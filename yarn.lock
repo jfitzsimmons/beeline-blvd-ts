@@ -89,7 +89,7 @@
   resolved "https://registry.yarnpkg.com/@ts-defold/tstl-userdata-sugar/-/tstl-userdata-sugar-1.0.1.tgz#a22a696b1bdfe9dc99155894ed53f3d8fbdecc1a"
   integrity sha512-iEBt+EpMOvBnpr1/fwUMirVGUqUAE9yFIuzi4ir7BOJvQEEtqAgTvyco2RIms9D7OzEL2jqBSzt3NjoD7zdKpQ==
 
-"@ts-defold/types@^1.2.20":
+"@ts-defold/types@^1.2.40":
   version "1.2.40"
   resolved "https://registry.yarnpkg.com/@ts-defold/types/-/types-1.2.40.tgz#736edba19c5057f5c8a5df27574ad6326e81c346"
   integrity sha512-sXPjLNIAN0+CMNSNqmRhkWSehvVyJxHJ2t1JxmTYcgAQCzCuXom/nanjF3gEo4ABRwH3r9c7AWW3duebed1ONQ==
