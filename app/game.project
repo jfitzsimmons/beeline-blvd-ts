@@ -1,5 +1,5 @@
 [project]
-title = tsd-template-war-battles
+title = Beeline Blvd
 dependencies#0 = https://github.com/ts-defold/defold-lldebugger/archive/extension.zip
 
 [bootstrap]
