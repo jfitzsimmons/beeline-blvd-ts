@@ -1,0 +1,80 @@
+math.randomseed(os.time()) 
+local settings = require "main.states.settings"
+local save = require "main.states.save"
+local world = require "main.states.worldstate"
+local gamesystem = require "main.systems.gamesystem"
+
+local function handle_new_turn(load_type) 
+	if load_type == "room transition" then 
+		world.clock = world.clock + 1
+		if world.clock > 23 then
+			world.clock = world.clock - 24;
+		end
+	elseif load_type == "new game" then gamesystem.init()
+	end
+end
+
+local function show(self, proxy) 
+	if self.current_proxy then 
+		print("MAIN PROXY UNLOAD ::: self.current_proxy ||| ",self.current_proxy)
+		msg.post(self.current_proxy, "unload")
+		self.current_proxy = nil
+	end
+	msg.post(proxy, "async_load")
+end
+
+function init(self)
+	--init from bootstrap (main.collection)
+	self.current_proxy = nil 
+	self.load_type = "none"
+
+	save.init() -- checks if theres app support data and if you're out of save slots
+	settings.init() -- checks if menu settings file, creates new or reads
+	msg.post("#", "acquire_input_focus")
+	msg.post("#", "show_menu")
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("show_menu") then 
+		self.is_menu = true
+		show(self, "#main_menu")
+	elseif message_id == hash("faint") then
+		world.clock = world.clock + 6
+		world.player.ap = world.player.ap_max - 6
+		msg.post("#", "pick_room", message)
+	elseif message_id == hash("arrested") then
+		world.clock = world.clock + 6
+		world.player.alert_level = 0
+		world.player.ap = world.player.ap_max - 6
+		msg.post("#", "pick_room", message)
+	elseif message_id == hash("pick_room") then
+		self.roomname = message.enter_room
+		self.is_menu = false
+		self.load_type = message.load_type
+		
+		handle_new_turn(self.load_type)
+		show(self, "#".. self.roomname)
+	elseif message_id == hash("proxy_loaded") then
+		self.current_proxy = sender 
+		if self.is_menu == false then
+			local params = {
+				roomname = self.roomname,
+				load_type = self.load_type
+			}
+			msg.post(self.roomname .. ":/level#level", "room_load", params)
+		end
+		msg.post(sender, "enable")
+	elseif message_id == hash("proxy_unloaded") then
+	end
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("main_menu") and action.released  then
+		if self.is_menu == true then
+			--back to game without interruption or changing state.
+			msg.post("#", "pick_room", {enter_room=self.roomname, load_type = "return to game"})
+		else
+			msg.post("#", "show_menu")
+		end
+	end
+end

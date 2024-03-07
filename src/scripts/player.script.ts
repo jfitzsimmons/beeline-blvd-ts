@@ -47,10 +47,10 @@ export function update(this: props, dt: number): void {
 
 export function on_input(this: props, actionId: hash, action: action): void {
     if (actionId == hash("up")) {
-        this.input.y = 1;
+        this.input.y = 2;
     }
     else if (actionId == hash("down")) {
-        this.input.y = -1;
+        this.input.y = -2;
     }
     else if (actionId == hash("left")) {
         this.input.x = -1;

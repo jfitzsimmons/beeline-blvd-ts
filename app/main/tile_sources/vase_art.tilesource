@@ -1,0 +1,110 @@
+image: "/assets/interiors/vase_art.png"
+tile_width: 49
+tile_height: 49
+tile_margin: 0
+tile_spacing: 0
+collision: ""
+material_tag: "tile"
+collision_groups: "default"
+animations {
+  id: "art1"
+  start_tile: 7
+  end_tile: 7
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 30
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "art2"
+  start_tile: 8
+  end_tile: 8
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 30
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "art3"
+  start_tile: 3
+  end_tile: 3
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 30
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "luggage01"
+  start_tile: 11
+  end_tile: 11
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "luggage02"
+  start_tile: 10
+  end_tile: 10
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "vase_art1"
+  start_tile: 1
+  end_tile: 1
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "vase_art2"
+  start_tile: 2
+  end_tile: 2
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "vase_art3"
+  start_tile: 3
+  end_tile: 3
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "vase_art4"
+  start_tile: 4
+  end_tile: 4
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "vase_art5"
+  start_tile: 5
+  end_tile: 5
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "vase_art6"
+  start_tile: 6
+  end_tile: 6
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+extrude_borders: 0
+inner_padding: 1
+sprite_trim_mode: SPRITE_TRIM_MODE_OFF

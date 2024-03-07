@@ -1,10 +1,10 @@
 key_trigger {
-  input: KEY_UP
-  action: "up"
+  input: KEY_DOWN
+  action: "front"
 }
 key_trigger {
-  input: KEY_DOWN
-  action: "down"
+  input: KEY_UP
+  action: "back"
 }
 key_trigger {
   input: KEY_LEFT
@@ -15,6 +15,26 @@ key_trigger {
   action: "right"
 }
 key_trigger {
-  input: KEY_SPACE
-  action: "fire"
+  input: KEY_W
+  action: "back"
+}
+key_trigger {
+  input: KEY_S
+  action: "front"
+}
+key_trigger {
+  input: KEY_D
+  action: "right"
+}
+key_trigger {
+  input: KEY_A
+  action: "left"
+}
+key_trigger {
+  input: KEY_ESC
+  action: "main_menu"
+}
+mouse_trigger {
+  input: MOUSE_BUTTON_1
+  action: "touch"
 }

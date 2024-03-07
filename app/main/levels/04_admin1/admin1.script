@@ -1,0 +1,38 @@
+local world = require "main.states.worldstate"
+local novel = require "main.utils.novel"
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("room_load") then
+		local params = {
+			roomname = "admin1", 
+			npc = world.rooms.all["admin1"].stations.desk,
+		}
+		if params.npc ~= "" then params.script = params.roomname .. "/" .. world.player.checkpoint:sub(1, -2) .. "desk" .. world.npcs.all[params.npc].clan end
+		msg.post("desk#station", "load_station", params)
+
+		params.npc = world.rooms.all["admin1"].stations.boss
+		if params.npc ~= "" then params.script = params.roomname .. "/" .. world.player.checkpoint:sub(1, -2) .. "boss" end
+		msg.post("boss#npc_loader", "load_npc", params)
+
+		params.npc = world.rooms.all["admin1"].stations.guard
+		if params.npc ~= "" then params.script = params.roomname .. "/" .. world.player.checkpoint:sub(1, -2) .. "guard" end
+		msg.post("guard#npc_loader", "load_npc", params)
+
+		params.npc = world.rooms.all["admin1"].stations.monitor
+		if params.npc ~= "" then params.script = params.roomname .. "/" .. world.player.checkpoint:sub(1, -2) .. "monitor" end
+		msg.post("monitor#npc_loader", "load_npc", params)
+
+		params.npc = world.rooms.all["admin1"].stations.assistant
+		if params.npc ~= "" then params.script = novel.script_builder(params.npc, params.roomname, "assistant", nil, false)  end
+		msg.post("assistant#npc_loader", "load_npc", params)
+
+		params.npc = world.rooms.all["admin1"].stations.patrol
+		if params.npc ~= "" then params.script = params.roomname .. "/" .. world.player.checkpoint:sub(1, -2) .. "patrol" end
+		msg.post("patrol#npc_loader", "load_npc", params)
+
+		params.npc = world.rooms.fallbacks.stations.admin1_passer
+		if params.npc ~= "" then params.script = novel.script_builder(params.npc, params.roomname, "passer", nil, false)  end 
+		msg.post("/passer#npc_loader", "load_npc", params)
+		
+	end
+end

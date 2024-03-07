@@ -1,0 +1,65 @@
+local world = require "main.states.worldstate"
+local novel = require "main.utils.novel"
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("room_load") then
+		--load npcs and inventory
+		local params = {
+			roomname = "reception",
+			npc = world.rooms.all["reception"].stations.desk,
+			script = ""
+		}
+		if params.npc ~= "" then params.script = params.roomname .. "/" .. world.player.checkpoint:sub(1, -2) .. "desk" end --
+
+		--load desk interactions and npc
+		msg.post("desk#station", "load_station", params)
+
+		params.npc = world.rooms.all["reception"].stations.patrol
+		--testjpf params.script = generate_script(room ,npc)
+		if params.npc ~= "" then params.script = params.roomname .. "/" .. world.player.checkpoint:sub(1, -2) .. "patrol" end
+		msg.post("/patrol#npc_loader", "load_npc", params)
+
+		params.npc = world.rooms.all["reception"].stations.guard
+		if params.npc ~= "" then params.script = params.roomname .. "/" .. world.player.checkpoint:sub(1, -2) .. "guard" end
+		msg.post("/guard#npc_loader", "load_npc", params)
+
+		params.npc = world.rooms.all["reception"].stations.loiter2
+		if params.npc ~= "" then params.script = params.roomname ..
+			"/" .. world.player.checkpoint:sub(1, -2) .. "loiter2" end
+		msg.post("/loiter2#npc_loader", "load_npc", params)
+
+		--testjpf here would be an example of where you would use
+		--script builder with quest checkpoint overwrites
+		params.npc = world.rooms.all["reception"].stations.loiter4
+		if params.npc ~= "" then
+			params.script = novel.script_builder(params.npc, params.roomname, "loiter4", nil, false)
+			--params.script = params.roomname .. "/" .. world.player.checkpoint:sub(1, -2) .. "loiter4"
+		end
+		msg.post("/loiter4#npc_loader", "load_npc", params)
+
+		params.npc = world.rooms.all["reception"].stations.guest
+		if params.npc ~= "" then params.script = params.roomname .. "/" .. world.player.checkpoint:sub(1, -2) .. "guest" end
+		msg.post("/guest#npc_loader", "load_npc", params)
+
+		params.npc = world.rooms.all["reception"].stations.guest2
+		if params.npc ~= "" then params.script = novel.script_builder(params.npc, params.roomname, "guest2", nil, false) end
+		msg.post("/guest2#npc_loader", "load_npc", params)
+
+		params.npc = world.rooms.fallbacks.stations.reception_unplaced
+		if params.npc ~= "" then params.script = novel.script_builder(params.npc, params.roomname, "unplaced", nil, false) end
+		msg.post("/unplaced#npc_loader", "load_npc", params)
+
+		params = {
+			roomname = "reception",
+			storagename = "vase",
+			ani = "vase_art1"
+		}
+		msg.post("/vase1#storage", "load_storage_inventory", params)
+		sprite.play_flipbook("#sprite", params.ani)
+
+		params.storagename = "vase2"
+		params.ani = "vase_art6"
+		msg.post("/vase2#storage", "load_storage_inventory", params)
+		sprite.play_flipbook("#sprite", params.ani)
+	end
+end

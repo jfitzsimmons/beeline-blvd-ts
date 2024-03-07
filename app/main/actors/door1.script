@@ -1,0 +1,24 @@
+local world = require "main.states.worldstate"
+local room_lookup = {
+	[hash("/to_baggage")] = "baggage",
+	[hash("/to_grounds")] = "grounds",
+	[hash("/to_reception")] = "reception",
+	[hash("/to_customs")] = "customs",
+	[hash("/to_admin1")] = "admin1",
+	[hash("/to_security")] = "security",
+	[hash("/to_infirmary")] = "infirmary"
+}
+function transition(self)
+	world.player.pos = go.get_position()
+	msg.post("proxies:/controller#worldcontroller", "pick_room",
+		{ load_type = "room transition", enter_room = room_lookup[go.get_id()] })
+end
+
+-- testjpf trigger ts build fart?
+function on_message(self, message_id, message, sender)
+	if message_id == hash("contact_point_response") then
+		if message.distance < 10 then
+			transition()
+		end
+	end
+end
