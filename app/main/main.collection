@@ -38,7 +38,7 @@ embedded_instances {
   "}\n"
   "components {\n"
   "  id: \"worldcontroller\"\n"
-  "  component: \"/main/gui/navigation/worldcontroller.script\"\n"
+  "  component: \"/scripts/world/worldcontroller.script\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

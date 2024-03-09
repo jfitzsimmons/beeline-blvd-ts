@@ -51,9 +51,9 @@ import WorldPlayer from './player'
 export default class World {
   private stateMachine: StateMachine
   //testjpf add player!!
-  private player: WorldPlayer
+  player: WorldPlayer
   private rooms: WorldRooms
-  private clock: number
+  clock: number
 
   constructor() {
     this.stateMachine = new StateMachine(this, 'world')

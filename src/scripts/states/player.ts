@@ -23,16 +23,16 @@ function random_skills(skills: Skills) {
 
 // need rooms interface?
 export default class WorldPlayer {
-  private player: PlayerState
+  state: PlayerState
   constructor() {
-    this.player = { ...PlayerInitState }
-    random_skills(this.player.skills)
+    this.state = { ...PlayerInitState }
+    random_skills(this.state.skills)
   }
 
   private return_inventory() {
-    return this.player.inventory
+    return this.state.inventory
   }
   private return_skills() {
-    return this.player.skills
+    return this.state.skills
   }
 }
