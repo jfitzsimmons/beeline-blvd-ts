@@ -21,6 +21,7 @@
     ],
     "@typescript-eslint/restrict-plus-operands": "off",
     "semi": "off",
-    "@typescript-eslint/semi": "off"
+    "@typescript-eslint/semi": "off",
+    "import/no-unresolved": "off"
   }
 }

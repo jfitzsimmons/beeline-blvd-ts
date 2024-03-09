@@ -1,12 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-assignment
-const world: world = require('../../main.states.worldstate')
-
-interface world {
-  player: any
-  npcs: any
-  tasks: any
-  clock: number
-}
+import Game from '../states/gamesystem2'
+import { WorldState, GameState } from '../../types/state'
+// use defaultGlobal.game when you can.
+const game: GameState = Game
+const world: WorldState = Game.world
 
 //testjpf need to send hastohex to here too!!!
 const room_lookup = {
@@ -25,7 +21,6 @@ function transition() {
     enter_room: room_lookup[hash_to_hex(go.get_id())],
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   world.player.pos = go.get_position()
   msg.post('proxies:/controller#worldcontroller', 'pick_room', params)
 }

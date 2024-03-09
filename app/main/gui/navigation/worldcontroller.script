@@ -1,8 +1,10 @@
 math.randomseed(os.time()) 
 local settings = require "main.states.settings"
 local save = require "main.states.save"
-local world = require "main.states.worldstate"
 local gamesystem = require "main.systems.gamesystem"
+local gamesystem2 = require "scripts.states.gamesystem2"
+local world = gamesystem2.world
+
 
 local function handle_new_turn(load_type) 
 	if load_type == "room transition" then 
@@ -10,7 +12,13 @@ local function handle_new_turn(load_type)
 		if world.clock > 23 then
 			world.clock = world.clock - 24;
 		end
-	elseif load_type == "new game" then gamesystem.init()
+	elseif load_type == "new game" then 
+		gamesystem.init()
+		for k,actor in pairs(gamesystem2) do 
+			print("testjpf k", k)
+		end
+		--testjpf working now from ts file gamesystem 2!!!
+		print("gamesystem2.testjpf2", gamesystem2.testjpf2)
 	end
 end
 
@@ -24,6 +32,9 @@ local function show(self, proxy)
 end
 
 function init(self)
+	local gamesystem2 = require "scripts.states.gamesystem2"
+	print("testjpf check again:::", gamesystem2)
+
 	--init from bootstrap (main.collection)
 	self.current_proxy = nil 
 	self.load_type = "none"
