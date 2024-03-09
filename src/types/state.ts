@@ -5,6 +5,42 @@ export interface WorldState {
   //tasks: any
   clock: number
 }
+
+export interface NpcsState {
+  all: Npcs
+  layout: Array<Array<string | null>>
+  roles: Roles
+  fallbacks: Fallbacks
+}
+
+export interface Npcs {
+  [key: string]: Npc
+}
+interface Npc extends NpcDefaults {
+  home: { x: number; y: number }
+  labelname: string
+  inventory: hash[]
+  clearence: number
+  clan: string
+}
+
+export interface NpcDefaults {
+  convos: number
+  actions: string[]
+  ai_path: string
+  matrix: { x: number; y: number }
+  attitudes: Skills | never
+  skills: Skills | never
+  binaries: Skills | never
+  turns_since_encounter: number
+  love: number
+  hp: number
+  cooldown: number
+  effects: string[]
+  currentroom: string
+  exitroom: string
+  currentstation: string
+}
 export interface GameState {
   world: WorldState
 }

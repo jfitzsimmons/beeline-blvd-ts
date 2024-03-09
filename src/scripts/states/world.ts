@@ -47,17 +47,21 @@ return M
 import StateMachine from './stateMachine'
 import WorldRooms from './rooms'
 import WorldPlayer from './player'
+import WorldNpcs from './npcs'
 
 export default class World {
   private stateMachine: StateMachine
-  //testjpf add player!!
+  //testjpf if i get taksstates done i think
+  // i can wipe out all the old lua states
   player: WorldPlayer
+  private npcs: WorldNpcs
   private rooms: WorldRooms
   clock: number
 
   constructor() {
     this.stateMachine = new StateMachine(this, 'world')
     this.player = new WorldPlayer()
+    this.npcs = new WorldNpcs()
     this.rooms = new WorldRooms()
     this.clock = 6
     /**
