@@ -1,7 +1,7 @@
 import { NpcsInitState } from './inits/npcsInitState'
-import { NpcsState, Npcs } from '../../types/state'
+import { NpcsState, Npcs, QuestMethods } from '../../types/state'
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
-const chest = require('main.systems.inventorysystem')
+//const chest = require('../../main.systems.inventorysystem')
 
 function shuffle(arrN: number[]): number[]
 function shuffle(arrS: string[]): string[]
@@ -17,10 +17,15 @@ function shuffle(array: Array<string | number>): Array<string | number> {
 export default class WorldNpcs {
   private npcs: NpcsState
   private order: []
+  quests: QuestMethods
   constructor() {
     this.npcs = { ...NpcsInitState }
     random_attributes(this.npcs.all)
     this.order = []
+    this.quests = {
+      return_doctors: this.return_doctors.bind(this),
+      return_all: this.return_all.bind(this),
+    }
   }
 
   return_doctors() {
@@ -214,17 +219,18 @@ function random_attributes(npcs: Npcs) {
 
     // random skills
     const tempskills = shuffle(startskills)
-    let s_count = 1
+    let s_count = 0
 
     let ks: keyof typeof skills // Type is "one" | "two" | "three"
     for (ks in skills) {
+      print(ks, ': tempskills[s_count]: ', tempskills[s_count])
       npcs[kn].skills[ks] = tempskills[s_count] + math.random(-1, 1)
       s_count = s_count + 1
     }
 
     // random binaries
     const tempbins = shuffle(startbins)
-    let b_count = 1
+    let b_count = 0
 
     let kb: keyof typeof binaries // Type is "one" | "two" | "three"
     for (kb in binaries) {
@@ -234,33 +240,16 @@ function random_attributes(npcs: Npcs) {
     }
 
     // inventory bonuses
+    // const inventory: hash[] = npcs[kn].inventory
+    // Type is "one" | "two" | "three"
+    /**TESTJPF TODO:::
+     * reapply this when youve replaced all
 
-    let kib: keyof typeof npcs.inventory // Type is "one" | "two" | "three"
-    for (kib in npcs.inventory) {
+    for (const item of npcs[kn].inventory) {
+      print('testjpf ITEM: ', item)
+      const params = { npc: npcs[kn], item }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      chest.add_chest_bonus(npcs[kn], kib)
-    }
+      chest.add_chest_bonus(params)
+    }     */
   }
 }
-/** 
-function M.new_npcs_state()
-	const count = 1
-	for _,npc in pairs(M.all) do
-		M.order[count] = npc.labelname
-		random_attributes(npc.labelname)
-		count = count + 1
-	}
-}
-
-function M.return_doctors()
-	return {
-		M.all.doc01,
-		M.all.doc02
-	}
-}
-
-function M.return_all()
-	return M.all
-}
-
-**/

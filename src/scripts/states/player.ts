@@ -1,4 +1,4 @@
-import { PlayerState, Skills } from '../../types/state'
+import { PlayerState, Skills, QuestMethods } from '../../types/state'
 import { PlayerInitState } from './inits/playerInitState'
 
 function shuffle(arrN: number[]): number[]
@@ -21,18 +21,27 @@ function random_skills(skills: Skills) {
   }
 }
 
-// need rooms interface?
 export default class WorldPlayer {
   state: PlayerState
+  quests: QuestMethods
+
   constructor() {
     this.state = { ...PlayerInitState }
     random_skills(this.state.skills)
+    this.quests = {
+      return_inventory: this.return_inventory.bind(this),
+      return_skills: this.return_skills.bind(this),
+      increase_alert_level: this.increase_alert_level.bind(this),
+    }
   }
 
-  private return_inventory() {
+  return_inventory() {
     return this.state.inventory
   }
-  private return_skills() {
+  return_skills() {
     return this.state.skills
+  }
+  increase_alert_level() {
+    this.state.alert_level += 1
   }
 }

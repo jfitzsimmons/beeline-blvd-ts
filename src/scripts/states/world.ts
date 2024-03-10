@@ -1,61 +1,18 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-
-/**
-const playerstate = require('main.states.playerstate')
-const roomstates = require('main.states.roomstates')
-const npcstates = require('main.states.npcstates')
-const taskstates = require('main.states.taskstates')
-const utils = require('main.utils.utils')
-
-const M = {}
-M.player = {}
-M.rooms = {}
-M.npcs = {}
-M.tasks = {}
-M.clock = 6
-
-function new_game_state() {
-	playerstate.new_player_state()
-	roomstates.clear_room_stations()
-	npcstates.new_npcs_state()
-	taskstates.new_task_state()
-
-	M.player = playerstate.state
-	M.rooms = { 
-		all = roomstates.all,
-		fallbacks = roomstates.fallbacks
-	}
-	M.npcs = {
-		all = npcstates.all,
-		order = npcstates.order,
-		ais = npcstates.ais
-	}
-	M.tasks = {
-		cautions = taskstates.cautions,
-		quests = taskstates.quests
-	}
-	M.clock = 6
-}
-
-function M.init() {
-	new_game_state()
-}
-
-return M
-**/
+import { AllQuestsMethods } from '../../types/state'
 
 import StateMachine from './stateMachine'
 import WorldRooms from './rooms'
 import WorldPlayer from './player'
 import WorldNpcs from './npcs'
+import WorldTasks from './tasks'
 
 export default class World {
   private stateMachine: StateMachine
-  //testjpf if i get taksstates done i think
-  // i can wipe out all the old lua states
   player: WorldPlayer
   private npcs: WorldNpcs
   private rooms: WorldRooms
+  private tasks: WorldTasks
   clock: number
 
   constructor() {
@@ -63,17 +20,12 @@ export default class World {
     this.player = new WorldPlayer()
     this.npcs = new WorldNpcs()
     this.rooms = new WorldRooms()
+    const params: AllQuestsMethods = {
+      pq: this.player.quests,
+      nq: this.npcs.quests,
+    }
+    this.tasks = new WorldTasks(params)
     this.clock = 6
-    /**
-     *testjpf
-     * we create a room class. we import it
-     * this.rooms = New Rooms()????
-     * then use this.room.privatefunc() to update stations and things.
-     *
-     *
-     * rooms should be it's own class with state amchine.
-     * what states can it have, enter
-     */
     this.stateMachine
       .addState('idle')
       .addState('world', {

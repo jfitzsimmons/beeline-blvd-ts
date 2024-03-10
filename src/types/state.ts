@@ -1,11 +1,3 @@
-export interface WorldState {
-  player: PlayerState
-  rooms: RoomsState
-  //npcs: any
-  //tasks: any
-  clock: number
-}
-
 export interface NpcsState {
   all: Npcs
   layout: Array<Array<string | null>>
@@ -16,7 +8,37 @@ export interface NpcsState {
 export interface Npcs {
   [key: string]: Npc
 }
-interface Npc extends NpcDefaults {
+
+export interface Quests {
+  [key: string]: Quest
+}
+
+export interface Quest {
+  passed: boolean
+  conditions: QuestConditions
+  side_quests?: QuestConditions
+}
+
+export interface QuestConditions {
+  [key: number]: QuestCondition
+}
+export interface QuestCondition {
+  passed?: boolean
+  interval?: string
+  func: () => void
+  args: unknown[]
+}
+
+export interface WorldQuests {
+  [key: string]: Quests
+}
+export interface AllQuestsMethods {
+  [key: string]: QuestMethods
+}
+export interface QuestMethods {
+  [key: string]: () => unknown
+}
+export interface Npc extends NpcDefaults {
   home: { x: number; y: number }
   labelname: string
   inventory: hash[]
@@ -40,9 +62,6 @@ export interface NpcDefaults {
   currentroom: string
   exitroom: string
   currentstation: string
-}
-export interface GameState {
-  world: WorldState
 }
 export interface Skills {
   [key: string]: number
