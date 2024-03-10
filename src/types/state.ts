@@ -90,10 +90,10 @@ export interface RoomsState {
   roles: Roles
   fallbacks: Fallbacks
 }
-interface Fallbacks {
+export interface Fallbacks {
   stations: { [key: string]: string }
 }
-interface Rooms {
+export interface Rooms {
   [key: string]: Room
 }
 interface Room {
@@ -101,7 +101,7 @@ interface Room {
   roomname: string
   stations: { [key: string]: string }
   actors: Actors
-  prisoners?: Prisoners
+  prisoners: Prisoners | never
   props?: string[]
 }
 interface Actors {
@@ -112,9 +112,9 @@ interface Actor {
   watcher?: string
   actions: string[]
 }
-interface Prisoners {
+export interface Prisoners {
   [key: string]: string
 }
-interface Roles {
+export interface Roles {
   [key: string]: string[]
 }

@@ -21,6 +21,7 @@ node_modules/
 # Generated
 app/modules/
 app/scripts/
+app/types/
 app/lualib_bundle.lua
 !src/**
 

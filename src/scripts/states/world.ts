@@ -10,9 +10,9 @@ import WorldTasks from './tasks'
 export default class World {
   private stateMachine: StateMachine
   player: WorldPlayer
-  private npcs: WorldNpcs
-  private rooms: WorldRooms
-  private tasks: WorldTasks
+  npcs: WorldNpcs
+  rooms: WorldRooms
+  tasks: WorldTasks
   clock: number
 
   constructor() {

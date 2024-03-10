@@ -1,5 +1,5 @@
 import { NpcsInitState } from './inits/npcsInitState'
-import { NpcsState, Npcs, QuestMethods } from '../../types/state'
+import { Npcs, QuestMethods } from '../../types/state'
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
 //const chest = require('../../main.systems.inventorysystem')
 
@@ -15,13 +15,13 @@ function shuffle(array: Array<string | number>): Array<string | number> {
 
 // need npcs interface?
 export default class WorldNpcs {
-  private npcs: NpcsState
-  private order: string[]
+  all: Npcs
+  order: string[]
   quests: QuestMethods
   constructor() {
-    this.npcs = { ...NpcsInitState }
+    this.all = { ...NpcsInitState }
     this.order = []
-    random_attributes(this.npcs.all, this.order)
+    random_attributes(this.all, this.order)
     this.quests = {
       return_doctors: this.return_doctors.bind(this),
       return_all: this.return_all.bind(this),
@@ -29,15 +29,14 @@ export default class WorldNpcs {
   }
 
   return_doctors() {
-    return [this.npcs.all.doc01, this.npcs.all.doc02]
+    return [this.all.doc01, this.all.doc02]
   }
   return_all() {
-    return this.npcs.all
+    return this.all
   }
   sort_npcs_by_encounter() {
     this.order.sort((a: string, b: string) =>
-      this.npcs.all[a].turns_since_encounter >
-      this.npcs.all[b].turns_since_encounter
+      this.all[a].turns_since_encounter > this.all[b].turns_since_encounter
         ? 1
         : -1
     )
