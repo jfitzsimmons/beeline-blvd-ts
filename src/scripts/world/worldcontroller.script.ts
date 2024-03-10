@@ -9,7 +9,9 @@ math.randomseed(os.time())
 //The file '/scripts/world/main/states/settings.lua' could not be found.
 const settings = require('../../main.states.settings')
 const save = require('../../main.states.save')
-const gamesystem = require('../../main.systems/gamesystem')
+const ai = require('../../main.systems.ai.ai_main')
+
+//const gamesystem = require('../../main.systems/gamesystem')
 //const gamesystem2 = require( 'scripts.states.gamesystem2')
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 globalThis.game = new Game()
@@ -23,7 +25,9 @@ function handle_new_turn(load_type: string) {
       world.clock = world.clock - 24
     }
   } else if (load_type === 'new game') {
-    gamesystem.init()
+    globalThis.game = new Game()
+    ai.place_npcs()
+    //gamesystem.init()
     //testjpf working now from ts file gamesystem 2!!!
   }
 }

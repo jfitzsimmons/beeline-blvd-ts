@@ -16,12 +16,12 @@ function shuffle(array: Array<string | number>): Array<string | number> {
 // need npcs interface?
 export default class WorldNpcs {
   private npcs: NpcsState
-  private order: []
+  private order: string[]
   quests: QuestMethods
   constructor() {
     this.npcs = { ...NpcsInitState }
-    random_attributes(this.npcs.all)
     this.order = []
+    random_attributes(this.npcs.all, this.order)
     this.quests = {
       return_doctors: this.return_doctors.bind(this),
       return_all: this.return_all.bind(this),
@@ -33,6 +33,14 @@ export default class WorldNpcs {
   }
   return_all() {
     return this.npcs.all
+  }
+  sort_npcs_by_encounter() {
+    this.order.sort((a: string, b: string) =>
+      this.npcs.all[a].turns_since_encounter >
+      this.npcs.all[b].turns_since_encounter
+        ? 1
+        : -1
+    )
   }
 }
 
@@ -191,11 +199,12 @@ function adjust_binaries(value: number, clan: string, binary: string) {
 }
 
 // testjpf probably just need npcs type??
-function random_attributes(npcs: Npcs) {
+function random_attributes(npcs: Npcs, order: string[]) {
   const ai_paths = ['inky', 'blinky', 'pinky', 'clyde']
   const startskills = [1, 2, 3, 5, 7, 7, 8, 8]
   const startbins = [-1, -0.5, -0.1, 0.1, 0.5, 1]
-  let path = 1
+  let path = 0
+  let count = 0
   /** 
   const _defaults = { ...npc_defaults }
   let knd: keyof typeof _defaults // Type is "one" | "two" | "three"
@@ -205,6 +214,8 @@ function random_attributes(npcs: Npcs) {
 **/
   let kn: keyof typeof npcs // Type is "one" | "two" | "three"
   for (kn in npcs) {
+    order.splice(count, 0, kn)
+    count++
     npcs[kn].turns_since_encounter = math.random(5, 15)
     npcs[kn].love = math.random(-1, 1)
     // random attitude
