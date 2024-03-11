@@ -82,7 +82,7 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
           npcs.all[npc].matrix = rooms.all[room].matrix
           npcs.all[npc].currentstation = ks[0]
           placed = true
-          if (room != player.state.currentroom) {
+          if (room != player.currentroom) {
             npcs.all[npc].turns_since_encounter =
               npcs.all[npc].turns_since_encounter + 1
           } else {
@@ -199,7 +199,7 @@ function set_npc_target(direction: Direction, n: string) {
   const npc = npcs.all[n]
   let target = { x: 0, y: 0 }
   if (npc.turns_since_encounter > 20) {
-    target = player.state.matrix
+    target = player.matrix
   } else if (npc.ai_path == 'pinky') {
     //always targets 1 to 3 rooms infront of player
     target = direction.front
@@ -216,9 +216,7 @@ function set_npc_target(direction: Direction, n: string) {
     let distance = 0
     if (math.random() < 0.33) {
       distance =
-        npc.matrix.x -
-        player.state.matrix.x +
-        (npc.matrix.y - player.state.matrix.y)
+        npc.matrix.x - player.matrix_x + (npc.matrix.y - player.matrix_y)
     } else {
       distance = 9
     }
@@ -233,9 +231,7 @@ function set_npc_target(direction: Direction, n: string) {
     }
   } else if (npc.ai_path == 'clyde') {
     const distance =
-      npc.matrix.x -
-      player.state.matrix.x +
-      (npc.matrix.y - player.state.matrix.y)
+      npc.matrix.x - player.matrix_x + (npc.matrix.y - player.matrix_y)
     //random front, back, left, right unless too close and fail 50/50 check
     if (distance > -2 && distance < 2 && math.random() > 0.5) {
       target = npc.home
@@ -263,7 +259,7 @@ function set_npc_target(direction: Direction, n: string) {
 }
 
 export function assign_nearby_rooms(enter: { x: number; y: number }) {
-  const exit = player.state.matrix
+  const exit = player.matrix
   let direction = {
     front: { x: 0, y: 0 },
     back: { x: 0, y: 0 },
@@ -304,14 +300,14 @@ export function assign_nearby_rooms(enter: { x: number; y: number }) {
 }
 
 function release_prisoners(d: Direction) {
-  const prisoners: Prisoners = rooms.all.security.prisoners
+  const prisoners: Prisoners = rooms.all.security.prisoners!
   let station: keyof typeof prisoners
   for (station in prisoners) {
     const prisoner = prisoners[station]
     if (prisoner != '' && npcs.all[prisoner].cooldown <= 0) {
       print('released from prison:', prisoner)
       npc_action_move(prisoner, d)
-      rooms.all.security.prisoners[station] = ''
+      rooms.all.security.prisoners![station] = ''
     }
   }
 }

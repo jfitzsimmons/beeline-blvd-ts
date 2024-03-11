@@ -6,13 +6,14 @@
 //const ai = require('main.systems.ai.ai_main')
 //const task = require('main.states.taskstates')
 //const rooms = require( "main.states.roomstates")
-const tasksystem = require('../../main.systems.tasksystem')
+//const tasksystem = require('../../main.systems.tasksystem')
 const quest = require('../../main.systems.quests.quest_main')
 const novel = require('../../main.utils.novel')
 import { ai_turn } from '../ai/ai_main'
 const { world } = globalThis.game
 const { tasks, rooms, npcs, player } = world
 import { Confront } from '../../types/state'
+import { address_cautions } from '../systems/tasksystem'
 
 function game_turn(room: string) {
   rooms.clear_stations()
@@ -92,7 +93,7 @@ export function on_message(
       //load room specific state
       msg.post('level#' + this.roomname, 'room_load')
 
-      const confrontation: Confront | null = tasksystem.address_cautions()
+      const confrontation: Confront | null = address_cautions()
       if (confrontation != null) confrontation_scene(confrontation)
 
       //position player on screen

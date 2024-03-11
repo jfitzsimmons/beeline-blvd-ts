@@ -41,7 +41,7 @@ export interface QuestMethods {
 export interface Npc extends NpcDefaults {
   home: { x: number; y: number }
   labelname: string
-  inventory: hash[]
+  inventory: string[]
   clearence: number
   clan: string
 }
@@ -58,7 +58,7 @@ export interface NpcDefaults {
   love: number
   hp: number
   cooldown: number
-  effects: string[]
+  effects: Effect[]
   currentroom: string
   exitroom: string
   currentstation: string
@@ -134,4 +134,14 @@ export interface Confront {
   station: string
   state: string
   reason: string
+}
+
+export interface Effect {
+  label: string
+  turns: number
+  fx: {
+    type: string
+    stat: string
+    adjustment: 0.2
+  }
 }

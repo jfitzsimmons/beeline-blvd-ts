@@ -4,6 +4,7 @@ local M = {}
 
 M.all = {
 	crimewave = {
+		label = "crimewave",
 		turns = 10,
 		fx = {
 			type = "binaries",
@@ -12,6 +13,7 @@ M.all = {
 		}
 	},
 	yogi = {
+		label = "yogi",
 		turns = 10,
 		fx = {
 			type = "skills",
@@ -20,6 +22,7 @@ M.all = {
 		}
 	},
 	angel = {
+		label = "angel",
 		turns = 10,
 		fx = {
 			type = "binaries",
@@ -28,6 +31,7 @@ M.all = {
 		}
 	},
 	devil = {
+		label = "devil",
 		turns = 10,
 		fx = {
 			type = "binaries",
@@ -36,6 +40,7 @@ M.all = {
 		}
 	},
 	inspired = {
+		label = "inspired",
 		turns = 10,
 		fx = {
 			type = "skills",
@@ -44,6 +49,7 @@ M.all = {
 		}
 	},
 	eagleeye = {
+		label = "eagleeye",
 		turns = 10,
 		fx = {
 			type = "skills",
@@ -52,6 +58,7 @@ M.all = {
 		}
 	},
 	modesty = {
+		label = "modesty",
 		turns = 10,
 		fx = {
 			type = "binaries",
@@ -60,6 +67,7 @@ M.all = {
 		}
 	},
 	admirer = {
+		label = "admirer",
 		turns = 10,
 		fx = {
 			type = "attitudes",
@@ -68,6 +76,7 @@ M.all = {
 		}
 	},
 	opportunist = {
+		label = "opportunist",
 		turns = 10,
 		fx = {
 			type = "binaries",
@@ -76,6 +85,7 @@ M.all = {
 		}
 	},
 	amped = {
+		label = "amped",
 		turns = 10,
 		fx = {
 			type = "binaries",
@@ -84,6 +94,7 @@ M.all = {
 		}
 	},
 	prejudice = {
+		label = "prejudice",
 		turns = 10,
 		fx = {
 			type = "attitudes",
@@ -92,6 +103,7 @@ M.all = {
 		}
 	},
 	incharge = {
+		label = "incharge",
 		turns = 10,
 		fx = {
 			type = "binaries",
@@ -100,6 +112,7 @@ M.all = {
 		}
 	},
 	boring = {
+		label = "boring",
 		turns = 10,
 		fx = {
 			type = "skills",
@@ -108,6 +121,7 @@ M.all = {
 		}
 	},
 	loudmouth = {
+		label = "loudmouth",
 		turns = 10,
 		fx = {
 			type = "skills",
@@ -116,6 +130,7 @@ M.all = {
 		}
 	},
 	vanity = {
+		label = "vanity",
 		turns = 10,
 		fx = {
 			type = "skills",
@@ -124,6 +139,7 @@ M.all = {
 		}
 	},
 	inhiding = {
+		label = "inhiding",
 		turns = 10,
 		fx = {
 			type = "skills",
@@ -132,6 +148,7 @@ M.all = {
 		}
 	},
 	inshape = {
+		label = "inshape",
 		turns = 10,
 		fx = {
 			type = "skills",
@@ -140,6 +157,7 @@ M.all = {
 		}
 	},
 	readup = {
+		label = "readup",
 		turns = 10,
 		fx = {
 			type = "skills",
@@ -148,6 +166,7 @@ M.all = {
 		}
 	},
 	dunce = {
+		label = "dunce",
 		turns = 10,
 		fx = {
 			type = "skills",
@@ -156,6 +175,7 @@ M.all = {
 		}
 	},
 	lazy = {
+		label = "lazy",
 		turns = 10,
 		fx = {
 			type = "skills",
@@ -164,6 +184,7 @@ M.all = {
 		}
 	},
 	ignorant = {
+		label = "ignorant",
 		turns = 10,
 		fx = {
 			type = "skills",
@@ -172,6 +193,7 @@ M.all = {
 		}
 	},
 	distracted = {
+		label = "distracted",
 		turns = 10,
 		fx = {
 			type = "skills",

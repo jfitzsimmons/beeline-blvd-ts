@@ -3,7 +3,7 @@ local utils = require "main.utils.utils"
 local M = {}
 
 M.items = {
-	[hash("magica1")] = {
+	magica1 = {
 		value = 2,
 		level = 1,
 		bins = {
@@ -12,7 +12,7 @@ M.items = {
 		},
 		skills = {}
 	},
-	[hash("feather01")] = {
+	feather01 = {
 		value = 1,
 		level = 1,
 		bins = {
@@ -22,7 +22,7 @@ M.items = {
 			speed = 1
 		}
 	},
-	[hash("berry01")] = {
+	berry01 = {
 		value = 2,
 		level = 1,
 		bins = {
@@ -32,7 +32,7 @@ M.items = {
 			wisdom = -1
 		}
 	},
-	[hash("drumstick01")] = {
+	drumstick01 = {
 		value = 3,
 		level = 1,
 		bins = {
@@ -42,7 +42,7 @@ M.items = {
 			speed = -2
 		}
 	},
-	[hash("magica4")] = {
+	magica4 = {
 		value = 4,
 		level = 1,
 		bins = {
@@ -50,7 +50,7 @@ M.items = {
 		},
 		skills = {}
 	},
-	[hash("magicb3")] = {
+	magicb3 = {
 		value = 4,
 		level = 1,
 		bins = {
@@ -58,7 +58,7 @@ M.items = {
 		},
 		skills = {}
 	},
-	[hash("magicb1")] = {
+	magicb1 = {
 		value = 3,
 		level = 1,
 		bins = {
@@ -66,7 +66,7 @@ M.items = {
 		},
 		skills = {}
 	},
-	[hash("feather02")] = {
+	feather02 = {
 		value = 2,
 		level = 1,
 		bins = {
@@ -74,7 +74,7 @@ M.items = {
 		},
 		skills = {}
 	},
-	[hash("eyeball02")] = {
+	eyeball02 = {
 		value = 2,
 		level = 1,
 		bins = {
@@ -82,7 +82,7 @@ M.items = {
 		},
 		skills = {}
 	},
-	[hash("eyeball03")] = {
+	eyeball03 = {
 		value = 3,
 		level = 1,
 		bins = {
@@ -92,7 +92,7 @@ M.items = {
 			perception = 1
 		}
 	},
-	[hash("drumstick01")] = {
+	drumstick01 = {
 		value = 3,
 		level = 1,
 		bins = {
@@ -102,7 +102,7 @@ M.items = {
 			speed = -2
 		}
 	},
-	[hash("sunhat")] = {
+	sunhat = {
 		value = 3,
 		level = 1,
 		bins = {
@@ -110,7 +110,7 @@ M.items = {
 		},
 		skills = {}
 	},
-	[hash("magicc5")] = {
+	magicc5 = {
 		value = 3,
 		level = 1,
 		bins = {
@@ -118,7 +118,7 @@ M.items = {
 		},
 		skills = {}
 	},
-	[hash("shrimp02")] = {
+	shrimp02 = {
 		value = 3,
 		level = 1,
 		bins = {
@@ -128,7 +128,7 @@ M.items = {
 			charisma = -1
 		}
 	},
-	[hash("avacado")] = {
+	avacado = {
 		value = 3,
 		level = 1,
 		bins = {
@@ -138,7 +138,7 @@ M.items = {
 			charisma = 1
 		}
 	},
-	[hash("gold")] = {
+	gold = {
 		value = 10,
 		level = 1,
 		bins = {
@@ -146,7 +146,7 @@ M.items = {
 		},
 		skills = {}
 	},
-	[hash("gold")] = {
+	gold = {
 		value = 10,
 		level = 1,
 		bins = {
@@ -154,7 +154,7 @@ M.items = {
 		},
 		skills = {}
 	},
-	[hash("cape")] = {
+	cape = {
 		value = 4,
 		level = 1,
 		bins = {
@@ -162,7 +162,7 @@ M.items = {
 		},
 		skills = {}
 	},
-	[hash("glove01")] = {
+	glove01 = {
 		value = 3,
 		level = 1,
 		bins = {
@@ -170,7 +170,7 @@ M.items = {
 		},
 		skills = {}
 	},
-	[hash("banana")] = {
+	banana = {
 		value = 2,
 		level = 1,
 		bins = {
@@ -178,7 +178,7 @@ M.items = {
 		},
 		skills = {}
 	},
-	[hash("string")] = {
+	string = {
 		value = 1,
 		level = 1,
 		bins = {
@@ -186,7 +186,7 @@ M.items = {
 		},
 		skills = {}
 	},
-	[hash("mirror")] = {
+	mirror = {
 		value = 1,
 		level = 1,
 		bins = {},
@@ -194,7 +194,7 @@ M.items = {
 			perception = -1,
 		}
 	},
-	[hash("leaf03")] = {
+	leaf03 = {
 		value = 1,
 		level = 1,
 		bins = {
@@ -204,7 +204,7 @@ M.items = {
 			stealth = -1,
 		}
 	},
-	[hash("leaf01")] = {
+	leaf01 = {
 		value = 1,
 		level = 1,
 		bins = {},
@@ -212,7 +212,7 @@ M.items = {
 			stealth = -1,
 		}
 	},
-	[hash("magicb2")] = {
+	magicb2 = {
 		value = 3,
 		level = 1,
 		bins = {
@@ -220,7 +220,7 @@ M.items = {
 		},
 		skills = {},
 	},
-	[hash("leaf02")] = {
+	leaf02 = {
 		value = 1,
 		level = 1,
 		bins = {},
@@ -228,7 +228,7 @@ M.items = {
 			stealth = -2,
 		}
 	},
-	[hash("mushroom02")] = {
+	mushroom02 = {
 		value = 4,
 		level = 1,
 		bins = {},
@@ -237,7 +237,7 @@ M.items = {
 			intelligence = -2,
 		}
 	},
-	[hash("orange")] = {
+	orange = {
 		value = 2,
 		level = 1,
 		bins = {},
@@ -245,7 +245,7 @@ M.items = {
 			constitution = 1,
 		}
 	},
-	[hash("mushroom03")] = {
+	mushroom03 = {
 		value = 5,
 		level = 1,
 		bins = {},
@@ -254,7 +254,7 @@ M.items = {
 			intelligence = -3,
 		}
 	},
-	[hash("tomato")] = {
+	tomato = {
 		value = 2,
 		level = 1,
 		bins = {},
@@ -262,7 +262,7 @@ M.items = {
 			perception = 1,
 		}
 	},
-	[hash("axe")] = {
+	axe = {
 		value = 5,
 		level = 1,
 		bins = {},
@@ -271,7 +271,7 @@ M.items = {
 			speed = -1
 		}
 	},
-	[hash("ring")] = {
+	ring = {
 		value = 8,
 		level = 1,
 		bins = {},
@@ -280,7 +280,7 @@ M.items = {
 			constitution = -1
 		}
 	},
-	[hash("bronze")] = {
+	bronze = {
 		value = 6,
 		level = 1,
 		bins = {},
@@ -289,7 +289,7 @@ M.items = {
 			constitution = -1
 		}
 	},
-	[hash("potion")] = {
+	potion = {
 		value = 5,
 		level = 1,
 		bins = {},
@@ -298,7 +298,7 @@ M.items = {
 			strength = -1
 		}
 	},
-	[hash("berry02")] = {
+	berry02 = {
 		value = 3,
 		level = 1,
 		bins = {},
@@ -307,7 +307,7 @@ M.items = {
 			wisdom = -1
 		}
 	},
-	[hash("egg01")] = {
+	egg01 = {
 		value = 2,
 		level = 1,
 		bins = {},
@@ -316,7 +316,7 @@ M.items = {
 			speed = -1
 		}
 	},
-	[hash("envelope")] = {
+	envelope = {
 		value = 1,
 		level = 1,
 		bins = {},
@@ -325,7 +325,7 @@ M.items = {
 			charisma = -1
 		}
 	},
-	[hash("vial01")] = {
+	vial01 = {
 		value = 2,
 		level = 1,
 		bins = {},
@@ -334,7 +334,7 @@ M.items = {
 			stealth = -1
 		}
 	},
-	[hash("vial02")] = {
+	vial02 = {
 		value = 7,
 		level = 1,
 		bins = {
@@ -345,7 +345,7 @@ M.items = {
 			constitution = 2,
 		}
 	},
-	[hash("fish01")] = {
+	fish01 = {
 		value = 3,
 		level = 1,
 		bins = {},
@@ -354,7 +354,7 @@ M.items = {
 			strength = 1
 		}
 	},
-	[hash("shears")] = {
+	shears = {
 		value = 4,
 		level = 1,
 		bins = {},
@@ -363,7 +363,7 @@ M.items = {
 			perception = 1
 		}
 	},
-	[hash("cheese")] = {
+	cheese = {
 		value = 2,
 		level = 1,
 		bins = {},
@@ -371,7 +371,7 @@ M.items = {
 			constitution = -1,
 		}
 	},
-	[hash("pillow")] = {
+	pillow = {
 		value = 2,
 		level = 2,
 		bins = {},
@@ -380,7 +380,7 @@ M.items = {
 			stealth = 3
 		}
 	},
-	[hash("steak01")] = {
+	steak01 = {
 		value = 3,
 		level = 2,
 		bins = {},
@@ -389,7 +389,7 @@ M.items = {
 			constitution = 1,
 		}
 	},
-	[hash("steak02")] = {
+	steak02 = {
 		value = 4,
 		level = 2,
 		bins = {},
@@ -398,7 +398,7 @@ M.items = {
 			constitution = 3,
 		}
 	},
-	[hash("shrimp01")] = {
+	shrimp01 = {
 		value = 4,
 		level = 2,
 		bins = {},
@@ -406,7 +406,7 @@ M.items = {
 			wisdom = -3,
 		}
 	},
-	[hash("daisy")] = {
+	daisy = {
 		value = 4,
 		level = 2,
 		bins = {
@@ -416,7 +416,7 @@ M.items = {
 			wisdom = 2,
 		}
 	},
-	[hash("earrings")] = {
+	earrings = {
 		value = 9,
 		level = 2,
 		bins = {},
@@ -425,7 +425,7 @@ M.items = {
 			charisma = 3
 		}
 	},
-	[hash("coingold")] = {
+	coingold = {
 		value = 10,
 		level = 1,
 		bins = {},
@@ -434,7 +434,7 @@ M.items = {
 			wisdom =1
 		}
 	},
-	[hash("book")] = {
+	book = {
 		value = 5,
 		level = 1,
 		bins = {},
@@ -442,7 +442,7 @@ M.items = {
 			intelligence = 1,
 		}
 	},
-	[hash("rose")] = {
+	rose = {
 		value = 6,
 		level = 1,
 		bins = {},
@@ -450,7 +450,7 @@ M.items = {
 			charisma = 1,
 		}
 	},
-	[hash("coffeemug")] = {
+	coffeemug = {
 		value = 2,
 		level = 1,
 		bins = {},
@@ -459,7 +459,7 @@ M.items = {
 			perception = -1
 		}
 	},
-	[hash("mallot")] = {
+	mallot = {
 		value = 4,
 		level = 1,
 		bins = {},
@@ -468,7 +468,7 @@ M.items = {
 			wisdom = -1
 		}
 	},
-	[hash("apple")] = {
+	apple = {
 		value = 2,
 		level = 1,
 		bins = {},
@@ -476,7 +476,7 @@ M.items = {
 			constitution = 1,
 		}
 	},
-	[hash("mushroom01")] = {
+	mushroom01 = {
 		value = 1,
 		level = 1,
 		bins = {},
@@ -485,7 +485,7 @@ M.items = {
 			strength = -1
 		}
 	},
-	[hash("sack")] = {
+	sack = {
 		value = 1,
 		level = 1,
 		bins = {},
@@ -494,7 +494,7 @@ M.items = {
 			speed = -1
 		}
 	},
-	[hash("eyeball01")] = {
+	eyeball01 = {
 		value = 0,
 		level = 1,
 		bins = {},
@@ -503,7 +503,7 @@ M.items = {
 			charisma = -1
 		}
 	},
-	[hash("fish02")] = {
+	fish02 = {
 		value = 2,
 		level = 1,
 		bins = {},
@@ -514,7 +514,7 @@ M.items = {
 			passive_aggressive = 0.2,
 		}
 	},
-	[hash("note")] = {
+	note = {
 		value = 2,
 		level = 1,
 		bins = {},
@@ -525,7 +525,7 @@ M.items = {
 			evil_good = 0.1,
 		}
 	},
-	[hash("apple01")] = {
+	apple01 = {
 		value = 2,
 		level = 1,
 		bins = {},

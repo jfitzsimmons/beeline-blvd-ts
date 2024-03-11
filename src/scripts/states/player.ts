@@ -34,6 +34,9 @@ export default class WorldPlayer {
       increase_alert_level: this.increase_alert_level.bind(this),
     }
   }
+  public get state() {
+    return this._state
+  }
   public set ap(n: number) {
     this._state.ap = n
   }

@@ -214,10 +214,10 @@ function M.address_cautions()
 		if c.state == "questioning" and (agent.currentroom == suspect.currentroom or (agent.currentroom == suspect.exitroom and agent.exitroom == suspect.currentroom)) then
 			c.time = 0
 			if c.suspect == "player" then
-				print(c.npc, "has found player. QUESTIONING!!!! STATION:::", s_name)
-				confront.station = s_name
+				print(c.npc, "has found player. QUESTIONING!!!! STATION:::", suspect.name)
+				confront.station = suspect.name
 			else
-				M.question_consequence(c)
+				question_consequence(c)
 				confront = nil
 			end
 		-- in the same room for arrest

@@ -205,19 +205,19 @@ function random_attributes(npcs: Npcs, order: string[]) {
   let count = 0
   /** 
   const _defaults = { ...npc_defaults }
-  let knd: keyof typeof _defaults // Type is "one" | "two" | "three"
+  let knd: keyof typeof _defaults 
   for (knd in _defaults) {
     npcs[npcname][knd] = _defaults[knd]
   }
 **/
-  let kn: keyof typeof npcs // Type is "one" | "two" | "three"
+  let kn: keyof typeof npcs
   for (kn in npcs) {
     order.splice(count, 0, kn)
     count++
     npcs[kn].turns_since_encounter = math.random(5, 15)
     npcs[kn].love = math.random(-1, 1)
     // random attitude
-    let kbl: keyof typeof binarylookup // Type is "one" | "two" | "three"
+    let kbl: keyof typeof binarylookup
     for (kbl in binarylookup) {
       npcs[kn].attitudes[kbl] = math.random(-9, 9)
     }
@@ -230,7 +230,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
     const tempskills = shuffle(startskills)
     let s_count = 0
 
-    let ks: keyof typeof skills // Type is "one" | "two" | "three"
+    let ks: keyof typeof skills
     for (ks in skills) {
       print(ks, ': tempskills[s_count]: ', tempskills[s_count])
       npcs[kn].skills[ks] = tempskills[s_count] + math.random(-1, 1)
@@ -241,7 +241,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
     const tempbins = shuffle(startbins)
     let b_count = 0
 
-    let kb: keyof typeof binaries // Type is "one" | "two" | "three"
+    let kb: keyof typeof binaries
     for (kb in binaries) {
       const adjustment = adjust_binaries(tempbins[b_count], npcs[kn].clan, kb)
       npcs[kn].binaries[kb] = adjustment
@@ -250,7 +250,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
 
     // inventory bonuses
     // const inventory: hash[] = npcs[kn].inventory
-    // Type is "one" | "two" | "three"
+
     /**TESTJPF TODO:::
      * reapply this when youve replaced all
 

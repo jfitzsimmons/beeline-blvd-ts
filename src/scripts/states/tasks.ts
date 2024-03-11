@@ -54,15 +54,18 @@ interface Consolation {
 }
 
 export default class WorldTasks {
-  private cautions: Caution[]
+  private _cautions: Caution[]
   private questmethods: AllQuestsMethods
   private consolations: Array<(b: Skills, s: Skills) => Consolation>
   private quests: WorldQuests
   constructor(questmethods: AllQuestsMethods) {
     this.questmethods = questmethods
-    this.cautions = []
+    this._cautions = []
     this.quests = build_quests(this.questmethods)
     this.consolations = [snitch, merits, reckless]
+  }
+  public get cautions() {
+    return this._cautions
   }
   remove_heat(sus: string) {
     for (let i = this.cautions.length - 1; i >= 0; i--) {
