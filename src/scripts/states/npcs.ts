@@ -35,10 +35,9 @@ export default class WorldNpcs {
     return this.all
   }
   sort_npcs_by_encounter() {
-    this.order.sort((a: string, b: string) =>
-      this.all[a].turns_since_encounter > this.all[b].turns_since_encounter
-        ? 1
-        : -1
+    this.order.sort(
+      (a: string, b: string) =>
+        this.all[b].turns_since_encounter - this.all[a].turns_since_encounter
     )
   }
 }

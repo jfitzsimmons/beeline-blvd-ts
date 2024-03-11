@@ -101,7 +101,7 @@ interface Room {
   roomname: string
   stations: { [key: string]: string }
   actors: Actors
-  prisoners: Prisoners | never
+  prisoners?: Prisoners | never
   props?: string[]
 }
 interface Actors {
@@ -117,4 +117,21 @@ export interface Prisoners {
 }
 export interface Roles {
   [key: string]: string[]
+}
+
+export interface Caution {
+  npc: string
+  time: number
+  state: string // merits //testjpf state is a bad name
+  type: string
+  authority: string //ex; labor
+  suspect: string
+  reason: string
+}
+
+export interface Confront {
+  npc: string
+  station: string
+  state: string
+  reason: string
 }

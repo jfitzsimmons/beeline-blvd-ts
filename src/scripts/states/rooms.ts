@@ -22,7 +22,7 @@ export default class WorldRooms {
   // TODO - testjpf
   //abstract and import room types
   // create efficient look for clear station in TS
-  private clearStations() {
+  clear_stations() {
     let kr: keyof typeof this.all // Type is "one" | "two" | "three"
     for (kr in this.all) {
       const room = this.all[kr]

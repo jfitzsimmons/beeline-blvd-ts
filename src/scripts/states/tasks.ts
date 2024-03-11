@@ -1,37 +1,15 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Npc, WorldQuests, AllQuestsMethods, Skills } from '../../types/state'
+import {
+  Npc,
+  WorldQuests,
+  AllQuestsMethods,
+  Skills,
+  Caution,
+} from '../../types/state'
 import { tutorialQuests } from '../quests/tutorialstate'
-
+import { shuffle } from '../utils/utils'
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
 //const chest = require('../../main.systems.inventorysystem')
-interface Caution {
-  npc: string
-  time: number
-  state: string // merits //testjpf state is a bad name
-  type: string
-  authority: string //ex; labor
-  suspect: string
-  reason: string
-}
-function shuffle<T>(array: T[]): T[] {
-  let currentIndex = array.length,
-    randomIndex
-
-  // While there remain elements to shuffle.
-  while (currentIndex != 0) {
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex)
-    currentIndex--
-
-    // And swap it with the current element.
-    ;[array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ]
-  }
-
-  return array
-}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function snitch(bins: Skills, skills: Skills): Consolation {
@@ -109,13 +87,13 @@ export default class WorldTasks {
     }
     return null
   }
-  plan_on_snitching(npc: string, sus: string) {
+  plan_on_snitching(npc: string, sus: string): boolean {
     for (const c of this.cautions) {
       if (c.npc == npc && c.suspect == sus && c.state == 'snitch') {
         return true
       }
-      return false
     }
+    return false
   }
   npc_has_caution(npc: string, sus: string) {
     for (const c of this.cautions) {

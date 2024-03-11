@@ -3,7 +3,7 @@ import { PlayerState } from '../../../types/state'
 export const PlayerInitState: PlayerState = {
   currentroom: 'grounds',
   exitroom: '',
-  matrix: { x: 1, y: 5 },
+  matrix: { x: 0, y: 4 },
   //name:hash("/adam"),
   labelname: 'adam',
   inventory: [hash('axe'), hash('apple01')],

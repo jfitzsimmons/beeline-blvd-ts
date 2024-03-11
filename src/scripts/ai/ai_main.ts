@@ -3,12 +3,14 @@
 //const world = require('main.states.worldstate')
 //const rooms = require('main.states.rooms')
 //const states = require('main.states.states')
-const tasksystem = require('main.systems.tasksystem')
-const chest = require('main.systems.inventorysystem')
-const effects = require('main.systems.effectsystem')
-const reception = require('main.systems.ai.levels.reception')
-const utils = require('main.utils.utils')
-const checks = require('main.utils.checks')
+//const tasksystem = require('main.systems.tasksystem')
+//const chest = require('main.systems.inventorysystem')
+const effects = require('../../main.systems.effectsystem')
+const reception = require('../../main.systems.ai.levels.reception')
+//const utils = require('main.utils.utils')
+import { shuffle } from '../utils/utils'
+
+const checks = require('../../main.utils.checks')
 import { Direction } from '../../types/ai'
 import { Prisoners } from '../../types/state'
 
@@ -51,13 +53,15 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
   //loop through priority room_list
   while (placed == false) {
     room_list.forEach((r: string) => {
-      const shuffled_stations = utils.shuffle(rooms.all[r].stations)
+      const shuffled_stations: [string, string][] = shuffle(
+        Object.entries(rooms.all[r].stations)
+      )
 
-      let ks: keyof typeof shuffled_stations
-      for (ks in shuffled_stations) {
-        const station = shuffled_stations[ks]
+      //  let ks: keyof typeof shuffled_stations
+      for (const ks of shuffled_stations) {
+        const station = ks[1]
 
-        if (station == '' && utils.has_value(rooms.roles[ks], npc.clan)) {
+        if (station == '' && rooms.roles[ks[0]].includes(npcs.all[npc].clan)) {
           //loop thru room stations see if empty or has correct role
           print(
             npc,
@@ -74,9 +78,9 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
           //fill station
           npcs.all[npc].exitroom = rooms.layout[current.y][current.x]!
           npcs.all[npc].currentroom = room
-          rooms.all[room].stations[ks] = npc
+          rooms.all[room].stations[ks[0]] = npc
           npcs.all[npc].matrix = rooms.all[room].matrix
-          npcs.all[npc].currentstation = ks
+          npcs.all[npc].currentstation = ks[0]
           placed = true
           if (room != player.state.currentroom) {
             npcs.all[npc].turns_since_encounter =
@@ -94,7 +98,7 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
       // testjpf thought of idea to have a "non_placer" npc in each room.
       // could have some dialog about being stranded. having to wait.
       if (
-        utils.has_value(room_list, 'admin1') &&
+        room_list.includes('admin1') &&
         rooms.fallbacks.stations['admin1_passer'] == '' &&
         rooms.layout[current.y][current.x] != 'admin1'
       ) {
@@ -102,7 +106,7 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
         rooms.fallbacks.stations['admin1_passer'] = npc
         npcs.all[npc].matrix = rooms.all['admin1'].matrix
       } else if (
-        utils.has_value(room_list, 'security') &&
+        room_list.includes('security') &&
         rooms.fallbacks.stations['admin1_passer'] == '' &&
         rooms.layout[current.y][current.x] != 'security'
       ) {
@@ -110,14 +114,14 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
         rooms.fallbacks.stations['security_passer'] = npc
         npcs.all[npc].matrix = rooms.all['security'].matrix
       } else if (
-        utils.has_value(room_list, 'grounds') &&
+        room_list.includes('grounds') &&
         rooms.fallbacks.stations['grounds_unplaced'] == ''
       ) {
         print(npc, 'grounds_unplaced')
         rooms.fallbacks.stations['grounds_unplaced'] = npc
         npcs.all[npc].matrix = rooms.all['grounds'].matrix
       } else if (
-        utils.has_value(room_list, 'reception') &&
+        room_list.includes('reception') &&
         rooms.fallbacks.stations['reception_unplaced'] == ''
       ) {
         print(npc, 'recpt_unplaced')
@@ -141,7 +145,7 @@ function set_room_priority(
   target: { x: number; y: number },
   npc: string
 ): string[] {
-  const room_list = []
+  const room_list: (string | null)[] = []
   const current = npcs.all[npc].matrix
 
   //get list of possible rooms NPC could go to next in order to get to target
@@ -184,8 +188,11 @@ function set_room_priority(
   }
 
   room_list.push(rooms.layout[npcs.all[npc].home.y][npcs.all[npc].home.x])
-
-  return room_list
+  // room_list = room_list.filter((r) => r !== null
+  const filteredArray: string[] = room_list.filter((s): s is string =>
+    Boolean(s)
+  )
+  return filteredArray //.filter((r) => r !== null)
 }
 
 function set_npc_target(direction: Direction, n: string) {
@@ -233,8 +240,10 @@ function set_npc_target(direction: Direction, n: string) {
     if (distance > -2 && distance < 2 && math.random() > 0.5) {
       target = npc.home
     } else {
-      const dirs = utils.shuffle(['front', 'back', 'left', 'right'])
-      target = direction[dirs[1]]
+      const dirsRO = ['front', 'back', 'left', 'right'] as const
+      const dirs = shuffle([...dirsRO])
+      const kd: keyof Direction = dirs[0]
+      target = direction[kd]
     }
   }
   //limit target to map layout grid
@@ -310,6 +319,7 @@ function release_prisoners(d: Direction) {
 // testjpf naming conventions start getting vague
 function ai_actions(direction: Direction) {
   release_prisoners(direction)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   reception.steal_stash_checks()
 }
 
@@ -318,6 +328,7 @@ export function npc_action_move(n: string, d: Direction) {
   const target = set_npc_target(d, n)
   const room_list: string[] = set_room_priority(target, n)
   attempt_to_fill_station(room_list, n)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   effects.remove_effects(npc)
   if (npc.cooldown > 0) npc.cooldown = npc.cooldown - 1
 }
@@ -333,15 +344,20 @@ export function place_npcs() {
     const npc = npcs.all[n]
     let placed = false
     //tries to place NPC at grounds - level 1
-    let shuffled_stations = utils.shuffle(rooms.all.grounds.stations)
 
-    let ks: keyof typeof shuffled_stations
-    for (ks in shuffled_stations) {
-      const station = shuffled_stations[ks]
-      if (station == '' && utils.has_value(rooms.roles[ks], npc.clan)) {
-        rooms.all.grounds.stations[ks] = npc.labelname
+    const shuffled_stations: [string, string][] = shuffle(
+      Object.entries(rooms.all.grounds.stations)
+    )
+
+    //  let ks: keyof typeof shuffled_stations
+    for (const ks of shuffled_stations) {
+      const station = ks[1]
+      // const station = shuffled_stations[ks]
+
+      if (station == '' && rooms.roles[ks[0]].includes(npc.clan)) {
+        rooms.all.grounds.stations[ks[0]] = npc.labelname
         npc.matrix = rooms.all.grounds.matrix
-        npc.currentstation = ks
+        npc.currentstation = ks[0]
         print('GROUNDS::: ', npc.labelname, 'placed in', ks)
         placed = true
         break
@@ -349,16 +365,20 @@ export function place_npcs() {
     }
     if (placed == false) {
       for (const p of initial_places) {
-        shuffled_stations = utils.shuffle(rooms.all[p].stations)
+        const shuffled_stations: [string, string][] = shuffle(
+          Object.entries(rooms.all[p].stations)
+        )
 
-        for (ks in shuffled_stations) {
-          const station = shuffled_stations[ks]
+        //  let ks: keyof typeof shuffled_stations
+        for (const ks of shuffled_stations) {
+          const station = ks[1]
+          // const station = shuffled_stations[ks]
 
-          if (station == '' && utils.has_value(rooms.roles[ks], npc.clan)) {
-            rooms.all[p].stations[ks] = npc.labelname
+          if (station == '' && rooms.roles[ks[0]].includes(npc.clan)) {
+            rooms.all[p].stations[ks[0]] = npc.labelname
             npc.matrix = rooms.all[p].matrix
-            npc.currentstation = ks
-            print('RANDOM::: ', npc.labelname, 'placed in', ks, 'ROOM', p)
+            npc.currentstation = ks[0]
+            print('RANDOM::: ', npc.labelname, 'placed in', ks[0], 'ROOM', p)
             placed = true
             break
           }
@@ -397,9 +417,11 @@ export function witness(w: string) {
   // is an NPC watching?
   if (
     watcher != null &&
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     checks.seen_check(suspect.skills, watcher.skills) == true
   ) {
     // should NPC confront suspect?
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     if (checks.confrontation_check(suspect, watcher) == true) {
       consequence.confront = true
       consequence.type = 'confront'

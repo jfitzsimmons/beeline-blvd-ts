@@ -5,3 +5,5 @@ export class Game {
     this.world = new World()
   }
 }
+
+globalThis.game = new Game()

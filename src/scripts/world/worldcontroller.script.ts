@@ -4,19 +4,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 //import World from '../states/world'
 import { Game } from '../states/gamesystem2'
+const { world } = globalThis.game
+const { player } = world
 math.randomseed(os.time())
 ///scripts/world/worldcontroller.script
 //The file '/scripts/world/main/states/settings.lua' could not be found.
 const settings = require('../../main.states.settings')
 const save = require('../../main.states.save')
-const ai = require('../../main.systems.ai.ai_main')
+import { place_npcs } from '../ai/ai_main'
+//const ai = require('../../main.systems.ai.ai_main')
 
 //const gamesystem = require('../../main.systems/gamesystem')
 //const gamesystem2 = require( 'scripts.states.gamesystem2')
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-globalThis.game = new Game()
-const { world } = globalThis.game
-const { player } = world
 
 function handle_new_turn(load_type: string) {
   if (load_type === 'room transition') {
@@ -26,7 +26,7 @@ function handle_new_turn(load_type: string) {
     }
   } else if (load_type === 'new game') {
     globalThis.game = new Game()
-    ai.place_npcs()
+    place_npcs()
     //gamesystem.init()
     //testjpf working now from ts file gamesystem 2!!!
   }
@@ -45,6 +45,7 @@ export function init(this: props) {
   //print('testjpf check again:::', gamesystem2)
 
   //init from bootstrap (main.collection)
+  globalThis.game = new Game()
   this.current_proxy = null
   this.load_type = 'none'
 

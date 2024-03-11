@@ -22,26 +22,62 @@ function random_skills(skills: Skills) {
 }
 
 export default class WorldPlayer {
-  state: PlayerState
+  private _state: PlayerState
   quests: QuestMethods
 
   constructor() {
-    this.state = { ...PlayerInitState }
-    random_skills(this.state.skills)
+    this._state = { ...PlayerInitState }
+    random_skills(this._state.skills)
     this.quests = {
       return_inventory: this.return_inventory.bind(this),
       return_skills: this.return_skills.bind(this),
       increase_alert_level: this.increase_alert_level.bind(this),
     }
   }
+  public set ap(n: number) {
+    this._state.ap = n
+  }
+  public get ap() {
+    return this._state.ap
+  }
+  public set currentroom(r: string) {
+    this._state.currentroom = r
+  }
 
+  public set turns(n: number) {
+    this._state.turns = n
+  }
+  public set exitroom(r: string) {
+    this._state.exitroom = r
+  }
+  public get exitroom() {
+    return this._state.exitroom
+  }
+  public set alert_level(n: number) {
+    this._state.alert_level = n
+  }
+  public set matrix(m: { x: number; y: number }) {
+    this._state.matrix = m
+  }
+  public get matrix(): { x: number; y: number } {
+    return this._state.matrix
+  }
+  public get matrix_x(): number {
+    return this._state.matrix.x
+  }
+  public get matrix_y(): number {
+    return this._state.matrix.y
+  }
+  public get checkpoint(): string {
+    return this._state.checkpoint
+  }
   return_inventory() {
-    return this.state.inventory
+    return this._state.inventory
   }
   return_skills() {
-    return this.state.skills
+    return this._state.skills
   }
   increase_alert_level() {
-    this.state.alert_level += 1
+    this._state.alert_level += 1
   }
 }
