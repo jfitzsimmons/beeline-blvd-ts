@@ -398,7 +398,7 @@ embedded_instances {
   "}\n"
   "components {\n"
   "  id: \"grounds\"\n"
-  "  component: \"/main/levels/00_front_grounds/grounds.script\"\n"
+  "  component: \"/scripts/levels/grounds.script\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

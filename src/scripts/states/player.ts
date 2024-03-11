@@ -56,6 +56,9 @@ export default class WorldPlayer {
   public get exitroom() {
     return this._state.exitroom
   }
+  public get alert_level() {
+    return this._state.alert_level
+  }
   public set alert_level(n: number) {
     this._state.alert_level = n
   }

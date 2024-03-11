@@ -103,8 +103,7 @@ export function on_message(
   } //else if (messageId == hash('proxy_unloaded')) {}
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function on_input(
+export function on_input(
   this: props,
   action_id: hash,
   action: {
