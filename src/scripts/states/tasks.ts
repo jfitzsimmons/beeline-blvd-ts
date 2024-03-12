@@ -42,7 +42,7 @@ function merits(bins: Skills, skills: Skills): Consolation {
 
   return { fail: false, caution: 'neutral' }
 }
-
+//should be build checkpoints?
 function build_quests(questmethods: AllQuestsMethods): WorldQuests {
   return {
     tutorial: tutorialQuests(questmethods),
@@ -59,6 +59,7 @@ export default class WorldTasks {
   private consolations: Array<(b: Skills, s: Skills) => Consolation>
   private quests: WorldQuests
   constructor(questmethods: AllQuestsMethods) {
+    //testjpf may not need? pass directly to this.quests
     this.questmethods = questmethods
     this._cautions = []
     this.quests = build_quests(this.questmethods)
@@ -98,7 +99,7 @@ export default class WorldTasks {
     }
     return false
   }
-  npc_has_caution(npc: string, sus: string) {
+  npc_has_caution(npc: string, sus: string): Caution | null {
     for (const c of this.cautions) {
       if ((npc == 'any' || c.npc == npc) && c.suspect == sus) {
         return c

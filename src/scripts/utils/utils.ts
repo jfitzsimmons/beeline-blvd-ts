@@ -1,5 +1,7 @@
-//math.randomseed(os.time())
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
 
+//math.randomseed(os.time())
+//const { player } = globalThis.game.world
 export function shuffle<T>(array: T[]): T[] {
   let currentIndex = array.length,
     randomIndex
@@ -18,7 +20,9 @@ export function shuffle<T>(array: T[]): T[] {
   }
 
   return array
-} /** 
+}
+
+/** 
 export function has_value(tab, val){
 	for index, value in ipairs(tab) do
 		if value == val {

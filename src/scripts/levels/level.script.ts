@@ -8,10 +8,10 @@
 //const rooms = require( "main.states.roomstates")
 //const tasksystem = require('../../main.systems.tasksystem')
 const quest = require('../../main.systems.quests.quest_main')
-const novel = require('../../main.utils.novel')
+const utils = require('../../main.utils.utils')
 import { ai_turn } from '../ai/ai_main'
 const { world } = globalThis.game
-const { tasks, rooms, npcs, player } = world
+const { rooms, npcs, player } = world
 import { Confront } from '../../types/state'
 import { address_cautions } from '../systems/tasksystem'
 
@@ -32,8 +32,17 @@ function update_hud() {
 
 function confrontation_scene(c: Confront) {
   npcs.all[c.npc].convos = npcs.all[c.npc].convos + 1
+  //need tstjpf to investigate this script builder
+  // ditch it.  use world.novel???
   const params = {
-    path: novel.script_builder(c.npc, null, null, c.state, false),
+    path: utils.script_builder(
+      c.npc,
+      null,
+      null,
+      c.state,
+      false,
+      player.checkpoint
+    ),
     npc: c.npc,
     reason: c.reason,
   }
@@ -115,13 +124,5 @@ export function on_message(
       'hud#security_alert',
       'alert_' + tostring(world.player.alert_level)
     )
-    if (tasks.plan_on_snitching(message.npc_name, 'player') == false) {
-      tasks.caution_builder(
-        world.npcs.all[message.npc_name],
-        'snitch',
-        'player',
-        'harassing'
-      )
-    }
   }
 }

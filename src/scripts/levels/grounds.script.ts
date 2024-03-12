@@ -1,6 +1,6 @@
 //const world = require "main.states.worldstate"
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
-const novel = require('../../../main.utils.novel')
+//const utils = require('../utils.utils')
 const { rooms } = globalThis.game.world
 function load_npcs() {
   const roomname = 'grounds' // testjpf remove hardcode string!
@@ -12,8 +12,6 @@ function load_npcs() {
     if (npc != '') {
       const params = {
         npc,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-        script: novel.script_builder(npc, roomname, station, null, false),
       }
       msg.post('/aid#npc_loader', 'load_npc', params)
     }

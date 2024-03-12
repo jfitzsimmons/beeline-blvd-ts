@@ -34,8 +34,20 @@ export default class WorldPlayer {
       increase_alert_level: this.increase_alert_level.bind(this),
     }
   }
+  public set pos(p: { x: number; y: number }) {
+    this._state.pos = p
+  }
+  public get pos() {
+    return this._state.pos
+  }
   public get state() {
     return this._state
+  }
+  public set hp(n: number) {
+    this._state.hp = n
+  }
+  public get hp() {
+    return this._state.hp
   }
   public set ap(n: number) {
     this._state.ap = n

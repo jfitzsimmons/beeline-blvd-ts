@@ -320,7 +320,7 @@ embedded_instances {
   id: "main"
   data: "components {\n"
   "  id: \"main\"\n"
-  "  component: \"/main/novel/main.script\"\n"
+  "  component: \"/scripts/novel/novel_main.script\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

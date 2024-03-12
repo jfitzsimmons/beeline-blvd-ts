@@ -6,6 +6,7 @@ import WorldRooms from './rooms'
 import WorldPlayer from './player'
 import WorldNpcs from './npcs'
 import WorldTasks from './tasks'
+import WorldNovel from './novel'
 
 export default class World {
   private stateMachine: StateMachine
@@ -13,6 +14,7 @@ export default class World {
   npcs: WorldNpcs
   rooms: WorldRooms
   tasks: WorldTasks
+  novel: WorldNovel
   clock: number
 
   constructor() {
@@ -20,6 +22,7 @@ export default class World {
     this.player = new WorldPlayer()
     this.npcs = new WorldNpcs()
     this.rooms = new WorldRooms()
+    this.novel = new WorldNovel(this.npcs.all[0])
     const params: AllQuestsMethods = {
       pq: this.player.quests,
       nq: this.npcs.quests,
