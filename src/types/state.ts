@@ -101,6 +101,8 @@ interface Room {
   roomname: string
   stations: { [key: string]: string }
   actors: Actors
+  //testjpf extend room to have a
+  // security interface
   prisoners?: Prisoners | never
   props?: string[]
 }

@@ -12,7 +12,7 @@ interface props {
 export function init(this: props): void {
   //this.chests = {}
   this.actions = {}
-  this.roomname = ''
+  this.roomname = 'tesjpf'
   this.storagename = ''
 }
 /** 
@@ -29,6 +29,9 @@ function prep_storage(this: props, message: { enter: boolean; exit: boolean }) {
  * testjpf
  * need to reign in messages.  makes them minimal. find standard and make a type out of.  message may need to be created on the fly by design though. keep in mind.
  */
+export function testjpf(_this: props) {
+  print('is this nil| this.roomnam', _this.roomname)
+}
 export function on_message(
   this: props,
   messageId: hash,
@@ -41,6 +44,7 @@ export function on_message(
   _sender: url
 ): void {
   if (messageId == hash('trigger_response') && message.enter) {
+    testjpf(this)
     const params = {
       pos: go.get_position('adam'),
       actions: this.actions,

@@ -1,6 +1,6 @@
 components {
   id: "npc_loader"
-  component: "/main/characters/npc_loader.script"
+  component: "/scripts/characters/npc_loader.script"
   position {
     x: 0.0
     y: 0.0
