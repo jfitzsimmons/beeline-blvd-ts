@@ -9,8 +9,8 @@ const effects = require('../../main.systems.effectsystem')
 const reception = require('../../main.systems.ai.levels.reception')
 //const utils = require('main.utils.utils')
 import { shuffle } from '../utils/utils'
-
-const checks = require('../../main.utils.checks')
+import { seen_check, confrontation_check } from '../utils/checks'
+//const checks = require('../../main.utils.checks')
 import { Direction } from '../../types/ai'
 import { Prisoners } from '../../types/state'
 
@@ -414,11 +414,11 @@ export function witness(w: string) {
   if (
     watcher != null &&
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    checks.seen_check(suspect.skills, watcher.skills) == true
+    seen_check(suspect.skills, watcher.skills) == true
   ) {
     // should NPC confront suspect?
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    if (checks.confrontation_check(suspect, watcher) == true) {
+    if (confrontation_check(suspect, watcher) == true) {
       consequence.confront = true
       consequence.type = 'confront'
     } else {

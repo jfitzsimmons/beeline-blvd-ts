@@ -22,6 +22,11 @@ export function shuffle<T>(array: T[]): T[] {
   return array
 }
 
+export function dice_roll() {
+  const chances = [math.random(), math.random()]
+  return chances.sort()
+}
+
 /** 
 export function has_value(tab, val){
 	for index, value in ipairs(tab) do
@@ -68,11 +73,7 @@ export function shuffle(tbl)	{
 
 
 
-export function dice_roll() {
-	const chances = {math.random(),math.random()}
-	table.sort(chances)
-	return chances
-)
+
 
 export function create_ipairs(ps){
 	const ips = {}

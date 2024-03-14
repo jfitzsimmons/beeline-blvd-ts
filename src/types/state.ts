@@ -109,7 +109,7 @@ interface Room {
 interface Actors {
   [key: string]: Actor
 }
-interface Actor {
+export interface Actor {
   inventory: hash[]
   watcher?: string
   actions: string[]

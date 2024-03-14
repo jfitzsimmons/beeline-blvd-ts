@@ -19,67 +19,93 @@ import {
 } from '../../types/state'
 import { shuffle } from '../utils/utils'
 
-function go_to_jail(suspect: string) {
+const fxLookup = {
+  merits: [
+    'admirer',
+    'inspired',
+    'eagleeye',
+    'vanity',
+    'readup',
+    'yogi',
+    'angel',
+  ],
+  demerits: [
+    'prejudice',
+    'boring',
+    'distracted',
+    'ignorant',
+    'lazy',
+    'dunce',
+    'devil',
+  ],
+}
+
+function go_to_jail(s: string) {
   //testjpf not sure if i should loop through cautions and
   // remove all arrests for suspect(clear record)
-  print('found:', suspect, ' ARREST!!!!')
-  tasks.remove_heat(suspect)
+  print('found:', s, ' ARREST!!!!')
+  tasks.remove_heat(s)
   const prisoners: Prisoners = rooms.all.security.prisoners!
   let station: keyof typeof prisoners
   for (station in prisoners) {
     const prisoner = prisoners[station]
     if (prisoner == '') {
-      rooms.all.security.prisoners![station] = suspect
-      npcs.all[suspect].matrix = rooms.all.security.matrix
-      npcs.all[suspect].cooldown = 6
+      rooms.all.security.prisoners![station] = s
+      npcs.all[s].matrix = rooms.all.security.matrix
+      npcs.all[s].cooldown = 6
 
-      print(
-        suspect,
-        'is in jail for:',
-        npcs.all[suspect].cooldown,
-        'as',
-        station,
-        rooms.all.security.prisoners![station]
-      )
+      print(s, 'jailed for:', npcs.all[s].cooldown)
       break
       //testjpf if jail full, kick outside of hub
     }
   }
 }
 
-function snitch_to_security(c: Caution, watcher: string) {
-  print(c.npc, 'SNITCHED')
+function player_snitch_check(b: boolean, w: string, reason: string): string {
   let caution_state = 'questioning'
-  if (c.suspect == 'player') {
-    if (player.alert_level > 1) {
-      caution_state = 'arrest'
-    }
-    player.alert_level = player.alert_level + 1
-  } else if (math.random() < 0.33) {
-    caution_state = 'arrest'
+  if (player.alert_level > 1) caution_state = 'arrest'
+  player.alert_level =
+    b == false ? player.alert_level + 1 : player.alert_level + 2
+  if (player.alert_level > 2 && tasks.plan_on_snitching(w, 'player') == false) {
+    tasks.caution_builder(npcs.all[w], 'snitch', 'player', reason)
   }
+  return caution_state
+}
 
+function npc_snitch_check(b: boolean, w: string, s: string) {
+  let caution_state = 'questioning'
+
+  if (b == true) {
+    npcs.all[w].attitudes[npcs.all[s].clan] =
+      npcs.all[w].attitudes[npcs.all[s].clan] - 1
+  }
+  if (math.random() < 0.33) caution_state = 'arrest'
+  return caution_state
+}
+
+function snitch_to_security(c: Caution, watcher: string) {
+  //i think you need a function for player and one for npc TESTJPF
+  // two separate CHECKS!! functions
+  print(c.npc, 'SNITCHED')
   const bulletin = tasks.already_hunting(watcher, c.suspect)
+  let caution_state = 'questioning'
+
   if (bulletin == null) {
     tasks.caution_builder(npcs.all[watcher], caution_state, c.suspect, c.reason)
   } else {
     bulletin.time = bulletin.time + 6
-    if (c.suspect == 'player') {
-      player.alert_level = player.alert_level + 1
-    } else {
-      npcs.all[watcher].attitudes[npcs.all[c.suspect].clan] =
-        npcs.all[watcher].attitudes[npcs.all[c.suspect].clan] - 1
-    }
-  }
-  if (
-    player.alert_level > 2 &&
-    tasks.plan_on_snitching(watcher, c.suspect) == false
-  ) {
-    tasks.caution_builder(npcs.all[watcher], 'snitch', c.suspect, c.reason)
   }
 
+  caution_state =
+    c.suspect == 'player'
+      ? player_snitch_check(bulletin == null, watcher, c.reason)
+      : npc_snitch_check(bulletin == null, watcher, c.suspect)
   c.time = 0
 }
+//TESTJPF ABOVE: the above i think can go to Tasks State
+//2nd though, manipulates all sorts of state
+// ithink we need ca consequence system?
+//below feels more like a check?? CONSEQUENCES
 
 function reckless_consequence(c: Caution, w: string) {
   print('RC::: ', c.npc, ' is gossiping with', w)
@@ -186,6 +212,134 @@ function reckless_consequence(c: Caution, w: string) {
   }
 }
 
+const consequenceConditions = (
+  watcher: string,
+  suspect: string,
+  return_first = false
+): string[] => {
+  const { binaries: wb, skills: ws } = npcs.all[watcher]
+  const { binaries: sb, skills: ss } = npcs.all[suspect]
+  const initConditions: string[] = []
+  if (
+    wb.passive_aggressive <= sb.passive_aggressive &&
+    ws.wisdom >= ss.constitution
+  ) {
+    initConditions.push('pledge')
+    if (return_first === true) return ['pledge']
+  }
+  if (
+    wb.lawless_lawful < -0.4 &&
+    ws.strength >= ss.strength &&
+    sb.passive_aggressive < 0.0
+  ) {
+    initConditions.push('bribe')
+    if (return_first === true) return ['bribe']
+  }
+  if (
+    ws.intelligence < 5 &&
+    wb.evil_good < -0.3 &&
+    ws.constitution >= ss.speed
+  ) {
+    initConditions.push('wPunchS')
+    if (return_first === true) return ['wPunchS']
+  }
+  if (
+    wb.anti_authority > 0.3 &&
+    ws.perception >= ss.perception &&
+    sb.passive_aggressive <= 0.0
+  ) {
+    initConditions.push('jailTime')
+    if (return_first === true) return ['jailTime']
+  }
+  if (
+    ws.charisma <= ss.charisma &&
+    wb.anti_authority < -0.3 &&
+    ws.perception < 5
+  ) {
+    initConditions.push('admirer')
+    if (return_first === true) return ['admirer']
+  }
+  if (
+    ws.wisdom < 4 &&
+    sb.poor_wealthy < wb.poor_wealthy &&
+    ws.charisma < ws.stealth
+  ) {
+    initConditions.push('prejudice')
+    if (return_first === true) return ['prejudice']
+  }
+  if (math.random() < 0.5) {
+    initConditions.push('unlucky')
+    if (return_first === true) return ['unlucky']
+  }
+  /**   return {
+    pledge:
+      wb.passive_aggressive <= sb.passive_aggressive &&
+      ws.wisdom >= ss.constitution,
+  }**/
+  return initConditions
+}
+
+const consequenceLookup = (_s: string, _w: string) => {
+  return {
+    pledge,
+    bribe,
+    wPunchS,
+    jailTime: go_to_jail,
+    admirer,
+    prejudice,
+    unlucky: go_to_jail,
+  }
+}
+function admirer(s: string, w: string) {
+  const effect: Effect = { ...fx.all.admirer }
+  effect.fx.stat = npcs.all[s].clan
+  npcs.all[w].effects.push(effect)
+  fx.add_effects_bonus(npcs.all[w], effect)
+}
+function prejudice(s: string, w: string) {
+  print('QC:: prejudice')
+  const effect: Effect = { ...fx.all.prejudice }
+  effect.fx.stat = npcs.all[s].clan
+  npcs.all[w].effects.push(effect)
+  fx.add_effects_bonus(npcs.all[w], effect)
+}
+function pledge(s: string) {
+  print('QC:: pledge') //pledge not to do it again
+  npcs.all[s].cooldown = npcs.all[s].cooldown + 8
+}
+function bribe(s: string, w: string) {
+  const s_inv = npcs.all[s].inventory
+  const w_inv = npcs.all[w].inventory
+
+  if (s_inv.length > 0) {
+    //testjpf need to change hashes to string in npc init state and invsystem
+
+    for (let i = s_inv.length - 1; i >= 0; i--) {
+      if (chest.items[s_inv[i]].value > 1) {
+        const loot = s_inv.splice(i, 1)
+
+        w_inv.push(...loot)
+        //table.insert(w.inventory,loot)
+        break
+      } else {
+        print('bribe failed so punch???')
+        // bribe failed so punch???
+      }
+    }
+  }
+}
+function wPunchS(s: string) {
+  npcs.all[s].hp = npcs.all[s].hp - 1
+}
+/**
+ *
+ * testjpf o think we should have a function of binary checks
+ * that return a list of consequences
+ * have gunc for each consequence
+ * have a "quick" arg? that returns immediate after a true fail
+ * instead of all fails
+ */
+
 //testjpf maybe later abstract to security tasks? sub tasks?
 // or i could see other systems using this method
 export function question_consequence(c: Caution) {
@@ -193,94 +347,21 @@ export function question_consequence(c: Caution) {
   const w = npcs.all[c.npc]
   const s = npcs.all[c.suspect]
 
-  if (
-    w.binaries.passive_aggressive <= s.binaries.passive_aggressive &&
-    w.skills.wisdom >= s.skills.constitution
-  ) {
-    print('QC:: promise') //promise not to do it again
-    s.cooldown = s.cooldown + 8
-  } else if (
-    w.binaries.lawless_lawful < -0.4 &&
-    w.skills.strength >= s.skills.strength &&
-    s.binaries.passive_aggressive < 0.0
-  ) {
-    if (s.inventory.length > 0) {
-      //testjpf need to change hashes to string in npc init state and invsystem
+  let consequenceResults: string[] = consequenceConditions(
+    w.labelname,
+    s.labelname
+  )
+  if (consequenceResults.length > 0) {
+    if (consequenceResults.length > 1)
+      consequenceResults = shuffle(consequenceResults)
+    const consequenceLabel: string = consequenceResults[0]
 
-      for (let i = s.inventory.length - 1; i >= 0; i--) {
-        if (chest.items[s.inventory[i]].value > 1) {
-          const loot = s.inventory.splice(i, 1)
-          print(
-            'QC:: bribed.',
-            w.labelname,
-            'extorted',
-            loot,
-            'from',
-            s.labelname
-          )
-          w.inventory.push(...loot)
-          //table.insert(w.inventory,loot)
-          break
-        } else {
-          print('bribe failed so punch???')
-          // bribe failed so punch???
-        }
-      }
-    }
-    print('QC:: bribed //- if described above (else, nothing to steal)')
-  } else if (
-    w.skills.intelligence < 5 &&
-    w.binaries.evil_good < -0.3 &&
-    w.skills.constitution >= s.skills.speed
-  ) {
-    // watcher punches suspect
-    print('QC:: w punches s')
-    s.hp = s.hp - 1
-  } else if (
-    w.binaries.anti_authority > 0.3 &&
-    w.skills.perception >= s.skills.perception &&
-    s.binaries.passive_aggressive <= 0.0
-  ) {
-    print(
-      'QC:: jailtime.',
-      w.labelname,
-      'threw',
-      s.labelname,
-      'in jail for lying while questioning'
-    )
-    go_to_jail(s.labelname)
-  } else if (
-    w.skills.charisma <= s.skills.charisma &&
-    w.binaries.anti_authority < -0.3 &&
-    w.skills.perception < 5
-  ) {
-    print('QC:: admirer')
-    const effect: Effect = { ...fx.all.admirer }
-    effect.fx.stat = s.clan
-    table.insert(w.effects, effect)
-    fx.add_effects_bonus(w, effect)
-  } else if (
-    w.skills.wisdom < 4 &&
-    s.binaries.poor_wealthy < w.binaries.poor_wealthy &&
-    w.skills.charisma < w.skills.stealth
-  ) {
-    print('QC:: prejudice')
-    const effect: Effect = { ...fx.all.prejudice }
-    effect.fx.stat = s.clan
-    table.insert(w.effects, effect)
-    fx.add_effects_bonus(w, effect)
-  } else if (math.random() < 0.5) {
-    //testjpf not sure what to do here
-    //lessser sentence
-    //misdemeanor??
-    print(
-      'QC:: UNLUCKY ARREST.',
-      w.labelname,
-      'threw',
-      s.labelname,
-      'in jail for unlucky QUESTIONING'
-    )
-    go_to_jail(s.labelname)
+    const consequences: { [key: string]: (s: string, w: string) => void } =
+      consequenceLookup(s.labelname, w.labelname)
+    consequences[consequenceLabel](s.labelname, w.labelname)
+    //print(consequenceResults)
+    //const consequenceResult: (s: string, w: string) => void = consequenceLookup(s,w)
+    // consequenceResult[consequenceResults[0]]()
   } else {
     if (c.suspect != 'player') {
       const caution = tasks.consolation_checks(w.binaries, w.skills)
@@ -295,183 +376,94 @@ export function question_consequence(c: Caution) {
   }
   c.time = 0
 }
+function npc_confrontation(s: string, c: Caution) {
+  if (c.reason == 'questioning') {
+    question_consequence(c)
+  }
+  if (c.reason == 'arrest') {
+    print('CAUTION:: arrest.', c.npc, 'threw', s, 'in jail')
+    go_to_jail(s)
+  }
+}
+
+function merits_demerits(c: Caution, w: string) {
+  if (c.suspect === 'player') {
+    const adj = c.state === 'merits' ? 1 : -1
+    npcs.all[w].love = npcs.all[w].love + adj
+  }
+  const fxArray = c.state === 'merits' ? fxLookup.merits : fxLookup.demerits
+  const fx_labels = shuffle(fxArray)
+  const effect: Effect = { ...fx.all[fx_labels[1]] }
+  if (effect.fx.type == 'attitudes') {
+    effect.fx.stat = npcs.all[c.suspect].clan
+  }
+  print(c.npc, 'found:', w, 'because merits.', w, 'has effect:', fx_labels[1])
+  npcs.all[w].effects.push(effect)
+  //table.insert(npcs.all[watcher].effects,effect)
+  fx.add_effects_bonus(npcs.all[w], effect)
+}
+
+function passive_acts(c: Caution, w: string) {
+  if (c.state == 'reckless') {
+    reckless_consequence(c, w)
+  } else if (
+    c.authority == 'security' &&
+    c.state == 'snitch' &&
+    (c.authority == npcs.all[w].clan || c.authority == npcs.all[w].labelname)
+  ) {
+    snitch_to_security(c, w)
+  } else if (
+    (c.state == 'merits' || c.state == 'demerits') &&
+    (npcs.all[w].clan == c.authority ||
+      npcs.all[c.npc].attitudes[npcs.all[w].clan] > 0)
+  ) {
+    merits_demerits(c, w)
+  }
+}
 
 export function address_cautions() {
-  const cautions = tasks.cautions
+  const cautions = tasks.cautions.sort(
+    (a: Caution, b: Caution) => a.time - b.time
+  )
   let confront: Confront | null = null
   for (let i = cautions.length - 1; i >= 0; i--) {
-    //for (const c of cautions) {
     const c = cautions[i]
-    confront = {
-      npc: c.npc,
-      station: '',
-      state: c.state,
-      reason: c.reason,
-    }
-    // print("ADDRESS CAUTIONS - c.suspect :",c.suspect)
     const agent = npcs.all[c.npc]
-    let suspect: Npc | PlayerState = player.state
-    if (c.suspect != 'player') {
-      suspect = npcs.all[c.suspect]
-    }
+    const suspect: Npc | PlayerState =
+      c.suspect === 'player' ? player.state : npcs.all[c.suspect]
 
-    // in the same room for quesitioning
     if (
-      c.state == 'questioning' &&
+      (c.state == 'questioning' || c.state == 'arrest') &&
       (agent.currentroom == suspect.currentroom ||
         (agent.currentroom == suspect.exitroom &&
           agent.exitroom == suspect.currentroom))
     ) {
+      c.suspect !== 'player' && npc_confrontation(suspect.labelname, c)
       c.time = 0
-      if (c.suspect == 'player') {
-        print(
-          c.npc,
-          'has found player. QUESTIONING!!!! STATION:::',
-          suspect.labelname
-        )
-        confront.station = suspect.labelname
-      } else {
-        question_consequence(c)
-        confront = null
-      }
-      // in the same room for arrest
-    } else if (
-      c.state == 'arrest' &&
-      (agent.currentroom == suspect.currentroom ||
-        (agent.currentroom == suspect.exitroom &&
-          agent.exitroom == suspect.currentroom))
-    ) {
-      c.time = 0
-      if (c.suspect == 'player') {
-        print(
-          c.npc,
-          'has found player. ARREST!!!! STATION:::',
-          suspect.labelname
-        )
-        confront.station = suspect.labelname
-      } else {
-        print('CAUTION:: arrest.', c.npc, 'threw', c.suspect, 'in jail')
-        go_to_jail(c.suspect)
-        confront = null
-      }
-    } else {
-      const stations = rooms.all[agent.currentroom].stations
-      let station: keyof typeof stations // Type is "one" | "two" | "three"
-      for (station in stations) {
-        const watcher = stations[station]
-        //loop through stations in room of task agent
+      confront =
+        c.suspect == 'player'
+          ? {
+              npc: c.npc,
+              station: '',
+              state: c.state,
+              reason: c.reason,
+            }
+          : null
+    }
 
-        confront = null
-        //is watcher present?, is caution active?
-        if (
-          watcher != '' &&
-          c.state != 'neutral' &&
-          c.time > 0 &&
-          watcher != c.npc &&
-          watcher != c.suspect
-        ) {
-          if (c.state == 'reckless') {
-            reckless_consequence(c, watcher)
-            // is the watcher an authority for this task
-          } else if (
-            c.authority == npcs.all[watcher].clan ||
-            c.authority == npcs.all[watcher].labelname
-          ) {
-            //
-            // intersting here TESTJPF
-            // it might be interesting to add random npc authorities?
-            // or bases on room roles??
-            if (
-              c.authority == 'security' &&
-              c.state == 'snitch' &&
-              c.npc != watcher
-            ) {
-              snitch_to_security(c, watcher)
-            }
-            // if watcher's clan is authority or clan liked by agent
-          } else if (
-            c.state == 'merits' &&
-            c.npc != watcher &&
-            (npcs.all[watcher].clan == c.authority ||
-              npcs.all[c.npc].attitudes[npcs.all[watcher].clan] > 0)
-          ) {
-            if (c.suspect != 'player') {
-              //apply possible effect to watcher
-              const effects_list = [
-                'admirer',
-                'inspired',
-                'eagleeye',
-                'vanity',
-                'readup',
-                'yogi',
-                'angel',
-              ]
-              const fx_labels = shuffle(effects_list)
-              const effect: Effect = { ...fx.all[fx_labels[1]] }
-              if (effect.fx.type == 'attitudes') {
-                effect.fx.stat = npcs.all[c.suspect].clan
-              }
-              print(
-                c.npc,
-                'has found:',
-                watcher,
-                'because of merits caution. now',
-                watcher,
-                'has this effect:',
-                fx_labels[1]
-              )
-              npcs.all[watcher].effects.push(effect)
-              //table.insert(npcs.all[watcher].effects,effect)
-              fx.add_effects_bonus(npcs.all[watcher], effect)
-            } else {
-              npcs.all[watcher].love = npcs.all[watcher].love + 1
-            }
-          } else if (
-            c.state == 'demerits' &&
-            c.npc != watcher &&
-            (npcs.all[watcher].clan == c.authority ||
-              npcs.all[c.npc].attitudes[npcs.all[watcher].clan] > 0)
-          ) {
-            if (c.suspect != 'player') {
-              const effects_list = [
-                'prejudice',
-                'boring',
-                'distracted',
-                'ignorant',
-                'lazy',
-                'dunce',
-                'devil',
-              ]
-              const fx_labels = shuffle(effects_list)
-              const effect: Effect = { ...fx.all[fx_labels[1]] }
-              if (effect.fx.type == 'attitudes') {
-                effect.fx.stat = npcs.all[c.suspect].clan
-              }
-              print(
-                c.npc,
-                'has found:',
-                watcher,
-                'because of DEmerits caution. now',
-                watcher,
-                'has this effect:',
-                fx_labels[1]
-              )
-              npcs.all[watcher].effects.push(effect)
-
-              //table.insert(npcs.all[watcher].effects,effect)
-              fx.add_effects_bonus(npcs.all[watcher], effect)
-            } else {
-              npcs.all[watcher].love = npcs.all[watcher].love - 1
-            }
-          }
-        }
+    const stations = rooms.all[agent.currentroom].stations
+    let station: keyof typeof stations
+    for (station in stations) {
+      const watcher = stations[station]
+      //loop through stations in room of task agent
+      if (watcher != '' && watcher != c.npc && watcher != c.suspect) {
+        passive_acts(c, watcher)
       }
     }
+
     c.time = c.time - 1
     if (c.time <= 0) cautions.splice(i, 1)
-    if (confront != null) {
-      break
-    }
+    if (confront != null) break
   }
   return confront
 }

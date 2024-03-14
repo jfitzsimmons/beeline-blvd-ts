@@ -107,17 +107,6 @@ export default class WorldTasks {
     }
     return null
   }
-  consolation_checks(b: Skills, s: Skills) {
-    const tempcons: Array<(b: Skills, s: Skills) => Consolation> = shuffle(
-      this.consolations
-    )
-    tempcons.forEach((c) => {
-      const consolation = c(b, s)
-      if (consolation.fail == true) return consolation.caution
-    })
-    print('did nothing after witnessing a theft attempt')
-    return 'neutral'
-  }
   caution_builder(n: Npc, c: string, s: string, r: string) {
     //explain why you need this testjpf
     //no nested ifs
@@ -171,5 +160,19 @@ export default class WorldTasks {
   }
   append_caution(caution: Caution) {
     this.cautions.push(caution)
+  }
+  //TESTJPF ABOVE: all manipulate or return cautions
+  //below do consolations need to be part of state at all??
+  //probably not MOVE TO new "consequences" . "util"?
+  consolation_checks(b: Skills, s: Skills) {
+    const tempcons: Array<(b: Skills, s: Skills) => Consolation> = shuffle(
+      this.consolations
+    )
+    tempcons.forEach((c) => {
+      const consolation = c(b, s)
+      if (consolation.fail == true) return consolation.caution
+    })
+    print('did nothing after witnessing a theft attempt')
+    return 'neutral'
   }
 }
