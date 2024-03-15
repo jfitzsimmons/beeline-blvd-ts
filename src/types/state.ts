@@ -71,7 +71,7 @@ export interface PlayerState {
   exitroom: string
   matrix: { x: number; y: number }
   labelname: string
-  inventory: hash[]
+  inventory: string[]
   pos: { x: number; y: number }
   alert_level: number
   hp: number
@@ -110,7 +110,7 @@ interface Actors {
   [key: string]: Actor
 }
 export interface Actor {
-  inventory: hash[]
+  inventory: string[]
   watcher?: string
   actions: string[]
 }

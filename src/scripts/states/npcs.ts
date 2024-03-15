@@ -1,7 +1,6 @@
 import { NpcsInitState } from './inits/npcsInitState'
 import { Npcs, QuestMethods } from '../../types/state'
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
-//const chest = require('../../main.systems.inventorysystem')
 
 function shuffle(arrN: number[]): number[]
 function shuffle(arrS: string[]): string[]

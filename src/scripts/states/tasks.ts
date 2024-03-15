@@ -9,7 +9,6 @@ import {
 import { tutorialQuests } from '../quests/tutorialstate'
 import { shuffle } from '../utils/utils'
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
-//const chest = require('../../main.systems.inventorysystem')
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function snitch(bins: Skills, skills: Skills): Consolation {

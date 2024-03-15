@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-//const world = require('main.states.worldstate')
-//const rooms = require('main.states.rooms')
-//const states = require('main.states.states')
-//const tasksystem = require('main.systems.tasksystem')
-//const chest = require('main.systems.inventorysystem')
+
 const effects = require('../../main.systems.effectsystem')
 const reception = require('../../main.systems.ai.levels.reception')
 //const utils = require('main.utils.utils')

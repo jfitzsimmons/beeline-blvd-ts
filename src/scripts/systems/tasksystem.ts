@@ -7,7 +7,7 @@
 //const taskstates = require( "main.states.taskstates")
 //const utils = require( "main.utils.utils")
 const fx = require('../../../main.systems.effectsystem')
-const chest = require('../../../main.systems.inventorysystem')
+import { items } from '../systems/inventorysystem'
 const { tasks, rooms, npcs, player } = globalThis.game.world
 import {
   Prisoners,
@@ -315,7 +315,7 @@ function bribe(s: string, w: string) {
     //testjpf need to change hashes to string in npc init state and invsystem
 
     for (let i = s_inv.length - 1; i >= 0; i--) {
-      if (chest.items[s_inv[i]].value > 1) {
+      if (items[s_inv[i]].value > 1) {
         const loot = s_inv.splice(i, 1)
 
         w_inv.push(...loot)

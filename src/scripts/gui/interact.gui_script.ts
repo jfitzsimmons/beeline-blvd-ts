@@ -6,7 +6,7 @@
 ////const ai = require "main.systems.ai.ai_main"
 //const novel = require "main.utils.novel"
 import { witness } from '../ai/ai_main'
-const { npcs, rooms, tasks } = globalThis.game.world
+const { npcs, rooms, tasks, player } = globalThis.game.world
 
 interface cloneparent {
   clone: node
@@ -23,7 +23,7 @@ interface props {
     confront: boolean
     type: string
   }
-  room: string
+  //room: string
   isNpc: boolean
 }
 function show_ai_screen() {
@@ -47,13 +47,13 @@ function open_novel(_this: props) {
 }
 
 function open_inventory(_this: props, actor: string, action: string) {
+  const room = rooms.all[player.state.currentroom]
+  //print('open iinventory _this.room:::', _this.room)
   if (action == 'open') {
     // station where the watcher will be located
-    const station: string | undefined =
-      rooms.all[_this.room].actors[actor].watcher
+    const station: string | undefined = room.actors[actor].watcher
     // the actual npc assigned to that station
-    if (station != undefined)
-      _this.watcher = rooms.all[_this.room].stations[station]
+    if (station != undefined) _this.watcher = room.stations[station]
   } else if (action == 'trade' || action == 'give' || action == 'pockets') {
     // testjpf trade will need "acceptanace"???
     _this.watcher = actor
@@ -63,7 +63,7 @@ function open_inventory(_this: props, actor: string, action: string) {
     const prev_caution = tasks.npc_has_caution(_this.watcher, 'player')
 
     if (prev_caution != null) {
-      _this.consequence = { confront: true, type: 'off}er' }
+      _this.consequence = { confront: true, type: 'offender' }
     } else if (action == 'pockets' || action == 'open') {
       _this.consequence = witness(_this.watcher)
     } else if (action == 'trade') {
@@ -83,7 +83,7 @@ function open_inventory(_this: props, actor: string, action: string) {
     const params = {
       actorname: actor,
       isNpc: _this.isNpc,
-      room: _this.room,
+      //room: _this.room,
       watcher: _this.watcher,
       action: action,
     }
@@ -198,7 +198,7 @@ export function on_message(
     allActions: { [key: string]: string[] }
     pos: vmath.vector3
     npcname: string
-    room: string
+    //room: string
     enter: boolean
   },
   _sender: url
@@ -209,9 +209,9 @@ export function on_message(
     //for (actorKey in actorsActions) {
     // }
     this.clones = set_interactions(message.allActions, message.pos) //GO.pos cannot come from gui script
-    this.room = message.room
-    print('message.room', message.room)
-    print('this.room', this.room)
+    // this.room = message.room
+    // print('message.room', message.room)
+    // print('this.room', this.room)
 
     //this.script = message.script
     this.npcname = message.npcname

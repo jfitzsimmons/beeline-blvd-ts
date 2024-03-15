@@ -2,11 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-//const world = require( "main.states.worldstate")
-//const ai = require('main.systems.ai.ai_main')
-//const task = require('main.states.taskstates')
-//const rooms = require( "main.states.roomstates")
-//const tasksystem = require('../../main.systems.tasksystem')
+
 const quest = require('../../main.systems.quests.quest_main')
 const utils = require('../../main.utils.utils')
 import { ai_turn } from '../ai/ai_main'

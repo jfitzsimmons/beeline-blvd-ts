@@ -283,11 +283,11 @@ export const RoomsInitState = {
     },
     actors: {
       desks: {
-        inventory: [hash('deskbook01'), hash('globegold')],
+        inventory: ['deskbook01', 'globegold'],
         actions: ['pickup', 'use'],
       },
       locker: {
-        inventory: [hash('silver'), hash('mushroom01')],
+        inventory: ['silver', 'mushroom01'],
         actions: ['use', 'open'],
       },
     },
@@ -307,7 +307,7 @@ export const RoomsInitState = {
     },
     actors: {
       drawer: {
-        inventory: [hash('cheese'), hash('shrimp01')],
+        inventory: ['cheese', 'shrimp01'],
         actions: ['open'],
         watcher: 'desk',
       },
@@ -317,12 +317,12 @@ export const RoomsInitState = {
         watcher: 'desk',
       },
       vase: {
-        inventory: [hash('pillow'), hash('book')],
+        inventory: ['pillow', 'book'],
         actions: ['open'],
         watcher: 'loiter2',
       },
       vase2: {
-        inventory: [hash('steak01'), hash('leaf03'), hash('daisy')],
+        inventory: ['steak01', 'leaf03', 'daisy'],
         actions: ['open'],
         watcher: 'patrol',
       },
@@ -342,12 +342,12 @@ export const RoomsInitState = {
     },
     actors: {
       player_luggage: {
-        inventory: [hash('berry01'), hash('feather01'), hash('magica1')],
+        inventory: ['berry01', 'feather01', 'magica1'],
         watcher: 'worker2',
         actions: ['open'],
       },
       other_luggage: {
-        inventory: [hash('eyeball03'), hash('feather02'), hash('magicb1')],
+        inventory: ['eyeball03', 'feather02', 'magicb1'],
         watcher: 'worker2',
         actions: ['open'],
       },
@@ -406,7 +406,7 @@ export const RoomsInitState = {
     },
     actors: {
       drawer: {
-        inventory: [hash('vial02')],
+        inventory: ['vial02'],
         actions: ['open'],
         watcher: 'assistant',
       },

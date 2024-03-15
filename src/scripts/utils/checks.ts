@@ -7,7 +7,14 @@ import { Actor, Effect, Npc, PlayerState, Skills } from '../../types/state'
 import { dice_roll } from './utils'
 const { tasks } = globalThis.game.world
 //const utils = require "main.utils.utils"
-const chest = require('../../main.systems.inventorysystem')
+import {
+  remove_advantageous,
+  remove_valuable,
+  remove_last,
+  remove_random,
+  add_chest_bonus,
+  remove_chest_bonus,
+} from '../systems/inventorysystem'
 const fx = require('../../main.systems.effectsystem')
 //testjpf some logic issues throughout
 function confrontation_consequence(p: Npc, n: Npc) {
@@ -139,17 +146,17 @@ export function take_check(taker: Npc, actor: Npc) {
   if (take == true) {
     let chest_item = null
     if (math.random() < 0.5) {
-      chest_item = chest.remove_valuable(taker.inventory, actor.inventory)
+      chest_item = remove_valuable(taker.inventory, actor.inventory)
     } else if (math.random() < 0.51) {
-      chest_item = chest.remove_advantageous(
+      chest_item = remove_advantageous(
         taker.inventory,
         actor.inventory,
         taker.skills
       )
     } else {
-      chest_item = chest.remove_random(taker.inventory, actor.inventory)
+      chest_item = remove_random(taker.inventory, actor.inventory)
     }
-    chest.add_chest_bonus(taker, chest_item)
+    add_chest_bonus(taker, chest_item)
 
     print(taker.labelname, 'TOOK an item')
   } else {
@@ -202,18 +209,19 @@ export function stash_check(stasher: Npc, actor: Npc) {
     // testjpf would need watcher for victim && more checks
     // const victim = has_value(w.inventory, a[1])
     if (math.random() < 0.5) {
-      chest_item = chest.remove_valuable(actor.inventory, stasher.inventory)
+      chest_item = remove_valuable(actor.inventory, stasher.inventory)
     } else if (math.random() < 0.51) {
-      chest_item = chest.remove_advantageous(
+      chest_item = remove_advantageous(
         actor.inventory,
         stasher.inventory,
         stasher.skills
       )
     } else {
-      chest_item = chest.remove_last(actor.inventory, stasher.inventory)
+      chest_item = remove_last(actor.inventory, stasher.inventory)
     }
-    chest.remove_chest_bonus(stasher, chest_item)
-    // if victim == true ){ chest.add_chest_bonus(n, chest_item) }
+    print('check.utils Remove bonus:: chestitem:', chest_item)
+    remove_chest_bonus(stasher, chest_item)
+    // if victim == true ){ add_chest_bonus(n, chest_item) }
 
     print(stasher.labelname, 'STASHED an item')
   } else {
@@ -353,14 +361,14 @@ export function steal_check(n: Npc, w: Npc, a: Actor) {
       //if w != null ){ utils.has_value(w.inventory, a[1]) }
       print(n.labelname, 'in room', n.currentroom, 'stole following item:')
       if (math.random() < 0.5) {
-        chest_item = chest.remove_random(n.inventory, a)
+        chest_item = remove_random(n.inventory, a.inventory)
       } else if (math.random() < 0.51) {
-        chest_item = chest.remove_valuable(n.inventory, a)
+        chest_item = remove_valuable(n.inventory, a.inventory)
       } else {
-        chest_item = chest.remove_advantageous(n.inventory, a, n.skills)
+        chest_item = remove_advantageous(n.inventory, a.inventory, n.skills)
       }
-      chest.add_chest_bonus(n, chest_item)
-      //if (victim == true ){ chest.remove_chest_bonus(w, chest_item) }
+      add_chest_bonus(n, chest_item)
+      //if (victim == true ){ remove_chest_bonus(w, chest_item) }
       n.cooldown = math.random(5, 15)
     } else if (consequence != 'nothing') {
       if (w != null) {

@@ -6,7 +6,7 @@ export const PlayerInitState: PlayerState = {
   matrix: { x: 0, y: 4 },
   //name:hash("/adam"),
   labelname: 'adam',
-  inventory: [hash('axe'), hash('apple01')],
+  inventory: ['axe', 'apple01'],
   pos: { x: 704, y: 448 },
   //levels_cleared:0,
   alert_level: 0,

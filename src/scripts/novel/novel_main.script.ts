@@ -3,9 +3,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-//const world = require "main.states.worldstate"
-//const tasks = require "main.states.tasks"
-//const task = require "main.systems.tasksystem"
 const quest = require('../../../main.systems.quests.quest_main')
 const matchanovel = require('../../../main.novel.matchanovel')
 //const save = require ("main.novel.save")
