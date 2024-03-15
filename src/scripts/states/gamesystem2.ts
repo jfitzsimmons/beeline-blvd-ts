@@ -1,4 +1,6 @@
 import World from './world'
+print('testjpf FIRST')
+
 export class Game {
   public world: World
   constructor() {

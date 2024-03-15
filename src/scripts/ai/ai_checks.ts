@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //const taskstates = require "main.states.taskstates"
 import { Actor, Effect, Npc, PlayerState, Skills } from '../../types/state'
-import { dice_roll } from './utils'
+import { dice_roll } from '../utils/utils'
 const { tasks } = globalThis.game.world
 //const utils = require "main.utils.utils"
 import {

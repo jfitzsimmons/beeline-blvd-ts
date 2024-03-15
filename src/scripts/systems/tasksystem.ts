@@ -40,6 +40,47 @@ const fxLookup = {
   ],
 }
 
+function admirer(s: string, w: string) {
+  const effect: Effect = { ...fx.all.admirer }
+  effect.fx.stat = npcs.all[s].clan
+  npcs.all[w].effects.push(effect)
+  fx.add_effects_bonus(npcs.all[w], effect)
+}
+function prejudice(s: string, w: string) {
+  print('QC:: prejudice')
+  const effect: Effect = { ...fx.all.prejudice }
+  effect.fx.stat = npcs.all[s].clan
+  npcs.all[w].effects.push(effect)
+  fx.add_effects_bonus(npcs.all[w], effect)
+}
+function pledge(s: string) {
+  print('QC:: pledge') //pledge not to do it again
+  npcs.all[s].cooldown = npcs.all[s].cooldown + 8
+}
+function bribe(s: string, w: string) {
+  const s_inv = npcs.all[s].inventory
+  const w_inv = npcs.all[w].inventory
+
+  if (s_inv.length > 0) {
+    //testjpf need to change hashes to string in npc init state and invsystem
+
+    for (let i = s_inv.length - 1; i >= 0; i--) {
+      if (items[s_inv[i]].value > 1) {
+        const loot = s_inv.splice(i, 1)
+
+        w_inv.push(...loot)
+        //table.insert(w.inventory,loot)
+        break
+      } else {
+        print('bribe failed so punch???')
+        // bribe failed so punch???
+      }
+    }
+  }
+}
+function wPunchS(s: string) {
+  npcs.all[s].hp = npcs.all[s].hp - 1
+}
 function go_to_jail(s: string) {
   //testjpf not sure if i should loop through cautions and
   // remove all arrests for suspect(clear record)
@@ -60,7 +101,83 @@ function go_to_jail(s: string) {
     }
   }
 }
-
+const consequenceConditions = (
+  watcher: string,
+  suspect: string,
+  return_first = false
+): string[] => {
+  const { binaries: wb, skills: ws } = npcs.all[watcher]
+  const { binaries: sb, skills: ss } = npcs.all[suspect]
+  const initConditions: string[] = []
+  if (
+    wb.passive_aggressive <= sb.passive_aggressive &&
+    ws.wisdom >= ss.constitution
+  ) {
+    initConditions.push('pledge')
+    if (return_first === true) return ['pledge']
+  }
+  if (
+    wb.lawless_lawful < -0.4 &&
+    ws.strength >= ss.strength &&
+    sb.passive_aggressive < 0.0
+  ) {
+    initConditions.push('bribe')
+    if (return_first === true) return ['bribe']
+  }
+  if (
+    ws.intelligence < 5 &&
+    wb.evil_good < -0.3 &&
+    ws.constitution >= ss.speed
+  ) {
+    initConditions.push('wPunchS')
+    if (return_first === true) return ['wPunchS']
+  }
+  if (
+    wb.anti_authority > 0.3 &&
+    ws.perception >= ss.perception &&
+    sb.passive_aggressive <= 0.0
+  ) {
+    initConditions.push('jailTime')
+    if (return_first === true) return ['jailTime']
+  }
+  if (
+    ws.charisma <= ss.charisma &&
+    wb.anti_authority < -0.3 &&
+    ws.perception < 5
+  ) {
+    initConditions.push('admirer')
+    if (return_first === true) return ['admirer']
+  }
+  if (
+    ws.wisdom < 4 &&
+    sb.poor_wealthy < wb.poor_wealthy &&
+    ws.charisma < ws.stealth
+  ) {
+    initConditions.push('prejudice')
+    if (return_first === true) return ['prejudice']
+  }
+  if (math.random() < 0.5) {
+    initConditions.push('unlucky')
+    if (return_first === true) return ['unlucky']
+  }
+  /**   return {
+    pledge:
+      wb.passive_aggressive <= sb.passive_aggressive &&
+      ws.wisdom >= ss.constitution,
+  }**/
+  return initConditions
+}
+const consequenceLookup = (_s: string, _w: string) => {
+  return {
+    pledge,
+    bribe,
+    wPunchS,
+    jailTime: go_to_jail,
+    admirer,
+    prejudice,
+    unlucky: go_to_jail,
+  }
+}
 function player_snitch_check(b: boolean, w: string, reason: string): string {
   let caution_state = 'questioning'
   if (player.alert_level > 1) caution_state = 'arrest'
@@ -71,7 +188,6 @@ function player_snitch_check(b: boolean, w: string, reason: string): string {
   }
   return caution_state
 }
-
 function npc_snitch_check(b: boolean, w: string, s: string) {
   let caution_state = 'questioning'
 
@@ -82,7 +198,6 @@ function npc_snitch_check(b: boolean, w: string, s: string) {
   if (math.random() < 0.33) caution_state = 'arrest'
   return caution_state
 }
-
 function snitch_to_security(c: Caution, watcher: string) {
   //i think you need a function for player and one for npc TESTJPF
   // two separate CHECKS!! functions
@@ -102,11 +217,9 @@ function snitch_to_security(c: Caution, watcher: string) {
       : npc_snitch_check(bulletin == null, watcher, c.suspect)
   c.time = 0
 }
-//TESTJPF ABOVE: the above i think can go to Tasks State
 //2nd though, manipulates all sorts of state
 // ithink we need ca consequence system?
 //below feels more like a check?? CONSEQUENCES
-
 function reckless_consequence(c: Caution, w: string) {
   print('RC::: ', c.npc, ' is gossiping with', w)
   const watcher = npcs.all[w]
@@ -211,135 +324,6 @@ function reckless_consequence(c: Caution, w: string) {
     }
   }
 }
-
-const consequenceConditions = (
-  watcher: string,
-  suspect: string,
-  return_first = false
-): string[] => {
-  const { binaries: wb, skills: ws } = npcs.all[watcher]
-  const { binaries: sb, skills: ss } = npcs.all[suspect]
-  const initConditions: string[] = []
-  if (
-    wb.passive_aggressive <= sb.passive_aggressive &&
-    ws.wisdom >= ss.constitution
-  ) {
-    initConditions.push('pledge')
-    if (return_first === true) return ['pledge']
-  }
-  if (
-    wb.lawless_lawful < -0.4 &&
-    ws.strength >= ss.strength &&
-    sb.passive_aggressive < 0.0
-  ) {
-    initConditions.push('bribe')
-    if (return_first === true) return ['bribe']
-  }
-  if (
-    ws.intelligence < 5 &&
-    wb.evil_good < -0.3 &&
-    ws.constitution >= ss.speed
-  ) {
-    initConditions.push('wPunchS')
-    if (return_first === true) return ['wPunchS']
-  }
-  if (
-    wb.anti_authority > 0.3 &&
-    ws.perception >= ss.perception &&
-    sb.passive_aggressive <= 0.0
-  ) {
-    initConditions.push('jailTime')
-    if (return_first === true) return ['jailTime']
-  }
-  if (
-    ws.charisma <= ss.charisma &&
-    wb.anti_authority < -0.3 &&
-    ws.perception < 5
-  ) {
-    initConditions.push('admirer')
-    if (return_first === true) return ['admirer']
-  }
-  if (
-    ws.wisdom < 4 &&
-    sb.poor_wealthy < wb.poor_wealthy &&
-    ws.charisma < ws.stealth
-  ) {
-    initConditions.push('prejudice')
-    if (return_first === true) return ['prejudice']
-  }
-  if (math.random() < 0.5) {
-    initConditions.push('unlucky')
-    if (return_first === true) return ['unlucky']
-  }
-  /**   return {
-    pledge:
-      wb.passive_aggressive <= sb.passive_aggressive &&
-      ws.wisdom >= ss.constitution,
-  }**/
-  return initConditions
-}
-
-const consequenceLookup = (_s: string, _w: string) => {
-  return {
-    pledge,
-    bribe,
-    wPunchS,
-    jailTime: go_to_jail,
-    admirer,
-    prejudice,
-    unlucky: go_to_jail,
-  }
-}
-function admirer(s: string, w: string) {
-  const effect: Effect = { ...fx.all.admirer }
-  effect.fx.stat = npcs.all[s].clan
-  npcs.all[w].effects.push(effect)
-  fx.add_effects_bonus(npcs.all[w], effect)
-}
-function prejudice(s: string, w: string) {
-  print('QC:: prejudice')
-  const effect: Effect = { ...fx.all.prejudice }
-  effect.fx.stat = npcs.all[s].clan
-  npcs.all[w].effects.push(effect)
-  fx.add_effects_bonus(npcs.all[w], effect)
-}
-function pledge(s: string) {
-  print('QC:: pledge') //pledge not to do it again
-  npcs.all[s].cooldown = npcs.all[s].cooldown + 8
-}
-function bribe(s: string, w: string) {
-  const s_inv = npcs.all[s].inventory
-  const w_inv = npcs.all[w].inventory
-
-  if (s_inv.length > 0) {
-    //testjpf need to change hashes to string in npc init state and invsystem
-
-    for (let i = s_inv.length - 1; i >= 0; i--) {
-      if (items[s_inv[i]].value > 1) {
-        const loot = s_inv.splice(i, 1)
-
-        w_inv.push(...loot)
-        //table.insert(w.inventory,loot)
-        break
-      } else {
-        print('bribe failed so punch???')
-        // bribe failed so punch???
-      }
-    }
-  }
-}
-function wPunchS(s: string) {
-  npcs.all[s].hp = npcs.all[s].hp - 1
-}
-/**
- *
- * testjpf o think we should have a function of binary checks
- * that return a list of consequences
- * have gunc for each consequence
- * have a "quick" arg? that returns immediate after a true fail
- * instead of all fails
- */
-
 //testjpf maybe later abstract to security tasks? sub tasks?
 // or i could see other systems using this method
 export function question_consequence(c: Caution) {
@@ -385,7 +369,6 @@ function npc_confrontation(s: string, c: Caution) {
     go_to_jail(s)
   }
 }
-
 function merits_demerits(c: Caution, w: string) {
   if (c.suspect === 'player') {
     const adj = c.state === 'merits' ? 1 : -1
@@ -402,7 +385,6 @@ function merits_demerits(c: Caution, w: string) {
   //table.insert(npcs.all[watcher].effects,effect)
   fx.add_effects_bonus(npcs.all[w], effect)
 }
-
 function passive_acts(c: Caution, w: string) {
   if (c.state == 'reckless') {
     reckless_consequence(c, w)
@@ -420,7 +402,6 @@ function passive_acts(c: Caution, w: string) {
     merits_demerits(c, w)
   }
 }
-
 export function address_cautions() {
   const cautions = tasks.cautions.sort(
     (a: Caution, b: Caution) => a.time - b.time

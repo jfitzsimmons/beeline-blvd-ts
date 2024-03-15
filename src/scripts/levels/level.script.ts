@@ -3,18 +3,17 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-const quest = require('../../main.systems.quests.quest_main')
-const utils = require('../../main.utils.utils')
 import { ai_turn } from '../ai/ai_main'
 const { world } = globalThis.game
-const { rooms, npcs, player } = world
+const { rooms, npcs, player, tasks } = world
 import { Confront } from '../../types/state'
 import { address_cautions } from '../systems/tasksystem'
 
 function game_turn(room: string) {
   rooms.clear_stations()
   ai_turn(room)
-  quest.address_quests('turn')
+
+  tasks.address_quests('turn', player.state.checkpoint)
   player.ap = player.ap - 1
   player.turns = player.turns + 1
 }
@@ -31,14 +30,6 @@ function confrontation_scene(c: Confront) {
   //need tstjpf to investigate this script builder
   // ditch it.  use world.novel???
   const params = {
-    path: utils.script_builder(
-      c.npc,
-      null,
-      null,
-      c.state,
-      false,
-      player.checkpoint
-    ),
     npc: c.npc,
     reason: c.reason,
   }
@@ -66,7 +57,7 @@ export function on_message(
   if (messageId == hash('room_load')) {
     if (player.ap <= 0) {
       const params = {
-        enter_room: quest.checkpoints[player.checkpoint.slice(0, -1)].spawn,
+        enter_room: tasks.spawn,
       }
       msg.post('proxies:/controller#worldcontroller', 'faint', params)
     } else {
@@ -105,7 +96,7 @@ export function on_message(
       msg.post('adam#adam', 'wake_up')
     }
   } else if (messageId == hash('exit_gui')) {
-    quest.address_quests('interact')
+    tasks.address_quests('interact', player.state.checkpoint)
     if (message.novel == true) {
       msg.post(this.roomname + ':/adam#interact', 'reload_script')
     }

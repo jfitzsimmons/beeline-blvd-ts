@@ -2,9 +2,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //local npcs = require "main.states.npcstates"
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
-const questutils = require('../../../main.utils.quest')
-import { AllQuestsMethods, Quests } from '../../types/state'
-
+//const questutils = require('../../../main.utils.quest')
+import { AllQuestsMethods, Quests } from '../../../../types/state'
+//TESTJPF THESE util imports require state
+//STATE hasnt been CREATED!
+import {
+  any_has_value,
+  convos_check,
+  has_value,
+  max_skills,
+  returnfalse,
+  max_love,
+} from '../../../utils/quest'
+//TESTJPF abovenot loaded yet on GAME STATE CREAT new game
 //local player = require "main.states.playerstate"
 
 export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
@@ -19,7 +29,7 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
         [1]: {
           passed: false,
           interval: 'interact',
-          func: questutils.convos_check,
+          func: convos_check,
           // what if instead of nq.return_docs
           // its quest.return doctors?
           args: [nq.return_doctors, 1],
@@ -27,14 +37,14 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
         [2]: {
           passed: false,
           interval: 'interact',
-          func: questutils.any_has_value,
-          args: [nq.return_doctors, hash('apple01')],
+          func: any_has_value,
+          args: [nq.return_doctors, 'apple01'],
         }, // doc needs some item
         [3]: {
           passed: false,
           interval: 'interact',
-          func: questutils.any_has_value,
-          args: [nq.return_doctors, hash('vial02')],
+          func: any_has_value,
+          args: [nq.return_doctors, 'vial02'],
         }, //gets keycard, goes to infirmary, gets meds
       },
     }, // charmer
@@ -43,8 +53,8 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
       conditions: {
         [1]: {
           interval: 'interact',
-          func: questutils.max_love,
-          args: [nq.return_all, 5],
+          func: max_love,
+          args: [nq.return_order_all, 5],
         }, //1st // labor003
       },
     }, // charmer
@@ -53,7 +63,7 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
       conditions: {
         [1]: {
           interval: 'interact',
-          func: questutils.max_skills,
+          func: max_skills,
           args: [pq.return_skills, 3],
         }, // speed
       },
@@ -62,16 +72,16 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
       passed: false,
       conditions: {
         [1]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         }, // flag maintenance
         [2]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         }, // "unscrew monitor"
         [3]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         }, // help maintenance
       },
     }, // technician
@@ -80,18 +90,18 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
       conditions: {
         [1]: {
           interval: 'interact',
-          func: questutils.has_value,
-          args: [pq.return_inventory, hash('berry01')],
+          func: has_value,
+          args: [pq.return_inventory, 'berry01'],
         },
         [2]: {
           interval: 'interact',
-          func: questutils.has_value,
-          args: [pq.return_inventory, hash('feather01')],
+          func: has_value,
+          args: [pq.return_inventory, 'feather01'],
         },
         [3]: {
           interval: 'interact',
-          func: questutils.has_value,
-          args: [pq.return_inventory, hash('magica1')],
+          func: has_value,
+          args: [pq.return_inventory, 'magica1'],
         },
       },
     }, // DIY
@@ -99,16 +109,16 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
       passed: false,
       conditions: {
         [1]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         }, // steal a key card
         [2]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         }, // find blank id form
         [3]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         }, // learn to make a forgery
       },
     }, // fake id
@@ -116,26 +126,26 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
       passed: false,
       conditions: {
         [1]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         }, // pass a "perfect" charm check
         [2]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         }, // complete a side quest
         [3]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         }, // at least 1 church, security and corps love
       },
       side_quests: {
         [1]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         },
         [2]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         }, // key card
       },
     }, // vouged for
@@ -143,26 +153,26 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
       passed: false,
       conditions: {
         [1]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         }, // pass a "perfect" charm check
         [2]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         }, // complete a side quest
         [3]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         }, // 3 of 4 gang loves
       },
       side_quests: {
         [1]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         },
         [2]: {
-          func: questutils.returnfalse,
-          args: [],
+          func: returnfalse,
+          args: [returnfalse, false],
         }, // ai maintenace
       },
     }, // vouged for

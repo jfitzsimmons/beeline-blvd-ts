@@ -24,6 +24,7 @@ export default class WorldNpcs {
     this.quests = {
       return_doctors: this.return_doctors.bind(this),
       return_all: this.return_all.bind(this),
+      return_order_all: this.return_order_all.bind(this),
     }
   }
 
@@ -38,6 +39,9 @@ export default class WorldNpcs {
       (a: string, b: string) =>
         this.all[b].turns_since_encounter - this.all[a].turns_since_encounter
     )
+  }
+  return_order_all() {
+    return [shuffle(this.order), this.all]
   }
 }
 

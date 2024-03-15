@@ -237,14 +237,14 @@ function reset_nodes() {
   }
 }
 
-function exit_inventory(_this: props) {
+function exit_inventory(actorname: string, actorinventory: string[]) {
   gui.set_enabled(gui.get_node('btm'), false)
 
-  if (npcs.all[_this.actorname] != null) {
-    npcs.all[_this.actorname].inventory = _this.actorinventory
+  if (npcs.all[actorname] != null) {
+    npcs.all[actorname].inventory = actorinventory
   } else {
-    rooms.all[player.state.currentroom].actors[_this.actorname].inventory =
-      _this.actorinventory
+    rooms.all[player.state.currentroom].actors[actorname].inventory =
+      actorinventory
   }
 
   reset_nodes()
@@ -300,14 +300,16 @@ export function on_input(
 ) {
   if (action_id == hash('touch') && action.released) {
     if (gui.pick_node(gui.get_node('exit'), action.x, action.y)) {
-      exit_inventory(this)
+      exit_inventory(this.actorname, this.actorinventory)
     } else {
       check_inventory_nodes(this, action)
 
       // only choose one inventory item?
       if (this.watcher != '' && this.watcher != null) {
         msg.post('inventories#inventory', 'release_input_focus')
-        timer.delay(0.9, false, exit_inventory(this))
+        timer.delay(0.9, false, function (this: props) {
+          exit_inventory(this.actorname, this.actorinventory)
+        })
       }
     }
   }

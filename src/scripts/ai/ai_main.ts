@@ -5,7 +5,7 @@ const effects = require('../../main.systems.effectsystem')
 const reception = require('../../main.systems.ai.levels.reception')
 //const utils = require('main.utils.utils')
 import { shuffle } from '../utils/utils'
-import { seen_check, confrontation_check } from '../utils/checks'
+import { seen_check, confrontation_check } from './ai_checks'
 //const checks = require('../../main.utils.checks')
 import { Direction } from '../../types/ai'
 import { Prisoners } from '../../types/state'
@@ -134,7 +134,6 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
     }
   }
 }
-
 //target: room npc wants to get to
 //current: room npc is in
 function set_room_priority(
@@ -190,7 +189,6 @@ function set_room_priority(
   )
   return filteredArray //.filter((r) => r !== null)
 }
-
 function set_npc_target(direction: Direction, n: string) {
   const npc = npcs.all[n]
   let target = { x: 0, y: 0 }
@@ -253,7 +251,6 @@ function set_npc_target(direction: Direction, n: string) {
 
   return target
 }
-
 export function assign_nearby_rooms(enter: { x: number; y: number }) {
   const exit = player.matrix
   let direction = {
@@ -294,7 +291,6 @@ export function assign_nearby_rooms(enter: { x: number; y: number }) {
   }
   return direction
 }
-
 function release_prisoners(d: Direction) {
   const prisoners: Prisoners = rooms.all.security.prisoners!
   let station: keyof typeof prisoners
@@ -314,7 +310,6 @@ function ai_actions(direction: Direction) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   reception.steal_stash_checks()
 }
-
 export function npc_action_move(n: string, d: Direction) {
   const npc = npcs.all[n]
   const target = set_npc_target(d, n)
@@ -382,7 +377,6 @@ export function place_npcs() {
     }
   })
 }
-
 export function ai_turn(enter: string) {
   const direction: Direction = assign_nearby_rooms(rooms.all[enter].matrix)
   // NPC gone longest since encountering player moves first
@@ -397,7 +391,6 @@ export function ai_turn(enter: string) {
 
   ai_actions(direction)
 }
-
 export function witness(w: string) {
   const suspect = player.state
   const watcher = npcs.all[w]

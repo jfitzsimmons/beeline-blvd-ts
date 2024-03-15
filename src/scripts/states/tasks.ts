@@ -6,8 +6,8 @@ import {
   Skills,
   Caution,
 } from '../../types/state'
-import { tutorialQuests } from '../quests/tutorialstate'
 import { shuffle } from '../utils/utils'
+import { tutorialQuests } from './inits/quests/tutorialstate'
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -41,7 +41,6 @@ function merits(bins: Skills, skills: Skills): Consolation {
 
   return { fail: false, caution: 'neutral' }
 }
-//should be build checkpoints?
 function build_quests(questmethods: AllQuestsMethods): WorldQuests {
   return {
     tutorial: tutorialQuests(questmethods),
@@ -54,18 +53,38 @@ interface Consolation {
 
 export default class WorldTasks {
   private _cautions: Caution[]
-  private questmethods: AllQuestsMethods
+  private _questmethods: AllQuestsMethods
   private consolations: Array<(b: Skills, s: Skills) => Consolation>
-  private quests: WorldQuests
+  private _quests: WorldQuests
+  //spawn will be updated when checkpoints are passed
+  private _spawn: string
+
   constructor(questmethods: AllQuestsMethods) {
     //testjpf may not need? pass directly to this.quests
-    this.questmethods = questmethods
+    this._questmethods = questmethods
     this._cautions = []
-    this.quests = build_quests(this.questmethods)
+    this._quests = build_quests(this.questmethods) // go back to old way of building!!!!TESTJPF
     this.consolations = [snitch, merits, reckless]
+    this._spawn = 'grounds'
+    // this.address_quests = this.address_quests.bind(this)
+  }
+  public set spawn(s: string) {
+    this._spawn = s
+  }
+  public get spawn() {
+    return this._spawn
+  }
+  public set quests(s: WorldQuests) {
+    this._quests = s
+  }
+  public get quests() {
+    return this._quests
   }
   public get cautions() {
     return this._cautions
+  }
+  public get questmethods() {
+    return this._questmethods
   }
   remove_heat(sus: string) {
     for (let i = this.cautions.length - 1; i >= 0; i--) {
@@ -173,5 +192,42 @@ export default class WorldTasks {
     })
     print('did nothing after witnessing a theft attempt')
     return 'neutral'
+  }
+  // checks quest completion after interactions and turns
+  address_quests = (interval: string, checkpoint: string) => {
+    //const checkpoint = world.player.checkpoint:sub(1, -2)
+
+    const quests = this.quests[checkpoint.slice(0, -1)]
+
+    let questKey: keyof typeof quests
+    for (questKey in quests) {
+      const quest = quests[questKey]
+      //print("quest passed?", qv.passed)
+      if (quest.passed == false) {
+        // testjpf gettng sloppy?!?!?
+        let quest_passed = true
+        //quests.checks[checkpoint](interval)
+
+        let condition: keyof typeof quest.conditions
+        for (condition in quest.conditions) {
+          const goal = quest.conditions[condition]
+          //for _,cv in pairs(qv.conditions) do
+          if (goal.passed != true && goal.interval == interval) {
+            if (goal.func(goal.args) == false) {
+              quest_passed = false
+              //print(_,qk, "quest not complete", goal.func(goal.args))
+            } else if (goal.passed != null) {
+              goal.passed = true
+            }
+          } else if (goal.passed == false || goal.passed == null) {
+            quest_passed = false
+          }
+        }
+        if (quest_passed == true) {
+          quest.passed = true
+          print(questKey, 'quest COMPLETE!!!')
+        }
+      }
+    }
   }
 }

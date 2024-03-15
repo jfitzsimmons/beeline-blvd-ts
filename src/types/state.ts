@@ -20,13 +20,13 @@ export interface Quest {
 }
 
 export interface QuestConditions {
-  [key: number]: QuestCondition
+  [key: string | number]: QuestCondition
 }
 export interface QuestCondition {
   passed?: boolean
   interval?: string
-  func: () => void
-  args: unknown[]
+  func: (args: [() => any, any]) => boolean
+  args: [() => any, any]
 }
 
 export interface WorldQuests {
@@ -36,7 +36,7 @@ export interface AllQuestsMethods {
   [key: string]: QuestMethods
 }
 export interface QuestMethods {
-  [key: string]: () => unknown
+  [key: string]: (args?: unknown | [() => Npcs, number]) => unknown | boolean
 }
 export interface Npc extends NpcDefaults {
   home: { x: number; y: number }
