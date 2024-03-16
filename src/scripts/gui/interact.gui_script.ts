@@ -195,7 +195,7 @@ export function on_message(
   this: props,
   messageId: hash,
   message: {
-    allActions: { [key: string]: string[] }
+    actions: { [key: string]: string[] }
     pos: vmath.vector3
     npcname: string
     //room: string
@@ -208,7 +208,7 @@ export function on_message(
     print('show node?')
     //for (actorKey in actorsActions) {
     // }
-    this.clones = set_interactions(message.allActions, message.pos) //GO.pos cannot come from gui script
+    this.clones = set_interactions(message.actions, message.pos) //GO.pos cannot come from gui script
     // this.room = message.room
     // print('message.room', message.room)
     // print('this.room', this.room)

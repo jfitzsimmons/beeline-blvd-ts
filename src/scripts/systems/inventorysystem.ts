@@ -1,8 +1,6 @@
 import { Npc, PlayerState, Skills } from '../../types/state'
 import { shuffle } from '../utils/utils'
 
-//const utils = require ("main.utils.utils")
-
 interface InventoryTable {
   [key: string]: InventoryTableItem
 }

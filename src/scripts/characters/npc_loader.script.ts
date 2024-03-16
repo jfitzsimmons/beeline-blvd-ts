@@ -49,7 +49,7 @@ export function on_message(
     if (message.enter) {
       const params = {
         pos: go.get_position('adam'), //must come from .script
-        allActions: this.actions,
+        actions: this.actions,
         //  script: this.script,
         collision: 'enter',
         npcname: this.npc,

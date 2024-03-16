@@ -73,7 +73,7 @@ function remove_item_actor(actor: string, room: string, item: string) {
       : false
   }
 }
-/** 
+
 function hide_inventory_animation(node: node) {
   gui.animate(
     node,
@@ -96,7 +96,7 @@ function hide_inventory_animation(node: node) {
   })
   print('posttimer')
 }
-**/
+
 function show_inventory_animation(actor_inv: string[], beneficiary: string) {
   let endNode = {}
   if (beneficiary == 'npc') {
@@ -143,18 +143,21 @@ function load_inventory_sprites(
   }
 }
 
-function choose_inventory(_this: props) {
+function choose_inventory(actorname: string) {
   //
-  if (npcs.all[_this.actorname] !== null) {
+  if (npcs.all[actorname] !== null) {
     //
 
-    return npcs.all[_this.actorname].inventory
+    return npcs.all[actorname].inventory
   } else {
-    return rooms.all[player.state.currentroom].actors[_this.actorname].inventory
+    return rooms.all[player.state.currentroom].actors[actorname].inventory
   }
 }
 
-function check_inventory_nodes(_this: props, action: { x: number; y: number }) {
+function check_inventory_nodes(
+  actorname: string,
+  action: { x: number; y: number }
+) {
   for (let i = 1; i < 31; i++) {
     let slotnum = i
     let slotname = 'slot'
@@ -169,44 +172,34 @@ function check_inventory_nodes(_this: props, action: { x: number; y: number }) {
     slotname = slotname + slotnum
 
     const node = gui.get_node(slotname)
+    // const texture = gui.get_flipbook(node)
     //testjpf texture is has, your using has to get string key
     //for remove_item_player.
     //add hash prop to initStates. reverse of how you had it.
     //get id?? still hash!!!???
-    const textureHash = gui.get_id(node)
-
+    const textureHash = gui.get_flipbook(node)
+    // tihis is getting the node name "slot..."
     if (
       gui.pick_node(node, action.x, action.y) &&
       textureHash != hash('empty')
     ) {
-      //hide_inventory_animation(node)
-      const item = async () =>
-        await Promise.resolve(inventoryLookup[hash_to_hex(textureHash)])
-      //const testjpf = await item()
-      print(
-        'inventoryLookup[hash_to_hex(vial01)]:',
-        inventoryLookup[hash_to_hex(hash('vial01'))]
-      )
-      print('item immediate:', item())
-      print('damn aliases:', _this.actorname, player.state.currentroom)
-      ;(async function () {
-        if (i < 21) {
-          remove_item_player(await item())
-          add_item_actor(
-            _this.actorname,
-            player.state.currentroom,
-            await item()
-          )
-        } else {
-          remove_item_actor(
-            _this.actorname,
-            player.state.currentroom,
-            await item()
-          )
-          add_item_player(await item())
-        }
-      })
-      const inventory: string[] = choose_inventory(_this)
+      //    let tKey: keyof typeof inventoryLookup
+      //      for (tKey in inventoryLookup) {
+      //       print('testjpf tkey:', tKey)
+      //   }
+      print(textureHash, 'pre-hash-lookup testjpf')
+      const item = inventoryLookup[hash_to_hex(textureHash)]
+      hide_inventory_animation(node)
+
+      if (i < 21) {
+        add_item_actor(actorname, player.state.currentroom, item)
+        remove_item_player(item)
+      } else {
+        add_item_player(item)
+        remove_item_actor(actorname, player.state.currentroom, item)
+      }
+
+      const inventory: string[] = choose_inventory(actorname)
       load_inventory_sprites(inventory, beneficiary)
       timer.delay(0.3, false, function () {
         if (debtor == 'player') {
@@ -230,7 +223,7 @@ function reset_prop_gui() {
 
 function reset_nodes() {
   reset_prop_gui()
-  for (let i = 20; i-- !== 1; ) {
+  for (let i = 21; i-- !== 1; ) {
     const slotname = 'slot' + i
     const node = gui.get_node(slotname)
     gui.play_flipbook(node, 'empty')
@@ -277,7 +270,7 @@ export function on_message(
     this.actorname = message.actorname //npc or prop name
 
     //
-    this.actorinventory = choose_inventory(this)
+    this.actorinventory = choose_inventory(this.actorname)
 
     load_inventory_sprites(this.actorinventory)
 
@@ -302,7 +295,7 @@ export function on_input(
     if (gui.pick_node(gui.get_node('exit'), action.x, action.y)) {
       exit_inventory(this.actorname, this.actorinventory)
     } else {
-      check_inventory_nodes(this, action)
+      check_inventory_nodes(this.actorname, action)
 
       // only choose one inventory item?
       if (this.watcher != '' && this.watcher != null) {
