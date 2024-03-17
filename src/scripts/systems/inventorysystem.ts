@@ -586,7 +586,7 @@ export function remove_random(to_inv: string[], from_inv: string[]) {
 export function remove_last(to_inv: string[], from_inv: string[]) {
   let stolen_item = from_inv.pop()
   if (stolen_item === undefined) stolen_item = ''
-  print('remove_ random', stolen_item)
+  print('remove_ last', stolen_item)
   if (stolen_item !== '') to_inv.push(stolen_item)
   return stolen_item
 }

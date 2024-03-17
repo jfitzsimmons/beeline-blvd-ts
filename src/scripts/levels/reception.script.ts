@@ -11,7 +11,7 @@ function load_npcs() {
     const npc = stations[station]
     if (npc != '') {
       station == 'desk'
-        ? msg.post('desk#station', 'load_station', { npc })
+        ? msg.post('desk#station', 'load_station', { npc, roomname })
         : msg.post(`/${station}#npc_loader`, 'load_npc', { npc })
     }
     //params.script = params.roomname + "/" + world.player.checkpoint:sub(1, -2) + "aid"
@@ -31,12 +31,12 @@ function load_storage() {
     ani: 'vase_art1',
   }
   msg.post('/vase1#storage', 'load_storage_inventory', params)
-  sprite.play_flipbook('#sprite', params.ani)
+  sprite.play_flipbook('/vase1#sprite', params.ani)
 
   params.storagename = 'vase2'
   params.ani = 'vase_art6'
   msg.post('/vase2#storage', 'load_storage_inventory', params)
-  sprite.play_flipbook('#sprite', params.ani)
+  sprite.play_flipbook('/vase2#sprite', params.ani)
 }
 
 export function on_message(

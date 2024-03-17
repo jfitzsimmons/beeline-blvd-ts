@@ -485,7 +485,7 @@ embedded_instances {
   children: "npc_loader"
   data: "components {\n"
   "  id: \"station\"\n"
-  "  component: \"/main/actors/station.script\"\n"
+  "  component: \"/scripts/actors/station.script\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

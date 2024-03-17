@@ -360,7 +360,7 @@ export function steal_check(n: Npc, w: Npc, loot: string[]) {
       let chest_item = null
       //const victim = false
       //if w != null ){ utils.has_value(w.inventory, a[1]) }
-      print(n.labelname, 'in room', n.currentroom, 'stole following item:')
+
       if (math.random() < 0.5) {
         chest_item = remove_random(n.inventory, loot)
       } else if (math.random() < 0.51) {
@@ -368,6 +368,13 @@ export function steal_check(n: Npc, w: Npc, loot: string[]) {
       } else {
         chest_item = remove_advantageous(n.inventory, loot, n.skills)
       }
+      print(
+        n.labelname,
+        'in room',
+        n.currentroom,
+        'stole following item:',
+        chest_item
+      )
       add_chest_bonus(n, chest_item)
       //if (victim == true ){ remove_chest_bonus(w, chest_item) }
       n.cooldown = math.random(5, 15)

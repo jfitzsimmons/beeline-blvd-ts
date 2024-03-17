@@ -199,7 +199,7 @@ export function on_message(
     pos: vmath.vector3
     npcname: string
     //room: string
-    enter: boolean
+    //enter: boolean
   },
   _sender: url
 ): void {

@@ -1,6 +1,6 @@
 components {
   id: "door1"
-  component: "/main/actors/door1DELETE.script"
+  component: "/scripts/actors/door1.script"
   position {
     x: 0.0
     y: 0.0
