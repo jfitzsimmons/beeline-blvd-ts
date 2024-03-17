@@ -5,19 +5,19 @@
 //const { npcs } = globalThis.game.world
 //const  M = {}
 
-import { Npcs, Skills } from '../../types/state'
+import { Npc, Npcs, Skills } from '../../types/state'
 import { shuffle } from './utils'
 
 export function has_value(t: [() => string[], string]) {
   return t[0]().includes(t[1])
 }
 
-export function any_has_value(t: [() => Npcs, string]) {
+export function any_has_value(t: [() => Npc[], string]) {
   const npcs = t[0]()
-  let nKey: keyof typeof npcs
-  for (nKey in npcs) {
+  // let nKey: keyof typeof npcs
+  for (const npc of npcs) {
     //for ni,nv in pairs(npcs) do
-    if (npcs[nKey].inventory.includes(t[1])) return true
+    if (npc.inventory.includes(t[1])) return true
   }
   return false
 }

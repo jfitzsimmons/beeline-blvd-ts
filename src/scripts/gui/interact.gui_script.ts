@@ -47,7 +47,7 @@ function open_novel(_this: props) {
 }
 
 function open_inventory(_this: props, actor: string, action: string) {
-  const room = rooms.all[player.state.currentroom]
+  const room = rooms.all[player.currentroom]
   //print('open iinventory _this.room:::', _this.room)
   if (action == 'open') {
     // station where the watcher will be located

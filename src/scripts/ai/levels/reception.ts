@@ -1,50 +1,61 @@
-local world = require "main.states.worldstate"
-local checks = require "main.utils.checks"
+import { Actor } from '../../../types/state'
 
-local M = {}
+const { rooms, npcs } = globalThis.game.world
+import { take_check, steal_check, take_or_stash } from '../ai_checks'
 
-function M.steal_stash_checks()
-	local victim = nil
-	local thief =  nil
-	local actor =  {}
-	local loot = {}
-	local attendant = world.npcs.all[world.rooms.all.reception.stations.desk]
-	--print("world.rooms.all.reception.stations.guest",world.rooms.all.reception.stations.guest)
-	if world.rooms.all.reception.stations.guest ~= "" then 
-		victim = world.npcs.all[world.rooms.all.reception.stations.guest]
-		--print("victim.labelname",victim.labelname)
-		
-		loot = victim.inventory 
-		actor = world.rooms.all.reception.actors.drawer 
-		if #actor.inventory > 0  and world.rooms.all.reception.stations.desk == "" then 
-			if math.random() < 0.5 then checks.take_check(victim,actor) end
-		elseif #actor.inventory > 0 then
-			if math.random() < 0.5 then checks.steal_check(victim,attendant,actor.inventory) end
-		end
-	end
+function steal_stash_checks() {
+  let victim = null
+  let thief = null
+  let actor: Actor
+  let loot: string[] = []
+  let attendant = npcs.all[rooms.all.reception.stations.desk]
+  //print("rooms.all.reception.stations.guest",rooms.all.reception.stations.guest)
+  if (rooms.all.reception.stations.guest != '') {
+    victim = npcs.all[rooms.all.reception.stations.guest]
+    //print("victim.labelname",victim.labelname)
 
-	if world.rooms.all.reception.stations.loiter4 ~= "" then 
-		thief = world.npcs.all[world.rooms.all.reception.stations.loiter4]
-	end
-	if victim ~= nil and thief ~= nil and #loot > 0 and thief.cooldown <=0 then
-		if math.random() < 0.5 then	
-			checks.steal_check(thief,victim,loot) 
-		end
-	end
-	if world.rooms.all.reception.stations.desk ~= "" then 
-		actor = world.rooms.all.reception.actors.drawer 
-		checks.take_or_stash(attendant,actor)
-	end
-	if world.rooms.all.reception.stations.patrol ~= "" then 
-		attendant = world.npcs.all[world.rooms.all.reception.stations.patrol]
-		actor = world.rooms.all.reception.actors.vase2 
-		checks.take_or_stash(attendant,actor)
-	end
-	if world.rooms.all.reception.stations.loiter2 ~= "" then 
-		attendant = world.npcs.all[world.rooms.all.reception.stations.loiter2]
-		actor = world.rooms.all.reception.actors.vase
-		checks.take_or_stash(attendant,actor)
-	end
-end
+    loot = victim.inventory
+    actor = rooms.all.reception.actors.drawer
+    if (actor.inventory.length > 0 && rooms.all.reception.stations.desk == '') {
+      if (math.random() < 0.5) {
+        take_check(victim, actor)
+      }
+    } else if (actor.inventory.length > 0) {
+      if (math.random() < 0.5) {
+        steal_check(victim, attendant, actor.inventory)
+      }
+    }
+  }
 
-return M
+  if (rooms.all.reception.stations.loiter4 != '') {
+    thief = npcs.all[rooms.all.reception.stations.loiter4]
+  }
+  if (
+    victim != null &&
+    thief != null &&
+    loot.length > 0 &&
+    thief.cooldown <= 0
+  ) {
+    if (math.random() < 0.5) {
+      steal_check(thief, victim, loot)
+    }
+  }
+  if (rooms.all.reception.stations.desk != '') {
+    actor = rooms.all.reception.actors.drawer
+    take_or_stash(attendant, actor)
+  }
+  if (rooms.all.reception.stations.patrol != '') {
+    attendant = npcs.all[rooms.all.reception.stations.patrol]
+    actor = rooms.all.reception.actors.vase2
+    take_or_stash(attendant, actor)
+  }
+  if (rooms.all.reception.stations.loiter2 != '') {
+    attendant = npcs.all[rooms.all.reception.stations.loiter2]
+    actor = rooms.all.reception.actors.vase
+    take_or_stash(attendant, actor)
+  }
+}
+
+export function reception_checks() {
+  steal_stash_checks
+}

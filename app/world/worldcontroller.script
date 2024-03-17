@@ -45,12 +45,12 @@ function ____exports.on_message(self, messageId, message, _sender)
         show(nil, self.current_proxy, "#main_menu")
     elseif messageId == hash("faint") then
         world.clock = world.clock + 6
-        player.state.ap = player.state.ap_max - 6
+        player.ap = player.ap_max - 6
         msg.post("#", "pick_room", message)
     elseif messageId == hash("arrested") then
         world.clock = world.clock + 6
-        player.state.alert_level = 0
-        player.state.ap = player.state.ap_max - 6
+        player.alert_level = 0
+        player.ap = player.ap_max - 6
         msg.post("#", "pick_room", message)
     elseif messageId == hash("pick_room") then
         self.roomname = message.enter_room

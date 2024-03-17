@@ -76,12 +76,12 @@ export function on_message(
     show(this.current_proxy, '#main_menu')
   } else if (messageId == hash('faint')) {
     world.clock = world.clock + 6
-    player.state.ap = player.state.ap_max - 6
+    player.ap = player.ap_max - 6
     msg.post('#', 'pick_room', message)
   } else if (messageId == hash('arrested')) {
     world.clock = world.clock + 6
-    player.state.alert_level = 0
-    player.state.ap = player.state.ap_max - 6
+    player.alert_level = 0
+    player.ap = player.ap_max - 6
     msg.post('#', 'pick_room', message)
   } else if (messageId == hash('pick_room')) {
     this.roomname = message.enter_room

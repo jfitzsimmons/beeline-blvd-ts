@@ -321,7 +321,7 @@ embedded_instances {
   "}\n"
   "components {\n"
   "  id: \"reception\"\n"
-  "  component: \"/main/levels/01_vipreception/reception.script\"\n"
+  "  component: \"/scripts/levels/reception.script\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

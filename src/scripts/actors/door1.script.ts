@@ -15,7 +15,7 @@ function transition() {
     enter_room: room_lookup[hash_to_hex(go.get_id())],
   }
 
-  player.state.pos = go.get_position()
+  player.pos = go.get_position()
   msg.post('proxies:/controller#worldcontroller', 'pick_room', params)
 }
 

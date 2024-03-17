@@ -36,7 +36,9 @@ export interface AllQuestsMethods {
   [key: string]: QuestMethods
 }
 export interface QuestMethods {
-  [key: string]: (args?: unknown | [() => Npcs, number]) => unknown | boolean
+  [key: string]: (
+    args?: unknown | [() => Npcs, number]
+  ) => Npc[] | boolean | Npcs | [string[], Npcs] | string[] | Skills | void
 }
 export interface Npc extends NpcDefaults {
   home: { x: number; y: number }

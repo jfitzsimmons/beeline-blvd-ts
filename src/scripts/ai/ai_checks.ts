@@ -105,7 +105,7 @@ function confrontation_consequence(p: Npc, n: Npc) {
   return 'neutral'
 }
 
-export function take_check(taker: Npc, actor: Npc) {
+export function take_check(taker: Npc, actor: Npc | Actor) {
   // testjpf if you hae a cooldown, it greatly increases your chances??
   // ){ make default chance lower
   let chances =
@@ -165,7 +165,7 @@ export function take_check(taker: Npc, actor: Npc) {
   }
 }
 
-export function stash_check(stasher: Npc, actor: Npc) {
+export function stash_check(stasher: Npc, actor: Npc | Actor) {
   // testjpf if you hae a cooldown, it greatly increases your chances??
   // ){ make default chance lower
   let chances =
@@ -230,7 +230,7 @@ export function stash_check(stasher: Npc, actor: Npc) {
   }
 }
 
-export function take_or_stash(attendant: Npc, actor: Npc) {
+export function take_or_stash(attendant: Npc, actor: Npc | Actor) {
   if (actor.inventory.length > 0 && math.random() < 0.5) {
     take_check(attendant, actor)
   } else if (attendant.inventory.length > 0 && math.random() < 0.66) {
@@ -288,7 +288,7 @@ export function confrontation_check(p: Npc | PlayerState, n: Npc) {
 }
 
 //testjpf only being used between npcs (just tutorial luggage)
-export function steal_check(n: Npc, w: Npc, a: Actor) {
+export function steal_check(n: Npc, w: Npc, loot: string[]) {
   let consequence = 'neutral'
 
   if (
@@ -362,11 +362,11 @@ export function steal_check(n: Npc, w: Npc, a: Actor) {
       //if w != null ){ utils.has_value(w.inventory, a[1]) }
       print(n.labelname, 'in room', n.currentroom, 'stole following item:')
       if (math.random() < 0.5) {
-        chest_item = remove_random(n.inventory, a.inventory)
+        chest_item = remove_random(n.inventory, loot)
       } else if (math.random() < 0.51) {
-        chest_item = remove_valuable(n.inventory, a.inventory)
+        chest_item = remove_valuable(n.inventory, loot)
       } else {
-        chest_item = remove_advantageous(n.inventory, a.inventory, n.skills)
+        chest_item = remove_advantageous(n.inventory, loot, n.skills)
       }
       add_chest_bonus(n, chest_item)
       //if (victim == true ){ remove_chest_bonus(w, chest_item) }

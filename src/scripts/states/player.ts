@@ -43,6 +43,12 @@ export default class WorldPlayer {
   public get state() {
     return this._state
   }
+  public set inventory(i: string[]) {
+    this._state.inventory = i
+  }
+  public get inventory() {
+    return this._state.inventory
+  }
   public set hp(n: number) {
     this._state.hp = n
   }
@@ -55,12 +61,21 @@ export default class WorldPlayer {
   public get ap() {
     return this._state.ap
   }
+  public set ap_max(n: number) {
+    this._state.ap_max = n
+  }
+  public get ap_max() {
+    return this._state.ap_max
+  }
   public set currentroom(r: string) {
     this._state.currentroom = r
   }
 
   public set turns(n: number) {
     this._state.turns = n
+  }
+  public get turns() {
+    return this._state.turns
   }
   public set exitroom(r: string) {
     this._state.exitroom = r
@@ -89,13 +104,13 @@ export default class WorldPlayer {
   public get checkpoint(): string {
     return this._state.checkpoint
   }
-  return_inventory() {
+  return_inventory(): string[] {
     return this._state.inventory
   }
-  return_skills() {
+  return_skills(): Skills {
     return this._state.skills
   }
   increase_alert_level() {
-    this._state.alert_level += 1
+    this.alert_level += 1
   }
 }

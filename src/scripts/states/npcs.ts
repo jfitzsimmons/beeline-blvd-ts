@@ -1,5 +1,5 @@
 import { NpcsInitState } from './inits/npcsInitState'
-import { Npcs, QuestMethods } from '../../types/state'
+import { Npc, Npcs, QuestMethods } from '../../types/state'
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
 
 function shuffle(arrN: number[]): number[]
@@ -26,12 +26,13 @@ export default class WorldNpcs {
       return_all: this.return_all.bind(this),
       return_order_all: this.return_order_all.bind(this),
     }
+    this.return_doctors = this.return_doctors.bind(this)
   }
 
-  return_doctors() {
+  return_doctors(): Npc[] {
     return [this.all.doc01, this.all.doc02]
   }
-  return_all() {
+  return_all(): Npcs {
     return this.all
   }
   sort_npcs_by_encounter() {
@@ -40,7 +41,7 @@ export default class WorldNpcs {
         this.all[b].turns_since_encounter - this.all[a].turns_since_encounter
     )
   }
-  return_order_all() {
+  return_order_all(): [string[], Npcs] {
     return [shuffle(this.order), this.all]
   }
 }

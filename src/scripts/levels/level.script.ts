@@ -8,12 +8,13 @@ const { world } = globalThis.game
 const { rooms, npcs, player, tasks } = world
 import { Confront } from '../../types/state'
 import { address_cautions } from '../systems/tasksystem'
+import { quest_checks } from '../quests/quests_main'
 
 function game_turn(room: string) {
   rooms.clear_stations()
   ai_turn(room)
-
-  tasks.address_quests('turn', player.state.checkpoint)
+  quest_checks('turn')
+  tasks.address_quests('turn', player.checkpoint)
   player.ap = player.ap - 1
   player.turns = player.turns + 1
 }
@@ -96,7 +97,9 @@ export function on_message(
       msg.post('adam#adam', 'wake_up')
     }
   } else if (messageId == hash('exit_gui')) {
-    tasks.address_quests('interact', player.state.checkpoint)
+    quest_checks('interact')
+
+    tasks.address_quests('interact', player.checkpoint)
     if (message.novel == true) {
       msg.post(this.roomname + ':/adam#interact', 'reload_script')
     }
@@ -109,7 +112,7 @@ export function on_message(
   } else if (messageId == hash('update_alert')) {
     sprite.play_flipbook(
       'hud#security_alert',
-      'alert_' + tostring(world.player.alert_level)
+      'alert_' + tostring(player.alert_level)
     )
   }
 }

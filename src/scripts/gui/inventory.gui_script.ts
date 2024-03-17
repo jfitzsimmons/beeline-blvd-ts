@@ -26,21 +26,19 @@ export function init(this: props) {
 
 function add_item_player(item: string) {
   print('additem player : item::', item)
-  player.state.inventory[player.state.inventory.length] = item
+  player.inventory.push(item)
   add_chest_bonus(player.state, item)
 }
 
 function remove_item_player(item: string) {
   print('REMitem player : item::', item)
 
-  const itemIndex = player.state.inventory.indexOf(item)
+  const itemIndex = player.inventory.indexOf(item)
   print('REMitem PLayer : itemIndex::', itemIndex)
 
-  const removed = player.state.inventory.splice(itemIndex, 1)
+  const removed = player.inventory.splice(itemIndex, 1)
   print('removed[0] PLAYER::', removed[0])
 
-  //const index = utils.get_index(player.state.inventory,item)
-  //table.remove(player.state.inventory, index)
   remove_chest_bonus(player.state, removed[0])
 }
 
@@ -102,7 +100,7 @@ function show_inventory_animation(actor_inv: string[], beneficiary: string) {
   if (beneficiary == 'npc') {
     endNode = gui.get_node('slotb' + actor_inv.length)
   } else {
-    endNode = gui.get_node('slot' + player.state.inventory.length)
+    endNode = gui.get_node('slot' + player.inventory.length)
   }
   gui.set_color(endNode, vmath.vector4(1, 1, 1, 0))
   timer.delay(0.3, false, function () {
@@ -133,7 +131,7 @@ function load_inventory_sprites(
   actor: string | null = null
 ) {
   if (actor == null || actor == 'player') {
-    show_icons(player.state.inventory, 'slot')
+    show_icons(player.inventory, 'slot')
   }
   if (actor == null || actor == 'npc') {
     show_icons(actor_inv, 'slotb')
@@ -150,7 +148,7 @@ function choose_inventory(actorname: string) {
 
     return npcs.all[actorname].inventory
   } else {
-    return rooms.all[player.state.currentroom].actors[actorname].inventory
+    return rooms.all[player.currentroom].actors[actorname].inventory
   }
 }
 
@@ -192,18 +190,18 @@ function check_inventory_nodes(
       hide_inventory_animation(node)
 
       if (i < 21) {
-        add_item_actor(actorname, player.state.currentroom, item)
+        add_item_actor(actorname, player.currentroom, item)
         remove_item_player(item)
       } else {
         add_item_player(item)
-        remove_item_actor(actorname, player.state.currentroom, item)
+        remove_item_actor(actorname, player.currentroom, item)
       }
 
       const inventory: string[] = choose_inventory(actorname)
       load_inventory_sprites(inventory, beneficiary)
       timer.delay(0.3, false, function () {
         if (debtor == 'player') {
-          show_icons(player.state.inventory, 'slot')
+          show_icons(player.inventory, 'slot')
         } else {
           show_icons(inventory, 'slotb')
         }
@@ -236,8 +234,7 @@ function exit_inventory(actorname: string, actorinventory: string[]) {
   if (npcs.all[actorname] != null) {
     npcs.all[actorname].inventory = actorinventory
   } else {
-    rooms.all[player.state.currentroom].actors[actorname].inventory =
-      actorinventory
+    rooms.all[player.currentroom].actors[actorname].inventory = actorinventory
   }
 
   reset_nodes()

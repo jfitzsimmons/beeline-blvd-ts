@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-const reception = require('../../main.systems.ai.levels.reception')
+//const reception = require('../../main.systems.ai.levels.reception')
 //const utils = require('main.utils.utils')
 import { shuffle } from '../utils/utils'
 import { seen_check, confrontation_check } from './ai_checks'
@@ -9,6 +9,7 @@ import { seen_check, confrontation_check } from './ai_checks'
 import { Direction } from '../../types/ai'
 import { Prisoners } from '../../types/state'
 import { remove_effects } from '../systems/effectsystem'
+import { reception_checks } from './levels/reception'
 
 const { tasks, rooms, npcs, player } = globalThis.game.world
 
@@ -311,7 +312,7 @@ function release_prisoners(d: Direction) {
 function ai_actions(direction: Direction) {
   release_prisoners(direction)
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-  reception.steal_stash_checks()
+  reception_checks()
 }
 export function npc_action_move(n: string, d: Direction) {
   const npc = npcs.all[n]
