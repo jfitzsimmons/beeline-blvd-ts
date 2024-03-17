@@ -22,7 +22,7 @@ export const RoomsInitState = {
     },
   },
   viplobby: {
-    matrix: { x: 2, y: 6 },
+    matrix: { x: 1, y: 5 },
     roomname: 'viplobby',
     stations: {
       guard: '',
@@ -36,7 +36,7 @@ export const RoomsInitState = {
     actors: {},
   },
   entrance: {
-    matrix: { x: 1, y: 6 },
+    matrix: { x: 0, y: 5 },
     roomname: 'entrance',
     stations: {
       loiter2: '',
@@ -49,7 +49,7 @@ export const RoomsInitState = {
     actors: {},
   },
   recroom: {
-    matrix: { x: 4, y: 4 },
+    matrix: { x: 3, y: 3 },
     roomname: 'recroom',
     stations: {
       lounge: '',
@@ -63,14 +63,14 @@ export const RoomsInitState = {
     actors: {},
   },
   security: {
-    matrix: { x: 3, y: 6 },
+    matrix: { x: 2, y: 5 },
     roomname: 'security',
     stations: { guard: '', authority: '', assistant: '' },
     prisoners: { prisoner1: '', prisoner2: '', prisoner3: '', prisoner4: '' },
     actors: {},
   },
   chapel: {
-    matrix: { x: 4, y: 3 },
+    matrix: { x: 3, y: 2 },
     roomname: 'chapel',
     stations: {
       loiter1: '',
@@ -83,7 +83,7 @@ export const RoomsInitState = {
     actors: {},
   },
   inn1: {
-    matrix: { x: 5, y: 3 },
+    matrix: { x: 4, y: 2 },
     roomname: 'inn1',
     stations: {
       loiter3: '',
@@ -96,7 +96,7 @@ export const RoomsInitState = {
     actors: {},
   },
   pubgrill: {
-    matrix: { x: 5, y: 4 },
+    matrix: { x: 4, y: 3 },
     roomname: 'pubgrill',
     stations: {
       host: '',
@@ -109,13 +109,13 @@ export const RoomsInitState = {
     actors: {},
   },
   maintenance: {
-    matrix: { x: 5, y: 2 },
+    matrix: { x: 4, y: 1 },
     roomname: 'maintenance',
     stations: { bench: '', patrol: '', browse: '', worker1: '' },
     actors: {},
   },
   lobby: {
-    matrix: { x: 3, y: 4 },
+    matrix: { x: 2, y: 3 },
     roomname: 'lobby',
     stations: {
       loiter1: '',
@@ -129,7 +129,7 @@ export const RoomsInitState = {
     actors: {},
   },
   storage: {
-    matrix: { x: 4, y: 2 },
+    matrix: { x: 3, y: 1 },
     roomname: 'storage',
     stations: {
       patrol: '',
@@ -141,7 +141,7 @@ export const RoomsInitState = {
     actors: {},
   },
   commonsint: {
-    matrix: { x: 3, y: 3 },
+    matrix: { x: 2, y: 2 },
     roomname: 'commonsint',
     stations: {
       loiter1: '',
@@ -155,7 +155,7 @@ export const RoomsInitState = {
     actors: {},
   },
   commonsext: {
-    matrix: { x: 3, y: 2 },
+    matrix: { x: 2, y: 1 },
     roomname: 'commonsext',
     stations: {
       loiter1: '',
@@ -169,13 +169,13 @@ export const RoomsInitState = {
     actors: {},
   },
   warehouse: {
-    matrix: { x: 2, y: 2 },
+    matrix: { x: 1, y: 1 },
     roomname: 'warehouse',
     stations: { worker1: '', worker2: '', boss: '' },
     actors: {},
   },
   lockers: {
-    matrix: { x: 2, y: 3 },
+    matrix: { x: 1, y: 2 },
     roomname: 'lockers',
     stations: {
       loiter1: '',
@@ -189,7 +189,7 @@ export const RoomsInitState = {
     actors: {},
   },
   unloading: {
-    matrix: { x: 1, y: 2 },
+    matrix: { x: 0, y: 1 },
     roomname: 'unloading',
     stations: {
       worker1: '',
@@ -202,7 +202,7 @@ export const RoomsInitState = {
     actors: {},
   },
   alley3: {
-    matrix: { x: 3, y: 1 },
+    matrix: { x: 2, y: 0 },
     roomname: 'alley3',
     stations: {
       worker1: '',
@@ -216,7 +216,7 @@ export const RoomsInitState = {
     actors: {},
   },
   alley2: {
-    matrix: { x: 2, y: 1 },
+    matrix: { x: 1, y: 0 },
     roomname: 'alley2',
     stations: {
       worker1: '',
@@ -228,7 +228,7 @@ export const RoomsInitState = {
     actors: {},
   },
   alley1: {
-    matrix: { x: 1, y: 1 },
+    matrix: { x: 0, y: 0 },
     roomname: 'alley1',
     stations: {
       worker1: '',
@@ -240,13 +240,13 @@ export const RoomsInitState = {
     actors: {},
   },
   loading: {
-    matrix: { x: 1, y: 3 },
+    matrix: { x: 0, y: 2 },
     roomname: 'loading',
     stations: { worker1: '', worker2: '', boss: '', patrol: '', gang: '' },
     actors: {},
   },
   admin1: {
-    matrix: { x: 3, y: 5 },
+    matrix: { x: 2, y: 4 },
     roomname: 'admin1',
     props: ['desks', 'locker'],
     stations: {
@@ -269,7 +269,7 @@ export const RoomsInitState = {
     },
   },
   customs: {
-    matrix: { x: 2, y: 4 },
+    matrix: { x: 1, y: 3 },
     roomname: 'customs',
     props: ['desks', 'locker'],
     stations: {
@@ -293,7 +293,7 @@ export const RoomsInitState = {
     },
   },
   reception: {
-    matrix: { x: 2, y: 5 },
+    matrix: { x: 1, y: 4 },
     roomname: 'reception',
     props: ['drawer', 'computer'],
     stations: {
@@ -329,7 +329,7 @@ export const RoomsInitState = {
     },
   },
   grounds: {
-    matrix: { x: 1, y: 5 },
+    matrix: { x: 0, y: 4 },
     roomname: 'grounds',
     stations: {
       assistant: '',
@@ -354,7 +354,7 @@ export const RoomsInitState = {
     },
   },
   dorms: {
-    matrix: { x: 5, y: 6 },
+    matrix: { x: 4, y: 5 },
     roomname: 'dorms',
     stations: {
       bench: '',
@@ -367,7 +367,7 @@ export const RoomsInitState = {
     actors: {},
   },
   gym: {
-    matrix: { x: 4, y: 5 },
+    matrix: { x: 3, y: 4 },
     roomname: 'gym',
     stations: {
       //guest: "",
@@ -380,7 +380,7 @@ export const RoomsInitState = {
     actors: {},
   },
   store: {
-    matrix: { x: 5, y: 5 },
+    matrix: { x: 4, y: 4 },
     roomname: 'store',
     stations: {
       guest: '',
@@ -394,7 +394,7 @@ export const RoomsInitState = {
     actors: {},
   },
   infirmary: {
-    matrix: { x: 4, y: 6 },
+    matrix: { x: 3, y: 5 },
     roomname: 'infirmary',
     props: ['drawer', 'computer'],
     stations: {

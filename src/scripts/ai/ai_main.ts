@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-const effects = require('../../main.systems.effectsystem')
 const reception = require('../../main.systems.ai.levels.reception')
 //const utils = require('main.utils.utils')
 import { shuffle } from '../utils/utils'
@@ -9,6 +8,7 @@ import { seen_check, confrontation_check } from './ai_checks'
 //const checks = require('../../main.utils.checks')
 import { Direction } from '../../types/ai'
 import { Prisoners } from '../../types/state'
+import { remove_effects } from '../systems/effectsystem'
 
 const { tasks, rooms, npcs, player } = globalThis.game.world
 
@@ -42,15 +42,15 @@ const initial_places = [
 
 function attempt_to_fill_station(room_list: string[], npc: string) {
   let placed = false
-  const room = ''
+  //const room = ''
   //const misses = {}
   const current = npcs.all[npc].matrix
 
   //loop through priority room_list
   while (placed == false) {
-    room_list.forEach((r: string) => {
+    room_list.forEach((room: string) => {
       const shuffled_stations: [string, string][] = shuffle(
-        Object.entries(rooms.all[r].stations)
+        Object.entries(rooms.all[room].stations)
       )
 
       //  let ks: keyof typeof shuffled_stations
@@ -142,8 +142,11 @@ function set_room_priority(
 ): string[] {
   const room_list: (string | null)[] = []
   const current = npcs.all[npc].matrix
-
+  print(npc, target.x, target.y, 'target.x target.y')
   //get list of possible rooms NPC could go to next in order to get to target
+  print(current.x, current.y, 'current.x current.y')
+  print('curr room', rooms.layout[current.y][current.x])
+  //print(rooms.layout[current.y + 1][current.x])
 
   //testjpf
   if (target.y > current.y) {
@@ -163,7 +166,7 @@ function set_room_priority(
 
   if (
     target.y > current.y &&
-    current.y - 1 != 0 &&
+    current.y - 1 >= 0 &&
     rooms.layout[current.y - 1][current.x] != null
   ) {
     room_list.push(rooms.layout[current.y - 1][current.x])
@@ -174,7 +177,7 @@ function set_room_priority(
   if (
     target.y <= current.y &&
     current.y < 6 &&
-    rooms.layout[current.y + 1][current.x] != null
+    rooms.layout[current.y + 1] != null
   ) {
     room_list.push(rooms.layout[current.y + 1][current.x])
   }
@@ -184,8 +187,8 @@ function set_room_priority(
 
   room_list.push(rooms.layout[npcs.all[npc].home.y][npcs.all[npc].home.x])
   // room_list = room_list.filter((r) => r !== null
-  const filteredArray: string[] = room_list.filter((s): s is string =>
-    Boolean(s)
+  const filteredArray: string[] = room_list.filter(
+    (s): s is string => s != null
   )
   return filteredArray //.filter((r) => r !== null)
 }
@@ -237,16 +240,16 @@ function set_npc_target(direction: Direction, n: string) {
     }
   }
   //limit target to map layout grid
-  if (target.x < 1) {
-    target.x = 1
-  } else if (target.x > 6) {
-    target.x = 6
+  if (target.x < 0) {
+    target.x = 0
+  } else if (target.x > 5) {
+    target.x = 5
   }
 
-  if (target.y < 1) {
-    target.y = 1
-  } else if (target.y > 6) {
-    target.y = 6
+  if (target.y < 0) {
+    target.y = 0
+  } else if (target.y > 5) {
+    target.y = 5
   }
 
   return target
@@ -316,7 +319,7 @@ export function npc_action_move(n: string, d: Direction) {
   const room_list: string[] = set_room_priority(target, n)
   attempt_to_fill_station(room_list, n)
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-  effects.remove_effects(npc)
+  remove_effects(npc)
   if (npc.cooldown > 0) npc.cooldown = npc.cooldown - 1
 }
 

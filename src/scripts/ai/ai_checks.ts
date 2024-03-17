@@ -15,7 +15,8 @@ import {
   add_chest_bonus,
   remove_chest_bonus,
 } from '../systems/inventorysystem'
-const fx = require('../../main.systems.effectsystem')
+//const fx = require('../../main.systems.effectsystem')
+import { fx, add_effects_bonus } from '../systems/effectsystem'
 //testjpf some logic issues throughout
 function confrontation_consequence(p: Npc, n: Npc) {
   //ugly code. testjpf.  not many cautions needed.
@@ -35,9 +36,9 @@ function confrontation_consequence(p: Npc, n: Npc) {
   ) {
     // makes next person n meets like p's clan
     print('CC:: vanity')
-    const effect: Effect = { ...fx.all.vanity }
+    const effect: Effect = { ...fx.vanity }
     n.effects.push(effect) // lawfulness increase?
-    fx.add_effects_bonus(n, effect)
+    add_effects_bonus(n, effect)
     return 'nothing'
   } else if (
     p.skills.wisdom > 6 &&
@@ -46,9 +47,9 @@ function confrontation_consequence(p: Npc, n: Npc) {
   ) {
     // makes next person n meets like their clan
     print('CC:: angel')
-    const effect: Effect = { ...fx.all.angel }
+    const effect: Effect = { ...fx.angel }
     n.effects.push(effect) // lawfulness increase?
-    fx.add_effects_bonus(n, effect)
+    add_effects_bonus(n, effect)
     return 'nothing'
   } else if (
     p.binaries.passive_aggressive > 0.5 &&
@@ -67,10 +68,10 @@ function confrontation_consequence(p: Npc, n: Npc) {
   ) {
     // makes next person n meets hate p's clan
     print('CC:: prejudice')
-    const effect: Effect = { ...fx.all.prejudice }
+    const effect: Effect = { ...fx.prejudice }
     effect.fx.stat = p.clan
     n.effects.push(effect) // lawfulness increase?
-    fx.add_effects_bonus(n, effect)
+    add_effects_bonus(n, effect)
     return 'nothing'
   } else if (
     p.binaries.anti_authority > 0 &&
@@ -114,14 +115,14 @@ export function take_check(taker: Npc, actor: Npc) {
   }
 
   const minmax = dice_roll()
-  //print("chances:",chances,"TAKE CHECK dicE:",minmax[1]*10,minmax[2]*10)
+  //print("chances:",chances,"TAKE CHECK dicE:",minmax[0]*10,minmax[1]*10)
   //print((taker.skills.speed + taker.skills.stealth + (taker.binaries.poor_wealthy * -10)) /2)
   let take = false
   //print("(taker.skills.speed + taker.skills.stealth + (taker.binaries.poor_wealthy * -10)) /9 = ",(taker.skills.speed + taker.skills.stealth + (taker.binaries.poor_wealthy * -10)) /9)
   if (chances > 0.5) {
     // advantage
     if (
-      minmax[1] * 10 <
+      minmax[0] * 10 <
       (taker.skills.speed +
         taker.skills.stealth +
         taker.binaries.poor_wealthy * -10) /
@@ -132,7 +133,7 @@ export function take_check(taker: Npc, actor: Npc) {
     }
     //disadvantage
     else if (
-      minmax[2] * 10 <
+      minmax[1] * 10 <
       (taker.skills.speed +
         taker.skills.stealth +
         taker.binaries.poor_wealthy * -10) /
@@ -176,13 +177,13 @@ export function stash_check(stasher: Npc, actor: Npc) {
   }
 
   const minmax = dice_roll()
-  //print("chances:",chances,"stash_check dicE:",minmax[1]*10,minmax[2]*10)
+  //print("chances:",chances,"stash_check dicE:",minmax[0]*10,minmax[1]*10)
   //print("(stasher.skills.constitution + stasher.skills.stealth + (stasher.binaries.anti_authority * -10)) /5 =",(stasher.skills.constitution + stasher.skills.stealth + (stasher.binaries.anti_authority * -10)) /5)
   let stash = false
   if (chances > 0.5) {
     // advantage
     if (
-      minmax[1] * 10 <
+      minmax[0] * 10 <
       (stasher.skills.constitution +
         stasher.skills.stealth +
         stasher.binaries.anti_authority * -10) /
@@ -193,7 +194,7 @@ export function stash_check(stasher: Npc, actor: Npc) {
     }
     //disadvantage
     else if (
-      minmax[2] * 10 <
+      minmax[1] * 10 <
       (stasher.skills.constitution +
         stasher.skills.stealth +
         stasher.binaries.anti_authority * -10) /
@@ -242,9 +243,9 @@ export function seen_check(p: Skills, n: Skills) {
   //testjpf these are high odds you'll be seen
   // as inteded???
   if (p.stealth <= n.stealth || p.stealth <= n.perception) {
-    if (minmax[1] * 10 < (n.perception + n.stealth + n.speed) / 2) {
+    if (minmax[0] * 10 < (n.perception + n.stealth + n.speed) / 2) {
       return true
-    } else if (minmax[2] * 10 < (n.perception + n.stealth + n.speed) / 2) {
+    } else if (minmax[1] * 10 < (n.perception + n.stealth + n.speed) / 2) {
       return true
     }
   }
@@ -268,13 +269,13 @@ export function confrontation_check(p: Npc | PlayerState, n: Npc) {
       p.skills.speed < n.skills.constitution
     ) {
       // check for confrontation with DISADVANTAGE
-      if (minmax[1] * 9 < (n.skills.speed + n.skills.constitution) / 1.6) {
+      if (minmax[0] * 9 < (n.skills.speed + n.skills.constitution) / 1.6) {
         print('Caught: too slow')
         return true
       }
       // check for confrontation with ADVANTAGE
       else if (
-        minmax[2] * 10 <
+        minmax[1] * 10 <
         (n.skills.speed + n.skills.constitution) / 1.8
       ) {
         print('Caught: fast, but unlucky')

@@ -6,7 +6,6 @@
 //const roomstates = require( "main.states.roomstates")
 //const taskstates = require( "main.states.taskstates")
 //const utils = require( "main.utils.utils")
-const fx = require('../../../main.systems.effectsystem')
 import { items } from '../systems/inventorysystem'
 const { tasks, rooms, npcs, player } = globalThis.game.world
 import {
@@ -18,6 +17,7 @@ import {
   Effect,
 } from '../../types/state'
 import { shuffle } from '../utils/utils'
+import { fx, add_effects_bonus } from '../systems/effectsystem'
 
 const fxLookup = {
   merits: [
@@ -41,17 +41,17 @@ const fxLookup = {
 }
 
 function admirer(s: string, w: string) {
-  const effect: Effect = { ...fx.all.admirer }
+  const effect: Effect = { ...fx.admirer }
   effect.fx.stat = npcs.all[s].clan
   npcs.all[w].effects.push(effect)
-  fx.add_effects_bonus(npcs.all[w], effect)
+  add_effects_bonus(npcs.all[w], effect)
 }
 function prejudice(s: string, w: string) {
   print('QC:: prejudice')
-  const effect: Effect = { ...fx.all.prejudice }
+  const effect: Effect = { ...fx.prejudice }
   effect.fx.stat = npcs.all[s].clan
   npcs.all[w].effects.push(effect)
-  fx.add_effects_bonus(npcs.all[w], effect)
+  add_effects_bonus(npcs.all[w], effect)
 }
 function pledge(s: string) {
   print('QC:: pledge') //pledge not to do it again
@@ -279,13 +279,13 @@ function reckless_consequence(c: Caution, w: string) {
   if (effects_list.length > 0) {
     const fx_labels = shuffle(effects_list)
 
-    const effect: Effect = fx.all[fx_labels[1]]
+    const effect: Effect = fx[fx_labels[1]]
     //testjpf need types, maybe more
     //effect.label = fx_labels[1]
     if (effect.fx.type == 'attitudes') {
       effect.fx.stat = npcs.all[c.suspect].clan
     }
-    fx.add_effects_bonus(watcher, effect)
+    add_effects_bonus(watcher, effect)
     print(
       'RC:::',
       watcher.labelname,
@@ -376,14 +376,14 @@ function merits_demerits(c: Caution, w: string) {
   }
   const fxArray = c.state === 'merits' ? fxLookup.merits : fxLookup.demerits
   const fx_labels = shuffle(fxArray)
-  const effect: Effect = { ...fx.all[fx_labels[1]] }
+  const effect: Effect = { ...fx[fx_labels[1]] }
   if (effect.fx.type == 'attitudes') {
     effect.fx.stat = npcs.all[c.suspect].clan
   }
   print(c.npc, 'found:', w, 'because merits.', w, 'has effect:', fx_labels[1])
   npcs.all[w].effects.push(effect)
   //table.insert(npcs.all[watcher].effects,effect)
-  fx.add_effects_bonus(npcs.all[w], effect)
+  add_effects_bonus(npcs.all[w], effect)
 }
 function passive_acts(c: Caution, w: string) {
   if (c.state == 'reckless') {

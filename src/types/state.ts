@@ -142,8 +142,8 @@ export interface Effect {
   label: string
   turns: number
   fx: {
-    type: string
+    type: 'skills' | 'binaries' | 'attitudes'
     stat: string
-    adjustment: 0.2
+    adjustment: number
   }
 }

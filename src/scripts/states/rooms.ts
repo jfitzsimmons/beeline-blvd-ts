@@ -14,7 +14,7 @@ export default class WorldRooms {
   fallbacks: Fallbacks
   constructor() {
     this.all = { ...RoomsInitState }
-    this.layout = { ...RoomsInitLayout }
+    this.layout = [...RoomsInitLayout]
     this.roles = { ...RoomsInitRoles }
     this.fallbacks = { ...RoomsInitFallbacks }
   }

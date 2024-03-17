@@ -13,7 +13,7 @@ function load_npcs() {
       const params = {
         npc,
       }
-      msg.post('/aid#npc_loader', 'load_npc', params)
+      msg.post(`/${station}#npc_loader`, 'load_npc', params)
     }
     //params.script = params.roomname + "/" + world.player.checkpoint:sub(1, -2) + "aid"
   }
@@ -48,16 +48,14 @@ function load_npcs() {
 	params.npc = world.rooms.all["grounds"].stations.worker2
 	if (params.npc != "") { params.script = params.roomname + "/" + world.player.checkpoint:sub(1, -2) + "worker2" } 
 	msg.post("/worker2#npc_loader", "load_npc", params)
-
-	params.npc = world.rooms.fallbacks.stations.grounds_unplaced
-	if (params.npc != "") { params.script = novel.script_builder(params.npc,params.roomname, "unplaced", nil, false)  } 
-	msg.post("/unplaced#npc_loader", "load_npc", params)
-
-	//load "AI" npc to screen prop
-	params.npc = "fredai"
-	params.script = params.roomname + "/" + world.player.checkpoint:sub(1, -2) + "screen" + "ais" 
-	msg.post("/screen#screen_loader", "show_npc", params)
 	**/
+  let npc = rooms.fallbacks.stations.grounds_unplaced
+  msg.post('/unplaced#npc_loader', 'load_npc', { npc })
+
+  //load "AI" npc to screen prop
+  npc = 'fredai'
+
+  msg.post('/screen#screen_loader', 'show_npc', { npc })
 }
 
 function load_storage() {
@@ -74,7 +72,7 @@ function load_storage() {
 }
 
 export function on_message(
-  this: any,
+  // this: any,
   messageId: hash,
   // message: any,
   _sender: url
