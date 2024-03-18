@@ -9,12 +9,12 @@ function load_npcs() {
   let station: keyof typeof stations
   for (station in stations) {
     const npc = stations[station]
-    if (npc != '') {
-      const params = {
-        npc,
-      }
-      msg.post(`/${station}#npc_loader`, 'load_npc', params)
+    //if (npc != '') {
+    const params = {
+      npc,
     }
+    msg.post(`/${station}#npc_loader`, 'load_npc', params)
+    //   }
     //params.script = params.roomname + "/" + world.player.checkpoint:sub(1, -2) + "aid"
   }
 

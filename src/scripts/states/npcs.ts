@@ -206,7 +206,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
   const startskills = [1, 2, 3, 5, 7, 7, 8, 8]
   const startbins = [-1, -0.5, -0.1, 0.1, 0.5, 1]
   let path = 0
-  let count = 0
+  let count = 1
   /** 
   const _defaults = { ...npc_defaults }
   let knd: keyof typeof _defaults 
@@ -217,7 +217,6 @@ function random_attributes(npcs: Npcs, order: string[]) {
   let kn: keyof typeof npcs
   for (kn in npcs) {
     order.splice(count, 0, kn)
-    count++
     npcs[kn].turns_since_encounter = math.random(5, 15)
     npcs[kn].love = math.random(-1, 1)
     // random attitude
@@ -225,8 +224,14 @@ function random_attributes(npcs: Npcs, order: string[]) {
     for (kbl in binarylookup) {
       npcs[kn].attitudes[kbl] = math.random(-9, 9)
     }
-
-    if (path > 4) path = 1
+    print(count, 'COUNT')
+    if (path > 3) {
+      count++
+      path = 0
+      if (count > 4) count = 1
+    }
+    print(`rpath,count ||| ::: race0${path + 1}_0${count}`)
+    npcs[kn].race = `race0${path + 1}_0${count}`
     npcs[kn].ai_path = ai_paths[path]
     path = path + 1
 

@@ -9,11 +9,11 @@ function load_npcs() {
   let station: keyof typeof stations
   for (station in stations) {
     const npc = stations[station]
-    if (npc != '') {
-      station == 'desk'
-        ? msg.post('desk#station', 'load_station', { npc, roomname })
-        : msg.post(`/${station}#npc_loader`, 'load_npc', { npc })
-    }
+    //  if (npc != '') {
+    station == 'desk'
+      ? msg.post('desk#station', 'load_station', { npc, roomname })
+      : msg.post(`/${station}#npc_loader`, 'load_npc', { npc })
+    //   }
     //params.script = params.roomname + "/" + world.player.checkpoint:sub(1, -2) + "aid"
   }
 

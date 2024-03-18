@@ -2,9 +2,11 @@
 const { npcs } = globalThis.game.world
 function show_npc(name: string) {
   if (name != '') {
-    sprite.play_flipbook('#npcsprite', name)
+    sprite.play_flipbook('#npcspritebody', npcs.all[name].body)
+    sprite.play_flipbook('#npcsprite', npcs.all[name].race)
   } else {
     msg.post('#npcsprite', 'disable')
+    msg.post('#npcspritebody', 'disable')
   }
 }
 

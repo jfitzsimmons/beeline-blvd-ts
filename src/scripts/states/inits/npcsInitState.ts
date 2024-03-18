@@ -15,6 +15,7 @@ const npc_defaults: NpcDefaults = {
   currentroom: '',
   exitroom: '',
   currentstation: '',
+  race: '',
 }
 export const NpcsInitState = {
   labor01: {
@@ -23,6 +24,7 @@ export const NpcsInitState = {
     inventory: ['tomato'],
     clearence: 1,
     clan: 'labor',
+    body: 'labor01body',
     ...npc_defaults,
   },
   labor02: {
@@ -31,6 +33,7 @@ export const NpcsInitState = {
     inventory: ['mushroom03'],
     clearence: 1,
     clan: 'labor',
+    body: 'labor02body',
     ...npc_defaults,
   },
   labor03: {
@@ -39,6 +42,7 @@ export const NpcsInitState = {
     inventory: [],
     clearence: 1,
     clan: 'labor',
+    body: 'labor03body',
     ...npc_defaults,
   },
   labor04: {
@@ -47,6 +51,7 @@ export const NpcsInitState = {
     inventory: [],
     clearence: 1,
     clan: 'labor',
+    body: 'labor04body',
     ...npc_defaults,
   },
   doc02: {
@@ -55,6 +60,7 @@ export const NpcsInitState = {
     inventory: [],
     clearence: 1,
     clan: 'doctors',
+    body: 'doctors01body',
     ...npc_defaults,
   },
   doc01: {
@@ -63,6 +69,7 @@ export const NpcsInitState = {
     inventory: ['orange'],
     clearence: 1,
     clan: 'doctors',
+    body: 'doctors02body',
     ...npc_defaults,
   },
   contractor02: {
@@ -71,6 +78,7 @@ export const NpcsInitState = {
     inventory: [],
     clearence: 0,
     clan: 'contractors',
+    body: 'contractors01body',
     ...npc_defaults,
   },
   contractor01: {
@@ -79,6 +87,7 @@ export const NpcsInitState = {
     inventory: ['earrings'],
     clearence: 0,
     clan: 'contractors',
+    body: 'contractors02body',
     ...npc_defaults,
   },
   visitor02: {
@@ -87,6 +96,7 @@ export const NpcsInitState = {
     inventory: ['mushroom02'],
     clearence: 0,
     clan: 'visitors',
+    body: 'visitors01body',
     ...npc_defaults,
   },
   visitor01: {
@@ -95,6 +105,7 @@ export const NpcsInitState = {
     inventory: ['leaf02'],
     clearence: 0,
     clan: 'visitors',
+    body: 'visitors02body',
     ...npc_defaults,
   },
   sexworker01: {
@@ -103,6 +114,7 @@ export const NpcsInitState = {
     inventory: ['magicb2'],
     clearence: 1,
     clan: 'sexworkers',
+    body: 'sexworkers01body',
     ...npc_defaults,
   },
   sexworker02: {
@@ -111,6 +123,7 @@ export const NpcsInitState = {
     inventory: ['leaf01'],
     clearence: 0,
     clan: 'sexworkers',
+    body: 'sexworkers02body',
     ...npc_defaults,
   },
   church01: {
@@ -119,6 +132,7 @@ export const NpcsInitState = {
     inventory: ['mirror'],
     clearence: 1,
     clan: 'church',
+    body: 'church02body',
     ...npc_defaults,
   },
   church02: {
@@ -127,6 +141,7 @@ export const NpcsInitState = {
     inventory: ['string'],
     clearence: 0,
     clan: 'church',
+    body: 'church01body',
     ...npc_defaults,
   },
   eve: {
@@ -135,6 +150,7 @@ export const NpcsInitState = {
     inventory: ['bronze', 'glove01'],
     clearence: 1,
     clan: 'staff',
+    body: 'staff01body',
     ...npc_defaults,
   },
   tyler: {
@@ -143,6 +159,7 @@ export const NpcsInitState = {
     inventory: ['banana', 'cape'],
     clearence: 1,
     clan: 'staff',
+    body: 'staff02body',
     ...npc_defaults,
   },
   frank: {
@@ -151,6 +168,7 @@ export const NpcsInitState = {
     inventory: ['envelope', 'vial01'],
     clearence: 1,
     clan: 'staff',
+    body: 'staff03body',
     ...npc_defaults,
   },
   staff04: {
@@ -159,6 +177,7 @@ export const NpcsInitState = {
     inventory: ['fish01', 'gold'],
     clearence: 1,
     clan: 'staff',
+    body: 'staff04body',
     ...npc_defaults,
   },
   staff05: {
@@ -167,6 +186,7 @@ export const NpcsInitState = {
     inventory: ['steak02'],
     clearence: 1,
     clan: 'staff',
+    body: 'staff05body',
     ...npc_defaults,
   },
   bruiser: {
@@ -175,6 +195,7 @@ export const NpcsInitState = {
     inventory: ['egg01', 'mallot'],
     clearence: 1,
     clan: 'gang1',
+    body: 'gang101body',
     ...npc_defaults,
   },
   lou: {
@@ -183,6 +204,7 @@ export const NpcsInitState = {
     inventory: ['avacado'],
     clearence: 1,
     clan: 'gang1',
+    body: 'gang102body',
     ...npc_defaults,
   },
   spike: {
@@ -191,6 +213,7 @@ export const NpcsInitState = {
     inventory: ['rose'],
     clearence: 1,
     clan: 'gang2',
+    body: 'gang201body',
     ...npc_defaults,
   },
   curly: {
@@ -199,6 +222,7 @@ export const NpcsInitState = {
     inventory: ['berry02'],
     clearence: 1,
     clan: 'gang2',
+    body: 'gang202body',
     ...npc_defaults,
   },
   gang302: {
@@ -207,6 +231,7 @@ export const NpcsInitState = {
     inventory: ['shrimp02'],
     clearence: 1,
     clan: 'gang3',
+    body: 'gang301body',
     ...npc_defaults,
   },
   gang301: {
@@ -215,6 +240,7 @@ export const NpcsInitState = {
     inventory: ['magicc5'],
     clearence: 1,
     clan: 'gang3',
+    body: 'gang302body',
     ...npc_defaults,
   },
   gang402: {
@@ -223,6 +249,7 @@ export const NpcsInitState = {
     inventory: ['fish02', 'sunhat'],
     clearence: 1,
     clan: 'gang4',
+    body: 'gang401body',
     ...npc_defaults,
   },
   gang401: {
@@ -231,6 +258,7 @@ export const NpcsInitState = {
     inventory: ['eyeball02'],
     clearence: 1,
     clan: 'gang4',
+    body: 'gang402body',
     ...npc_defaults,
   },
   corps02: {
@@ -239,6 +267,7 @@ export const NpcsInitState = {
     inventory: ['magicb3'],
     clearence: 1,
     clan: 'corps',
+    body: 'corps01body',
     ...npc_defaults,
   },
   corps01: {
@@ -247,6 +276,7 @@ export const NpcsInitState = {
     inventory: ['sack'],
     clearence: 1,
     clan: 'corps',
+    body: 'corps02body',
     ...npc_defaults,
   },
   corps03: {
@@ -255,6 +285,7 @@ export const NpcsInitState = {
     inventory: ['magica4'],
     clearence: 1,
     clan: 'corps',
+    body: 'corps03body',
     ...npc_defaults,
   },
   security001: {
@@ -263,6 +294,7 @@ export const NpcsInitState = {
     inventory: ['potion'],
     clearence: 1,
     clan: 'security',
+    body: 'security01body',
     ...npc_defaults,
   },
   security002: {
@@ -272,6 +304,7 @@ export const NpcsInitState = {
     inventory: ['ring'],
     clearence: 1,
     clan: 'security',
+    body: 'security02body',
     ...npc_defaults,
   },
   security003: {
@@ -280,6 +313,7 @@ export const NpcsInitState = {
     inventory: ['drumstick01'],
     clearence: 2,
     clan: 'security',
+    body: 'security03body',
     ...npc_defaults,
   },
   security004: {
@@ -288,6 +322,7 @@ export const NpcsInitState = {
     inventory: ['coffeemug'],
     clearence: 2,
     clan: 'security',
+    body: 'security04body',
     ...npc_defaults,
   },
 }

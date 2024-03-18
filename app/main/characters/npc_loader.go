@@ -16,17 +16,17 @@ components {
 embedded_components {
   id: "npcsprite"
   type: "sprite"
-  data: "default_animation: \"frank\"\n"
+  data: "default_animation: \"race01_01\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   "textures {\n"
   "  sampler: \"texture_sampler\"\n"
-  "  texture: \"/main/characters/tilesources/npcs.tilesource\"\n"
+  "  texture: \"/main/characters/tilesources/npcs64x128.tilesource\"\n"
   "}\n"
   ""
   position {
     x: 0.0
-    y: 0.0
+    y: 64.0
     z: 0.0
   }
   rotation {
@@ -121,6 +121,29 @@ embedded_components {
   "angular_damping: 0.0\n"
   "locked_rotation: false\n"
   "bullet: false\n"
+  ""
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+embedded_components {
+  id: "npcspritebody"
+  type: "sprite"
+  data: "default_animation: \"church01body\"\n"
+  "material: \"/builtins/materials/sprite.material\"\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  "textures {\n"
+  "  sampler: \"texture_sampler\"\n"
+  "  texture: \"/main/characters/tilesources/npcs64x128.tilesource\"\n"
+  "}\n"
   ""
   position {
     x: 0.0

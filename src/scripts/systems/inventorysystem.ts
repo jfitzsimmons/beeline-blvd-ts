@@ -576,26 +576,27 @@ export function add_chest_bonus(actor: Npc | PlayerState, i: string) {
 }
 
 export function remove_random(to_inv: string[], from_inv: string[]) {
-  let stolen_item = shuffle(from_inv).pop()
-  if (stolen_item === undefined) stolen_item = ''
+  const stolen_item = shuffle(from_inv).pop()
+  if (stolen_item === undefined) return ''
   print('remove_ random', stolen_item)
   if (stolen_item !== '') to_inv.push(stolen_item)
   return stolen_item
 }
 
 export function remove_last(to_inv: string[], from_inv: string[]) {
-  let stolen_item = from_inv.pop()
-  if (stolen_item === undefined) stolen_item = ''
+  const stolen_item = from_inv.pop()
+  if (stolen_item === undefined) return ''
   print('remove_ last', stolen_item)
   if (stolen_item !== '') to_inv.push(stolen_item)
   return stolen_item
 }
-
+//testjpf amke this one alway fire for testing
 export function remove_advantageous(
   to_inv: string[],
   from_inv: string[],
   skills: Skills
 ) {
+  if (from_inv.length < 1) return ''
   //const order = utils.create_ipairs(skills)
   const order = Object.entries(skills)
 
@@ -639,6 +640,8 @@ export function remove_valuable(to_inv: string[], from_inv: string[]) {
 		print("M.items[iv].value:",M.items[iv].value)
 	}
 	**/
+  if (from_inv.length < 1) return ''
+
   from_inv.sort((a: string, b: string) => items[a].value - items[b].value)
   let stolen_item = from_inv.pop()
 

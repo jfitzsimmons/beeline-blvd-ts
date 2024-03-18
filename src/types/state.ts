@@ -46,6 +46,7 @@ export interface Npc extends NpcDefaults {
   inventory: string[]
   clearence: number
   clan: string
+  body: string
 }
 
 export interface NpcDefaults {
@@ -64,6 +65,7 @@ export interface NpcDefaults {
   currentroom: string
   exitroom: string
   currentstation: string
+  race: string
 }
 export interface Skills {
   [key: string]: number
