@@ -1,8 +1,6 @@
 const { world } = globalThis.game
 const { rooms } = world
 
-print('world.clock', world.clock)
-//const utils: any = require("main.utils.utils");
 interface props {
   actions: { [key: string]: string[] }
   roomname: string

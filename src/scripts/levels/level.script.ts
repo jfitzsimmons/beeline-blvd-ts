@@ -63,11 +63,6 @@ export function on_message(
       msg.post('proxies:/controller#worldcontroller', 'faint', params)
     } else {
       this.roomname = message.roomname
-      print(
-        'player.matrix_y, player.matrix_x',
-        player.matrix_y,
-        player.matrix_x
-      )
       player.exitroom = rooms.layout[player.matrix_y][player.matrix_x]!
       player.currentroom = this.roomname
       player.matrix = rooms.all[this.roomname].matrix

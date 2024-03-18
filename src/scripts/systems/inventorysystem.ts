@@ -605,6 +605,7 @@ export function remove_advantageous(
   let found = false
   let stolen_item = ''
   let count = 0
+
   for (const desire of order) {
     for (const item of from_inv) {
       const stats: InventoryTableItem = items[item]
@@ -622,6 +623,7 @@ export function remove_advantageous(
     }
     if (found == true) break
   }
+  print('print adv!!!', stolen_item)
   if (found == false) {
     stolen_item = from_inv.splice(from_inv.length - 1, 1)[0]
     print('remove_ advFALLBACK', stolen_item)

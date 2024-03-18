@@ -236,7 +236,6 @@ function random_attributes(npcs: Npcs, order: string[]) {
 
     let ks: keyof typeof skills
     for (ks in skills) {
-      print(ks, ': tempskills[s_count]: ', tempskills[s_count])
       npcs[kn].skills[ks] = tempskills[s_count] + math.random(-1, 1)
       s_count = s_count + 1
     }

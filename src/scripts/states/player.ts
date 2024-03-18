@@ -70,6 +70,9 @@ export default class WorldPlayer {
   public set currentroom(r: string) {
     this._state.currentroom = r
   }
+  public get currentroom() {
+    return this._state.currentroom
+  }
 
   public set turns(n: number) {
     this._state.turns = n

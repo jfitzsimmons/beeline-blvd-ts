@@ -49,7 +49,8 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
 
   //loop through priority room_list
   while (placed == false) {
-    room_list.forEach((room: string) => {
+    //    room_list.forEach((room: string) => {
+    for (const room of room_list) {
       const shuffled_stations: [string, string][] = shuffle(
         Object.entries(rooms.all[room].stations)
       )
@@ -64,7 +65,7 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
             npc,
             ',went to ,',
             room,
-            ks,
+            ks[0],
             ',from,',
             rooms.layout[current.y][current.x],
             ',using,',
@@ -85,11 +86,11 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
           } else {
             npcs.all[npc].turns_since_encounter = 0
           }
-          break
+          return
         }
       }
       //  if (placed == true) break
-    })
+    }
     // fallback stations
     if (placed == false) {
       // testjpf thought of idea to have a "non_placer" npc in each room.
@@ -143,12 +144,7 @@ function set_room_priority(
 ): string[] {
   const room_list: (string | null)[] = []
   const current = npcs.all[npc].matrix
-  print(npc, target.x, target.y, 'target.x target.y')
   //get list of possible rooms NPC could go to next in order to get to target
-  print(current.x, current.y, 'current.x current.y')
-  print('curr room', rooms.layout[current.y][current.x])
-  //print(rooms.layout[current.y + 1][current.x])
-
   //testjpf
   if (target.y > current.y) {
     room_list.push(rooms.layout[current.y + 1][current.x])
@@ -404,13 +400,8 @@ export function witness(w: string) {
   }
 
   // is an NPC watching?
-  if (
-    watcher != null &&
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    seen_check(suspect.skills, watcher.skills) == true
-  ) {
+  if (watcher != null && seen_check(suspect.skills, watcher.skills) == true) {
     // should NPC confront suspect?
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     if (confrontation_check(suspect, watcher) == true) {
       consequence.confront = true
       consequence.type = 'confront'

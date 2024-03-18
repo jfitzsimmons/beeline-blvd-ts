@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-//import World from '../states/world'
 import { Game } from '../states/gamesystem2'
 const { world } = globalThis.game
 const { player } = world
@@ -87,7 +86,7 @@ export function on_message(
     this.roomname = message.enter_room
     this.is_menu = false
     this.load_type = message.load_type
-
+    print('--- === ::: NEW ROOM LOADED ::: === ---')
     handle_new_turn(this.load_type)
     show(this.current_proxy, '#' + this.roomname)
   } else if (messageId == hash('proxy_loaded')) {
