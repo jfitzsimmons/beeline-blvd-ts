@@ -143,8 +143,8 @@ instances {
   id: "loiter2"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 289.0
-    y: 253.0
+    x: 282.0
+    y: 227.0
     z: 0.1
   }
   rotation {
@@ -163,8 +163,8 @@ instances {
   id: "guard"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 1148.0
-    y: 234.0
+    x: 1151.0
+    y: 206.0
     z: 0.1
   }
   rotation {
@@ -183,8 +183,8 @@ instances {
   id: "patrol"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 475.0
-    y: 697.0
+    x: 417.0
+    y: 694.0
     z: 0.1
   }
   rotation {
@@ -223,8 +223,8 @@ instances {
   id: "guest"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 708.0
-    y: 364.0
+    x: 705.0
+    y: 344.0
     z: 0.1
   }
   rotation {
@@ -263,8 +263,8 @@ instances {
   id: "guest2"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 1108.0
-    y: 775.0
+    x: 1050.0
+    y: 740.0
     z: 0.1
   }
   rotation {
@@ -714,7 +714,7 @@ embedded_instances {
   position {
     x: 861.0
     y: 455.0
-    z: 0.7
+    z: 0.2
   }
   rotation {
     x: 0.0
