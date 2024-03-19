@@ -8,12 +8,12 @@ const { world } = globalThis.game
 const { rooms, npcs, player, tasks } = world
 import { Confront } from '../../types/state'
 import { address_cautions } from '../systems/tasksystem'
-import { quest_checks } from '../quests/quests_main'
+import { quest_checker } from '../quests/quests_main'
 
 function game_turn(room: string) {
   rooms.clear_stations()
   ai_turn(room)
-  quest_checks('turn')
+  quest_checker('turn')
   tasks.address_quests('turn', player.checkpoint)
   player.ap = player.ap - 1
   player.turns = player.turns + 1
@@ -60,6 +60,7 @@ export function on_message(
       const params = {
         enter_room: tasks.spawn,
       }
+      print('faint :level')
       msg.post('proxies:/controller#worldcontroller', 'faint', params)
     } else {
       this.roomname = message.roomname
@@ -92,7 +93,7 @@ export function on_message(
       msg.post('adam#adam', 'wake_up')
     }
   } else if (messageId == hash('exit_gui')) {
-    quest_checks('interact')
+    quest_checker('interact')
 
     tasks.address_quests('interact', player.checkpoint)
     if (message.novel == true) {

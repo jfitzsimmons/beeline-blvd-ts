@@ -626,7 +626,7 @@ export function remove_advantageous(
   }
   print('print adv!!!', stolen_item)
   if (found == false) {
-    stolen_item = from_inv.splice(from_inv.length - 1, 1)[0]
+    stolen_item = from_inv.splice(0, 1)[0]
     print('remove_ advFALLBACK', stolen_item)
     to_inv.push(stolen_item)
   }

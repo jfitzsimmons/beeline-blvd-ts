@@ -2,26 +2,21 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+print('testjpf 2nd??')
+
 import { Game } from '../states/gamesystem2'
-const { world } = globalThis.game
-const { player } = world
+
 math.randomseed(os.time())
-///scripts/world/worldcontroller.script
-//The file '/scripts/world/main/states/settings.lua' could not be found.
+
 const settings = require('../../main.states.settings')
 const save = require('../../main.states.save')
 import { place_npcs } from '../ai/ai_main'
-//const ai = require('../../main.systems.ai.ai_main')
-
-//const gamesystem = require('../../main.systems/gamesystem')
-//const gamesystem2 = require( 'scripts.states.gamesystem2')
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 
 function handle_new_turn(load_type: string) {
   if (load_type === 'room transition') {
-    world.clock = world.clock + 1
-    if (world.clock > 23) {
-      world.clock = world.clock - 24
+    globalThis.game.world.clock = globalThis.game.world.clock + 1
+    if (globalThis.game.world.clock > 23) {
+      globalThis.game.world.clock = globalThis.game.world.clock - 24
     }
   } else if (load_type === 'new game') {
     globalThis.game = new Game()
@@ -44,7 +39,7 @@ export function init(this: props) {
   //print('testjpf check again:::', gamesystem2)
 
   //init from bootstrap (main.collection)
-  globalThis.game = new Game()
+  //globalThis.game = new Game()
   this.current_proxy = null
   this.load_type = 'none'
 
@@ -74,13 +69,13 @@ export function on_message(
     this.is_menu = true
     show(this.current_proxy, '#main_menu')
   } else if (messageId == hash('faint')) {
-    world.clock = world.clock + 6
-    player.ap = player.ap_max - 6
+    globalThis.game.world.clock = globalThis.game.world.clock + 6
+    globalThis.game.world.player.ap = globalThis.game.world.player.ap_max - 6
     msg.post('#', 'pick_room', message)
   } else if (messageId == hash('arrested')) {
-    world.clock = world.clock + 6
-    player.alert_level = 0
-    player.ap = player.ap_max - 6
+    globalThis.game.world.clock = globalThis.game.world.clock + 6
+    globalThis.game.world.player.alert_level = 0
+    globalThis.game.world.player.ap = globalThis.game.world.player.ap_max - 6
     msg.post('#', 'pick_room', message)
   } else if (messageId == hash('pick_room')) {
     this.roomname = message.enter_room

@@ -25,26 +25,17 @@ export function init(this: props) {
 }
 
 function add_item_player(item: string) {
-  print('additem player : item::', item)
   player.inventory.push(item)
   add_chest_bonus(player.state, item)
 }
 
 function remove_item_player(item: string) {
-  print('REMitem player : item::', item)
-
   const itemIndex = player.inventory.indexOf(item)
-  print('REMitem PLayer : itemIndex::', itemIndex)
-
   const removed = player.inventory.splice(itemIndex, 1)
-  print('removed[0] PLAYER::', removed[0])
-
   remove_chest_bonus(player.state, removed[0])
 }
 
 function add_item_actor(actor: string, room: string, inv_item: string) {
-  print('additem ACTIR : item::', inv_item)
-
   if (npcs.all[actor] != null) {
     npcs.all[actor].inventory[npcs.all[actor].inventory.length] = inv_item
     add_chest_bonus(npcs.all[actor], inv_item)
@@ -56,13 +47,9 @@ function add_item_actor(actor: string, room: string, inv_item: string) {
 }
 
 function remove_item_actor(actor: string, room: string, item: string) {
-  print('REMitem actoR : item::', item)
-
   if (npcs.all[actor] != null) {
     const itemIndex = npcs.all[actor].inventory.indexOf(item)
-    print('REMitem actoR : itemIndex::', itemIndex)
     const removed = npcs.all[actor].inventory.splice(itemIndex, 1)
-    print('removed[0]', removed[0])
     remove_chest_bonus(npcs.all[actor], removed[0])
   } else {
     const itemIndex = rooms.all[room].actors[actor].inventory.indexOf(item)
@@ -80,9 +67,7 @@ function hide_inventory_animation(node: node) {
     gui.EASING_OUTQUAD,
     0.2
   )
-  print('pretimer')
   timer.delay(0.3, false, function () {
-    print('intimer')
     gui.play_flipbook(node, 'empty')
     gui.animate(
       node,
@@ -92,7 +77,6 @@ function hide_inventory_animation(node: node) {
       0.2
     )
   })
-  print('posttimer')
 }
 
 function show_inventory_animation(actor_inv: string[], beneficiary: string) {
@@ -181,11 +165,6 @@ function check_inventory_nodes(
       gui.pick_node(node, action.x, action.y) &&
       textureHash != hash('empty')
     ) {
-      //    let tKey: keyof typeof inventoryLookup
-      //      for (tKey in inventoryLookup) {
-      //       print('testjpf tkey:', tKey)
-      //   }
-      print(textureHash, 'pre-hash-lookup testjpf')
       const item = inventoryLookup[hash_to_hex(textureHash)]
       hide_inventory_animation(node)
 
@@ -260,13 +239,8 @@ export function on_message(
   if (messageId == hash('opened_chest')) {
     const inventory_node = gui.get_node('btm')
     const name_node = gui.get_node('propname')
-
-    // this.room = message.room
-    // print(this.room, '<--THIS.ROOM testjpf')
     this.watcher = message.watcher
     this.actorname = message.actorname //npc or prop name
-
-    //
     this.actorinventory = choose_inventory(this.actorname)
 
     load_inventory_sprites(this.actorinventory)

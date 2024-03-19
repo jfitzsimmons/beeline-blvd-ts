@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-const quest = require('../../../main.systems.quests.quest_main')
+//const quest = require('../../../main.systems.quests.quest_main')
 const matchanovel = require('../../../main.novel.matchanovel')
 //const save = require ("main.novel.save")
 //const settings = require ("main.novel.settings")
@@ -11,6 +11,7 @@ const matchanovel = require('../../../main.novel.matchanovel')
 //make it a class constructed by World?
 //leaning towards class.
 //import { Npcs, PlayerState, Skills, QuestMethods } from '../../types/state'
+import { questScripts } from '../quests/quests_main'
 const { tasks, npcs, player, novel } = globalThis.game.world
 
 function script_builder(
@@ -29,7 +30,7 @@ function script_builder(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let path: string =
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    quest.checkpoints[checkpoint].scripts[checkpoint + 'scripts'](name)
+    questScripts[checkpoint + 'scripts'](name)
 
   if (path == '') {
     if (room) {
@@ -109,7 +110,7 @@ export function on_message(
     //testjpf create func() called+. emergencies()????
     if (message.cause == 'faint') {
       const params = {
-        enter_room: quest.checkpoints[player.checkpoint.slice(0, -1)].spawn,
+        enter_room: tasks.spawn,
       }
       msg.post('proxies:/controller#worldcontroller', 'faint', params)
     } else if (message.cause == 'arrested') {
