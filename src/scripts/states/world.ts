@@ -22,7 +22,7 @@ export default class World {
     this.player = new WorldPlayer()
     this.npcs = new WorldNpcs()
     this.rooms = new WorldRooms()
-    this.novel = new WorldNovel(this.npcs.all[0])
+    this.novel = new WorldNovel(this.npcs.all.labor01)
     const params: AllQuestsMethods = {
       pq: this.player.quests,
       nq: this.npcs.quests,

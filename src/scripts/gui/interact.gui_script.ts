@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-//const world = require "main.states.worldstate"
-//const task = require "main.states.taskstates"
-////const ai = require "main.systems.ai.ai_main"
-//const novel = require "main.utils.novel"
+
 import { witness } from '../ai/ai_main'
-const { npcs, rooms, tasks, player } = globalThis.game.world
+const { npcs, rooms, tasks, player, novel } = globalThis.game.world
 
 interface cloneparent {
   clone: node
@@ -34,15 +31,12 @@ function show_ai_screen() {
 function open_novel(_this: props) {
   print('OPEN NOVEL', _this.npcname)
   npcs.all[_this.npcname].convos = npcs.all[_this.npcname].convos + 1
-  const params = {
-    //path:_this.script,
-    npc: _this.npcname,
-  }
-  //	print("_this.script", _this.script)
-  print('npcs.all[_this.npcname].convos', npcs.all[_this.npcname].convos)
+  novel.npc = npcs.all[_this.npcname]
+  print('just set novel npc: TESTJPF', novel.npc)
 
   //pass params to level to access level information
-  msg.post('level#level', 'show_scene', params)
+  //rtestjpf
+  msg.post('level#level', 'show_scene')
   msg.post('#', 'release_input_focus')
 }
 

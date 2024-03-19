@@ -531,7 +531,7 @@ end
 -- can handle jumps through LUA???
 -- pass character, love score, and location to determine txts and/or jumps
 --ex: desk1_frank_0, desk1_frank_5, desk1_frank_9, desk1_eve_0, desk1_eve_5, desk1_eve_9
-function M.init(path, options)
+function M.init(option, path) -- TESTJPF you just flkippped tehse!! start here
 	if path then 
 		M.add_file(path) --gos to mscript add_file to load_file, which uses defold engine add locally to script = {}
 	end

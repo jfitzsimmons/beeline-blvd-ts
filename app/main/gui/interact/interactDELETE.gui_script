@@ -126,7 +126,7 @@ function open_novel(self)
 		npc = self.npcname
 	}
 	print("self.script", self.script)
-	print("npcs[self.npcname].convos", npcs[self.npcname].convos)
+	print("npcs[self.npcname].convos FIRED TESTJPF OLD?!?!?!", npcs[self.npcname].convos)
 
 	--pass params to level to access level information
 	msg.post("level#level", "show_scene", params)

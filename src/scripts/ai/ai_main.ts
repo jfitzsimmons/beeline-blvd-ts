@@ -1,11 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
-//const reception = require('../../main.systems.ai.levels.reception')
-//const utils = require('main.utils.utils')
 import { shuffle } from '../utils/utils'
 import { seen_check, confrontation_check } from './ai_checks'
-//const checks = require('../../main.utils.checks')
 import { Direction } from '../../types/ai'
 import { Prisoners } from '../../types/state'
 import { remove_effects } from '../systems/effectsystem'
@@ -345,7 +339,6 @@ export function place_npcs() {
         rooms.all.grounds.stations[ks[0]] = npc.labelname
         npc.matrix = rooms.all.grounds.matrix
         npc.currentstation = ks[0]
-        print('GROUNDS::: ', npc.labelname, 'placed in', ks)
         placed = true
         break
       }

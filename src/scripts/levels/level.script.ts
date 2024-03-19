@@ -3,13 +3,15 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import { ai_turn } from '../ai/ai_main'
+import { ai_turn, place_npcs } from '../ai/ai_main'
 const { world } = globalThis.game
-const { rooms, npcs, player, tasks } = world
+const { rooms, npcs, player, tasks, novel } = world
 import { Confront } from '../../types/state'
 import { address_cautions } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
-
+export function init() {
+  place_npcs()
+}
 function game_turn(room: string) {
   rooms.clear_stations()
   ai_turn(room)
@@ -28,14 +30,10 @@ function update_hud() {
 
 function confrontation_scene(c: Confront) {
   npcs.all[c.npc].convos = npcs.all[c.npc].convos + 1
-  //need tstjpf to investigate this script builder
-  // ditch it.  use world.novel???
-  const params = {
-    npc: c.npc,
-    reason: c.reason,
-  }
+  novel.npc = npcs.all[c.npc]
+  novel.reason = c.reason
   //pass params to load novel
-  msg.post('#', 'show_scene', params)
+  msg.post('#', 'show_scene')
 }
 interface props {
   //chests: ???,
@@ -78,12 +76,6 @@ export function on_message(
 
       update_hud()
 
-      //testjpf so could have load npcs, then load props
-      //for rk,rv in pairs(world.rooms.all[this.room].npcs) do
-      // desks use different scripts!!
-      //props use specific animations per level!!
-      //hold off for a while
-      //load room specific state
       msg.post('level#' + this.roomname, 'room_load')
 
       const confrontation: Confront | null = address_cautions()
@@ -96,15 +88,17 @@ export function on_message(
     quest_checker('interact')
 
     tasks.address_quests('interact', player.checkpoint)
+
     if (message.novel == true) {
       msg.post(this.roomname + ':/adam#interact', 'reload_script')
     }
+
     msg.post(this.roomname + ':/adam#adam', 'acquire_input_focus')
   } else if (messageId == hash('show_scene')) {
     msg.post('hud#map', 'release_input_focus')
-    const params = message
-    params.roomname = this.roomname
-    msg.post('proxies:/controller#novelcontroller', 'show_scene', params)
+    //testjpf DELETE all params get npc, reason and script from Novel class
+    //get roomname from Player.currentroom
+    msg.post('proxies:/controller#novelcontroller', 'show_scene')
   } else if (messageId == hash('update_alert')) {
     sprite.play_flipbook(
       'hud#security_alert',

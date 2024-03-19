@@ -224,13 +224,11 @@ function random_attributes(npcs: Npcs, order: string[]) {
     for (kbl in binarylookup) {
       npcs[kn].attitudes[kbl] = math.random(-9, 9)
     }
-    print(count, 'COUNT')
     if (path > 3) {
       count++
       path = 0
       if (count > 4) count = 1
     }
-    print(`rpath,count ||| ::: race0${path + 1}_0${count}`)
     npcs[kn].race = `race0${path + 1}_0${count}`
     npcs[kn].ai_path = ai_paths[path]
     path = path + 1

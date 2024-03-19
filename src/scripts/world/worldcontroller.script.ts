@@ -3,14 +3,12 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 print('testjpf 2nd??')
+math.randomseed(os.time())
 
 import { Game } from '../states/gamesystem2'
 
-math.randomseed(os.time())
-
 const settings = require('../../main.states.settings')
 const save = require('../../main.states.save')
-import { place_npcs } from '../ai/ai_main'
 
 function handle_new_turn(load_type: string) {
   if (load_type === 'room transition') {
@@ -20,9 +18,6 @@ function handle_new_turn(load_type: string) {
     }
   } else if (load_type === 'new game') {
     globalThis.game = new Game()
-    place_npcs()
-    //gamesystem.init()
-    //testjpf working now from ts file gamesystem 2!!!
   }
 }
 
@@ -35,9 +30,6 @@ function show(current_proxy: url | null, p: string) {
 }
 
 export function init(this: props) {
-  // gamesystem2 = require 'scripts.states.gamesystem2'
-  //print('testjpf check again:::', gamesystem2)
-
   //init from bootstrap (main.collection)
   //globalThis.game = new Game()
   this.current_proxy = null
@@ -49,7 +41,6 @@ export function init(this: props) {
   msg.post('#', 'show_menu')
 }
 interface props {
-  //chests: ???,
   is_menu: boolean
   roomname: string
   storagename: string

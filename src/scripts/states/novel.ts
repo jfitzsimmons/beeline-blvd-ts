@@ -17,7 +17,7 @@ import { Npc } from '../../types/state'
 export default class WorldNovel {
   private background: string
   private sprites: { [key: string]: string }
-  private reason: string
+  private _reason: string
   private _script: string
   private _alertChange: number
   private _npc: Npc
@@ -25,10 +25,12 @@ export default class WorldNovel {
   constructor(initnpc: Npc) {
     this.background = ''
     this.sprites = {}
-    this.reason = ''
+    this._reason = ''
     this._script = ''
     this._alertChange = 0
     this._npc = initnpc
+    //Have something here like this.sprites.smile .laugh .sad etc....
+    // set the sprites in the same function you set npc! TESTJPF
     /** 
     this._state = { ...PlayerInitState }
     random_skills(this._state.skills)
@@ -38,7 +40,12 @@ export default class WorldNovel {
       increase_alert_level: this.increase_alert_level.bind(this),
     }**/
   }
-
+  public get reason() {
+    return this._reason
+  }
+  public set reason(r: string) {
+    this._reason = r
+  }
   public get script() {
     return this._script
   }
@@ -49,6 +56,7 @@ export default class WorldNovel {
     return this._npc
   }
   public set npc(npc: Npc) {
+    print('NOVEL set npc: ', npc)
     this._npc = npc
   }
   public get alertChange() {
