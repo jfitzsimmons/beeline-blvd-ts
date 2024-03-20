@@ -1,0 +1,42 @@
+local world = require "main.states.worldstate"
+local utils = require "main.utils.utils"
+
+function init(self)
+	self.chests = {}
+	self.actions = {}
+end
+
+function prep_storage(self, message)
+	self.storagename = message.storagename
+	self.room = message.roomname
+	--self.url = world.rooms.all[self.room].actors[self.storagename].url
+	self.actions[self.storagename] = world.rooms.all[self.room].actors[self.storagename].actions
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("trigger_response") then -- <2>
+		if message.enter then -- <3>	
+			local params = {
+				pos = go.get_position("adam"),
+				actions = self.actions,
+				sender = go.get_id(),
+				collision = "enter",
+				--parenturl = self.url,
+				actorname = self.storagename,
+				room = self.room
+				--character = false,
+			}
+			
+			msg.post("adam#interact", "shownode", params )
+		else
+			local params = {
+				["collision"] = "exit",
+				["texts"] = self.actions
+			}
+			msg.post("adam#interact", "hidenode", params)
+		end
+	elseif message_id == hash("load_storage_inventory") then 
+		sprite.play_flipbook("#sprite", message.ani)
+		prep_storage(self, message)
+	end
+end

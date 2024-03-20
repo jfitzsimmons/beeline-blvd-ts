@@ -1,0 +1,62 @@
+
+local world = require "main.states.worldstate"
+local taskstates = require "main.states.taskstates"
+local task = require "main.systems.tasksystem"
+local quest = require "main.systems.quests.quest_main"
+local matchanovel = require "main.novel.matchanovel"
+local save = require "main.novel.save"
+local settings = require "main.novel.settings"
+
+u = require "main.utils.novel"
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("wake_up") then 
+		self.npc = message.npc
+		self.roomname = message.roomname
+		--testjpf i wonder if this is handled better in original matchanovel
+		-- cant use this in html.  no file load. indexDB only.
+		local pathstring = "/main/novel/assets/scripts/" .. message.path .. ".txt"
+		
+		if message.reason ~= nil then reason = message.reason end
+		--testjpf probably a better way to do this TODO
+		
+		npc = world.npcs.all[self.npc] 
+		npc.sighsprite = "/main/novel/assets/characters/" .. self.npc .. "/sigh.png"
+		npc.madsprite = "/main/novel/assets/characters/" .. self.npc .. "/angry.png"
+		npc.frownsprite = "/main/novel/assets/characters/" .. self.npc .. "/frown.png"
+		npc.laughsprite = "/main/novel/assets/characters/" .. self.npc .. "/laugh.png"
+		npc.smilesprite = "/main/novel/assets/characters/" .. self.npc .. "/smile.png"
+		
+		player = world.player
+		
+		matchanovel.init(pathstring)
+		matchanovel.start()
+	elseif message_id == hash("sleep") then 
+		if message.merits ~= nil then
+			world.npcs.all[self.npc].love = message.merits
+			world.npcs.all[self.npc].turns_since_encounter = 0
+		end
+		print("world.player.hp", world.player.hp)
+		print("world.npcs.all[self.npc].turns_since_encounter", world.npcs.all[self.npc].turns_since_encounter)
+		msg.post("proxies:/controller#novelcontroller", "unload_novel")
+	
+		--testjpf create func() called... emergencies()????
+		if message.faint == true then
+			local params = {
+				enter_room = quest.checkpoints[world.player.checkpoint:sub(1, -2)].spawn
+			}
+			msg.post("proxies:/controller#worldcontroller", "faint", params)
+		elseif  message.arrested == true then
+			taskstates.remove_heat("player")
+			msg.post("proxies:/controller#worldcontroller", "arrested", {enter_room = "security"})
+		end
+		print("NOVEL::: world.player.alert_level",world.player.alert_level)
+		if world.player.alert_level ~= message.alert and message.alert ~= nil then
+			world.player.alert_level = message.alert
+			msg.post(self.roomname .. ":/level#level", "update_alert", {npc_name = self.npc})
+		end
+		print("NOVEL::: message.alert",message.alert)
+		print("NOVEL::: world.player.alert_level",world.player.alert_level)
+		msg.post(self.roomname .. ":/level#level", "exit_gui", {novel = true})
+	end 
+end

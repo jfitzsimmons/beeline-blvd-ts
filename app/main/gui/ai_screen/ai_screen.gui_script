@@ -1,0 +1,67 @@
+function on_input(self, action_id, action)
+	if action_id == hash("touch") and action.released then
+		print("TOUCH")
+		if gui.pick_node(gui.get_node("exit"), action.x, action.y) then 
+			--[[
+			local params = {
+				parentprop = self.parentprop,
+				character = self.character,
+				playerinventory = world.player.inventory,
+			}
+
+			gui.set_enabled(gui.get_node("btm"),false)
+
+			if self.character == true then
+				world.set_npc_inventory(self.actorinventory, self.parentprop)
+			else
+				world.set_actor_inventory(self.actorinventory, self.parentprop, self.room)
+			end
+
+			msg.post("level#level", "exit_gui")
+			]]--
+			gui.set_enabled(gui.get_node("screen"),false)
+			msg.post("adam#adam", "acquire_input_focus")
+		end
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("show_screen") then 
+		node = gui.get_node("screen")
+		--[[
+		local name = gui.get_node("propname")
+
+		self.parentprop = message.npcname --actor name
+		if world.npcs.all[message.npcname] ~= nil then
+			self.character = true 
+		else
+			self.character = false
+		end   --boolean to update either npc or room state
+		self.parenturl = message.parenturl --actor url for messaging
+		self.room = message.room
+		--choose_actor_inventory(message.character)
+		if self.character == true then
+			self.actorinventory = world.get_npc_inventory(message.npcname)
+		else
+			self.actorinventory = world.get_actor_inventory(self.parentprop, self.room)
+		end
+
+		load_player_inventory(world.player.inventory)
+		load_actor_inventory(self.actorinventory)
+
+		gui.set_text(name, message.npcname)
+		]]--
+		gui.set_enabled(node, true)
+
+		--msg.post("ai_screen#ai_screen", "acquire_input_focus")
+		--[[
+	elseif message_id == hash("refresh_prop") then 
+		load_actor_inventory(self.actorinventory)
+	elseif message_id == hash("clear_propgui") then 
+		reset_prop_gui()
+	elseif message_id == hash("load_player_inventory") then
+		world.player.inventory = message
+		]]--
+		msg.post("ai_screen#ai_screen", "acquire_input_focus")
+	end
+end

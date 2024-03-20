@@ -1,0 +1,479 @@
+image: "/assets/charactersheet3.png"
+tile_width: 64
+tile_height: 64
+tile_margin: 0
+tile_spacing: 0
+collision: ""
+material_tag: "tile"
+collision_groups: "default"
+animations {
+  id: "church01body"
+  start_tile: 34
+  end_tile: 34
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "church02body"
+  start_tile: 35
+  end_tile: 35
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "contractors01body"
+  start_tile: 43
+  end_tile: 43
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "contractors02body"
+  start_tile: 43
+  end_tile: 43
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "corps01body"
+  start_tile: 44
+  end_tile: 44
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "corps02body"
+  start_tile: 44
+  end_tile: 44
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "corps03body"
+  start_tile: 44
+  end_tile: 44
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "doctors01body"
+  start_tile: 32
+  end_tile: 32
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "doctors02body"
+  start_tile: 33
+  end_tile: 33
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "doctors03body"
+  start_tile: 32
+  end_tile: 32
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "doctors04body"
+  start_tile: 33
+  end_tile: 33
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "gang101body"
+  start_tile: 62
+  end_tile: 62
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "gang102body"
+  start_tile: 63
+  end_tile: 63
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "gang201body"
+  start_tile: 64
+  end_tile: 64
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "gang202body"
+  start_tile: 65
+  end_tile: 65
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "gang301body"
+  start_tile: 66
+  end_tile: 66
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "gang302body"
+  start_tile: 67
+  end_tile: 67
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "gang401body"
+  start_tile: 68
+  end_tile: 68
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "gang402body"
+  start_tile: 69
+  end_tile: 69
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "labor01body"
+  start_tile: 36
+  end_tile: 36
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "labor02body"
+  start_tile: 37
+  end_tile: 37
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "labor03body"
+  start_tile: 36
+  end_tile: 36
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "labor04body"
+  start_tile: 37
+  end_tile: 37
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race01_01"
+  start_tile: 17
+  end_tile: 17
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race01_02"
+  start_tile: 18
+  end_tile: 18
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race01_03"
+  start_tile: 19
+  end_tile: 19
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race01_04"
+  start_tile: 20
+  end_tile: 20
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race02_01"
+  start_tile: 21
+  end_tile: 21
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race02_02"
+  start_tile: 22
+  end_tile: 22
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race02_03"
+  start_tile: 23
+  end_tile: 23
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race02_04"
+  start_tile: 24
+  end_tile: 24
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race03_01"
+  start_tile: 25
+  end_tile: 25
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race03_02"
+  start_tile: 26
+  end_tile: 26
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race03_03"
+  start_tile: 27
+  end_tile: 27
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race03_04"
+  start_tile: 28
+  end_tile: 28
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race04_01"
+  start_tile: 47
+  end_tile: 47
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race04_02"
+  start_tile: 48
+  end_tile: 48
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race04_03"
+  start_tile: 49
+  end_tile: 49
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race04_04"
+  start_tile: 50
+  end_tile: 50
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "security01body"
+  start_tile: 38
+  end_tile: 38
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "security02body"
+  start_tile: 39
+  end_tile: 39
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "security03body"
+  start_tile: 38
+  end_tile: 38
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "security04body"
+  start_tile: 39
+  end_tile: 39
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "sexworkers01body"
+  start_tile: 70
+  end_tile: 70
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "sexworkers02body"
+  start_tile: 71
+  end_tile: 71
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "staff01body"
+  start_tile: 40
+  end_tile: 40
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "staff02body"
+  start_tile: 41
+  end_tile: 41
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "staff03body"
+  start_tile: 42
+  end_tile: 42
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "staff04body"
+  start_tile: 40
+  end_tile: 40
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "staff05body"
+  start_tile: 41
+  end_tile: 41
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "visitors01body"
+  start_tile: 72
+  end_tile: 72
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "visitors02body"
+  start_tile: 73
+  end_tile: 73
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+extrude_borders: 0
+inner_padding: 0
+sprite_trim_mode: SPRITE_TRIM_MODE_OFF
