@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 print('novel main 4th??')
-const matchanovel = require('../../../main.novel.matchanovel')
+const matchanovel = require('../../../app.main.novel.matchanovel')
 
 import { questScripts } from '../quests/quests_main'
 const { tasks, player, novel } = globalThis.game.world

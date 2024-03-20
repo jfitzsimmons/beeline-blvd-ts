@@ -1,4 +1,4 @@
-merits = ____G_game_world_0.novel.npc.love
+love = ____G_game_world_0.novel.npc.love
 z = ____G_game_world_0.novel.npc.clan
 x = ____G_game_world_0.novel.npc.skills
 n.name = ____G_game_world_0.novel.npc.labelname

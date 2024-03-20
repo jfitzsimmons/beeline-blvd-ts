@@ -7,8 +7,8 @@ math.randomseed(os.time())
 
 import { Game } from '../states/gamesystem2'
 
-const settings = require('../../main.states.settings')
-const save = require('../../main.states.save')
+const settings = require('../../../app.main.states.settings')
+const save = require('../../../app.main.states.save')
 
 function handle_new_turn(load_type: string) {
   if (load_type === 'room transition') {

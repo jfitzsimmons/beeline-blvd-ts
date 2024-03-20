@@ -20,7 +20,6 @@ interface props {
     confront: boolean
     type: string
   }
-  //room: string
   isNpc: boolean
 }
 function show_ai_screen() {
