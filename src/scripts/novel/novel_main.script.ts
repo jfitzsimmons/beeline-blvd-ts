@@ -3,12 +3,13 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 print('novel main 4th??')
+const { tasks, player, novel } = globalThis.game.world
+
 const matchanovel = require('../../../main/novel/matchanovel.lua')
 
 import { questScripts } from '../quests/quests_main'
-const { tasks, player, novel } = globalThis.game.world
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const npc = globalThis.game.world.novel.npc
 function script_builder(
   //npc: string,
   room: boolean | true = true,
@@ -17,7 +18,6 @@ function script_builder(
   extend: boolean | false = false
   //checkpoint: string | 'tutorialA'
 ) {
-  const npc = globalThis.game.world.novel.npc
   let checkpoint = player.checkpoint.slice(0, -1)
   if (extend == true) {
     checkpoint = player.checkpoint
@@ -25,7 +25,7 @@ function script_builder(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let path: string =
     novel.script != ''
-      ? questScripts[checkpoint + 'scripts'](npc.labelname)
+      ? questScripts[checkpoint + 'scripts'](novel.npc.labelname)
       : ''
 
   if (path == '') {
@@ -33,11 +33,16 @@ function script_builder(
       path = path + player.currentroom + '/'
     }
     path = path + checkpoint
-    if (npc.currentstation != null) {
-      print('novel noc:', npc.labelname, ' | station:', npc.currentstation)
-      path = path + npc.currentstation
+    if (novel.npc.currentstation != null) {
+      print(
+        'novel noc:',
+        novel.npc.labelname,
+        ' | station:',
+        novel.npc.currentstation
+      )
+      path = path + novel.npc.currentstation
     }
-    const caution = tasks.npc_has_caution(npc.labelname, 'player')
+    const caution = tasks.npc_has_caution(novel.npc.labelname, 'player')
     if (caution != null) {
       path = path + caution
     }

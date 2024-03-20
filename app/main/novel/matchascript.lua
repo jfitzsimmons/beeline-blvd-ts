@@ -23,9 +23,17 @@ function file_exists(name)
 end
 
 local function load_file(filename)
-	count = #script
+	local count = #script
 	for i=0, count do script[i]=nil end
+
+	local loaded = files.load_script('/main/assets/novel/scripts/_novelglobals.txt')
+	--main/novel/assets/scripts/grounds/tutorialloiter1.txt
+	for k, line in pairs(loaded) do
+		table.insert(script, line)
+	end
+
 	local loaded = files.load_script(filename)
+	--main/novel/assets/scripts/grounds/tutorialloiter1.txt
 	for k, line in pairs(loaded) do
 		table.insert(script, line)
 	end
@@ -260,13 +268,7 @@ local function get_end_of_action_block(starting_line)
 	return end_line
 end
 
-local function get_value(s)
-	local str = string.match(s, "^[^\"]*\"([^\"]*)\"")
-	if str then return str end
 
-	local num = tonumber(s)
-	if num then return num end
-end
 
 local function set_define(name, value_string)
 	local value, type = read_variable(value_string)
@@ -401,12 +403,6 @@ function M.execute()
 	local action = actions[save.state.pos]
 	local args = arguments[save.state.pos]
 
-	for _, extension in pairs(definition.extensions) do
-		if extension.before_action then
-			extension.before_action(action, args)
-		end
-	end
-
 	if action == "none" or action == "empty" then
 		M.next()
 	else
@@ -492,10 +488,6 @@ function M.start()
 	else
 		M.jump_to_line(1)
 	end
-end
-
-local function add_line_to_script(line)
-	table.insert(script, line)
 end
 
 

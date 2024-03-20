@@ -1,6 +1,5 @@
 [project]
 title = Beeline Blvd
-custom_resources = main/novel/assets
 dependencies#0 = https://github.com/ts-defold/defold-lldebugger/archive/extension.zip
 
 [bootstrap]

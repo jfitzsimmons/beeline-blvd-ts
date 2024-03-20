@@ -1,6 +1,7 @@
+---@diagnostic disable: undefined-global
 local matchanovel = require "main.novel.matchanovel"
 local typewriterlib = require "main.novel.typewriter"
-local settings = require "main.novel.settings"
+--local settings = require "main.novel.settings"
 local save = require "main.novel.save"
 local display_width = tonumber(sys.get_config("display.width"))
 local display_height = tonumber(sys.get_config("display.height"))
@@ -11,10 +12,7 @@ local textbox_gradient_y = 1/2
 local text_width = 2/3
 local text_height = 0.3
 local skipping = false
-local skip_t = 0
-local skip_per_second = 30
 local auto = false
-local auto_t = 0
 local log_position = false
 local textbox_visible = true
 local name_scale = 1
@@ -59,13 +57,8 @@ local function set_font(font)
 end
 
 local function continue()
-	save.set_global_read()
+	--save.set_global_read()
 	typewriter.next()
-end
-
-local function hide_name()
-	local node = gui.get_node("name")
-	gui.set_enabled(node, false)
 end
 
 local function show_name(name)
@@ -83,10 +76,6 @@ local function say( text, name)
 		name = ""
 	end
 	show_name(name)
-end
-
-local function get_auto_duration()
-	return 2 + 8*(1 - settings.get("auto_speed")/100)
 end
 
 local function end_skip()
@@ -242,34 +231,6 @@ function init(self)
 	name_scale = gui.get_scale(gui.get_node("name")).x
 	init_textbox()
 	typewriter.init("text")
-end
-
-function update(self, dt)
-	if skipping then
-		skip_t = skip_t + dt
-		if skip_t >= 1/skip_per_second then
-			if settings.get("skip_all") or save.get_global_read(line) then
-				continue()
-				skip_t = 0
-			else
-				end_skip()
-			end
-		end
-	elseif auto then
-		local auto_duration = get_auto_duration()
-		auto_t = auto_t + dt
-		if auto_t >= auto_duration then
-			gui.set_fill_angle(gui.get_node("auto"), 360)
-			if typewriter.get_state() == "waiting" then
-				continue()
-				auto_t = 0
-			end
-		else
-			local angle = 360 * auto_t / auto_duration
-			angle = math.min(angle, 360)
-			gui.set_fill_angle(gui.get_node("auto"), angle)
-		end
-	end
 end
 
 function on_message(self, message_id, message, sender)
