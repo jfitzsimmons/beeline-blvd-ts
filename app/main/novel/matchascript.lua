@@ -31,10 +31,10 @@ local function load_file(filename)
 	for k, line in pairs(loaded) do
 		table.insert(script, line)
 	end
-
-	local loaded = files.load_script(filename)
+print("mscript testjpf:", filename)
+	local loaded2 = files.load_script(filename)
 	--main/novel/assets/scripts/grounds/tutorialloiter1.txt
-	for k, line in pairs(loaded) do
+	for k, line in pairs(loaded2) do
 		table.insert(script, line)
 	end
 end
@@ -82,7 +82,6 @@ local function read_variable(value)
 	elseif value == "nil" then
 		return nil, "nil"
 	end
-
 	local str = string.match(value, "^[^\"]*\"([^\"]*)\"")
 	if not str then 
 		str = string.match(value, "^[^\']*\'([^\']*)\"")
@@ -103,17 +102,18 @@ local function read_variable(value)
 end
 
 function M.get_var_from_savestate(var)
-	local v, t = save.get_var(var)
-	return v, t
+
+	local v, t = save.get_var(this,var)
+	return {v, t}
 end
 
-function M.get_variable(v)
+function M.get_variable(this, v)
 	local value, type = read_variable(v)
 	if type == "pointer" then
 		local v, t = M.get_var_from_savestate(value)
-		return v, t
+		return {v, t}
 	else
-		return value, type
+		return{ value, type}
 	end
 end
 
@@ -276,17 +276,18 @@ local function set_define(name, value_string)
 end
 
 local function execute_function(action, args)
+	--this is the 1st logging of a table instead
 	local f = definition.functions[action]
 	if f then
-		f(args)
+		f(this,args)
 	end
 end
 
-function M.set_definition(definition_table)
+function M.set_definition(this, definition_table)
 	definition = definition_table
 end
 
-function M.add_file(filename)
+function M.add_file(opt, filename)
 	load_file(filename)
 end
 
@@ -437,6 +438,8 @@ end
 function M.next()
 	if not define then
 		local next_line = get_next_line()
+		print("next_line")
+		print(next_line)
 		M.jump_to_line(next_line)
 	end
 end

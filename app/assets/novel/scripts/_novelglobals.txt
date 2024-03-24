@@ -1,3 +1,6 @@
+n.name = "FARTYFARTFART"
+poop = ____G_game_world_0.novel.npc.labelname
+npc.speed = ____G_game_world_0.novel.npc.skills.speed
 love = ____G_game_world_0.novel.npc.love
 z = ____G_game_world_0.novel.npc.clan
 --x.skills.speed = ____G_game_world_0.novel.npc.skills.speed

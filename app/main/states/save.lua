@@ -272,11 +272,11 @@ function M.define(name, value, type)
 	defined_variables_type[name] = type
 end
 
-function M.get_var(name)
+function M.get_var(this,name)
 	local value = M.state.var[name] or defined_variables[name]
 	local type = M.state.var_type[name] or defined_variables_type[name]
 	if type == "pointer" then 
-		local v, t = M.get_var(value)
+		local v, t = M.get_var(this,value)
 		if v then
 			return v, t
 		else

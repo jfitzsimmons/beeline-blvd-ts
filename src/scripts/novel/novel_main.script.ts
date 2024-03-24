@@ -1,15 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { novel_init, novel_start } from './matchanovel'
 print('novel main 4th??')
 const { tasks, player, novel } = globalThis.game.world
 
-const matchanovel = require('../../../main/novel/matchanovel.lua')
-
 import { questScripts } from '../quests/quests_main'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function script_builder(
   //npc: string,
   room: boolean | true = true,
@@ -22,7 +16,6 @@ function script_builder(
   if (extend == true) {
     checkpoint = player.checkpoint
   }
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let path: string =
     novel.script != ''
       ? questScripts[checkpoint + 'scripts'](novel.npc.labelname)
@@ -48,7 +41,7 @@ function script_builder(
     }
   }
   print('PATH:::', path)
-  novel.script = '/main/novel/assets/scripts/' + path + '.txt'
+  novel.script = '/assets/novel/scripts/' + path + '.txt'
   print('novel.script testjpf', novel.script)
 }
 //u = require "main.utils.novel"
@@ -70,8 +63,8 @@ export function on_message(
     print('global novel npc', globalThis.game.world.novel.npc.labelname)
     print('global any npc', globalThis.game.world.npcs.all.eve.labelname)
 
-    matchanovel.init(novel.script)
-    matchanovel.start()
+    novel_init(novel.script)
+    novel_start()
   } else if (messageId == hash('sleep')) {
     /**
     if (message.merits != null) {

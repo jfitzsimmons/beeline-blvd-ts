@@ -14,7 +14,8 @@ local defold_objects = {
 }
 
 -- Defold function to post message to objects
-function M.post(receiver, message_id, message)
+function M.post(this,receiver, message_id, message)
+	
 	msg.post(defold_objects[receiver], message_id, message)
 end
 

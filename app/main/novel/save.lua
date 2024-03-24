@@ -23,7 +23,8 @@ function M.reset()
 	M.state.sprites = {}
 end
 
-function M.set_var(name, value, type)
+function M.set_var(this, name, value, type)
+	print("SAVE TESTJPF:", name, value, type)
 	M.state.var[name] = value
 	M.state.var_type[name] = type
 end
@@ -33,18 +34,23 @@ function M.define(name, value, type)
 	defined_variables_type[name] = type
 end
 
-function M.get_var(name)
+function M.get_var(this,name)
+	print("save get THIS: ",this)
+	print("save get vasr: ",name)
 	local value = M.state.var[name] or defined_variables[name]
+	print("value", value)
 	local type = M.state.var_type[name] or defined_variables_type[name]
+	print("type", type)
+
 	if type == "pointer" then 
-		local v, t = M.get_var(value)
+		local v, t = M.get_var(this, value)
 		if v then
-			return v, t
+			return {v, t}
 		else
-			return value, "string"
+			return {value, "string"}
 		end
 	else
-		return value, type
+		return {value, type}
 	end
 	
 end

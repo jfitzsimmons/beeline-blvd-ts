@@ -1,6 +1,9 @@
-npclogskills = "spd: { npc.speed} | str: { npc.strength} |con: { npc.constitution} | chr: { npc.charisma} |wis: { npc.wisdom} | per: { npc.perception} |int: { npc.intelligence} | stl: { npc.stealth}"
-npclogbinaries = "good: { npc.binaries.evil_good} | aggression: { npc.binaries.passive_aggressive} |law: { npc.binaries.lawless_lawful} | auth: { npc.binaries.anti_authority} |edu: { npc.binaries.un_educated} | wealth: { npc.binaries.poor_wealthy}"
+npclogskills = "spd: { x.speed} | str: { ____G_game_world_0.novel.npc.skills.strength} |con: { ____G_game_world_0.novel.npc.skills.constitution} | chr: { ____G_game_world_0.novel.npc.skills.charisma} |wis: { ____G_game_world_0.novel.npc.skills.wisdom} | per: { ____G_game_world_0.novel.npc.skills.perception} |int: { ____G_game_world_0.novel.npc.skills.intelligence} | stl: { ____G_game_world_0.novel.npc.skills.stealth}"
+
+npclogbinaries = "good: { ____G_game_world_0.novel.npc.binaries.evil_good} | aggression: { ____G_game_world_0.novel.npc.binaries.passive_aggressive} |law: { ____G_game_world_0.novel.npc.binaries.lawless_lawful} | auth: { ____G_game_world_0.novel.npc.binaries.anti_authority} |edu: { ____G_game_world_0.novel.npc.binaries.un_educated} | wealth: { ____G_game_world_0.novel.npc.binaries.poor_wealthy}"
 playerskillslog = "spd: {player.skills.speed} | str: {player.skills.strength} |con: {player.skills.constitution} | chr: {player.skills.charisma} |wis: {player.skills.wisdom} | per: {player.skills.perception} |int: {player.skills.intelligence} | stl: {player.skills.stealth}"
+
+
 show.transition = "fade"
 scene haikeisozai_tatemono4.jpg
 
@@ -13,19 +16,6 @@ n: Is there anything I can help you with?
 > Where do I go?
   turns = turns + 1
   jump onboarding
-
-
-DEBUG:SCRIPT: OLD MSRPTV getvar mscript::	"Adam"
-DEBUG:SCRIPT: Adam	string	value, type :: get var OLD MSPT
-DEBUG:SCRIPT: Adam	string	value, vartype
-DEBUG:SCRIPT: OLD ::: SAVE TESTJPF:	p.name	Adam	string
-
-
-DEBUG:SCRIPT: V getvar mscript::	p.name
-DEBUG:SCRIPT: table: 0x011f3affb0	nil	value, type :: get var
-DEBUG:SCRIPT: table: 0x011f3affb0	nil	value, vartype
-DEBUG:SCRIPT: SAVE TESTJPF:	table: 0x011f373ee0	p.name	table: 0x011f3affb0
-
 
 label start
 show n
@@ -41,7 +31,7 @@ n: Getting through customs takes forever nowadays.
   jump quickclose
 
 label humorcheck
-if player.skills.charisma > 6 and  npc.charisma < 4
+if player.skills.charisma > 6 and  ____G_game_world_0.novel.npc.skills.charisma < 4
   merits = merits + 2
   that's funny but...
   jump exposition
@@ -63,7 +53,7 @@ if turns < 3
     jump youagain
   Oh, Hi!
   jump needhelp
-n: My name is {N.name}.  I'm { npc.binaries.passive_aggressive <= -.5 and "attempting to run" or "attending to"} the reception desk for now.
+n: My name is {N.name}.  I'm { ____G_game_world_0.novel.npc.binaries.passive_aggressive <= -.5 and "attempting to run" or "attending to"} the reception desk for now.
 jump needhelp
 
 label youagain
@@ -88,7 +78,7 @@ n: Can I have your name and ticket number?
   jump persuasioncheck
 
 label mmmphexit
-n: mmmmph... the door to thnpc...
+n: mmmmph... the door to thn...
 jump sterndirection
 
 label travelreason
@@ -132,11 +122,11 @@ n: Who are you here to see?
     
 label repeatannoyed
 if merits <= -2
-  n.sprite =  npc.sighsprite
+  n.sprite =  ____G_game_world_0.novel.npc.sighsprite
   if merits <= -4
-    n.sprite =  npc.frownsprite
+    n.sprite =  ____G_game_world_0.novel.npc.frownsprite
     if merits <= -6
-      n.sprite =  npc.madsprite
+      n.sprite =  ____G_game_world_0.novel.npc.madsprite
   show n
 n: The door to thn...
 
@@ -152,7 +142,7 @@ n: North.
   if turns > 0 and merits < -2
     n: SECURITY!
     jump quickclose
-  if turns > 0 and player.skills.speed < 4 and  npc.binaries.evil_good > 0.3 and  npc.binaries.un_educated < -0.3
+  if turns > 0 and player.skills.speed < 4 and  ____G_game_world_0.novel.npc.binaries.evil_good > 0.3 and  ____G_game_world_0.novel.npc.binaries.un_educated < -0.3
     merits = merits + 2
     n: You're not too quick, are you?
     jump quickclose
@@ -165,26 +155,26 @@ n: merits : {merits}
 label npcthreatened
 merits = merits - 3
 if merits <= -2
-    n.sprite =  npc.sighsprite
+    n.sprite =  ____G_game_world_0.novel.npc.sighsprite
     if merits <= -4
-      n.sprite =  npc.frownsprite
+      n.sprite =  ____G_game_world_0.novel.npc.frownsprite
       if merits <= -6
-        n.sprite =  npc.madsprite
+        n.sprite =  ____G_game_world_0.novel.npc.madsprite
 n: Your not owed anything.
 n: Here are your options.
 jump lastoptions
 
 label lastoptions
 > Go through the door to the north.
-  if player.skills.intelligence > 6 and  npc.binaries.un_educated > 0.5
+  if player.skills.intelligence > 6 and  ____G_game_world_0.novel.npc.binaries.un_educated > 0.5
     merits = merits + 3
-    n.sprite =  npc.smilesprite
+    n.sprite =  ____G_game_world_0.novel.npc.smilesprite
     show n
     n: I guess you are kind of smart.
     jump quickclose
-  if player.skills.intelligence < 4 and  npc.binaries.un_educated < -0.6
+  if player.skills.intelligence < 4 and  ____G_game_world_0.novel.npc.binaries.un_educated < -0.6
     merits = merits + 4
-    n.sprite =  npc.laughsprite
+    n.sprite =  ____G_game_world_0.novel.npc.laughsprite
     show n
     n: You're an idiot.
     jump quickclose
@@ -206,11 +196,11 @@ label earlybs
 label lastchance
 merits = merits-2
 if merits <= -2
-  n.sprite =  npc.sighsprite
+  n.sprite =  ____G_game_world_0.novel.npc.sighsprite
   if merits <= -4
-    n.sprite =  npc.frownsprite
+    n.sprite =  ____G_game_world_0.novel.npc.frownsprite
     if merits <= -6
-      n.sprite =  npc.madsprite
+      n.sprite =  ____G_game_world_0.novel.npc.madsprite
 n: My finger is on the button.
 n: Do you want trouble? 
 n: Or do you want to go through the door to the north?
@@ -220,18 +210,18 @@ n: Just like every other schmuck who walks through that door and has no idea whe
   jump quickclose
 > Bring it on
   merits = merits -5
-  if  npc.binaries.passive_aggressive > 0.5 and  n.constitution > 7
-    n.sprite =  npc.laughsprite
+  if  ____G_game_world_0.novel.npc.binaries.passive_aggressive > 0.5 and  ____G_game_world_0.novel.npc.skills.constitution > 7
+    n.sprite =  ____G_game_world_0.novel.npc.laughsprite
     show n
     merits = merits + 10
     n: "I like you."
     jump repeatannoyed
   if merits <= -2
-    n.sprite =  npc.sighsprite
+    n.sprite =  ____G_game_world_0.novel.npc.sighsprite
     if merits <= -4
-      n.sprite =  npc.frownsprite
+      n.sprite =  ____G_game_world_0.novel.npc.frownsprite
       if merits <= -6
-        n.sprite =  npc.madsprite
+        n.sprite =  ____G_game_world_0.novel.npc.madsprite
   n: SECURITY!
   jump quickclose
   
@@ -242,25 +232,25 @@ n: Just like every other schmuck who walks through that door and has no idea whe
 
 label persuasioncheck
 if player.skills.charisma > 7
-  n.sprite =  npc.laughsprite
+  n.sprite =  ____G_game_world_0.novel.npc.laughsprite
   show n
   merits = merits + 5
   n: You crack me up.  Go to the north dammit.
   jump quickclose
-if player.binaries.passive_aggressive > .7 and  npc.binaries.passive_aggressive < .4
-  n.sprite =  npc.frownsprite
+if player.binaries.passive_aggressive > .7 and  ____G_game_world_0.novel.npc.binaries.passive_aggressive < .4
+  n.sprite =  ____G_game_world_0.novel.npc.frownsprite
   show n
   merits = merits - 2
-  if  npc.binaries.anti_autority < -.4
+  if  ____G_game_world_0.novel.npc.binaries.anti_autority < -.4
     merits = merits - 3
   n: sorry.
   jump quickclose
 if merits <= -2
-  n.sprite =  npc.sighsprite
+  n.sprite =  ____G_game_world_0.novel.npc.sighsprite
   if merits <= -4
-    n.sprite =  npc.frownsprite
+    n.sprite =  ____G_game_world_0.novel.npc.frownsprite
     if merits <= -6
-      n.sprite =  npc.madsprite
+      n.sprite =  ____G_game_world_0.novel.npc.madsprite
 show n
 n: I'm not convniced
 jump lastchance

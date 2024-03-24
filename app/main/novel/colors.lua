@@ -200,9 +200,9 @@ function M.get_color(name)
 	if color then 
 		return color
 	end
-	
-	color, type = save.get_var(name..".color")
-
+	local colorTable = save.get_var(this,name..".color")
+	local color=colorTable[1]
+	local type = colorTable[2]
 	if type == "color" then 
 		return color
 	end
@@ -211,9 +211,9 @@ function M.get_color(name)
 		return M.string_to_color(color)
 	end
 	
-	local r = save.get_var(name..".r") or save.get_var(name..".color.r")
-	local g = save.get_var(name..".g") or save.get_var(name..".color.g")
-	local b = save.get_var(name..".b") or save.get_var(name..".color.b")
+	local r = save.get_var(this,name..".r")[1] or save.get_var(this,name..".color.r")[1]
+	local g = save.get_var(this,name..".g")[1] or save.get_var(this,name..".color.g")[1]
+	local b = save.get_var(this,name..".b")[1] or save.get_var(this,name..".color.b")[1]
 	if r or g or b then
 		return vmath.vector4(r or 0, g or 0, b or 0, 1)
 	end

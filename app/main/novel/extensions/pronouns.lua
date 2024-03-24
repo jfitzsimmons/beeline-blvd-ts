@@ -42,20 +42,20 @@ pronouns.they = {
 
 local function set_var(name, value)
 end
-local function get_var(name)
+local function get_var(this,name)
 end
 
 
 function M.interpolate_string(s)
 	--{a??looks,look} -> {name??term_singular,term_plural}
 	if name then
-		if get_var(name..".plural") then
+		if get_var(this,name..".plural") then
 			return term_plural
 		else
 			return term_singular
 		end
 	else
-		if get_var("plural") then
+		if get_var(this,"plural") then
 			return term_plural
 		else
 			return term_singular
