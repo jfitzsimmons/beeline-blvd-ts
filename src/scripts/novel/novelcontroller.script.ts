@@ -21,7 +21,12 @@ export function init(this: props) {
   // this.script_path = ''
 }
 
-export function on_message(this: props, messageId: hash, _sender: url): void {
+export function on_message(
+  this: props,
+  messageId: hash,
+  _message: unknown,
+  _sender: url
+): void {
   if (messageId == hash('show_scene')) {
     // again, get all "this." from Novel class TESTJPF
     // this.script_path = message.path
@@ -45,6 +50,6 @@ export function on_message(this: props, messageId: hash, _sender: url): void {
     if (_sender.fragment == hash('novel')) {
       msg.post('novel:/main#main', 'wake_up')
     }
-    msg.post(_sender, 'enable') // <11>
+    msg.post(this.current_proxy, 'enable') // <11>
   } //else if( messageId == hash("proxy_unloaded") ){}
 }

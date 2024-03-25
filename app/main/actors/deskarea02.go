@@ -1,6 +1,6 @@
 components {
   id: "station"
-  component: "/main/actors/station.script"
+  component: "/scripts/actors/station.script"
   position {
     x: 0.0
     y: 0.0

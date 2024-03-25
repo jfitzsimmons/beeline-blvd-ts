@@ -25,16 +25,16 @@ end
 local function load_file(filename)
 	local count = #script
 	for i=0, count do script[i]=nil end
-
-	local loaded = files.load_script('/main/assets/novel/scripts/_novelglobals.txt')
-	--main/novel/assets/scripts/grounds/tutorialloiter1.txt
+	local loaded = files.load_script('/assets/novel/scripts/_novelglobals.txt')
 	for k, line in pairs(loaded) do
+		print("global line:",line)
 		table.insert(script, line)
 	end
 print("mscript testjpf:", filename)
 	local loaded2 = files.load_script(filename)
-	--main/novel/assets/scripts/grounds/tutorialloiter1.txt
+	--/assets/novel/scripts/grounds/tutorialloiter1.txt
 	for k, line in pairs(loaded2) do
+		print("script line:",line)
 		table.insert(script, line)
 	end
 end
@@ -66,6 +66,7 @@ function M.hex_to_rgb(hex)
 end
 
 local function read_variable(value)
+	print(value, "::: read variable mscript !!! HERE TESTJPF")
 	if not value then 
 		return nil, "nil"
 	end
@@ -97,21 +98,23 @@ local function read_variable(value)
 	elseif number then
 		return number, "number"
 	else
+		print("pointer right??", value)
 		return value, "pointer"
 	end
 end
 
 function M.get_var_from_savestate(var)
-
-	local v, t = save.get_var(this,var)
-	return {v, t}
+	local vtable = save.get_var(this,var)
+	print("printer from save state:", vtable[1],vtable[2])
+	return vtable
 end
 
 function M.get_variable(this, v)
 	local value, type = read_variable(v)
+	print("get_var", value, type)
 	if type == "pointer" then
-		local v, t = M.get_var_from_savestate(value)
-		return {v, t}
+		local saved= M.get_var_from_savestate(value)
+		return {saved[1], saved[2]}
 	else
 		return{ value, type}
 	end

@@ -1,10 +1,6 @@
-n.name = "FARTYFARTFART"
-poop = ____G_game_world_0.novel.npc.labelname
-npc.speed = ____G_game_world_0.novel.npc.skills.speed
-love = ____G_game_world_0.novel.npc.love
-z = ____G_game_world_0.novel.npc.clan
---x.skills.speed = ____G_game_world_0.novel.npc.skills.speed
---	n.name = ____G_game_world_0.novel.npc.labelname
-n.sprite =  ____G_game_world_0.novel.npc.smilesprite
+npc.clan = _G.game.temp.npc.clan
+npc.speed = _G.game.temp.npc.skills.speed
+npc.love = _G.game.temp.npc.love
+n.name = _G.game.temp.npc.labelname
 n.scale = 3
 n.y = 0.5

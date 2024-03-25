@@ -1,5 +1,5 @@
 -- local sys = require "main.novel.engine.defold.sysys"
-local world = require "main.states.worldstate"
+--local world = require "main.states.worldstate"
 
 local M = {}
 
@@ -194,7 +194,7 @@ function M.load(slot)
 		--then pick room testjpf
 		local params = {
 			load_type = "load game",
-			enter_room = world.player.currentroom
+			--enter_room = world.player.currentroom
 			--enter_room = v.roomname
 		}
 		msg.post("proxies:/controller#worldcontroller", "pick_room", params)

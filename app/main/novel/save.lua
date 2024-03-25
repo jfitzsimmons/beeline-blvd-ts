@@ -35,7 +35,6 @@ function M.define(name, value, type)
 end
 
 function M.get_var(this,name)
-	print("save get THIS: ",this)
 	print("save get vasr: ",name)
 	local value = M.state.var[name] or defined_variables[name]
 	print("value", value)

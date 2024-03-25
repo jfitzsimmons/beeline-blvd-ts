@@ -131,10 +131,10 @@ function substitute_in_expression(w: string) {
 
     const name = string.lower(w)
     const [var_value, var_type]: [string | number, string] = save.get_var(name)
-    if (var_type != undefined && var_type == 'string') {
+    if (var_type != null && var_type == 'string') {
       add_quotes = true
     }
-    if (var_value != undefined) {
+    if (var_value != null) {
       result = tostring(var_value)
     } else {
       result = w
@@ -297,7 +297,7 @@ function set(args: any) {
   let [value, var_type]: [string, string] = val_table
   print(value, var_type, 'value, vartype')
 
-  if (value === '' && var_type === '') {
+  if (value === null && var_type === null) {
     value = execute_string(tostring(value_string))
     if (value != '' && !Number.isNaN(parseInt(value))) {
       var_type = 'number'
