@@ -11,10 +11,15 @@ const color_unhovered = vmath.vector4(0.8, 1, 1, 0.9)
 const hover_duration = 0.2
 
 let active = false
-let pressed_choice: boolean | string = false
-let hovered_choice: boolean | string = false
-let current_text: { [key: string]: string }
-let nodes: any = {}
+let pressed_choice: boolean | number = false
+let hovered_choice: boolean | number = false
+let current_text: { [key: number]: string }
+interface ChoiceNodes {
+  choice: node
+  box: node
+  text: node
+}
+let nodes: { [key: number]: ChoiceNodes } = {}
 
 function get_text_size(node: node, text: string) {
   const font_resource = gui.get_font_resource(gui.get_font(node))
@@ -29,11 +34,14 @@ function get_text_size(node: node, text: string) {
 }
 
 function delete_choices() {
-  let nKey: keyof typeof nodes
-  for (nKey in nodes) {
+  for (const [nKey] of Object.entries(nodes)) {
+    print('DELETE CHOICES::: NKEY:', nKey)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-    gui.delete_node(nodes[nKey]['choice'])
+    gui.delete_node(nodes[parseInt(nKey)].choice)
+    //gui.delete_node(nodes[parseInt(nKey)].box)
+    //gui.delete_node(nodes[parseInt(nKey)].text)
   }
+
   nodes = {}
   hovered_choice = false
 }
@@ -46,37 +54,76 @@ function unhide_choices() {
   gui.set_enabled(gui.get_node('choices'), true)
 }
 
-function create_choices(choices: { [key: string]: string }) {
-  delete_choices()
+function create_choices(choices: { [key: number]: string }) {
+  //delete_choices()
   current_text = choices
   let y = 0
-  let nKey: keyof typeof nodes
-  for (nKey in nodes) {
-    nodes[nKey] = gui.clone_tree(gui.get_node('choice'))
-    const node_choice = nodes[nKey]['choice']
-    const node_box = nodes[nKey]['choice_box']
-    const node_text = nodes[nKey]['choice_text']
+
+  for (const [nKey] of Object.entries(choices)) {
+    print('choice keys:', nKey)
+
+    const choiceLookup = {
+      choice: {},
+      box: {},
+      text: {},
+    }
+    const clonetree = gui.clone_tree(gui.get_node('choice'))
+    let clonedNode: keyof typeof clonetree
+    for (clonedNode in clonetree) {
+      print('CNODE NEXT>>::')
+
+      print('CNODE KET:::', clonedNode)
+      //print('gui.get_id(clonedNode', gui.get_id(clonedNode))
+
+      //  print('clonedNode clonedNode clonedNode', clonedNode)
+      if (clonedNode == hash('choice')) {
+        choiceLookup.choice = clonetree[clonedNode]
+        // nodes[parseInt(nKey)] = clonedNode
+      } else if (clonedNode == hash('choice_box')) {
+        choiceLookup.box = clonetree[clonedNode]
+        // const node_box = clonedNode
+      } else if (clonedNode == hash('choice_text')) {
+        choiceLookup.text = clonetree[clonedNode]
+
+        // const node_text = clonedNode
+      }
+      //for ck, cv in pairs(clonetree) do
+      //const clone = gui.clone(clonetree[clonedNode])
+    }
+    nodes[parseInt(nKey)] = choiceLookup
+
+    // nodes[nKey] = gui.clone(gui.get_node('choice'))
+    // const node_choice = gui.clone(gui.get_node('choice'))
+    // const node_box = gui.clone(gui.get_node('choice_box'))
+    // const node_text = gui.clone(gui.get_node('choice_text'))
+
+    // print(node_text)
     const [text_width, text_height]: number[] = get_text_size(
-      node_text,
-      nodes[nKey]
+      choiceLookup.text,
+      choices[parseInt(nKey)]
     )
 
     y = y - text_height / 2 - border_y
-    gui.set_enabled(node_choice, true)
-    gui.set_text(node_text, nodes[nKey])
+    gui.set_enabled(choiceLookup.choice, true)
+    // gui.set_enabled(choiceLookup.box, true)
+    // gui.set_enabled(choiceLookup.text, true)
+    gui.set_text(choiceLookup.text, choices[parseInt(nKey)])
     gui.set_size(
-      node_box,
+      choiceLookup.box,
       vmath.vector3(text_width + 2 * border_x, text_height + 2 * border_y, 0)
     )
-    gui.set_position(node_choice, vmath.vector3(0, y, 0))
-    gui.set_color(node_box, color_unhovered)
+    gui.set_position(choiceLookup.choice, vmath.vector3(0, y, 0))
+    //  gui.set_position(choiceLookup.box, vmath.vector3(0, y, 0))
+    // gui.set_position(choiceLookup.text, vmath.vector3(0, y, 0))
+
+    gui.set_color(choiceLookup.box, color_unhovered)
     y = y - text_height / 2 - border_y - distance
   }
   y = y + border_y + distance
-  gui.set_position(gui.get_node('choices'), vmath.vector3(0, -y / 2, 0))
+  //gui.set_position(gui.get_node('choices'), vmath.vector3(0, -y / 2, 0))
 }
 
-function pick_choices(choice: string) {
+function pick_choices(choice: number) {
   active = false
   choose(choice)
   delete_choices()
@@ -92,9 +139,15 @@ function set_font(font: string) {
 
 function unhover_choice() {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const node: node = nodes[tostring(hovered_choice)]['choice_box']
+  print(hovered_choice, 'UNhoveredchoice')
+  if (typeof hovered_choice !== 'number') return
+  const testjpf: node = nodes[hovered_choice].box
+  //let nKey: keyof typeof testjpf
+  // for (const nKey of testjpf) {
+  //print('hover nkeys:', nKey)
+  //}/
   gui.animate(
-    node,
+    testjpf,
     'color',
     color_unhovered,
     gui.EASING_INOUTSINE,
@@ -103,12 +156,16 @@ function unhover_choice() {
   hovered_choice = false
 }
 
-function hover_choice(choice: string) {
+function hover_choice(choice: number) {
   if (hovered_choice != false) {
+    print(hovered_choice, 'hoveredchoice false')
+
     unhover_choice()
   }
+  print(hovered_choice, 'hoveredchoice true')
+
   hovered_choice = choice
-  const node = nodes[choice]['choice_box']
+  const node = nodes[choice].box
   gui.animate(
     node,
     'color',
@@ -129,11 +186,16 @@ export function on_message(
   _sender: url
 ) {
   if (message_id == hash('show_text_choices')) {
-    const choices: { [key: string]: string } = {}
+    const choices: { [key: number]: string } = {}
 
     let tKey: keyof typeof message.text
     for (tKey in message.text) {
-      choices[tKey] = message.text[tKey][0]
+      print(
+        tKey,
+        'choces message::: show text shoices::: message.text[tKey]',
+        message.text[tKey]
+      )
+      choices[parseInt(tKey)] = message.text[tKey]
     }
     create_choices(choices)
     active = true
@@ -172,38 +234,35 @@ export function on_input(
   }
 
   if (action_id == null) {
-    if (hovered_choice == true) {
-      const node = nodes[tostring(hovered_choice)]['choice_box']
+    if (typeof hovered_choice == 'number') {
+      const node = nodes[hovered_choice]['box']
       if (!gui.pick_node(node, action.x, action.y)) {
         unhover_choice()
       }
     } else {
-      let nKey: keyof typeof nodes
-      for (nKey in nodes) {
-        const node = nodes[nKey]['choice_box']
+      for (const [nKey] of Object.entries(nodes)) {
+        const node = nodes[parseInt(nKey)]['box']
         if (gui.pick_node(node, action.x, action.y)) {
-          hover_choice(nKey)
+          print('no action id??? hover choice::: nkey:', nKey)
+          hover_choice(parseInt(nKey))
         }
       }
     }
   } else if (action_id == hash('touch')) {
     if (action.pressed) {
-      let nKey: keyof typeof nodes
-      for (nKey in nodes) {
-        if (gui.pick_node(nodes[nKey]['choice_box'], action.x, action.y)) {
-          pressed_choice = nKey
+      for (const [nKey] of Object.entries(nodes)) {
+        if (gui.pick_node(nodes[parseInt(nKey)]['box'], action.x, action.y)) {
+          pressed_choice = parseInt(nKey)
+          print('action press chice number::: ', pressed_choice)
         }
       }
     } else if (action.released) {
       if (
-        pressed_choice != false &&
-        gui.pick_node(
-          nodes[tostring(pressed_choice)]['choice_box'],
-          action.x,
-          action.y
-        )
+        typeof pressed_choice == 'number' &&
+        gui.pick_node(nodes[pressed_choice]['box'], action.x, action.y)
       ) {
-        pick_choices(tostring(pressed_choice))
+        print('action released input::: ', pressed_choice)
+        pick_choices(pressed_choice)
       }
       pressed_choice = false
     }

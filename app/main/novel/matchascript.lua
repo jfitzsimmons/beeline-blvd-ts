@@ -164,8 +164,10 @@ local function get_words(line)
 end
 
 -- returns indention of line (number of spaces or tabs on start of line)
-local function get_indention(line)
+local function get_indention( line)
+	print("get_indention v get_indention",line)
 	local indention = string.match(line or "", "^[%s	]*") or ""
+	print("getindentation mscript:: #indent:", #indention)
 	return #indention
 end
 
@@ -205,33 +207,49 @@ local function separate_arguments(argument_string)
 end
 
 -- returns next line with same or smaller indention than current line
-local function get_next_line(line)
-	line = line or save.state.pos
+local function get_next_line(this, line)
+	if script[line] == nil then
+		line = save.state.pos
+	else
+		line = line
+	end
+	--line = line or save.state.pos
+	print("line and script line", line, script[line])
+	
 	local current_indention = get_indention(script[line])
 	local next_line = line + 1
 	if next_line > #script then 
 		return 1
 	end
 	local indention = get_indention(script[next_line])
+	--print("get_next_line:: line, next_line, indentation:", line, next_line, indention)
 	while not indention or indention > current_indention do 
 		next_line = next_line + 1
+
 		if next_line > #script then return false end
+		print("while indented::", line, next_line, indention)
 		indention = get_indention(script[next_line])
+		
 	end
+	print("get_next_lineget_next_line",next_line)
 	return next_line
 end
 
 -- returns previous line with same or smaller indention than current line
-local function get_previous_line(line)
+local function get_previous_line(this, line)
 	line = line or save.state.pos
 	local current_indention = get_indention(script[line])
 	local previous_line = line - 1
 	local indention = get_indention(script[previous_line])
+	print("get_PREV_line:: line, next_line, indentation:", line, next_line, indentation)
+
 	while not indention or indention > current_indention do 
 		previous_line = previous_line - 1
 		if previous_line < 1 then return false end
 		indention = get_indention(script[previous_line])
 	end
+	print("get_nprev_line",previous_line)
+
 	return previous_line
 end
 
@@ -239,7 +257,10 @@ end
 -- lines are in same block if they are of same action, same indention, 
 -- and are next of each other (disregaring empty lines)
 local function get_action_block(starting_line)
-	local current_action = actions[starting_line]
+	print(starting_line,"is this a table cuz NO THIS?:: geactionblk mscript")
+	--starting line::: > NO
+	local current_action = actions[starting_line] -- choice?
+	print("current_action", current_action)
 	local line = starting_line
 	local action = current_action
 	local action_block = {}
@@ -247,9 +268,21 @@ local function get_action_block(starting_line)
 		if action == current_action then
 			table.insert(action_block, line)
 		end
-		line = get_next_line(line)
+		print(line, "is this always incresing?")
+		local temp = get_next_line(line)
+		if temp == line then
+			line = line + 1
+		else
+			line = temp
+		end
+		--line = get_next_line(line)
+		print("get block :: line each, action", line, action)
+
 		action = actions[line]
+		print("next_action. hpefully line went to twelve and this is also choice?", action)
 	end
+	print("post While get action block done!")
+	print(action_block)
 	return action_block
 end
 
@@ -257,18 +290,25 @@ end
 local function is_start_of_action_block(starting_line)
 	local current_action = actions[starting_line]
 	local line = get_previous_line(starting_line)
+	print("is startt :: startline", starting_line)
+	print("is startt :: prev", line)
 	local action = actions[line]
 	return action ~= current_action
 end
 
 -- returns last line in action block of given line
 local function get_end_of_action_block(starting_line)
+	print("endofactionblk::: strting line", starting_line)
+
 	local action_block = get_action_block(starting_line)
 	local end_line = 1
 	for k, v in pairs(action_block) do
 		end_line = math.max(v, end_line)
 	end
+	print("endofactionblk::: END line", end_line)
+
 	return end_line
+
 end
 
 
@@ -415,61 +455,67 @@ function M.execute()
 end
 
 -- set the current line of script
-function M.set_line(line)
+function M.set_line(this, line)
+	print("setline", line)
 	save.state.pos = line
 end
 
 -- jump to given line and execute it
-function M.jump_to_line(line)
-	M.set_line(line)
+function M.jump_to_line(this, line)
+	print("jump to line mscript:: line:",line)
+	M.set_line(this, line)
 	M.execute()
 end
 
 -- jump to line of given label and execute it
 function M.jump_to_label(label)
 	if label == "start" and not labels["start"] then 
-		M.jump_to_line(1)
+		M.jump_to_line(this, 1)
 	end
 	
 	local line = labels[label]
 	if line then
-		M.jump_to_line(line)
+		M.jump_to_line(this, line)
 	end
 end
 
 -- go to the next line with same or smaller indention and execute it
-function M.next()
+function M.next(this)
 	if not define then
-		local next_line = get_next_line()
-		print("next_line")
-		print(next_line)
-		M.jump_to_line(next_line)
+		print("COMING FROM M.NEXT()!!!!!!!")
+		local next_line = get_next_line(nil)
+		print("next_line mscript:: next_line", next_line)
+		M.jump_to_line(this,next_line)
 	end
 end
 
 -- go to the next line (regardless of indention) and execute it
 function M.next_step()
 	local next_line = save.state.pos + 1
-	M.jump_to_line(next_line)
+	M.jump_to_line(this, next_line)
 end
 
 -- returns table of lines of all actions in block starting from current line
 function M.get_current_action_block(starting_line)
+	print("M RETRUN anything??")
 	return get_action_block(save.state.pos)
 end
 
 -- returns argument of given line
-function M.get_argument(line)
-	return arguments[line]
+function M.get_argument(this, line)
+	print("mscript get argument:: line", line, arguments[line],arguments[line][1])
+	return arguments[line][1]
 end
 
 -- returns boolean that is true if current line is the first in the action block that line is part of
 function M.current_line_is_start_of_action_block()
+	print("is_start_of_action_block(save.state.pos)",is_start_of_action_block(save.state.pos))
 	return is_start_of_action_block(save.state.pos)
 end
 
 -- returns last line in action block of current line
 function M.get_end_of_current_action_block()
+	print(save.state.pos)
 	return get_end_of_action_block(save.state.pos)
 end
 
@@ -492,7 +538,7 @@ function M.start()
 	if labels["start"] then
 		M.jump_to_label("start")
 	else
-		M.jump_to_line(1)
+		M.jump_to_line(this, 1)
 	end
 end
 

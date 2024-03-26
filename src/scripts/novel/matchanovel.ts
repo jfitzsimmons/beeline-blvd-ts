@@ -10,7 +10,7 @@ const messages = require('../../../main.novel.engine.defold.messages')
 let Sandbox: any = { math, vmath, string }
 //const pronouns = require "main.novel.extensions.pronouns"
 let stripped_quotes: string[] = []
-let choices: { [key: string]: string }
+let choices: { [key: number]: string }
 
 let state = 'uninitialized'
 //let pause_active = false
@@ -519,15 +519,22 @@ function choice() {
   if (matchascript.current_line_is_start_of_action_block() == true) {
     state = 'choices'
     choices = matchascript.get_current_action_block()
+    print('POST cet current action block:: shoice MNOVEL')
     const text: { [key: string]: string } = {}
-    let cKey: keyof typeof choices
-    for (cKey in choices) {
-      text[cKey] = matchascript.get_argument(choices[cKey])
+    for (const [cKey] of Object.entries(choices)) {
+      print('choices cKey:: choice() :mnovel:', cKey, choices[parseInt(cKey)])
+      /**
+       * DEBUG:SCRIPT: choices cKey:: choice() :mnovel:	1	10
+       * DEBUG:SCRIPT: choices cKey:: choice() :mnovel:	2	12
+       */
+      text[cKey] = matchascript.get_argument(choices[parseInt(cKey)])
     }
     messages.post('choices', 'show_text_choices', { text: text })
     messages.post('textbox', 'hide')
   } else {
+    print('END OF ACTIONBLOCK?')
     const line = matchascript.get_end_of_current_action_block()
+    print('END OF ACTIONBLOCK?:: line', line)
     matchascript.set_line(line)
     matchascript.next()
   }
@@ -693,8 +700,9 @@ export function textbox_done() {
   }
 }
 
-export function choose(choice: string) {
-  matchascript.jump_to_line(choices[choice] + 1)
+export function choose(choice: number) {
+  print('matchascript choose:: choice num:', choice)
+  matchascript.jump_to_line(parseInt(choices[choice]) + 1)
 }
 
 export function set_font(font: string) {
