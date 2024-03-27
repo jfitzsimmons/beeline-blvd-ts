@@ -22,17 +22,20 @@ function file_exists(name)
 	return f ~= nil and io.close(f)
 end
 
-local function load_file(filename)
+local function load_file(filenames)
 	local count = #script
 	for i=0, count do script[i]=nil end
 	local loaded = files.load_script('/assets/novel/scripts/_novelglobals.txt')
 	for k, line in pairs(loaded) do
 		table.insert(script, line)
 	end
-	local loaded2 = files.load_script(filename)
-	--/assets/novel/scripts/grounds/tutorialloiter1.txt
-	for k, line in pairs(loaded2) do
-		table.insert(script, line)
+	for f,file in pairs(filenames) do
+		print("MSCRIPT:: LOAD FILE:: ",file)
+		local loaded2 = files.load_script('/assets/novel/scripts/'..file)
+		--/assets/novel/scripts/grounds/tutorialloiter1.txt
+		for k, line in pairs(loaded2) do
+			table.insert(script, line)
+		end
 	end
 end
 

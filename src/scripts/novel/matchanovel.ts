@@ -620,9 +620,9 @@ function set_input_order() {
   }
 }
 
-export function novel_init(path: string) {
-  if (path != '') {
-    matchascript.add_file(path)
+export function novel_init(paths: string[]) {
+  if (paths.length > 0) {
+    matchascript.add_file(paths)
   }
   matchascript.set_definition(script_definition)
   set_render_order()

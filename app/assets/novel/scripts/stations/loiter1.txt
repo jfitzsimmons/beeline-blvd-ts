@@ -1,0 +1,2 @@
+label loiter1random1
+n: Just because I'm standing here doesn't mean i want to talk to you.

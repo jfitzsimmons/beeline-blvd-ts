@@ -12,32 +12,39 @@ function script_builder(
   if (extend == true) {
     checkpoint = player.checkpoint
   }
-  let path: string =
-    novel.script != ''
-      ? questScripts[checkpoint + 'scripts'](novel.npc.labelname)
-      : ''
-
-  if (path == '') {
-    if (room) {
-      path = path + player.currentroom + '/'
-    }
-    path = path + checkpoint
-    if (novel.npc.currentstation != null) {
-      print(
-        'novel noc:',
-        novel.npc.labelname,
-        ' | station:',
-        novel.npc.currentstation
-      )
-      path = path + novel.npc.currentstation
-    }
-    const caution = tasks.npc_has_caution(novel.npc.labelname, 'player')
-    if (caution != null) {
-      path = path + caution
-    }
+  const paths: string[] = questScripts[player.checkpoint + 'scripts'](
+    novel.npc.labelname
+  )
+  paths.push('clans/' + novel.npc.clan)
+  // if (path.length <= 0) {
+  if (room) {
+    paths.push(player.currentroom + '/default')
   }
-  novel.script = '/assets/novel/scripts/' + path + '.txt'
+  paths.push(checkpoint + '/default')
+  if (novel.npc.currentstation != null) {
+    print(
+      'novel noc:',
+      novel.npc.labelname,
+      ' | station:',
+      novel.npc.currentstation
+    )
+    //testjpf need something like this that
+    //includes checkpoints, stationDefault,
+    //roomStationDefault?
+    paths.push('stations/' + novel.npc.currentstation)
+    paths.push(player.currentroom + '/' + novel.npc.currentstation)
+  }
+  const caution = tasks.npc_has_caution(novel.npc.labelname, 'player')
+  //testjpf also update something on Novel Class
+  //like relevance? Topics!!:: has_caution, got_beat_up, has_effect
+  if (caution != null) {
+    paths.push('cautions/' + caution.label)
+  }
+  novel.scripts = paths
 }
+
+//'/assets/novel/scripts/' + path + '.txt'
+//}
 interface props {
   npcname: string
   cause: string
@@ -51,7 +58,7 @@ export function on_message(
   if (messageId == hash('wake_up')) {
     script_builder()
     novel.alertChange = player.alert_level
-    novel_init(novel.script)
+    novel_init(novel.scripts)
     novel_start()
   } else if (messageId == hash('sleep')) {
     /**

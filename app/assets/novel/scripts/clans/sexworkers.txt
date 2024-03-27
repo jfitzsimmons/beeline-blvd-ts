@@ -1,0 +1,2 @@
+label clanrandom1
+n: Get lost buddy.  You're scaring the clients.

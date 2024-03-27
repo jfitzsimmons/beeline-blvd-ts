@@ -18,7 +18,7 @@ export default class WorldNovel {
   private background: string
   private sprites: { [key: string]: string }
   private _reason: string
-  private _script: string
+  private _scripts: string[]
   private _alertChange: number
   private _npc: Npc
 
@@ -26,7 +26,7 @@ export default class WorldNovel {
     this.background = ''
     this.sprites = {}
     this._reason = ''
-    this._script = ''
+    this._scripts = []
     this._alertChange = 0
     this._npc = initnpc
     //Have something here like this.sprites.smile .laugh .sad etc....
@@ -46,11 +46,11 @@ export default class WorldNovel {
   public set reason(r: string) {
     this._reason = r
   }
-  public get script() {
-    return this._script
+  public get scripts() {
+    return this._scripts
   }
-  public set script(s: string) {
-    this._script = s
+  public set scripts(s: string[]) {
+    this._scripts = s
   }
   public get npc(): Npc {
     return this._npc
@@ -64,7 +64,12 @@ export default class WorldNovel {
   }
   public set alertChange(n: number) {
     this._alertChange = n
-  } /** 
+  }
+  addScript(s: string) {
+    this._scripts.push(s)
+  }
+
+  /** 
   public set hp(n: number) {
     this._state.hp = n
   }
