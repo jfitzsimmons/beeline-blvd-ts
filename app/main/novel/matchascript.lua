@@ -31,7 +31,7 @@ local function load_file(filenames)
 	end
 	for f,file in pairs(filenames) do
 		print("MSCRIPT:: LOAD FILE:: ",file)
-		local loaded2 = files.load_script('/assets/novel/scripts/'..file)
+		local loaded2 = files.load_script('/assets/novel/scripts/'..file..".txt")
 		--/assets/novel/scripts/grounds/tutorialloiter1.txt
 		for k, line in pairs(loaded2) do
 			table.insert(script, line)
@@ -73,7 +73,6 @@ local function read_variable(value)
 	if #value == 0 then 
 		return "", "string"
 	end
-
 	value = remove_spaces(value)
 	if value == "true" then
 		return true, "bool"
@@ -160,7 +159,7 @@ local function get_words(line)
 end
 
 -- returns indention of line (number of spaces or tabs on start of line)
-local function get_indention( line)
+local function get_indention(line)
 	local indention = string.match(line or "", "^[%s	]*") or ""
 	return #indention
 end
@@ -188,31 +187,37 @@ local function separate_arguments(argument_string)
 
 	return arguments_table
 end
-
 -- returns next line with same or smaller indention than current line
-local function get_next_line(this, line)
-	if script[line] == nil then
+local function get_next_line( this, line)
+	--print("get_next_line(lin)",line)
+	if line == nil then
 		line = save.state.pos
 	else
 		line = line
 	end
 	--line = line or save.state.pos
-	
+	--print("line and script line", line, script[line], get_indention(script[line]))
 	local current_indention = get_indention(script[line])
+	--print("curr indentation::",current_indention, "for line:", line, get_indention(script[line]))
 	local next_line = line + 1
 	if next_line > #script then 
 		return 1
 	end
 	local indention = get_indention(script[next_line])
+	--print("next indentation::",indention, "for next_line:", next_line, get_indention(script[line]))
+	
 	--print("get_next_line:: line, next_line, indentation:", line, next_line, indention)
 	while not indention or indention > current_indention do 
 		next_line = next_line + 1
-
+		--print("while indented::", line, next_line, indention)
+				
 		if next_line > #script then return false end
 		indention = get_indention(script[next_line])
-		
+		--print("while indented2::", line, next_line, indention)
+				
 	end
-	return next_line
+	--print("is this always staying the same??",next_line)
+		return next_line
 end
 
 -- returns previous line with same or smaller indention than current line
@@ -239,19 +244,20 @@ local function get_action_block(starting_line)
 	local line = starting_line
 	local action = current_action
 	local action_block = {}
+	--print("1: starting_line, line:::", starting_line,line)
 	while (action == "empty" or action == current_action) and line and line <= #script do
 		if action == current_action then
 			table.insert(action_block, line)
 		end
-		local temp = get_next_line(line)
-		if temp == line then
-			line = line + 1
-		else
-			line = temp
-		end
+	--	print(line, "is this always incresing?")
 
+		line = get_next_line(this, line)
+	--	print("get block :: line each, action", line, action)
+		
+	--	print("MSCRIPTRiPT::: get_action_block::actions[line]: ",actions[line])
 		action = actions[line]
 	end
+	--print("GETACTIONBLOCK LOOP ENDS. actionblockreturned", action_block)
 	return action_block
 end
 
@@ -414,28 +420,35 @@ function M.execute()
 	if action == "none" or action == "empty" then
 		M.next()
 	else
+	--	print(action,"<---LINE in mscript EXEcute")
 		execute_function(action, args)
 	end
 end
 
 -- set the current line of script
 function M.set_line(this, line)
+	--print("MSCRIPT setLine:", line)
 	save.state.pos = line
 end
 
 -- jump to given line and execute it
 function M.jump_to_line(this, line)
+	--print(line,"<---LINE in mscript jump to line")
+
 	M.set_line(this, line)
 	M.execute()
 end
 
 -- jump to line of given label and execute it
-function M.jump_to_label(label)
+function M.jump_to_label(this, label)
+	print(label, "<--jump to label: label ")
 	if label == "start" and not labels["start"] then 
 		M.jump_to_line(this, 1)
 	end
 	
 	local line = labels[label]
+--	print(line, "<--jump to label: line ")
+
 	if line then
 		M.jump_to_line(this, line)
 	end
@@ -444,7 +457,7 @@ end
 -- go to the next line with same or smaller indention and execute it
 function M.next(this)
 	if not define then
-		local next_line = get_next_line(nil)
+		local next_line = get_next_line(this, nil)
 		M.jump_to_line(this,next_line)
 	end
 end
@@ -462,7 +475,7 @@ end
 
 -- returns argument of given line
 function M.get_argument(this, line)
-	return arguments[line][1]
+	return arguments[line]
 end
 
 -- returns boolean that is true if current line is the first in the action block that line is part of
@@ -492,7 +505,7 @@ end
 -- jump to line of given by label "start" and execute it 
 function M.start()
 	if labels["start"] then
-		M.jump_to_label("start")
+		M.jump_to_label(this,"start")
 	else
 		M.jump_to_line(this, 1)
 	end

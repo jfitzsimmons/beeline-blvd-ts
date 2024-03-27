@@ -46,7 +46,7 @@ export default class WorldNovel {
   public set reason(r: string) {
     this._reason = r
   }
-  public get scripts() {
+  public get scripts(): string[] {
     return this._scripts
   }
   public set scripts(s: string[]) {

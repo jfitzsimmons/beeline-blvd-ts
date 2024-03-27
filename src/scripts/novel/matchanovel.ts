@@ -221,6 +221,7 @@ function interpolate_string(s: string) {
 }
 
 function jump(args: any) {
+  //print(args[0], args.length, '<---LINE in MNOVEL jump()')
   matchascript.jump_to_label(args[0])
 }
 
@@ -487,8 +488,10 @@ function choice() {
     choices = matchascript.get_current_action_block()
     const text: { [key: string]: string } = {}
     for (const [cKey] of Object.entries(choices)) {
-      text[cKey] = matchascript.get_argument(choices[parseInt(cKey)])
+      const words = [...matchascript.get_argument(choices[parseInt(cKey)])]
+      text[cKey] = words.join(' ')
     }
+
     messages.post('choices', 'show_text_choices', { text: text })
     messages.post('textbox', 'hide')
   } else {

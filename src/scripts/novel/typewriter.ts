@@ -234,8 +234,7 @@ function reposition_letters(line_table: { [key: string]: string }) {
 
 function get_next_space(text: string) {
   let next_space = 1
-
-  const [_c] = string.gmatch(text, '.')
+  const _c = text.split('')
 
   for (const c of _c) {
     if (is_cjk(c)) {
@@ -419,6 +418,7 @@ export function change_typewriter(id: number) {
 
 // Clears old text && starts typing.
 export function start(text: string) {
+  print('text for typewriter::', text)
   start_typewriter(text, true)
 }
 
