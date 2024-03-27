@@ -60,13 +60,11 @@ export default class WorldTasks {
   private _spawn: string
 
   constructor(questmethods: AllQuestsMethods) {
-    //testjpf may not need? pass directly to this.quests
     this._questmethods = questmethods
     this._cautions = []
-    this._quests = build_quests(this.questmethods) // go back to old way of building!!!!TESTJPF
+    this._quests = build_quests(this.questmethods)
     this.consolations = [snitch, merits, reckless]
     this._spawn = 'grounds'
-    // this.address_quests = this.address_quests.bind(this)
   }
   public set spawn(s: string) {
     this._spawn = s
@@ -91,7 +89,7 @@ export default class WorldTasks {
       const c = this.cautions[i]
       if (
         c.suspect == sus &&
-        (c.state == 'questioning' || c.state == 'arrest' || c.state == 'snitch')
+        (c.label == 'questioning' || c.label == 'arrest' || c.label == 'snitch')
       ) {
         this.cautions.splice(i, 1)
       }
@@ -102,7 +100,7 @@ export default class WorldTasks {
       if (
         c.npc == npc &&
         c.suspect == sus &&
-        (c.state == 'questioning' || c.state == 'arrest')
+        (c.label == 'questioning' || c.label == 'arrest')
       ) {
         return c
       }
@@ -111,7 +109,7 @@ export default class WorldTasks {
   }
   plan_on_snitching(npc: string, sus: string): boolean {
     for (const c of this.cautions) {
-      if (c.npc == npc && c.suspect == sus && c.state == 'snitch') {
+      if (c.npc == npc && c.suspect == sus && c.label == 'snitch') {
         return true
       }
     }
@@ -134,7 +132,7 @@ export default class WorldTasks {
     const append: Caution = {
       npc: n.labelname,
       time: 15,
-      state: c, // merits //testjpf state is a bad name
+      label: c, // merits //testjpf state is a bad name
       type: 'npc',
       authority: n.clan, //ex; labor
       suspect: s,
@@ -171,7 +169,7 @@ export default class WorldTasks {
       'did',
       append.reason,
       'so created caution:',
-      append.state
+      append.label
     )
 
     this.append_caution(append)
@@ -195,27 +193,19 @@ export default class WorldTasks {
   }
   // checks quest completion after interactions and turns
   address_quests = (interval: string, checkpoint: string) => {
-    //const checkpoint = world.player.checkpoint:sub(1, -2)
-
     const quests = this.quests[checkpoint.slice(0, -1)]
 
     let questKey: keyof typeof quests
     for (questKey in quests) {
       const quest = quests[questKey]
-      //print("quest passed?", qv.passed)
       if (quest.passed == false) {
-        // testjpf gettng sloppy?!?!?
         let quest_passed = true
-        //quests.checks[checkpoint](interval)
-
         let condition: keyof typeof quest.conditions
         for (condition in quest.conditions) {
           const goal = quest.conditions[condition]
-          //for _,cv in pairs(qv.conditions) do
           if (goal.passed != true && goal.interval == interval) {
             if (goal.func(goal.args) == false) {
               quest_passed = false
-              //print(_,qk, "quest not complete", goal.func(goal.args))
             } else if (goal.passed != null) {
               goal.passed = true
             }

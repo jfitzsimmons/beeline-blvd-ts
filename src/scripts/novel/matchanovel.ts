@@ -177,71 +177,46 @@ function return_quotes(s: string) {
 function execute_string(s: string) {
   Sandbox = {}
   Sandbox = { math: math, vmath: vmath, string: string }
-  print('begin execution!!!:', s)
   let stripped: LuaMultiReturn<[string, number]> = strip_quotes(s)
-  print(stripped[0], 'stripped1[0]')
   stripped = string.gsub(
     stripped[0],
     '[%a_][%w_%.]*',
     substitute_in_expression(stripped[0])
   )
 
-  print(stripped[0], 'stripped2')
   stripped = return_quotes(tostring(stripped[0]))
-  print(stripped[0], 'stripped3')
 
   const f = loadstring('return ' + stripped[0])
-  print('FF:::::', f[0])
 
   let result = ''
   if (f[0] !== null) {
     result = assert(f[0])()
   }
   Sandbox = null
-  print('result from executestring:', result)
   return result
 }
 
 function add_escapes(s: string) {
-  print('add escapes for:::', s)
   return string.gsub(s, '%W', '%%%0')
 }
 
 // replaces all instances of {x} with value of x
 function interpolate_string(s: string) {
-  //this testjpf doesnt seem to be doing anything it's supposed to
-  // debug against old build
-  //with same scritps for both
-  print('intepolatedstring', s)
   const left = '{'
   const right = '}'
   let _s: LuaMultiReturn<[string, number]> | string = s
   let expression = string.match(s, left + '([^{]*)' + right)
-  //print(expression[0])
   for (let i = expression.length; i-- !== 0; ) {
     let value = ''
     value = execute_string(expression[i])
     value = tostring(value)
-    // value is correct ex "ThIS WORKS"
-    print('VALUE::: THIS WORKS???::', value)
     const pattern = add_escapes(left + expression[i] + right)
-    print('WHAT THE FUCK IS PATTERN?:::', pattern)
-    print('WHAT THE FUCK IS PATTERN000?:::', pattern[0])
+
     _s = string.gsub(s, tostring(pattern[0]), value)[0]
-    print('_s', _s)
-    print('_s[00000', _s[0])
+
     expression = string.match(tostring(_s), left + '([^{]+)' + right)
-    print('expression', expression[0])
   }
-  print('interpolate string return::: _s::', _s)
-  //print('interpolate string return::: _s000::', _s[0])
-  //testjpf i think i'm returning the wrong thing
-  /**
-   * in debug you get this:::
-   *  SUVSTITUTE result::	"THIS WORKS"
-DEBUG:SCRIPT: "THIS WORKS"	stripped2
-DEBUG:SCRIPT: "THIS WORKS"	stripped3
-   */
+
   return _s
 }
 
@@ -435,15 +410,10 @@ function scene(args: any) {
   messages.post('background', 'scene', message)
   matchascript.next()
 }
-//testjpf need nested ifs to not get booleans in TS
-//To do start here
+
 function show(args: any) {
   const name = args[0]
-  print('REDALERT::: SHOW MNNOVEL:: args.at', args.at, args[1])
   const at = args.at != null ? args.at : args[1]
-  print(save.get_var('show.transition'))
-
-  print(save.get_var('show.transition')[1])
   const transition =
     args.transition != null
       ? args.transition
@@ -454,10 +424,8 @@ function show(args: any) {
       : args.t != null
       ? args.t
       : save.get_var('show.duration')[1]
-  print('args.color', args.color)
   const color = args.color != null ? args.color : save.get_var('show.color')[1]
   const wait = args.wait
-  print('ACTUAL PRE SPRITE  MESSAGE MNOVEL')
 
   messages.post('sprites', 'show', {
     name: name,
@@ -466,9 +434,7 @@ function show(args: any) {
     duration: duration,
     color: color,
   })
-  print('ACTUAL POST SPRITE  MESSAGE MNOVEL')
   if (wait == null) {
-    print('no wait')
     matchascript.next()
   }
 }
@@ -519,22 +485,14 @@ function choice() {
   if (matchascript.current_line_is_start_of_action_block() == true) {
     state = 'choices'
     choices = matchascript.get_current_action_block()
-    print('POST cet current action block:: shoice MNOVEL')
     const text: { [key: string]: string } = {}
     for (const [cKey] of Object.entries(choices)) {
-      print('choices cKey:: choice() :mnovel:', cKey, choices[parseInt(cKey)])
-      /**
-       * DEBUG:SCRIPT: choices cKey:: choice() :mnovel:	1	10
-       * DEBUG:SCRIPT: choices cKey:: choice() :mnovel:	2	12
-       */
       text[cKey] = matchascript.get_argument(choices[parseInt(cKey)])
     }
     messages.post('choices', 'show_text_choices', { text: text })
     messages.post('textbox', 'hide')
   } else {
-    print('END OF ACTIONBLOCK?')
     const line = matchascript.get_end_of_current_action_block()
-    print('END OF ACTIONBLOCK?:: line', line)
     matchascript.set_line(line)
     matchascript.next()
   }
@@ -650,38 +608,22 @@ const render_order = [
 const input_order = ['textbox', 'choices']
 
 function set_render_order() {
-  //for k, v in pairs(render_order) do {
   for (let i = 0; i < render_order.length - 1; i++) {
     const extracted = string.match(render_order[i], '/(.*)')
-    print('extracted[0] SRP:', extracted[0])
     messages.post(extracted[0], 'set_render_order', { n: i })
   }
 }
 
 function set_input_order() {
-  //for k, v in pairs(input_order) do {
   for (const gui of input_order) {
     messages.post(gui, 'acquire_input_focus', {})
   }
 }
 
-//testjpf pass options that include jump labels?
-//option = {>use computer, >ask for instructions??, deskmanned options++  }
-// also need to include game vars some how?
-// need success .txts && fail???
-// can h&&le jumps through LUA???
-// pass character, love score, && location to determine txts &&/or jumps
-//ex: desk1_frank_0, desk1_frank_5, desk1_frank_9, desk1_eve_0, desk1_eve_5, desk1_eve_9
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function novel_init(path: string) {
-  //print(option, 'TESTJpf opt<--')
-  print(path, 'TESTJpf path<--')
-  // TESTJPF you just flkippped tehse!! start here
-  //matchascript.load_scripts()
   if (path != '') {
-    matchascript.add_file(path) //gos to mscript add_file to load_file, which uses defold engine add constly to script = {}
+    matchascript.add_file(path)
   }
-  //save.set_save_folder_name("Beeline Game Novel")
   matchascript.set_definition(script_definition)
   set_render_order()
   set_input_order()
@@ -701,7 +643,6 @@ export function textbox_done() {
 }
 
 export function choose(choice: number) {
-  print('matchascript choose:: choice num:', choice)
   matchascript.jump_to_line(parseInt(choices[choice]) + 1)
 }
 

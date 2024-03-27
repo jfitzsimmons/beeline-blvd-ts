@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import { ai_turn, place_npcs } from '../ai/ai_main'
 const { world } = globalThis.game
 const { rooms, npcs, player, tasks, novel } = world
@@ -32,15 +27,11 @@ function confrontation_scene(c: Confront) {
   npcs.all[c.npc].convos = npcs.all[c.npc].convos + 1
   novel.npc = npcs.all[c.npc]
   novel.reason = c.reason
-  //pass params to load novel
   msg.post('#', 'show_scene')
 }
 interface props {
-  //chests: ???,
-  //actions: actions
   roomname: string
   storagename: string
-  //nlife: number
 }
 export function on_message(
   this: props,
@@ -96,8 +87,6 @@ export function on_message(
     msg.post(this.roomname + ':/adam#adam', 'acquire_input_focus')
   } else if (messageId == hash('show_scene')) {
     msg.post('hud#map', 'release_input_focus')
-    //testjpf DELETE all params get npc, reason and script from Novel class
-    //get roomname from Player.currentroom
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
   } else if (messageId == hash('update_alert')) {
     sprite.play_flipbook(

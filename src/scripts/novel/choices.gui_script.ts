@@ -55,7 +55,7 @@ function unhide_choices() {
 }
 
 function create_choices(choices: { [key: number]: string }) {
-  //delete_choices()
+  delete_choices()
   current_text = choices
   let y = 0
 
@@ -70,34 +70,15 @@ function create_choices(choices: { [key: number]: string }) {
     const clonetree = gui.clone_tree(gui.get_node('choice'))
     let clonedNode: keyof typeof clonetree
     for (clonedNode in clonetree) {
-      print('CNODE NEXT>>::')
-
-      print('CNODE KET:::', clonedNode)
-      //print('gui.get_id(clonedNode', gui.get_id(clonedNode))
-
-      //  print('clonedNode clonedNode clonedNode', clonedNode)
       if (clonedNode == hash('choice')) {
         choiceLookup.choice = clonetree[clonedNode]
-        // nodes[parseInt(nKey)] = clonedNode
       } else if (clonedNode == hash('choice_box')) {
         choiceLookup.box = clonetree[clonedNode]
-        // const node_box = clonedNode
       } else if (clonedNode == hash('choice_text')) {
         choiceLookup.text = clonetree[clonedNode]
-
-        // const node_text = clonedNode
       }
-      //for ck, cv in pairs(clonetree) do
-      //const clone = gui.clone(clonetree[clonedNode])
     }
     nodes[parseInt(nKey)] = choiceLookup
-
-    // nodes[nKey] = gui.clone(gui.get_node('choice'))
-    // const node_choice = gui.clone(gui.get_node('choice'))
-    // const node_box = gui.clone(gui.get_node('choice_box'))
-    // const node_text = gui.clone(gui.get_node('choice_text'))
-
-    // print(node_text)
     const [text_width, text_height]: number[] = get_text_size(
       choiceLookup.text,
       choices[parseInt(nKey)]
@@ -105,22 +86,17 @@ function create_choices(choices: { [key: number]: string }) {
 
     y = y - text_height / 2 - border_y
     gui.set_enabled(choiceLookup.choice, true)
-    // gui.set_enabled(choiceLookup.box, true)
-    // gui.set_enabled(choiceLookup.text, true)
     gui.set_text(choiceLookup.text, choices[parseInt(nKey)])
     gui.set_size(
       choiceLookup.box,
       vmath.vector3(text_width + 2 * border_x, text_height + 2 * border_y, 0)
     )
     gui.set_position(choiceLookup.choice, vmath.vector3(0, y, 0))
-    //  gui.set_position(choiceLookup.box, vmath.vector3(0, y, 0))
-    // gui.set_position(choiceLookup.text, vmath.vector3(0, y, 0))
-
     gui.set_color(choiceLookup.box, color_unhovered)
     y = y - text_height / 2 - border_y - distance
   }
   y = y + border_y + distance
-  //gui.set_position(gui.get_node('choices'), vmath.vector3(0, -y / 2, 0))
+  gui.set_position(gui.get_node('choices'), vmath.vector3(0, -y / 2, 0))
 }
 
 function pick_choices(choice: number) {
@@ -138,16 +114,11 @@ function set_font(font: string) {
 }
 
 function unhover_choice() {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  print(hovered_choice, 'UNhoveredchoice')
   if (typeof hovered_choice !== 'number') return
-  const testjpf: node = nodes[hovered_choice].box
-  //let nKey: keyof typeof testjpf
-  // for (const nKey of testjpf) {
-  //print('hover nkeys:', nKey)
-  //}/
+  const node: node = nodes[hovered_choice].box
+
   gui.animate(
-    testjpf,
+    node,
     'color',
     color_unhovered,
     gui.EASING_INOUTSINE,

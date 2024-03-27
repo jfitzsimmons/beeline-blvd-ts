@@ -5,12 +5,8 @@ const { tasks, player, novel } = globalThis.game.world
 import { questScripts } from '../quests/quests_main'
 
 function script_builder(
-  //npc: string,
   room: boolean | true = true,
-  //station: string,
-  //caution: string,
   extend: boolean | false = false
-  //checkpoint: string | 'tutorialA'
 ) {
   let checkpoint = player.checkpoint.slice(0, -1)
   if (extend == true) {
@@ -40,13 +36,8 @@ function script_builder(
       path = path + caution
     }
   }
-  print('PATH:::', path)
   novel.script = '/assets/novel/scripts/' + path + '.txt'
-  print('novel.script testjpf', novel.script)
 }
-//u = require "main.utils.novel"
-// need to check out the message coming to this file
-//probs from worldcontroller? novelcontroller
 interface props {
   npcname: string
   cause: string
@@ -60,9 +51,6 @@ export function on_message(
   if (messageId == hash('wake_up')) {
     script_builder()
     novel.alertChange = player.alert_level
-    print('global novel npc', globalThis.game.world.novel.npc.labelname)
-    print('global any npc', globalThis.game.world.npcs.all.eve.labelname)
-
     novel_init(novel.script)
     novel_start()
   } else if (messageId == hash('sleep')) {
@@ -85,9 +73,6 @@ export function on_message(
       }
       msg.post('proxies:/controller#worldcontroller', 'faint', params)
     } else if (message.cause == 'arrested') {
-      //testjpf mught be a better function for
-      //Novel class
-      //probably all these 'sleep' conditions could be class based
       tasks.remove_heat('player')
       msg.post('proxies:/controller#worldcontroller', 'arrested', {
         enter_room: 'security',

@@ -83,12 +83,9 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
           return
         }
       }
-      //  if (placed == true) break
     }
     // fallback stations
     if (placed == false) {
-      // testjpf thought of idea to have a "non_placer" npc in each room.
-      // could have some dialog about being stranded. having to wait.
       if (
         room_list.includes('admin1') &&
         rooms.fallbacks.stations['admin1_passer'] == '' &&
@@ -139,7 +136,6 @@ function set_room_priority(
   const room_list: (string | null)[] = []
   const current = npcs.all[npc].matrix
   //get list of possible rooms NPC could go to next in order to get to target
-  //testjpf
   if (target.y > current.y) {
     room_list.push(rooms.layout[current.y + 1][current.x])
   }

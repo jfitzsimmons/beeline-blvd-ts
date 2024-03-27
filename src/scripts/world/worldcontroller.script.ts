@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-print('testjpf 2nd??')
 math.randomseed(os.time())
 
 import { Game } from '../states/gamesystem2'
@@ -31,7 +30,6 @@ function show(current_proxy: url | null, p: string) {
 
 export function init(this: props) {
   //init from bootstrap (main.collection)
-  //globalThis.game = new Game()
   this.current_proxy = null
   this.load_type = 'none'
 
@@ -85,7 +83,7 @@ export function on_message(
       msg.post(this.roomname + ':/level#level', 'room_load', params)
     }
     msg.post(_sender, 'enable')
-  } //else if (messageId == hash('proxy_unloaded')) {}
+  }
 }
 
 export function on_input(

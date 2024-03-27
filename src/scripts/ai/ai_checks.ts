@@ -2,11 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-//const taskstates = require "main.states.taskstates"
 import { Actor, Effect, Npc, PlayerState, Skills } from '../../types/state'
 import { dice_roll } from '../utils/utils'
 const { tasks } = globalThis.game.world
-//const utils = require "main.utils.utils"
 import {
   remove_advantageous,
   remove_valuable,
@@ -15,9 +13,7 @@ import {
   add_chest_bonus,
   remove_chest_bonus,
 } from '../systems/inventorysystem'
-//const fx = require('../../main.systems.effectsystem')
 import { fx, add_effects_bonus } from '../systems/effectsystem'
-//testjpf some logic issues throughout
 function confrontation_consequence(p: Npc, n: Npc) {
   //ugly code. testjpf.  not many cautions needed.
   //returns are superflous
@@ -115,10 +111,9 @@ export function take_check(taker: Npc, actor: Npc | Actor) {
   }
 
   const minmax = dice_roll()
-  //print("chances:",chances,"TAKE CHECK dicE:",minmax[0]*10,minmax[1]*10)
-  //print((taker.skills.speed + taker.skills.stealth + (taker.binaries.poor_wealthy * -10)) /2)
+
   let take = false
-  //print("(taker.skills.speed + taker.skills.stealth + (taker.binaries.poor_wealthy * -10)) /9 = ",(taker.skills.speed + taker.skills.stealth + (taker.binaries.poor_wealthy * -10)) /9)
+
   if (chances > 0.5) {
     // advantage
     if (
@@ -166,8 +161,6 @@ export function take_check(taker: Npc, actor: Npc | Actor) {
 }
 
 export function stash_check(stasher: Npc, actor: Npc | Actor) {
-  // testjpf if you hae a cooldown, it greatly increases your chances??
-  // ){ make default chance lower
   let chances =
     math.random() +
     (stasher.inventory.length - 2) * 0.1 +
@@ -177,8 +170,6 @@ export function stash_check(stasher: Npc, actor: Npc | Actor) {
   }
 
   const minmax = dice_roll()
-  //print("chances:",chances,"stash_check dicE:",minmax[0]*10,minmax[1]*10)
-  //print("(stasher.skills.constitution + stasher.skills.stealth + (stasher.binaries.anti_authority * -10)) /5 =",(stasher.skills.constitution + stasher.skills.stealth + (stasher.binaries.anti_authority * -10)) /5)
   let stash = false
   if (chances > 0.5) {
     // advantage

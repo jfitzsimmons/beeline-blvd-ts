@@ -46,10 +46,6 @@ export default class WorldNpcs {
   }
 }
 
-// TODO - testjpf
-//abstract and import room types
-// create efficient look for clear station in TS
-
 interface BinaryLookupTable {
   [key: string]: BinaryLookupRow
 }
@@ -200,20 +196,13 @@ function adjust_binaries(value: number, clan: string, binary: string) {
   return adj
 }
 
-// testjpf probably just need npcs type??
 function random_attributes(npcs: Npcs, order: string[]) {
   const ai_paths = ['inky', 'blinky', 'pinky', 'clyde']
   const startskills = [1, 2, 3, 5, 7, 7, 8, 8]
   const startbins = [-1, -0.5, -0.1, 0.1, 0.5, 1]
   let path = 0
   let count = 1
-  /** 
-  const _defaults = { ...npc_defaults }
-  let knd: keyof typeof _defaults 
-  for (knd in _defaults) {
-    npcs[npcname][knd] = _defaults[knd]
-  }
-**/
+
   let kn: keyof typeof npcs
   for (kn in npcs) {
     order.splice(count, 0, kn)

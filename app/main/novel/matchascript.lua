@@ -27,14 +27,11 @@ local function load_file(filename)
 	for i=0, count do script[i]=nil end
 	local loaded = files.load_script('/assets/novel/scripts/_novelglobals.txt')
 	for k, line in pairs(loaded) do
-		print("global line:",line)
 		table.insert(script, line)
 	end
-print("mscript testjpf:", filename)
 	local loaded2 = files.load_script(filename)
 	--/assets/novel/scripts/grounds/tutorialloiter1.txt
 	for k, line in pairs(loaded2) do
-		print("script line:",line)
 		table.insert(script, line)
 	end
 end
@@ -66,7 +63,6 @@ function M.hex_to_rgb(hex)
 end
 
 local function read_variable(value)
-	print(value, "::: read variable mscript !!! HERE TESTJPF")
 	if not value then 
 		return nil, "nil"
 	end
@@ -98,20 +94,17 @@ local function read_variable(value)
 	elseif number then
 		return number, "number"
 	else
-		print("pointer right??", value)
 		return value, "pointer"
 	end
 end
 
 function M.get_var_from_savestate(var)
 	local vtable = save.get_var(this,var)
-	print("printer from save state:", vtable[1],vtable[2])
 	return vtable
 end
 
 function M.get_variable(this, v)
 	local value, type = read_variable(v)
-	print("get_var", value, type)
 	if type == "pointer" then
 		local saved= M.get_var_from_savestate(value)
 		return {saved[1], saved[2]}
@@ -165,9 +158,7 @@ end
 
 -- returns indention of line (number of spaces or tabs on start of line)
 local function get_indention( line)
-	print("get_indention v get_indention",line)
 	local indention = string.match(line or "", "^[%s	]*") or ""
-	print("getindentation mscript:: #indent:", #indention)
 	return #indention
 end
 
@@ -186,17 +177,6 @@ local function separate_arguments(argument_string)
 		rest_left, argument, value, rest_right = string.match(argument_string, pattern)
 	end
 
-	--[[
-	-- set arguments from flags ("-x")
-	pattern = "(.*)%s+%-([%a%_]%S*)(.*)"
-	local rest_left, flag, rest_right = string.match(argument_string, pattern)
-	while flag do
-		arguments_table[flag] = true
-		argument_string = rest_left..rest_right
-		rest_left, flag, rest_right = string.match(argument_string, pattern)
-	end
-	--]]
-
 	-- set other arguments ("x")
 	local words = get_words(argument_string)
 	for i, v in pairs(words) do
@@ -214,7 +194,6 @@ local function get_next_line(this, line)
 		line = line
 	end
 	--line = line or save.state.pos
-	print("line and script line", line, script[line])
 	
 	local current_indention = get_indention(script[line])
 	local next_line = line + 1
@@ -227,11 +206,9 @@ local function get_next_line(this, line)
 		next_line = next_line + 1
 
 		if next_line > #script then return false end
-		print("while indented::", line, next_line, indention)
 		indention = get_indention(script[next_line])
 		
 	end
-	print("get_next_lineget_next_line",next_line)
 	return next_line
 end
 
@@ -241,14 +218,12 @@ local function get_previous_line(this, line)
 	local current_indention = get_indention(script[line])
 	local previous_line = line - 1
 	local indention = get_indention(script[previous_line])
-	print("get_PREV_line:: line, next_line, indentation:", line, next_line, indentation)
 
 	while not indention or indention > current_indention do 
 		previous_line = previous_line - 1
 		if previous_line < 1 then return false end
 		indention = get_indention(script[previous_line])
 	end
-	print("get_nprev_line",previous_line)
 
 	return previous_line
 end
@@ -257,10 +232,7 @@ end
 -- lines are in same block if they are of same action, same indention, 
 -- and are next of each other (disregaring empty lines)
 local function get_action_block(starting_line)
-	print(starting_line,"is this a table cuz NO THIS?:: geactionblk mscript")
-	--starting line::: > NO
 	local current_action = actions[starting_line] -- choice?
-	print("current_action", current_action)
 	local line = starting_line
 	local action = current_action
 	local action_block = {}
@@ -268,21 +240,15 @@ local function get_action_block(starting_line)
 		if action == current_action then
 			table.insert(action_block, line)
 		end
-		print(line, "is this always incresing?")
 		local temp = get_next_line(line)
 		if temp == line then
 			line = line + 1
 		else
 			line = temp
 		end
-		--line = get_next_line(line)
-		print("get block :: line each, action", line, action)
 
 		action = actions[line]
-		print("next_action. hpefully line went to twelve and this is also choice?", action)
 	end
-	print("post While get action block done!")
-	print(action_block)
 	return action_block
 end
 
@@ -290,22 +256,17 @@ end
 local function is_start_of_action_block(starting_line)
 	local current_action = actions[starting_line]
 	local line = get_previous_line(starting_line)
-	print("is startt :: startline", starting_line)
-	print("is startt :: prev", line)
 	local action = actions[line]
 	return action ~= current_action
 end
 
 -- returns last line in action block of given line
 local function get_end_of_action_block(starting_line)
-	print("endofactionblk::: strting line", starting_line)
-
 	local action_block = get_action_block(starting_line)
 	local end_line = 1
 	for k, v in pairs(action_block) do
 		end_line = math.max(v, end_line)
 	end
-	print("endofactionblk::: END line", end_line)
 
 	return end_line
 
@@ -386,61 +347,61 @@ function M.init()
 		This will prioritize the operator the furthest to the left
 		and if two start at the same position, the longer one will be prioritized, so for
 		alice: The function is y = a * b + c
-			it will match ":", and not "="
-			so you can put any operator to the right of the first in the line without worrying about conflicts
-			--]] 
-			if not action then
-				local max_operator_length = 1
-				for _, operator in pairs(definition.operators) do
-					max_operator_length = math.max(max_operator_length, #operator)
-				end
-				local operator_length = 0
-				for length = max_operator_length, 1, -1 do
-					for action_name, operator in pairs(definition.operators) do
-						if #operator == length then
-							local op = string.gsub(operator, ".", "%%%0")
-							arg_left, arg_right = string.match(line, "^%s*(.-)%s*"..op.."%s*(.*)")
-							local is_furthes_to_left = arg_left and ((not arguments[k].left) or #arg_left < #arguments[k].left)
-							local is_equally_far_to_left = arg_left and arguments[k].left and #arg_left == #arguments[k].left
-							local is_longer = #operator > operator_length
-							if is_furthes_to_left or (is_equally_far_to_left and is_longer) then
-								action = action_name
-								arguments[k].left = arg_left
-								arguments[k].right = arg_right
-								arguments[k][0] = line
-								operator_length = #operator
-							end
+		it will match ":", and not "="
+		so you can put any operator to the right of the first in the line without worrying about conflicts
+		--]] 
+		if not action then
+			local max_operator_length = 1
+			for _, operator in pairs(definition.operators) do
+				max_operator_length = math.max(max_operator_length, #operator)
+			end
+			local operator_length = 0
+			for length = max_operator_length, 1, -1 do
+				for action_name, operator in pairs(definition.operators) do
+					if #operator == length then
+						local op = string.gsub(operator, ".", "%%%0")
+						arg_left, arg_right = string.match(line, "^%s*(.-)%s*"..op.."%s*(.*)")
+						local is_furthes_to_left = arg_left and ((not arguments[k].left) or #arg_left < #arguments[k].left)
+						local is_equally_far_to_left = arg_left and arguments[k].left and #arg_left == #arguments[k].left
+						local is_longer = #operator > operator_length
+						if is_furthes_to_left or (is_equally_far_to_left and is_longer) then
+							action = action_name
+							arguments[k].left = arg_left
+							arguments[k].right = arg_right
+							arguments[k][0] = line
+							operator_length = #operator
 						end
 					end
-					--if matched then break end
 				end
-			end
-			if not action then
-				action = "default"
-				arguments[k][0] = line
-			elseif action == "label" then
-				labels[arguments[k][0]] = k
-				action = "label"
-				define = false
-			end
-
-			-- set action
-			actions[k] = action or "none"
-
-			-- set arguments 
-			if arguments[k][0] then
-				local argument_table = separate_arguments(arguments[k][0])
-				for i, v in pairs(argument_table) do
-					arguments[k][i] = v
-				end
-			end
-
-			if define then
-				execute_function(actions[k], arguments[k])
+				--if matched then break end
 			end
 		end
-		define = false
+		if not action then
+			action = "default"
+			arguments[k][0] = line
+		elseif action == "label" then
+			labels[arguments[k][0]] = k
+			action = "label"
+			define = false
+		end
+
+		-- set action
+		actions[k] = action or "none"
+
+		-- set arguments 
+		if arguments[k][0] then
+			local argument_table = separate_arguments(arguments[k][0])
+			for i, v in pairs(argument_table) do
+				arguments[k][i] = v
+			end
+		end
+
+		if define then
+			execute_function(actions[k], arguments[k])
+		end
 	end
+	define = false
+end
 
 -- execute the action on the current line
 function M.execute()
@@ -456,13 +417,11 @@ end
 
 -- set the current line of script
 function M.set_line(this, line)
-	print("setline", line)
 	save.state.pos = line
 end
 
 -- jump to given line and execute it
 function M.jump_to_line(this, line)
-	print("jump to line mscript:: line:",line)
 	M.set_line(this, line)
 	M.execute()
 end
@@ -482,9 +441,7 @@ end
 -- go to the next line with same or smaller indention and execute it
 function M.next(this)
 	if not define then
-		print("COMING FROM M.NEXT()!!!!!!!")
 		local next_line = get_next_line(nil)
-		print("next_line mscript:: next_line", next_line)
 		M.jump_to_line(this,next_line)
 	end
 end
@@ -497,25 +454,21 @@ end
 
 -- returns table of lines of all actions in block starting from current line
 function M.get_current_action_block(starting_line)
-	print("M RETRUN anything??")
 	return get_action_block(save.state.pos)
 end
 
 -- returns argument of given line
 function M.get_argument(this, line)
-	print("mscript get argument:: line", line, arguments[line],arguments[line][1])
 	return arguments[line][1]
 end
 
 -- returns boolean that is true if current line is the first in the action block that line is part of
 function M.current_line_is_start_of_action_block()
-	print("is_start_of_action_block(save.state.pos)",is_start_of_action_block(save.state.pos))
 	return is_start_of_action_block(save.state.pos)
 end
 
 -- returns last line in action block of current line
 function M.get_end_of_current_action_block()
-	print(save.state.pos)
 	return get_end_of_action_block(save.state.pos)
 end
 
