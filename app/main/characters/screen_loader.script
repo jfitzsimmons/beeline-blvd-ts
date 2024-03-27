@@ -1,0 +1,34 @@
+--local world = require "main.states.worldstate"
+
+function get_npc(name)
+	sprite.play_flipbook("#screensprite", name)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("show_npc") then
+		self.name = message.npc
+		self.actions = {}
+		--self.actions[self.name] = world.npcs.ais[self.name].actions
+		--self.actorurl =  world.npcs.all[self.name].actions -- for inventory
+		self.script =  message.script
+
+		get_npc(self.name)
+	elseif message_id == hash("trigger_response") then -- <2>
+		if message.enter then	
+			local params = {
+				pos = go.get_position("adam"),
+				actions = self.actions,
+				script = self.script,
+				collision = "enter",
+				--parenturl = self.actorurl,
+				npcname = self.name,
+			}
+			
+			msg.post("adam#interact", "shownode", params )
+		else
+			local params = {actions = self.actions}
+			
+			msg.post("adam#interact", "hidenode", params)
+		end
+	end
+end

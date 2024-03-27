@@ -1,0 +1,21 @@
+function init(self)
+	msg.post("#", "acquire_input_focus")
+end
+
+function create_new_game(self, action) 
+	local node = gui.get_node("new_game")
+
+	if gui.pick_node(node, action.x, action.y) then 
+		local params = {
+			enter_room = "grounds",
+			load_type = "new game"
+		}
+		msg.post("proxies:/controller#worldcontroller", "pick_room", params)
+	end
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("touch") and action.released then	
+		create_new_game(self, action)
+	end
+end

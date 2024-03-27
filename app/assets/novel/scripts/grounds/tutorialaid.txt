@@ -1,0 +1,259 @@
+merits = npc.love
+turns = npc.convos
+n.name = npc.labelname
+npclogskills = "spd: {npc.skills.speed} | str: {npc.skills.strength} |con: {npc.skills.constitution} | chr: {npc.skills.charisma} |wis: {npc.skills.wisdom} | per: {npc.skills.perception} |int: {npc.skills.intelligence} | stl: {npc.skills.stealth}"
+
+
+
+
+
+n.sprite = npc.smilesprite
+npclogbinaries = "good: {npc.binaries.evil_good} | aggression: {npc.binaries.passive_aggressive} |law: {npc.binaries.lawless_lawful} | auth: {npc.binaries.anti_authority} |edu: {npc.binaries.un_educated} | wealth: {npc.binaries.poor_wealthy}"
+playerskillslog = "spd: {player.skills.speed} | str: {player.skills.strength} |con: {player.skills.constitution} | chr: {player.skills.charisma} |wis: {player.skills.wisdom} | per: {player.skills.perception} |int: {player.skills.intelligence} | stl: {player.skills.stealth}"
+n.scale = 3
+n.y = 0.5
+
+show.transition = "fade"
+scene haikeisozai_tatemono4.jpg
+
+p.name = "Adam"
+
+label needhelp
+n: Is there anything I can help you with?
+> No thanks, I'm fine
+  jump goodbye5
+> Where do I go?
+  turns = turns + 1
+  jump onboarding
+
+label start
+show n
+n: {npclogskills}
+n: {npclogbinaries}
+p: {playerskillslog}
+> What's up doc?
+  jump humorcheck
+> What's wrong with them?
+  jump rougharound
+
+label humorcheck
+if npc.skills.charisma < 4 and player.skills.charisma > 6
+  n: that's funny but...
+  merits = merits + 2
+  if npc.clan ~= "doctors"
+    n: I'm not a doctor you idiot. Go get one!
+    jump quickclose
+  jump rougharound
+n: PUNCH {u.punch()}
+p: OW! 
+if npc.clan ~= "doctors"
+  n: I'm not a doctor you idiot. Go get one!
+  jump quickclose
+jump rougharound
+  
+  
+label rougharound
+n: It's rough around here.  
+n: Everyone comes to see me in the infirmary at one point or another.
+n: My advice is to try not to get in the way too much.
+jump quickclose
+
+
+label youagain
+n: What do you want?
+> Nothing.
+  jump goodbye5
+> Seriously, where do I go?
+  jump sterndirection
+
+label goodbye5
+n: Let me know if you need anything.
+jump quickclose
+
+label onboarding
+n: I can help you with that.
+n: Can I have your name and ticket number?
+> I'm sorry, I don't know what I'm doing.
+  jump travelreason
+> Ticket number?
+  jump thisagain
+> Don't you know who I am?!?!
+  jump persuasioncheck
+
+label mmmphexit
+n: mmmmph... the door to thn...
+jump sterndirection
+
+label travelreason
+n: Are you hear for busines or pleasure?
+> business
+  p: my boss sent me here, so I guess business
+  n: Whom are you conducting business with.
+  jump talkbusiness
+> leisure
+  p: I didn't think there was leisure hern.
+  p: Where can I find that?
+  n: We have many bars and inns for all types.
+  p: Do you know where Blank Hotel is?
+  jump mmmphexit
+
+label talkbusiness
+> I'm investigating a crime, so criminals?
+  jump mmmphexit
+> The head of security
+  jump tothepoint
+
+label tothepoint
+n: He's overloking customs. Take the door to the North
+jump goodbye5
+
+label securitysuspicion
+n: why?
+p: Thanks, that's all
+jump quickclose
+
+label thisagain
+n: Who are you here to see?
+> uhhhhhh
+  merits = merits -1
+  jump sterndirection
+> The boss
+  n: Name?
+  jump earlybs
+> The head of security
+  {merits >= -5 and "jump tothepoint" or "jump securitysuspicion"}
+    
+label repeatannoyed
+if merits <= -2
+  n.sprite = npc.sighsprite
+  if merits <= -4
+    n.sprite = npc.frownsprite
+    if merits <= -6
+      n.sprite = npc.madsprite
+  show n
+n: The door to thn...
+
+label sterndirection
+n: North.
+> huh
+  merits = merits -1
+  jump repeatannoyed
+> thanks for the help
+  ...
+  jump goodbye5
+> what's with the attitude
+  if turns > 0 and merits < -2
+    n: SECURITY!
+    jump quickclose
+  if turns > 0 and player.skills.speed < 4 and npc.binaries.evil_good > 0.3 and npc.binaries.un_educated < -0.3
+    merits = merits + 2
+    n: You're not too quick, are you?
+    jump quickclose
+  jump npcthreatened
+
+label quickclose
+n: merits : {merits}
+{u.novelclose(merits,turns,alert)}
+
+label npcthreatened
+merits = merits - 3
+if merits <= -2
+    n.sprite = npc.sighsprite
+    if merits <= -4
+      n.sprite = npc.frownsprite
+      if merits <= -6
+        n.sprite = npc.madsprite
+n: Your not owed anything.
+n: Here are your options.
+jump lastoptions
+
+label lastoptions
+> Go through the door to the north.
+  if player.skills.intelligence > 6 and npc.binaries.un_educated > 0.5
+    merits = merits + 3
+    n.sprite = npc.smilesprite
+    show n
+    n: I guess you are kind of smart.
+    jump quickclose
+  if player.skills.intelligence < 4 and npc.binaries.un_educated < -0.6
+    merits = merits + 4
+    n.sprite = npc.laughsprite
+    show n
+    n: You're an idiot.
+    jump quickclose
+  n: Smart.
+  jump quickclose
+> Turn around, and take a 4 day trip back to where you came from.
+  n: Bon voyage!
+> Take your chances with security.
+  n: Oh boy. Good luck!
+jump quickclose
+
+label earlybs
+> huh?
+  merits = merits -1
+  jump sterndirection
+> Frank... Fuuuurrter
+  jump lastchance
+
+label lastchance
+merits = merits-2
+if merits <= -2
+  n.sprite = npc.sighsprite
+  if merits <= -4
+    n.sprite = npc.frownsprite
+    if merits <= -6
+      n.sprite = npc.madsprite
+n: My finger is on the button.
+n: Do you want trouble? 
+n: Or do you want to go through the door to the north?
+n: Just like every other schmuck who walks through that door and has no idea where they arn.
+> ...
+  n: Have a good day.
+  jump quickclose
+> Bring it on
+  merits = merits -5
+  if npc.binaries.passive_aggressive > 0.5 and npc.skills.constitution > 7
+    n.sprite = npc.laughsprite
+    show n
+    merits = merits + 10
+    n: "I like you."
+    jump repeatannoyed
+  if merits <= -2
+    n.sprite = npc.sighsprite
+    if merits <= -4
+      n.sprite = npc.frownsprite
+      if merits <= -6
+        n.sprite = npc.madsprite
+  n: SECURITY!
+  jump quickclose
+  
+   
+  
+  
+    
+
+label persuasioncheck
+if player.skills.charisma > 7
+  n.sprite = npc.laughsprite
+  show n
+  merits = merits + 5
+  n: You crack me up.  Go to the north dammit.
+  jump quickclose
+if player.binaries.passive_aggressive > .7 and npc.binaries.passive_aggressive < .4
+  n.sprite = npc.frownsprite
+  show n
+  merits = merits - 2
+  if npc.binaries.anti_autority < -.4
+    merits = merits - 3
+  n: sorry.
+  jump quickclose
+if merits <= -2
+  n.sprite = npc.sighsprite
+  if merits <= -4
+    n.sprite = npc.frownsprite
+    if merits <= -6
+      n.sprite = npc.madsprite
+show n
+n: I'm not convniced
+jump lastchance
