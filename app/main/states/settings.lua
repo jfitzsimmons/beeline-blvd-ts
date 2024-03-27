@@ -1,8 +1,7 @@
 --local files = require "main.novel.engine.defold.filesys"
 
 local M = {}
---testjpf abstract to state.config
--- same with save.lua
+
 local app_id = "Beeline Boulevard"
 local file = "settings.ini"
 local filename = sys.get_save_file(app_id, file)

@@ -12,7 +12,7 @@ local framerates = {}
 function init(self)
 	gui.set_render_order(15)
 	active = sys.get_engine_info().is_debug
-	local var_debug = save.get_var("debug")
+	local var_debug = save.get_var(this,"debug")
 	if not active_on_debug or (not active and not active_on_release) then
 		gui.set_enabled(gui.get_node("debug"), false)
 	end

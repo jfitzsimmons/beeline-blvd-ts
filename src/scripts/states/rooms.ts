@@ -19,19 +19,16 @@ export default class WorldRooms {
     this.fallbacks = { ...RoomsInitFallbacks }
   }
 
-  // TODO - testjpf
-  //abstract and import room types
-  // create efficient look for clear station in TS
   clear_stations() {
-    let kr: keyof typeof this.all // Type is "one" | "two" | "three"
+    let kr: keyof typeof this.all
     for (kr in this.all) {
       const room = this.all[kr]
-      let sr: keyof typeof room.stations // Type is "one" | "two" | "three"
+      let sr: keyof typeof room.stations
       for (sr in room.stations) {
         room.stations[sr] = ''
       }
     }
-    let kfs: keyof typeof this.fallbacks.stations // Type is "one" | "two" | "three"
+    let kfs: keyof typeof this.fallbacks.stations
     for (kfs in this.fallbacks.stations) {
       this.fallbacks.stations[kfs] = ''
     }

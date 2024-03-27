@@ -154,13 +154,9 @@ function check_inventory_nodes(
     slotname = slotname + slotnum
 
     const node = gui.get_node(slotname)
-    // const texture = gui.get_flipbook(node)
-    //testjpf texture is has, your using has to get string key
-    //for remove_item_player.
-    //add hash prop to initStates. reverse of how you had it.
-    //get id?? still hash!!!???
+
     const textureHash = gui.get_flipbook(node)
-    // tihis is getting the node name "slot..."
+    // this is getting the node name "slot..."
     if (
       gui.pick_node(node, action.x, action.y) &&
       textureHash != hash('empty')
@@ -221,18 +217,13 @@ function exit_inventory(actorname: string, actorinventory: string[]) {
   msg.post('level#level', 'exit_gui')
 }
 
-/**
- * testjpf dont think i need character, actorinventory
- */
 export function on_message(
   this: props,
   messageId: hash,
   message: {
     watcher: string
     actorname: string
-    //  room: string
     action: string
-    //enter: boolean
   },
   _sender: url
 ): void {
@@ -245,7 +236,6 @@ export function on_message(
 
     load_inventory_sprites(this.actorinventory)
 
-    //show actor inventory?
     if (message.action != 'give') {
       gui.set_enabled(gui.get_node('propinventory'), true)
     } else {
@@ -268,7 +258,6 @@ export function on_input(
     } else {
       check_inventory_nodes(this.actorname, action)
 
-      // only choose one inventory item?
       if (this.watcher != '' && this.watcher != null) {
         msg.post('inventories#inventory', 'release_input_focus')
         timer.delay(0.9, false, function (this: props) {

@@ -1,4 +1,4 @@
-local world = require "main.states.worldstate"
+--local world = require "main.states.worldstate"
 
 function get_npc(name)
 	sprite.play_flipbook("#screensprite", name)
@@ -8,7 +8,7 @@ function on_message(self, message_id, message, sender)
 	if message_id == hash("show_npc") then
 		self.name = message.npc
 		self.actions = {}
-		self.actions[self.name] = world.npcs.ais[self.name].actions
+		--self.actions[self.name] = world.npcs.ais[self.name].actions
 		--self.actorurl =  world.npcs.all[self.name].actions -- for inventory
 		self.script =  message.script
 

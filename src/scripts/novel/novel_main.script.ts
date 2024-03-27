@@ -1,31 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { novel_init, novel_start } from './matchanovel'
 print('novel main 4th??')
-const matchanovel = require('../../../main/novel/matchanovel.lua')
+const { tasks, player, novel } = globalThis.game.world
 
 import { questScripts } from '../quests/quests_main'
-const { tasks, player, novel } = globalThis.game.world
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const npc = globalThis.game.world.novel.npc
+
 function script_builder(
-  //npc: string,
   room: boolean | true = true,
-  //station: string,
-  //caution: string,
   extend: boolean | false = false
-  //checkpoint: string | 'tutorialA'
 ) {
-  const npc = globalThis.game.world.novel.npc
   let checkpoint = player.checkpoint.slice(0, -1)
   if (extend == true) {
     checkpoint = player.checkpoint
   }
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let path: string =
     novel.script != ''
-      ? questScripts[checkpoint + 'scripts'](npc.labelname)
+      ? questScripts[checkpoint + 'scripts'](novel.npc.labelname)
       : ''
 
   if (path == '') {
@@ -33,22 +22,22 @@ function script_builder(
       path = path + player.currentroom + '/'
     }
     path = path + checkpoint
-    if (npc.currentstation != null) {
-      print('novel noc:', npc.labelname, ' | station:', npc.currentstation)
-      path = path + npc.currentstation
+    if (novel.npc.currentstation != null) {
+      print(
+        'novel noc:',
+        novel.npc.labelname,
+        ' | station:',
+        novel.npc.currentstation
+      )
+      path = path + novel.npc.currentstation
     }
-    const caution = tasks.npc_has_caution(npc.labelname, 'player')
+    const caution = tasks.npc_has_caution(novel.npc.labelname, 'player')
     if (caution != null) {
       path = path + caution
     }
   }
-  print('PATH:::', path)
-  novel.script = '/main/novel/assets/scripts/' + path + '.txt'
-  print('novel.script testjpf', novel.script)
+  novel.script = '/assets/novel/scripts/' + path + '.txt'
 }
-//u = require "main.utils.novel"
-// need to check out the message coming to this file
-//probs from worldcontroller? novelcontroller
 interface props {
   npcname: string
   cause: string
@@ -62,11 +51,8 @@ export function on_message(
   if (messageId == hash('wake_up')) {
     script_builder()
     novel.alertChange = player.alert_level
-    print('global novel npc', globalThis.game.world.novel.npc.labelname)
-    print('global any npc', globalThis.game.world.npcs.all.eve.labelname)
-
-    matchanovel.init(novel.script)
-    matchanovel.start()
+    novel_init(novel.script)
+    novel_start()
   } else if (messageId == hash('sleep')) {
     /**
     if (message.merits != null) {
@@ -87,9 +73,6 @@ export function on_message(
       }
       msg.post('proxies:/controller#worldcontroller', 'faint', params)
     } else if (message.cause == 'arrested') {
-      //testjpf mught be a better function for
-      //Novel class
-      //probably all these 'sleep' conditions could be class based
       tasks.remove_heat('player')
       msg.post('proxies:/controller#worldcontroller', 'arrested', {
         enter_room: 'security',

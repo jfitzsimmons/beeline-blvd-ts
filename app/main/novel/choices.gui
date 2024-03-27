@@ -1,4 +1,4 @@
-script: "/main/novel/choices.gui_script"
+script: "/scripts/novel/choices.gui_script"
 fonts {
   name: "serif"
   font: "/main/novel/fonts/serif.font"
@@ -73,6 +73,7 @@ nodes {
   custom_type: 0
   enabled: true
   visible: false
+  material: ""
 }
 nodes {
   position {
@@ -131,6 +132,7 @@ nodes {
   custom_type: 0
   enabled: true
   visible: false
+  material: ""
 }
 nodes {
   position {
@@ -189,12 +191,13 @@ nodes {
   custom_type: 0
   enabled: true
   visible: false
+  material: ""
 }
 nodes {
   position {
     x: 0.0
     y: 0.0
-    z: 0.0
+    z: 0.9
     w: 1.0
   }
   rotation {
@@ -247,6 +250,7 @@ nodes {
   custom_type: 0
   enabled: false
   visible: true
+  material: ""
 }
 nodes {
   position {
@@ -305,6 +309,7 @@ nodes {
   custom_type: 0
   enabled: true
   visible: true
+  material: ""
 }
 nodes {
   position {
@@ -371,6 +376,7 @@ nodes {
   custom_type: 0
   enabled: true
   visible: true
+  material: ""
 }
 material: "/builtins/materials/gui.material"
 adjust_reference: ADJUST_REFERENCE_PARENT

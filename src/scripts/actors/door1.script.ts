@@ -1,4 +1,3 @@
-//testjpf need to send hastohex to here too!!!
 const { player } = globalThis.game.world
 const room_lookup = {
   [hash_to_hex(hash('/to_baggage'))]: 'baggage',

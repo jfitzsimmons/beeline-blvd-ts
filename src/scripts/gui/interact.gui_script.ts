@@ -28,20 +28,15 @@ function show_ai_screen() {
 }
 
 function open_novel(_this: props) {
-  print('OPEN NOVEL', _this.npcname)
   npcs.all[_this.npcname].convos = npcs.all[_this.npcname].convos + 1
   novel.npc = npcs.all[_this.npcname]
-  print('just set novel npc: TESTJPF', novel.npc)
 
-  //pass params to level to access level information
-  //rtestjpf
   msg.post('level#level', 'show_scene')
   msg.post('#', 'release_input_focus')
 }
 
 function open_inventory(_this: props, actor: string, action: string) {
   const room = rooms.all[player.currentroom]
-  //print('open iinventory _this.room:::', _this.room)
   if (action == 'open') {
     // station where the watcher will be located
     const station: string | undefined = room.actors[actor].watcher
@@ -70,13 +65,12 @@ function open_inventory(_this: props, actor: string, action: string) {
     if (_this.isNpc == false) {
       _this.npcname = _this.watcher
     }
-    //_this.script = novel.script_builder(_this.npcname, null, null, this.consequence.type, false)
+
     open_novel(_this)
   } else {
     const params = {
       actorname: actor,
       isNpc: _this.isNpc,
-      //room: _this.room,
       watcher: _this.watcher,
       action: action,
     }
@@ -142,7 +136,6 @@ function set_interactions(
       let clonedNode: keyof typeof clonetree
 
       for (clonedNode in clonetree) {
-        //for ck, cv in pairs(clonetree) do
         const clone = gui.clone(clonetree[clonedNode])
         gui.set_position(clone, nodepos)
         gui.set_visible(clone, true)
@@ -153,7 +146,6 @@ function set_interactions(
           action,
         }
         clones.push(cloneparent)
-        //table.insert(clones, cloneparent)
       }
     }
     nodepos.y = nodepos.y + spacing * 1.3
@@ -191,49 +183,25 @@ export function on_message(
     actions: { [key: string]: string[] }
     pos: vmath.vector3
     npcname: string
-    //room: string
-    //enter: boolean
   },
   _sender: url
 ): void {
   if (messageId == hash('shownode')) {
     //populate text nodes && show them
-    print('show node?')
-    //for (actorKey in actorsActions) {
-    // }
     this.clones = set_interactions(message.actions, message.pos) //GO.pos cannot come from gui script
-    // this.room = message.room
-    // print('message.room', message.room)
-    // print('this.room', this.room)
-
-    //this.script = message.script
     this.npcname = message.npcname
     if (npcs.all[this.npcname] != null) {
       this.isNpc = true
     } else {
       this.isNpc = false
     }
-  } /**else if (messageId == hash('reload_script') && this.npcname != null) {
-    //const station = npcs.all[this.npcname].currentstation
-    //this.script = novel.script_builder(this.npcname, this.room, station, null, false)
-  }**/ else if (messageId == hash('hidenode')) {
-    //let clone: keyof typeof this.clones
-
+  } else if (messageId == hash('hidenode')) {
     for (const clone of this.clones) {
       gui.delete_node(clone.clone)
     }
     this.clones = []
     this.watcher = ''
   }
-  /** 
-	}else if( messageId == hash("updatenode") ){
-		const node = gui.get_node(this.selectedGui)
-		if (message.position ){ gui.set_position(node, message.position) }
-
-	}else if( messageId == hash("testjpf") ){
-		print("testjpf msg?")
-	}
-			*/
 }
 
 export function on_input(
@@ -242,7 +210,6 @@ export function on_input(
   action: { released: true; x: number; y: number }
 ) {
   if (action_id == hash('touch') && action.released) {
-    print(this.npcname, 'is ther an npc name testjpf?')
     check_nodes(this, action)
   }
 }

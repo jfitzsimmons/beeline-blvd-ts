@@ -1,4 +1,4 @@
-local matchanovel = require "main.novel.matchanovel"
+--local --matchanovel = require "main.novel.--matchanovel"
 local settings = require "main.states.settings"
 local save = require "main.states.save"
 local display_width = tonumber(sys.get_config("display.width"))
@@ -206,15 +206,15 @@ local function press_button(i)
 	local button = buttons[i]
 	if button == "settings" then
 		msg.post("menu#menu", "show_settings")
-		matchanovel.showing_menu = true
+		--matchanovel.showing_menu = true
 	elseif button == "skip" then
 		msg.post("textbox#textbox", "skip_button")
 	elseif button == "auto" then
 		msg.post("textbox#textbox", "auto_button")
 	elseif button == "qsave" then
-		matchanovel.quicksave()
+		--matchanovel.quicksave()
 	elseif button == "qload" then
-		matchanovel.quickload()
+		--matchanovel.quickload()
 	elseif button == "save" then
 		msg.post("menu#menu", "show_save")
 		print("button == save")
@@ -236,9 +236,9 @@ function init(self)
 end
 
 function update(self, dt)
-	if matchanovel.showing_menu and button_hovered then 
-		unhover_button()
-	end
+	--if matchanovel.showing_menu and button_hovered then 
+	--	unhover_button()
+	--end
 end
 
 function on_message(self, message_id, message, sender)

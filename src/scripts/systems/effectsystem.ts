@@ -202,7 +202,7 @@ export const fx: { [key: string]: Effect } = {
     },
   },
 }
-// testjpf probably makes more sense to s} a key that deep copy
+
 export function remove_effects_bonus(a: Npc, e: Effect) {
   a[e.fx.type][e.fx.stat] = a[e.fx.type][e.fx.stat] - e.fx.adjustment
 }

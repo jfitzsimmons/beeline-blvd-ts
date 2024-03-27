@@ -98,17 +98,19 @@ export interface Fallbacks {
   stations: { [key: string]: string }
 }
 export interface Rooms {
-  [key: string]: Room
+  [key: string]: Room | Jail
 }
 interface Room {
   matrix: { x: number; y: number }
   roomname: string
   stations: { [key: string]: string }
   actors: Actors
-  //testjpf extend room to have a
-  // security interface
-  prisoners?: Prisoners | never
   props?: string[]
+  prisoners?: Prisoners
+}
+
+export interface Jail extends Room {
+  prisoners: Prisoners
 }
 interface Actors {
   [key: string]: Actor
@@ -128,7 +130,7 @@ export interface Roles {
 export interface Caution {
   npc: string
   time: number
-  state: string // merits //testjpf state is a bad name
+  label: string // merits
   type: string
   authority: string //ex; labor
   suspect: string
@@ -150,4 +152,29 @@ export interface Effect {
     stat: string
     adjustment: number
   }
+}
+
+export interface Typewriter {
+  state: string
+  textspeed: number
+  letter_fadein: number
+  letter_fadeout: number
+  line_spacing_scale: number
+  zoom_speed: number
+  scale: number
+  node: node
+  auto: boolean
+  letter_nodes: { [key: string]: node }
+  text: string
+  parent: node
+  instant_node: node | null
+  init: (arg: string) => void
+  set_node: () => void
+  set_options: (arg: any) => void
+  start: (arg: string) => void
+  set_instant_text: (arg: string) => void
+  hide_instant_text: () => void
+  next: () => void
+  set_scale: (arg: number) => void
+  redraw: () => void
 }

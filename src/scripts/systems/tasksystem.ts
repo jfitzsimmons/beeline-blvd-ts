@@ -62,14 +62,11 @@ function bribe(s: string, w: string) {
   const w_inv = npcs.all[w].inventory
 
   if (s_inv.length > 0) {
-    //testjpf need to change hashes to string in npc init state and invsystem
-
     for (let i = s_inv.length - 1; i >= 0; i--) {
       if (items[s_inv[i]].value > 1) {
         const loot = s_inv.splice(i, 1)
 
         w_inv.push(...loot)
-        //table.insert(w.inventory,loot)
         break
       } else {
         print('bribe failed so punch???')
@@ -82,7 +79,6 @@ function wPunchS(s: string) {
   npcs.all[s].hp = npcs.all[s].hp - 1
 }
 function go_to_jail(s: string) {
-  //testjpf not sure if i should loop through cautions and
   // remove all arrests for suspect(clear record)
   print('found:', s, ' ARREST!!!!')
   tasks.remove_heat(s)
@@ -199,8 +195,6 @@ function npc_snitch_check(b: boolean, w: string, s: string) {
   return caution_state
 }
 function snitch_to_security(c: Caution, watcher: string) {
-  //i think you need a function for player and one for npc TESTJPF
-  // two separate CHECKS!! functions
   print(c.npc, 'SNITCHED')
   const bulletin = tasks.already_hunting(watcher, c.suspect)
   let caution_state = 'questioning'
@@ -217,9 +211,7 @@ function snitch_to_security(c: Caution, watcher: string) {
       : npc_snitch_check(bulletin == null, watcher, c.suspect)
   c.time = 0
 }
-//2nd though, manipulates all sorts of state
-// ithink we need ca consequence system?
-//below feels more like a check?? CONSEQUENCES
+
 function reckless_consequence(c: Caution, w: string) {
   print('RC::: ', c.npc, ' is gossiping with', w)
   const watcher = npcs.all[w]
@@ -280,8 +272,6 @@ function reckless_consequence(c: Caution, w: string) {
     const fx_labels = shuffle(effects_list)
 
     const effect: Effect = fx[fx_labels[1]]
-    //testjpf need types, maybe more
-    //effect.label = fx_labels[1]
     if (effect.fx.type == 'attitudes') {
       effect.fx.stat = npcs.all[c.suspect].clan
     }
@@ -324,8 +314,7 @@ function reckless_consequence(c: Caution, w: string) {
     }
   }
 }
-//testjpf maybe later abstract to security tasks? sub tasks?
-// or i could see other systems using this method
+
 export function question_consequence(c: Caution) {
   print('QC::: ', c.npc, 'is NOW questioning:', c.suspect)
   const w = npcs.all[c.npc]
@@ -343,9 +332,6 @@ export function question_consequence(c: Caution) {
     const consequences: { [key: string]: (s: string, w: string) => void } =
       consequenceLookup(s.labelname, w.labelname)
     consequences[consequenceLabel](s.labelname, w.labelname)
-    //print(consequenceResults)
-    //const consequenceResult: (s: string, w: string) => void = consequenceLookup(s,w)
-    // consequenceResult[consequenceResults[0]]()
   } else {
     if (c.suspect != 'player') {
       const caution = tasks.consolation_checks(w.binaries, w.skills)
@@ -371,10 +357,10 @@ function npc_confrontation(s: string, c: Caution) {
 }
 function merits_demerits(c: Caution, w: string) {
   if (c.suspect === 'player') {
-    const adj = c.state === 'merits' ? 1 : -1
+    const adj = c.label === 'merits' ? 1 : -1
     npcs.all[w].love = npcs.all[w].love + adj
   }
-  const fxArray = c.state === 'merits' ? fxLookup.merits : fxLookup.demerits
+  const fxArray = c.label === 'merits' ? fxLookup.merits : fxLookup.demerits
   const fx_labels = shuffle(fxArray)
   const effect: Effect = { ...fx[fx_labels[1]] }
   if (effect.fx.type == 'attitudes') {
@@ -382,20 +368,19 @@ function merits_demerits(c: Caution, w: string) {
   }
   print(c.npc, 'found:', w, 'because merits.', w, 'has effect:', fx_labels[1])
   npcs.all[w].effects.push(effect)
-  //table.insert(npcs.all[watcher].effects,effect)
   add_effects_bonus(npcs.all[w], effect)
 }
 function passive_acts(c: Caution, w: string) {
-  if (c.state == 'reckless') {
+  if (c.label == 'reckless') {
     reckless_consequence(c, w)
   } else if (
     c.authority == 'security' &&
-    c.state == 'snitch' &&
+    c.label == 'snitch' &&
     (c.authority == npcs.all[w].clan || c.authority == npcs.all[w].labelname)
   ) {
     snitch_to_security(c, w)
   } else if (
-    (c.state == 'merits' || c.state == 'demerits') &&
+    (c.label == 'merits' || c.label == 'demerits') &&
     (npcs.all[w].clan == c.authority ||
       npcs.all[c.npc].attitudes[npcs.all[w].clan] > 0)
   ) {
@@ -414,7 +399,7 @@ export function address_cautions() {
       c.suspect === 'player' ? player.state : npcs.all[c.suspect]
 
     if (
-      (c.state == 'questioning' || c.state == 'arrest') &&
+      (c.label == 'questioning' || c.label == 'arrest') &&
       (agent.currentroom == suspect.currentroom ||
         (agent.currentroom == suspect.exitroom &&
           agent.exitroom == suspect.currentroom))
@@ -426,7 +411,7 @@ export function address_cautions() {
           ? {
               npc: c.npc,
               station: '',
-              state: c.state,
+              state: c.label,
               reason: c.reason,
             }
           : null

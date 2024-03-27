@@ -1,4 +1,14 @@
+import { Jail } from '../../../types/state'
+
+const securityRoom: Jail = {
+  matrix: { x: 2, y: 5 },
+  roomname: 'security',
+  stations: { guard: '', authority: '', assistant: '' },
+  prisoners: { prisoner1: '', prisoner2: '', prisoner3: '', prisoner4: '' },
+  actors: {},
+}
 export const RoomsInitState = {
+  security: { ...securityRoom },
   baggage: {
     matrix: { x: 1, y: 4 },
     roomname: 'baggage',
@@ -60,13 +70,6 @@ export const RoomsInitState = {
       bench: '',
       browse: '',
     },
-    actors: {},
-  },
-  security: {
-    matrix: { x: 2, y: 5 },
-    roomname: 'security',
-    stations: { guard: '', authority: '', assistant: '' },
-    prisoners: { prisoner1: '', prisoner2: '', prisoner3: '', prisoner4: '' },
     actors: {},
   },
   chapel: {

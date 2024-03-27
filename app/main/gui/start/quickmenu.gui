@@ -1,4 +1,4 @@
-script: "/main/novel/quickmenu.gui_script"
+script: "/main/gui/start/quickmenu.gui_script"
 fonts {
   name: "serif"
   font: "/main/novel/fonts/serif.font"
@@ -77,6 +77,7 @@ nodes {
   custom_type: 0
   enabled: true
   visible: false
+  material: ""
 }
 nodes {
   position {
@@ -135,6 +136,7 @@ nodes {
   custom_type: 0
   enabled: true
   visible: false
+  material: ""
 }
 nodes {
   position {
@@ -193,6 +195,7 @@ nodes {
   custom_type: 0
   enabled: true
   visible: false
+  material: ""
 }
 nodes {
   position {
@@ -251,6 +254,7 @@ nodes {
   custom_type: 0
   enabled: true
   visible: false
+  material: ""
 }
 nodes {
   position {
@@ -309,6 +313,7 @@ nodes {
   custom_type: 0
   enabled: true
   visible: false
+  material: ""
 }
 nodes {
   position {
@@ -367,6 +372,7 @@ nodes {
   custom_type: 0
   enabled: true
   visible: false
+  material: ""
 }
 nodes {
   position {
@@ -425,6 +431,7 @@ nodes {
   custom_type: 0
   enabled: true
   visible: true
+  material: ""
 }
 nodes {
   position {
@@ -483,6 +490,7 @@ nodes {
   custom_type: 0
   enabled: true
   visible: true
+  material: ""
 }
 nodes {
   position {
@@ -549,6 +557,7 @@ nodes {
   custom_type: 0
   enabled: true
   visible: true
+  material: ""
 }
 material: "/builtins/materials/gui.material"
 adjust_reference: ADJUST_REFERENCE_PARENT

@@ -1,5 +1,5 @@
 -- local sys = require "main.novel.engine.defold.sysys"
-local world = require "main.states.worldstate"
+--local world = require "main.states.worldstate"
 
 local M = {}
 
@@ -194,7 +194,7 @@ function M.load(slot)
 		--then pick room testjpf
 		local params = {
 			load_type = "load game",
-			enter_room = world.player.currentroom
+			--enter_room = world.player.currentroom
 			--enter_room = v.roomname
 		}
 		msg.post("proxies:/controller#worldcontroller", "pick_room", params)
@@ -272,11 +272,11 @@ function M.define(name, value, type)
 	defined_variables_type[name] = type
 end
 
-function M.get_var(name)
+function M.get_var(this,name)
 	local value = M.state.var[name] or defined_variables[name]
 	local type = M.state.var_type[name] or defined_variables_type[name]
 	if type == "pointer" then 
-		local v, t = M.get_var(value)
+		local v, t = M.get_var(this,value)
 		if v then
 			return v, t
 		else

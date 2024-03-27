@@ -30,8 +30,8 @@ local function get_screen_position(v)
 end
 
 local function get_position_from_variable(var)
-	local x = save.get_var(var..".x") or 0.5
-	local y = save.get_var(var..".y") or 0.5
+	local x = save.get_var(this,var..".x")[1] or 0.5
+	local y = save.get_var(this,var..".y")[1] or 0.5
 	return v3(x, y, 0)
 end
 
@@ -54,12 +54,15 @@ local function set_sprite(name, spr)
 end
 
 local function get_character_delta_position(name)
-	local x = save.get_var(name..".x") or 0
-	local y = save.get_var(name..".y") or 0
+	local x = save.get_var(this,name..".x")[1] or 0
+	local y = save.get_var(this,name..".y")[1] or 0
+	print("getdfelta : x" ,x, "y", y)
 	return v3(x, y, 0)
 end
 
 local function show(name, at, transition, duration)
+print("sprite show name", name)
+print("at",at,"duration", duration, "transition", transition)
 	if not sprites[name] then 
 		sprites[name] = gui.clone(gui.get_node("sprite"))
 		gui.set_id(sprites[name],name)
@@ -67,30 +70,33 @@ local function show(name, at, transition, duration)
 
 	local node = sprites[name]
 	local gui_scale = gui.get_scale(gui.get_node("gui")).x
-	local spr = save.get_var(name..".sprite")
-	local spine_node = save.get_var(name..".spine")
-	local scale = save.get_var(name..".scale") or 1
+	local spr = save.get_var(this,name..".sprite")[1]
+	local spine_node = save.get_var(this,name..".spine")[1]
+	local scale = save.get_var(this,name..".scale")[1] or 1
 	local character_pos = get_character_delta_position(name)
 	local at_pos = v3()
 	if at then 
-		local at_id = save.get_var(name..".at")
+		print("ATATATATATATATATATAT")
+		local at_id = save.get_var(this,name..".at")[1]
 		if at_id then
-			at_pos.x = save.get_var(at_id..".x") or 0.5
-			at_pos.y = save.get_var(at_id..".y") or 0
+			at_pos.x = save.get_var(this,at_id..".x")[1] or 0.5
+			at_pos.y = save.get_var(this,at_id..".y")[1] or 0
 		else
 			at_pos.x = 0.5
 			at_pos.y = 0
 		end
 	else
+		print("AT ELSE")
 		at_pos.x = 0.5
 		at_pos.y = 0
 	end
 	local position = get_screen_position(character_pos + at_pos)
 	
-	transition = transition or save.get_var("show.transition")
-	duration = duration or save.get_var("show.duration")
-
+	transition = transition or save.get_var(this,"show.transition")[1]
+	duration = duration or save.get_var(this,"show.duration")[1]
+	print("sprites duration set")
 	if spr then
+		print(spr[1][1],spr[1][2])
 		set_sprite(name, spr)
 		gui.move_below(node, gui.get_node("front"))
 	end
@@ -135,6 +141,8 @@ local function show(name, at, transition, duration)
 	end
 	
 	save.state.sprites[name] = true
+	print("sprites file show() end, at, transition, duration)")
+	
 end
 
 
@@ -147,8 +155,8 @@ end
 
 local function hide(name, to, transition, duration)
 	local node = sprites[name]
-	transition = transition or save.get_var("show.transition")
-	duration = duration or save.get_var("show.duration")
+	transition = transition or save.get_var(this,"show.transition")[1]
+	duration = duration or save.get_var(this,"show.duration")[1]
 	local gui_scale = gui.get_scale(gui.get_node("gui")).x
 	
 	if node then
@@ -189,8 +197,7 @@ end
 
 local function move(name, to, duration)
 	local node = sprites[name]
-	duration = duration or save.get_var("move.duration") or 0.5
-	local character_pos = get_character_delta_position(name) or v3()
+	duration = duration or save.get_var(this,"move.duration")[1] or v3()
 	local to_pos = get_position_from_variable(to) or v3()
 	local position = get_screen_position(character_pos + to_pos)
 	--+ v3(x, y, 0)

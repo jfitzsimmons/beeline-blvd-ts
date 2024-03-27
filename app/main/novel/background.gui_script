@@ -41,10 +41,13 @@ local function create_image_scene(image_name)
 end
 
 local function get_color(name)
+	print("STAGING::: get_color bg.gui :: name:", name)
 	return colors.get_color(name)
 end
 
 local function create_new_scene(scene, color)
+	print("STAGING::: create_new_scene bg.gui :: scene:", scene)
+	
 	delete_node(_, old_node)
 	old_node = current_node
 	current_node = gui.clone(gui.get_node("background"))
@@ -52,9 +55,12 @@ local function create_new_scene(scene, color)
 	gui.set_alpha(current_node, 1)
 	
 	local scene_name_color = get_color(scene)
+	print("bggui:::creatnewscreen:: scene_name_color", scene_name_color)
 	if scene_name_color then
+		print("bggui ::: getcolor:: IF scene_name_color:", scene_name_color)
 		set_scene_color(scene_name_color)
 	else
+		print("bggui ::: getcolor:: ELSE create_image_scene:", scene)
 		create_image_scene(scene)
 	end
 	if color then
@@ -201,6 +207,7 @@ local transitions = {
 }
 
 local function action_scene(scene, transition, duration, color, transition_color)
+	print("action_scene::: scene, color::", scene, color)
 	create_new_scene(scene, color)
 	if old_node and transition then
 		(transitions[transition] or transition_instant)(duration, transition_color)
@@ -210,8 +217,10 @@ local function action_scene(scene, transition, duration, color, transition_color
 end
 
 local function load_scene()
-	local scene_current = save.get_var("scene.current")
-	local scene_current_color = save.get_var("scene.current_color")
+	local scene_current = save.get_var(this,"scene.current")
+	print("bggui ::: load_scene :: scene.curret")
+	local scene_current_color = save.get_var(this,"scene.current_color")
+	print("bggui ::: load_scene :: scene.curretcolor")
 	if scene_current then
 		change_scene_instantly(scene_current, scene_current_color)
 	end
@@ -273,6 +282,7 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("scene") then
 		gui.set_enabled(gui.get_node("background_default"), false) 
+		print("is scene message called TWICW???")
 		action_scene(message.scene, message.transition, message.duration, message.color,  message.transition_color)
 	elseif message_id == hash("action_set") then 
 		if message.name == "scene.weather" then
@@ -283,7 +293,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("loaded") then
 		load_scene()
 		clear_weather()
-		local weather = save.get_var("scene.weather")
+		local weather = save.get_var(this,"scene.weather")
 		if weather then 
 			set_weather(weather)
 		end
