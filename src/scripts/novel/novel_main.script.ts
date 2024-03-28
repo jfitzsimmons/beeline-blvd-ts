@@ -1,6 +1,6 @@
 import { novel_init, novel_start } from './matchanovel'
 print('novel main 4th??')
-const { tasks, player, novel } = globalThis.game.world
+const { npcs, tasks, player, novel } = globalThis.game.world
 
 import { questScripts } from '../quests/quests_main'
 
@@ -52,25 +52,29 @@ interface props {
 export function on_message(
   this: props,
   messageId: hash,
-  message: { npcname: string; cause: string },
+  message: {
+    npcname: string
+    love: number
+    alert: number
+    hp: number
+    cause: string
+  },
   _sender: url
 ): void {
   if (messageId == hash('wake_up')) {
     script_builder()
-    novel.alertChange = player.alert_level
+    // novel.alertChange = player.alert_level
     novel_init(novel.scripts)
     novel_start()
   } else if (messageId == hash('sleep')) {
-    /**
-    if (message.merits != null) {
-      npcs.all[this.npc].love = message.merits
-      npcs.all[this.npc].turns_since_encounter = 0
+    player.hp = message.hp
+    novel.npc.turns_since_encounter = 0
+
+    if (message.love != novel.npc.love) {
+      print(novel.npc.love, '| novel.npc.love = message.love |', message.love)
+      novel.npc.love = message.love
     }
-    print('player.hp', player.hp)
-    print(
-      'npcs.all[this.npc].turns_since_encounter',
-      npcs.all[this.npc].turns_since_encounter
-    )**/
+
     msg.post('proxies:/controller#novelcontroller', 'unload_novel')
 
     //testjpf create func() called+. emergencies()????
@@ -85,16 +89,15 @@ export function on_message(
         enter_room: 'security',
       })
     }
-    print('NOVEL::: player.alert_level', player.alert_level)
-    if (player.alert_level != novel.alertChange) {
+    if (player.alert_level != message.alert) {
       player.alert_level = novel.alertChange
       if (tasks.plan_on_snitching(novel.npc.labelname, 'player') == false) {
         tasks.caution_builder(novel.npc, 'snitch', 'player', 'harassing')
       }
       msg.post(player.currentroom + ':/level#level', 'update_alert', {})
     }
-    //print('NOVEL::: message.alert', message.alert)
-    print('NOVEL::: player.alert_level', player.alert_level)
-    msg.post(player.currentroom + ':/level#level', 'exit_gui', { novel: true })
+    //TESTJPF If you need to reload scripts, do it here, not level or interact.
+    npcs.all[novel.npc.labelname] = novel.npc
+    msg.post(player.currentroom + ':/level#level', 'exit_gui')
   }
 }

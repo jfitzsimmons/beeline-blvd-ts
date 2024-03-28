@@ -209,6 +209,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
     npcs[kn].turns_since_encounter = math.random(5, 15)
     npcs[kn].love = math.random(-1, 1)
     // random attitude
+    npcs[kn].attitudes = {}
     let kbl: keyof typeof binarylookup
     for (kbl in binarylookup) {
       npcs[kn].attitudes[kbl] = math.random(-9, 9)
@@ -226,6 +227,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
     const tempskills = shuffle(startskills)
     let s_count = 0
 
+    npcs[kn].skills = {}
     let ks: keyof typeof skills
     for (ks in skills) {
       npcs[kn].skills[ks] = tempskills[s_count] + math.random(-1, 1)
@@ -236,6 +238,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
     const tempbins = shuffle(startbins)
     let b_count = 0
 
+    npcs[kn].binaries = {}
     let kb: keyof typeof binaries
     for (kb in binaries) {
       const adjustment = adjust_binaries(tempbins[b_count], npcs[kn].clan, kb)

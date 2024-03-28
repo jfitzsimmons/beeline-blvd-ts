@@ -1,2 +1,3 @@
 label clanrandom1
 n: The people here are so rude.
+jump quickclose

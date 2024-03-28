@@ -56,8 +56,8 @@ export default class WorldNovel {
     return this._npc
   }
   public set npc(npc: Npc) {
-    print('NOVEL set npc: ', npc)
-    this._npc = npc
+    Object.assign(this._npc, npc)
+    // this._npc = npc
   }
   public get alertChange() {
     return this._alertChange
@@ -68,26 +68,6 @@ export default class WorldNovel {
   addScript(s: string) {
     this._scripts.push(s)
   }
-
-  /** 
-  public set hp(n: number) {
-    this._state.hp = n
-  }
-  public get hp() {
-    return this._state.hp
-  }
-  public set ap(n: number) {
-    this._state.ap = n
-  }
-  public get checkpoint(): string {
-    return this._state.checkpoint
-  }
-  return_inventory() {
-    return this._state.inventory
-  }
-  increase_alert_level() {
-    this._state.alert_level += 1
-  }**/
   load_novel() {
     /**
      * set background, sprites, script, etcc
@@ -97,21 +77,21 @@ export default class WorldNovel {
   }
   //make arrest generic string TESTJPF??
   //cause: "none", "irritated", "arrested",...
-  novelclose(cause: string | 'none') {
+  novelclose(love: number, alert: number, hp: number, cause: string) {
     //testjpf in txt files, need to pass arrested as string, not boolean
+    print('novel.novel close love:', love, alert, hp, cause)
     msg.post('novel:/main#main', 'sleep', {
-      /**
-      merits = merits,
-      turns = turns,
-      alert = alert,  **/
+      love,
+      alert,
+      hp,
       cause,
     })
   }
 
   punch(hp: number) {
-    // player.hp = player.hp - 1
+    //player.hp = player.hp - 1
     if (hp <= 0) {
-      this.novelclose('faint')
+      this.novelclose(this.npc.love, 0, 0, 'faint')
     }
   }
 }

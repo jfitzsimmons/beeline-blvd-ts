@@ -1,6 +1,15 @@
 npc.clan = _G.game.world.novel.npc.clan
-npc.speed = _G.game.world.novel.npc.skills.speed
 npc.love = _G.game.world.novel.npc.love
+npc.b.poor = _G.game.world.novel.npc.binaries.poor_wealthy
+npc.s.charisma = _G.game.world.novel.npc.skills.charisma
+
+alert = _G.game.world.player.alert_level
+hp = _G.game.world.player.hp
+cause = "none"
 n.name = _G.game.world.novel.npc.labelname
 n.scale = 3
 n.y = 0.5
+
+label quickclose
+n: bye {npc.love}
+n:{_G.game.world.novel.novelclose(this, npc.love, alert, hp, cause)}

@@ -1,2 +1,3 @@
 label clanrandom1
 n: This is what I look like when I'm managing my workers.
+jump quickclose

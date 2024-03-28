@@ -1,4 +1,28 @@
-label groundsrandom1
+label secretgrounds
 n: I hear theres nicer grounds...
 n: for more "important" people.
+jump quickclose
+
+label complainaboutgrounds
+n: They havent updated this place in decades.
+jump quickclose
+
+label cluelesscharm
+n: I don't know much, I apologize greatly.
+jump quickclose
+
+label generic1
+n: I'm not from here. Sorry.
+jump quickclose
+
+label groundsrandom1
+n: and my CLAN is {npc.clan}
+n: and my poor is {npc.b.poor} or {npc.poor}
+if npc.b.poor < -0.3
+    jump secretgrounds
+if npc.b.poor > 0.3
+    jump complainaboutgrounds
+if npc.s.charisma > 3
+    jump cluelesscharm
+jump generic1
 

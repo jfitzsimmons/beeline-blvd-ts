@@ -1,2 +1,3 @@
 label clanrandom1
 n: Why don't i get my friends to kick your ass!
+jump quickclose

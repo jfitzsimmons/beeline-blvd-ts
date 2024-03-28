@@ -105,15 +105,12 @@ function sysget(name: string){
 }**/
 
 function substitute_in_expression(w: string) {
-  print('new WWWWWW: ', w)
   let result = ''
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  print('in substiotue', w)
   const [before_dot, after_dot] = string.match(
     w,
     '([%a_][%w_]*)%.([%a_][%w_]*)'
   )
-  print('after string match for NIL W')
   const is_in_lib = before_dot !== '' && Sandbox[before_dot]
 
   //const is_in_lib = before_dot && Sandbox[before_dot]
@@ -123,12 +120,8 @@ function substitute_in_expression(w: string) {
   //	add_quotes = true
   //} else
   if (is_in_lib == true || w == '__STRIPPED_QUOTE__') {
-    print('in substiotue::: IF IF IF')
-
     result = w
   } else {
-    print('in substiotue::: ELSE ELSE')
-
     const name = string.lower(w)
     const [var_value, var_type]: [string | number, string] = save.get_var(name)
     if (var_type != null && var_type == 'string') {
@@ -177,14 +170,18 @@ function return_quotes(s: string) {
 function execute_string(s: string) {
   Sandbox = {}
   Sandbox = { math: math, vmath: vmath, string: string }
+  print('exe stri::: S::', s)
+
   let stripped: LuaMultiReturn<[string, number]> = strip_quotes(s)
-  stripped = string.gsub(
-    stripped[0],
-    '[%a_][%w_%.]*',
-    substitute_in_expression(stripped[0])
-  )
+  print('exe stri::: string1::', stripped[0])
+
+  stripped = string.gsub(stripped[0], '[%a_][%w_%.]*', function (x) {
+    return substitute_in_expression(x)
+  })
+  print('exe stri::: string2::', stripped[0])
 
   stripped = return_quotes(tostring(stripped[0]))
+  print('exe stri::: string3::', stripped[0])
 
   const f = loadstring('return ' + stripped[0])
 
@@ -204,7 +201,7 @@ function add_escapes(s: string) {
 function interpolate_string(s: string) {
   const left = '{'
   const right = '}'
-  let _s: LuaMultiReturn<[string, number]> | string = s
+  //let _s: LuaMultiReturn<[string, number]> | string = s
   let expression = string.match(s, left + '([^{]*)' + right)
   for (let i = expression.length; i-- !== 0; ) {
     let value = ''
@@ -212,16 +209,16 @@ function interpolate_string(s: string) {
     value = tostring(value)
     const pattern = add_escapes(left + expression[i] + right)
 
-    _s = string.gsub(s, tostring(pattern[0]), value)[0]
+    s = string.gsub(s, tostring(pattern[0]), value)[0]
 
-    expression = string.match(tostring(_s), left + '([^{]+)' + right)
+    expression = string.match(tostring(s), left + '([^{]+)' + right)
   }
-
-  return _s
+  print('interpolate string :: s:: false??:', s)
+  return s
 }
 
 function jump(args: any) {
-  //print(args[0], args.length, '<---LINE in MNOVEL jump()')
+  print(args[0], args.length, '<---LINE in MNOVEL jump()')
   matchascript.jump_to_label(args[0])
 }
 
@@ -275,7 +272,7 @@ function set(args: any) {
 
   if (value === null && var_type === null) {
     value = execute_string(tostring(value_string))
-    if (value != '' && !Number.isNaN(parseInt(value))) {
+    if (value != '' && tonumber(value) != undefined) {
       var_type = 'number'
     } else {
       var_type = 'string'
@@ -512,8 +509,8 @@ function empty() {
   matchascript.next()
 }
 
-function action_if_true(v: string) {
-  if (v != '') {
+function action_if_true(v: string | boolean) {
+  if (v != false && v != 'false') {
     matchascript.next_step()
   } else {
     matchascript.next()
@@ -521,6 +518,8 @@ function action_if_true(v: string) {
 }
 
 function action_if(args: any) {
+  print('mnovel action_if: args[0]', args[0])
+
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   action_if_true(execute_string(args[0]))
 }

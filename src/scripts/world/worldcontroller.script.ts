@@ -16,6 +16,7 @@ function handle_new_turn(load_type: string) {
       globalThis.game.world.clock = globalThis.game.world.clock - 24
     }
   } else if (load_type === 'new game') {
+    print('WORLD CONTROLLER NEW GAME NEW GAME NEW GAME')
     globalThis.game = new Game()
   }
 }

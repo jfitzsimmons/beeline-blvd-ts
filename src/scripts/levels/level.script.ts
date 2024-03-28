@@ -80,9 +80,9 @@ export function on_message(
 
     tasks.address_quests('interact', player.checkpoint)
 
-    if (message.novel == true) {
-      msg.post(this.roomname + ':/adam#interact', 'reload_script')
-    }
+    // if (message.novel == true) {
+    //  msg.post(this.roomname + ':/adam#interact', 'reload_script')
+    // }
 
     msg.post(this.roomname + ':/adam#adam', 'acquire_input_focus')
   } else if (messageId == hash('show_scene')) {

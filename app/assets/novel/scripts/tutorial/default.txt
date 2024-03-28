@@ -1,2 +1,3 @@
 label tutorialrandom1
 n: It's a logistics facility.
+jump quickclose
