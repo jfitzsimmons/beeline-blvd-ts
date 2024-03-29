@@ -5,7 +5,7 @@ import { Confront } from '../../types/state'
 import { address_cautions } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
 export function init() {
-  place_npcs()
+  //place_npcs()
 }
 function game_turn(room: string) {
   rooms.clear_stations()
@@ -57,12 +57,10 @@ export function on_message(
       player.currentroom = this.roomname
       player.matrix = rooms.all[this.roomname].matrix
 
-      if (
-        message.load_type != 'load game' &&
-        message.load_type != 'return to game' &&
-        message.load_type != 'new game'
-      ) {
+      if (message.load_type == 'room transition') {
         game_turn(message.roomname)
+      } else if (message.load_type == 'new game') {
+        place_npcs()
       }
 
       update_hud()

@@ -1,3 +1,99 @@
-label loiter1random1
+label loiter1unsocial
 n: Just because I'm standing here doesn't mean i want to talk to you.
+jump quickclose
+
+label l1passingtime
+n: Just passing the time. Waiting for a room to open up.
+jump quickclose
+
+label l1needdrink
+n: Dying for a drink.
+jump quickclose
+
+label l1opposibg
+n: Being opposing.
+jump quickclose
+
+label loiter1random1
+if npc.b.authority < -0.3
+    jump negativeprying
+if npc.b.educated < -0.3
+    jump dumbresponses
+if npc.b.lawful > 0.3
+    jump positiveprying
+jump genericloiter
+
+label negativeprying
+if npc.b.good < -0.4
+    jump loiter1unsocial
+if npc.s.constitution < 4
+    jump l1needdrink
+if npc.s.strength > 4
+    jump l1opposibg
+jump genericloiter
+
+label positiveprying
+if npc.b.good > 0.4
+    jump loiternice
+if npc.s.wisdom > 4
+    jump loiterwise
+if npc.b.authority > 0.3
+    jump loiterleader
+jump genericloiter
+
+label dumbresponses
+if npc.s.perception < 4
+    jump canthearyou
+if npc.s.intelligence < 4
+    jump blankstare
+if npc.b.wealth > 0.4
+    jump cryptoinvest
+jump genericloiter
+
+label loiterleader
+n: Waiting to be of service.
+jump quickclose
+
+label loiterwise
+n: Thinking about what I'm grateful for
+jump quickclose
+
+label loiternice
+n: Just taking a nice break.
+jump quickclose
+
+label canthearyou
+n: Huh? What? What were you saying?
+jump quickclose
+
+label blankstare
+n: Staring blankly into space.
+jump quickclose
+
+label cryptoinvest
+n: Investing in crypto.
+jump quickclose
+
+label genericloiter
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump genericl1
+if dice > 50
+    jump genericl3
+if dice > 25
+    jump genericl2
+n: Not much really.
+jump quickclose
+
+label genericl2
+n: Having a quick rest.
+jump quickclose
+
+label genericl3
+n: Passing the time.
+jump quickclose
+
+label genericl1
+n: Just loitering.
 jump quickclose

@@ -3,26 +3,97 @@ n: I hear theres nicer grounds...
 n: for more "important" people.
 jump quickclose
 
+label tiredofhub
+n: This place will grind you to dust.
+jump quickclose
+
+label poorblowoff
+n: Leave me alone. I'm on the clock.
+jump quickclose
+
 label complainaboutgrounds
 n: They havent updated this place in decades.
+jump quickclose
+
+label richbrag
+n: A "money printing" machine.
+jump quickclose
+
+label snobinsult
+n: This place is full of savages.
+jump quickclose
+
+label roomcharm
+if npc.s.intelligence < 4
+    jump cluelesscharm
+if npc.b.aggressive > 0.3
+    jump comeonstrong
+if npc.s.perception > 3
+    jump hinewbie
+jump generic1
+
+label pooropinion
+if npc.s.stealth > 6
+    jump secretgrounds
+if npc.b.aggressive < -0.3
+    jump tiredofhub
+if npc.b.aggressive > 0.3
+    jump poorblowoff
+jump generic1
+
+label richopinion
+if npc.s.wisdom < 4
+    jump complainaboutgrounds
+if npc.s.constitution > 6
+    jump richbrag
+if npc.s.charisma < 4
+    jump snobinsult
+jump generic1
+
+label hinewbie
+n: Ahh, I remember my first trip to The Hub.
+jump quickclose
+
+label comeonstrong
+n: Anything for you. This is the front door of The Hub.
 jump quickclose
 
 label cluelesscharm
 n: I don't know much, I apologize greatly.
 jump quickclose
 
+label generic2
+n: This is the grounds for The Hub.
+jump quickclose
+
+label generic3
+n: First time here?
+jump quickclose
+
+label generic4
+n: It's a shipping facility.
+jump quickclose
+
 label generic1
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump generic2
+if dice > 50
+    jump generic3
+if dice > 25
+    jump generic4
 n: I'm not from here. Sorry.
 jump quickclose
 
 label groundsrandom1
 n: and my CLAN is {npc.clan}
-n: and my poor is {npc.b.poor} or {npc.poor}
-if npc.b.poor < -0.3
-    jump secretgrounds
-if npc.b.poor > 0.3
-    jump complainaboutgrounds
+n: and my poor is {npc.b.wealth} or {npc.poor}
+if npc.b.wealth < -0.3
+    jump pooropinion
+if npc.b.wealth > 0.3
+    jump richopinion
 if npc.s.charisma > 3
-    jump cluelesscharm
+    jump roomcharm
 jump generic1
 

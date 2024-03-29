@@ -1,3 +1,44 @@
+label visitor1
+n: I got this shirt at the store.
+jump quickclose
+
+label visitor2
+n: Are you from around here?
+jump quickclose
+
+label visitor3
+n: I didn't get much sleep. Jetlag.
+jump quickclose
+
+label genericvisitor
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump visitor1
+if dice > 50
+    jump visitor2
+if dice > 25
+    jump visitor3
+n: I'm not sure where I'm going.
+jump quickclose
+
 label clanrandom1
-n: The people here are so rude.
+if npc.b.educated > 0.4
+    jump notusedtoforeigners
+if npc.b.aggressive < -0.4
+    jump offendedtourist
+if npc.s.wisdom > 0.4
+    jump awaretourist
+jump genericvisitor
+
+label notusedtoforeigners
+n: I guess you're not used to foreigners.
+jump quickclose
+
+label awaretourist
+n: I look like a tourist, don't I?
+jump quickclose
+
+label offendedtourist
+n: I thought people would be nicer.
 jump quickclose

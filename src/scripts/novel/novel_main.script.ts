@@ -74,6 +74,7 @@ export function on_message(
       print(novel.npc.love, '| novel.npc.love = message.love |', message.love)
       novel.npc.love = message.love
     }
+    npcs.all[novel.npc.labelname] = novel.npc
 
     msg.post('proxies:/controller#novelcontroller', 'unload_novel')
 
@@ -97,7 +98,6 @@ export function on_message(
       msg.post(player.currentroom + ':/level#level', 'update_alert', {})
     }
     //TESTJPF If you need to reload scripts, do it here, not level or interact.
-    npcs.all[novel.npc.labelname] = novel.npc
     msg.post(player.currentroom + ':/level#level', 'exit_gui')
   }
 }

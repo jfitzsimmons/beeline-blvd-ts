@@ -1,3 +1,44 @@
+label 2gang1
+n: Get fucked.
+jump quickclose
+
+label 2gang2
+n: Talk to someone else.
+jump quickclose
+
+label 2gang3
+n: Not today.
+jump quickclose
+
+label generic2gang
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump 2gang1
+if dice > 50
+    jump 2gang2
+if dice > 25
+    jump 2gang3
+n: Keep moving.
+jump quickclose
+
 label clanrandom1
-n: Why don't i get my friends to kick your ass!
+if npc.b.lawful < -0.4
+    jump copsdontstopme
+if npc.s.wisdom > 4
+    jump outofyourelement
+if npc.s.perception > 0.4
+    jump looklikenarc
+jump generic2gang
+
+label copsdontstopme
+n: The pigs wont stop me.
+jump quickclose
+
+label outofyourelement
+n: You need to learn how to act around here.
+jump quickclose
+
+label looklikenarc
+n: You look like a narc.
 jump quickclose

@@ -605,9 +605,9 @@ export function remove_advantageous(
   //order.sort((a, b) => skills[a] > skills[b] )
   let found = false
   let stolen_item = ''
-  let count = 0
 
   for (const desire of order) {
+    let count = 0
     for (const item of from_inv) {
       const stats: InventoryTableItem = items[item]
       let sKey: keyof typeof stats.skills

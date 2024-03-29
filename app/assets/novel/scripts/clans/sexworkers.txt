@@ -1,3 +1,44 @@
+label sexwork1
+n: Do you need anything?
+jump quickclose
+
+label sexwork2
+n: Like what you see?
+jump quickclose
+
+label sexwork3
+n: You're scaring away the customers.
+jump quickclose
+
+label genericsexwork
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump sexwork1
+if dice > 50
+    jump sexwork2
+if dice > 25
+    jump sexwork3
+n: You can't afford it.
+jump quickclose
+
 label clanrandom1
-n: Get lost buddy.  You're scaring the clients.
+if npc.b.wealth > 0.4
+    jump thesedesigner
+if npc.s.stealth > 4
+    jump waystogetby
+if npc.s.constitution > 0.4
+    jump harasssomeoneelse
+jump genericsexwork
+
+label thesedesigner
+n: These are all designer.
+jump quickclose
+
+label waystogetby
+n: I find ways to get by.
+jump quickclose
+
+label harasssomeoneelse
+n: Go harass someone else!
 jump quickclose
