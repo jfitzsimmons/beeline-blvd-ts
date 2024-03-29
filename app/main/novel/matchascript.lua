@@ -23,8 +23,9 @@ function file_exists(name)
 end
 
 local function load_file(filenames)
-	local count = #script
-	for i=0, count do script[i]=nil end
+	--local count = #script
+	script = {}
+	--for i=0, count do script[i]=nil end
 	local loaded = files.load_script('/assets/novel/scripts/_novelglobals.txt')
 	for k, line in pairs(loaded) do
 		table.insert(script, line)

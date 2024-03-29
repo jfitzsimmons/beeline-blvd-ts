@@ -11,6 +11,7 @@ n: It's so boring waiting to get through customs.
     jump tutorialrandom1
 > test choices???
     jump testchoices
+jump quickclose
 
 label testchoices
 n: are choices working???
@@ -22,3 +23,4 @@ n: My name is and {n.name}
 n: love {npc.love}
 n: and {npc.clan} clan again
 n: speed?: {npc.speed}
+jump quickclose

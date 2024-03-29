@@ -28,7 +28,7 @@ export default class WorldNovel {
     this._reason = ''
     this._scripts = []
     this._alertChange = 0
-    this._npc = initnpc
+    this._npc = { ...initnpc }
     //Have something here like this.sprites.smile .laugh .sad etc....
     // set the sprites in the same function you set npc! TESTJPF
     /** 
@@ -56,8 +56,8 @@ export default class WorldNovel {
     return this._npc
   }
   public set npc(npc: Npc) {
-    Object.assign(this._npc, npc)
-    // this._npc = npc
+    //Object.assign(this._npc, npc)
+    this._npc = { ...npc }
   }
   public get alertChange() {
     return this._alertChange

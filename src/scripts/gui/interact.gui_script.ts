@@ -29,7 +29,7 @@ function show_ai_screen() {
 
 function open_novel(_this: props) {
   npcs.all[_this.npcname].convos = npcs.all[_this.npcname].convos + 1
-  novel.npc = npcs.all[_this.npcname]
+  novel.npc = { ...npcs.all[_this.npcname] }
 
   msg.post('level#level', 'show_scene')
   msg.post('#', 'release_input_focus')

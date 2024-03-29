@@ -74,7 +74,7 @@ export function on_message(
       print(novel.npc.love, '| novel.npc.love = message.love |', message.love)
       novel.npc.love = message.love
     }
-    npcs.all[novel.npc.labelname] = novel.npc
+    npcs.all[novel.npc.labelname] = { ...novel.npc }
 
     msg.post('proxies:/controller#novelcontroller', 'unload_novel')
 
