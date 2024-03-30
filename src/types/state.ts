@@ -23,10 +23,12 @@ export interface QuestConditions {
   [key: string | number]: QuestCondition
 }
 export interface QuestCondition {
+  label?: string
+  solution?: string
   passed?: boolean
   interval?: string
-  func: (args: [() => any, any]) => boolean
-  args: [() => any, any]
+  func: { (args: [() => any, any]): boolean }[]
+  args: [() => any, any][]
 }
 
 export interface WorldQuests {

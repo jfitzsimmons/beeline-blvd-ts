@@ -1,0 +1,45 @@
+label doctors1
+n: I'm making the rounds.
+jump quickclose
+
+label learninghospital
+n: They send a lot of new doctors out here.
+n: For experience.
+jump quickclose
+
+label doctors3
+n: I'm always in need of supplies.
+jump quickclose
+
+label genericdoctors
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump doctors1
+if dice > 50
+    jump doctors2
+if dice > 25
+    jump doctors3
+n: Come by the infirmary if you're ill.
+jump quickclose
+
+label clanrandom1
+if npc.b.lawful > 0.4
+    jump notadrugdealer
+if npc.s.constitution < 4
+    jump ineedabreak
+if npc.b.educated < -0.4
+    jump learninghospital
+jump genericdoctors
+
+label doctors2
+n: I'm returning from a call.
+jump quickclose
+
+label notadrugdealer
+n: I'm not giving you drugs.
+jump quickclose
+
+label ineedabreak
+n: I don't know.  I'm just dying to take a break.
+jump quickclose

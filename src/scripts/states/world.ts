@@ -22,12 +22,15 @@ export default class World {
     this.player = new WorldPlayer()
     this.npcs = new WorldNpcs()
     this.rooms = new WorldRooms()
-    this.novel = new WorldNovel(this.npcs.all.labor01)
     const params: AllQuestsMethods = {
       pq: this.player.quests,
       nq: this.npcs.quests,
     }
     this.tasks = new WorldTasks(params)
+    this.novel = new WorldNovel(
+      this.npcs.all.labor01,
+      this.tasks.quests.tutorial.medic_assist.conditions[1]
+    )
     this.clock = 6
     this.stateMachine
       .addState('idle')

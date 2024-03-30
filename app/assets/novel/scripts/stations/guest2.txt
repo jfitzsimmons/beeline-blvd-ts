@@ -1,0 +1,47 @@
+
+label theyreallcriminals
+n: The workers are all a bunch of criminals.
+jump quickclose
+
+label genericw2
+n: Underpaid and overworked.
+jump quickclose
+
+label genericw3
+n: Always on the move.
+jump quickclose
+
+label genericw4
+n: It's tough to make ends meet.
+jump quickclose
+
+label genericwopinion
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump genericw2
+if dice > 50
+    jump genericw3
+if dice > 25
+    jump genericw4
+n: They're fine.
+jump quickclose
+
+--What's with the workers here?
+label guest2random1
+if npc.b.wealth > 0.3
+    jump theyreallcriminals
+if npc.s.wisdom > 0.3
+    jump everyoneunique
+if npc.b.authority < -0.3
+    jump readytorebel
+jump genericwopinion
+
+label everyoneunique
+n: They all have their quirks.
+jump quickclose
+
+label readytorebel
+n: They're ready to burn this place down.
+jump quickclose
+

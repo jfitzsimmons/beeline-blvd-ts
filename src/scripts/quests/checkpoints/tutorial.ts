@@ -91,6 +91,9 @@ export function tutorialA(interval = 'turn') {
 }
 function doctorsScripts() {
   const has_met = tasks.quests.tutorial.medic_assist.conditions[1].passed
+  tasks.quests.tutorial.medic_assist.conditions[1]
+  // bad??:: if reasonstring.startswith('quest - ')
+  //then on novel_main novel.quest.solution = endof(message.reason)
   if (has_met == false) {
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc

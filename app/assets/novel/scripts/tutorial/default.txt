@@ -97,3 +97,48 @@ if npc.s.constitution > 4
     jump toughitout
 jump tutsgeneric1
 
+label tutorialnext1
+if npc.b.educated < -0.5
+    jump cletusyokel
+if npc.b.authority < -0.4
+    jump hoopsjumping
+if npc.s.perception > 5
+    jump intheknow
+jump tutsgenericnext
+
+label hoopsjumping
+n: You jump through hoops until you get through customs.
+jump quickclose
+
+label intheknow
+n: Depends on who you know. Or how much you have.
+jump quickclose
+
+label cletusyokel
+n: There's more than one way to skin a skunk
+jump quickclose
+
+label tutsgenericnext
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump tutsnext2
+if dice > 50
+    jump tutsnext3
+if dice > 25
+    jump tutsnext4
+n: Make friends I guess.
+jump quickclose
+
+label tutsnext2
+n: You can't do anything without clearence.
+jump quickclose
+
+label tutsnext3
+n: I'm not sure what it takes 
+n: to not have to deal with security.
+jump quickclose
+
+label tutsnext4
+n: It's risky to try to bypass customs.
+jump quickclose

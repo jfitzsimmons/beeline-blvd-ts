@@ -93,7 +93,53 @@ if npc.b.wealth < -0.3
     jump pooropinion
 if npc.b.wealth > 0.3
     jump richopinion
-if npc.s.charisma > 3
+if npc.s.charisma > 5
     jump roomcharm
 jump generic1
 
+label groundsworkers1
+if npc.b.lawful > 0.4
+    jump peoplestealhere
+if npc.b.educated > 0.3
+    jump luggagesnob
+if npc.s.speed > 5
+    jump complainworkers
+jump genericluggage1
+
+label peoplestealhere
+n: I've seen people stand in this spot...
+n: and steal from the luggage.
+jump quickclose
+
+label luggagesnob
+n: These brutes destroy it
+n: if you're lucky enough to get it back at all.
+jump quickclose
+
+label complainworkers
+n: You'll wait here forever and not get your luggage.
+jump quickclose
+
+label genericlug2
+n: You get it back when you go through customs.
+jump quickclose
+
+label genericlug3
+n: Make sure theres nothing "illegal" in it.
+jump quickclose
+
+label genericlug4
+n: Who knows?
+jump quickclose
+
+label genericluggage1
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump genericlug2
+if dice > 50
+    jump genericlug3
+if dice > 25
+    jump genericlug4
+n: It takes forever to get your luggage.
+jump quickclose

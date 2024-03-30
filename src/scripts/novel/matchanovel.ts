@@ -148,18 +148,19 @@ function substitute_in_expression(w: string) {
 }
 
 function strip_quote(s: string) {
+  stripped_quotes = []
   stripped_quotes.push(s)
   return '__STRIPPED_QUOTE__'
 }
 
 function strip_quotes(s: string) {
-  stripped_quotes = []
-  return string.gsub(s, '["\'][^"\']*["\']', strip_quote)
+  return string.gsub(s, '["\'][^"\']*["\']', function (x) {
+    return strip_quote(x)
+  })
 }
 
 function return_quote(): string {
-  const value = stripped_quotes.shift()
-  //table.remove(stripped_quotes, 1)
+  const value = stripped_quotes.pop()
   return value == undefined ? '' : value
 }
 
@@ -190,6 +191,7 @@ function execute_string(s: string) {
     result = assert(f[0])()
   }
   Sandbox = null
+  print('exe stirng result::', result)
   return result
 }
 

@@ -193,6 +193,7 @@ export default class WorldTasks {
   }
   // checks quest completion after interactions and turns
   address_quests = (interval: string, checkpoint: string) => {
+    print('checkpoint.slice(0, -1)', checkpoint.slice(0, -1))
     const quests = this.quests[checkpoint.slice(0, -1)]
 
     let questKey: keyof typeof quests
@@ -200,18 +201,22 @@ export default class WorldTasks {
       const quest = quests[questKey]
       if (quest.passed == false) {
         let quest_passed = true
+        print('questKey:', questKey)
         let condition: keyof typeof quest.conditions
         for (condition in quest.conditions) {
+          print('condition:', condition)
           const goal = quest.conditions[condition]
-          if (goal.passed != true && goal.interval == interval) {
-            if (goal.func(goal.args) == false) {
-              quest_passed = false
-            } else if (goal.passed != null) {
-              goal.passed = true
+          print('goal label', goal.label, goal.passed, goal.interval, interval)
+          if (goal.passed == false && goal.interval == interval) {
+            for (let i = goal.func.length; i-- !== 0; ) {
+              if (goal.func[i](goal.args[i]) == true) {
+                goal.passed = true
+                print('quest Condition passed::', goal.label)
+                break
+              }
             }
-          } else if (goal.passed == false || goal.passed == null) {
-            quest_passed = false
           }
+          if (goal.passed == false) quest_passed = false
         }
         if (quest_passed == true) {
           quest.passed = true

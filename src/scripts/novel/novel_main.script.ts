@@ -15,12 +15,13 @@ function script_builder(
   const paths: string[] = questScripts[player.checkpoint + 'scripts'](
     novel.npc.labelname
   )
-  paths.push('clans/' + novel.npc.clan)
-  // if (path.length <= 0) {
+  if (paths.length > 0) novel.reason = 'quest'
+  paths.unshift('clans/' + novel.npc.clan)
+
   if (room) {
-    paths.push(player.currentroom + '/default')
+    paths.unshift(player.currentroom + '/default')
   }
-  paths.push(checkpoint + '/default')
+  paths.unshift(checkpoint + '/default')
   if (novel.npc.currentstation != null) {
     print(
       'novel noc:',
@@ -28,23 +29,18 @@ function script_builder(
       ' | station:',
       novel.npc.currentstation
     )
-    //testjpf need something like this that
-    //includes checkpoints, stationDefault,
-    //roomStationDefault?
-    paths.push('stations/' + novel.npc.currentstation)
-    paths.push(player.currentroom + '/' + novel.npc.currentstation)
+
+    paths.unshift('stations/' + novel.npc.currentstation)
+    paths.unshift(player.currentroom + '/' + novel.npc.currentstation)
   }
   const caution = tasks.npc_has_caution(novel.npc.labelname, 'player')
-  //testjpf also update something on Novel Class
-  //like relevance? Topics!!:: has_caution, got_beat_up, has_effect
+
   if (caution != null) {
     paths.push('cautions/' + caution.label)
   }
   novel.scripts = paths
 }
 
-//'/assets/novel/scripts/' + path + '.txt'
-//}
 interface props {
   npcname: string
   cause: string
@@ -57,7 +53,7 @@ export function on_message(
     love: number
     alert: number
     hp: number
-    cause: string
+    reason: string
   },
   _sender: url
 ): void {
@@ -79,16 +75,20 @@ export function on_message(
     msg.post('proxies:/controller#novelcontroller', 'unload_novel')
 
     //testjpf create func() called+. emergencies()????
-    if (message.cause == 'faint') {
+    if (message.reason == 'faint') {
       const params = {
         enter_room: tasks.spawn,
       }
       msg.post('proxies:/controller#worldcontroller', 'faint', params)
-    } else if (message.cause == 'arrested') {
+    } else if (message.reason == 'arrested') {
       tasks.remove_heat('player')
       msg.post('proxies:/controller#worldcontroller', 'arrested', {
         enter_room: 'security',
       })
+    }
+    if (message.reason.substring(0, 6) == 'quest:') {
+      //testjpf remove spaces??
+      novel.quest.solution = message.reason.substring(7)
     }
     if (player.alert_level != message.alert) {
       player.alert_level = novel.alertChange
@@ -98,6 +98,7 @@ export function on_message(
       msg.post(player.currentroom + ':/level#level', 'update_alert', {})
     }
     //TESTJPF If you need to reload scripts, do it here, not level or interact.
+    novel.reason = 'none'
     msg.post(player.currentroom + ':/level#level', 'exit_gui')
   }
 }
