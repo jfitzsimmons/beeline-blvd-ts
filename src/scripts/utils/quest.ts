@@ -1,5 +1,5 @@
 import { Npc, Npcs, Skills } from '../../types/state'
-import { shuffle } from './utils'
+//import { shuffle } from './utils'
 
 export function has_value(t: [() => string[], string]) {
   return t[0]().includes(t[1])
@@ -21,7 +21,9 @@ export function convos_check(args: [() => Npcs, number]): boolean {
   const npcs = args[0]()
   let nKey: keyof typeof npcs
   for (nKey in npcs) {
-    if (npcs[nKey].convos >= args[1]) return true
+    if (npcs[nKey].convos >= args[1]) {
+      return true //tesjpf could return array with "hounded" ??? bad.
+    }
   }
   return false
 }
@@ -43,10 +45,9 @@ export function max_skills(args: [() => Skills, number]) {
 export function max_love(args: [() => [string[], Npcs], number]): boolean {
   let count = 10
   let score = 0
-  const all = args[0]()
-  const shuffled = shuffle(all[0])
-  for (const npcname of shuffled) {
-    if (all[1][npcname].love > 5) {
+  const [ordered, all] = args[0]()
+  for (const npcname of ordered) {
+    if (all[npcname].love > args[1]) {
       score = score + 1
     }
     count = count - 1

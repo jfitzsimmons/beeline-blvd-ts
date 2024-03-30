@@ -1,0 +1,44 @@
+label corps1
+n: I have a business to run.
+jump quickclose
+
+label haveyouthrownout
+n: I can have you thrown out of here.
+jump quickclose
+
+label corps3
+n: This is my money making face.
+jump quickclose
+
+label genericcorps
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump corps1
+if dice > 50
+    jump corps2
+if dice > 25
+    jump corps3
+n: I have a meeting to get to.
+jump quickclose
+
+label clanrandom1
+if npc.b.wealth > 0.4
+    jump butimrich
+if npc.s.speed > 4
+    jump imtoofast
+if npc.b.authority > 0.4
+    jump haveyouthrownout
+jump genericcorps
+
+label corps2
+n: Get lost.
+jump quickclose
+
+label butimrich
+n: You wanna know how much I paid for this suit?
+jump quickclose
+
+label imtoofast
+n: What? I wasn't listening.
+jump quickclose

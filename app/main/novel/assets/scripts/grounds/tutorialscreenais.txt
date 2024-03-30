@@ -1,7 +1,0 @@
-I am an AI
-I'm an easy way to add pcs
-it's not lazy , it's smart
-jump quickclose
-
-label quickclose
-{u.novelclose()}

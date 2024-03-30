@@ -1,0 +1,44 @@
+label 1gang1
+n: It's the game.
+jump quickclose
+
+label 1gang2
+n: Back off!
+jump quickclose
+
+label 1gang3
+n: You're a punk.
+jump quickclose
+
+label generic1gang
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump 1gang1
+if dice > 50
+    jump 1gang2
+if dice > 25
+    jump 1gang3
+n: Quit wasting my time.
+jump quickclose
+
+label clanrandom1
+if npc.b.good < -0.4
+    jump ihurtpeople
+if npc.s.charisma > 4
+    jump murderface
+if npc.b.wealth > 0.4
+    jump whenyouhavemoney
+jump generic1gang
+
+label ihurtpeople
+n: I hurt people.
+jump quickclose
+
+label murderface
+n: People say I have resting murder face.
+jump quickclose
+
+label whenyouhavemoney
+n: Who needs looks when you have money?
+jump quickclose

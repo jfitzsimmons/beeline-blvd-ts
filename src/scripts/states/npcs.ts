@@ -14,11 +14,11 @@ function shuffle(array: Array<string | number>): Array<string | number> {
 
 // need npcs interface?
 export default class WorldNpcs {
-  all: Npcs
+  private _all: Npcs
   order: string[]
   quests: QuestMethods
   constructor() {
-    this.all = { ...NpcsInitState }
+    this._all = { ...NpcsInitState }
     this.order = []
     random_attributes(this.all, this.order)
     this.quests = {
@@ -28,7 +28,12 @@ export default class WorldNpcs {
     }
     this.return_doctors = this.return_doctors.bind(this)
   }
-
+  public get all(): Npcs {
+    return this._all
+  }
+  set_an_npc(n: Npc) {
+    this.all[n.labelname] = { ...n }
+  }
   return_doctors(): Npc[] {
     return [this.all.doc01, this.all.doc02]
   }
@@ -209,6 +214,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
     npcs[kn].turns_since_encounter = math.random(5, 15)
     npcs[kn].love = math.random(-1, 1)
     // random attitude
+    npcs[kn].attitudes = {}
     let kbl: keyof typeof binarylookup
     for (kbl in binarylookup) {
       npcs[kn].attitudes[kbl] = math.random(-9, 9)
@@ -226,6 +232,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
     const tempskills = shuffle(startskills)
     let s_count = 0
 
+    npcs[kn].skills = {}
     let ks: keyof typeof skills
     for (ks in skills) {
       npcs[kn].skills[ks] = tempskills[s_count] + math.random(-1, 1)
@@ -236,6 +243,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
     const tempbins = shuffle(startbins)
     let b_count = 0
 
+    npcs[kn].binaries = {}
     let kb: keyof typeof binaries
     for (kb in binaries) {
       const adjustment = adjust_binaries(tempbins[b_count], npcs[kn].clan, kb)

@@ -89,19 +89,33 @@ export function tutorialA(interval = 'turn') {
     }
   }
 }
-
-export function tutorialAscripts(actor: string): string {
+function doctorsScripts() {
   const has_met = tasks.quests.tutorial.medic_assist.conditions[1].passed
-  if (
-    actor != 'player' &&
-    npcs.all[actor].clan == 'doctors' &&
-    has_met == false
-  ) {
+  tasks.quests.tutorial.medic_assist.conditions[1]
+  // bad??:: if reasonstring.startswith('quest - ')
+  //then on novel_main novel.quest.solution = endof(message.reason)
+  if (has_met == false) {
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
-    return 'tutorialAdoctor'
+    return 'tutorial/tutorialAdoctor'
   }
-  return ''
+  return null
+}
+
+const tutorialAlookup: { [key: string]: () => string | null } = {
+  doctors: doctorsScripts,
+}
+
+export function tutorialAscripts(actor: string): string[] {
+  const scripts = []
+  let script = null
+  if (tutorialAlookup[actor] != null) script = tutorialAlookup[actor]()
+  if (script != null) scripts.push(script)
+  if (tutorialAlookup[npcs.all[actor].clan] != null)
+    script = tutorialAlookup[npcs.all[actor].clan]()
+  if (script != null) scripts.push(script)
+
+  return scripts
 }
 
 export function tutorialB() {

@@ -1,0 +1,45 @@
+label connie1
+n: I need to get back to work.
+jump quickclose
+
+label rudeconnie
+n: Do I go to the lewd place you work at 
+n: and knock whatever lewd thing out of your mouth?
+jump quickclose
+
+label connie3
+n: I'm busy.
+jump quickclose
+
+label genericconnie
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump connie1
+if dice > 50
+    jump connie2
+if dice > 25
+    jump connie3
+n: It's been a long day
+jump quickclose
+
+label clanrandom1
+if npc.b.authority < -0.3
+    jump rudeconnie
+if npc.s.constitution < 4
+    jump insecureconnie
+if npc.b.aggressive < 0.4
+    jump passiveconnie
+jump genericconnie
+
+label connie2
+n: Nice suit.
+jump quickclose
+
+label insecureconnie
+n: Do I need a new uniform?
+jump quickclose
+
+label passiveconnie
+n: Whatever.
+jump quickclose
