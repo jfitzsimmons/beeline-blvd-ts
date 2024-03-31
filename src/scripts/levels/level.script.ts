@@ -56,6 +56,7 @@ export function on_message(
       player.exitroom = rooms.layout[player.matrix_y][player.matrix_x]!
       player.currentroom = this.roomname
       player.matrix = rooms.all[this.roomname].matrix
+      const confrontation: Confront | null = address_cautions()
 
       if (message.load_type == 'room transition') {
         game_turn(message.roomname)
@@ -67,7 +68,6 @@ export function on_message(
 
       msg.post('level#' + this.roomname, 'room_load')
 
-      const confrontation: Confront | null = address_cautions()
       if (confrontation != null) confrontation_scene(confrontation)
 
       //position player on screen

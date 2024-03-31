@@ -1,7 +1,7 @@
 import { shuffle } from '../utils/utils'
-import { seen_check, confrontation_check } from './ai_checks'
+import { seen_check, confrontation_check, aid_check } from './ai_checks'
 import { Direction } from '../../types/ai'
-import { Prisoners } from '../../types/state'
+import { Occupants } from '../../types/state'
 import { remove_effects } from '../systems/effectsystem'
 import { reception_checks } from './levels/reception'
 
@@ -52,7 +52,6 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
       //  let ks: keyof typeof shuffled_stations
       for (const ks of shuffled_stations) {
         const station = ks[1]
-
         if (station == '' && rooms.roles[ks[0]].includes(npcs.all[npc].clan)) {
           //loop thru room stations see if empty or has correct role
           print(
@@ -281,22 +280,36 @@ export function assign_nearby_rooms(enter: { x: number; y: number }) {
   }
   return direction
 }
-function release_prisoners(d: Direction) {
-  const prisoners: Prisoners = rooms.all.security.prisoners!
+function release_occupants(d: Direction) {
+  const prisoners: Occupants = rooms.all.security.occupants!
   let station: keyof typeof prisoners
   for (station in prisoners) {
     const prisoner = prisoners[station]
     if (prisoner != '' && npcs.all[prisoner].cooldown <= 0) {
       print('released from prison:', prisoner)
       npc_action_move(prisoner, d)
-      rooms.all.security.prisoners![station] = ''
+      rooms.all.security.occupants![station] = ''
+    }
+  }
+  const occupants: Occupants = rooms.all.infirmary.occupants!
+  let bed: keyof typeof occupants
+  for (bed in occupants) {
+    const patient = occupants[bed]
+    if (patient != '' && npcs.all[patient].cooldown <= 0) {
+      npcs.all[patient].hp = 10
+      print('released from prison:', patient)
+      npc_action_move(patient, d)
+      rooms.all.infirmary.occupants![bed] = ''
     }
   }
 }
 
 // testjpf naming conventions start getting vague
-function ai_actions(direction: Direction) {
-  release_prisoners(direction)
+function ai_actions(direction: Direction, injured: string[]) {
+  aid_check(injured)
+  release_occupants(direction)
+
+  //replace_injured(injured)
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   reception_checks()
 }
@@ -335,6 +348,7 @@ export function place_npcs() {
         rooms.all.grounds.stations[ks[0]] = npc.labelname
         npc.matrix = rooms.all.grounds.matrix
         npc.currentstation = ks[0]
+        npc.currentroom = 'grounds'
         placed = true
         break
       }
@@ -354,6 +368,8 @@ export function place_npcs() {
             rooms.all[p].stations[ks[0]] = npc.labelname
             npc.matrix = rooms.all[p].matrix
             npc.currentstation = ks[0]
+            npc.currentroom = p
+
             print('RANDOM::: ', npc.labelname, 'placed in', ks[0], 'ROOM', p)
             placed = true
             break
@@ -365,20 +381,53 @@ export function place_npcs() {
       }
     }
   })
+  npcs.all[rooms.all.grounds.stations.worker1].hp = 0
 }
 export function ai_turn(enter: string) {
-  const direction: Direction = assign_nearby_rooms(rooms.all[enter].matrix)
+  let direction: Direction = assign_nearby_rooms(rooms.all[enter].matrix)
   // NPC gone longest since encountering player moves first
   npcs.sort_npcs_by_encounter()
   /**npcs.order.sort(function(a:string,b:string) { 
 		return npcs.all[a].turns_since_encounter > npcs.all[b].turns_since_encounter; 
 	});**/
+  const immobile: string[] = [
+    ...Object.values(rooms.all.security.occupants!),
+    ...Object.values(rooms.all.infirmary.occupants!),
+    ...tasks.busy_doctors(),
+  ]
+  const injured: string[] = []
 
-  npcs.order.forEach((n: string) => {
-    npc_action_move(n, direction)
-  })
+  for (let i = npcs.order.length; i-- !== 0; ) {
+    const npc = npcs.all[npcs.order[i]]
+    //print(npc.currentroom, npc.currentstation, 'CURRS NPC')
+    if (
+      npc.hp <= 0 &&
+      Object.values(rooms.all.infirmary.occupants!).includes(npc.labelname) ==
+        false
+    ) {
+      //TESTJPF IF IN INFIRMARY OR PRISON,
+      // wont be stations, but occupancy
+      rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
+      print(
+        'rooms.all[npc.currentroom].stations[npc.currentstation]',
+        rooms.all[npc.currentroom].stations[npc.currentstation]
+      )
+      injured.push(npc.labelname)
+    }
+    if (npc.clan == 'doctors') {
+      if (tasks.busy_doctors().includes(npc.labelname) == true)
+        rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
+      if (injured.length > 0)
+        direction = assign_nearby_rooms(
+          rooms.all[npcs.all[injured[0]].currentroom].matrix
+        )
+    }
 
-  ai_actions(direction)
+    if (immobile.includes(npc.labelname) == false && npc.hp > 0)
+      npc_action_move(npc.labelname, direction)
+  }
+
+  ai_actions(direction, injured)
 }
 export function witness(w: string) {
   const suspect = player.state

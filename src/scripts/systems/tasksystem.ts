@@ -9,7 +9,7 @@
 import { items } from '../systems/inventorysystem'
 const { tasks, rooms, npcs, player } = globalThis.game.world
 import {
-  Prisoners,
+  Occupants,
   Caution,
   Confront,
   Npc,
@@ -18,6 +18,7 @@ import {
 } from '../../types/state'
 import { shuffle } from '../utils/utils'
 import { fx, add_effects_bonus } from '../systems/effectsystem'
+import { send_to_infirmary } from '../ai/ai_checks'
 
 const fxLookup = {
   merits: [
@@ -82,12 +83,12 @@ function go_to_jail(s: string) {
   // remove all arrests for suspect(clear record)
   print('found:', s, ' ARREST!!!!')
   tasks.remove_heat(s)
-  const prisoners: Prisoners = rooms.all.security.prisoners!
-  let station: keyof typeof prisoners
-  for (station in prisoners) {
-    const prisoner = prisoners[station]
+  const occupants: Occupants = rooms.all.security.occupants!
+  let station: keyof typeof occupants
+  for (station in occupants) {
+    const prisoner = occupants[station]
     if (prisoner == '') {
-      rooms.all.security.prisoners![station] = s
+      rooms.all.security.occupants![station] = s
       npcs.all[s].matrix = rooms.all.security.matrix
       npcs.all[s].cooldown = 6
 
@@ -370,6 +371,77 @@ function merits_demerits(c: Caution, w: string) {
   npcs.all[w].effects.push(effect)
   add_effects_bonus(npcs.all[w], effect)
 }
+
+function arraymove(arr: string[], fromIndex: number, toIndex: number) {
+  const element = arr[fromIndex]
+  arr.splice(fromIndex, 1)
+  arr.splice(toIndex, 0, element)
+}
+
+function adjust_medic_queue(s: string) {
+  if (tasks.medicQueue.includes(s)) {
+    if (tasks.medicQueue.indexOf(s) > 1)
+      arraymove(tasks.medicQueue, tasks.medicQueue.indexOf(s), 0)
+  } else {
+    tasks.medicQueue.push(s)
+  }
+}
+
+function decide_aid_response(c: Caution, w: string) {
+  if (npcs.all[w].clan == 'doctors' && math.random() > 0.5) {
+    print('adjust_medic_queue::: doc 0.3')
+
+    adjust_medic_queue(c.suspect)
+    //if in queue and not first
+    //bump up
+    //do they have other injury cautions?
+    //delete this injury caution
+  } else if (npcs.all[w].clan == 'security' && math.random() > 0.7) {
+    print('adjust_medic_queue::: sec 0.5')
+
+    adjust_medic_queue(c.suspect)
+  } else if (npcs.all[w].clan == 'staff' && math.random() > 0.8) {
+    print('adjust_medic_queue::: staff 0.7')
+
+    adjust_medic_queue(c.suspect)
+  } else if (math.random() > 0.9) {
+    print('adjust_medic_queue::: other 0.8')
+
+    adjust_medic_queue(c.suspect)
+  } else if (math.random() > 0.94) {
+    print('TESTJPf creat another cauiton if not already 0.9')
+    //erase old cautin, create new injury caution
+  }
+}
+function focused_acts(c: Caution) {
+  if (c.reason == 'office') {
+    if (c.time == 1) {
+      npcs.all[c.suspect].hp = 10
+      rooms.all.infirmary.occupants![npcs.all[c.suspect].currentstation] = ''
+    } else {
+      const aid = rooms.all.infirmary.stations.aid
+      if (aid != '' && npcs.all[aid].clan == 'doctors') {
+        npcs.all[c.npc].currentroom = 'infirmary'
+        npcs.all[c.npc].currentstation = 'aid'
+      }
+    }
+  } else if (c.reason == 'field') {
+    if (c.time == 1) {
+      //testjpf send doc too. need to send them to infirmary as well.
+      send_to_infirmary(c.suspect, c.npc)
+    } else {
+      // testjpfsame code as ai_checks tendtopatient
+      const vstation = npcs.all[c.suspect].currentstation
+      const dstation = npcs.all[c.npc].currentstation
+      if (npcs.all[c.npc].currentroom == player.currentroom)
+        msg.post(`/${dstation}#npc_loader`, hash('move_npc'), {
+          station: vstation,
+          npc: c.npc,
+        })
+      print(c.npc, 'tending to', c.suspect, 'in the field')
+    }
+  }
+}
 function passive_acts(c: Caution, w: string) {
   if (c.label == 'reckless') {
     reckless_consequence(c, w)
@@ -385,6 +457,8 @@ function passive_acts(c: Caution, w: string) {
       npcs.all[c.npc].attitudes[npcs.all[w].clan] > 0)
   ) {
     merits_demerits(c, w)
+  } else if (c.label == 'injury') {
+    decide_aid_response(c, w)
   }
 }
 export function address_cautions() {
@@ -415,15 +489,17 @@ export function address_cautions() {
               reason: c.reason,
             }
           : null
-    }
-
-    const stations = rooms.all[agent.currentroom].stations
-    let station: keyof typeof stations
-    for (station in stations) {
-      const watcher = stations[station]
-      //loop through stations in room of task agent
-      if (watcher != '' && watcher != c.npc && watcher != c.suspect) {
-        passive_acts(c, watcher)
+    } else if (c.label == 'mending') {
+      focused_acts(c)
+    } else {
+      const stations = rooms.all[agent.currentroom].stations
+      let station: keyof typeof stations
+      for (station in stations) {
+        const watcher = stations[station]
+        //loop through stations in room of task agent
+        if (watcher != '' && watcher != c.npc && watcher != c.suspect) {
+          passive_acts(c, watcher)
+        }
       }
     }
 

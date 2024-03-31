@@ -7,12 +7,24 @@ function load_npcs() {
   for (station in stations) {
     const npc = stations[station]
     //  if (npc != '') {
-    station == 'desk'
+    station == 'assistant'
       ? msg.post('desk#station', 'load_station', { npc, roomname })
       : msg.post(`/${station}#npc_loader`, 'load_npc', { npc })
     //   }
     //params.script = params.roomname + "/" + world.player.checkpoint:sub(1, -2) + "aid"
   }
+  msg.post('patient1#npc_loader', 'load_npc', {
+    npc: rooms.all['infirmary'].occupants!.patient1,
+  })
+  msg.post('patient2#npc_loader', 'load_npc', {
+    npc: rooms.all['infirmary'].occupants!.patient2,
+  })
+  msg.post('patient3#npc_loader', 'load_npc', {
+    npc: rooms.all['infirmary'].occupants!.patient3,
+  })
+  msg.post('patient4#npc_loader', 'load_npc', {
+    npc: rooms.all['infirmary'].occupants!.patient4,
+  })
 }
 
 export function on_message(

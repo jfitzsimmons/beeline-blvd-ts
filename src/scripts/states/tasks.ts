@@ -58,6 +58,7 @@ export default class WorldTasks {
   private _quests: WorldQuests
   //spawn will be updated when checkpoints are passed
   private _spawn: string
+  medicQueue: string[]
 
   constructor(questmethods: AllQuestsMethods) {
     this._questmethods = questmethods
@@ -65,6 +66,7 @@ export default class WorldTasks {
     this._quests = build_quests(this.questmethods)
     this.consolations = [snitch, merits, reckless]
     this._spawn = 'grounds'
+    this.medicQueue = []
   }
   public set spawn(s: string) {
     this._spawn = s
@@ -89,7 +91,10 @@ export default class WorldTasks {
       const c = this.cautions[i]
       if (
         c.suspect == sus &&
-        (c.label == 'questioning' || c.label == 'arrest' || c.label == 'snitch')
+        (c.label == 'questioning' ||
+          c.label == 'arrest' ||
+          c.label == 'snitch' ||
+          c.label == 'injury')
       ) {
         this.cautions.splice(i, 1)
       }
@@ -114,6 +119,14 @@ export default class WorldTasks {
       }
     }
     return false
+  }
+  busy_doctors(): string[] {
+    const docs = this.cautions
+      .filter((c) => c.label == 'mending')
+      .map((c) => c.npc)
+
+    print('busy_doc:: docs[0]:', docs[0])
+    return docs
   }
   npc_has_caution(npc: string, sus: string): Caution | null {
     for (const c of this.cautions) {
@@ -160,6 +173,9 @@ export default class WorldTasks {
       append.time = 3
     } else if (c == 'reckless') {
       append.time = 3
+    } else if (c == 'injury') {
+      append.authority = 'doctors'
+      append.type = 'clan'
     }
 
     print(
@@ -193,7 +209,7 @@ export default class WorldTasks {
   }
   // checks quest completion after interactions and turns
   address_quests = (interval: string, checkpoint: string) => {
-    print('checkpoint.slice(0, -1)', checkpoint.slice(0, -1))
+    //  print('checkpoint.slice(0, -1)', checkpoint.slice(0, -1))
     const quests = this.quests[checkpoint.slice(0, -1)]
 
     let questKey: keyof typeof quests
@@ -201,17 +217,17 @@ export default class WorldTasks {
       const quest = quests[questKey]
       if (quest.passed == false) {
         let quest_passed = true
-        print('questKey:', questKey)
+        // print('questKey:', questKey)
         let condition: keyof typeof quest.conditions
         for (condition in quest.conditions) {
-          print('condition:', condition)
+          //   print('condition:', condition)
           const goal = quest.conditions[condition]
-          print('goal label', goal.label, goal.passed, goal.interval, interval)
+          //    print('goal label', goal.label, goal.passed, goal.interval, interval)
           if (goal.passed == false && goal.interval == interval) {
             for (let i = goal.func.length; i-- !== 0; ) {
-              if (goal.func[i](goal.args[i]) == true) {
+              if (goal.func[i]!(goal.args[i]) == true) {
                 goal.passed = true
-                print('quest Condition passed::', goal.label)
+                //         print('quest Condition passed::', goal.label)
                 break
               }
             }

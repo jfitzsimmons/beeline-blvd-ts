@@ -366,31 +366,13 @@ function scene(args: any) {
     args.transition != null
       ? args.transition
       : save.get_var('scene.transition')[1]
-
   const duration =
     args.duration != null
       ? args.duration
       : args.t != null
       ? args.t
       : save.get_var('scene.duration')[1]
-  /**
-   *
-   *
-   * TESTJPF THESE SHOULD ALL BE NIL!!!!!
-   * save.get_vars are fucked probably
-   * log each condition path and see what conditions are being met?!?!?!?!?!
-   *
-   */
-  print('durartionm:::', duration)
-
-  print('transition:::', transition)
-  //I think theres an issue with these save.get_vars.
-  //getting tables as key indexes.  probably poulated wrong.
-  //or wrong this??? TESTJPF
-
-  const color = null // args.color != null ? args.color : save.get_var(this,'scene.color')
-  print('SCENE::: COLOR::', color)
-
+  const color = null
   const transition_color =
     args.transition_color != null
       ? args.transition_color
@@ -398,8 +380,7 @@ function scene(args: any) {
 
   save.set_var('scene.current', scene, 'string')
   save.set_var('scene.current_color', color, 'string')
-  print('matchanovel::: scene:: color:', color)
-  print('matchanovel::: scene:: scene:', scene)
+
   const message = {
     scene: scene,
     transition: transition,

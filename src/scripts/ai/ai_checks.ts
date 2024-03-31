@@ -2,9 +2,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Actor, Effect, Npc, PlayerState, Skills } from '../../types/state'
+import {
+  Actor,
+  Effect,
+  Npc,
+  Occupants,
+  PlayerState,
+  Skills,
+} from '../../types/state'
 import { dice_roll } from '../utils/utils'
-const { tasks } = globalThis.game.world
+const { tasks, npcs, rooms, player } = globalThis.game.world
 import {
   remove_advantageous,
   remove_valuable,
@@ -14,6 +21,93 @@ import {
   remove_chest_bonus,
 } from '../systems/inventorysystem'
 import { fx, add_effects_bonus } from '../systems/effectsystem'
+
+export function send_to_infirmary(v: string, doc: string) {
+  // remove all arrests for suspect(clear record)
+  print('infirmed:', v, ' :::!!!!')
+  // tasks.remove_heat(v)
+  const occupants: Occupants = rooms.all.infirmary.occupants!
+  let station: keyof typeof occupants
+  for (station in occupants) {
+    const patient = occupants[station]
+    if (patient == '') {
+      rooms.all.infirmary.occupants![station] = v
+      npcs.all[v].matrix = rooms.all.infirmary.matrix
+      npcs.all[v].cooldown = 6
+      npcs.all[v].currentroom = 'infirmary'
+      npcs.all[v].currentstation = station
+      print(v, 'infirmed for:', npcs.all[v].cooldown)
+      tasks.caution_builder(npcs.all[doc], 'mending', v, 'office')
+      break
+    }
+
+    //create caution mending, reason: office
+    // keep doc in aid position until caution wears off
+    // if a doc isnt already in aid position.
+    //patients heal faster when doc is in position.
+  }
+  //TESTJPF
+  //ideally this would finish before stations are atempted to be filled.!!!
+}
+function tend_to_patient(v: string, doc: string) {
+  print('tend to patient', doc, v)
+  tasks.medicQueue.splice(tasks.medicQueue.indexOf(v), 1)
+  tasks.remove_heat(v)
+  const vstation = npcs.all[v].currentstation
+  const dstation = npcs.all[doc].currentstation
+  //npcs.all[doc].cooldown = 8
+  if (npcs.all[doc].currentroom == player.currentroom)
+    msg.post(`/${dstation}#npc_loader`, hash('move_npc'), {
+      station: vstation,
+      npc: doc,
+    })
+  tasks.caution_builder(npcs.all[doc], 'mending', v, 'field')
+  // testjpf need a CAUTION!!!??
+  // c.label = mending
+  //go.set_position()
+  //send_to_infirmary(i)
+}
+
+export function aid_check(injured: string[]) {
+  for (const i of injured) {
+    const stations = rooms.all[npcs.all[i].currentroom].stations
+    let sKey: keyof typeof stations
+    for (sKey in stations) {
+      const helper = stations[sKey]
+      print('AID CHECK:: HELPER:', helper)
+      //testjpf this conditional needs more logic to it.
+      if (
+        helper != '' &&
+        helper != i &&
+        math.random() < 0.6 &&
+        tasks.npc_has_caution(helper, i) == null
+      ) {
+        if (
+          npcs.all[helper].clan == 'doctors' &&
+          tasks.medicQueue.indexOf(i) < math.random(0, 9)
+        ) {
+          print('Medic helped victim')
+
+          tend_to_patient(i, helper)
+
+          // send_to_infirmary(i)
+          //testjpf move victim to infirmary bed
+          //clear cautions
+          //restore hp
+          //give cooldown
+        } else {
+          print('injury caution created for', i, ' | HEL{ER::', helper)
+          tasks.caution_builder(npcs.all[helper], 'injury', i, 'injury')
+        }
+        break
+      }
+    }
+    //for every station in "i" current room
+    //if not empty and != "i"
+    //then chance to get help or other consequence
+    //print(i)
+  }
+}
 function confrontation_consequence(p: Npc, n: Npc) {
   //ugly code. testjpf.  not many cautions needed.
   //returns are superflous
