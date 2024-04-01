@@ -25,8 +25,8 @@ export interface QuestConditions {
 export interface QuestCondition {
   label?: string
   solution?: string
-  passed?: boolean
-  interval?: string
+  passed: boolean
+  interval: string[]
   func: { (args: [() => any, any]): boolean }[]
   args: [() => any, any][]
 }
@@ -40,7 +40,15 @@ export interface AllQuestsMethods {
 export interface QuestMethods {
   [key: string]: (
     args?: unknown | [() => Npcs, number]
-  ) => Npc[] | boolean | Npcs | [string[], Npcs] | string[] | Skills | void
+  ) =>
+    | Npc[]
+    | boolean
+    | Npcs
+    | [string[], Npcs]
+    | string[]
+    | Skills
+    | number
+    | void
 }
 export interface Npc extends NpcDefaults {
   home: { x: number; y: number }
@@ -100,7 +108,7 @@ export interface Fallbacks {
   stations: { [key: string]: string }
 }
 export interface Rooms {
-  [key: string]: Room | Jail
+  [key: string]: Room | Occupancy
 }
 interface Room {
   matrix: { x: number; y: number }
@@ -108,11 +116,11 @@ interface Room {
   stations: { [key: string]: string }
   actors: Actors
   props?: string[]
-  prisoners?: Prisoners
+  occupants?: Occupants
 }
 
-export interface Jail extends Room {
-  prisoners: Prisoners
+export interface Occupancy extends Room {
+  occupants: Occupants
 }
 interface Actors {
   [key: string]: Actor
@@ -122,7 +130,7 @@ export interface Actor {
   watcher?: string
   actions: string[]
 }
-export interface Prisoners {
+export interface Occupants {
   [key: string]: string
 }
 export interface Roles {

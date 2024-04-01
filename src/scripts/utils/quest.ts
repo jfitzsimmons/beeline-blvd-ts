@@ -17,6 +17,12 @@ export function returnfalse() {
   return false
 }
 
+export function greater_than(args: [() => number, number]): boolean {
+  const value = args[0]()
+  print('injury check!!!::: value ', value)
+  return value > args[1] ? true : false
+}
+
 export function convos_check(args: [() => Npcs, number]): boolean {
   const npcs = args[0]()
   let nKey: keyof typeof npcs

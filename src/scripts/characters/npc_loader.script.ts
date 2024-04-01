@@ -1,5 +1,7 @@
 //const world = require('main.states.worldstate')
 const { npcs } = globalThis.game.world
+//go.property('default_pos', go.get_position())
+
 function show_npc(name: string) {
   if (name != '') {
     sprite.play_flipbook('#npcspritebody', npcs.all[name].body)
@@ -8,6 +10,14 @@ function show_npc(name: string) {
     msg.post('#npcsprite', 'disable')
     msg.post('#npcspritebody', 'disable')
   }
+}
+
+function move_npc(station: string, npc: string) {
+  print('MOVE NPC IN NPC LOADER!!! TESTJPF', npc, station)
+  const pos = go.get_position(station)
+  pos.y = pos.y - 64
+  pos.x = pos.x - 28
+  go.set_position(pos)
 }
 
 export function init(this: props) {
@@ -21,7 +31,7 @@ interface props {
 export function on_message(
   this: props,
   messageId: hash,
-  message: { npc: string; room: string; enter: boolean },
+  message: { npc: string; room: string; enter: boolean; station: string },
   _sender: url
 ): void {
   //const senderId = go.get_id()
@@ -45,6 +55,8 @@ export function on_message(
     }
 
     show_npc(message.npc)
+  } else if (messageId == hash('move_npc')) {
+    move_npc(message.station, message.npc)
   } else if (messageId == hash('show_npc')) {
     show_npc(message.npc)
   } else if (messageId == hash('trigger_response')) {

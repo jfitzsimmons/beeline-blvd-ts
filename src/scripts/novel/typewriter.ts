@@ -59,9 +59,6 @@ function animate_letter(node: node, delay: number, last?: boolean) {
 
 function fade_done() {
   current.state = 'empty'
-  print(
-    'No way fade done is called and this sends a fucking message to txtbox!!!'
-  )
   msg.post('#textbox', 'typewriter_next')
 }
 

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
-import { witness } from '../ai/ai_main'
+import { witness_player } from '../ai/ai_main'
 const { npcs, rooms, tasks, player, novel } = globalThis.game.world
 
 interface cloneparent {
@@ -22,6 +22,18 @@ interface props {
   }
   isNpc: boolean
 }
+
+export function init(this: props): void {
+  this.npcname = ''
+  this.clones = []
+  this.watcher = ''
+  this.station = ''
+  this.consequence = {
+    confront: false,
+    type: 'neutral',
+  }
+}
+
 function show_ai_screen() {
   msg.post('ai_screen#ai_screen', 'show_screen')
   msg.post('#', 'release_input_focus')
@@ -30,8 +42,12 @@ function show_ai_screen() {
 function open_novel(_this: props) {
   npcs.all[_this.npcname].convos = npcs.all[_this.npcname].convos + 1
   novel.npc = { ...npcs.all[_this.npcname] }
-
-  msg.post('level#level', 'show_scene')
+  novel.reason = _this.consequence.type
+  //testjpf cut out the #level middla man and use::
+  // msg.post('proxies:/controller#novelcontroller', 'show_scene')
+  // i thin with the Novel class we don't have to mess with level
+  //msg.post('level#level', 'show_scene', { confront: true })
+  msg.post('proxies:/controller#novelcontroller', 'show_scene')
   msg.post('#', 'release_input_focus')
 }
 
@@ -53,7 +69,7 @@ function open_inventory(_this: props, actor: string, action: string) {
     if (prev_caution != null) {
       _this.consequence = { confront: true, type: 'offender' }
     } else if (action == 'pockets' || action == 'open') {
-      _this.consequence = witness(_this.watcher)
+      _this.consequence = witness_player(_this.watcher)
     } else if (action == 'trade') {
       _this.consequence = { confront: true, type: 'trade' }
     } else {
@@ -62,6 +78,19 @@ function open_inventory(_this: props, actor: string, action: string) {
   }
   if (_this.consequence.confront == true) {
     print('Confront!!!')
+    /**
+     * ued to send confront info though script builder.
+     * use Novel class!! testjpf
+     * maybe send in message.
+     *
+     * still confused as to where other consequrnces happen
+     * tutoral quests?
+     * ai levels!!??
+     *
+     * 		if self.is_npc == false then self.npcname = self.watcher end
+     * self.script = novel.script_builder(self.npcname, nil, nil, self.
+     *  consequence.type, false)
+     */
     if (_this.isNpc == false) {
       _this.npcname = _this.watcher
     }
@@ -101,17 +130,6 @@ function check_nodes(
         show_ai_screen()
       }
     }
-  }
-}
-
-export function init(this: props): void {
-  this.npcname = ''
-  this.clones = []
-  this.watcher = ''
-  this.station = ''
-  this.consequence = {
-    confront: false,
-    type: 'neutral',
   }
 }
 

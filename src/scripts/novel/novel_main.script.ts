@@ -35,9 +35,9 @@ function script_builder(
   }
   const caution = tasks.npc_has_caution(novel.npc.labelname, 'player')
 
-  if (caution != null) {
-    paths.push('cautions/' + caution.label)
-  }
+  if (caution != null) novel.reason = caution.reason
+  paths.push('reasons/' + novel.reason)
+  print('NOVEL>REASON:::', novel.reason)
   novel.scripts = paths
 }
 

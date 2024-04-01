@@ -1,10 +1,6 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Actor, Effect, Npc, PlayerState, Skills } from '../../types/state'
 import { dice_roll } from '../utils/utils'
-const { tasks } = globalThis.game.world
+const { tasks, npcs, rooms, player } = globalThis.game.world
 import {
   remove_advantageous,
   remove_valuable,
@@ -14,6 +10,7 @@ import {
   remove_chest_bonus,
 } from '../systems/inventorysystem'
 import { fx, add_effects_bonus } from '../systems/effectsystem'
+
 function confrontation_consequence(p: Npc, n: Npc) {
   //ugly code. testjpf.  not many cautions needed.
   //returns are superflous
@@ -100,7 +97,70 @@ function confrontation_consequence(p: Npc, n: Npc) {
 
   return 'neutral'
 }
+function tend_to_patient(v: string, doc: string) {
+  print('tending to patient', doc, v)
+  tasks.medicQueue.splice(tasks.medicQueue.indexOf(v), 1)
+  tasks.remove_heat(v)
+  const vstation = npcs.all[v].currentstation
+  const dstation = npcs.all[doc].currentstation
+  //npcs.all[doc].cooldown = 8
+  if (npcs.all[doc].currentroom == player.currentroom)
+    msg.post(`/${dstation}#npc_loader`, hash('move_npc'), {
+      station: vstation,
+      npc: doc,
+    })
+  tasks.caution_builder(npcs.all[doc], 'mending', v, 'field')
+  // testjpf need a CAUTION!!!??
+  // c.label = mending
+  //go.set_position()
+  //send_to_infirmary(i)
+}
 
+export function aid_check(injured: string[]) {
+  /**
+   * tesrtjpf so when caution created
+   * removed form injured[]
+   * added to tasks.mediQ
+   * best thing would be to split these into 2 loops. one for each array.
+   */
+  const allInjured = [...tasks.medicQueue, ...injured]
+  for (const i of allInjured) {
+    const stations = rooms.all[npcs.all[i].currentroom].stations
+    let sKey: keyof typeof stations
+    for (sKey in stations) {
+      const helper = stations[sKey]
+      print('RAW helper:::', helper)
+      if (helper != '' && helper != i && math.random() < 0.3) {
+        print('Pass helper:::', helper)
+
+        if (
+          npcs.all[helper].clan == 'doctors' &&
+          tasks.medicQueue.indexOf(i) != -1 &&
+          tasks.medicQueue.indexOf(i) < math.random(0, 5)
+        ) {
+          tend_to_patient(i, helper)
+          break
+
+          // send_to_infirmary(i)
+          //testjpf move victim to infirmary bed
+          //clear cautions
+          //restore hp
+          //give cooldown
+        } else {
+          if (math.random() > 0.9 && tasks.npc_has_caution(helper, i) == null) {
+            tasks.caution_builder(npcs.all[helper], 'injury', i, 'injury')
+            print('injury caution created for', i, ' | HEL{ER::', helper)
+            break
+          }
+        }
+      }
+    }
+    //for every station in "i" current room
+    //if not empty and != "i"
+    //then chance to get help or other consequence
+    //print(i)
+  }
+}
 export function take_check(taker: Npc, actor: Npc | Actor) {
   // testjpf if you hae a cooldown, it greatly increases your chances??
   // ){ make default chance lower
@@ -159,7 +219,6 @@ export function take_check(taker: Npc, actor: Npc | Actor) {
     print(taker.labelname, 'failed to Take')
   }
 }
-
 export function stash_check(stasher: Npc, actor: Npc | Actor) {
   let chances =
     math.random() +
@@ -220,7 +279,6 @@ export function stash_check(stasher: Npc, actor: Npc | Actor) {
     print(stasher.labelname, 'failed to stash')
   }
 }
-
 export function take_or_stash(attendant: Npc, actor: Npc | Actor) {
   if (actor.inventory.length > 0 && math.random() < 0.5) {
     take_check(attendant, actor)
@@ -228,12 +286,11 @@ export function take_or_stash(attendant: Npc, actor: Npc | Actor) {
     stash_check(attendant, actor)
   }
 }
-
 export function seen_check(p: Skills, n: Skills) {
   const minmax = dice_roll()
   //testjpf these are high odds you'll be seen
   // as inteded???
-  if (p.stealth <= n.stealth || p.stealth <= n.perception) {
+  if (p.stealth <= n.stealth + 3 || p.stealth <= n.perception + 3) {
     if (minmax[0] * 10 < (n.perception + n.stealth + n.speed) / 2) {
       return true
     } else if (minmax[1] * 10 < (n.perception + n.stealth + n.speed) / 2) {
@@ -243,21 +300,19 @@ export function seen_check(p: Skills, n: Skills) {
 
   return false
 }
-
 export function confrontation_check(p: Npc | PlayerState, n: Npc) {
   // testjpf for debugging you could check if player return false
-  if (p.labelname == 'adam') {
-    return false
-  }
+  //if (p.labelname == 'adam') return false
+
   const minmax = dice_roll()
   if (
-    n.binaries.passive_aggressive > -0.4 ||
-    n.binaries.lawless_lawful > -0.4
+    n.binaries.passive_aggressive > -0.8 ||
+    n.binaries.lawless_lawful > -0.8
   ) {
     // p slower || NPC willing p is caught
     if (
-      p.skills.speed < n.skills.speed ||
-      p.skills.speed < n.skills.constitution
+      p.skills.speed < n.skills.speed + 3 ||
+      p.skills.speed < n.skills.constitution + 3
     ) {
       // check for confrontation with DISADVANTAGE
       if (minmax[0] * 9 < (n.skills.speed + n.skills.constitution) / 1.6) {
@@ -277,7 +332,6 @@ export function confrontation_check(p: Npc | PlayerState, n: Npc) {
   print(n.labelname, 'did not confront: ', p.labelname)
   return false
 }
-
 //testjpf only being used between npcs (just tutorial luggage)
 export function steal_check(n: Npc, w: Npc, loot: string[]) {
   let consequence = 'neutral'

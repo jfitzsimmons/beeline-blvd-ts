@@ -1,10 +1,10 @@
-import { Jail } from '../../../types/state'
+import { Occupancy } from '../../../types/state'
 
-const securityRoom: Jail = {
+const securityRoom: Occupancy = {
   matrix: { x: 2, y: 5 },
   roomname: 'security',
   stations: { guard: '', authority: '', assistant: '' },
-  prisoners: { prisoner1: '', prisoner2: '', prisoner3: '', prisoner4: '' },
+  occupants: { prisoner1: '', prisoner2: '', prisoner3: '', prisoner4: '' },
   actors: {},
 }
 export const RoomsInitState = {
@@ -407,6 +407,7 @@ export const RoomsInitState = {
       assistant: '',
       loiter4: '',
     },
+    occupants: { patient1: '', patient2: '', patient3: '', patient4: '' },
     actors: {
       drawer: {
         inventory: ['vial02'],
