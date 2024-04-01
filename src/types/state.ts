@@ -25,8 +25,8 @@ export interface QuestConditions {
 export interface QuestCondition {
   label?: string
   solution?: string
-  passed?: boolean
-  interval?: string
+  passed: boolean
+  interval: string[]
   func: { (args: [() => any, any]): boolean }[]
   args: [() => any, any][]
 }
@@ -40,7 +40,15 @@ export interface AllQuestsMethods {
 export interface QuestMethods {
   [key: string]: (
     args?: unknown | [() => Npcs, number]
-  ) => Npc[] | boolean | Npcs | [string[], Npcs] | string[] | Skills | void
+  ) =>
+    | Npc[]
+    | boolean
+    | Npcs
+    | [string[], Npcs]
+    | string[]
+    | Skills
+    | number
+    | void
 }
 export interface Npc extends NpcDefaults {
   home: { x: number; y: number }

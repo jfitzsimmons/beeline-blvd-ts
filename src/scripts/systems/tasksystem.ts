@@ -379,44 +379,19 @@ function arraymove(arr: string[], fromIndex: number, toIndex: number) {
 }
 
 function adjust_medic_queue(s: string) {
-  if (tasks.medicQueue.includes(s)) {
+  if (tasks.medicQueue.includes(s) == true) {
     if (tasks.medicQueue.indexOf(s) > 1)
       arraymove(tasks.medicQueue, tasks.medicQueue.indexOf(s), 0)
   } else {
+    print('cautions caused s:', s, 'to be added to medicQueue')
     tasks.medicQueue.push(s)
   }
 }
 
-function decide_aid_response(c: Caution, w: string) {
-  if (npcs.all[w].clan == 'doctors' && math.random() > 0.5) {
-    print('adjust_medic_queue::: doc 0.3')
-
-    adjust_medic_queue(c.suspect)
-    //if in queue and not first
-    //bump up
-    //do they have other injury cautions?
-    //delete this injury caution
-  } else if (npcs.all[w].clan == 'security' && math.random() > 0.7) {
-    print('adjust_medic_queue::: sec 0.5')
-
-    adjust_medic_queue(c.suspect)
-  } else if (npcs.all[w].clan == 'staff' && math.random() > 0.8) {
-    print('adjust_medic_queue::: staff 0.7')
-
-    adjust_medic_queue(c.suspect)
-  } else if (math.random() > 0.9) {
-    print('adjust_medic_queue::: other 0.8')
-
-    adjust_medic_queue(c.suspect)
-  } else if (math.random() > 0.94) {
-    print('TESTJPf creat another cauiton if not already 0.9')
-    //erase old cautin, create new injury caution
-  }
-}
 function focused_acts(c: Caution) {
   if (c.reason == 'office') {
     if (c.time == 1) {
-      npcs.all[c.suspect].hp = 10
+      npcs.all[c.suspect].hp = 5
       rooms.all.infirmary.occupants![npcs.all[c.suspect].currentstation] = ''
     } else {
       const aid = rooms.all.infirmary.stations.aid
@@ -427,7 +402,6 @@ function focused_acts(c: Caution) {
     }
   } else if (c.reason == 'field') {
     if (c.time == 1) {
-      //testjpf send doc too. need to send them to infirmary as well.
       send_to_infirmary(c.suspect, c.npc)
     } else {
       // testjpfsame code as ai_checks tendtopatient
@@ -458,7 +432,7 @@ function passive_acts(c: Caution, w: string) {
   ) {
     merits_demerits(c, w)
   } else if (c.label == 'injury') {
-    decide_aid_response(c, w)
+    adjust_medic_queue(c.suspect)
   }
 }
 export function address_cautions() {

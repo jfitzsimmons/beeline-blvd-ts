@@ -50,7 +50,7 @@ export function send_to_infirmary(v: string, doc: string) {
   //ideally this would finish before stations are atempted to be filled.!!!
 }
 function tend_to_patient(v: string, doc: string) {
-  print('tend to patient', doc, v)
+  print('tending to patient', doc, v)
   tasks.medicQueue.splice(tasks.medicQueue.indexOf(v), 1)
   tasks.remove_heat(v)
   const vstation = npcs.all[v].currentstation
@@ -69,26 +69,26 @@ function tend_to_patient(v: string, doc: string) {
 }
 
 export function aid_check(injured: string[]) {
-  for (const i of injured) {
+  /**
+   * tesrtjpf so when caution created
+   * removed form injured[]
+   * added to tasks.mediQ
+   * best thing would be to split these into 2 loops. one for each array.
+   */
+  const allInjured = [...tasks.medicQueue, ...injured]
+  for (const i of allInjured) {
     const stations = rooms.all[npcs.all[i].currentroom].stations
     let sKey: keyof typeof stations
     for (sKey in stations) {
       const helper = stations[sKey]
-      print('AID CHECK:: HELPER:', helper)
-      //testjpf this conditional needs more logic to it.
-      if (
-        helper != '' &&
-        helper != i &&
-        math.random() < 0.6 &&
-        tasks.npc_has_caution(helper, i) == null
-      ) {
+      if (helper != '' && helper != i && math.random() < 0.3) {
         if (
           npcs.all[helper].clan == 'doctors' &&
-          tasks.medicQueue.indexOf(i) < math.random(0, 9)
+          tasks.medicQueue.indexOf(i) != -1 &&
+          tasks.medicQueue.indexOf(i) < math.random(0, 5)
         ) {
-          print('Medic helped victim')
-
           tend_to_patient(i, helper)
+          break
 
           // send_to_infirmary(i)
           //testjpf move victim to infirmary bed
@@ -96,10 +96,12 @@ export function aid_check(injured: string[]) {
           //restore hp
           //give cooldown
         } else {
-          print('injury caution created for', i, ' | HEL{ER::', helper)
-          tasks.caution_builder(npcs.all[helper], 'injury', i, 'injury')
+          if (math.random() > 0.9 && tasks.npc_has_caution(helper, i) == null) {
+            tasks.caution_builder(npcs.all[helper], 'injury', i, 'injury')
+            print('injury caution created for', i, ' | HEL{ER::', helper)
+            break
+          }
         }
-        break
       }
     }
     //for every station in "i" current room

@@ -54,6 +54,7 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
         const station = ks[1]
         if (station == '' && rooms.roles[ks[0]].includes(npcs.all[npc].clan)) {
           //loop thru room stations see if empty or has correct role
+          /** 
           print(
             npc,
             ',went to ,',
@@ -65,7 +66,7 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
             npcs.all[npc].ai_path,
             ',TURNS,',
             npcs.all[npc].turns_since_encounter
-          )
+          )**/
           //fill station
           npcs.all[npc].exitroom = rooms.layout[current.y][current.x]!
           npcs.all[npc].currentroom = room
@@ -390,10 +391,11 @@ export function ai_turn(enter: string) {
   /**npcs.order.sort(function(a:string,b:string) { 
 		return npcs.all[a].turns_since_encounter > npcs.all[b].turns_since_encounter; 
 	});**/
+  const busy_docs = tasks.busy_doctors()
   const immobile: string[] = [
     ...Object.values(rooms.all.security.occupants!),
     ...Object.values(rooms.all.infirmary.occupants!),
-    ...tasks.busy_doctors(),
+    ...busy_docs,
   ]
   const injured: string[] = []
 
@@ -405,17 +407,14 @@ export function ai_turn(enter: string) {
       Object.values(rooms.all.infirmary.occupants!).includes(npc.labelname) ==
         false
     ) {
-      //TESTJPF IF IN INFIRMARY OR PRISON,
-      // wont be stations, but occupancy
       rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
-      print(
-        'rooms.all[npc.currentroom].stations[npc.currentstation]',
-        rooms.all[npc.currentroom].stations[npc.currentstation]
-      )
-      injured.push(npc.labelname)
+
+      // injured make a part of tasks??
+      const limit = tasks.medicQueue.indexOf(npc.labelname)
+      if (limit < 0 || limit > 3) injured.push(npc.labelname)
     }
     if (npc.clan == 'doctors') {
-      if (tasks.busy_doctors().includes(npc.labelname) == true)
+      if (busy_docs.includes(npc.labelname) == true)
         rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
       if (injured.length > 0)
         direction = assign_nearby_rooms(

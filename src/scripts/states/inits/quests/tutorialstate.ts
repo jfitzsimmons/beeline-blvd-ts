@@ -9,16 +9,22 @@ import { AllQuestsMethods, Quests } from '../../../../types/state'
 import {
   any_has_value,
   convos_check,
-  has_value,
-  max_skills,
-  returnfalse,
-  max_love,
+  //has_value,
+  //max_skills,
+  //returnfalse,
+  //max_love,
+  greater_than,
 } from '../../../utils/quest'
 //TESTJPF abovenot loaded yet on GAME STATE CREAT new game
 //local player = require "main.states.playerstate"
 
 export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
-  const { pq, nq } = questmethods
+  const { nq, tq } = questmethods
+  /**
+   * testjpf
+   * interval, funcs, and args need to all be a part of 1 object.
+   * // i mean 1 object per so {[key: check1]: {func,arg,interval}}
+   */
   return {
     medic_assist: {
       passed: false,
@@ -31,17 +37,20 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           label: 'Somebody help that man!',
           solution: '',
           passed: false,
-          interval: 'interact',
-          func: [convos_check],
+          interval: ['interact', 'turn'],
+          func: [convos_check, greater_than],
           // what if instead of nq.return_docs
           // its quest.return doctors?
-          args: [[nq.return_doctors, 1]],
+          args: [
+            [nq.return_doctors, 5],
+            [tq.num_of_injuries, 5],
+          ],
         }, //have you talked to a doctor?
         [2]: {
           label: 'get an apple!',
           solution: '',
           passed: false,
-          interval: 'interact',
+          interval: ['interact'],
           func: [any_has_value],
           args: [[nq.return_doctors, 'apple01']],
         }, // doc needs some item
@@ -49,12 +58,13 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           label: 'Get some meds!',
           solution: '',
           passed: false,
-          interval: 'interact',
+          interval: ['interact'],
           func: [any_has_value],
           args: [[nq.return_doctors, 'vial02']],
         }, //gets keycard, goes to infirmary, gets meds
       },
     }, // charmer
+    /** 
     npcs_like_you: {
       passed: false,
       conditions: {
@@ -219,5 +229,6 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
         }, // ai maintenace
       },
     }, // vouged for
+    **/
   }
 }

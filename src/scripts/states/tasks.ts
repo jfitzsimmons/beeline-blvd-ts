@@ -62,6 +62,9 @@ export default class WorldTasks {
 
   constructor(questmethods: AllQuestsMethods) {
     this._questmethods = questmethods
+    this._questmethods.tq = {
+      num_of_injuries: this.num_of_injuries.bind(this),
+    }
     this._cautions = []
     this._quests = build_quests(this.questmethods)
     this.consolations = [snitch, merits, reckless]
@@ -85,6 +88,11 @@ export default class WorldTasks {
   }
   public get questmethods() {
     return this._questmethods
+  }
+  num_of_injuries(): number {
+    const injuries = this.cautions.filter((c) => c.label == 'injury').length
+    //print('busy_doc:: docs[0]:', docs[0])
+    return injuries
   }
   remove_heat(sus: string) {
     for (let i = this.cautions.length - 1; i >= 0; i--) {
@@ -176,6 +184,7 @@ export default class WorldTasks {
     } else if (c == 'injury') {
       append.authority = 'doctors'
       append.type = 'clan'
+      append.time = 30
     }
 
     print(
@@ -223,9 +232,13 @@ export default class WorldTasks {
           //   print('condition:', condition)
           const goal = quest.conditions[condition]
           //    print('goal label', goal.label, goal.passed, goal.interval, interval)
-          if (goal.passed == false && goal.interval == interval) {
-            for (let i = goal.func.length; i-- !== 0; ) {
-              if (goal.func[i]!(goal.args[i]) == true) {
+          if (goal.passed == false) {
+            for (let i: number = goal.func.length; i-- !== 0; ) {
+              if (
+                goal.interval[i] == interval &&
+                goal.func[i]!(goal.args[i]) == true
+              ) {
+                print('goal PASSED: GOAL', goal.label)
                 goal.passed = true
                 //         print('quest Condition passed::', goal.label)
                 break
