@@ -128,14 +128,6 @@ export default class WorldTasks {
     }
     return false
   }
-  busy_doctors(): string[] {
-    const docs = this.cautions
-      .filter((c) => c.label == 'mending')
-      .map((c) => c.npc)
-
-    print('busy_doc:: docs[0]:', docs[0])
-    return docs
-  }
   npc_has_caution(npc: string, sus: string): Caution | null {
     for (const c of this.cautions) {
       if ((npc == 'any' || c.npc == npc) && c.suspect == sus) {
@@ -253,5 +245,13 @@ export default class WorldTasks {
         }
       }
     }
+  }
+  busy_doctors(): string[] {
+    const docs = this.cautions
+      .filter((c) => c.label == 'mending')
+      .map((c) => c.npc)
+
+    print('busy_doc:: docs[0]:', docs[0])
+    return docs
   }
 }

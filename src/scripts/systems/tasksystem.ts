@@ -1,11 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-//const world = require( "main.states.worldstate")
-//const roomstates = require( "main.states.roomstates")
-//const taskstates = require( "main.states.taskstates")
-//const utils = require( "main.utils.utils")
 import { items } from '../systems/inventorysystem'
 const { tasks, rooms, npcs, player } = globalThis.game.world
 import {
@@ -18,7 +10,6 @@ import {
 } from '../../types/state'
 import { shuffle } from '../utils/utils'
 import { fx, add_effects_bonus } from '../systems/effectsystem'
-import { send_to_infirmary } from '../ai/ai_checks'
 
 const fxLookup = {
   merits: [
@@ -98,82 +89,32 @@ function go_to_jail(s: string) {
     }
   }
 }
-const consequenceConditions = (
-  watcher: string,
-  suspect: string,
-  return_first = false
-): string[] => {
-  const { binaries: wb, skills: ws } = npcs.all[watcher]
-  const { binaries: sb, skills: ss } = npcs.all[suspect]
-  const initConditions: string[] = []
-  if (
-    wb.passive_aggressive <= sb.passive_aggressive &&
-    ws.wisdom >= ss.constitution
-  ) {
-    initConditions.push('pledge')
-    if (return_first === true) return ['pledge']
+function send_to_infirmary(v: string, doc: string) {
+  // remove all arrests for suspect(clear record)
+  print('infirmed:', v, ' :::!!!!')
+  // tasks.remove_heat(v)
+  const occupants: Occupants = rooms.all.infirmary.occupants!
+  let station: keyof typeof occupants
+  for (station in occupants) {
+    const patient = occupants[station]
+    if (patient == '') {
+      rooms.all.infirmary.occupants![station] = v
+      npcs.all[v].matrix = rooms.all.infirmary.matrix
+      npcs.all[v].cooldown = 8
+      npcs.all[v].currentroom = 'infirmary'
+      npcs.all[v].currentstation = station
+      print(v, 'infirmed for:', npcs.all[v].cooldown)
+      tasks.caution_builder(npcs.all[doc], 'mending', v, 'office')
+      break
+    }
+
+    //create caution mending, reason: office
+    // keep doc in aid position until caution wears off
+    // if a doc isnt already in aid position.
+    //patients heal faster when doc is in position.
   }
-  if (
-    wb.lawless_lawful < -0.4 &&
-    ws.strength >= ss.strength &&
-    sb.passive_aggressive < 0.0
-  ) {
-    initConditions.push('bribe')
-    if (return_first === true) return ['bribe']
-  }
-  if (
-    ws.intelligence < 5 &&
-    wb.evil_good < -0.3 &&
-    ws.constitution >= ss.speed
-  ) {
-    initConditions.push('wPunchS')
-    if (return_first === true) return ['wPunchS']
-  }
-  if (
-    wb.anti_authority > 0.3 &&
-    ws.perception >= ss.perception &&
-    sb.passive_aggressive <= 0.0
-  ) {
-    initConditions.push('jailTime')
-    if (return_first === true) return ['jailTime']
-  }
-  if (
-    ws.charisma <= ss.charisma &&
-    wb.anti_authority < -0.3 &&
-    ws.perception < 5
-  ) {
-    initConditions.push('admirer')
-    if (return_first === true) return ['admirer']
-  }
-  if (
-    ws.wisdom < 4 &&
-    sb.poor_wealthy < wb.poor_wealthy &&
-    ws.charisma < ws.stealth
-  ) {
-    initConditions.push('prejudice')
-    if (return_first === true) return ['prejudice']
-  }
-  if (math.random() < 0.5) {
-    initConditions.push('unlucky')
-    if (return_first === true) return ['unlucky']
-  }
-  /**   return {
-    pledge:
-      wb.passive_aggressive <= sb.passive_aggressive &&
-      ws.wisdom >= ss.constitution,
-  }**/
-  return initConditions
-}
-const consequenceLookup = (_s: string, _w: string) => {
-  return {
-    pledge,
-    bribe,
-    wPunchS,
-    jailTime: go_to_jail,
-    admirer,
-    prejudice,
-    unlucky: go_to_jail,
-  }
+  //TESTJPF
+  //ideally this would finish before stations are atempted to be filled.!!!
 }
 function player_snitch_check(b: boolean, w: string, reason: string): string {
   let caution_state = 'questioning'
@@ -212,7 +153,6 @@ function snitch_to_security(c: Caution, watcher: string) {
       : npc_snitch_check(bulletin == null, watcher, c.suspect)
   c.time = 0
 }
-
 function reckless_consequence(c: Caution, w: string) {
   print('RC::: ', c.npc, ' is gossiping with', w)
   const watcher = npcs.all[w]
@@ -315,38 +255,6 @@ function reckless_consequence(c: Caution, w: string) {
     }
   }
 }
-
-export function question_consequence(c: Caution) {
-  print('QC::: ', c.npc, 'is NOW questioning:', c.suspect)
-  const w = npcs.all[c.npc]
-  const s = npcs.all[c.suspect]
-
-  let consequenceResults: string[] = consequenceConditions(
-    w.labelname,
-    s.labelname
-  )
-  if (consequenceResults.length > 0) {
-    if (consequenceResults.length > 1)
-      consequenceResults = shuffle(consequenceResults)
-    const consequenceLabel: string = consequenceResults[0]
-
-    const consequences: { [key: string]: (s: string, w: string) => void } =
-      consequenceLookup(s.labelname, w.labelname)
-    consequences[consequenceLabel](s.labelname, w.labelname)
-  } else {
-    if (c.suspect != 'player') {
-      const caution = tasks.consolation_checks(w.binaries, w.skills)
-      if (caution != 'neutral') {
-        tasks.caution_builder(w, caution, c.suspect, c.reason)
-      } else {
-        print('QUESTIONING_consequence: no fx or cautions')
-      }
-    } else {
-      w.love = w.love - 1
-    }
-  }
-  c.time = 0
-}
 function npc_confrontation(s: string, c: Caution) {
   if (c.reason == 'questioning') {
     question_consequence(c)
@@ -371,13 +279,11 @@ function merits_demerits(c: Caution, w: string) {
   npcs.all[w].effects.push(effect)
   add_effects_bonus(npcs.all[w], effect)
 }
-
 function arraymove(arr: string[], fromIndex: number, toIndex: number) {
   const element = arr[fromIndex]
   arr.splice(fromIndex, 1)
   arr.splice(toIndex, 0, element)
 }
-
 function adjust_medic_queue(s: string) {
   if (tasks.medicQueue.includes(s) == true) {
     if (tasks.medicQueue.indexOf(s) > 1)
@@ -387,7 +293,6 @@ function adjust_medic_queue(s: string) {
     tasks.medicQueue.push(s)
   }
 }
-
 function focused_acts(c: Caution) {
   if (c.reason == 'office') {
     if (c.time == 1) {
@@ -435,22 +340,19 @@ function passive_acts(c: Caution, w: string) {
     adjust_medic_queue(c.suspect)
   }
 }
-export function address_cautions() {
-  const cautions = tasks.cautions.sort(
-    (a: Caution, b: Caution) => a.time - b.time
-  )
+function address_confrontations(cs: Caution[]) {
   let confront: Confront | null = null
-  for (let i = cautions.length - 1; i >= 0; i--) {
-    const c = cautions[i]
+
+  for (let i = cs.length - 1; i >= 0; i--) {
+    const c = cs[i]
     const agent = npcs.all[c.npc]
     const suspect: Npc | PlayerState =
       c.suspect === 'player' ? player.state : npcs.all[c.suspect]
 
     if (
-      (c.label == 'questioning' || c.label == 'arrest') &&
-      (agent.currentroom == suspect.currentroom ||
-        (agent.currentroom == suspect.exitroom &&
-          agent.exitroom == suspect.currentroom))
+      agent.currentroom == suspect.currentroom ||
+      (agent.currentroom == suspect.exitroom &&
+        agent.exitroom == suspect.currentroom)
     ) {
       c.suspect !== 'player' && npc_confrontation(suspect.labelname, c)
       c.time = 0
@@ -463,23 +365,174 @@ export function address_cautions() {
               reason: c.reason,
             }
           : null
-    } else if (c.label == 'mending') {
-      focused_acts(c)
-    } else {
-      const stations = rooms.all[agent.currentroom].stations
-      let station: keyof typeof stations
-      for (station in stations) {
-        const watcher = stations[station]
-        //loop through stations in room of task agent
-        if (watcher != '' && watcher != c.npc && watcher != c.suspect) {
-          passive_acts(c, watcher)
-        }
-      }
     }
-
-    c.time = c.time - 1
-    if (c.time <= 0) cautions.splice(i, 1)
     if (confront != null) break
   }
   return confront
+}
+function address_conversations(cs: Caution[]) {
+  for (let i = cs.length - 1; i >= 0; i--) {
+    const agent = npcs.all[cs[i].npc]
+    const stations = rooms.all[agent.currentroom].stations
+    let station: keyof typeof stations
+    for (station in stations) {
+      const watcher = stations[station]
+      //loop through stations in room of task agent
+      if (watcher != '' && watcher != cs[i].npc && watcher != cs[i].suspect) {
+        passive_acts(cs[i], watcher)
+      }
+    }
+  }
+}
+function address_busy_acts(cs: Caution[]) {
+  for (let i = cs.length - 1; i >= 0; i--) {
+    focused_acts(cs[i])
+  }
+}
+
+const consequenceConditions = (
+  watcher: string,
+  suspect: string,
+  return_first = false
+): string[] => {
+  const { binaries: wb, skills: ws } = npcs.all[watcher]
+  const { binaries: sb, skills: ss } = npcs.all[suspect]
+  const initConditions: string[] = []
+  if (
+    wb.passive_aggressive <= sb.passive_aggressive &&
+    ws.wisdom >= ss.constitution
+  ) {
+    initConditions.push('pledge')
+    if (return_first === true) return ['pledge']
+  }
+  if (
+    wb.lawless_lawful < -0.4 &&
+    ws.strength >= ss.strength &&
+    sb.passive_aggressive < 0.0
+  ) {
+    initConditions.push('bribe')
+    if (return_first === true) return ['bribe']
+  }
+  if (
+    ws.intelligence < 5 &&
+    wb.evil_good < -0.3 &&
+    ws.constitution >= ss.speed
+  ) {
+    initConditions.push('wPunchS')
+    if (return_first === true) return ['wPunchS']
+  }
+  if (
+    wb.anti_authority > 0.3 &&
+    ws.perception >= ss.perception &&
+    sb.passive_aggressive <= 0.0
+  ) {
+    initConditions.push('jailTime')
+    if (return_first === true) return ['jailTime']
+  }
+  if (
+    ws.charisma <= ss.charisma &&
+    wb.anti_authority < -0.3 &&
+    ws.perception < 5
+  ) {
+    initConditions.push('admirer')
+    if (return_first === true) return ['admirer']
+  }
+  if (
+    ws.wisdom < 4 &&
+    sb.poor_wealthy < wb.poor_wealthy &&
+    ws.charisma < ws.stealth
+  ) {
+    initConditions.push('prejudice')
+    if (return_first === true) return ['prejudice']
+  }
+  if (math.random() < 0.5) {
+    initConditions.push('unlucky')
+    if (return_first === true) return ['unlucky']
+  }
+  /**   return {
+    pledge:
+      wb.passive_aggressive <= sb.passive_aggressive &&
+      ws.wisdom >= ss.constitution,
+  }**/
+  return initConditions
+}
+const consequenceLookup = (_s: string, _w: string) => {
+  return {
+    pledge,
+    bribe,
+    wPunchS,
+    jailTime: go_to_jail,
+    admirer,
+    prejudice,
+    unlucky: go_to_jail,
+  }
+}
+
+export function address_cautions() {
+  const sortedCautions = tasks.cautions.sort(
+    (a: Caution, b: Caution) => a.time - b.time
+  )
+  const { confrontational, leftovercautions } = sortedCautions.reduce(
+    (r: { [key: string]: Caution[] }, o: Caution) => {
+      r[
+        o.label == 'questioning' || o.label == 'arrest'
+          ? 'confrontational'
+          : 'leftovercautions'
+      ].push(o)
+      return r
+    },
+    { confrontational: [], leftovercautions: [] }
+  )
+  const { medical, conversational } = leftovercautions.reduce(
+    (r: { [key: string]: Caution[] }, o: Caution) => {
+      r[o.label == 'mending' ? 'medical' : 'conversational'].push(o)
+      return r
+    },
+    { medical: [], conversational: [] }
+  )
+
+  const confront: Confront | null = address_confrontations(confrontational)
+
+  address_busy_acts(medical)
+  address_conversations(conversational)
+
+  for (let i = sortedCautions.length - 1; i >= 0; i--) {
+    sortedCautions[i].time--
+    if (sortedCautions[i].time <= 0) sortedCautions.splice(i, 1)
+    print('OUT OF HAND ??? tasks.cautions.length', tasks.cautions.length)
+    //if (confront != null) break
+  }
+  //testjpf could see adding more data to this return
+  return confront
+}
+export function question_consequence(c: Caution) {
+  print('QC::: ', c.npc, 'is NOW questioning:', c.suspect)
+  const w = npcs.all[c.npc]
+  const s = npcs.all[c.suspect]
+
+  let consequenceResults: string[] = consequenceConditions(
+    w.labelname,
+    s.labelname
+  )
+  if (consequenceResults.length > 0) {
+    if (consequenceResults.length > 1)
+      consequenceResults = shuffle(consequenceResults)
+    const consequenceLabel: string = consequenceResults[0]
+
+    const consequences: { [key: string]: (s: string, w: string) => void } =
+      consequenceLookup(s.labelname, w.labelname)
+    consequences[consequenceLabel](s.labelname, w.labelname)
+  } else {
+    if (c.suspect != 'player') {
+      const caution = tasks.consolation_checks(w.binaries, w.skills)
+      if (caution != 'neutral') {
+        tasks.caution_builder(w, caution, c.suspect, c.reason)
+      } else {
+        print('QUESTIONING_consequence: no fx or cautions')
+      }
+    } else {
+      w.love = w.love - 1
+    }
+  }
+  c.time = 0
 }

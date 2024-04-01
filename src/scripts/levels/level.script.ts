@@ -1,9 +1,10 @@
-import { ai_turn, place_npcs } from '../ai/ai_main'
 const { world } = globalThis.game
 const { rooms, npcs, player, tasks, novel } = world
 import { Confront } from '../../types/state'
 import { address_cautions } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
+import { ai_turn, place_npcs } from '../ai/ai_main'
+
 export function init() {
   //place_npcs()
 }
@@ -27,7 +28,7 @@ function confrontation_scene(c: Confront) {
   npcs.all[c.npc].convos = npcs.all[c.npc].convos + 1
   novel.npc = npcs.all[c.npc]
   novel.reason = c.reason
-  msg.post('#', 'show_scene')
+  msg.post('proxies:/controller#novelcontroller', 'show_scene')
 }
 interface props {
   roomname: string
@@ -56,22 +57,20 @@ export function on_message(
       player.exitroom = rooms.layout[player.matrix_y][player.matrix_x]!
       player.currentroom = this.roomname
       player.matrix = rooms.all[this.roomname].matrix
-      const confrontation: Confront | null = address_cautions()
 
       if (message.load_type == 'room transition') {
         game_turn(message.roomname)
       } else if (message.load_type == 'new game') {
         place_npcs()
       }
-
       update_hud()
 
+      const confrontation: Confront | null = address_cautions()
+
       msg.post('level#' + this.roomname, 'room_load')
-
-      if (confrontation != null) confrontation_scene(confrontation)
-
       //position player on screen
       msg.post('adam#adam', 'wake_up')
+      if (confrontation != null) confrontation_scene(confrontation)
     }
   } else if (messageId == hash('exit_gui')) {
     quest_checker('interact')
@@ -83,9 +82,8 @@ export function on_message(
     // }
 
     msg.post(this.roomname + ':/adam#adam', 'acquire_input_focus')
-  } else if (messageId == hash('show_scene')) {
-    msg.post('hud#map', 'release_input_focus')
-    msg.post('proxies:/controller#novelcontroller', 'show_scene')
+    // } else if (messageId == hash('show_scene')) {
+    //msg.post('hud#map', 'release_input_focus')
   } else if (messageId == hash('update_alert')) {
     sprite.play_flipbook(
       'hud#security_alert',

@@ -6,7 +6,6 @@ import { remove_effects } from '../systems/effectsystem'
 import { reception_checks } from './levels/reception'
 
 const { tasks, rooms, npcs, player } = globalThis.game.world
-
 const initial_places = [
   'reception',
   'baggage',
@@ -127,8 +126,11 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
     }
   }
 }
-//target: room npc wants to get to
-//current: room npc is in
+/**
+ * @param target target: room npc wants to get to
+ * @param npc current: room npc is in
+ * @returns array of room strings
+ */
 function set_room_priority(
   target: { x: number; y: number },
   npc: string
@@ -241,6 +243,48 @@ function set_npc_target(direction: Direction, n: string) {
 
   return target
 }
+function release_occupants(d: Direction) {
+  const prisoners: Occupants = rooms.all.security.occupants!
+  let station: keyof typeof prisoners
+  for (station in prisoners) {
+    const prisoner = prisoners[station]
+    if (prisoner != '' && npcs.all[prisoner].cooldown <= 0) {
+      print('released from prison:', prisoner)
+      npc_action_move(prisoner, d)
+      rooms.all.security.occupants![station] = ''
+    }
+  }
+  const occupants: Occupants = rooms.all.infirmary.occupants!
+  let bed: keyof typeof occupants
+  for (bed in occupants) {
+    const patient = occupants[bed]
+    if (patient != '' && npcs.all[patient].cooldown <= 0) {
+      npcs.all[patient].hp = 10
+      print('released from prison:', patient)
+      npc_action_move(patient, d)
+      rooms.all.infirmary.occupants![bed] = ''
+    }
+  }
+}
+// testjpf naming conventions start getting vague
+function ai_actions(direction: Direction, injured: string[]) {
+  aid_check(injured)
+  release_occupants(direction)
+
+  //replace_injured(injured)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+  reception_checks()
+}
+
+export function npc_action_move(n: string, d: Direction) {
+  const npc = npcs.all[n]
+  const target = set_npc_target(d, n)
+  const room_list: string[] = set_room_priority(target, n)
+  attempt_to_fill_station(room_list, n)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+  remove_effects(npc)
+  if (npc.cooldown > 0) npc.cooldown = npc.cooldown - 1
+}
 export function assign_nearby_rooms(enter: { x: number; y: number }) {
   const exit = player.matrix
   let direction = {
@@ -281,49 +325,6 @@ export function assign_nearby_rooms(enter: { x: number; y: number }) {
   }
   return direction
 }
-function release_occupants(d: Direction) {
-  const prisoners: Occupants = rooms.all.security.occupants!
-  let station: keyof typeof prisoners
-  for (station in prisoners) {
-    const prisoner = prisoners[station]
-    if (prisoner != '' && npcs.all[prisoner].cooldown <= 0) {
-      print('released from prison:', prisoner)
-      npc_action_move(prisoner, d)
-      rooms.all.security.occupants![station] = ''
-    }
-  }
-  const occupants: Occupants = rooms.all.infirmary.occupants!
-  let bed: keyof typeof occupants
-  for (bed in occupants) {
-    const patient = occupants[bed]
-    if (patient != '' && npcs.all[patient].cooldown <= 0) {
-      npcs.all[patient].hp = 10
-      print('released from prison:', patient)
-      npc_action_move(patient, d)
-      rooms.all.infirmary.occupants![bed] = ''
-    }
-  }
-}
-
-// testjpf naming conventions start getting vague
-function ai_actions(direction: Direction, injured: string[]) {
-  aid_check(injured)
-  release_occupants(direction)
-
-  //replace_injured(injured)
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-  reception_checks()
-}
-export function npc_action_move(n: string, d: Direction) {
-  const npc = npcs.all[n]
-  const target = set_npc_target(d, n)
-  const room_list: string[] = set_room_priority(target, n)
-  attempt_to_fill_station(room_list, n)
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-  remove_effects(npc)
-  if (npc.cooldown > 0) npc.cooldown = npc.cooldown - 1
-}
-
 // testjpf So far this is just run on init
 export function place_npcs() {
   // NPC with longest since encounter with p (Randomized on init)
@@ -385,28 +386,22 @@ export function place_npcs() {
   npcs.all[rooms.all.grounds.stations.worker1].hp = 0
 }
 export function ai_turn(enter: string) {
-  let direction: Direction = assign_nearby_rooms(rooms.all[enter].matrix)
-  // NPC gone longest since encountering player moves first
-  npcs.sort_npcs_by_encounter()
-  /**npcs.order.sort(function(a:string,b:string) { 
-		return npcs.all[a].turns_since_encounter > npcs.all[b].turns_since_encounter; 
-	});**/
+  const patients = Object.values(rooms.all.infirmary.occupants!)
   const busy_docs = tasks.busy_doctors()
   const immobile: string[] = [
     ...Object.values(rooms.all.security.occupants!),
-    ...Object.values(rooms.all.infirmary.occupants!),
+    ...patients,
     ...busy_docs,
   ]
   const injured: string[] = []
+  let targets: Direction = assign_nearby_rooms(rooms.all[enter].matrix)
+
+  npcs.sort_npcs_by_encounter()
 
   for (let i = npcs.order.length; i-- !== 0; ) {
     const npc = npcs.all[npcs.order[i]]
-    //print(npc.currentroom, npc.currentstation, 'CURRS NPC')
-    if (
-      npc.hp <= 0 &&
-      Object.values(rooms.all.infirmary.occupants!).includes(npc.labelname) ==
-        false
-    ) {
+
+    if (npc.hp <= 0 && patients.includes(npc.labelname) == false) {
       rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
 
       // injured make a part of tasks??
@@ -417,18 +412,18 @@ export function ai_turn(enter: string) {
       if (busy_docs.includes(npc.labelname) == true)
         rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
       if (injured.length > 0)
-        direction = assign_nearby_rooms(
+        targets = assign_nearby_rooms(
           rooms.all[npcs.all[injured[0]].currentroom].matrix
         )
     }
-
     if (immobile.includes(npc.labelname) == false && npc.hp > 0)
-      npc_action_move(npc.labelname, direction)
+      npc_action_move(npc.labelname, targets)
   }
 
-  ai_actions(direction, injured)
+  ai_actions(targets, injured)
 }
-export function witness(w: string) {
+//testjpf player interact.gui related
+export function witness_player(w: string) {
   const suspect = player.state
   const watcher = npcs.all[w]
   const consequence = {
@@ -441,7 +436,7 @@ export function witness(w: string) {
     // should NPC confront suspect?
     if (confrontation_check(suspect, watcher) == true) {
       consequence.confront = true
-      consequence.type = 'confront'
+      consequence.type = 'concern'
     } else {
       consequence.type = tasks.consolation_checks(
         watcher.binaries,
