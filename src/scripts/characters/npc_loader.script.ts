@@ -12,8 +12,7 @@ function show_npc(name: string) {
   }
 }
 
-function move_npc(station: string, npc: string) {
-  print('MOVE NPC IN NPC LOADER!!! TESTJPF', npc, station)
+function move_npc(station: string) {
   const pos = go.get_position(station)
   pos.y = pos.y - 64
   pos.x = pos.x - 28
@@ -56,7 +55,7 @@ export function on_message(
 
     show_npc(message.npc)
   } else if (messageId == hash('move_npc')) {
-    move_npc(message.station, message.npc)
+    move_npc(message.station)
   } else if (messageId == hash('show_npc')) {
     show_npc(message.npc)
   } else if (messageId == hash('trigger_response')) {

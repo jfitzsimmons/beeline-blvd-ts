@@ -1,5 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
 
+export function arraymove(arr: string[], fromIndex: number, toIndex: number) {
+  const element = arr[fromIndex]
+  arr.splice(fromIndex, 1)
+  arr.splice(toIndex, 0, element)
+}
 //math.randomseed(os.time())
 //const { player } = globalThis.game.world
 export function shuffle<T>(array: T[]): T[] {

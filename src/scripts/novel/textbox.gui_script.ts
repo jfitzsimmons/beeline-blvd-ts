@@ -69,7 +69,6 @@ function set_font(font: hash) {
 
 function text_continue() {
   //save.set_global_read()
-  print('press_continue txt cont type nxt')
 
   typewriter.next()
 }
@@ -190,13 +189,10 @@ function hide_log() {
 
 function press_continue() {
   if (typeof log_position == 'number') {
-    print('press_continue', log_position)
     hide_log()
   } else if (skipping) {
-    print('press_continue SKIP')
     end_skip()
   } else if (auto) {
-    print('press_continue auto')
     end_auto()
   } else {
     text_continue()
@@ -278,7 +274,6 @@ export function on_message(
 ) {
   if (messageId == hash('say')) {
     show()
-    print('message.text, message.name', message.text, message.name)
     say(message.text, message.name)
     //gui.set_text(gui.get_node("text"), message.text)
   } else if (messageId == hash('typewriter_next')) {
@@ -317,11 +312,8 @@ export function on_input(
   action: { pressed: boolean; released: boolean; repeated: boolean }
 ) {
   if (action_id == hash('continue') && action.pressed) {
-    print('TEXT BOX GOT CONTINUE message on input pressed')
     press_continue()
   } else if (action_id == hash('touch') && action.released) {
-    print('TEXT BOX GOT CONTINUE message on TOUCH release')
-
     press_continue()
   } else if (action_id == hash('skip')) {
     if (action.pressed) {

@@ -1,3 +1,5 @@
+
+
 label church1x
 n: I'll pray for youx
 jump quickclose
@@ -22,7 +24,7 @@ if dice > 25
 n: Holy. Holy.x
 jump quickclose
 
-label reasonrandom1
+label reasonsrandom1
 if npc.b.good < -0.3
     jump smiteyoux
 if npc.s.wisdom > 5

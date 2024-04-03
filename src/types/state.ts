@@ -68,6 +68,7 @@ export interface NpcDefaults {
   skills: Skills | never
   binaries: Skills | never
   turns_since_encounter: number
+  turns_since_convo: number
   love: number
   hp: number
   cooldown: number
@@ -87,7 +88,9 @@ export interface PlayerState {
   labelname: string
   inventory: string[]
   pos: { x: number; y: number }
+  heat: number
   alert_level: number
+  clearance: number
   hp: number
   ap_max: number
   ap: number
@@ -187,4 +190,9 @@ export interface Typewriter {
   next: () => void
   set_scale: (arg: number) => void
   redraw: () => void
+}
+
+export interface Consolation {
+  fail: boolean
+  caution: string
 }

@@ -532,23 +532,10 @@ function buildLookup() {
   }
 }
 
-/**
-!!! testjpf, loopthrough and create hastable and add hash as property to each item?
-const room_lookup = {
-  [hash_to_hex(hash('/to_baggage'))]: 'baggage',
-  [hash_to_hex(hash('/to_grounds'))]: 'grounds',
-  [hash_to_hex(hash('/to_reception'))]: 'reception',
-  [hash_to_hex(hash('/to_customs'))]: 'customs',
-  [hash_to_hex(hash('/to_admin1'))]: 'admin1',
-  [hash_to_hex(hash('/to_security'))]: 'security',
-  [hash_to_hex(hash('/to_infirmary'))]: 'infirmary',
-  so loopthru get key hextohash to new key of new table. value equals old key
-}
-**/
+// testjpf generate_random_gift() food, supplies, money
 
 //testjpf may need a binaries_chest_bonus()
 export function remove_chest_bonus(actor: Npc | PlayerState, i: string) {
-  print('testjpf: is i anything', i)
   const item: InventoryTableItem = items[i]
   let sKey: keyof typeof item.skills
 
@@ -562,8 +549,6 @@ export function remove_chest_bonus(actor: Npc | PlayerState, i: string) {
 }
 
 export function add_chest_bonus(actor: Npc | PlayerState, i: string) {
-  print('ADD testjpf: is i anything', i)
-
   const item: InventoryTableItem = items[i]
   let sKey: keyof typeof item.skills
   for (sKey in items[i].skills)
@@ -578,7 +563,6 @@ export function add_chest_bonus(actor: Npc | PlayerState, i: string) {
 export function remove_random(to_inv: string[], from_inv: string[]) {
   const stolen_item = shuffle(from_inv).pop()
   if (stolen_item === undefined) return ''
-  print('remove_ random', stolen_item)
   if (stolen_item !== '') to_inv.push(stolen_item)
   return stolen_item
 }
@@ -586,7 +570,6 @@ export function remove_random(to_inv: string[], from_inv: string[]) {
 export function remove_last(to_inv: string[], from_inv: string[]) {
   const stolen_item = from_inv.pop()
   if (stolen_item === undefined) return ''
-  print('remove_ last', stolen_item)
   if (stolen_item !== '') to_inv.push(stolen_item)
   return stolen_item
 }
@@ -624,10 +607,8 @@ export function remove_advantageous(
     }
     if (found == true) break
   }
-  print('print adv!!!', stolen_item)
   if (found == false) {
     stolen_item = from_inv.splice(0, 1)[0]
-    print('remove_ advFALLBACK', stolen_item)
     to_inv.push(stolen_item)
   }
   return stolen_item
@@ -648,7 +629,6 @@ export function remove_valuable(to_inv: string[], from_inv: string[]) {
   if (stolen_item === undefined) stolen_item = ''
   //table.sort(from_inv, function(x, y) return M.items[x].value > M.items[y].value })
 
-  print('remove_ valueable', stolen_item)
   if (stolen_item !== '') to_inv.push(stolen_item)
   return stolen_item
 }

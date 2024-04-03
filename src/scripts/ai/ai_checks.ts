@@ -1,4 +1,4 @@
-import { Actor, Effect, Npc, PlayerState, Skills } from '../../types/state'
+import { Actor, Effect, Npc } from '../../types/state'
 import { dice_roll } from '../utils/utils'
 const { tasks, npcs, rooms, player } = globalThis.game.world
 import {
@@ -10,10 +10,17 @@ import {
   remove_chest_bonus,
 } from '../systems/inventorysystem'
 import { fx, add_effects_bonus } from '../systems/effectsystem'
+import { thief_consolation_checks } from '../systems/tasksystem'
+import { roll_special_dice } from '../utils/dice'
 
 function confrontation_consequence(p: Npc, n: Npc) {
+  //used for non novel dialog choices(npcs on npcs)
+  //rename FUNCTION!!
+  //start here, to easy to pass?
+  // probably shuffle functions, each will a dice roll
   //ugly code. testjpf.  not many cautions needed.
   //returns are superflous
+  print('AI_CHECKS::: confrontation consequence::: UGLY CODE TESTJPF START')
   if (
     n.binaries.passive_aggressive > 0.0 &&
     n.skills.wisdom < 5 &&
@@ -81,7 +88,7 @@ function confrontation_consequence(p: Npc, n: Npc) {
   }
 
   if (p.labelname != 'adam') {
-    const caution = tasks.consolation_checks(n.binaries, n.skills)
+    const caution = thief_consolation_checks(n.labelname)
     if (caution != 'neutral') {
       tasks.caution_builder(n, caution, p.labelname, 'theft')
       print(
@@ -129,10 +136,7 @@ export function aid_check(injured: string[]) {
     let sKey: keyof typeof stations
     for (sKey in stations) {
       const helper = stations[sKey]
-      print('RAW helper:::', helper)
       if (helper != '' && helper != i && math.random() < 0.3) {
-        print('Pass helper:::', helper)
-
         if (
           npcs.all[helper].clan == 'doctors' &&
           tasks.medicQueue.indexOf(i) != -1 &&
@@ -183,7 +187,6 @@ export function take_check(taker: Npc, actor: Npc | Actor) {
         taker.binaries.poor_wealthy * -10) /
         9
     ) {
-      print('take adv')
       take = true
     }
     //disadvantage
@@ -194,7 +197,6 @@ export function take_check(taker: Npc, actor: Npc | Actor) {
         taker.binaries.poor_wealthy * -10) /
         9
     ) {
-      print('take DISadv')
       take = true
     }
   }
@@ -239,7 +241,6 @@ export function stash_check(stasher: Npc, actor: Npc | Actor) {
         stasher.binaries.anti_authority * -10) /
         5
     ) {
-      print('stash adv')
       stash = true
     }
     //disadvantage
@@ -250,7 +251,6 @@ export function stash_check(stasher: Npc, actor: Npc | Actor) {
         stasher.binaries.anti_authority * -10) /
         5
     ) {
-      print('stash DISadv')
       stash = true
     }
   }
@@ -270,7 +270,6 @@ export function stash_check(stasher: Npc, actor: Npc | Actor) {
     } else {
       chest_item = remove_last(actor.inventory, stasher.inventory)
     }
-    print('check.utils Remove bonus:: chestitem:', chest_item)
     remove_chest_bonus(stasher, chest_item)
     // if victim == true ){ add_chest_bonus(n, chest_item) }
 
@@ -286,44 +285,62 @@ export function take_or_stash(attendant: Npc, actor: Npc | Actor) {
     stash_check(attendant, actor)
   }
 }
-export function seen_check(p: Skills, n: Skills) {
-  const minmax = dice_roll()
-  //testjpf these are high odds you'll be seen
-  // as inteded???
-  if (p.stealth <= n.stealth + 3 || p.stealth <= n.perception + 3) {
-    if (minmax[0] * 10 < (n.perception + n.stealth + n.speed) / 2) {
-      return true
-    } else if (minmax[1] * 10 < (n.perception + n.stealth + n.speed) / 2) {
-      return true
-    }
-  }
+export function seen_check(s: string, w: string) {
+  const sus = s == 'player' ? player.state : npcs.all[s]
+  const wchr = npcs.all[w]
+  const heat =
+    s == 'player' ? player.heat * 10 : wchr.binaries.poor_wealthy * -4
 
-  return false
+  const modifier = Math.round(
+    sus.skills.stealth +
+      sus.binaries.lawless_lawful * 10 -
+      wchr.skills.stealth -
+      wchr.skills.perception -
+      heat
+  )
+  const advantage =
+    sus.skills.speed - wchr.binaries.lawless_lawful * 10 >
+    wchr.skills.speed +
+      wchr.skills.constitution +
+      wchr.binaries.passive_aggressive * 10
+
+  const result =
+    roll_special_dice(5, advantage, 3, 2) + (modifier > -4 ? modifier : -4)
+
+  print('SEEN CHECK:: RESULT: DICE ROLL::', result)
+  if (result > 10) return { confront: false, type: 'special' }
+  if (result < 0) return { confront: true, type: 'concern' }
+  const bossResult = roll_special_dice(7, true, 3, 2)
+  print('SEEN CHECK:: bossResult: DICE ROLL::', bossResult)
+
+  const seen = result < bossResult
+  return seen === true
+    ? { confront: false, type: 'seen' }
+    : { confront: false, type: 'neutral' }
 }
-export function confrontation_check(p: Npc | PlayerState, n: Npc) {
+export function confrontation_check(pname: string, nname: string) {
   // testjpf for debugging you could check if player return false
   //if (p.labelname == 'adam') return false
+  const p = pname == 'player' ? player.state : npcs.all[pname]
+  const n = npcs.all[nname]
 
   const minmax = dice_roll()
   if (
-    n.binaries.passive_aggressive > -0.8 ||
+    n.binaries.passive_aggressive > -0.9 ||
     n.binaries.lawless_lawful > -0.8
   ) {
     // p slower || NPC willing p is caught
     if (
-      p.skills.speed < n.skills.speed + 3 ||
+      p.skills.speed < n.skills.speed + 2 ||
       p.skills.speed < n.skills.constitution + 3
     ) {
       // check for confrontation with DISADVANTAGE
-      if (minmax[0] * 9 < (n.skills.speed + n.skills.constitution) / 1.6) {
+      if (minmax[0] * 9 < (n.skills.speed + n.skills.constitution) / 1.8) {
         print('Caught: too slow')
         return true
       }
       // check for confrontation with ADVANTAGE
-      else if (
-        minmax[1] * 10 <
-        (n.skills.speed + n.skills.constitution) / 1.8
-      ) {
+      else if (minmax[1] * 10 < (n.skills.speed + n.skills.constitution) / 2) {
         print('Caught: fast, but unlucky')
         return true
       }
@@ -332,83 +349,63 @@ export function confrontation_check(p: Npc | PlayerState, n: Npc) {
   print(n.labelname, 'did not confront: ', p.labelname)
   return false
 }
-//testjpf only being used between npcs (just tutorial luggage)
-export function steal_check(n: Npc, w: Npc, loot: string[]) {
-  let consequence = 'neutral'
-
-  if (
-    (n.cooldown <= 0 && n.binaries.un_educated < -0.5 && n.skills.speed > 4) ||
-    (n.binaries.lawless_lawful < 0.5 && n.skills.stealth > 2) ||
-    (n.binaries.evil_good < -0.5 &&
-      n.love < -5 &&
-      n.binaries.poor_wealthy < -0.5 &&
-      n.skills.stealth > 4) ||
-    (n.skills.perception < 4 && n.skills.constitution < 4) ||
-    (n.skills.speed > 6 && w != null && n.attitudes[w.clan] < -3)
-  ) {
-    if (w != null && seen_check(n.skills, w.skills) == true) {
-      print(
-        'steal attempt -',
-        n.labelname,
-        ' SEEN by:',
-        w.labelname,
-        'in',
-        w.currentroom
-      )
-      if (confrontation_check(n, w) == true) {
-        consequence = confrontation_consequence(n, w)
+export function thief_consequences(
+  s: string,
+  w: string,
+  c: { confront: boolean; type: string }
+) {
+  if (npcs.all[w] != null && c.type == 'seen') {
+    if (c.confront == true || confrontation_check(s, w) == true) {
+      //npc gets the following.  Player gets dialog options
+      if (s == 'player') {
+        c.confront = true
+        c.type = 'concern'
       } else {
-        consequence = tasks.consolation_checks(w.binaries, w.skills)
+        c.type = confrontation_consequence(npcs.all[s], npcs.all[w])
       }
     } else {
-      if (math.random() < 0.6) {
-        consequence = 'nothing'
-        if (w != null) {
-          print(
-            'steal attempt -',
-            n.labelname,
-            'was UNSEEN but FAILED by:',
-            w.labelname,
-            'in',
-            w.currentroom
-          )
-        } else {
-          print(
-            'steal attempt -',
-            n.labelname,
-            'was UNSEEN but FAILED no WATCHER',
-            n.currentroom
-          )
-        }
-      } else {
-        if (w != null) {
-          print(
-            'STEAL attempt PASS-',
-            n.labelname,
-            'was UNSEEN by:',
-            w.labelname,
-            'in',
-            w.currentroom
-          )
-        } else {
-          print(
-            'STEAL attempt PASS-',
-            n.labelname,
-            'was UNSEEN no WATCHER',
-            n.currentroom
-          )
-        }
-      }
+      c.type = thief_consolation_checks(w)
     }
+  }
 
-    if (consequence == 'neutral') {
+  if (c.confront == false && c.type != 'neutral') {
+    tasks.caution_builder(npcs.all[w], c.type, s, 'theft')
+  }
+  return c
+}
+//testjpf only being used between npcs (just tutorial luggage)
+export function steal_check(n: Npc, w: Npc, loot: string[]) {
+  if (
+    (n.cooldown <= 0 && n.binaries.un_educated < -0.3 && n.skills.speed > 3) ||
+    (n.binaries.lawless_lawful < 0.5 && n.skills.stealth > 2) ||
+    (n.binaries.evil_good < -0.3 &&
+      n.love < -4 &&
+      n.binaries.poor_wealthy < -0.3 &&
+      n.skills.stealth > 3) ||
+    (n.skills.perception < 5 && n.skills.constitution < 5) ||
+    (n.skills.speed > 4 && w != null && n.attitudes[w.clan] < -1) ||
+    math.random() < 0.2
+  ) {
+    let consequence = {
+      confront: true,
+      type: 'neutral',
+    }
+    if (w != null) {
+      consequence = seen_check(n.labelname, w.labelname)
+      print('SEEN CHECK CONSEQUNCE::', consequence.type)
+      consequence = thief_consequences(n.labelname, w.labelname, consequence)
+      print('THIEF CONSEQUNCE::', consequence.type)
+    }
+    //consequence = confront.type
+
+    if (consequence.type == 'neutral') {
       let chest_item = null
       //const victim = false
       //if w != null ){ utils.has_value(w.inventory, a[1]) }
 
-      if (math.random() < 0.5) {
+      if (math.random() < 0.4) {
         chest_item = remove_random(n.inventory, loot)
-      } else if (math.random() < 0.51) {
+      } else if (math.random() < 0.5) {
         chest_item = remove_valuable(n.inventory, loot)
       } else {
         chest_item = remove_advantageous(n.inventory, loot, n.skills)
@@ -423,15 +420,23 @@ export function steal_check(n: Npc, w: Npc, loot: string[]) {
       add_chest_bonus(n, chest_item)
       //if (victim == true ){ remove_chest_bonus(w, chest_item) }
       n.cooldown = math.random(5, 15)
-    } else if (consequence != 'nothing') {
-      if (w != null) {
-        tasks.caution_builder(w, consequence, n.labelname, 'theft')
-      } else
-        print('UNSEEN FAIL??? NO ATTEMPT??? CC:: ALL NOTHINGS???', ' TESTJPF')
     }
 
-    n.cooldown = n.cooldown + 8
+    n.cooldown = n.cooldown + 5
   } else {
-    print('No attempt by', n.labelname)
+    // print('No attempt by', n.labelname)
   }
+}
+//testjpf player interact.gui related
+export function witness_player(w: string) {
+  let consequence = {
+    confront: false,
+    type: 'neutral',
+  }
+
+  consequence = seen_check('player', w)
+
+  consequence = thief_consequences('player', w, consequence)
+
+  return consequence
 }

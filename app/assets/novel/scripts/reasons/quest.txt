@@ -1,0 +1,46 @@
+
+
+label qstreason1x
+n: I'll pray for youx qs
+jump quickclose
+
+label qstreason2x
+n: Peace be with you.xqs
+jump quickclose
+
+label qstreason3x
+n: Merx bless us all.xqs
+jump quickclose
+
+label genericqstreasonx
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump qstreason1x
+if dice > 50
+    jump qstreason2x
+if dice > 25
+    jump qstreason3x
+n: Holy. Holy.xqs
+jump quickclose
+
+label reasonsrandom1
+if npc.b.good < -0.3
+    jump smiteyouxsdftestjpf
+if npc.s.wisdom > 5
+    jump wiseqstreasonx
+if npc.s.strength > 4
+    jump strongqstreason
+jump genericqstreasonx
+
+label smiteyouxsdftestjpf
+n: The lord will smite you.xqs
+jump quickclose
+
+label wiseqstreasonx
+n: Everyone is a worthy person.xqs
+jump quickclose
+
+label strongqstreasonx
+n: The lord has imbued me with great strength!xvvqs
+jump quickclose

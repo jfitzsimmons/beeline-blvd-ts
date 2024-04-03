@@ -8,6 +8,7 @@ const npc_defaults: NpcDefaults = {
   skills: {},
   binaries: {},
   turns_since_encounter: 0,
+  turns_since_convo: 99,
   love: 0,
   hp: 5,
   cooldown: 0,

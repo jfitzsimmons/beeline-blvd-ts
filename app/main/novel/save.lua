@@ -24,7 +24,6 @@ function M.reset()
 end
 
 function M.set_var(this, name, value, type)
-	print("SAVE TESTJPF:", name, value, type)
 	M.state.var[name] = value
 	M.state.var_type[name] = type
 end
@@ -35,11 +34,11 @@ function M.define(name, value, type)
 end
 
 function M.get_var(this,name)
-	print("save get vasr: ",name)
+	--print("save get vasr: ",name)
 	local value = M.state.var[name] or defined_variables[name]
-	print("value", value)
+	--print("value", value)
 	local type = M.state.var_type[name] or defined_variables_type[name]
-	print("type", type)
+	--print("type", type)
 
 	if type == "pointer" then 
 		local v, t = M.get_var(this, value)

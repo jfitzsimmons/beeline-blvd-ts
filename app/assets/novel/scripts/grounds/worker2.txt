@@ -4,7 +4,7 @@ n: It's so boring waiting to get through customs.
 if reason == "quest"
     jump queststart
 if reason == "concern"
-    jump concernrandom1
+    jump actualconcern
 > How about these grounds?
     jump groundsrandom1
 > What are you up to?

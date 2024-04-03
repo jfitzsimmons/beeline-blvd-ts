@@ -143,7 +143,6 @@ function substitute_in_expression(w: string) {
   if (add_quotes && result != '') {
     result = '"' + result + '"'
   }
-  print('SUVSTITUTE result::', result)
   return result
 }
 
@@ -171,18 +170,18 @@ function return_quotes(s: string) {
 function execute_string(s: string) {
   Sandbox = {}
   Sandbox = { math: math, vmath: vmath, string: string }
-  print('exe stri::: S::', s)
+  //print('exe stri::: S::', s)
 
   let stripped: LuaMultiReturn<[string, number]> = strip_quotes(s)
-  print('exe stri::: string1::', stripped[0])
+  //print('exe stri::: string1::', stripped[0])
 
   stripped = string.gsub(stripped[0], '[%a_][%w_%.]*', function (x) {
     return substitute_in_expression(x)
   })
-  print('exe stri::: string2::', stripped[0])
+  //print('exe stri::: string2::', stripped[0])
 
   stripped = return_quotes(tostring(stripped[0]))
-  print('exe stri::: string3::', stripped[0])
+  //print('exe stri::: string3::', stripped[0])
 
   const f = loadstring('return ' + stripped[0])
 
@@ -191,7 +190,7 @@ function execute_string(s: string) {
     result = assert(f[0])()
   }
   Sandbox = null
-  print('exe stirng result::', result)
+  //print('exe stirng result::', result)
   return result
 }
 
@@ -215,12 +214,10 @@ function interpolate_string(s: string) {
 
     expression = string.match(tostring(s), left + '([^{]+)' + right)
   }
-  print('interpolate string :: s:: false??:', s)
   return s
 }
 
 function jump(args: any) {
-  print(args[0], args.length, '<---LINE in MNOVEL jump()')
   matchascript.jump_to_label(args[0])
 }
 
@@ -249,28 +246,18 @@ function say(args: any) {
   }
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const interpolated_text = interpolate_string(text)
-  print('PRE MPRE PERR EPR textboxmessage say :: from mnnvoel say.')
   messages.post('textbox', 'say', { text: interpolated_text, name: name })
-  print('post textboxmessage say :: from mnnvoel say.')
   messages.post('choices', 'delete')
-  print('post choices deltet msg  :: from mnnvoel say.')
 }
 
 function set(args: any) {
-  print('0 from mnovel:: args:', args[0])
-  print('1 from mnovel:: args:', args[1])
   const name =
     args.left != '' ? args.left : args.name != '' ? args.name : args[0]
-  print('name', name)
   const value_string =
     args.right != '' ? args.right : args.value != '' ? args.value : args[1]
-  print('value_String', value_string)
 
   const val_table = matchascript.get_variable(value_string)
-  print('typeof valtbl', typeof val_table)
-  print(val_table[0], val_table[1], 'all vals table novel')
   let [value, var_type]: [string, string] = val_table
-  print(value, var_type, 'value, vartype')
 
   if (value === null && var_type === null) {
     value = execute_string(tostring(value_string))
@@ -280,7 +267,6 @@ function set(args: any) {
       var_type = 'string'
     }
   }
-  print('save.set_var(name, value, var_type) FRO<::: matchanovel')
   save.set_var(name, value, var_type)
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -304,7 +290,6 @@ function set(args: any) {
       })
     }
   }
-  print('When does this matchascript .next get called.')
   matchascript.next()
 }
 
@@ -357,10 +342,6 @@ function subtract(args: any) {
 }
 
 function scene(args: any) {
-  let aKey: keyof typeof args
-  for (aKey of args) {
-    print('ALL SCENE ARGS::: AKEY::', aKey)
-  }
   const scene = args.scene != null ? args.scene : args[0]
   const transition =
     args.transition != null
@@ -440,7 +421,7 @@ function hide(args: any) {
     transition: transition,
     duration: duration,
   })
-  print('POST SPRITE  MESSAGE MNOVEL')
+  //  print('POST SPRITE  MESSAGE MNOVEL')
   if (wait == null) {
     matchascript.next()
   }
@@ -501,8 +482,6 @@ function action_if_true(v: string | boolean) {
 }
 
 function action_if(args: any) {
-  print('mnovel action_if: args[0]', args[0])
-
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   action_if_true(execute_string(args[0]))
 }

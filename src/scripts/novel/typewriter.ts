@@ -313,7 +313,6 @@ function end_typewriter() {
 function fade_away() {
   current.state = 'fade_away'
   let nodeKey: keyof typeof current.letter_nodes
-  print('TYPEWERITE FADEAWAY')
   for (nodeKey in current.letter_nodes) {
     const node = current.letter_nodes[nodeKey]
     fade_letter(
@@ -415,7 +414,6 @@ export function change_typewriter(id: number) {
 
 // Clears old text && starts typing.
 export function start(text: string) {
-  print('text for typewriter::', text)
   start_typewriter(text, true)
 }
 
@@ -488,10 +486,8 @@ export function hide_instant_text() {
 // Finishes current text if still typing, removes text && asks for next text if already typed.
 export function next() {
   if (current.state == 'typing') {
-    print('next endtpyewriter')
     end_typewriter()
   } else if (current.state == 'waiting') {
-    print('nxt type fade away')
     fade_away()
   }
 }

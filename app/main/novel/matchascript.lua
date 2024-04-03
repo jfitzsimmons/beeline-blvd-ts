@@ -442,7 +442,7 @@ end
 
 -- jump to line of given label and execute it
 function M.jump_to_label(this, label)
-	print(label, "<--jump to label: label ")
+	--print(label, "<--jump to label: label ")
 	if label == "start" and not labels["start"] then 
 		M.jump_to_line(this, 1)
 	end

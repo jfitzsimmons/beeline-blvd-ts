@@ -1,5 +1,4 @@
-import { items } from '../systems/inventorysystem'
-const { tasks, rooms, npcs, player } = globalThis.game.world
+import { items, remove_advantageous } from '../systems/inventorysystem'
 import {
   Occupants,
   Caution,
@@ -7,9 +6,13 @@ import {
   Npc,
   PlayerState,
   Effect,
+  Consolation,
 } from '../../types/state'
-import { shuffle } from '../utils/utils'
+import { arraymove, shuffle } from '../utils/utils'
 import { fx, add_effects_bonus } from '../systems/effectsystem'
+import { roll_special_dice } from '../utils/dice'
+
+const { tasks, rooms, npcs, player } = globalThis.game.world
 
 const fxLookup = {
   merits: [
@@ -81,7 +84,7 @@ function go_to_jail(s: string) {
     if (prisoner == '') {
       rooms.all.security.occupants![station] = s
       npcs.all[s].matrix = rooms.all.security.matrix
-      npcs.all[s].cooldown = 6
+      npcs.all[s].cooldown = 8
 
       print(s, 'jailed for:', npcs.all[s].cooldown)
       break
@@ -232,7 +235,7 @@ function reckless_consequence(c: Caution, w: string) {
     npcs.all[watcher.labelname].effects.push(effect) // lawfulness increase?
   } else {
     if (c.suspect != 'player') {
-      const caution = tasks.consolation_checks(watcher.binaries, watcher.skills)
+      const caution = thief_consolation_checks(watcher.labelname)
       if (caution != 'neutral' && caution != 'reckless') {
         print(
           'RC:::',
@@ -279,11 +282,7 @@ function merits_demerits(c: Caution, w: string) {
   npcs.all[w].effects.push(effect)
   add_effects_bonus(npcs.all[w], effect)
 }
-function arraymove(arr: string[], fromIndex: number, toIndex: number) {
-  const element = arr[fromIndex]
-  arr.splice(fromIndex, 1)
-  arr.splice(toIndex, 0, element)
-}
+
 function adjust_medic_queue(s: string) {
   if (tasks.medicQueue.includes(s) == true) {
     if (tasks.medicQueue.indexOf(s) > 1)
@@ -390,6 +389,157 @@ function address_busy_acts(cs: Caution[]) {
   }
 }
 
+//TESTJPF move to outcomes utils?
+//task system makes the most sence, but it's bloated.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function snitch(n: string): Consolation {
+  if (npcs.all[n].binaries.anti_authority > -0.7) {
+    //tell authority they have good attitude towards
+    return { fail: true, caution: 'snitch' }
+  }
+  return { fail: false, caution: 'neutral' }
+}
+function reckless(n: string): Consolation {
+  //testjpf was -.5 , 4
+  if (
+    npcs.all[n].binaries.un_educated < -0.4 ||
+    npcs.all[n].skills.intelligence < 4
+  ) {
+    //underdog task
+    return { fail: true, caution: 'reckless' }
+  }
+  // will tell whoever what they saw
+  // they might like it or hate it
+
+  return { fail: false, caution: 'neutral' }
+}
+function evil_merits(n: string): Consolation {
+  if (
+    npcs.all[n].binaries.evil_good < -0.2 &&
+    npcs.all[n].binaries.lawless_lawful < -0.2
+  ) {
+    return { fail: true, caution: 'merits' }
+  } else if (
+    npcs.all[n].binaries.passive_aggressive < -0.3 ||
+    npcs.all[n].skills.constitution < 4
+  )
+    return { fail: true, caution: 'demerits' }
+
+  //won't like you,
+  // slander you to people close to them / who like them / they like / cohort with
+  // decreases others love for player
+
+  return { fail: false, caution: 'neutral' }
+}
+function love_drop(n: string): Consolation {
+  const npc = npcs.all[n]
+
+  const modifier = Math.round(
+    player.state.skills.wisdom +
+      player.state.binaries.un_educated * 10 -
+      npc.skills.charisma +
+      Math.abs(npc.binaries.evil_good * 10)
+  )
+  const advantage =
+    player.state.skills.speed + player.state.binaries.lawless_lawful * 10 >
+    npc.binaries.evil_good * 10 + npc.skills.constitution
+  const result = math.min(
+    roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1),
+    roll_special_dice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2)
+  )
+  //const result =
+  // roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
+
+  if (result > 1 && result < 5) return { fail: true, caution: 'lovedrop' }
+
+  if (result <= 1) return { fail: true, caution: 'critical' }
+  return { fail: false, caution: 'neutral' }
+}
+function love_boost(n: string): Consolation {
+  const npc = npcs.all[n]
+
+  const modifier = Math.round(
+    Math.abs(player.state.binaries.evil_good) * 10 - npc.skills.speed
+  )
+  const advantage =
+    player.state.skills.charm +
+      player.state.skills.intelligence +
+      npc.binaries.anti_authority * 10 >
+    npc.skills.intelligence + npc.skills.perception + player.state.skills.speed
+  const result = math.min(
+    roll_special_dice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2),
+    roll_special_dice(5, advantage, 3, 2) + (modifier > -3 ? modifier : -3)
+  )
+  //const result =
+  // roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
+
+  if (result > 5 && result < 9) return { fail: true, caution: 'loveboost' }
+
+  if (result >= 10) return { fail: true, caution: 'special' }
+  return { fail: false, caution: 'neutral' }
+}
+function ap_boost(n: string): Consolation {
+  const npc = npcs.all[n]
+
+  const modifier = Math.round(
+    player.state.skills.constitution +
+      npc.love +
+      (npc.binaries.passive_aggressive * 10) / 3
+  )
+  const advantage =
+    player.state.binaries.passive_aggressive + npc.binaries.passive_aggressive >
+      0.1 && npc.skills.constitution > player.state.skills.speed
+  const result =
+    roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
+
+  if (result > 5 && result < 9) return { fail: true, caution: 'apboost' }
+
+  if (result >= 10) return { fail: true, caution: 'special' }
+  return { fail: false, caution: 'neutral' }
+}
+function charmed_merits(n: string): Consolation {
+  //testjpf GOOD time for a diceroll
+  const npc = npcs.all[n]
+
+  //so
+  /**
+   * what advantages do we want to give? npc love? not a bin or skill
+
+   */
+
+  const modifier = Math.round(
+    (player.state.skills.charisma + npc.love) / 2 - npc.skills.constitution
+  )
+  const advantage =
+    player.state.skills.charisma > npc.skills.charisma &&
+    npc.binaries.un_educated < -0.1
+  const result =
+    roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
+
+  if (result > 5 && result < 9) return { fail: true, caution: 'merits' }
+
+  if (result >= 10) return { fail: true, caution: 'special' }
+  //won't like you,
+  // slander you to people close to them / who like them / they like / cohort with
+  // decreases others love for player
+
+  return { fail: false, caution: 'neutral' }
+}
+function generate_gift() {
+  player.state.inventory.push('berry02')
+}
+function given_gift(n: string): Consolation {
+  //testjpf check if inventory full?!
+  const gift = remove_advantageous(
+    player.state.inventory,
+    npcs.all[n].inventory,
+    player.state.skills
+  )
+
+  if (gift == null) generate_gift()
+  return { fail: true, caution: 'neutral' }
+}
+
 const consequenceConditions = (
   watcher: string,
   suspect: string,
@@ -467,7 +617,42 @@ const consequenceLookup = (_s: string, _w: string) => {
     unlucky: go_to_jail,
   }
 }
-
+const consolations = [snitch, evil_merits, reckless]
+//testjpf problem is merits is a monkey paw version
+// has to deal with postive reaction to negative behavior.
+// so maybe conolation good, evil, chaotic, lawful neutral!!!!
+const pos_consolations = [charmed_merits, ap_boost, given_gift, love_boost]
+const neg_consolations = [reckless, love_drop]
+//TESTJPF ABOVE: all manipulate or return cautions
+//below do consolations need to be part of state at all??
+//probably not MOVE TO new "consequences" . "util"?
+export function unimpressed_checks(n: string) {
+  const tempcons: Array<(n: string) => Consolation> = shuffle(neg_consolations)
+  tempcons.forEach((c) => {
+    const consolation = c(n)
+    if (consolation.fail == true) return consolation.caution
+  })
+  print('did nothing after witnessing a theft attempt')
+  return 'neutral'
+}
+export function impressed_checks(n: string) {
+  const tempcons: Array<(n: string) => Consolation> = shuffle(pos_consolations)
+  tempcons.forEach((c) => {
+    const consolation = c(n)
+    if (consolation.fail == true) return consolation.caution
+  })
+  print('did nothing after witnessing a theft attempt')
+  return 'neutral'
+}
+export function thief_consolation_checks(n: string) {
+  const tempcons: Array<(n: string) => Consolation> = shuffle(consolations)
+  tempcons.forEach((c) => {
+    const consolation = c(n)
+    if (consolation.fail == true) return consolation.caution
+  })
+  print('did nothing after witnessing a theft attempt')
+  return 'neutral'
+}
 export function address_cautions() {
   const sortedCautions = tasks.cautions.sort(
     (a: Caution, b: Caution) => a.time - b.time
@@ -524,7 +709,7 @@ export function question_consequence(c: Caution) {
     consequences[consequenceLabel](s.labelname, w.labelname)
   } else {
     if (c.suspect != 'player') {
-      const caution = tasks.consolation_checks(w.binaries, w.skills)
+      const caution = thief_consolation_checks(w.labelname)
       if (caution != 'neutral') {
         tasks.caution_builder(w, caution, c.suspect, c.reason)
       } else {

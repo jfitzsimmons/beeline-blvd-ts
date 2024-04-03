@@ -3,6 +3,12 @@ print('novel main 4th??')
 const { npcs, tasks, player, novel } = globalThis.game.world
 
 import { questScripts } from '../quests/quests_main'
+import { impressed_checks, unimpressed_checks } from '../systems/tasksystem'
+
+interface props {
+  npcname: string
+  cause: string
+}
 
 function script_builder(
   room: boolean | true = true,
@@ -23,13 +29,6 @@ function script_builder(
   }
   paths.unshift(checkpoint + '/default')
   if (novel.npc.currentstation != null) {
-    print(
-      'novel noc:',
-      novel.npc.labelname,
-      ' | station:',
-      novel.npc.currentstation
-    )
-
     paths.unshift('stations/' + novel.npc.currentstation)
     paths.unshift(player.currentroom + '/' + novel.npc.currentstation)
   }
@@ -37,14 +36,74 @@ function script_builder(
 
   if (caution != null) novel.reason = caution.reason
   paths.push('reasons/' + novel.reason)
-  print('NOVEL>REASON:::', novel.reason)
+  //print('NOVEL>REASON:::', novel.reason)
   novel.scripts = paths
 }
 
-interface props {
-  npcname: string
-  cause: string
+function consolation_outcomes(love: number) {
+  //print(novel.npc.love, '| novel.npc.love = love |', love)
+  if (love > novel.npc.love) {
+    const consequence = impressed_checks(novel.npc.labelname)
+    print('impressed consequence:: ', consequence)
+    if (consequence != 'neutral')
+      tasks.caution_builder(novel.npc, consequence, 'player', 'impressed')
+
+    novel.npc.love = love
+    // they try to rob you?
+    //they leave the room!!!
+    // make npc more ALERT
+    // tip about quests
+    // tip about environment medics need help, maintenance, security,
+    //tip about clan hates you , loves you
+    // punches
+    //challenge to "fight?"
+  } else if (love < novel.npc.love) {
+    //could be ELSE
+
+    const consequence = unimpressed_checks(novel.npc.labelname)
+    print('UNimpressed consequence:: ', consequence)
+
+    if (consequence != 'neutral')
+      tasks.caution_builder(novel.npc, consequence, 'player', 'unimpressed')
+    // testjpf else cautionbuilder(npc, "offender", player, harassment)
+    //cooldown???
+  }
 }
+
+function novel_outcomes(reason: string) {
+  print('novel outcome :: reason:', reason)
+  //testjpf create func() called+. emergencies()????
+  if (reason == 'faint') {
+    const params = {
+      enter_room: tasks.spawn,
+    }
+    msg.post('proxies:/controller#worldcontroller', 'faint', params)
+  } else if (reason == 'arrested') {
+    tasks.remove_heat('player')
+    msg.post('proxies:/controller#worldcontroller', 'arrested', {
+      enter_room: 'security',
+    })
+  } else if (reason.substring(0, 6) == 'quest:') {
+    //testjpf remove spaces??
+    novel.quest.solution = reason.substring(7)
+  }
+  //if love positive. consolation checks. else negatice
+  //only merits is positive
+  // temp love boost!!
+  //temp love drop
+  // they try to rob you?
+  //they leave the room!!!
+  //player ap boost]
+  // make npc more ALERT
+  //recieve gift!
+  //generate_random_gift() food, supplies, money
+  // tip about quests
+  // tip about environment medics need help, maintenance, security,
+  //tip about clan hates you , loves you
+  // punches
+  //challenge to "fight?"
+}
+
 export function on_message(
   this: props,
   messageId: hash,
@@ -64,41 +123,31 @@ export function on_message(
     novel_start()
   } else if (messageId == hash('sleep')) {
     player.hp = message.hp
-    novel.npc.turns_since_encounter = 0
+    novel.npc.turns_since_convo = 0
 
-    if (message.love != novel.npc.love) {
-      print(novel.npc.love, '| novel.npc.love = message.love |', message.love)
-      novel.npc.love = message.love
-    }
-    npcs.all[novel.npc.labelname] = { ...novel.npc }
-
-    msg.post('proxies:/controller#novelcontroller', 'unload_novel')
-
-    //testjpf create func() called+. emergencies()????
-    if (message.reason == 'faint') {
-      const params = {
-        enter_room: tasks.spawn,
-      }
-      msg.post('proxies:/controller#worldcontroller', 'faint', params)
-    } else if (message.reason == 'arrested') {
-      tasks.remove_heat('player')
-      msg.post('proxies:/controller#worldcontroller', 'arrested', {
-        enter_room: 'security',
-      })
-    }
-    if (message.reason.substring(0, 6) == 'quest:') {
-      //testjpf remove spaces??
-      novel.quest.solution = message.reason.substring(7)
-    }
+    novel_outcomes(message.reason)
     if (player.alert_level != message.alert) {
-      player.alert_level = novel.alertChange
+      player.alert_level = message.alert
       if (tasks.plan_on_snitching(novel.npc.labelname, 'player') == false) {
         tasks.caution_builder(novel.npc, 'snitch', 'player', 'harassing')
       }
       msg.post(player.currentroom + ':/level#level', 'update_alert', {})
+    } else {
+      if (message.love != novel.npc.love) {
+        print('novel.npc.love1', novel.npc.love, message.love)
+        novel.npc.love = message.love
+        print('novel.npc.love1', novel.npc.love, message.love)
+
+        //testjof start here
+        // you have player.heat now what??
+        // how to use that to generate offender? harrassment?
+        consolation_outcomes(message.love)
+      }
     }
-    //TESTJPF If you need to reload scripts, do it here, not level or interact.
+
+    npcs.all[novel.npc.labelname] = { ...novel.npc }
     novel.reason = 'none'
+    msg.post('proxies:/controller#novelcontroller', 'unload_novel')
     msg.post(player.currentroom + ':/level#level', 'exit_gui')
   }
 }
