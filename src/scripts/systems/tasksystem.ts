@@ -6,7 +6,7 @@ import {
   Npc,
   PlayerState,
   Effect,
-  Consolation,
+  Consequence,
 } from '../../types/state'
 import { arraymove, clamp, shuffle } from '../utils/utils'
 import { fx, add_effects_bonus } from '../systems/effectsystem'
@@ -34,17 +34,39 @@ const fxLookup = {
     'devil',
   ],
 }
-interface Consequence {
-  pass: boolean
-  type: string
-}
+
+const questioning_checks: Array<
+  (s: string, w: string) => { pass: boolean; type: string }
+> = [
+  pledge_check,
+  bribe_check,
+  suspect_punched_check,
+  jailtime_check,
+  admirer_check,
+  prejudice_check,
+  unlucky_check,
+]
+const confrontation_checks: Array<
+  (s: string, w: string) => { pass: boolean; type: string }
+> = [
+  vanity_check,
+  angel_check,
+  suspect_punched_check,
+  watcher_punched_check,
+  snitch_check,
+  prejudice_check,
+  unlucky_check,
+]
+const thief_consolations = [snitch, evil_merits, reckless]
+const pos_consolations = [charmed_merits, ap_boost, given_gift, love_boost]
+const neg_consolations = [reckless, love_drop]
+
 function add_angel(n: string) {
   print('CC:: angel')
   const effect: Effect = { ...fx.angel }
   npcs.all[n].effects.push(effect) // lawfulness increase?
   add_effects_bonus(npcs.all[n], effect)
 }
-
 function angel_check(suspect: string, watcher: string): Consequence {
   //     p.skills.wisdom > 6 &&
   //n.skills.wisdom > 5 &&
@@ -90,7 +112,6 @@ function add_vanity(n: string) {
   npcs.all[n].effects.push(effect) // lawfulness increase?
   add_effects_bonus(npcs.all[n], effect)
 }
-
 function vanity_check(suspect: string, watcher: string): Consequence {
   //     p.skills.charisma > 5 &&
   // n.skills.intelligence < 5 &&
@@ -133,7 +154,6 @@ function vanity_check(suspect: string, watcher: string): Consequence {
 
   return { pass: false, type: 'neutral' }
 }
-
 function add_admirer(s: string, w: string) {
   const effect: Effect = { ...fx.admirer }
   effect.fx.stat = npcs.all[s].clan
@@ -181,7 +201,13 @@ function admirer_check(suspect: string, watcher: string): Consequence {
 
   return { pass: false, type: 'neutral' }
 }
-
+function add_prejudice(s: string, w: string) {
+  print('QC:: prejudice')
+  const effect: Effect = { ...fx.prejudice }
+  effect.fx.stat = npcs.all[s].clan
+  npcs.all[w].effects.push(effect)
+  add_effects_bonus(npcs.all[w], effect)
+}
 function prejudice_check(suspect: string, watcher: string): Consequence {
   //     ws.wisdom < 4 &&
   //  sb.poor_wealthy < wb.poor_wealthy &&
@@ -222,15 +248,10 @@ function prejudice_check(suspect: string, watcher: string): Consequence {
 
   return { pass: false, type: 'neutral' }
 }
-
-function add_prejudice(s: string, w: string) {
-  print('QC:: prejudice')
-  const effect: Effect = { ...fx.prejudice }
-  effect.fx.stat = npcs.all[s].clan
-  npcs.all[w].effects.push(effect)
-  add_effects_bonus(npcs.all[w], effect)
+function add_pledge(s: string) {
+  print('QC:: pledge') //pledge not to do it again
+  npcs.all[s].cooldown = npcs.all[s].cooldown + 8
 }
-
 function pledge_check(suspect: string, watcher: string): Consequence {
   // wb.passive_aggressive <= sb.passive_aggressive &&
   // ws.wisdom >= ss.constitution
@@ -271,10 +292,23 @@ function pledge_check(suspect: string, watcher: string): Consequence {
 
   return { pass: false, type: 'neutral' }
 }
+function get_extorted(s: string, w: string) {
+  const s_inv = npcs.all[s].inventory
+  const w_inv = npcs.all[w].inventory
 
-function add_pledge(s: string) {
-  print('QC:: pledge') //pledge not to do it again
-  npcs.all[s].cooldown = npcs.all[s].cooldown + 8
+  if (s_inv.length > 0) {
+    for (let i = s_inv.length - 1; i >= 0; i--) {
+      if (items[s_inv[i]].value > 1) {
+        const loot = s_inv.splice(i, 1)
+
+        w_inv.push(...loot)
+        break
+      } else {
+        print('bribe failed so punch???')
+        // bribe failed so punch???
+      }
+    }
+  }
 }
 function bribe_check(suspect: string, watcher: string): Consequence {
   //     wb.lawless_lawful < -0.4 &&
@@ -316,24 +350,8 @@ function bribe_check(suspect: string, watcher: string): Consequence {
 
   return { pass: false, type: 'neutral' }
 }
-
-function get_extorted(s: string, w: string) {
-  const s_inv = npcs.all[s].inventory
-  const w_inv = npcs.all[w].inventory
-
-  if (s_inv.length > 0) {
-    for (let i = s_inv.length - 1; i >= 0; i--) {
-      if (items[s_inv[i]].value > 1) {
-        const loot = s_inv.splice(i, 1)
-
-        w_inv.push(...loot)
-        break
-      } else {
-        print('bribe failed so punch???')
-        // bribe failed so punch???
-      }
-    }
-  }
+function wPunchS(s: string) {
+  npcs.all[s].hp = npcs.all[s].hp - 1
 }
 function suspect_punched_check(suspect: string, watcher: string): Consequence {
   // ws.intelligence < 5 &&
@@ -375,8 +393,8 @@ function suspect_punched_check(suspect: string, watcher: string): Consequence {
 
   return { pass: false, type: 'neutral' }
 }
-function wPunchS(s: string) {
-  npcs.all[s].hp = npcs.all[s].hp - 1
+function sPunchW(w: string) {
+  npcs.all[w].hp = npcs.all[w].hp - 1
 }
 function watcher_punched_check(suspect: string, watcher: string): Consequence {
   //     p.binaries.passive_aggressive > 0.5 &&
@@ -420,45 +438,24 @@ function watcher_punched_check(suspect: string, watcher: string): Consequence {
 
   return { pass: false, type: 'neutral' }
 }
-function sPunchW(w: string) {
-  npcs.all[w].hp = npcs.all[w].hp - 1
-}
-function snitch_check(suspect: string, watcher: string): Consequence {
-  const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
-  //so
-  /**
-   * what advantages do we want to give? w love? not a bin or skill
-   */
+function go_to_jail(s: string) {
+  // remove all arrests for suspect(clear record)
+  print('found:', s, ' ARREST!!!!')
+  tasks.remove_heat(s)
+  const occupants: Occupants = rooms.all.security.occupants!
+  let station: keyof typeof occupants
+  for (station in occupants) {
+    const prisoner = occupants[station]
+    if (prisoner == '') {
+      rooms.all.security.occupants![station] = s
+      npcs.all[s].matrix = rooms.all.security.matrix
+      npcs.all[s].cooldown = 8
 
-  const modifier = Math.round(
-    w.binaries.anti_authority * 5 -
-      w.skills.constitution +
-      s.skills.charisma / 2
-  )
-  const advantage =
-    w.skills.perception + Math.abs(w.binaries.passive_aggressive * 5) >
-    s.skills.stealth + +Math.abs(s.binaries.passive_aggressive * 5)
-  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
-
-  print('TESTJPF RESULT:::', result)
-  if (result > 6 && result < 10) {
-    return { pass: true, type: 'snitch' }
+      print(s, 'jailed for:', npcs.all[s].cooldown)
+      break
+      //testjpf if jail full, kick outside of hub
+    }
   }
-
-  if (result > 10) {
-    print('SPECIAL snitch')
-    return { pass: true, type: 'special' }
-  }
-  if (result <= 1) {
-    print('NEVER snitch')
-    return { pass: true, type: 'critical' }
-  }
-  //won't like you,
-  // slander you to people close to them / who like them / they like / cohort with
-  // decreases others love for player
-
-  return { pass: false, type: 'neutral' }
 }
 function jailtime_check(suspect: string, watcher: string): Consequence {
   //     wb.anti_authority > 0.3 &&
@@ -498,25 +495,6 @@ function jailtime_check(suspect: string, watcher: string): Consequence {
   // decreases others love for player
 
   return { pass: false, type: 'neutral' }
-}
-function go_to_jail(s: string) {
-  // remove all arrests for suspect(clear record)
-  print('found:', s, ' ARREST!!!!')
-  tasks.remove_heat(s)
-  const occupants: Occupants = rooms.all.security.occupants!
-  let station: keyof typeof occupants
-  for (station in occupants) {
-    const prisoner = occupants[station]
-    if (prisoner == '') {
-      rooms.all.security.occupants![station] = s
-      npcs.all[s].matrix = rooms.all.security.matrix
-      npcs.all[s].cooldown = 8
-
-      print(s, 'jailed for:', npcs.all[s].cooldown)
-      break
-      //testjpf if jail full, kick outside of hub
-    }
-  }
 }
 function unlucky_check(suspect: string, watcher: string): Consequence {
   //     wb.anti_authority > 0.3 &&
@@ -562,81 +540,42 @@ function unlucky_check(suspect: string, watcher: string): Consequence {
 
   return { pass: false, type: 'neutral' }
 }
-const consequenceLookup: Array<
-  (s: string, w: string) => { pass: boolean; type: string }
-> = [
-  pledge_check,
-  bribe_check,
-  suspect_punched_check,
-  jailtime_check,
-  admirer_check,
-  prejudice_check,
-  unlucky_check,
-]
-function send_to_infirmary(v: string, doc: string) {
-  // remove all arrests for suspect(clear record)
-  print('infirmed:', v, ' :::!!!!')
-  tasks.remove_heat(v)
-  const occupants: Occupants = rooms.all.infirmary.occupants!
-  let station: keyof typeof occupants
-  for (station in occupants) {
-    const patient = occupants[station]
-    if (patient == '') {
-      rooms.all.infirmary.occupants![station] = v
-      npcs.all[v].matrix = rooms.all.infirmary.matrix
-      npcs.all[v].cooldown = 8
-      npcs.all[v].currentroom = 'infirmary'
-      npcs.all[v].currentstation = station
-      print(v, 'infirmed for:', npcs.all[v].cooldown)
-      tasks.caution_builder(npcs.all[doc], 'mending', v, 'office')
-      break
-    }
+function snitch_check(suspect: string, watcher: string): Consequence {
+  const w = npcs.all[watcher]
+  const s = npcs.all[suspect]
+  //so
+  /**
+   * what advantages do we want to give? w love? not a bin or skill
+   */
 
-    //create caution mending, reason: office
-    // keep doc in aid position until caution wears off
-    // if a doc isnt already in aid position.
-    //patients heal faster when doc is in position.
-  }
-  //TESTJPF
-  //ideally this would finish before stations are atempted to be filled.!!!
-}
-function player_snitch_check(b: boolean, w: string, reason: string): string {
-  let caution_state = 'questioning'
-  if (player.alert_level > 1) caution_state = 'arrest'
-  player.alert_level =
-    b == false ? player.alert_level + 1 : player.alert_level + 2
-  if (player.alert_level > 2 && tasks.plan_on_snitching(w, 'player') == false) {
-    tasks.caution_builder(npcs.all[w], 'snitch', 'player', reason)
-  }
-  return caution_state
-}
-function npc_snitch_check(w: string, s: string) {
-  let caution_state = 'questioning'
+  const modifier = Math.round(
+    w.binaries.anti_authority * 5 -
+      w.skills.constitution +
+      s.skills.charisma / 2
+  )
+  const advantage =
+    w.skills.perception + Math.abs(w.binaries.passive_aggressive * 5) >
+    s.skills.stealth + +Math.abs(s.binaries.passive_aggressive * 5)
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
-  if (tasks.already_hunting(w, s)) {
-    npcs.all[w].attitudes[npcs.all[s].clan] =
-      npcs.all[w].attitudes[npcs.all[s].clan] - 1
-
-    if (math.random() < 0.33) caution_state = 'arrest'
-  }
-  return caution_state
-}
-function snitch_to_security(c: Caution, watcher: string) {
-  print(c.npc, 'SNITCHED')
-  const bulletin = tasks.already_hunting(watcher, c.suspect)
-  let caution_state = 'questioning'
-
-  if (bulletin == null) {
-    tasks.caution_builder(npcs.all[watcher], caution_state, c.suspect, c.reason)
-  } else {
-    bulletin.time = bulletin.time + 6
+  print('TESTJPF RESULT:::', result)
+  if (result > 6 && result < 10) {
+    return { pass: true, type: 'snitch' }
   }
 
-  caution_state =
-    c.suspect == 'player'
-      ? player_snitch_check(bulletin == null, watcher, c.reason)
-      : npc_snitch_check(watcher, c.suspect)
-  c.time = 0
+  if (result > 10) {
+    print('SPECIAL snitch')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    print('NEVER snitch')
+    return { pass: true, type: 'critical' }
+  }
+  //won't like you,
+  // slander you to people close to them / who like them / they like / cohort with
+  // decreases others love for player
+
+  return { pass: false, type: 'neutral' }
 }
 function reckless_consequence(c: Caution, w: string) {
   print('RC::: ', c.npc, ' is gossiping with', w)
@@ -740,6 +679,49 @@ function reckless_consequence(c: Caution, w: string) {
     }
   }
 }
+/**
+ * above :: consequence related
+ * below :: caution related
+ */
+
+function player_snitch_check(b: boolean, w: string, reason: string): string {
+  let caution_state = 'questioning'
+  if (player.alert_level > 1) caution_state = 'arrest'
+  player.alert_level =
+    b == false ? player.alert_level + 1 : player.alert_level + 2
+  if (player.alert_level > 2 && tasks.plan_on_snitching(w, 'player') == false) {
+    tasks.caution_builder(npcs.all[w], 'snitch', 'player', reason)
+  }
+  return caution_state
+}
+function npc_snitch_check(w: string, s: string) {
+  let caution_state = 'questioning'
+
+  if (tasks.already_hunting(w, s)) {
+    npcs.all[w].attitudes[npcs.all[s].clan] =
+      npcs.all[w].attitudes[npcs.all[s].clan] - 1
+
+    if (math.random() < 0.33) caution_state = 'arrest'
+  }
+  return caution_state
+}
+function snitch_to_security(c: Caution, watcher: string) {
+  print(c.npc, 'SNITCHED')
+  const bulletin = tasks.already_hunting(watcher, c.suspect)
+  let caution_state = 'questioning'
+
+  if (bulletin == null) {
+    tasks.caution_builder(npcs.all[watcher], caution_state, c.suspect, c.reason)
+  } else {
+    bulletin.time = bulletin.time + 6
+  }
+
+  caution_state =
+    c.suspect == 'player'
+      ? player_snitch_check(bulletin == null, watcher, c.reason)
+      : npc_snitch_check(watcher, c.suspect)
+  c.time = 0
+}
 function npc_confrontation(s: string, c: Caution) {
   if (c.reason == 'questioning') {
     question_consequence(c)
@@ -764,7 +746,33 @@ function merits_demerits(c: Caution, w: string) {
   npcs.all[w].effects.push(effect)
   add_effects_bonus(npcs.all[w], effect)
 }
+function send_to_infirmary(v: string, doc: string) {
+  // remove all arrests for suspect(clear record)
+  print('infirmed:', v, ' :::!!!!')
+  tasks.remove_heat(v)
+  const occupants: Occupants = rooms.all.infirmary.occupants!
+  let station: keyof typeof occupants
+  for (station in occupants) {
+    const patient = occupants[station]
+    if (patient == '') {
+      rooms.all.infirmary.occupants![station] = v
+      npcs.all[v].matrix = rooms.all.infirmary.matrix
+      npcs.all[v].cooldown = 8
+      npcs.all[v].currentroom = 'infirmary'
+      npcs.all[v].currentstation = station
+      print(v, 'infirmed for:', npcs.all[v].cooldown)
+      tasks.caution_builder(npcs.all[doc], 'mending', v, 'office')
+      break
+    }
 
+    //create caution mending, reason: office
+    // keep doc in aid position until caution wears off
+    // if a doc isnt already in aid position.
+    //patients heal faster when doc is in position.
+  }
+  //TESTJPF
+  //ideally this would finish before stations are atempted to be filled.!!!
+}
 function adjust_medic_queue(s: string) {
   if (tasks.medicQueue.includes(s) == true) {
     if (tasks.medicQueue.indexOf(s) > 1)
@@ -874,46 +882,46 @@ function address_busy_acts(cs: Caution[]) {
 //TESTJPF move to outcomes utils?
 //task system makes the most sence, but it's bloated.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function snitch(n: string): Consolation {
+function snitch(n: string): Consequence {
   if (npcs.all[n].binaries.anti_authority > -0.8) {
     //tell authority they have good attitude towards
-    return { fail: true, caution: 'snitch' }
+    return { pass: true, type: 'snitch' }
   }
-  return { fail: false, caution: 'neutral' }
+  return { pass: false, type: 'neutral' }
 }
-function reckless(n: string): Consolation {
+function reckless(n: string): Consequence {
   //testjpf was -.5 , 4
   if (
     npcs.all[n].binaries.un_educated < -0.4 ||
     npcs.all[n].skills.intelligence < 4
   ) {
     //underdog task
-    return { fail: true, caution: 'reckless' }
+    return { pass: true, type: 'reckless' }
   }
   // will tell whoever what they saw
   // they might like it or hate it
 
-  return { fail: false, caution: 'neutral' }
+  return { pass: false, type: 'neutral' }
 }
-function evil_merits(n: string): Consolation {
+function evil_merits(n: string): Consequence {
   if (
     npcs.all[n].binaries.evil_good < -0.1 &&
     npcs.all[n].binaries.lawless_lawful < -0.1
   ) {
-    return { fail: true, caution: 'merits' }
+    return { pass: true, type: 'merits' }
   } else if (
     npcs.all[n].binaries.passive_aggressive < -0.3 ||
     npcs.all[n].skills.constitution < 4
   )
-    return { fail: true, caution: 'demerits' }
+    return { pass: true, type: 'demerits' }
 
   //won't like you,
   // slander you to people close to them / who like them / they like / cohort with
   // decreases others love for player
 
-  return { fail: false, caution: 'neutral' }
+  return { pass: false, type: 'neutral' }
 }
-function love_drop(n: string): Consolation {
+function love_drop(n: string): Consequence {
   const npc = npcs.all[n]
 
   const modifier = Math.round(
@@ -932,12 +940,12 @@ function love_drop(n: string): Consolation {
   //const result =
   // roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
-  if (result > 1 && result < 5) return { fail: true, caution: 'lovedrop' }
+  if (result > 1 && result < 5) return { pass: true, type: 'lovedrop' }
 
-  if (result <= 1) return { fail: true, caution: 'critical' }
-  return { fail: false, caution: 'neutral' }
+  if (result <= 1) return { pass: true, type: 'critical' }
+  return { pass: false, type: 'neutral' }
 }
-function love_boost(n: string): Consolation {
+function love_boost(n: string): Consequence {
   const npc = npcs.all[n]
 
   const modifier = Math.round(
@@ -956,12 +964,12 @@ function love_boost(n: string): Consolation {
   // roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
   print('TESTJPF RESULT:::', result)
-  if (result > 6 && result < 10) return { fail: true, caution: 'loveboost' }
+  if (result > 6 && result < 10) return { pass: true, type: 'loveboost' }
 
-  if (result > 10) return { fail: true, caution: 'special' }
-  return { fail: false, caution: 'neutral' }
+  if (result > 10) return { pass: true, type: 'special' }
+  return { pass: false, type: 'neutral' }
 }
-function ap_boost(n: string): Consolation {
+function ap_boost(n: string): Consequence {
   const npc = npcs.all[n]
 
   const modifier = Math.round(
@@ -976,12 +984,12 @@ function ap_boost(n: string): Consolation {
     roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
   print('TESTJPF RESULT:::', result)
-  if (result > 6 && result < 10) return { fail: true, caution: 'apboost' }
+  if (result > 6 && result < 10) return { pass: true, type: 'apboost' }
 
-  if (result > 10) return { fail: true, caution: 'special' }
-  return { fail: false, caution: 'neutral' }
+  if (result > 10) return { pass: true, type: 'special' }
+  return { pass: false, type: 'neutral' }
 }
-function charmed_merits(n: string): Consolation {
+function charmed_merits(n: string): Consequence {
   //testjpf GOOD time for a diceroll
   const npc = npcs.all[n]
 
@@ -1001,19 +1009,19 @@ function charmed_merits(n: string): Consolation {
     roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
   print('TESTJPF RESULT:::', result)
-  if (result > 6 && result < 10) return { fail: true, caution: 'merits' }
+  if (result > 6 && result < 10) return { pass: true, type: 'merits' }
 
-  if (result > 10) return { fail: true, caution: 'special' }
+  if (result > 10) return { pass: true, type: 'special' }
   //won't like you,
   // slander you to people close to them / who like them / they like / cohort with
   // decreases others love for player
 
-  return { fail: false, caution: 'neutral' }
+  return { pass: false, type: 'neutral' }
 }
 function generate_gift() {
   player.state.inventory.push('berry02')
 }
-function given_gift(n: string): Consolation {
+function given_gift(n: string): Consequence {
   //testjpf check if inventory full?!
   const gift = remove_advantageous(
     player.state.inventory,
@@ -1022,41 +1030,37 @@ function given_gift(n: string): Consolation {
   )
 
   if (gift == null) generate_gift()
-  return { fail: true, caution: 'neutral' }
+  return { pass: true, type: 'gift' }
 }
+//testjpf create gift_check()
 
-const consolations = [snitch, evil_merits, reckless]
-//testjpf problem is merits is a monkey paw version
-// has to deal with postive reaction to negative behavior.
-// so maybe conolation good, evil, chaotic, lawful neutral!!!!
-const pos_consolations = [charmed_merits, ap_boost, given_gift, love_boost]
-const neg_consolations = [reckless, love_drop]
 //TESTJPF ABOVE: all manipulate or return cautions
 //below do consolations need to be part of state at all??
 //probably not MOVE TO new "consequences" . "util"?
 export function unimpressed_checks(n: string) {
-  const tempcons: Array<(n: string) => Consolation> = shuffle(neg_consolations)
+  const tempcons: Array<(n: string) => Consequence> = shuffle(neg_consolations)
   tempcons.forEach((c) => {
     const consolation = c(n)
-    if (consolation.fail == true) return consolation.caution
+    if (consolation.pass == true) return consolation.type
   })
   print('did nothing after witnessing a theft attempt')
   return 'neutral'
 }
 export function impressed_checks(n: string) {
-  const tempcons: Array<(n: string) => Consolation> = shuffle(pos_consolations)
+  const tempcons: Array<(n: string) => Consequence> = shuffle(pos_consolations)
   tempcons.forEach((c) => {
     const consolation = c(n)
-    if (consolation.fail == true) return consolation.caution
+    if (consolation.pass == true) return consolation.type
   })
   print('did nothing after witnessing a theft attempt')
   return 'neutral'
 }
 export function thief_consolation_checks(n: string) {
-  const tempcons: Array<(n: string) => Consolation> = shuffle(consolations)
+  const tempcons: Array<(n: string) => Consequence> =
+    shuffle(thief_consolations)
   tempcons.forEach((c) => {
     const consolation = c(n)
-    if (consolation.fail == true) return consolation.caution
+    if (consolation.pass == true) return consolation.type
   })
   print('did nothing after witnessing a theft attempt')
   return 'neutral'
@@ -1098,22 +1102,11 @@ export function address_cautions() {
   //testjpf could see adding more data to this return
   return confront
 }
-const confrontationLookup: Array<
-  (s: string, w: string) => { pass: boolean; type: string }
-> = [
-  vanity_check,
-  angel_check,
-  suspect_punched_check,
-  watcher_punched_check,
-  snitch_check,
-  prejudice_check,
-  unlucky_check,
-]
+
 export function confrontation_consequence(s: Npc, w: Npc) {
   let consolation = { pass: false, type: 'neutral' }
-  const tempcons: Array<
-    (s: string, w: string) => { pass: boolean; type: string }
-  > = shuffle(confrontationLookup)
+  const tempcons: Array<(s: string, w: string) => Consequence> =
+    shuffle(confrontation_checks)
 
   for (let i = tempcons.length; i-- !== 0; ) {
     consolation = tempcons[i](s.labelname, w.labelname)
@@ -1140,7 +1133,7 @@ export function question_consequence(c: Caution) {
   let consolation = { pass: false, type: 'neutral' }
   const tempcons: Array<
     (s: string, w: string) => { pass: boolean; type: string }
-  > = shuffle(consequenceLookup)
+  > = shuffle(questioning_checks)
 
   for (let i = tempcons.length; i-- !== 0; ) {
     consolation = tempcons[i](c.suspect, c.npc)

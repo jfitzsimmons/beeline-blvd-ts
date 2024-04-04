@@ -1,5 +1,5 @@
 import { Actor, Npc } from '../../types/state'
-import { dice_roll } from '../utils/utils'
+import { clamp } from '../utils/utils'
 const { tasks, npcs, rooms, player } = globalThis.game.world
 import {
   remove_advantageous,
@@ -161,33 +161,23 @@ export function seen_check(s: string, w: string) {
 export function confrontation_check(pname: string, nname: string) {
   // testjpf for debugging you could check if player return false
   //if (p.labelname == 'adam') return false
-  const p = pname == 'player' ? player.state : npcs.all[pname]
-  const n = npcs.all[nname]
+  const s = pname == 'player' ? player.state : npcs.all[pname]
+  const w = npcs.all[nname]
 
-  const minmax = dice_roll()
-  if (
-    n.binaries.passive_aggressive > -0.9 ||
-    n.binaries.lawless_lawful > -0.8
-  ) {
-    // p slower || NPC willing p is caught
-    if (
-      p.skills.speed < n.skills.speed + 2 ||
-      p.skills.speed < n.skills.constitution + 3
-    ) {
-      // check for confrontation with DISADVANTAGE
-      if (minmax[0] * 9 < (n.skills.speed + n.skills.constitution) / 1.8) {
-        print('Caught: too slow')
-        return true
-      }
-      // check for confrontation with ADVANTAGE
-      else if (minmax[1] * 10 < (n.skills.speed + n.skills.constitution) / 2) {
-        print('Caught: fast, but unlucky')
-        return true
-      }
-    }
-  }
-  print(n.labelname, 'did not confront: ', p.labelname)
-  return false
+  const modifier = Math.round(
+    w.binaries.lawless_lawful * 5 -
+      s.skills.speed +
+      w.skills.speed -
+      w.skills.constitution
+  )
+  const advantage =
+    w.skills.speed + w.skills.constitution >
+    s.skills.speed + w.binaries.lawless_lawful * 5
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  const bossResult = roll_special_dice(5, true, 4, 2)
+
+  print('aiCHECKS::: confrontation_check:: boss > result', bossResult, result)
+  return bossResult > result
 }
 export function thief_consequences(
   s: string,
@@ -213,10 +203,10 @@ export function thief_consequences(
   }
   return c
 }
-//testjpf only being used between npcs (just tutorial luggage)
+// testjpf only being used between npcs (just tutorial luggage)
 export function steal_check(s: Npc, w: Npc, loot: string[]) {
-  //accept strings not Npcs
-  //const attempt = roll_Specia_dice
+  // accept strings not Npcs
+  // const attempt = roll_Specia_dice
 
   const modifier = Math.round(
     s.skills.speed +

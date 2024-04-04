@@ -196,3 +196,8 @@ export interface Consolation {
   fail: boolean
   caution: string
 }
+
+export interface Consequence {
+  pass: boolean
+  type: string
+}
