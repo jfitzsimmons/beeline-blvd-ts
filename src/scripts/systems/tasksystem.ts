@@ -8,7 +8,7 @@ import {
   Effect,
   Consolation,
 } from '../../types/state'
-import { arraymove, shuffle } from '../utils/utils'
+import { arraymove, clamp, shuffle } from '../utils/utils'
 import { fx, add_effects_bonus } from '../systems/effectsystem'
 import { roll_special_dice } from '../utils/dice'
 
@@ -34,25 +34,290 @@ const fxLookup = {
     'devil',
   ],
 }
+interface Consequence {
+  pass: boolean
+  type: string
+}
+function add_angel(n: string) {
+  print('CC:: angel')
+  const effect: Effect = { ...fx.angel }
+  npcs.all[n].effects.push(effect) // lawfulness increase?
+  add_effects_bonus(npcs.all[n], effect)
+}
 
-function admirer(s: string, w: string) {
+function angel_check(suspect: string, watcher: string): Consequence {
+  //     p.skills.wisdom > 6 &&
+  //n.skills.wisdom > 5 &&
+  //p.binaries.evil_good + n.binaries.evil_good > 0.3
+
+  //testjpf GOOD time for a diceroll
+  const w = npcs.all[watcher]
+  const s = npcs.all[suspect]
+  //so
+  /**
+     * what advantages do we want to give? w love? not a bin or skill
+  
+     */
+
+  const modifier = Math.round(s.skills.wisdom - w.skills.wisdom)
+  const advantage =
+    Math.abs(s.binaries.evil_good) > Math.abs(w.binaries.evil_good)
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  print('TESTJPF RESULT:::', result)
+  if (result > 6 && result < 10) {
+    add_angel(watcher)
+    return { pass: true, type: 'angel' }
+  }
+
+  if (result > 10) {
+    print('SPECIAL angel')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    print('NEVER angel')
+    return { pass: true, type: 'critical' }
+  }
+  //won't like you,
+  // slander you to people close to them / who like them / they like / cohort with
+  // decreases others love for player
+
+  return { pass: false, type: 'neutral' }
+}
+function add_vanity(n: string) {
+  print('CC:: vanity')
+  const effect: Effect = { ...fx.vanity }
+  npcs.all[n].effects.push(effect) // lawfulness increase?
+  add_effects_bonus(npcs.all[n], effect)
+}
+
+function vanity_check(suspect: string, watcher: string): Consequence {
+  //     p.skills.charisma > 5 &&
+  // n.skills.intelligence < 5 &&
+  // p.binaries.evil_good < -0.2
+
+  //testjpf GOOD time for a diceroll
+  const w = npcs.all[watcher]
+  const s = npcs.all[suspect]
+  //so
+  /**
+   * what advantages do we want to give? w love? not a bin or skill
+
+   */
+
+  const modifier = Math.round(
+    s.skills.charisma - w.skills.intelligence + w.binaries.evil_good * -5
+  )
+  const advantage =
+    s.skills.strength + s.binaries.un_educated * 5 >
+    w.skills.strength + w.binaries.un_educated * 5
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 2)
+
+  print('TESTJPF RESULT:::', result)
+  if (result > 6 && result < 10) {
+    add_vanity(watcher)
+    return { pass: true, type: 'vanity' }
+  }
+
+  if (result > 10) {
+    print('SPECIAL VANITY')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    print('NEVER VANITY')
+    return { pass: true, type: 'critical' }
+  }
+  //won't like you,
+  // slander you to people close to them / who like them / they like / cohort with
+  // decreases others love for player
+
+  return { pass: false, type: 'neutral' }
+}
+
+function add_admirer(s: string, w: string) {
   const effect: Effect = { ...fx.admirer }
   effect.fx.stat = npcs.all[s].clan
   npcs.all[w].effects.push(effect)
   add_effects_bonus(npcs.all[w], effect)
 }
-function prejudice(s: string, w: string) {
+function admirer_check(suspect: string, watcher: string): Consequence {
+  // ws.charisma <= ss.charisma &&
+  // wb.anti_authority < -0.3 &&
+  // ws.perception < 5
+
+  //testjpf GOOD time for a diceroll
+  const w = npcs.all[watcher]
+  const s = npcs.all[suspect]
+  //so
+  /**
+   * what advantages do we want to give? w love? not a bin or skill
+
+   */
+
+  const modifier = Math.round(
+    s.skills.charisma - w.skills.charisma + w.binaries.anti_authority * -5
+  )
+  const advantage =
+    s.skills.intelligence > w.skills.perception && w.skills.strength < 5
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  print('TESTJPF RESULT:::', result)
+  if (result > 6 && result < 10) {
+    add_admirer(suspect, watcher)
+    return { pass: true, type: 'admirer' }
+  }
+
+  if (result > 10) {
+    print('SPECIAL ADMIRERER')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    print('NEVER ADMIRERER')
+    return { pass: true, type: 'critical' }
+  }
+  //won't like you,
+  // slander you to people close to them / who like them / they like / cohort with
+  // decreases others love for player
+
+  return { pass: false, type: 'neutral' }
+}
+
+function prejudice_check(suspect: string, watcher: string): Consequence {
+  //     ws.wisdom < 4 &&
+  //  sb.poor_wealthy < wb.poor_wealthy &&
+  //  ws.charisma < ws.stealth
+
+  //testjpf GOOD time for a diceroll
+  const w = npcs.all[watcher]
+  const s = npcs.all[suspect]
+  //so
+  /**
+   * what advantages do we want to give? w love? not a bin or skill
+
+   */
+
+  const modifier = Math.round(
+    w.binaries.poor_wealthy * -5 + s.binaries.poor_wealthy * -5
+  )
+  const advantage = w.skills.wisdom + w.skills.charisma < w.skills.stealth / 2
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  print('TESTJPF RESULT:::', result)
+  if (result > 6 && result < 10) {
+    add_prejudice(suspect, watcher)
+    return { pass: true, type: 'prejudice' }
+  }
+
+  if (result > 10) {
+    print('SPECIAL prejudice')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    print('NEVER prejudice')
+    return { pass: true, type: 'critical' }
+  }
+  //won't like you,
+  // slander you to people close to them / who like them / they like / cohort with
+  // decreases others love for player
+
+  return { pass: false, type: 'neutral' }
+}
+
+function add_prejudice(s: string, w: string) {
   print('QC:: prejudice')
   const effect: Effect = { ...fx.prejudice }
   effect.fx.stat = npcs.all[s].clan
   npcs.all[w].effects.push(effect)
   add_effects_bonus(npcs.all[w], effect)
 }
-function pledge(s: string) {
+
+function pledge_check(suspect: string, watcher: string): Consequence {
+  // wb.passive_aggressive <= sb.passive_aggressive &&
+  // ws.wisdom >= ss.constitution
+
+  //testjpf GOOD time for a diceroll
+  const w = npcs.all[watcher]
+  const s = npcs.all[suspect]
+  //so
+  /**
+   * what advantages do we want to give? w love? not a bin or skill
+   */
+
+  const modifier = Math.round(
+    w.binaries.passive_aggressive * -5 + s.binaries.passive_aggressive * 5
+  )
+  const advantage = w.skills.wisdom > s.skills.constitution + 1
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  print('TESTJPF RESULT:::', result)
+  if (result > 6 && result < 10) {
+    add_pledge(suspect)
+    return { pass: true, type: 'pledge' }
+  }
+
+  if (result > 10) {
+    print('SPECIAL pledge')
+    add_pledge(suspect)
+    add_pledge(suspect)
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    print('NEVER pledge')
+    return { pass: true, type: 'critical' }
+  }
+  //won't like you,
+  // slander you to people close to them / who like them / they like / cohort with
+  // decreases others love for player
+
+  return { pass: false, type: 'neutral' }
+}
+
+function add_pledge(s: string) {
   print('QC:: pledge') //pledge not to do it again
   npcs.all[s].cooldown = npcs.all[s].cooldown + 8
 }
-function bribe(s: string, w: string) {
+function bribe_check(suspect: string, watcher: string): Consequence {
+  //     wb.lawless_lawful < -0.4 &&
+  // ws.strength >= ss.strength &&
+  //  sb.passive_aggressive < 0.0
+
+  //testjpf GOOD time for a diceroll
+  const w = npcs.all[watcher]
+  const s = npcs.all[suspect]
+  //so
+  /**
+   * what advantages do we want to give? w love? not a bin or skill
+   */
+
+  const modifier = Math.round(
+    w.binaries.lawless_lawful * -5 + w.skills.strength - s.skills.strength
+  )
+  const advantage =
+    s.binaries.passive_aggressive < w.binaries.passive_aggressive - 0.3
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  print('TESTJPF RESULT:::', result)
+  if (result > 6 && result < 10) {
+    get_extorted(suspect, watcher)
+    return { pass: true, type: 'bribe' }
+  }
+
+  if (result > 10) {
+    print('SPECIAL bribe')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    print('NEVER bribe')
+    return { pass: true, type: 'critical' }
+  }
+  //won't like you,
+  // slander you to people close to them / who like them / they like / cohort with
+  // decreases others love for player
+
+  return { pass: false, type: 'neutral' }
+}
+
+function get_extorted(s: string, w: string) {
   const s_inv = npcs.all[s].inventory
   const w_inv = npcs.all[w].inventory
 
@@ -70,8 +335,169 @@ function bribe(s: string, w: string) {
     }
   }
 }
+function suspect_punched_check(suspect: string, watcher: string): Consequence {
+  // ws.intelligence < 5 &&
+  // wb.evil_good < -0.3 &&
+  //  ws.constitution >= ss.speed
+
+  //testjpf GOOD time for a diceroll
+  const w = npcs.all[watcher]
+  const s = npcs.all[suspect]
+  //so
+  /**
+   * what advantages do we want to give? w love? not a bin or skill
+   */
+
+  const modifier = Math.round(
+    w.skills.constitution - s.skills.speed + w.binaries.evil_good * -0.5
+  )
+  const advantage =
+    s.binaries.passive_aggressive < w.binaries.passive_aggressive - 0.3
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  print('TESTJPF RESULT:::', result)
+  if (result > 6 && result < 10) {
+    wPunchS(suspect)
+    return { pass: true, type: 'wPunchS' }
+  }
+
+  if (result > 10) {
+    print('SPECIAL wPunchS')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    print('NEVER wPunchS')
+    return { pass: true, type: 'critical' }
+  }
+  //won't like you,
+  // slander you to people close to them / who like them / they like / cohort with
+  // decreases others love for player
+
+  return { pass: false, type: 'neutral' }
+}
 function wPunchS(s: string) {
   npcs.all[s].hp = npcs.all[s].hp - 1
+}
+function watcher_punched_check(suspect: string, watcher: string): Consequence {
+  //     p.binaries.passive_aggressive > 0.5 &&
+  //p.skills.wisdom < 4 &&
+  // p.skills.strength >= n.skills.speed
+
+  //testjpf GOOD time for a diceroll
+  const w = npcs.all[watcher]
+  const s = npcs.all[suspect]
+  //so
+  /**
+   * what advantages do we want to give? w love? not a bin or skill
+   */
+
+  const modifier = Math.round(
+    s.binaries.lawless_lawful * -5 +
+      s.skills.strength -
+      w.skills.strength -
+      w.skills.wisdom
+  )
+  const advantage = s.binaries.passive_aggressive * 7 > w.skills.speed
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  print('TESTJPF RESULT:::', result)
+  if (result > 6 && result < 10) {
+    sPunchW(watcher)
+    return { pass: true, type: 'sPunchW' }
+  }
+
+  if (result > 10) {
+    print('SPECIAL sPunchW')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    print('NEVER sPunchW')
+    return { pass: true, type: 'critical' }
+  }
+  //won't like you,
+  // slander you to people close to them / who like them / they like / cohort with
+  // decreases others love for player
+
+  return { pass: false, type: 'neutral' }
+}
+function sPunchW(w: string) {
+  npcs.all[w].hp = npcs.all[w].hp - 1
+}
+function snitch_check(suspect: string, watcher: string): Consequence {
+  const w = npcs.all[watcher]
+  const s = npcs.all[suspect]
+  //so
+  /**
+   * what advantages do we want to give? w love? not a bin or skill
+   */
+
+  const modifier = Math.round(
+    w.binaries.anti_authority * 5 -
+      w.skills.constitution +
+      s.skills.charisma / 2
+  )
+  const advantage =
+    w.skills.perception + Math.abs(w.binaries.passive_aggressive * 5) >
+    s.skills.stealth + +Math.abs(s.binaries.passive_aggressive * 5)
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  print('TESTJPF RESULT:::', result)
+  if (result > 6 && result < 10) {
+    return { pass: true, type: 'snitch' }
+  }
+
+  if (result > 10) {
+    print('SPECIAL snitch')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    print('NEVER snitch')
+    return { pass: true, type: 'critical' }
+  }
+  //won't like you,
+  // slander you to people close to them / who like them / they like / cohort with
+  // decreases others love for player
+
+  return { pass: false, type: 'neutral' }
+}
+function jailtime_check(suspect: string, watcher: string): Consequence {
+  //     wb.anti_authority > 0.3 &&
+  //  ws.perception >= ss.perception &&
+  // sb.passive_aggressive <= 0.0
+
+  //testjpf GOOD time for a diceroll
+  const w = npcs.all[watcher]
+  const s = npcs.all[suspect]
+  //so
+  /**
+   * what advantages do we want to give? w love? not a bin or skill
+   */
+
+  const modifier = Math.round(
+    w.skills.perception - s.skills.perception + w.binaries.anti_authority * 0.5
+  )
+  const advantage = s.binaries.passive_aggressive < -0.1
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  print('TESTJPF RESULT:::', result)
+  if (result > 6 && result < 10) {
+    go_to_jail(suspect)
+    return { pass: true, type: 'jailed' }
+  }
+
+  if (result > 10) {
+    print('SPECIAL jailed')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    print('NEVER jailed')
+    return { pass: true, type: 'critical' }
+  }
+  //won't like you,
+  // slander you to people close to them / who like them / they like / cohort with
+  // decreases others love for player
+
+  return { pass: false, type: 'neutral' }
 }
 function go_to_jail(s: string) {
   // remove all arrests for suspect(clear record)
@@ -92,10 +518,65 @@ function go_to_jail(s: string) {
     }
   }
 }
+function unlucky_check(suspect: string, watcher: string): Consequence {
+  //     wb.anti_authority > 0.3 &&
+  //  ws.perception >= ss.perception &&
+  // sb.passive_aggressive <= 0.0
+
+  //testjpf GOOD time for a diceroll
+  //const w = npcs.all[watcher]
+  //const s = npcs.all[suspect]
+  //so
+  /**
+   * what advantages do we want to give? w love? not a bin or skill
+   */
+
+  const modifier = math.random(-1, 1)
+  const advantage = math.random() > 0.5
+  const result = roll_special_dice(5, advantage, 3, 2) + modifier
+
+  print('TESTJPF RESULT:::', result)
+  if (result > 6 && result < 10) {
+    shuffle([go_to_jail, get_extorted, wPunchS, add_pledge, add_prejudice])[0](
+      suspect,
+      watcher
+    )
+    return { pass: true, type: 'unlucky' }
+  }
+
+  if (result > 10) {
+    print('SPECIAL unlucky')
+    shuffle([go_to_jail, get_extorted, wPunchS, add_pledge, add_prejudice])[0](
+      suspect,
+      watcher
+    )
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    print('NEVER unlucky')
+    return { pass: true, type: 'critical' }
+  }
+  //won't like you,
+  // slander you to people close to them / who like them / they like / cohort with
+  // decreases others love for player
+
+  return { pass: false, type: 'neutral' }
+}
+const consequenceLookup: Array<
+  (s: string, w: string) => { pass: boolean; type: string }
+> = [
+  pledge_check,
+  bribe_check,
+  suspect_punched_check,
+  jailtime_check,
+  admirer_check,
+  prejudice_check,
+  unlucky_check,
+]
 function send_to_infirmary(v: string, doc: string) {
   // remove all arrests for suspect(clear record)
   print('infirmed:', v, ' :::!!!!')
-  // tasks.remove_heat(v)
+  tasks.remove_heat(v)
   const occupants: Occupants = rooms.all.infirmary.occupants!
   let station: keyof typeof occupants
   for (station in occupants) {
@@ -129,14 +610,15 @@ function player_snitch_check(b: boolean, w: string, reason: string): string {
   }
   return caution_state
 }
-function npc_snitch_check(b: boolean, w: string, s: string) {
+function npc_snitch_check(w: string, s: string) {
   let caution_state = 'questioning'
 
-  if (b == true) {
+  if (tasks.already_hunting(w, s)) {
     npcs.all[w].attitudes[npcs.all[s].clan] =
       npcs.all[w].attitudes[npcs.all[s].clan] - 1
+
+    if (math.random() < 0.33) caution_state = 'arrest'
   }
-  if (math.random() < 0.33) caution_state = 'arrest'
   return caution_state
 }
 function snitch_to_security(c: Caution, watcher: string) {
@@ -153,7 +635,7 @@ function snitch_to_security(c: Caution, watcher: string) {
   caution_state =
     c.suspect == 'player'
       ? player_snitch_check(bulletin == null, watcher, c.reason)
-      : npc_snitch_check(bulletin == null, watcher, c.suspect)
+      : npc_snitch_check(watcher, c.suspect)
   c.time = 0
 }
 function reckless_consequence(c: Caution, w: string) {
@@ -393,7 +875,7 @@ function address_busy_acts(cs: Caution[]) {
 //task system makes the most sence, but it's bloated.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function snitch(n: string): Consolation {
-  if (npcs.all[n].binaries.anti_authority > -0.7) {
+  if (npcs.all[n].binaries.anti_authority > -0.8) {
     //tell authority they have good attitude towards
     return { fail: true, caution: 'snitch' }
   }
@@ -415,8 +897,8 @@ function reckless(n: string): Consolation {
 }
 function evil_merits(n: string): Consolation {
   if (
-    npcs.all[n].binaries.evil_good < -0.2 &&
-    npcs.all[n].binaries.lawless_lawful < -0.2
+    npcs.all[n].binaries.evil_good < -0.1 &&
+    npcs.all[n].binaries.lawless_lawful < -0.1
   ) {
     return { fail: true, caution: 'merits' }
   } else if (
@@ -468,14 +950,15 @@ function love_boost(n: string): Consolation {
     npc.skills.intelligence + npc.skills.perception + player.state.skills.speed
   const result = math.min(
     roll_special_dice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2),
-    roll_special_dice(5, advantage, 3, 2) + (modifier > -3 ? modifier : -3)
+    roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   )
   //const result =
   // roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
-  if (result > 5 && result < 9) return { fail: true, caution: 'loveboost' }
+  print('TESTJPF RESULT:::', result)
+  if (result > 6 && result < 10) return { fail: true, caution: 'loveboost' }
 
-  if (result >= 10) return { fail: true, caution: 'special' }
+  if (result > 10) return { fail: true, caution: 'special' }
   return { fail: false, caution: 'neutral' }
 }
 function ap_boost(n: string): Consolation {
@@ -492,9 +975,10 @@ function ap_boost(n: string): Consolation {
   const result =
     roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
-  if (result > 5 && result < 9) return { fail: true, caution: 'apboost' }
+  print('TESTJPF RESULT:::', result)
+  if (result > 6 && result < 10) return { fail: true, caution: 'apboost' }
 
-  if (result >= 10) return { fail: true, caution: 'special' }
+  if (result > 10) return { fail: true, caution: 'special' }
   return { fail: false, caution: 'neutral' }
 }
 function charmed_merits(n: string): Consolation {
@@ -516,9 +1000,10 @@ function charmed_merits(n: string): Consolation {
   const result =
     roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
-  if (result > 5 && result < 9) return { fail: true, caution: 'merits' }
+  print('TESTJPF RESULT:::', result)
+  if (result > 6 && result < 10) return { fail: true, caution: 'merits' }
 
-  if (result >= 10) return { fail: true, caution: 'special' }
+  if (result > 10) return { fail: true, caution: 'special' }
   //won't like you,
   // slander you to people close to them / who like them / they like / cohort with
   // decreases others love for player
@@ -540,83 +1025,6 @@ function given_gift(n: string): Consolation {
   return { fail: true, caution: 'neutral' }
 }
 
-const consequenceConditions = (
-  watcher: string,
-  suspect: string,
-  return_first = false
-): string[] => {
-  const { binaries: wb, skills: ws } = npcs.all[watcher]
-  const { binaries: sb, skills: ss } = npcs.all[suspect]
-  const initConditions: string[] = []
-  if (
-    wb.passive_aggressive <= sb.passive_aggressive &&
-    ws.wisdom >= ss.constitution
-  ) {
-    initConditions.push('pledge')
-    if (return_first === true) return ['pledge']
-  }
-  if (
-    wb.lawless_lawful < -0.4 &&
-    ws.strength >= ss.strength &&
-    sb.passive_aggressive < 0.0
-  ) {
-    initConditions.push('bribe')
-    if (return_first === true) return ['bribe']
-  }
-  if (
-    ws.intelligence < 5 &&
-    wb.evil_good < -0.3 &&
-    ws.constitution >= ss.speed
-  ) {
-    initConditions.push('wPunchS')
-    if (return_first === true) return ['wPunchS']
-  }
-  if (
-    wb.anti_authority > 0.3 &&
-    ws.perception >= ss.perception &&
-    sb.passive_aggressive <= 0.0
-  ) {
-    initConditions.push('jailTime')
-    if (return_first === true) return ['jailTime']
-  }
-  if (
-    ws.charisma <= ss.charisma &&
-    wb.anti_authority < -0.3 &&
-    ws.perception < 5
-  ) {
-    initConditions.push('admirer')
-    if (return_first === true) return ['admirer']
-  }
-  if (
-    ws.wisdom < 4 &&
-    sb.poor_wealthy < wb.poor_wealthy &&
-    ws.charisma < ws.stealth
-  ) {
-    initConditions.push('prejudice')
-    if (return_first === true) return ['prejudice']
-  }
-  if (math.random() < 0.5) {
-    initConditions.push('unlucky')
-    if (return_first === true) return ['unlucky']
-  }
-  /**   return {
-    pledge:
-      wb.passive_aggressive <= sb.passive_aggressive &&
-      ws.wisdom >= ss.constitution,
-  }**/
-  return initConditions
-}
-const consequenceLookup = (_s: string, _w: string) => {
-  return {
-    pledge,
-    bribe,
-    wPunchS,
-    jailTime: go_to_jail,
-    admirer,
-    prejudice,
-    unlucky: go_to_jail,
-  }
-}
 const consolations = [snitch, evil_merits, reckless]
 //testjpf problem is merits is a monkey paw version
 // has to deal with postive reaction to negative behavior.
@@ -690,33 +1098,65 @@ export function address_cautions() {
   //testjpf could see adding more data to this return
   return confront
 }
+const confrontationLookup: Array<
+  (s: string, w: string) => { pass: boolean; type: string }
+> = [
+  vanity_check,
+  angel_check,
+  suspect_punched_check,
+  watcher_punched_check,
+  snitch_check,
+  prejudice_check,
+  unlucky_check,
+]
+export function confrontation_consequence(s: Npc, w: Npc) {
+  let consolation = { pass: false, type: 'neutral' }
+  const tempcons: Array<
+    (s: string, w: string) => { pass: boolean; type: string }
+  > = shuffle(confrontationLookup)
+
+  for (let i = tempcons.length; i-- !== 0; ) {
+    consolation = tempcons[i](s.labelname, w.labelname)
+    if (consolation.pass == true) break
+  }
+  //very similar to question_consequence in task system
+  //used for non novel dialog choices(npcs on npcs)
+  //rename FUNCTION!!
+  //start here, to easy to pass?
+  // probably shuffle functions, each will a dice roll
+  //ugly code. testjpf.  not many cautions needed.
+  //returns are superflous
+  print('AI_CHECKS::: confrontation consequence::: TYPE:', consolation.type)
+  if (consolation.pass == false) {
+    consolation.type = thief_consolation_checks(s.labelname)
+  }
+  print('CONFRONTATION_CONSEQUENCE :: ', consolation.pass, consolation.type)
+  return consolation.type
+}
 export function question_consequence(c: Caution) {
+  //npconly testjpf
   print('QC::: ', c.npc, 'is NOW questioning:', c.suspect)
-  const w = npcs.all[c.npc]
-  const s = npcs.all[c.suspect]
 
-  let consequenceResults: string[] = consequenceConditions(
-    w.labelname,
-    s.labelname
-  )
-  if (consequenceResults.length > 0) {
-    if (consequenceResults.length > 1)
-      consequenceResults = shuffle(consequenceResults)
-    const consequenceLabel: string = consequenceResults[0]
+  let consolation = { pass: false, type: 'neutral' }
+  const tempcons: Array<
+    (s: string, w: string) => { pass: boolean; type: string }
+  > = shuffle(consequenceLookup)
 
-    const consequences: { [key: string]: (s: string, w: string) => void } =
-      consequenceLookup(s.labelname, w.labelname)
-    consequences[consequenceLabel](s.labelname, w.labelname)
-  } else {
+  for (let i = tempcons.length; i-- !== 0; ) {
+    consolation = tempcons[i](c.suspect, c.npc)
+    if (consolation.pass == true) break
+  }
+
+  if (consolation.pass == false) {
     if (c.suspect != 'player') {
-      const caution = thief_consolation_checks(w.labelname)
+      const caution = thief_consolation_checks(c.npc)
       if (caution != 'neutral') {
-        tasks.caution_builder(w, caution, c.suspect, c.reason)
+        tasks.caution_builder(npcs.all[c.npc], caution, c.suspect, c.reason)
       } else {
         print('QUESTIONING_consequence: no fx or cautions')
       }
     } else {
-      w.love = w.love - 1
+      npcs.all[c.npc].love = npcs.all[c.npc].love - 1
     }
   }
   c.time = 0

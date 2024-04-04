@@ -26,40 +26,29 @@ function calculate_heat(room: string) {
   )
   //let sKey: keyof typeof stations
   heat += stations.length
-  print(heat, 'station length')
   for (const npc of stations) {
     heat += npcs.all[npc].love * -1
     if (npcs.all[npc].turns_since_convo <= 0) heat++
   }
-  print(heat, 'love and convos')
 
   heat +=
     (player.alert_level +
       player.clearance +
       tasks.number_of_cautions('player')) *
     2
-  print(heat, 'player security stuff')
 
   cold +=
     Object.values(rooms.all.security.occupants!).filter((s) => s != '').length *
     3
-  print(cold, 'cold:: prisoner length')
   cold +=
     (player.hp +
       tasks.cautions.length +
       player.state.skills.stealth +
       player.state.skills.charisma) *
     2
-  print(
-    cold,
-    'cold:: player skills /hp, caution.length',
-    player.state.skills.charisma,
-    player.state.skills.stealth
-  )
+
   cold += player.ap
-  print(cold, 'cold:: player ap')
   player.heat = heat / cold
-  print(player.heat, '<:: Player HEAT!!!')
 }
 
 function update_hud() {

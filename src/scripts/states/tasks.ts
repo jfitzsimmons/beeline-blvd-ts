@@ -62,10 +62,9 @@ export default class WorldTasks {
       const c = this.cautions[i]
       if (
         c.suspect == sus &&
-        (c.label == 'questioning' ||
-          c.label == 'arrest' ||
-          c.label == 'snitch' ||
-          c.label == 'injury')
+        ['questioning', 'arrest', 'snitch', 'injury', 'mending'].includes(
+          c.label
+        )
       ) {
         this.cautions.splice(i, 1)
       }

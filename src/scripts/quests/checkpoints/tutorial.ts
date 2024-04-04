@@ -1,4 +1,4 @@
-import { steal_check } from '../../ai/ai_checks'
+import { steal_check, take_or_stash } from '../../ai/ai_checks'
 import { npc_action_move, assign_nearby_rooms } from '../../ai/ai_main'
 import { shuffle } from '../../utils/utils'
 import { any_has_value } from '../../utils/quest'
@@ -6,15 +6,22 @@ import { Npc } from '../../../types/state'
 const { rooms, npcs, tasks, player, novel } = globalThis.game.world
 
 export function tutorialA(interval = 'turn') {
-  const luggage = rooms.all.grounds.actors.player_luggage.inventory
-  if (luggage.length > 0 && interval == 'turn') {
+  const luggage =
+    math.random() > 0.5
+      ? rooms.all.grounds.actors.player_luggage
+      : rooms.all.grounds.actors.other_luggage
+  if (luggage.inventory.length > 0 && interval == 'turn') {
     const worker2 = npcs.all[rooms.all['grounds'].stations.worker2]
     const guest2 = npcs.all[rooms.all['grounds'].stations.guest2]
 
-    if (math.random() < 0.5 && worker2 != null && worker2.cooldown <= 0) {
-      steal_check(worker2, guest2, luggage)
-    } else if (math.random() < 0.5 && guest2 != null && guest2.cooldown <= 0) {
-      steal_check(guest2, worker2, luggage)
+    if (worker2 != null && worker2.cooldown <= 0) {
+      guest2 == null
+        ? take_or_stash(worker2, rooms.all.grounds.actors.player_luggage)
+        : steal_check(worker2, guest2, luggage.inventory)
+    } else if (guest2 != null && guest2.cooldown <= 0) {
+      worker2 == null
+        ? take_or_stash(guest2, rooms.all.grounds.actors.player_luggage)
+        : steal_check(guest2, worker2, luggage.inventory)
     }
   }
 
