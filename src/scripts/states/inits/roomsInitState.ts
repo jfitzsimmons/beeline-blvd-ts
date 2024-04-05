@@ -293,6 +293,11 @@ export const RoomsInitState = {
         inventory: ['silver', 'mushroom01', 'potion'],
         actions: ['use', 'open'],
       },
+      vase3: {
+        inventory: ['steak02', 'leaf03', 'daisy', 'mushroom02'],
+        actions: ['open'],
+        watcher: 'patrol',
+      },
     },
   },
   reception: {

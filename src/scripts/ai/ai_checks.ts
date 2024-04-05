@@ -63,9 +63,7 @@ export function take_check(taker: Npc, actor: Npc | Actor) {
   }
   const advantage =
     taker.binaries.poor_wealthy + taker.binaries.anti_authority * -1 > 0
-  const result =
-    roll_special_dice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2)
-
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
   if (result < 5) return false
 
   let chest_item = null
@@ -113,6 +111,7 @@ export function stash_check(stasher: Npc, actor: Npc | Actor) {
   print(stasher.labelname, 'STASHED an item')
 }
 export function take_or_stash(attendant: Npc, actor: Npc | Actor) {
+  print('TAKE OR STASH SCTOR:::', attendant.labelname)
   if (
     actor.inventory.length > 0 &&
     (attendant.inventory.length == 0 || math.random() < 0.5)

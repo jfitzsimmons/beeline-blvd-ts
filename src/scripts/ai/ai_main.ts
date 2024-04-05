@@ -9,6 +9,7 @@ import { Direction } from '../../types/ai'
 import { Occupants } from '../../types/state'
 import { remove_effects } from '../systems/effectsystem'
 import { reception_checks } from './levels/reception'
+import { customs_checks } from './levels/customs'
 //import { thief_consolation_checks } from '../systems/tasksystem'
 
 const { tasks, rooms, npcs, player } = globalThis.game.world
@@ -280,6 +281,7 @@ function ai_actions(direction: Direction, injured: string[]) {
   //replace_injured(injured)
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   reception_checks()
+  customs_checks()
 }
 
 export function npc_action_move(n: string, d: Direction) {

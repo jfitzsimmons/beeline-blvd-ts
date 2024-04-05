@@ -184,8 +184,8 @@ instances {
   id: "loiter4"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 673.0
-    y: 576.0
+    x: 487.0
+    y: 750.0
     z: 0.0
   }
   rotation {
@@ -233,6 +233,26 @@ instances {
     y: 0.0
     z: 0.70710677
     w: 0.70710677
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "vase3"
+  prototype: "/main/actors/storage50x50.go"
+  position {
+    x: 401.0
+    y: 504.0
+    z: 0.1
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
   }
   scale3 {
     x: 1.0
