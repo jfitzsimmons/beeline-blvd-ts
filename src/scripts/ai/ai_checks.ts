@@ -9,10 +9,7 @@ import {
   add_chest_bonus,
   remove_chest_bonus,
 } from '../systems/inventorysystem'
-import {
-  confrontation_consequence,
-  thief_consolation_checks,
-} from '../systems/tasksystem'
+import { confrontation_consequence } from '../systems/tasksystem'
 import { roll_special_dice } from '../utils/dice'
 
 function tend_to_patient(v: string, doc: string) {
@@ -133,7 +130,7 @@ export function seen_check(s: string, w: string) {
 
   const modifier = Math.round(
     sus.skills.stealth +
-      sus.binaries.lawless_lawful * -5 -
+      sus.binaries.lawless_lawful * -4 -
       wchr.skills.stealth -
       wchr.skills.perception -
       heat
@@ -144,16 +141,18 @@ export function seen_check(s: string, w: string) {
       wchr.skills.constitution +
       wchr.binaries.passive_aggressive * 5
 
-  const result =
-    roll_special_dice(5, advantage, 3, 2) + (modifier > -4 ? modifier : -4)
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
-  print('SEEN CHECK:: RESULT: DICE ROLL::', result)
-  if (result > 10) return { confront: false, type: 'special' }
+  if (result > 10) return { confront: false, type: 'seenspecial' }
   if (result < 0) return { confront: true, type: 'critcal' }
   const bossResult = roll_special_dice(7, true, 3, 2)
-  print('SEEN CHECK:: bossResult: DICE ROLL::', bossResult)
+  print(
+    'SEEN CHECK:: bossResult: DICE ROLL:: boss >= result',
+    bossResult,
+    result
+  )
 
-  const seen = result < bossResult
+  const seen = result <= bossResult
   return seen === true
     ? { confront: false, type: 'seen' }
     : { confront: false, type: 'neutral' }
@@ -177,25 +176,16 @@ export function confrontation_check(pname: string, nname: string) {
   const bossResult = roll_special_dice(5, true, 4, 2)
 
   print('aiCHECKS::: confrontation_check:: boss > result', bossResult, result)
-  return bossResult > result
+  return bossResult >= result
 }
-export function thief_consequences(
+function thief_consequences(
   s: string,
   w: string,
   c: { confront: boolean; type: string }
 ) {
   if (npcs.all[w] != null && c.type == 'seen') {
-    if (c.confront == true || confrontation_check(s, w) == true) {
-      //npc gets the following.  Player gets dialog options
-      if (s == 'player') {
-        c.confront = true
-        c.type = 'concern'
-      } else {
-        c.type = confrontation_consequence(npcs.all[s], npcs.all[w])
-      }
-    } else {
-      c.type = thief_consolation_checks(w)
-    }
+    c.confront = c.confront == true || confrontation_check(s, w)
+    c.type = confrontation_consequence(s, w, c.confront)
   }
 
   if (c.confront == false && c.type != 'neutral') {

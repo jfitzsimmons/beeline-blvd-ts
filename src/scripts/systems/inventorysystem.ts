@@ -1,5 +1,7 @@
-import { Npc, PlayerState, Skills } from '../../types/state'
-import { shuffle } from '../utils/utils'
+import { Consequence, Npc, PlayerState, Skills } from '../../types/state'
+import { roll_special_dice } from '../utils/dice'
+import { clamp, shuffle } from '../utils/utils'
+const { npcs } = globalThis.game.world
 
 interface InventoryTable {
   [key: string]: InventoryTableItem
@@ -631,6 +633,65 @@ export function remove_valuable(to_inv: string[], from_inv: string[]) {
 
   if (stolen_item !== '') to_inv.push(stolen_item)
   return stolen_item
+}
+
+export function get_extorted(s: string, w: string) {
+  const s_inv = npcs.all[s].inventory
+  const w_inv = npcs.all[w].inventory
+
+  if (s_inv.length > 0) {
+    for (let i = s_inv.length - 1; i >= 0; i--) {
+      if (items[s_inv[i]].value > 1) {
+        const loot = s_inv.splice(i, 1)
+
+        w_inv.push(...loot)
+        break
+      } else {
+        print('bribe failed so punch???')
+        // bribe failed so punch???
+      }
+    }
+  }
+}
+export function bribe_check(suspect: string, watcher: string): Consequence {
+  //     wb.lawless_lawful < -0.4 &&
+  // ws.strength >= ss.strength &&
+  //  sb.passive_aggressive < 0.0
+
+  //testjpf GOOD time for a diceroll
+  const w = npcs.all[watcher]
+  const s = npcs.all[suspect]
+  //so
+  /**
+   * what advantages do we want to give? w love? not a bin or skill
+   */
+
+  const modifier = Math.round(
+    w.binaries.lawless_lawful * -5 + w.skills.strength - s.skills.strength
+  )
+  const advantage =
+    s.binaries.passive_aggressive < w.binaries.passive_aggressive - 0.3
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  print('TESTJPF RESULT::: bribe', result)
+  if (result > 5 && result <= 10) {
+    get_extorted(suspect, watcher)
+    return { pass: true, type: 'bribe' }
+  }
+
+  if (result > 10) {
+    print('SPECIAL bribe')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    print('NEVER bribe')
+    return { pass: true, type: 'critical' }
+  }
+  //won't like you,
+  // slander you to people close to them / who like them / they like / cohort with
+  // decreases others love for player
+
+  return { pass: false, type: 'neutral' }
 }
 
 buildLookup()
