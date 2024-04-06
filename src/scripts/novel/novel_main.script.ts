@@ -43,7 +43,7 @@ function script_builder(
 function consolation_outcomes(love: number) {
   //print(novel.npc.love, '| novel.npc.love = love |', love)
   if (love > novel.npc.love) {
-    const consequence = impressed_checks(novel.npc.labelname)
+    const consequence = impressed_checks('player', novel.npc.labelname)
     print('impressed consequence:: ', consequence)
     if (consequence != 'neutral')
       tasks.caution_builder(novel.npc, consequence, 'player', 'impressed')
@@ -60,7 +60,7 @@ function consolation_outcomes(love: number) {
   } else if (love < novel.npc.love) {
     //could be ELSE
 
-    const consequence = unimpressed_checks(novel.npc.labelname)
+    const consequence = unimpressed_checks('player', novel.npc.labelname)
     print('UNimpressed consequence:: ', consequence)
 
     if (consequence != 'neutral')

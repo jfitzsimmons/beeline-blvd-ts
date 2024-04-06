@@ -148,6 +148,12 @@ export default class WorldTasks {
       append.authority = 'doctors'
       append.type = 'clan'
       append.time = 30
+    } else if (c == 'suspicious') {
+      append.label = 'snitch'
+      append.authority = 'security'
+      append.type = 'clan'
+      append.time = 10
+      append.reason = 'suspicious'
     }
 
     print(
@@ -157,7 +163,9 @@ export default class WorldTasks {
       'did',
       append.reason,
       'so created caution:',
-      append.label
+      append.label,
+      'for time:',
+      append.time
     )
 
     this.append_caution(append)

@@ -661,10 +661,6 @@ export function bribe_check(suspect: string, watcher: string): Consequence {
   //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
   const s = npcs.all[suspect]
-  //so
-  /**
-   * what advantages do we want to give? w love? not a bin or skill
-   */
 
   const modifier = Math.round(
     w.binaries.lawless_lawful * -5 + w.skills.strength - s.skills.strength
@@ -687,9 +683,6 @@ export function bribe_check(suspect: string, watcher: string): Consequence {
     print('NEVER bribe')
     return { pass: true, type: 'critical' }
   }
-  //won't like you,
-  // slander you to people close to them / who like them / they like / cohort with
-  // decreases others love for player
 
   return { pass: false, type: 'neutral' }
 }

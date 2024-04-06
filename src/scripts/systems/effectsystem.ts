@@ -277,9 +277,6 @@ export function vanity_check(suspect: string, watcher: string): Consequence {
     print('NEVER VANITY')
     return { pass: true, type: 'critical' }
   }
-  //won't like you,
-  // slander you to people close to them / who like them / they like / cohort with
-  // decreases others love for player
 
   return { pass: false, type: 'neutral' }
 }
@@ -324,9 +321,6 @@ export function admirer_check(suspect: string, watcher: string): Consequence {
     print('NEVER ADMIRERER')
     return { pass: true, type: 'critical' }
   }
-  //won't like you,
-  // slander you to people close to them / who like them / they like / cohort with
-  // decreases others love for player
 
   return { pass: false, type: 'neutral' }
 }
@@ -371,9 +365,6 @@ export function prejudice_check(suspect: string, watcher: string): Consequence {
     print('NEVER prejudice')
     return { pass: true, type: 'critical' }
   }
-  //won't like you,
-  // slander you to people close to them / who like them / they like / cohort with
-  // decreases others love for player
 
   return { pass: false, type: 'neutral' }
 }

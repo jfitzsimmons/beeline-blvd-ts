@@ -6,8 +6,7 @@ import {
   Effect,
   Consequence,
 } from '../../types/state'
-import { roll_special_dice } from '../utils/dice'
-import { arraymove, clamp, shuffle } from '../utils/utils'
+import { arraymove, shuffle } from '../utils/utils'
 import {
   fx,
   add_effects_bonus,
@@ -20,7 +19,6 @@ import {
   ignorant_check,
   predator_check,
 } from '../systems/effectsystem'
-import { remove_advantageous } from '../systems/inventorysystem'
 import {
   build_consequence,
   npc_confrontation,
@@ -28,8 +26,10 @@ import {
   snitch_check,
 } from './emergencysystem'
 import {
-  reckless,
+  neg_consolations,
+  pos_consolations,
   suspect_punched_check,
+  suspicious_check,
   unlucky_check,
   watcher_punched_check,
 } from './chaossystem'
@@ -67,127 +67,11 @@ const confrontation_checks: Array<
   snitch_check,
   prejudice_check,
   unlucky_check,
+  suspicious_check,
 ]
 
-const pos_consolations = [charmed_merits, ap_boost, given_gift, love_boost]
-const neg_consolations = [reckless, love_drop]
 const reck_theft_checks = [ignorant_check, dumb_crook_check, chaotic_good_check]
 const reck_harass_checks = [classy_check, predator_check]
-
-//positive consolations
-function generate_gift() {
-  player.state.inventory.push('berry02')
-}
-function given_gift(n: string): Consequence {
-  //testjpf check if inventory full?!
-  const gift = remove_advantageous(
-    player.state.inventory,
-    npcs.all[n].inventory,
-    player.state.skills
-  )
-
-  if (gift == null) generate_gift()
-  return { pass: true, type: 'gift' }
-}
-function love_boost(n: string): Consequence {
-  const npc = npcs.all[n]
-
-  const modifier = Math.round(
-    Math.abs(player.state.binaries.evil_good) * 10 - npc.skills.speed
-  )
-  const advantage =
-    player.state.skills.charm +
-      player.state.skills.intelligence +
-      npc.binaries.anti_authority * 10 >
-    npc.skills.intelligence + npc.skills.perception + player.state.skills.speed
-  const result = math.min(
-    roll_special_dice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2),
-    roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
-  )
-  //const result =
-  // roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
-
-  print('TESTJPF RESULT::: loveboost', result)
-  if (result > 5 && result <= 10) return { pass: true, type: 'loveboost' }
-
-  if (result > 10) return { pass: true, type: 'special' }
-  return { pass: false, type: 'neutral' }
-}
-function ap_boost(n: string): Consequence {
-  const npc = npcs.all[n]
-
-  const modifier = Math.round(
-    player.state.skills.constitution +
-      npc.love +
-      (npc.binaries.passive_aggressive * 10) / 3
-  )
-  const advantage =
-    player.state.binaries.passive_aggressive + npc.binaries.passive_aggressive >
-      0.1 && npc.skills.constitution > player.state.skills.speed
-  const result =
-    roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
-
-  print('TESTJPF RESULT::: apboost', result)
-  if (result > 5 && result <= 10) return { pass: true, type: 'apboost' }
-
-  if (result > 10) return { pass: true, type: 'special' }
-  return { pass: false, type: 'neutral' }
-}
-function charmed_merits(n: string): Consequence {
-  //testjpf GOOD time for a diceroll
-  const npc = npcs.all[n]
-
-  //so
-  /**
-   * what advantages do we want to give? npc love? not a bin or skill
-
-   */
-
-  const modifier = Math.round(
-    (player.state.skills.charisma + npc.love) / 2 - npc.skills.constitution
-  )
-  const advantage =
-    player.state.skills.charisma > npc.skills.charisma &&
-    npc.binaries.un_educated < -0.1
-  const result =
-    roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
-
-  print('TESTJPF RESULT:::charmedmerits', result)
-  if (result > 5 && result <= 10) return { pass: true, type: 'merits' }
-
-  if (result > 10) return { pass: true, type: 'special' }
-  //won't like you,
-  // slander you to people close to them / who like them / they like / cohort with
-  // decreases others love for player
-
-  return { pass: false, type: 'neutral' }
-}
-
-//negative consolations
-function love_drop(n: string): Consequence {
-  const npc = npcs.all[n]
-
-  const modifier = Math.round(
-    player.state.skills.wisdom +
-      player.state.binaries.un_educated * 10 -
-      npc.skills.charisma +
-      Math.abs(npc.binaries.evil_good * 10)
-  )
-  const advantage =
-    player.state.skills.speed + player.state.binaries.lawless_lawful * 10 >
-    npc.binaries.evil_good * 10 + npc.skills.constitution
-  const result = math.min(
-    roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1),
-    roll_special_dice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2)
-  )
-  //const result =
-  // roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
-
-  if (result > 1 && result < 5) return { pass: true, type: 'lovedrop' }
-
-  if (result <= 1) return { pass: true, type: 'critical' }
-  return { pass: false, type: 'neutral' }
-}
 
 //Focused actions
 function focused_acts(c: Caution) {
@@ -276,20 +160,20 @@ function reckless_consequence(c: Caution, w: string) {
   build_consequence(c, checks)
 }
 function snitch_to_security(c: Caution, watcher: string) {
-  print(c.npc, 'SNITCHED')
+  print(c.npc, 'SNITCHED on:', c.suspect, 'TO:', watcher)
   const bulletin = tasks.already_hunting(watcher, c.suspect)
-  let caution_state = 'questioning'
+  const caution_state =
+    c.suspect == 'player'
+      ? player_snitch_check(bulletin == null, watcher, c.reason)
+      : npc_snitch_check(watcher, c.suspect)
 
   if (bulletin == null) {
     tasks.caution_builder(npcs.all[watcher], caution_state, c.suspect, c.reason)
   } else {
+    print('BULLETIN EXISTS + 666')
     bulletin.time = bulletin.time + 6
   }
 
-  caution_state =
-    c.suspect == 'player'
-      ? player_snitch_check(bulletin == null, watcher, c.reason)
-      : npc_snitch_check(watcher, c.suspect)
   c.time = 0
 }
 function passive_acts(c: Caution, w: string) {
@@ -344,19 +228,21 @@ export function confrontation_consequence(
 }
 
 //NOVEL
-export function unimpressed_checks(n: string) {
-  const tempcons: Array<(n: string) => Consequence> = shuffle(neg_consolations)
+export function unimpressed_checks(s: string, w: string) {
+  const tempcons: Array<(s: string, w: string) => Consequence> =
+    shuffle(neg_consolations)
   tempcons.forEach((c) => {
-    const consolation = c(n)
+    const consolation = c(s, w)
     if (consolation.pass == true) return consolation.type
   })
   print('did nothing after witnessing a theft attempt')
   return 'neutral'
 }
-export function impressed_checks(n: string) {
-  const tempcons: Array<(n: string) => Consequence> = shuffle(pos_consolations)
+export function impressed_checks(s: string, w: string) {
+  const tempcons: Array<(s: string, w: string) => Consequence> =
+    shuffle(pos_consolations)
   tempcons.forEach((c) => {
-    const consolation = c(n)
+    const consolation = c(s, w)
     if (consolation.pass == true) return consolation.type
   })
   print('did nothing after witnessing a theft attempt')
@@ -445,7 +331,15 @@ export function address_cautions() {
 
   for (let i = sortedCautions.length - 1; i >= 0; i--) {
     sortedCautions[i].time--
-    if (sortedCautions[i].time <= 0) sortedCautions.splice(i, 1)
+    if (sortedCautions[i].time <= 0) {
+      print(
+        sortedCautions[i].label,
+        'expired for:',
+        sortedCautions[i].suspect,
+        sortedCautions[i].reason
+      )
+      sortedCautions.splice(i, 1)
+    }
     //if (confront != null) break
   }
   //testjpf could see adding more data to this return

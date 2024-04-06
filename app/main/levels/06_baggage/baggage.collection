@@ -83,8 +83,8 @@ instances {
   id: "assistant"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 325.0
-    y: 522.0
+    x: 1333.0
+    y: 796.0
     z: 0.0
   }
   rotation {
@@ -163,8 +163,8 @@ instances {
   id: "guard"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 1342.0
-    y: 835.0
+    x: 322.0
+    y: 603.0
     z: 0.0
   }
   rotation {
@@ -223,8 +223,8 @@ instances {
   id: "browse"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 874.0
-    y: 805.0
+    x: 1117.0
+    y: 626.0
     z: 0.0
   }
   rotation {

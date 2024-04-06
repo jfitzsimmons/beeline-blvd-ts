@@ -3,7 +3,11 @@ import { roll_special_dice } from '../utils/dice'
 import { clamp, shuffle } from '../utils/utils'
 import { admirer_check, prejudice_check } from './effectsystem'
 import { bribe_check } from './inventorysystem'
-import { reckless, suspect_punched_check, unlucky_check } from './chaossystem'
+import {
+  reckless_check,
+  suspect_punched_check,
+  unlucky_check,
+} from './chaossystem'
 import { add_pledge, go_to_jail } from './systemshelpers'
 
 const { tasks, rooms, npcs } = globalThis.game.world
@@ -18,46 +22,46 @@ const questioning_checks: Array<
   prejudice_check,
   unlucky_check,
 ]
-const thief_consolations = [snitch, evil_merits, reckless]
+//TESTJPF WHAT ARE THESE USED FOR?
+//probably needs rolls and ADD MORE??!?!
+const thief_consolations = [
+  snitch_check,
+  merits_demerits,
+  reckless_check,
+  //society_check,
+] //testjpf makes people ...
 //Crime Consolations
-function snitch(n: string): Consequence {
-  if (npcs.all[n].binaries.anti_authority > -0.8) {
-    //tell authority they have good attitude towards
-    return { pass: true, type: 'snitch' }
-  }
-  return { pass: false, type: 'neutral' }
-}
-function evil_merits(n: string): Consequence {
-  if (
-    npcs.all[n].binaries.evil_good < -0.1 &&
-    npcs.all[n].binaries.lawless_lawful < -0.1
-  ) {
-    return { pass: true, type: 'merits' }
-  } else if (
-    npcs.all[n].binaries.passive_aggressive < -0.3 ||
-    npcs.all[n].skills.constitution < 4
-  )
-    return { pass: true, type: 'demerits' }
 
-  //won't like you,
-  // slander you to people close to them / who like them / they like / cohort with
-  // decreases others love for player
+//testjpf needs diceroll
+function merits_demerits(suspect: string, watcher: string): Consequence {
+  const w = npcs.all[watcher]
+  const s = npcs.all[suspect]
+
+  const modifier = Math.round(
+    (w.binaries.evil_good + w.binaries.lawless_lawful) * -2.5
+  )
+  const advantage =
+    w.skills.constitution +
+      (w.binaries.passive_aggressive - s.binaries.evil_good) * 5 >
+    7.5
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -1, 1)
+
+  print('TESTJPF RESULT::: evilmerits', result)
+  if (result < 4) {
+    return { pass: true, type: 'demerits' }
+  }
+
+  if (result > 8) {
+    return { pass: true, type: 'merits' }
+  }
 
   return { pass: false, type: 'neutral' }
 }
 //Checks and Helpers
 //security
 function pledge_check(suspect: string, watcher: string): Consequence {
-  // wb.passive_aggressive <= sb.passive_aggressive &&
-  // ws.wisdom >= ss.constitution
-
-  //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
   const s = npcs.all[suspect]
-  //so
-  /**
-   * what advantages do we want to give? w love? not a bin or skill
-   */
 
   const modifier = Math.round(
     w.binaries.passive_aggressive * -5 + s.binaries.passive_aggressive * 5
@@ -81,29 +85,16 @@ function pledge_check(suspect: string, watcher: string): Consequence {
     print('NEVER pledge')
     return { pass: true, type: 'critical' }
   }
-  //won't like you,
-  // slander you to people close to them / who like them / they like / cohort with
-  // decreases others love for player
 
   return { pass: false, type: 'neutral' }
 }
 export function jailtime_check(suspect: string, watcher: string): Consequence {
-  //     wb.anti_authority > 0.3 &&
-  //  ws.perception >= ss.perception &&
-  // sb.passive_aggressive <= 0.0
-
-  //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
   const s = npcs.all[suspect]
-  //so
-  /**
-   * what advantages do we want to give? w love? not a bin or skill
-   */
-
   const modifier = Math.round(
-    w.skills.perception - s.skills.perception + w.binaries.anti_authority * 0.5
+    w.skills.perception - s.skills.perception + w.binaries.anti_authority * 4
   )
-  const advantage = s.binaries.passive_aggressive < -0.1
+  const advantage = s.binaries.passive_aggressive < 0.2
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   print('TESTJPF RESULT::: jailed', result)
@@ -120,19 +111,12 @@ export function jailtime_check(suspect: string, watcher: string): Consequence {
     print('NEVER jailed')
     return { pass: true, type: 'critical' }
   }
-  //won't like you,
-  // slander you to people close to them / who like them / they like / cohort with
-  // decreases others love for player
 
   return { pass: false, type: 'neutral' }
 }
 export function snitch_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = npcs.all[suspect]
-  //so
-  /**
-   * what advantages do we want to give? w love? not a bin or skill
-   */
 
   const modifier = Math.round(
     w.binaries.anti_authority * 5 +
@@ -156,19 +140,16 @@ export function snitch_check(suspect: string, watcher: string): Consequence {
     print('NEVER snitch')
     return { pass: true, type: 'critical' }
   }
-  //won't like you,
-  // slander you to people close to them / who like them / they like / cohort with
-  // decreases others love for player
 
   return { pass: false, type: 'neutral' }
 }
 
 //Confrontation /security
-function thief_consolation_checks(n: string) {
-  const tempcons: Array<(n: string) => Consequence> =
+function thief_consolation_checks(s: string, w: string) {
+  const tempcons: Array<(s: string, w: string) => Consequence> =
     shuffle(thief_consolations)
   tempcons.forEach((c) => {
-    const consolation = c(n)
+    const consolation = c(s, w)
     if (consolation.pass == true) return consolation.type
   })
   print('did nothing after witnessing a theft attempt')
@@ -188,7 +169,7 @@ export function build_consequence(
 
   if (consolation.pass == false) {
     //if (c.suspect != 'player') {
-    consolation.type = thief_consolation_checks(c.npc)
+    consolation.type = thief_consolation_checks(c.suspect, c.npc)
     if (consolation.type != 'neutral') {
       tasks.caution_builder(
         npcs.all[c.npc],

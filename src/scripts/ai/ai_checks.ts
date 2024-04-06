@@ -146,6 +146,9 @@ export function seen_check(s: string, w: string) {
   if (result < 0) return { confront: true, type: 'critcal' }
   const bossResult = roll_special_dice(7, true, 3, 2)
   print(
+    w,
+    'saw',
+    s,
     'SEEN CHECK:: bossResult: DICE ROLL:: boss >= result',
     bossResult,
     result
@@ -183,7 +186,8 @@ function thief_consequences(
   c: { confront: boolean; type: string }
 ) {
   if (npcs.all[w] != null && c.type == 'seen') {
-    c.confront = c.confront == true || confrontation_check(s, w)
+    c.confront =
+      s == 'player' && (c.confront == true || confrontation_check(s, w))
     c.type = confrontation_consequence(s, w, c.confront)
   }
 
@@ -196,6 +200,7 @@ function thief_consequences(
 export function steal_check(s: Npc, w: Npc, loot: string[]) {
   // accept strings not Npcs
   // const attempt = roll_Specia_dice
+  if (s.cooldown > 0) return
 
   const modifier = Math.round(
     s.skills.speed +
