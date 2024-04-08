@@ -9,8 +9,7 @@ export function init() {
   //place_npcs()
 }
 function game_turn(room: string) {
-  rooms.clear_stations()
-  ai_turn(room)
+  ai_turn(room) // abstract to world controller?
   quest_checker('turn')
   tasks.address_quests('turn', player.checkpoint)
   player.ap = player.ap - 1

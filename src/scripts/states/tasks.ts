@@ -66,6 +66,7 @@ export default class WorldTasks {
           c.label
         )
       ) {
+        print('heat removed for', c.suspect, c.type, c.reason)
         this.cautions.splice(i, 1)
       }
     }
@@ -107,7 +108,7 @@ export default class WorldTasks {
     }
     return count
   }
-  caution_builder(n: Npc, c: string, s: string, r: string) {
+  caution_builder(n: Npc, c: string, s: string, reason = 'theft') {
     //explain why you need this testjpf
     //no nested ifs
     //cna this be done somewhere else?
@@ -120,7 +121,7 @@ export default class WorldTasks {
       type: 'npc',
       authority: n.clan, //ex; labor
       suspect: s,
-      reason: r.length > 0 ? r : 'theft',
+      reason,
     }
     //testjpf this is getting bad.  cleanup code
     if (c == 'snitch') {
@@ -211,9 +212,11 @@ export default class WorldTasks {
       }
     }
   }
-  busy_doctors(): string[] {
+  get_field_docs(): string[] {
+    //if mending and in field busy
+    //if mending in office and office full
     const docs = this.cautions
-      .filter((c) => c.label == 'mending')
+      .filter((c) => c.reason == 'field')
       .map((c) => c.npc)
 
     return docs

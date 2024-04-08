@@ -80,10 +80,13 @@ function focused_acts(c: Caution) {
       npcs.all[c.suspect].hp = 5
       rooms.all.infirmary.occupants![npcs.all[c.suspect].currentstation] = ''
     } else {
+      //ideally testjpf the doctor would be released
+      //it could then go back out into the field if medic queue is long
+      //or stay infirmary if too many patients
+      //TESTJPF BELOW MAKES NO SENSE
       const aid = rooms.all.infirmary.stations.aid
       if (aid != '' && npcs.all[aid].clan == 'doctors') {
-        npcs.all[c.npc].currentroom = 'infirmary'
-        npcs.all[c.npc].currentstation = 'aid'
+        c.time--
       }
     }
   } else if (c.reason == 'field') {
@@ -91,13 +94,15 @@ function focused_acts(c: Caution) {
       send_to_infirmary(c.suspect, c.npc)
     } else {
       // testjpfsame code as ai_checks tendtopatient
-      const vstation = npcs.all[c.suspect].currentstation
-      const dstation = npcs.all[c.npc].currentstation
       if (npcs.all[c.npc].currentroom == player.currentroom)
-        msg.post(`/${dstation}#npc_loader`, hash('move_npc'), {
-          station: vstation,
-          npc: c.npc,
-        })
+        msg.post(
+          `/${npcs.all[c.npc].currentstation}#npc_loader`,
+          hash('move_npc'),
+          {
+            station: npcs.all[c.suspect].currentstation,
+            npc: c.npc,
+          }
+        )
       print(c.npc, 'tending to', c.suspect, 'in the field')
     }
   }

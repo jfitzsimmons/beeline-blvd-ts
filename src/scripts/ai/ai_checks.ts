@@ -14,13 +14,13 @@ import { roll_special_dice } from '../utils/dice'
 
 function tend_to_patient(v: string, doc: string) {
   print('tending to patient', doc, v)
+  print('if tending then indexof is:', tasks.medicQueue.indexOf(v))
   tasks.medicQueue.splice(tasks.medicQueue.indexOf(v), 1)
+  print('now should be:', tasks.medicQueue.indexOf(v))
   tasks.remove_heat(v)
-  const vstation = npcs.all[v].currentstation
-  const dstation = npcs.all[doc].currentstation
   if (npcs.all[doc].currentroom == player.currentroom)
-    msg.post(`/${dstation}#npc_loader`, hash('move_npc'), {
-      station: vstation,
+    msg.post(`/${npcs.all[doc].currentstation}#npc_loader`, hash('move_npc'), {
+      station: npcs.all[v].currentstation,
       npc: doc,
     })
   tasks.caution_builder(npcs.all[doc], 'mending', v, 'field')

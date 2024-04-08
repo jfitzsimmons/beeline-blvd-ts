@@ -6,7 +6,7 @@ import { add_prejudice } from './effectsystem'
 import { get_extorted, remove_advantageous } from './inventorysystem'
 import { go_to_jail, add_pledge } from './systemshelpers'
 
-const { npcs, player } = globalThis.game.world
+const { npcs, player, tasks } = globalThis.game.world
 
 export const pos_consolations = [
   charmed_merits,
@@ -168,24 +168,37 @@ export function suspicious_check(
 
   return { pass: false, type: 'neutral' }
 }
+function call_security(watcher: string, suspect: string) {
+  npcs.all[watcher].clan == 'security'
+    ? go_to_jail(suspect)
+    : tasks.caution_builder(
+        npcs.all[watcher],
+        math.random() > 0.33 ? 'questioning' : 'arrest',
+        suspect,
+        'unlucky'
+      )
+}
 //Misc. Checks
-export function unlucky_check(suspect: string, watcher: string): Consequence {
+export function unlucky_check(watcher: string, suspect: string): Consequence {
   const modifier = math.random(-1, 1)
   const advantage = math.random() > 0.5
   const result = roll_special_dice(5, advantage, 3, 2) + modifier
 
   print('TESTJPF RESULT UNLUCKY:::', result)
   if (result > 5 && result <= 10) {
-    shuffle([go_to_jail, get_extorted, wPunchS, add_pledge, add_prejudice])[0](
-      suspect,
-      watcher
-    )
+    shuffle([
+      call_security,
+      get_extorted,
+      wPunchS,
+      add_pledge,
+      add_prejudice,
+    ])[0](suspect, watcher)
     return { pass: true, type: 'unlucky' }
   }
 
   if (result > 10) {
     print('SPECIAL unlucky')
-    go_to_jail(suspect)
+    call_security(suspect, watcher)
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {

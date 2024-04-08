@@ -1,5 +1,5 @@
 import { steal_check, take_or_stash } from '../../ai/ai_checks'
-import { npc_action_move, assign_nearby_rooms } from '../../ai/ai_main'
+import { npc_action_move, rooms_near_target } from '../../ai/ai_main'
 import { shuffle } from '../../utils/utils'
 import { any_has_value } from '../../utils/quest'
 import { Npc } from '../../../types/state'
@@ -41,7 +41,7 @@ export function tutorialA(interval = 'turn') {
         rooms.all.grounds.stations.aid = doc.labelname
         currentroom = 'grounds'
         currentstation = 'aid'
-        npc_action_move(replace, assign_nearby_rooms(player.matrix))
+        npc_action_move(replace, rooms_near_target(player.matrix))
       }
     }
     /**

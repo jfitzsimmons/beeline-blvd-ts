@@ -295,7 +295,7 @@ export function npc_action_move(n: string, d: Direction) {
   remove_effects(npc)
   if (npc.cooldown > 0) npc.cooldown = npc.cooldown - 1
 }
-export function assign_nearby_rooms(enter: { x: number; y: number }) {
+export function rooms_near_target(target: { x: number; y: number }) {
   const exit = player.matrix
   let direction = {
     front: { x: 0, y: 0 },
@@ -304,33 +304,33 @@ export function assign_nearby_rooms(enter: { x: number; y: number }) {
     right: { x: 0, y: 0 },
   }
   //get directions based on way exit is facing
-  if (exit.x > enter.x) {
+  if (exit.x > target.x) {
     direction = {
-      front: { x: enter.x - math.random(0, 2), y: enter.y },
-      back: { x: enter.x + 2, y: enter.y },
-      left: { x: enter.x, y: enter.y + 1 },
-      right: { x: enter.x, y: enter.y - 1 },
+      front: { x: target.x - math.random(0, 2), y: target.y },
+      back: { x: target.x + 2, y: target.y },
+      left: { x: target.x, y: target.y + 1 },
+      right: { x: target.x, y: target.y - 1 },
     }
-  } else if (exit.y < enter.y) {
+  } else if (exit.y < target.y) {
     direction = {
-      front: { x: enter.x, y: enter.y + math.random(0, 2) },
-      back: { x: enter.x, y: enter.y - 2 },
-      left: { x: enter.x + 1, y: enter.y },
-      right: { x: enter.x - 1, y: enter.y },
+      front: { x: target.x, y: target.y + math.random(0, 2) },
+      back: { x: target.x, y: target.y - 2 },
+      left: { x: target.x + 1, y: target.y },
+      right: { x: target.x - 1, y: target.y },
     }
-  } else if (exit.y > enter.y) {
+  } else if (exit.y > target.y) {
     direction = {
-      front: { x: enter.x, y: enter.y - math.random(0, 2) },
-      back: { x: enter.x, y: enter.y + 2 },
-      left: { x: enter.x - 1, y: enter.y },
-      right: { x: enter.x + 1, y: enter.y },
+      front: { x: target.x, y: target.y - math.random(0, 2) },
+      back: { x: target.x, y: target.y + 2 },
+      left: { x: target.x - 1, y: target.y },
+      right: { x: target.x + 1, y: target.y },
     }
   } else {
     direction = {
-      front: { x: enter.x + math.random(0, 2), y: enter.y },
-      back: { x: enter.x - 2, y: enter.y },
-      left: { x: enter.x, y: enter.y - 1 },
-      right: { x: enter.x, y: enter.y + 1 },
+      front: { x: target.x + math.random(0, 2), y: target.y },
+      back: { x: target.x - 2, y: target.y },
+      left: { x: target.x, y: target.y - 1 },
+      right: { x: target.x, y: target.y + 1 },
     }
   }
   return direction
@@ -393,38 +393,51 @@ export function place_npcs() {
       }
     }
   })
+  npcs.all[rooms.all.reception.stations.guard].hp = 0
   npcs.all[rooms.all.grounds.stations.worker1].hp = 0
 }
-export function ai_turn(enter: string) {
-  const patients = Object.values(rooms.all.infirmary.occupants!)
-  const busy_docs = tasks.busy_doctors()
+export function ai_turn(player_room: string) {
+  rooms.clear_stations()
+
+  const patients = Object.values(rooms.all.infirmary.occupants!).filter(
+    (p) => p != ''
+  )
+  const busy_docs = tasks.get_field_docs()
   const immobile: string[] = [
     ...Object.values(rooms.all.security.occupants!),
     ...patients,
     ...busy_docs,
   ]
+  //injury unreported, or reprioritized
   const injured: string[] = []
-  let targets: Direction = assign_nearby_rooms(rooms.all[enter].matrix)
+  let targets: Direction = rooms_near_target(rooms.all[player_room].matrix)
 
   npcs.sort_npcs_by_encounter()
 
   for (let i = npcs.order.length; i-- !== 0; ) {
     const npc = npcs.all[npcs.order[i]]
-
+    //Injured in the field
     if (npc.hp <= 0 && patients.includes(npc.labelname) == false) {
       rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
 
-      // injured make a part of tasks??
       const limit = tasks.medicQueue.indexOf(npc.labelname)
       if (limit < 0 || limit > 3) injured.push(npc.labelname)
     }
     if (npc.clan == 'doctors') {
-      if (busy_docs.includes(npc.labelname) == true)
+      if (busy_docs.includes(npc.labelname) == true) {
+        //stay put
         rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
-      if (injured.length > 0)
-        targets = assign_nearby_rooms(
+      } else if (patients.length > 1 && math.random() < 0.5) {
+        rooms.all.infirmary.stations.aid = npc.labelname
+        immobile.push(npc.labelname)
+      } else if (patients.length > 3) {
+        targets = rooms_near_target(rooms.all.infirmary.matrix)
+      } else if (injured.length > 0) {
+        //find emergency patient
+        targets = rooms_near_target(
           rooms.all[npcs.all[injured[0]].currentroom].matrix
         )
+      }
     }
     if (immobile.includes(npc.labelname) == false && npc.hp > 0)
       npc_action_move(npc.labelname, targets)
