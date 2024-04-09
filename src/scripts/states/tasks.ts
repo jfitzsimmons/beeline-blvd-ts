@@ -99,6 +99,18 @@ export default class WorldTasks {
     }
     return null
   }
+  npc_is_wanted(sus: string): boolean {
+    for (const c of this.cautions) {
+      if (
+        c.suspect == sus &&
+        (c.label == 'arrest' || c.label == 'questioning')
+      ) {
+        print('IS WANTED TRUE!!!', sus, c.suspect)
+        return true
+      }
+    }
+    return false
+  }
   number_of_cautions(sus: string): number {
     let count = 0
     for (const c of this.cautions) {

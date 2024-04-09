@@ -393,6 +393,14 @@ export function place_npcs() {
       }
     }
   })
+
+  //TESTJPF  TEST SETTINGS:::
+  tasks.caution_builder(
+    npcs.all['security004'],
+    'questioning',
+    rooms.all.grounds.stations.assistant,
+    'testing'
+  )
   npcs.all[rooms.all.reception.stations.guard].hp = 0
   npcs.all[rooms.all.grounds.stations.worker1].hp = 0
 }

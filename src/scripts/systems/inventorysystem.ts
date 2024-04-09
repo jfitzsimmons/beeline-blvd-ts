@@ -582,6 +582,7 @@ export function remove_advantageous(
   skills: Skills
 ) {
   if (from_inv.length < 1) return ''
+  if (from_inv.length === 1) return remove_last(to_inv, from_inv)
   //const order = utils.create_ipairs(skills)
   const order = Object.entries(skills)
 
@@ -624,7 +625,7 @@ export function remove_valuable(to_inv: string[], from_inv: string[]) {
 	}
 	**/
   if (from_inv.length < 1) return ''
-
+  if (from_inv.length === 1) return remove_last(to_inv, from_inv)
   from_inv.sort((a: string, b: string) => items[a].value - items[b].value)
   let stolen_item = from_inv.pop()
 

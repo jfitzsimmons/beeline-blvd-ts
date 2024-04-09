@@ -13,6 +13,36 @@ components {
     w: 1.0
   }
 }
+components {
+  id: "injury"
+  component: "/assets/injury.particlefx"
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+components {
+  id: "wanted"
+  component: "/assets/wanted.particlefx"
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
 embedded_components {
   id: "npcsprite"
   type: "sprite"
@@ -89,7 +119,7 @@ embedded_components {
   id: "solid"
   type: "collisionobject"
   data: "collision_shape: \"\"\n"
-  "type: COLLISION_OBJECT_TYPE_STATIC\n"
+  "type: COLLISION_OBJECT_TYPE_KINEMATIC\n"
   "mass: 0.0\n"
   "friction: 1.0\n"
   "restitution: 0.5\n"

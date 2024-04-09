@@ -185,6 +185,7 @@ export function build_consequence(
     //  npcs.all[c.npc].love = npcs.all[c.npc].love - 1
     // }
   }
+  print('BUILD CONEQUENCE return type::', consolation.type)
   return consolation.type
 }
 function question_consequence(c: Caution) {
