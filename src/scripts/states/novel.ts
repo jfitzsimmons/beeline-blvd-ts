@@ -2,8 +2,8 @@ import { Npc } from '../../types/state'
 import { QuestCondition } from '../../types/tasks'
 
 export default class WorldNovel {
-  private background: string
-  private sprites: { [key: string]: string }
+  //private background: string
+  //private sprites: { [key: string]: string }
   private _reason: string
   private _scripts: string[]
   //private _alertChange: number
@@ -11,8 +11,8 @@ export default class WorldNovel {
   private _quest: QuestCondition
 
   constructor(initnpc: Npc, initquest: QuestCondition) {
-    this.background = ''
-    this.sprites = {}
+    // this.background = ''
+    //  this.sprites = {}
     this._reason = 'none'
     this._scripts = []
     // this._alertChange = 0
