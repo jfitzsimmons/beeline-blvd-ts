@@ -1,4 +1,5 @@
-import { Consequence, Effect, Npc } from '../../types/state'
+import { Npc } from '../../types/state'
+import { Effect, Consequence } from '../../types/tasks'
 import { roll_special_dice } from '../utils/dice'
 import { clamp, shuffle } from '../utils/utils'
 const { npcs } = globalThis.game.world

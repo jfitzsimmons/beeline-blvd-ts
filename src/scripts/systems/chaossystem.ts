@@ -1,4 +1,4 @@
-import { Consequence } from '../../types/state'
+import { Consequence } from '../../types/tasks'
 import { roll_special_dice } from '../utils/dice'
 import { clamp, shuffle } from '../utils/utils'
 import { add_prejudice } from './effectsystem'

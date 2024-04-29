@@ -1,4 +1,4 @@
-import { Caution, Consequence, Occupants } from '../../types/state'
+import { Occupants } from '../../types/state'
 import { roll_special_dice } from '../utils/dice'
 import { clamp, shuffle } from '../utils/utils'
 import { admirer_check, prejudice_check } from './effectsystem'
@@ -9,6 +9,7 @@ import {
   unlucky_check,
 } from './chaossystem'
 import { add_pledge, go_to_jail } from './systemshelpers'
+import { Caution, Consequence } from '../../types/tasks'
 
 const { tasks, rooms, npcs } = globalThis.game.world
 const questioning_checks: Array<

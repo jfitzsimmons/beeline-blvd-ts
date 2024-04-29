@@ -1,4 +1,5 @@
-import { Consequence, Npc, PlayerState, Skills } from '../../types/state'
+import { Npc, PlayerState, Skills } from '../../types/state'
+import { Consequence } from '../../types/tasks'
 import { roll_special_dice } from '../utils/dice'
 import { clamp, shuffle } from '../utils/utils'
 const { npcs } = globalThis.game.world
@@ -575,7 +576,6 @@ export function remove_last(to_inv: string[], from_inv: string[]) {
   if (stolen_item !== '') to_inv.push(stolen_item)
   return stolen_item
 }
-//testjpf amke this one alway fire for testing
 export function remove_advantageous(
   to_inv: string[],
   from_inv: string[],
@@ -583,12 +583,10 @@ export function remove_advantageous(
 ) {
   if (from_inv.length < 1) return ''
   if (from_inv.length === 1) return remove_last(to_inv, from_inv)
-  //const order = utils.create_ipairs(skills)
   const order = Object.entries(skills)
 
   order.sort((a: [string, number], b: [string, number]) => b[1] - a[1])
 
-  //order.sort((a, b) => skills[a] > skills[b] )
   let found = false
   let stolen_item = ''
 

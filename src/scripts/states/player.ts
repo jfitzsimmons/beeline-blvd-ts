@@ -1,4 +1,5 @@
-import { PlayerState, Skills, QuestMethods } from '../../types/state'
+import { PlayerState, Skills } from '../../types/state'
+import { QuestMethods } from '../../types/tasks'
 import { PlayerInitState } from './inits/playerInitState'
 
 function shuffle(arrN: number[]): number[]

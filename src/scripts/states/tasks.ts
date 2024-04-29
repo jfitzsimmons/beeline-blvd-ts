@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {
   Npc,
-  WorldQuests,
-  AllQuestsMethods,
   // Skills,
-  Caution,
 } from '../../types/state'
+import { AllQuestsMethods, WorldQuests, Caution } from '../../types/tasks'
 //import { shuffle } from '../utils/utils'
 import { tutorialQuests } from './inits/quests/tutorialstate'
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires

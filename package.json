@@ -2,7 +2,7 @@
   "private": true,
   "name": "beeline-blvd-ts",
   "version": "0.1.0",
-  "description": "Beeline with TS using War Battles template",
+  "description": "Beeline with TS",
   "author": "jfitzsimmons",
   "keywords": [
     "typescript",

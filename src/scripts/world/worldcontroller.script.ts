@@ -5,9 +5,8 @@
 math.randomseed(os.time())
 
 import { Game } from '../states/gamesystem2'
-
-const settings = require('../../../main/states/settings.lua')
-const save = require('../../../main/states/save.lua')
+//const save = require('../../../main/states/gamesave.lua')
+import { gamesave, gamesettings } from '../../types/legacylua'
 
 function handle_new_turn(load_type: string) {
   if (load_type === 'room transition') {
@@ -34,8 +33,8 @@ export function init(this: props) {
   this.current_proxy = null
   this.load_type = 'none'
 
-  save.init() // checks if theres app support data and if you're out of save slots
-  settings.init() // checks if menu settings file, creates new or reads
+  gamesave.init() // checks if theres app support data and if you're out of save slots
+  gamesettings.init() // checks if menu settings file, creates new or reads
   msg.post('#', 'acquire_input_focus')
   msg.post('#', 'show_menu')
 }

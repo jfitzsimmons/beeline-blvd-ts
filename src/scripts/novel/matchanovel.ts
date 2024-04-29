@@ -2,11 +2,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-const matchascript = require('../../../main.novel.matchascript')
-const save = require('../../../main.novel.save')
+//const matchascript = require('../../../main.novel.matchascript')
+//const save = require('../../../main.novel.save')
 //const settings = require "main.novel.//settings"
 //const system = require "main.novel.engine.defold.system"
-const messages = require('../../../main.novel.engine.defold.messages')
+import { matchascript, novelsave, messages } from '../../types/legacylua'
+//const messages = require('../../../main.novel.engine.defold.messages')
 let Sandbox: any = { math, vmath, string }
 //const pronouns = require "main.novel.extensions.pronouns"
 let stripped_quotes: string[] = []
@@ -123,7 +124,8 @@ function substitute_in_expression(w: string) {
     result = w
   } else {
     const name = string.lower(w)
-    const [var_value, var_type]: [string | number, string] = save.get_var(name)
+    const [var_value, var_type]: [string | number, string] =
+      novelsave.get_var(name)
     if (var_type != null && var_type == 'string') {
       add_quotes = true
     }
@@ -222,12 +224,12 @@ function jump(args: any) {
 }
 
 function fcall(args: any) {
-  save.push_call_stack()
+  novelsave.push_call_stack()
   matchascript.jump_to_label(args[0])
 }
 
 function action_return() {
-  const pop: number = save.pop_call_stack()
+  const pop: number = novelsave.pop_call_stack()
   if (pop != undefined) {
     matchascript.jump_to_line(pop)
   }
@@ -267,7 +269,7 @@ function set(args: any) {
       var_type = 'string'
     }
   }
-  save.set_var(name, value, var_type)
+  novelsave.set_var(name, value, var_type)
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const before_dot = string.match(name, '[%a_][%w_]*')
@@ -307,7 +309,7 @@ function add(args: any) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const value_b_number = value != undefined ? parseInt(value_a) : 0
   const sum = value_a_number + value_b_number
-  save.set_var(name, sum)
+  novelsave.set_var(name, sum)
   matchascript.next()
 }
 
@@ -319,7 +321,7 @@ function addone(args: any) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const value = v != undefined ? parseInt(v) : 0
   const sum = value + 1
-  save.set_var(name, sum)[1]
+  novelsave.set_var(name, sum)[1]
   matchascript.next()
 }
 
@@ -337,7 +339,7 @@ function subtract(args: any) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const value_b_number = value != undefined ? parseInt(value) : 0
   const sum = value_a_number - value_b_number
-  save.set_var(name, sum)[1]
+  novelsave.set_var(name, sum)[1]
   matchascript.next()
 }
 
@@ -346,21 +348,21 @@ function scene(args: any) {
   const transition =
     args.transition != null
       ? args.transition
-      : save.get_var('scene.transition')[1]
+      : novelsave.get_var('scene.transition')[1]
   const duration =
     args.duration != null
       ? args.duration
       : args.t != null
       ? args.t
-      : save.get_var('scene.duration')[1]
+      : novelsave.get_var('scene.duration')[1]
   const color = null
   const transition_color =
     args.transition_color != null
       ? args.transition_color
-      : save.get_var('scene.transition_color')
+      : novelsave.get_var('scene.transition_color')
 
-  save.set_var('scene.current', scene, 'string')
-  save.set_var('scene.current_color', color, 'string')
+  novelsave.set_var('scene.current', scene, 'string')
+  novelsave.set_var('scene.current_color', color, 'string')
 
   const message = {
     scene: scene,
@@ -379,14 +381,15 @@ function show(args: any) {
   const transition =
     args.transition != null
       ? args.transition
-      : save.get_var('show.transition')[1]
+      : novelsave.get_var('show.transition')[1]
   const duration =
     args.duration != null
       ? args.duration
       : args.t != null
       ? args.t
-      : save.get_var('show.duration')[1]
-  const color = args.color != null ? args.color : save.get_var('show.color')[1]
+      : novelsave.get_var('show.duration')[1]
+  const color =
+    args.color != null ? args.color : novelsave.get_var('show.color')[1]
   const wait = args.wait
 
   messages.post('sprites', 'show', {
@@ -407,13 +410,13 @@ function hide(args: any) {
   const transition =
     args.transition != null
       ? args.transition
-      : save.get_var('hide.transition')[1]
+      : novelsave.get_var('hide.transition')[1]
   const duration =
     args.duration != null
       ? args.duration
       : args.t != null
       ? args.t
-      : save.get_var('hide.duration')
+      : novelsave.get_var('hide.duration')
   const wait = args.wait
   messages.post('sprites', 'hide', {
     name: name,
@@ -435,7 +438,7 @@ function move(args: any) {
       ? args.duration
       : args.t != null
       ? args.t
-      : save.get_var('move.duration')[1]
+      : novelsave.get_var('move.duration')[1]
   const wait = args.wait
   messages.post('sprites', 'move', { name: name, to: to, duration: duration })
   if (wait != undefined) {
@@ -617,15 +620,15 @@ export function set_font(font: string) {
 
 export function get_log(line: number): string {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return save.get_log(line)
+  return novelsave.get_log(line)
 }
 
 export function get_log_size(): number {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return save.get_log_size()
+  return novelsave.get_log_size()
 }
 
 export function add_to_log(text: string, name: string): string {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return save.add_to_log(text, name)
+  return novelsave.add_to_log(text, name)
 }

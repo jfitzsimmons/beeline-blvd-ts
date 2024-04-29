@@ -20,7 +20,7 @@ function M.load_script(filename)
 	if external then
 		for line in io.lines("."..filename) do table.insert(loaded, line) end
 	else
-		local internal = load_resource(filename)
+		local internal = sys.load_resource(filename)
 		if internal then 
 			local crlf = "\n"
 			for line in (internal..crlf):gmatch("(.-)"..crlf) do

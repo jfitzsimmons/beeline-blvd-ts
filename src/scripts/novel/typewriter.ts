@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import { Typewriter } from '../../types/state'
+import { Typewriter } from '../../types/novel'
 
 let typewriters: { [key: number]: Typewriter } = {}
 let current: Typewriter

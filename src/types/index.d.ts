@@ -3,5 +3,3 @@ declare global {
   // eslint-disable-next-line no-var
   var game: Game
 }
-
-export {}

@@ -1,9 +1,10 @@
-const { world } = globalThis.game
-const { rooms, npcs, player, tasks, novel } = world
-import { Confront } from '../../types/state'
+import { Confront } from '../../types/tasks'
 import { address_cautions } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
 import { ai_turn, place_npcs } from '../ai/ai_main'
+
+const { world } = globalThis.game
+const { rooms, npcs, player, tasks, novel } = world
 
 export function init() {
   //place_npcs()

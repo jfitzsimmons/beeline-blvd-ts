@@ -1,11 +1,5 @@
-import {
-  Caution,
-  Confront,
-  Npc,
-  PlayerState,
-  Effect,
-  Consequence,
-} from '../../types/state'
+import { Npc, PlayerState } from '../../types/state'
+import { Caution, Effect, Consequence, Confront } from '../../types/tasks'
 import { arraymove, shuffle } from '../utils/utils'
 import {
   fx,
@@ -144,9 +138,10 @@ function merits_demerits(c: Caution, w: string) {
     const adj = c.label === 'merits' ? 1 : -1
     npcs.all[w].love = npcs.all[w].love + adj
   }
-  const fxArray = c.label === 'merits' ? fxLookup.merits : fxLookup.demerits
+  const fxArray: string[] =
+    c.label === 'merits' ? fxLookup.merits : fxLookup.demerits
   const fx_labels = shuffle(fxArray)
-  const effect: Effect = { ...fx[fx_labels[1]] }
+  const effect: Effect = fx[fx_labels[0]]!
   if (effect.fx.type == 'attitudes') {
     effect.fx.stat = npcs.all[c.suspect].clan
   }

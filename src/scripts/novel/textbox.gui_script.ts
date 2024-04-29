@@ -3,10 +3,10 @@
 //const matchanovel = require('main.novel.matchanovel')
 //const typewriterlib = require('../../../main.novel.typewriter')
 //const settings = require "main.novel.settings"
-const save = require('../../../main.novel.save')
+import { novelsave } from '../../types/legacylua'
 import { new_typewriter } from './typewriter'
 import { add_to_log, get_log, get_log_size, textbox_done } from './matchanovel'
-import { Typewriter } from '../../types/state'
+import { Typewriter } from '../../types/novel'
 
 const display_width = tonumber(sys.get_config_string('display.width'))
 const display_height = tonumber(sys.get_config_string('display.height'))
@@ -68,7 +68,7 @@ function set_font(font: hash) {
 }
 
 function text_continue() {
-  //save.set_global_read()
+  //novelsave.set_global_read()
 
   typewriter.next()
 }
@@ -86,7 +86,7 @@ function say(this: any, text: string, name: string) {
   if (name !== '') {
     const name_prop = name + '.name'
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    local_name = save.get_var(name_prop)
+    local_name = novelsave.get_var(name_prop)
   }
   show_name(local_name[0])
 }

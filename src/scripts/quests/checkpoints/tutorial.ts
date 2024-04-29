@@ -1,8 +1,9 @@
+import { Npc } from '../../../types/state'
 import { steal_check, take_or_stash } from '../../ai/ai_checks'
 import { npc_action_move, rooms_near_target } from '../../ai/ai_main'
 import { shuffle } from '../../utils/utils'
 import { any_has_value } from '../../utils/quest'
-import { Npc } from '../../../types/state'
+
 const { rooms, npcs, tasks, player, novel } = globalThis.game.world
 
 export function tutorialA(interval = 'turn') {
@@ -141,7 +142,7 @@ export function tutorialAscripts(actor: string): string[] {
   if (tutorialAlookup[npcs.all[actor].currentstation] != null)
     scripts.push(tutorialAlookup[npcs.all[actor].currentstation]())
 
-  return scripts.filter((s) => s != null)
+  return scripts.filter((s: string | null): s is string => s != null)
 }
 
 export function tutorialB() {

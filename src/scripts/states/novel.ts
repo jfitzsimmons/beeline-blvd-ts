@@ -1,4 +1,5 @@
-import { Npc, QuestCondition } from '../../types/state'
+import { Npc } from '../../types/state'
+import { QuestCondition } from '../../types/tasks'
 
 export default class WorldNovel {
   private background: string
