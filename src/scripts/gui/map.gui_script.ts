@@ -30,7 +30,7 @@ export function on_input(
 export function on_message(this: any, messageId: hash, _sender: url): void {
   if (messageId == hash('update_heat')) {
     const pienode = gui.get_node('heat')
-    let angle = player.alert_level * 30
+    let angle = Math.round(player.heat * 180)
     if (angle > 180) angle = 180
     // get the outer bounds
     gui.set_fill_angle(pienode, angle)

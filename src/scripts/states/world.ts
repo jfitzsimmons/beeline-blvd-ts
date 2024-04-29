@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { AllQuestsMethods } from '../../types/state'
 
 import StateMachine from './stateMachine'
 import WorldRooms from './rooms'
@@ -7,6 +6,7 @@ import WorldPlayer from './player'
 import WorldNpcs from './npcs'
 import WorldTasks from './tasks'
 import WorldNovel from './novel'
+import { AllQuestsMethods } from '../../types/tasks'
 
 export default class World {
   private stateMachine: StateMachine

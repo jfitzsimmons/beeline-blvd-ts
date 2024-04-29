@@ -1,9 +1,17 @@
 import { shuffle } from '../utils/utils'
-import { seen_check, confrontation_check, aid_check } from './ai_checks'
+import {
+  // seen_check,
+  //confrontation_check,
+  aid_check,
+  // thief_consequences,
+} from './ai_checks'
 import { Direction } from '../../types/ai'
 import { Occupants } from '../../types/state'
 import { remove_effects } from '../systems/effectsystem'
 import { reception_checks } from './levels/reception'
+import { customs_checks } from './levels/customs'
+import { baggage_checks } from './levels/baggage'
+//import { thief_consolation_checks } from '../systems/tasksystem'
 
 const { tasks, rooms, npcs, player } = globalThis.game.world
 const initial_places = [
@@ -90,7 +98,7 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
         rooms.fallbacks.stations['admin1_passer'] == '' &&
         rooms.layout[current.y][current.x] != 'admin1'
       ) {
-        print(npc, 'passer A')
+        print(npc, 'passer Admin1')
         rooms.fallbacks.stations['admin1_passer'] = npc
         npcs.all[npc].matrix = rooms.all['admin1'].matrix
       } else if (
@@ -98,7 +106,7 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
         rooms.fallbacks.stations['admin1_passer'] == '' &&
         rooms.layout[current.y][current.x] != 'security'
       ) {
-        print(npc, 'passer S')
+        print(npc, 'passer Security')
         rooms.fallbacks.stations['security_passer'] = npc
         npcs.all[npc].matrix = rooms.all['security'].matrix
       } else if (
@@ -260,7 +268,7 @@ function release_occupants(d: Direction) {
     const patient = occupants[bed]
     if (patient != '' && npcs.all[patient].cooldown <= 0) {
       npcs.all[patient].hp = 10
-      print('released from prison:', patient)
+      print('released from infirmary:', patient)
       npc_action_move(patient, d)
       rooms.all.infirmary.occupants![bed] = ''
     }
@@ -274,6 +282,8 @@ function ai_actions(direction: Direction, injured: string[]) {
   //replace_injured(injured)
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   reception_checks()
+  customs_checks()
+  baggage_checks
 }
 
 export function npc_action_move(n: string, d: Direction) {
@@ -285,7 +295,7 @@ export function npc_action_move(n: string, d: Direction) {
   remove_effects(npc)
   if (npc.cooldown > 0) npc.cooldown = npc.cooldown - 1
 }
-export function assign_nearby_rooms(enter: { x: number; y: number }) {
+export function rooms_near_target(target: { x: number; y: number }) {
   const exit = player.matrix
   let direction = {
     front: { x: 0, y: 0 },
@@ -294,33 +304,33 @@ export function assign_nearby_rooms(enter: { x: number; y: number }) {
     right: { x: 0, y: 0 },
   }
   //get directions based on way exit is facing
-  if (exit.x > enter.x) {
+  if (exit.x > target.x) {
     direction = {
-      front: { x: enter.x - math.random(0, 2), y: enter.y },
-      back: { x: enter.x + 2, y: enter.y },
-      left: { x: enter.x, y: enter.y + 1 },
-      right: { x: enter.x, y: enter.y - 1 },
+      front: { x: target.x - math.random(0, 2), y: target.y },
+      back: { x: target.x + 2, y: target.y },
+      left: { x: target.x, y: target.y + 1 },
+      right: { x: target.x, y: target.y - 1 },
     }
-  } else if (exit.y < enter.y) {
+  } else if (exit.y < target.y) {
     direction = {
-      front: { x: enter.x, y: enter.y + math.random(0, 2) },
-      back: { x: enter.x, y: enter.y - 2 },
-      left: { x: enter.x + 1, y: enter.y },
-      right: { x: enter.x - 1, y: enter.y },
+      front: { x: target.x, y: target.y + math.random(0, 2) },
+      back: { x: target.x, y: target.y - 2 },
+      left: { x: target.x + 1, y: target.y },
+      right: { x: target.x - 1, y: target.y },
     }
-  } else if (exit.y > enter.y) {
+  } else if (exit.y > target.y) {
     direction = {
-      front: { x: enter.x, y: enter.y - math.random(0, 2) },
-      back: { x: enter.x, y: enter.y + 2 },
-      left: { x: enter.x - 1, y: enter.y },
-      right: { x: enter.x + 1, y: enter.y },
+      front: { x: target.x, y: target.y - math.random(0, 2) },
+      back: { x: target.x, y: target.y + 2 },
+      left: { x: target.x - 1, y: target.y },
+      right: { x: target.x + 1, y: target.y },
     }
   } else {
     direction = {
-      front: { x: enter.x + math.random(0, 2), y: enter.y },
-      back: { x: enter.x - 2, y: enter.y },
-      left: { x: enter.x, y: enter.y - 1 },
-      right: { x: enter.x, y: enter.y + 1 },
+      front: { x: target.x + math.random(0, 2), y: target.y },
+      back: { x: target.x - 2, y: target.y },
+      left: { x: target.x, y: target.y - 1 },
+      right: { x: target.x, y: target.y + 1 },
     }
   }
   return direction
@@ -383,73 +393,63 @@ export function place_npcs() {
       }
     }
   })
+
+  //TESTJPF  TEST SETTINGS:::
+  tasks.caution_builder(
+    npcs.all['security004'],
+    'questioning',
+    rooms.all.grounds.stations.assistant,
+    'testing'
+  )
+  npcs.all[rooms.all.reception.stations.guard].hp = 0
   npcs.all[rooms.all.grounds.stations.worker1].hp = 0
 }
-export function ai_turn(enter: string) {
-  const patients = Object.values(rooms.all.infirmary.occupants!)
-  const busy_docs = tasks.busy_doctors()
+export function ai_turn(player_room: string) {
+  rooms.clear_stations()
+
+  const patients = Object.values(rooms.all.infirmary.occupants!).filter(
+    (p) => p != ''
+  )
+  const busy_docs = tasks.get_field_docs()
   const immobile: string[] = [
     ...Object.values(rooms.all.security.occupants!),
     ...patients,
     ...busy_docs,
   ]
+  //injury unreported, or reprioritized
   const injured: string[] = []
-  let targets: Direction = assign_nearby_rooms(rooms.all[enter].matrix)
+  let targets: Direction = rooms_near_target(rooms.all[player_room].matrix)
 
   npcs.sort_npcs_by_encounter()
 
   for (let i = npcs.order.length; i-- !== 0; ) {
     const npc = npcs.all[npcs.order[i]]
-
+    //Injured in the field
     if (npc.hp <= 0 && patients.includes(npc.labelname) == false) {
       rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
 
-      // injured make a part of tasks??
       const limit = tasks.medicQueue.indexOf(npc.labelname)
       if (limit < 0 || limit > 3) injured.push(npc.labelname)
     }
     if (npc.clan == 'doctors') {
-      if (busy_docs.includes(npc.labelname) == true)
+      if (busy_docs.includes(npc.labelname) == true) {
+        //stay put
         rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
-      if (injured.length > 0)
-        targets = assign_nearby_rooms(
+      } else if (patients.length > 1 && math.random() < 0.5) {
+        rooms.all.infirmary.stations.aid = npc.labelname
+        immobile.push(npc.labelname)
+      } else if (patients.length > 3) {
+        targets = rooms_near_target(rooms.all.infirmary.matrix)
+      } else if (injured.length > 0) {
+        //find emergency patient
+        targets = rooms_near_target(
           rooms.all[npcs.all[injured[0]].currentroom].matrix
         )
+      }
     }
     if (immobile.includes(npc.labelname) == false && npc.hp > 0)
       npc_action_move(npc.labelname, targets)
   }
 
   ai_actions(targets, injured)
-}
-//testjpf player interact.gui related
-export function witness_player(w: string) {
-  const suspect = player.state
-  const watcher = npcs.all[w]
-  const consequence = {
-    confront: false,
-    type: 'neutral',
-  }
-
-  // is an NPC watching?
-  if (watcher != null && seen_check(suspect.skills, watcher.skills) == true) {
-    // should NPC confront suspect?
-    if (confrontation_check(suspect, watcher) == true) {
-      consequence.confront = true
-      consequence.type = 'concern'
-    } else {
-      consequence.type = tasks.consolation_checks(
-        watcher.binaries,
-        watcher.skills
-      )
-    }
-    if (consequence.confront == false && consequence.type != 'neutral') {
-      tasks.caution_builder(watcher, consequence.type, 'player', 'theft')
-    } else {
-      print('player seen but not confronted by', w)
-    }
-  } else {
-    print('No one is Watching')
-  }
-  return consequence
 }

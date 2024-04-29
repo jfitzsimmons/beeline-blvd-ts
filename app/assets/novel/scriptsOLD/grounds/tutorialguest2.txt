@@ -219,7 +219,7 @@ if player.binaries.passive_aggressive > .7 and npc.binaries.passive_aggressive <
   n.sprite = npc.frownsprite
   show n
   merits = merits - 2
-  if npc.binaries.anti_autority < -.4
+  if npc.binaries.anti_authority < -.4
     merits = merits - 3
   n: sorry.
   jump quickclose

@@ -19,7 +19,6 @@ export function returnfalse() {
 
 export function greater_than(args: [() => number, number]): boolean {
   const value = args[0]()
-  print('injury check!!!::: value ', value)
   return value > args[1] ? true : false
 }
 

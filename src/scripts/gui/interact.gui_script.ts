@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
-import { witness_player } from '../ai/ai_main'
+import { witness_player } from '../ai/ai_checks'
 const { npcs, rooms, tasks, player, novel } = globalThis.game.world
 
 interface cloneparent {
@@ -38,7 +38,6 @@ function show_ai_screen() {
   msg.post('ai_screen#ai_screen', 'show_screen')
   msg.post('#', 'release_input_focus')
 }
-
 function open_novel(_this: props) {
   npcs.all[_this.npcname].convos = npcs.all[_this.npcname].convos + 1
   novel.npc = { ...npcs.all[_this.npcname] }
@@ -50,7 +49,6 @@ function open_novel(_this: props) {
   msg.post('proxies:/controller#novelcontroller', 'show_scene')
   msg.post('#', 'release_input_focus')
 }
-
 function open_inventory(_this: props, actor: string, action: string) {
   const room = rooms.all[player.currentroom]
   if (action == 'open') {
@@ -63,7 +61,6 @@ function open_inventory(_this: props, actor: string, action: string) {
     _this.watcher = actor
   }
   if (_this.watcher != '' && _this.watcher != null) {
-    print('open_inventory task.npc_has_caution:::')
     const prev_caution = tasks.npc_has_caution(_this.watcher, 'player')
 
     if (prev_caution != null) {
@@ -77,7 +74,6 @@ function open_inventory(_this: props, actor: string, action: string) {
     }
   }
   if (_this.consequence.confront == true) {
-    print('Confront!!!')
     /**
      * ued to send confront info though script builder.
      * use Novel class!! testjpf
@@ -107,11 +103,11 @@ function open_inventory(_this: props, actor: string, action: string) {
     msg.post('#', 'release_input_focus')
   }
 }
-
 function check_nodes(
   _this: props,
   action: { released: boolean; x: number; y: number }
 ) {
+  _this.consequence = { confront: false, type: 'neutral' }
   for (const c of _this.clones) {
     if (
       gui.get_layer(c.clone) != hash('unclickable') &&
@@ -132,7 +128,6 @@ function check_nodes(
     }
   }
 }
-
 function set_interactions(
   actorsActions: {
     [key: string]: string[]
@@ -194,6 +189,7 @@ function set_interactions(
   }
   return clones
 }
+
 export function on_message(
   this: props,
   messageId: hash,

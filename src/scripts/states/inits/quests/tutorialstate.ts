@@ -3,9 +3,10 @@
 //local npcs = require "main.states.npcstates"
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
 //const questutils = require('../../../main.utils.quest')
-import { AllQuestsMethods, Quests } from '../../../../types/state'
+
 //TESTJPF THESE util imports require state
 //STATE hasnt been CREATED!
+import { AllQuestsMethods, Quests } from '../../../../types/tasks'
 import {
   any_has_value,
   convos_check,

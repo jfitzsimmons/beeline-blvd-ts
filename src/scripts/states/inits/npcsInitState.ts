@@ -8,6 +8,7 @@ const npc_defaults: NpcDefaults = {
   skills: {},
   binaries: {},
   turns_since_encounter: 0,
+  turns_since_convo: 99,
   love: 0,
   hp: 5,
   cooldown: 0,
@@ -21,7 +22,7 @@ export const NpcsInitState = {
   labor01: {
     home: { x: 0, y: 2 }, //loading
     labelname: 'labor01',
-    inventory: ['tomato'],
+    inventory: ['tomato', 'banana'],
     clearence: 1,
     clan: 'labor',
     body: 'labor01body',
@@ -30,7 +31,7 @@ export const NpcsInitState = {
   labor02: {
     home: { x: 1, y: 1 }, //warehouse
     labelname: 'labor02',
-    inventory: ['mushroom03'],
+    inventory: ['mushroom03', 'vial01'],
     clearence: 1,
     clan: 'labor',
     body: 'labor02body',
@@ -39,7 +40,7 @@ export const NpcsInitState = {
   labor03: {
     home: { x: 4, y: 1 }, //maintenance
     labelname: 'labor03',
-    inventory: [],
+    inventory: ['vial02'],
     clearence: 1,
     clan: 'labor',
     body: 'labor03body',
@@ -48,7 +49,7 @@ export const NpcsInitState = {
   labor04: {
     home: { x: 0, y: 5 },
     labelname: 'labor04',
-    inventory: [],
+    inventory: ['mushroom02'],
     clearence: 1,
     clan: 'labor',
     body: 'labor04body',
@@ -57,7 +58,7 @@ export const NpcsInitState = {
   doc02: {
     home: { x: 0, y: 4 },
     labelname: 'doc02',
-    inventory: [],
+    inventory: ['orange'],
     clearence: 1,
     clan: 'doctors',
     body: 'doctors01body',
@@ -66,7 +67,7 @@ export const NpcsInitState = {
   doc01: {
     home: { x: 4, y: 4 },
     labelname: 'doc01',
-    inventory: ['orange'],
+    inventory: ['orange', 'berry01'],
     clearence: 1,
     clan: 'doctors',
     body: 'doctors02body',
@@ -75,7 +76,7 @@ export const NpcsInitState = {
   contractor02: {
     home: { x: 2, y: 2 },
     labelname: 'contractor02',
-    inventory: [],
+    inventory: ['steak01'],
     clearence: 0,
     clan: 'contractors',
     body: 'contractors01body',
@@ -84,7 +85,7 @@ export const NpcsInitState = {
   contractor01: {
     home: { x: 2, y: 4 }, //admin1
     labelname: 'contractor01',
-    inventory: ['earrings'],
+    inventory: ['earrings', 'mushroom03'],
     clearence: 0,
     clan: 'contractors',
     body: 'contractors02body',
@@ -93,7 +94,7 @@ export const NpcsInitState = {
   visitor02: {
     home: { x: 0, y: 4 }, //grounds
     labelname: 'visitor02',
-    inventory: ['mushroom02'],
+    inventory: ['mushroom02', 'tomato'],
     clearence: 0,
     clan: 'visitors',
     body: 'visitors01body',
@@ -102,7 +103,7 @@ export const NpcsInitState = {
   visitor01: {
     home: { x: 2, y: 3 }, //lobby
     labelname: 'visitor01',
-    inventory: ['leaf02'],
+    inventory: ['leaf02', 'drumstick01'],
     clearence: 0,
     clan: 'visitors',
     body: 'visitors02body',
@@ -111,7 +112,7 @@ export const NpcsInitState = {
   sexworker01: {
     home: { x: 4, y: 3 }, //pubgrill
     labelname: 'sexworker01',
-    inventory: ['magicb2'],
+    inventory: ['magicb2', 'shrimp01'],
     clearence: 1,
     clan: 'sexworkers',
     body: 'sexworkers01body',
@@ -120,7 +121,7 @@ export const NpcsInitState = {
   sexworker02: {
     home: { x: 4, y: 2 }, //inn
     labelname: 'sexworker02',
-    inventory: ['leaf01'],
+    inventory: ['leaf01', 'cheese'],
     clearence: 0,
     clan: 'sexworkers',
     body: 'sexworkers02body',
@@ -129,7 +130,7 @@ export const NpcsInitState = {
   church01: {
     home: { x: 3, y: 2 }, //chapel
     labelname: 'church01',
-    inventory: ['mirror'],
+    inventory: ['mirror', 'potion'],
     clearence: 1,
     clan: 'church',
     body: 'church02body',
@@ -138,7 +139,7 @@ export const NpcsInitState = {
   church02: {
     home: { x: 4, y: 4 }, //store
     labelname: 'church02',
-    inventory: ['string'],
+    inventory: ['string', 'mushroom01'],
     clearence: 0,
     clan: 'church',
     body: 'church01body',
@@ -183,7 +184,7 @@ export const NpcsInitState = {
   staff05: {
     home: { x: 2, y: 0 }, //alley3
     labelname: 'staff05',
-    inventory: ['steak02'],
+    inventory: ['steak02', 'fish02'],
     clearence: 1,
     clan: 'staff',
     body: 'staff05body',
@@ -201,7 +202,7 @@ export const NpcsInitState = {
   lou: {
     home: { x: 1, y: 0 }, //alley2
     labelname: 'lou',
-    inventory: ['avacado'],
+    inventory: ['avacado', 'shrimp02'],
     clearence: 1,
     clan: 'gang1',
     body: 'gang102body',
@@ -210,7 +211,7 @@ export const NpcsInitState = {
   spike: {
     home: { x: 4, y: 3 },
     labelname: 'spike',
-    inventory: ['rose'],
+    inventory: ['rose', 'berry02'],
     clearence: 1,
     clan: 'gang2',
     body: 'gang201body',
@@ -219,7 +220,7 @@ export const NpcsInitState = {
   curly: {
     home: { x: 4, y: 5 },
     labelname: 'curly',
-    inventory: ['berry02'],
+    inventory: ['berry02', 'avacado'],
     clearence: 1,
     clan: 'gang2',
     body: 'gang202body',
@@ -228,7 +229,7 @@ export const NpcsInitState = {
   gang302: {
     home: { x: 0, y: 0 },
     labelname: 'gang302',
-    inventory: ['shrimp02'],
+    inventory: ['shrimp02', 'egg01'],
     clearence: 1,
     clan: 'gang3',
     body: 'gang301body',
@@ -237,7 +238,7 @@ export const NpcsInitState = {
   gang301: {
     home: { x: 3, y: 3 },
     labelname: 'gang301',
-    inventory: ['magicc5'],
+    inventory: ['magicc5', 'steak02'],
     clearence: 1,
     clan: 'gang3',
     body: 'gang302body',
@@ -255,7 +256,7 @@ export const NpcsInitState = {
   gang401: {
     home: { x: 4, y: 5 },
     labelname: 'gang401',
-    inventory: ['eyeball02'],
+    inventory: ['eyeball02', 'sish01'],
     clearence: 1,
     clan: 'gang4',
     body: 'gang402body',
@@ -264,7 +265,7 @@ export const NpcsInitState = {
   corps02: {
     home: { x: 2, y: 4 }, //admin1
     labelname: 'corps02',
-    inventory: ['magicb3'],
+    inventory: ['magicb3', 'vial01'],
     clearence: 1,
     clan: 'corps',
     body: 'corps01body',
@@ -273,7 +274,7 @@ export const NpcsInitState = {
   corps01: {
     home: { x: 3, y: 5 }, //admin2
     labelname: 'corps01',
-    inventory: ['sack'],
+    inventory: ['sack', 'banana'],
     clearence: 1,
     clan: 'corps',
     body: 'corps02body',
@@ -282,7 +283,7 @@ export const NpcsInitState = {
   corps03: {
     home: { x: 1, y: 5 }, //vip
     labelname: 'corps03',
-    inventory: ['magica4'],
+    inventory: ['magica4', 'mushroom02'],
     clearence: 1,
     clan: 'corps',
     body: 'corps03body',
@@ -291,7 +292,7 @@ export const NpcsInitState = {
   security001: {
     home: { x: 1, y: 3 }, //customs
     labelname: 'security001',
-    inventory: ['potion'],
+    inventory: ['potion', 'orange'],
     clearence: 1,
     clan: 'security',
     body: 'security01body',
@@ -301,7 +302,7 @@ export const NpcsInitState = {
     //matrix: { x: 3, y: 6 },
     home: { x: 0, y: 3 }, //baggage
     labelname: 'security002',
-    inventory: ['ring'],
+    inventory: ['ring', 'mushroom03'],
     clearence: 1,
     clan: 'security',
     body: 'security02body',
@@ -310,7 +311,7 @@ export const NpcsInitState = {
   security003: {
     home: { x: 4, y: 4 }, //store
     labelname: 'security003',
-    inventory: ['drumstick01'],
+    inventory: ['drumstick01', 'tomato'],
     clearence: 2,
     clan: 'security',
     body: 'security03body',
@@ -319,7 +320,7 @@ export const NpcsInitState = {
   security004: {
     home: { x: 4, y: 1 }, //maint
     labelname: 'security004',
-    inventory: ['coffeemug'],
+    inventory: ['coffeemug', 'orange'],
     clearence: 2,
     clan: 'security',
     body: 'security04body',

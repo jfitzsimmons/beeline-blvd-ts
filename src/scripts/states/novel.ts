@@ -1,20 +1,21 @@
-import { Npc, QuestCondition } from '../../types/state'
+import { Npc } from '../../types/state'
+import { QuestCondition } from '../../types/tasks'
 
 export default class WorldNovel {
-  private background: string
-  private sprites: { [key: string]: string }
+  //private background: string
+  //private sprites: { [key: string]: string }
   private _reason: string
   private _scripts: string[]
-  private _alertChange: number
+  //private _alertChange: number
   private _npc: Npc
   private _quest: QuestCondition
 
   constructor(initnpc: Npc, initquest: QuestCondition) {
-    this.background = ''
-    this.sprites = {}
+    // this.background = ''
+    //  this.sprites = {}
     this._reason = 'none'
     this._scripts = []
-    this._alertChange = 0
+    // this._alertChange = 0
     this._npc = { ...initnpc }
     this._quest = { ...initquest }
     //Have something here like this.sprites.smile .laugh .sad etc....
@@ -43,12 +44,6 @@ export default class WorldNovel {
   }
   public set npc(npc: Npc) {
     this._npc = { ...npc }
-  }
-  public get alertChange() {
-    return this._alertChange
-  }
-  public set alertChange(n: number) {
-    this._alertChange = n
   }
   addScript(s: string) {
     this._scripts.push(s)

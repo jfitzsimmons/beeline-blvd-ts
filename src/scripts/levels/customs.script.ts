@@ -15,6 +15,16 @@ function load_npcs() {
   }
 }
 
+function load_storage() {
+  const params = {
+    roomname: 'customs',
+    storagename: 'vase3',
+    ani: 'vase_art1',
+  }
+  msg.post('/vase3#storage', 'load_storage_inventory', params)
+  sprite.play_flipbook('/vase3#sprite', params.ani)
+}
+
 export function on_message(
   // this: any,
   messageId: hash,
@@ -23,6 +33,7 @@ export function on_message(
 ): void {
   if (messageId == hash('room_load')) {
     load_npcs()
+    load_storage()
   }
 }
 

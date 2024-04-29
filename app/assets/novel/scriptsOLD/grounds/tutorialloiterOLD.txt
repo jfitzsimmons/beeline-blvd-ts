@@ -241,7 +241,7 @@ if player.binaries.passive_aggressive > .7 and  ____G_game_world_0.novel.npc.bin
   n.sprite =  ____G_game_world_0.novel.npc.frownsprite
   show n
   merits = merits - 2
-  if  ____G_game_world_0.novel.npc.binaries.anti_autority < -.4
+  if  ____G_game_world_0.novel.npc.binaries.anti_authority < -.4
     merits = merits - 3
   n: sorry.
   jump quickclose

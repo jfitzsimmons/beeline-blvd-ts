@@ -17,13 +17,9 @@ function steal_stash_checks() {
     loot = victim.inventory
     actor = rooms.all.reception.actors.drawer
     if (actor.inventory.length > 0 && rooms.all.reception.stations.desk == '') {
-      if (math.random() < 0.5) {
-        take_check(victim, actor)
-      }
+      take_check(victim, actor)
     } else if (actor.inventory.length > 0) {
-      if (math.random() < 0.5) {
-        steal_check(victim, attendant, actor.inventory)
-      }
+      steal_check(victim, attendant, actor.inventory)
     }
   }
 
@@ -36,9 +32,7 @@ function steal_stash_checks() {
     loot.length > 0 &&
     thief.cooldown <= 0
   ) {
-    if (math.random() < 0.5) {
-      steal_check(thief, victim, loot)
-    }
+    steal_check(thief, victim, loot)
   }
   if (rooms.all.reception.stations.desk != '') {
     actor = rooms.all.reception.actors.drawer
