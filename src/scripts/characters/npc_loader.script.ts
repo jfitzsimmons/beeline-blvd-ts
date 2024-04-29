@@ -1,7 +1,11 @@
 //const world = require('main.states.worldstate')
-const { npcs } = globalThis.game.world
+const { npcs, tasks } = globalThis.game.world
+//go.property('default_pos', go.get_position())
+
 function show_npc(name: string) {
   if (name != '') {
+    if (npcs.all[name].hp <= 0) particlefx.play('#injury')
+    else if (tasks.npc_is_wanted(name) == true) particlefx.play('#wanted')
     sprite.play_flipbook('#npcspritebody', npcs.all[name].body)
     sprite.play_flipbook('#npcsprite', npcs.all[name].race)
   } else {
@@ -10,8 +14,16 @@ function show_npc(name: string) {
   }
 }
 
+function move_npc(station: string) {
+  const pos = go.get_position(station)
+  pos.y = pos.y - 64
+  pos.x = pos.x - 28
+  go.set_position(pos)
+}
+
 export function init(this: props) {
   this.actions = {}
+  this.npc = ''
 }
 interface props {
   npc: string
@@ -21,7 +33,7 @@ interface props {
 export function on_message(
   this: props,
   messageId: hash,
-  message: { npc: string; room: string; enter: boolean },
+  message: { npc: string; room: string; enter: boolean; station: string },
   _sender: url
 ): void {
   //const senderId = go.get_id()
@@ -43,10 +55,11 @@ export function on_message(
       msg.post('#fluid', 'disable')
       msg.post('#solid', 'disable')
     }
-
-    show_npc(message.npc)
+    show_npc(this.npc)
+  } else if (messageId == hash('move_npc')) {
+    move_npc(message.station)
   } else if (messageId == hash('show_npc')) {
-    show_npc(message.npc)
+    show_npc(this.npc)
   } else if (messageId == hash('trigger_response')) {
     if (message.enter) {
       const params = {

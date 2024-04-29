@@ -1,0 +1,68 @@
+label queststart
+if convos <= 0
+  n: Haven't you been warned!
+> I still need my luggage.
+  jump sterndirections
+> How else would I get my luggage?
+  jump routinedirections
+
+label routinedirections
+if convos > 1 
+  n: You'll get your luggage when you go through customs.
+  jump quickclose
+if npc.love < -2
+  jump callsecurity
+n: Listen asshole, go through customs
+npc.love = npc.love -1
+jump quickclose
+
+label sterndirections
+if convos > 2 
+  n: You and everyone else. Go through customs.
+  npc.love = npc.love -1
+  jump quickclose
+n: You're bothering me.  Do you wnat me to call security???
+> Don't you know who I am?!
+  jump persuasionoffender
+> ...
+  jump quickclose
+
+label callsecurity
+n: SECURITY!
+alert= alert+ 1
+jump quickclose
+
+label persuasionoffender
+if p.s.charisma > 7
+  npc.love = npc.love + 5
+  n: You crack me up, but sreiously, go to customs.
+  jump quickclose
+if p.b.aggressive > .7 and npc.b.aggressive < .4
+  npc.love = npc.love - 2
+  if npc.b.authority < -.4
+    npc.love = npc.love - 3
+  n: I'm sorry.
+  jump quickclose
+n: I'm not convinced
+jump lastchance
+
+label lastchance
+npc.love = npc.love-2
+n: My finger is on the button.
+n: Do you want trouble? 
+n: Or do you want to go through customsh?
+n: Just like every other schmuck who got on that train.
+> ...
+  n: Have a good day.
+  jump quickclose
+> Bring it on
+  npc.love = npc.love - 5
+  if npc.b.aggressive > 0.5 and npc.s.constitution > 7
+    npc.love = npc.love + 10
+    n: "I like you."
+    jump repeatannoyed
+  jump callsecurity
+
+label repeatannoyed
+n: Fuck you!
+jump quickclose

@@ -37,7 +37,6 @@
     "*.tilesource": "textproto"
   },
   "files.exclude": {
-    "node_modules/": true,
     "patches/": true
   },
   "typescript.tsdk": "node_modules\\typescript\\lib",

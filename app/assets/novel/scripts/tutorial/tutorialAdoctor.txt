@@ -1,0 +1,9 @@
+label queststart
+reason = "none"
+show n
+> Talk to doctor about injured man?
+    p: You gotta help that person over there.
+    n: Thanks kind stranger.
+    jump quickclose
+> Other
+    jump start

@@ -1,0 +1,29 @@
+label start
+show n
+n: the v::reason {reason}
+if reason == "quest"
+    jump queststart
+n: Got to keep an eye on your luggage.
+> What's with the workers here?
+    jump guest2random1
+> What do they do with the luggage?
+    jump groundsworkers1
+> What are you up to?
+    jump clanrandom1
+> What do I do next?
+    jump tutorialnext1
+> test choices???
+    jump testchoices
+jump quickclose
+
+label testchoices
+n: are choices working???
+> No 
+    n: Ironically this worked.
+> Yes
+    n:how did you know?!?!
+n: My name is and {n.name}
+n: love {npc.love}
+n: and {npc.clan} clan again
+n: speed?: {npc.s.speed}
+jump quickclose

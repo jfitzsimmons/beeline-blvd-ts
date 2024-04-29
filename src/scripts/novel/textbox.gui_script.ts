@@ -3,10 +3,10 @@
 //const matchanovel = require('main.novel.matchanovel')
 //const typewriterlib = require('../../../main.novel.typewriter')
 //const settings = require "main.novel.settings"
-const save = require('../../../main.novel.save')
+import { novelsave } from '../../types/legacylua'
 import { new_typewriter } from './typewriter'
 import { add_to_log, get_log, get_log_size, textbox_done } from './matchanovel'
-import { Typewriter } from '../../types/state'
+import { Typewriter } from '../../types/novel'
 
 const display_width = tonumber(sys.get_config_string('display.width'))
 const display_height = tonumber(sys.get_config_string('display.height'))
@@ -68,8 +68,7 @@ function set_font(font: hash) {
 }
 
 function text_continue() {
-  //save.set_global_read()
-  print('press_continue txt cont type nxt')
+  //novelsave.set_global_read()
 
   typewriter.next()
 }
@@ -87,7 +86,7 @@ function say(this: any, text: string, name: string) {
   if (name !== '') {
     const name_prop = name + '.name'
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    local_name = save.get_var(name_prop)
+    local_name = novelsave.get_var(name_prop)
   }
   show_name(local_name[0])
 }
@@ -190,13 +189,10 @@ function hide_log() {
 
 function press_continue() {
   if (typeof log_position == 'number') {
-    print('press_continue', log_position)
     hide_log()
   } else if (skipping) {
-    print('press_continue SKIP')
     end_skip()
   } else if (auto) {
-    print('press_continue auto')
     end_auto()
   } else {
     text_continue()
@@ -278,7 +274,6 @@ export function on_message(
 ) {
   if (messageId == hash('say')) {
     show()
-    print('message.text, message.name', message.text, message.name)
     say(message.text, message.name)
     //gui.set_text(gui.get_node("text"), message.text)
   } else if (messageId == hash('typewriter_next')) {
@@ -317,11 +312,8 @@ export function on_input(
   action: { pressed: boolean; released: boolean; repeated: boolean }
 ) {
   if (action_id == hash('continue') && action.pressed) {
-    print('TEXT BOX GOT CONTINUE message on input pressed')
     press_continue()
   } else if (action_id == hash('touch') && action.released) {
-    print('TEXT BOX GOT CONTINUE message on TOUCH release')
-
     press_continue()
   } else if (action_id == hash('skip')) {
     if (action.pressed) {

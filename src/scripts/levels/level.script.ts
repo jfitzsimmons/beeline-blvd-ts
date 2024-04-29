@@ -1,19 +1,54 @@
-import { ai_turn, place_npcs } from '../ai/ai_main'
-const { world } = globalThis.game
-const { rooms, npcs, player, tasks, novel } = world
-import { Confront } from '../../types/state'
+import { Confront } from '../../types/tasks'
 import { address_cautions } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
+import { ai_turn, place_npcs } from '../ai/ai_main'
+
+const { world } = globalThis.game
+const { rooms, npcs, player, tasks, novel } = world
+
 export function init() {
-  place_npcs()
+  //place_npcs()
 }
 function game_turn(room: string) {
-  rooms.clear_stations()
-  ai_turn(room)
+  ai_turn(room) // abstract to world controller?
   quest_checker('turn')
   tasks.address_quests('turn', player.checkpoint)
   player.ap = player.ap - 1
   player.turns = player.turns + 1
+  calculate_heat(room)
+}
+
+function calculate_heat(room: string) {
+  let heat = 0
+  let cold = 0
+  const stations = Object.values(rooms.all[room].stations).filter(
+    (s) => s != ''
+  )
+  //let sKey: keyof typeof stations
+  heat += stations.length
+  for (const npc of stations) {
+    heat += npcs.all[npc].love * -1
+    if (npcs.all[npc].turns_since_convo <= 0) heat++
+  }
+
+  heat +=
+    (player.alert_level +
+      player.clearance +
+      tasks.number_of_cautions('player')) *
+    2
+
+  cold +=
+    Object.values(rooms.all.security.occupants!).filter((s) => s != '').length *
+    3
+  cold +=
+    (player.hp +
+      tasks.cautions.length +
+      player.state.skills.stealth +
+      player.state.skills.charisma) *
+    2
+
+  cold += player.ap
+  player.heat = heat / cold
 }
 
 function update_hud() {
@@ -27,7 +62,7 @@ function confrontation_scene(c: Confront) {
   npcs.all[c.npc].convos = npcs.all[c.npc].convos + 1
   novel.npc = npcs.all[c.npc]
   novel.reason = c.reason
-  msg.post('#', 'show_scene')
+  msg.post('proxies:/controller#novelcontroller', 'show_scene')
 }
 interface props {
   roomname: string
@@ -49,7 +84,6 @@ export function on_message(
       const params = {
         enter_room: tasks.spawn,
       }
-      print('faint :level')
       msg.post('proxies:/controller#worldcontroller', 'faint', params)
     } else {
       this.roomname = message.roomname
@@ -57,41 +91,38 @@ export function on_message(
       player.currentroom = this.roomname
       player.matrix = rooms.all[this.roomname].matrix
 
-      if (
-        message.load_type != 'load game' &&
-        message.load_type != 'return to game' &&
-        message.load_type != 'new game'
-      ) {
+      if (message.load_type == 'room transition') {
         game_turn(message.roomname)
+      } else if (message.load_type == 'new game') {
+        place_npcs()
+        calculate_heat('grounds')
       }
 
-      update_hud()
+      const confrontation: Confront | null = address_cautions()
 
       msg.post('level#' + this.roomname, 'room_load')
-
-      const confrontation: Confront | null = address_cautions()
-      if (confrontation != null) confrontation_scene(confrontation)
-
       //position player on screen
       msg.post('adam#adam', 'wake_up')
+      if (confrontation != null) confrontation_scene(confrontation)
     }
   } else if (messageId == hash('exit_gui')) {
     quest_checker('interact')
 
     tasks.address_quests('interact', player.checkpoint)
+    calculate_heat(this.roomname)
 
-    if (message.novel == true) {
-      msg.post(this.roomname + ':/adam#interact', 'reload_script')
-    }
-
+    // if (message.novel == true) {
+    //  msg.post(this.roomname + ':/adam#interact', 'reload_script')
+    // }
     msg.post(this.roomname + ':/adam#adam', 'acquire_input_focus')
-  } else if (messageId == hash('show_scene')) {
-    msg.post('hud#map', 'release_input_focus')
-    msg.post('proxies:/controller#novelcontroller', 'show_scene')
+    // } else if (messageId == hash('show_scene')) {
+    //msg.post('hud#map', 'release_input_focus')
   } else if (messageId == hash('update_alert')) {
     sprite.play_flipbook(
       'hud#security_alert',
       'alert_' + tostring(player.alert_level)
     )
   }
+
+  update_hud()
 }

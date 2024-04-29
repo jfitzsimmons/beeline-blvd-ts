@@ -1,70 +1,36 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {
   Npc,
-  WorldQuests,
-  AllQuestsMethods,
-  Skills,
-  Caution,
+  // Skills,
 } from '../../types/state'
-import { shuffle } from '../utils/utils'
+import { AllQuestsMethods, WorldQuests, Caution } from '../../types/tasks'
+//import { shuffle } from '../utils/utils'
 import { tutorialQuests } from './inits/quests/tutorialstate'
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function snitch(bins: Skills, skills: Skills): Consolation {
-  if (bins.anti_authority > -0.7) {
-    //tell authority they have good attitude towards
-    return { fail: true, caution: 'snitch' }
-  }
-  return { fail: false, caution: 'neutral' }
-}
-function reckless(bins: Skills, skills: Skills): Consolation {
-  //testjpf was -.5 , 4
-  if (bins.un_educated < -0.4 || skills.intelligence < 4) {
-    //underdog task
-    return { fail: true, caution: 'reckless' }
-  }
-  // will tell whoever what they saw
-  // they might like it or hate it
-
-  return { fail: false, caution: 'neutral' }
-}
-function merits(bins: Skills, skills: Skills): Consolation {
-  if (bins.evil_good < -0.2 && bins.lawless_lawful < -0.2) {
-    return { fail: true, caution: 'merits' }
-  } else if (bins.passive_aggressive < -0.3 || skills.constitution < 4)
-    return { fail: true, caution: 'demerits' }
-
-  //won't like you,
-  // slander you to people close to them / who like them / they like / cohort with
-  // decreases others love for player
-
-  return { fail: false, caution: 'neutral' }
-}
 function build_quests(questmethods: AllQuestsMethods): WorldQuests {
   return {
     tutorial: tutorialQuests(questmethods),
   }
 }
-interface Consolation {
-  fail: boolean
-  caution: string
-}
-
 export default class WorldTasks {
   private _cautions: Caution[]
   private _questmethods: AllQuestsMethods
-  private consolations: Array<(b: Skills, s: Skills) => Consolation>
+  //private consolations: Array<(b: Skills, s: Skills) => Consolation>
   private _quests: WorldQuests
   //spawn will be updated when checkpoints are passed
   private _spawn: string
+  medicQueue: string[]
 
   constructor(questmethods: AllQuestsMethods) {
     this._questmethods = questmethods
+    this._questmethods.tq = {
+      num_of_injuries: this.num_of_injuries.bind(this),
+    }
     this._cautions = []
     this._quests = build_quests(this.questmethods)
-    this.consolations = [snitch, merits, reckless]
     this._spawn = 'grounds'
+    this.medicQueue = []
   }
   public set spawn(s: string) {
     this._spawn = s
@@ -84,13 +50,21 @@ export default class WorldTasks {
   public get questmethods() {
     return this._questmethods
   }
+  num_of_injuries(): number {
+    const injuries = this.cautions.filter((c) => c.label == 'injury').length
+    //print('busy_doc:: docs[0]:', docs[0])
+    return injuries
+  }
   remove_heat(sus: string) {
     for (let i = this.cautions.length - 1; i >= 0; i--) {
       const c = this.cautions[i]
       if (
         c.suspect == sus &&
-        (c.label == 'questioning' || c.label == 'arrest' || c.label == 'snitch')
+        ['questioning', 'arrest', 'snitch', 'injury', 'mending'].includes(
+          c.label
+        )
       ) {
+        print('heat removed for', c.suspect, c.type, c.reason)
         this.cautions.splice(i, 1)
       }
     }
@@ -123,7 +97,28 @@ export default class WorldTasks {
     }
     return null
   }
-  caution_builder(n: Npc, c: string, s: string, r: string) {
+  npc_is_wanted(sus: string): boolean {
+    for (const c of this.cautions) {
+      if (
+        c.suspect == sus &&
+        (c.label == 'arrest' || c.label == 'questioning')
+      ) {
+        print('IS WANTED TRUE!!!', sus, c.suspect)
+        return true
+      }
+    }
+    return false
+  }
+  number_of_cautions(sus: string): number {
+    let count = 0
+    for (const c of this.cautions) {
+      if (c.suspect == sus) {
+        count++
+      }
+    }
+    return count
+  }
+  caution_builder(n: Npc, c: string, s: string, reason = 'theft') {
     //explain why you need this testjpf
     //no nested ifs
     //cna this be done somewhere else?
@@ -136,7 +131,7 @@ export default class WorldTasks {
       type: 'npc',
       authority: n.clan, //ex; labor
       suspect: s,
-      reason: r.length > 0 ? r : 'theft',
+      reason,
     }
     //testjpf this is getting bad.  cleanup code
     if (c == 'snitch') {
@@ -160,6 +155,16 @@ export default class WorldTasks {
       append.time = 3
     } else if (c == 'reckless') {
       append.time = 3
+    } else if (c == 'injury') {
+      append.authority = 'doctors'
+      append.type = 'clan'
+      append.time = 30
+    } else if (c == 'suspicious') {
+      append.label = 'snitch'
+      append.authority = 'security'
+      append.type = 'clan'
+      append.time = 10
+      append.reason = 'suspicious'
     }
 
     print(
@@ -169,7 +174,9 @@ export default class WorldTasks {
       'did',
       append.reason,
       'so created caution:',
-      append.label
+      append.label,
+      'for time:',
+      append.time
     )
 
     this.append_caution(append)
@@ -177,22 +184,9 @@ export default class WorldTasks {
   append_caution(caution: Caution) {
     this.cautions.push(caution)
   }
-  //TESTJPF ABOVE: all manipulate or return cautions
-  //below do consolations need to be part of state at all??
-  //probably not MOVE TO new "consequences" . "util"?
-  consolation_checks(b: Skills, s: Skills) {
-    const tempcons: Array<(b: Skills, s: Skills) => Consolation> = shuffle(
-      this.consolations
-    )
-    tempcons.forEach((c) => {
-      const consolation = c(b, s)
-      if (consolation.fail == true) return consolation.caution
-    })
-    print('did nothing after witnessing a theft attempt')
-    return 'neutral'
-  }
   // checks quest completion after interactions and turns
   address_quests = (interval: string, checkpoint: string) => {
+    //  print('checkpoint.slice(0, -1)', checkpoint.slice(0, -1))
     const quests = this.quests[checkpoint.slice(0, -1)]
 
     let questKey: keyof typeof quests
@@ -200,18 +194,26 @@ export default class WorldTasks {
       const quest = quests[questKey]
       if (quest.passed == false) {
         let quest_passed = true
+        // print('questKey:', questKey)
         let condition: keyof typeof quest.conditions
         for (condition in quest.conditions) {
+          //   print('condition:', condition)
           const goal = quest.conditions[condition]
-          if (goal.passed != true && goal.interval == interval) {
-            if (goal.func(goal.args) == false) {
-              quest_passed = false
-            } else if (goal.passed != null) {
-              goal.passed = true
+          //    print('goal label', goal.label, goal.passed, goal.interval, interval)
+          if (goal.passed == false) {
+            for (let i: number = goal.func.length; i-- !== 0; ) {
+              if (
+                goal.interval[i] == interval &&
+                goal.func[i]!(goal.args[i]) == true
+              ) {
+                print('goal PASSED: GOAL', goal.label)
+                goal.passed = true
+                //         print('quest Condition passed::', goal.label)
+                break
+              }
             }
-          } else if (goal.passed == false || goal.passed == null) {
-            quest_passed = false
           }
+          if (goal.passed == false) quest_passed = false
         }
         if (quest_passed == true) {
           quest.passed = true
@@ -219,5 +221,14 @@ export default class WorldTasks {
         }
       }
     }
+  }
+  get_field_docs(): string[] {
+    //if mending and in field busy
+    //if mending in office and office full
+    const docs = this.cautions
+      .filter((c) => c.reason == 'field')
+      .map((c) => c.npc)
+
+    return docs
   }
 }

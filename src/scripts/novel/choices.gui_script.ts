@@ -35,11 +35,7 @@ function get_text_size(node: node, text: string) {
 
 function delete_choices() {
   for (const [nKey] of Object.entries(nodes)) {
-    print('DELETE CHOICES::: NKEY:', nKey)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
     gui.delete_node(nodes[parseInt(nKey)].choice)
-    //gui.delete_node(nodes[parseInt(nKey)].box)
-    //gui.delete_node(nodes[parseInt(nKey)].text)
   }
 
   nodes = {}
@@ -60,8 +56,6 @@ function create_choices(choices: { [key: number]: string }) {
   let y = 0
 
   for (const [nKey] of Object.entries(choices)) {
-    print('choice keys:', nKey)
-
     const choiceLookup = {
       choice: {},
       box: {},
@@ -128,12 +122,7 @@ function unhover_choice() {
 }
 
 function hover_choice(choice: number) {
-  if (hovered_choice != false) {
-    print(hovered_choice, 'hoveredchoice false')
-
-    unhover_choice()
-  }
-  print(hovered_choice, 'hoveredchoice true')
+  if (hovered_choice != false) unhover_choice()
 
   hovered_choice = choice
   const node = nodes[choice].box
@@ -161,11 +150,6 @@ export function on_message(
 
     let tKey: keyof typeof message.text
     for (tKey in message.text) {
-      print(
-        tKey,
-        'choces message::: show text shoices::: message.text[tKey]',
-        message.text[tKey]
-      )
       choices[parseInt(tKey)] = message.text[tKey]
     }
     create_choices(choices)
@@ -214,7 +198,6 @@ export function on_input(
       for (const [nKey] of Object.entries(nodes)) {
         const node = nodes[parseInt(nKey)]['box']
         if (gui.pick_node(node, action.x, action.y)) {
-          print('no action id??? hover choice::: nkey:', nKey)
           hover_choice(parseInt(nKey))
         }
       }
@@ -224,7 +207,6 @@ export function on_input(
       for (const [nKey] of Object.entries(nodes)) {
         if (gui.pick_node(nodes[parseInt(nKey)]['box'], action.x, action.y)) {
           pressed_choice = parseInt(nKey)
-          print('action press chice number::: ', pressed_choice)
         }
       }
     } else if (action.released) {
@@ -232,7 +214,6 @@ export function on_input(
         typeof pressed_choice == 'number' &&
         gui.pick_node(nodes[pressed_choice]['box'], action.x, action.y)
       ) {
-        print('action released input::: ', pressed_choice)
         pick_choices(pressed_choice)
       }
       pressed_choice = false

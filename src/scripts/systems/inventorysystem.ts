@@ -1,5 +1,8 @@
 import { Npc, PlayerState, Skills } from '../../types/state'
-import { shuffle } from '../utils/utils'
+import { Consequence } from '../../types/tasks'
+import { roll_special_dice } from '../utils/dice'
+import { clamp, shuffle } from '../utils/utils'
+const { npcs } = globalThis.game.world
 
 interface InventoryTable {
   [key: string]: InventoryTableItem
@@ -532,23 +535,10 @@ function buildLookup() {
   }
 }
 
-/**
-!!! testjpf, loopthrough and create hastable and add hash as property to each item?
-const room_lookup = {
-  [hash_to_hex(hash('/to_baggage'))]: 'baggage',
-  [hash_to_hex(hash('/to_grounds'))]: 'grounds',
-  [hash_to_hex(hash('/to_reception'))]: 'reception',
-  [hash_to_hex(hash('/to_customs'))]: 'customs',
-  [hash_to_hex(hash('/to_admin1'))]: 'admin1',
-  [hash_to_hex(hash('/to_security'))]: 'security',
-  [hash_to_hex(hash('/to_infirmary'))]: 'infirmary',
-  so loopthru get key hextohash to new key of new table. value equals old key
-}
-**/
+// testjpf generate_random_gift() food, supplies, money
 
 //testjpf may need a binaries_chest_bonus()
 export function remove_chest_bonus(actor: Npc | PlayerState, i: string) {
-  print('testjpf: is i anything', i)
   const item: InventoryTableItem = items[i]
   let sKey: keyof typeof item.skills
 
@@ -562,8 +552,6 @@ export function remove_chest_bonus(actor: Npc | PlayerState, i: string) {
 }
 
 export function add_chest_bonus(actor: Npc | PlayerState, i: string) {
-  print('ADD testjpf: is i anything', i)
-
   const item: InventoryTableItem = items[i]
   let sKey: keyof typeof item.skills
   for (sKey in items[i].skills)
@@ -578,7 +566,6 @@ export function add_chest_bonus(actor: Npc | PlayerState, i: string) {
 export function remove_random(to_inv: string[], from_inv: string[]) {
   const stolen_item = shuffle(from_inv).pop()
   if (stolen_item === undefined) return ''
-  print('remove_ random', stolen_item)
   if (stolen_item !== '') to_inv.push(stolen_item)
   return stolen_item
 }
@@ -586,28 +573,25 @@ export function remove_random(to_inv: string[], from_inv: string[]) {
 export function remove_last(to_inv: string[], from_inv: string[]) {
   const stolen_item = from_inv.pop()
   if (stolen_item === undefined) return ''
-  print('remove_ last', stolen_item)
   if (stolen_item !== '') to_inv.push(stolen_item)
   return stolen_item
 }
-//testjpf amke this one alway fire for testing
 export function remove_advantageous(
   to_inv: string[],
   from_inv: string[],
   skills: Skills
 ) {
   if (from_inv.length < 1) return ''
-  //const order = utils.create_ipairs(skills)
+  if (from_inv.length === 1) return remove_last(to_inv, from_inv)
   const order = Object.entries(skills)
 
   order.sort((a: [string, number], b: [string, number]) => b[1] - a[1])
 
-  //order.sort((a, b) => skills[a] > skills[b] )
   let found = false
   let stolen_item = ''
-  let count = 0
 
   for (const desire of order) {
+    let count = 0
     for (const item of from_inv) {
       const stats: InventoryTableItem = items[item]
       let sKey: keyof typeof stats.skills
@@ -624,10 +608,8 @@ export function remove_advantageous(
     }
     if (found == true) break
   }
-  print('print adv!!!', stolen_item)
   if (found == false) {
     stolen_item = from_inv.splice(0, 1)[0]
-    print('remove_ advFALLBACK', stolen_item)
     to_inv.push(stolen_item)
   }
   return stolen_item
@@ -641,16 +623,67 @@ export function remove_valuable(to_inv: string[], from_inv: string[]) {
 	}
 	**/
   if (from_inv.length < 1) return ''
-
+  if (from_inv.length === 1) return remove_last(to_inv, from_inv)
   from_inv.sort((a: string, b: string) => items[a].value - items[b].value)
   let stolen_item = from_inv.pop()
 
   if (stolen_item === undefined) stolen_item = ''
   //table.sort(from_inv, function(x, y) return M.items[x].value > M.items[y].value })
 
-  print('remove_ valueable', stolen_item)
   if (stolen_item !== '') to_inv.push(stolen_item)
   return stolen_item
+}
+
+export function get_extorted(s: string, w: string) {
+  const s_inv = npcs.all[s].inventory
+  const w_inv = npcs.all[w].inventory
+
+  if (s_inv.length > 0) {
+    for (let i = s_inv.length - 1; i >= 0; i--) {
+      if (items[s_inv[i]].value > 1) {
+        const loot = s_inv.splice(i, 1)
+
+        w_inv.push(...loot)
+        break
+      } else {
+        print('bribe failed so punch???')
+        // bribe failed so punch???
+      }
+    }
+  }
+}
+export function bribe_check(suspect: string, watcher: string): Consequence {
+  //     wb.lawless_lawful < -0.4 &&
+  // ws.strength >= ss.strength &&
+  //  sb.passive_aggressive < 0.0
+
+  //testjpf GOOD time for a diceroll
+  const w = npcs.all[watcher]
+  const s = npcs.all[suspect]
+
+  const modifier = Math.round(
+    w.binaries.lawless_lawful * -5 + w.skills.strength - s.skills.strength
+  )
+  const advantage =
+    s.binaries.passive_aggressive < w.binaries.passive_aggressive - 0.3
+  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  print('TESTJPF RESULT::: bribe', result)
+  if (result > 5 && result <= 10) {
+    get_extorted(suspect, watcher)
+    return { pass: true, type: 'bribe' }
+  }
+
+  if (result > 10) {
+    print('SPECIAL bribe')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    print('NEVER bribe')
+    return { pass: true, type: 'critical' }
+  }
+
+  return { pass: false, type: 'neutral' }
 }
 
 buildLookup()

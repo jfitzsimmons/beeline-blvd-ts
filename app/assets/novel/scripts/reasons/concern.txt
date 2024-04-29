@@ -1,0 +1,46 @@
+
+
+label church1x
+n: I'll pray for youx
+jump quickclose
+
+label church2x
+n: Peace be with you.x
+jump quickclose
+
+label church3x
+n: Merx bless us all.x
+jump quickclose
+
+label genericchurchx
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump church1x
+if dice > 50
+    jump church2x
+if dice > 25
+    jump church3x
+n: Holy. Holy.x
+jump quickclose
+
+label reasonsrandom1
+if npc.b.good < -0.3
+    jump smiteyoux
+if npc.s.wisdom > 5
+    jump wisechurchx
+if npc.s.strength > 4
+    jump strongchurch
+jump genericchurchx
+
+label smiteyoux
+n: The lord will smite you.x
+jump quickclose
+
+label wisechurchx
+n: Everyone is a worthy person.x
+jump quickclose
+
+label strongchurchx
+n: The lord has imbued me with great strength!x
+jump quickclose

@@ -1,6 +1,6 @@
 import { tutorialA, tutorialAscripts, tutorialB } from './checkpoints/tutorial'
 
-export const questScripts: { [key: string]: (actor: string) => string } = {
+export const questScripts: { [key: string]: (actor: string) => string[] } = {
   ['tutorialAscripts']: tutorialAscripts,
   //["tutorialB"] = tutorialBscripts,
 }

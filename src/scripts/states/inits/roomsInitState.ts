@@ -1,10 +1,10 @@
-import { Jail } from '../../../types/state'
+import { Occupancy } from '../../../types/state'
 
-const securityRoom: Jail = {
+const securityRoom: Occupancy = {
   matrix: { x: 2, y: 5 },
   roomname: 'security',
   stations: { guard: '', authority: '', assistant: '' },
-  prisoners: { prisoner1: '', prisoner2: '', prisoner3: '', prisoner4: '' },
+  occupants: { prisoner1: '', prisoner2: '', prisoner3: '', prisoner4: '' },
   actors: {},
 }
 export const RoomsInitState = {
@@ -20,12 +20,12 @@ export const RoomsInitState = {
     },
     actors: {
       luggage_1: {
-        inventory: [],
+        inventory: ['tomato', 'mushroom03', 'orange'],
         watcher: 'browse',
         actions: ['open'],
       },
       luggage_2: {
-        inventory: [],
+        inventory: ['mushroom02', 'banana', 'vial01'],
         watcher: 'guard',
         actions: ['open'],
       },
@@ -262,11 +262,11 @@ export const RoomsInitState = {
     },
     actors: {
       desks: {
-        inventory: [],
+        inventory: ['fish01', 'steak02', 'egg01'],
         actions: ['pickup', 'use'],
       },
       locker: {
-        inventory: [],
+        inventory: ['avacado', 'berry02', 'shrimp02'],
         actions: ['use', 'open'],
       },
     },
@@ -286,12 +286,17 @@ export const RoomsInitState = {
     },
     actors: {
       desks: {
-        inventory: ['deskbook01', 'globegold'],
+        inventory: ['deskbook01', 'globegold', 'fish02'],
         actions: ['pickup', 'use'],
       },
       locker: {
-        inventory: ['silver', 'mushroom01'],
+        inventory: ['silver', 'mushroom01', 'potion'],
         actions: ['use', 'open'],
+      },
+      vase3: {
+        inventory: ['steak02', 'leaf03', 'daisy', 'mushroom02'],
+        actions: ['open'],
+        watcher: 'patrol',
       },
     },
   },
@@ -310,7 +315,7 @@ export const RoomsInitState = {
     },
     actors: {
       drawer: {
-        inventory: ['cheese', 'shrimp01'],
+        inventory: ['cheese', 'shrimp01', 'drumstick01'],
         actions: ['open'],
         watcher: 'desk',
       },
@@ -320,12 +325,12 @@ export const RoomsInitState = {
         watcher: 'desk',
       },
       vase: {
-        inventory: ['pillow', 'book'],
+        inventory: ['pillow', 'book', 'tomato'],
         actions: ['open'],
         watcher: 'loiter2',
       },
       vase2: {
-        inventory: ['steak01', 'leaf03', 'daisy'],
+        inventory: ['steak01', 'leaf03', 'daisy', 'mushroom03'],
         actions: ['open'],
         watcher: 'patrol',
       },
@@ -345,12 +350,12 @@ export const RoomsInitState = {
     },
     actors: {
       player_luggage: {
-        inventory: ['berry01', 'feather01', 'magica1'],
+        inventory: ['berry01', 'feather01', 'magica1', 'orange'],
         watcher: 'worker2',
         actions: ['open'],
       },
       other_luggage: {
-        inventory: ['eyeball03', 'feather02', 'magicb1'],
+        inventory: ['eyeball03', 'feather02', 'magicb1', 'mushroom02'],
         watcher: 'worker2',
         actions: ['open'],
       },
@@ -407,9 +412,10 @@ export const RoomsInitState = {
       assistant: '',
       loiter4: '',
     },
+    occupants: { patient1: '', patient2: '', patient3: '', patient4: '' },
     actors: {
       drawer: {
-        inventory: ['vial02'],
+        inventory: ['vial02', 'banana', 'vial01'],
         actions: ['open'],
         watcher: 'assistant',
       },

@@ -1,9 +1,0 @@
-
-n.name = _G.game.world.novel.npc.lab.labelname
-npc.speed = _G.game.world.novel.npc.skills.speed
-npc.love = _G.game.world.novel.npc.love
-npc.clan = _G.game.world.novel.npc.clan
-n.sprite =  _G.game.world.novel.npc.lab.smilesprite
-n.scale = 3
-n.y = 0.5
-npc.strength = _G.game.world.novel.npc.skills.strength

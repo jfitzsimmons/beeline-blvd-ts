@@ -1,0 +1,98 @@
+label queststart
+n: LOVE {npc.love}
+if convos == 0
+  n: Haven't you been warned!
+if npc.love < -2
+  n: This jerk again. Hey!
+if convos > 0
+  n: HEY! What do you think you're doing?!?!
+> I need my luggage.
+  jump sternluggage
+> How else would I get my luggage?
+  jump routineluggage
+
+label routineluggage
+if convos > 0 
+  n: You'll get your luggage when you go through customs.
+  jump quickclose
+n: Listen asshole, go through customs
+npc.love = npc.love -1
+jump quickclose
+
+label sternluggage
+if convos > 0
+  n: You and everyone else. Go through customs.
+  jump quickclose
+if convos == 0 and npc.love < -2
+  n: You can go through customs or through me I guess.
+  npc.love = npc.love - 1
+  n: punchlogic?
+  jump quickclose
+n: You're bothering me.  Do you wnat me to call security???
+> ...
+  jump quickclose
+> I'm a guest here!
+  npc.love = npc.love -1
+  jump sterndirection
+> Don't you know who I am?!
+  jump persuasionoffender
+
+label persuasionoffender
+if p.s.charisma > 7
+  npc.love = npc.love + 5
+  n: You crack me up, but sreiously, go to customs.
+  jump quickclose
+if p.b.aggressive > .7 and npc.b.aggressive < .4
+  npc.love = npc.love - 2
+  if npc.b.authority < -.4
+    npc.love = npc.love - 3
+  n: I'm sorry.
+  jump quickclose
+n: I'm not convinced
+jump lastchance
+
+label lastchance
+npc.love = npc.love-2
+n: My finger is on the button.
+n: Do you want trouble? 
+n: Or do you want to go through customsh?
+n: Just like every other schmuck who got on that train.
+> ...
+  n: Have a good day.
+  jump quickclose
+> Bring it on
+  npc.love = npc.love - 5
+  if npc.b.aggressive > 0.5 and npc.s.constitution > 7
+    npc.love = npc.love + 10
+    n: I like you.
+    jump repeatannoyed
+  jump callsecurity
+
+label callsecurity
+n: SECURITY!
+alert= alert+ 1
+jump quickclose
+
+label sterndirection
+n: Where do you think you are?
+> huh
+  npc.love = npc.love -1
+  jump repeatannoyed
+> thanks for the help
+  n: hmmph
+  jump quickclose
+> what's with the attitude
+  if convos <= 0 and npc.love < -2
+    n: SECURITY!
+    alert = alert + 1
+    jump quickclose
+  if convos <= 4 and p.s.speed < 4 and npc.b.good > 0.3 and npc.b.educated < -0.3
+    npc.love = npc.love + 3
+    n: You're not too quick, are you?
+    jump quickclose
+  n: We have the slowest fucking security in the world.
+  jump quickclose
+
+label repeatannoyed
+n: and you suck.
+jump quickclose

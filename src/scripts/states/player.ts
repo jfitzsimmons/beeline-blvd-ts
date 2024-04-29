@@ -1,4 +1,5 @@
-import { PlayerState, Skills, QuestMethods } from '../../types/state'
+import { PlayerState, Skills } from '../../types/state'
+import { QuestMethods } from '../../types/tasks'
 import { PlayerInitState } from './inits/playerInitState'
 
 function shuffle(arrN: number[]): number[]
@@ -49,11 +50,23 @@ export default class WorldPlayer {
   public get inventory() {
     return this._state.inventory
   }
+  public set clearance(c: number) {
+    this._state.clearance = c
+  }
+  public get clearance() {
+    return this._state.clearance
+  }
   public set hp(n: number) {
     this._state.hp = n
   }
   public get hp() {
     return this._state.hp
+  }
+  public set heat(h: number) {
+    this._state.heat = h
+  }
+  public get heat() {
+    return this._state.heat
   }
   public set ap(n: number) {
     this._state.ap = n

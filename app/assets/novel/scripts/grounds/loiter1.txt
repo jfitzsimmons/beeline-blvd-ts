@@ -1,0 +1,30 @@
+label start
+show n
+n: It's so boring waiting to get through customs.
+if reason == "quest"
+    jump queststart
+if reason == "concern"
+    jump concernrandom1
+> How about these grounds?
+    jump groundsrandom1
+> What are you up to?
+    jump loiter1random1
+> You look funny.
+    jump clanrandom1
+> What is this place?
+    jump tutorialrandom1
+> test choices???
+    jump testchoices
+jump quickclose
+
+label testchoices
+n: are choices working???
+> No 
+    n: Ironically this worked.
+> Yes
+    n:how did you know?!?!
+n: My name is and {n.name}
+n: love {npc.love}
+n: and {npc.clan} clan again
+n: speed?: {npc.s.speed}
+jump quickclose

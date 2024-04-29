@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import { Typewriter } from '../../types/state'
+import { Typewriter } from '../../types/novel'
 
 let typewriters: { [key: number]: Typewriter } = {}
 let current: Typewriter
@@ -59,9 +59,6 @@ function animate_letter(node: node, delay: number, last?: boolean) {
 
 function fade_done() {
   current.state = 'empty'
-  print(
-    'No way fade done is called and this sends a fucking message to txtbox!!!'
-  )
   msg.post('#textbox', 'typewriter_next')
 }
 
@@ -234,8 +231,7 @@ function reposition_letters(line_table: { [key: string]: string }) {
 
 function get_next_space(text: string) {
   let next_space = 1
-
-  const [_c] = string.gmatch(text, '.')
+  const _c = text.split('')
 
   for (const c of _c) {
     if (is_cjk(c)) {
@@ -317,7 +313,6 @@ function end_typewriter() {
 function fade_away() {
   current.state = 'fade_away'
   let nodeKey: keyof typeof current.letter_nodes
-  print('TYPEWERITE FADEAWAY')
   for (nodeKey in current.letter_nodes) {
     const node = current.letter_nodes[nodeKey]
     fade_letter(
@@ -491,10 +486,8 @@ export function hide_instant_text() {
 // Finishes current text if still typing, removes text && asks for next text if already typed.
 export function next() {
   if (current.state == 'typing') {
-    print('next endtpyewriter')
     end_typewriter()
   } else if (current.state == 'waiting') {
-    print('nxt type fade away')
     fade_away()
   }
 }

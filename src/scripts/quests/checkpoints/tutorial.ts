@@ -1,22 +1,28 @@
-import { steal_check } from '../../ai/ai_checks'
-import { npc_action_move, assign_nearby_rooms } from '../../ai/ai_main'
+import { Npc } from '../../../types/state'
+import { steal_check, take_or_stash } from '../../ai/ai_checks'
+import { npc_action_move, rooms_near_target } from '../../ai/ai_main'
 import { shuffle } from '../../utils/utils'
 import { any_has_value } from '../../utils/quest'
-import { Npc } from '../../../types/state'
-const { rooms, npcs, tasks, player } = globalThis.game.world
+
+const { rooms, npcs, tasks, player, novel } = globalThis.game.world
 
 export function tutorialA(interval = 'turn') {
-  const luggage = rooms.all.grounds.actors.player_luggage.inventory
-  if (luggage.length > 0 && interval == 'turn') {
+  const luggage =
+    math.random() > 0.5
+      ? rooms.all.grounds.actors.player_luggage
+      : rooms.all.grounds.actors.other_luggage
+  if (luggage.inventory.length > 0 && interval == 'turn') {
     const worker2 = npcs.all[rooms.all['grounds'].stations.worker2]
     const guest2 = npcs.all[rooms.all['grounds'].stations.guest2]
 
-    if (math.random() < 0.5 && worker2 != null && worker2.cooldown <= 0) {
-      print('Quest related checks:::')
-      steal_check(worker2, guest2, luggage)
-    } else if (math.random() < 0.5 && guest2 != null && guest2.cooldown <= 0) {
-      print('Quest related checks:::')
-      steal_check(guest2, worker2, luggage)
+    if (worker2 != null && worker2.cooldown <= 0) {
+      guest2 == null
+        ? take_or_stash(worker2, rooms.all.grounds.actors.player_luggage)
+        : steal_check(worker2, guest2, luggage.inventory)
+    } else if (guest2 != null && guest2.cooldown <= 0) {
+      worker2 == null
+        ? take_or_stash(guest2, rooms.all.grounds.actors.player_luggage)
+        : steal_check(guest2, worker2, luggage.inventory)
     }
   }
 
@@ -26,7 +32,6 @@ export function tutorialA(interval = 'turn') {
       interval == 'turn' &&
       rooms.all['grounds'].stations.worker1 != ''
     ) {
-      print('placing a doctor!!!')
       const replace = rooms.all.grounds.stations.aid
       if (replace != '' && npcs.all[replace].clan != 'doctors') {
         //const docs = shuffle(npcs.return_doctors())
@@ -37,8 +42,7 @@ export function tutorialA(interval = 'turn') {
         rooms.all.grounds.stations.aid = doc.labelname
         currentroom = 'grounds'
         currentstation = 'aid'
-        print(replace, 'has been REPLACED by:', doc.labelname)
-        npc_action_move(replace, assign_nearby_rooms(player.matrix))
+        npc_action_move(replace, rooms_near_target(player.matrix))
       }
     }
     /**
@@ -75,7 +79,6 @@ export function tutorialA(interval = 'turn') {
       player.inventory.includes('note') == true &&
       any_has_value([_return_docs, 'vial02']) == true
     ) {
-      print('PASSED')
       //for (const item of player.inventory) {
       if (player.inventory.includes('note')) {
         const note = player.inventory.splice(
@@ -89,19 +92,57 @@ export function tutorialA(interval = 'turn') {
     }
   }
 }
-
-export function tutorialAscripts(actor: string): string {
+function doctorsScripts() {
   const has_met = tasks.quests.tutorial.medic_assist.conditions[1].passed
-  if (
-    actor != 'player' &&
-    npcs.all[actor].clan == 'doctors' &&
-    has_met == false
-  ) {
+  tasks.quests.tutorial.medic_assist.conditions[1]
+  // bad??:: if reasonstring.startswith('quest - ')
+  //then on novel_main novel.quest.solution = endof(message.reason)
+  if (has_met == false) {
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
-    return 'tutorialAdoctor'
+    return 'tutorial/tutorialAdoctor'
   }
-  return ''
+  return null
+}
+function worker2Scripts() {
+  print('worker2 script called', novel.reason)
+  if (novel.npc.turns_since_convo > 0 && novel.reason == 'concern') {
+    print('worker2 script returned')
+    return 'tutorial/concernLuggage'
+  }
+
+  if (
+    novel.reason == 'offender' ||
+    (novel.reason == 'concern' &&
+      novel.npc.turns_since_convo < 3 &&
+      novel.npc.love < -4)
+  )
+    return 'tutorial/offenderLuggage'
+
+  //testjpf maybe have another fedUpLuggage that is majority alerts?
+  //also, just add a lot more love chcks to the concern and offender
+  //more alert checks as well
+  //by checks i mean choices with checks
+
+  if (novel.reason == 'concern') return 'tutorial/concernLuggage'
+
+  return null
+}
+
+const tutorialAlookup: { [key: string]: () => string | null } = {
+  doctors: doctorsScripts,
+  worker2: worker2Scripts,
+}
+
+export function tutorialAscripts(actor: string): string[] {
+  const scripts = []
+  if (tutorialAlookup[actor] != null) scripts.push(tutorialAlookup[actor]())
+  if (tutorialAlookup[npcs.all[actor].clan] != null)
+    scripts.push(tutorialAlookup[npcs.all[actor].clan]())
+  if (tutorialAlookup[npcs.all[actor].currentstation] != null)
+    scripts.push(tutorialAlookup[npcs.all[actor].currentstation]())
+
+  return scripts.filter((s: string | null): s is string => s != null)
 }
 
 export function tutorialB() {

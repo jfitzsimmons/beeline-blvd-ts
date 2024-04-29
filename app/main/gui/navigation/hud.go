@@ -46,8 +46,8 @@ embedded_components {
   "blend_mode: BLEND_MODE_ALPHA\n"
   "line_break: false\n"
   "text: \"00:00\"\n"
-  "font: \"/builtins/fonts/system_font.font\"\n"
-  "material: \"/builtins/fonts/label.material\"\n"
+  "font: \"/assets/fonts/system_font.font\"\n"
+  "material: \"/assets/fonts/label.material\"\n"
   ""
   position {
     x: 1326.0
@@ -64,10 +64,13 @@ embedded_components {
 embedded_components {
   id: "security_alert"
   type: "sprite"
-  data: "tile_set: \"/main/gui/navigation/ui.tilesource\"\n"
-  "default_animation: \"alert_0\"\n"
+  data: "default_animation: \"alert_0\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
+  "textures {\n"
+  "  sampler: \"texture_sampler\"\n"
+  "  texture: \"/main/gui/navigation/ui.tilesource\"\n"
+  "}\n"
   ""
   position {
     x: 1362.0

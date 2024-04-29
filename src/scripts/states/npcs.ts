@@ -1,51 +1,7 @@
 import { NpcsInitState } from './inits/npcsInitState'
-import { Npc, Npcs, QuestMethods } from '../../types/state'
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
-
-function shuffle(arrN: number[]): number[]
-function shuffle(arrS: string[]): string[]
-function shuffle(array: Array<string | number>): Array<string | number> {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[array[i], array[j]] = [array[j], array[i]]
-  }
-  return array
-}
-
-// need npcs interface?
-export default class WorldNpcs {
-  all: Npcs
-  order: string[]
-  quests: QuestMethods
-  constructor() {
-    this.all = { ...NpcsInitState }
-    this.order = []
-    random_attributes(this.all, this.order)
-    this.quests = {
-      return_doctors: this.return_doctors.bind(this),
-      return_all: this.return_all.bind(this),
-      return_order_all: this.return_order_all.bind(this),
-    }
-    this.return_doctors = this.return_doctors.bind(this)
-  }
-
-  return_doctors(): Npc[] {
-    return [this.all.doc01, this.all.doc02]
-  }
-  return_all(): Npcs {
-    return this.all
-  }
-  sort_npcs_by_encounter() {
-    this.order.sort(
-      (a: string, b: string) =>
-        this.all[b].turns_since_encounter - this.all[a].turns_since_encounter
-    )
-  }
-  return_order_all(): [string[], Npcs] {
-    return [shuffle(this.order), this.all]
-  }
-}
-
+import { Npc, Npcs } from '../../types/state'
+import { shuffle } from '../utils/utils'
+import { QuestMethods } from '../../types/tasks'
 interface BinaryLookupTable {
   [key: string]: BinaryLookupRow
 }
@@ -185,6 +141,45 @@ const binarylookup: BinaryLookupTable = {
   },
 }
 
+// need npcs interface?
+export default class WorldNpcs {
+  private _all: Npcs
+  order: string[]
+  quests: QuestMethods
+  constructor() {
+    this._all = { ...NpcsInitState }
+    this.order = []
+    random_attributes(this.all, this.order)
+    this.quests = {
+      return_doctors: this.return_doctors.bind(this),
+      return_all: this.return_all.bind(this),
+      return_order_all: this.return_order_all.bind(this),
+    }
+    this.return_doctors = this.return_doctors.bind(this)
+  }
+  public get all(): Npcs {
+    return this._all
+  }
+  set_an_npc(n: Npc) {
+    this.all[n.labelname] = { ...n }
+  }
+  return_doctors(): Npc[] {
+    return [this.all.doc01, this.all.doc02]
+  }
+  return_all(): Npcs {
+    return this.all
+  }
+  sort_npcs_by_encounter() {
+    this.order.sort(
+      (a: string, b: string) =>
+        this.all[b].turns_since_encounter - this.all[a].turns_since_encounter
+    )
+  }
+  return_order_all(): [string[], Npcs] {
+    return [shuffle(this.order), this.all]
+  }
+}
+
 function adjust_binaries(value: number, clan: string, binary: string) {
   let adj = binarylookup[clan][binary] + value + math.random(-4, 4) / 10
   if (adj > 1) {
@@ -209,6 +204,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
     npcs[kn].turns_since_encounter = math.random(5, 15)
     npcs[kn].love = math.random(-1, 1)
     // random attitude
+    npcs[kn].attitudes = {}
     let kbl: keyof typeof binarylookup
     for (kbl in binarylookup) {
       npcs[kn].attitudes[kbl] = math.random(-9, 9)
@@ -226,6 +222,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
     const tempskills = shuffle(startskills)
     let s_count = 0
 
+    npcs[kn].skills = {}
     let ks: keyof typeof skills
     for (ks in skills) {
       npcs[kn].skills[ks] = tempskills[s_count] + math.random(-1, 1)
@@ -236,6 +233,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
     const tempbins = shuffle(startbins)
     let b_count = 0
 
+    npcs[kn].binaries = {}
     let kb: keyof typeof binaries
     for (kb in binaries) {
       const adjustment = adjust_binaries(tempbins[b_count], npcs[kn].clan, kb)
