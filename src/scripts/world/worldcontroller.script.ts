@@ -8,6 +8,14 @@ import { Game } from '../states/gamesystem2'
 //const save = require('../../../main/states/gamesave.lua')
 import { gamesave, gamesettings } from '../../types/legacylua'
 
+interface props {
+  is_level: boolean
+  roomname: string
+  storagename: string
+  current_proxy: url | null
+  load_type: string
+}
+
 function handle_new_turn(load_type: string) {
   if (load_type === 'room transition') {
     globalThis.game.world.clock = globalThis.game.world.clock + 1
@@ -19,6 +27,9 @@ function handle_new_turn(load_type: string) {
     globalThis.game = new Game()
   }
 }
+interface url {
+  fragment: hash
+}
 
 function show(current_proxy: url | null, p: string) {
   if (current_proxy) {
@@ -29,6 +40,7 @@ function show(current_proxy: url | null, p: string) {
 }
 
 export function init(this: props) {
+  this.is_level = false
   //init from bootstrap (main.collection)
   this.current_proxy = null
   this.load_type = 'none'
@@ -38,13 +50,7 @@ export function init(this: props) {
   msg.post('#', 'acquire_input_focus')
   msg.post('#', 'show_menu')
 }
-interface props {
-  is_menu: boolean
-  roomname: string
-  storagename: string
-  current_proxy: url | null
-  load_type: string
-}
+
 export function on_message(
   this: props,
   messageId: hash,
@@ -55,8 +61,11 @@ export function on_message(
   _sender: url
 ): void {
   if (messageId == hash('show_menu')) {
-    this.is_menu = true
+    this.is_level = false
     show(this.current_proxy, '#main_menu')
+  } else if (messageId == hash('show_info')) {
+    this.is_level = false
+    show(this.current_proxy, '#info_gui')
   } else if (messageId == hash('faint')) {
     globalThis.game.world.clock = globalThis.game.world.clock + 6
     globalThis.game.world.player.ap = globalThis.game.world.player.ap_max - 6
@@ -68,20 +77,28 @@ export function on_message(
     msg.post('#', 'pick_room', message)
   } else if (messageId == hash('pick_room')) {
     this.roomname = message.enter_room
-    this.is_menu = false
+    this.is_level = true
     this.load_type = message.load_type
     print('--- === ::: NEW ROOM LOADED ::: === ---')
     handle_new_turn(this.load_type)
     show(this.current_proxy, '#' + this.roomname)
   } else if (messageId == hash('proxy_loaded')) {
+    print('proxy_loaded::: _sender::', _sender, this.is_level)
     this.current_proxy = _sender
-    if (this.is_menu == false) {
+    print(
+      'proxy_loaded::: this.current_proxy::',
+      this.current_proxy,
+      this.is_level
+    )
+    if (this.current_proxy !== null && this.is_level == true) {
       const params = {
         roomname: this.roomname,
         load_type: this.load_type,
       }
-      msg.post(this.roomname + ':/level#level', 'room_load', params)
+      msg.post(this.roomname + ':/shared/scripts#level', 'room_load', params)
     }
+    print('CURR PROX:::', this.current_proxy)
+    print('CURR PROX FRAG::::', this.current_proxy.fragment)
     msg.post(_sender, 'enable')
   }
 }
@@ -94,7 +111,7 @@ export function on_input(
   }
 ) {
   if (action_id == hash('main_menu') && action.released) {
-    if (this.is_menu == true) {
+    if (this.is_level == false) {
       //back to game without interruption or changing state.
       const params = {
         enter_room: this.roomname,
@@ -103,6 +120,17 @@ export function on_input(
       msg.post('#', 'pick_room', params)
     } else {
       msg.post('#', 'show_menu')
+    }
+  } else if (action_id == hash('info_gui') && action.released) {
+    if (this.is_level == false) {
+      //back to game without interruption or changing state.
+      const params = {
+        enter_room: this.roomname,
+        load_type: 'return to game',
+      }
+      msg.post('#', 'pick_room', params)
+    } else {
+      msg.post('#', 'show_info')
     }
   }
 }

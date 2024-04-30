@@ -63,7 +63,7 @@ export function on_message(
   } else if (messageId == hash('trigger_response')) {
     if (message.enter) {
       const params = {
-        pos: go.get_position('adam'), //must come from .script
+        pos: go.get_position('/shared/adam'), //must come from .script
         actions: this.actions,
         //  script: this.script,
         collision: 'enter',
@@ -71,14 +71,14 @@ export function on_message(
         room: this.room,
       }
 
-      msg.post('adam#interact', 'shownode', params)
+      msg.post('/shared/adam#interact', 'shownode', params)
     } else {
       const params = {
         ['collision']: 'exit',
         ['texts']: this.actions,
       }
 
-      msg.post('adam#interact', 'hidenode', params)
+      msg.post('/shared/adam#interact', 'hidenode', params)
     }
   }
 }

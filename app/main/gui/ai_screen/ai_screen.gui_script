@@ -17,7 +17,7 @@ function on_input(self, action_id, action)
 				world.set_actor_inventory(self.actorinventory, self.parentprop, self.room)
 			end
 
-			msg.post("level#level", "exit_gui")
+			msg.post("shared/scripts#level", "exit_gui")
 			]]--
 			gui.set_enabled(gui.get_node("screen"),false)
 			msg.post("adam#adam", "acquire_input_focus")

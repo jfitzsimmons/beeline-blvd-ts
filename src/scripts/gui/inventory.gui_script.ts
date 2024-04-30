@@ -214,7 +214,7 @@ function exit_inventory(actorname: string, actorinventory: string[]) {
 
   reset_nodes()
   msg.post('inventories#inventory', 'release_input_focus')
-  msg.post('level#level', 'exit_gui')
+  msg.post('shared/scripts#level', 'exit_gui')
 }
 
 export function on_message(

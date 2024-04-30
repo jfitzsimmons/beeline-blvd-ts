@@ -672,7 +672,7 @@ embedded_instances {
   id: "inventories"
   data: "components {\n"
   "  id: \"inventory\"\n"
-  "  component: \"/main/gui/inventories/inventory.gui\"\n"
+  "  component: \"/main/gui/information/inventories/inventory.gui\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

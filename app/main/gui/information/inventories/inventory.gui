@@ -9,7 +9,7 @@ textures {
 }
 textures {
   name: "chestitems"
-  texture: "/main/gui/inventories/chestitems.atlas"
+  texture: "/main/gui/information/inventories/chestitems.atlas"
 }
 background_color {
   x: 0.0

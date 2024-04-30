@@ -99,10 +99,10 @@ export function on_message(
       }
 
       const confrontation: Confront | null = address_cautions()
-
-      msg.post('level#' + this.roomname, 'room_load')
+      //grounds:/shared/scripts#level
+      msg.post(this.roomname + ':/level#' + this.roomname, 'room_load')
       //position player on screen
-      msg.post('adam#adam', 'wake_up')
+      msg.post('/shared/adam#adam', 'wake_up')
       if (confrontation != null) confrontation_scene(confrontation)
     }
   } else if (messageId == hash('exit_gui')) {
@@ -114,7 +114,7 @@ export function on_message(
     // if (message.novel == true) {
     //  msg.post(this.roomname + ':/adam#interact', 'reload_script')
     // }
-    msg.post(this.roomname + ':/adam#adam', 'acquire_input_focus')
+    msg.post(this.roomname + ':/shared/adam#adam', 'acquire_input_focus')
     // } else if (messageId == hash('show_scene')) {
     //msg.post('hud#map', 'release_input_focus')
   } else if (messageId == hash('update_alert')) {

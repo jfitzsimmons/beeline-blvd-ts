@@ -45,7 +45,7 @@ function open_novel(_this: props) {
   //testjpf cut out the #level middla man and use::
   // msg.post('proxies:/controller#novelcontroller', 'show_scene')
   // i thin with the Novel class we don't have to mess with level
-  //msg.post('level#level', 'show_scene', { confront: true })
+  //msg.post('shared/scripts#level', 'show_scene', { confront: true })
   msg.post('proxies:/controller#novelcontroller', 'show_scene')
   msg.post('#', 'release_input_focus')
 }

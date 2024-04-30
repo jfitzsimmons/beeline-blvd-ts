@@ -131,7 +131,11 @@ export function on_message(
       if (tasks.plan_on_snitching(novel.npc.labelname, 'player') == false) {
         tasks.caution_builder(novel.npc, 'snitch', 'player', 'harassing')
       }
-      msg.post(player.currentroom + ':/level#level', 'update_alert', {})
+      msg.post(
+        player.currentroom + ':/shared/scripts#level',
+        'update_alert',
+        {}
+      )
     } else {
       if (message.love != novel.npc.love) {
         print('novel.npc.love1', novel.npc.love, message.love)
@@ -148,6 +152,6 @@ export function on_message(
     npcs.all[novel.npc.labelname] = { ...novel.npc }
     novel.reason = 'none'
     msg.post('proxies:/controller#novelcontroller', 'unload_novel')
-    msg.post(player.currentroom + ':/level#level', 'exit_gui')
+    msg.post(player.currentroom + ':/shared/scripts#level', 'exit_gui')
   }
 }
