@@ -138,7 +138,7 @@ export function suspicious_check(
   watcher: string
 ): Consequence {
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
     w.skills.charisma -
@@ -227,7 +227,7 @@ export function watcher_punched_check(
 
   //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
     s.binaries.lawless_lawful * -5 +
@@ -264,8 +264,9 @@ export function reckless_check(suspect: string, watcher: string): Consequence {
 
   //   npcs.all[w].binaries.un_educated < -0.4 ||
   //  npcs.all[w].skills.intelligence < 4
+  print(suspect, 'reckless suspect!!!!')
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
     w.binaries.evil_good * -5 -
@@ -306,7 +307,7 @@ export function suspect_punched_check(
 
   //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
     w.skills.constitution - s.skills.speed + w.binaries.evil_good * -0.5

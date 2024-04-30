@@ -659,7 +659,7 @@ export function bribe_check(suspect: string, watcher: string): Consequence {
 
   //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
     w.binaries.lawless_lawful * -5 + w.skills.strength - s.skills.strength

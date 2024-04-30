@@ -213,8 +213,8 @@ function exit_inventory(actorname: string, actorinventory: string[]) {
   }
 
   reset_nodes()
-  msg.post('inventories#inventory', 'release_input_focus')
-  msg.post('shared/scripts#level', 'exit_gui')
+  msg.post('/shared/guis#inventory', 'release_input_focus')
+  msg.post('/shared/scripts#level', 'exit_gui')
 }
 
 export function on_message(
@@ -243,7 +243,7 @@ export function on_message(
     }
     gui.set_text(name_node, this.actorname)
     gui.set_enabled(inventory_node, true)
-    msg.post('inventories#inventory', 'acquire_input_focus')
+    msg.post('/shared/guis#inventory', 'acquire_input_focus')
   }
 }
 
@@ -259,7 +259,7 @@ export function on_input(
       check_inventory_nodes(this.actorname, action)
 
       if (this.watcher != '' && this.watcher != null) {
-        msg.post('inventories#inventory', 'release_input_focus')
+        msg.post('/shared/guis#inventory', 'release_input_focus')
         timer.delay(0.9, false, function (this: props) {
           exit_inventory(this.actorname, this.actorinventory)
         })

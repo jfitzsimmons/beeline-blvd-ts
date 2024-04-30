@@ -16,7 +16,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("trigger_response") then -- <2>
 		if message.enter then	
 			local params = {
-				pos = go.get_position("adam"),
+				pos = go.get_position("/shared/adam"),
 				actions = self.actions,
 				script = self.script,
 				collision = "enter",
@@ -24,11 +24,11 @@ function on_message(self, message_id, message, sender)
 				npcname = self.name,
 			}
 			
-			msg.post("adam#interact", "shownode", params )
+			msg.post("/shared/adam#interact", "shownode", params )
 		else
 			local params = {actions = self.actions}
 			
-			msg.post("adam#interact", "hidenode", params)
+			msg.post("/shared/adam#interact", "hidenode", params)
 		end
 	end
 end

@@ -11,7 +11,7 @@ import {
 import { add_pledge, go_to_jail } from './systemshelpers'
 import { Caution, Consequence } from '../../types/tasks'
 
-const { tasks, rooms, npcs } = globalThis.game.world
+const { tasks, rooms, npcs, player } = globalThis.game.world
 const questioning_checks: Array<
   (s: string, w: string) => { pass: boolean; type: string }
 > = [
@@ -35,8 +35,9 @@ const thief_consolations = [
 
 //testjpf needs diceroll
 function merits_demerits(suspect: string, watcher: string): Consequence {
+  print('merits_demertis:: suspect::', suspect)
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
     (w.binaries.evil_good + w.binaries.lawless_lawful) * -2.5
@@ -62,7 +63,7 @@ function merits_demerits(suspect: string, watcher: string): Consequence {
 //security
 function pledge_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
     w.binaries.passive_aggressive * -5 + s.binaries.passive_aggressive * 5
@@ -91,7 +92,7 @@ function pledge_check(suspect: string, watcher: string): Consequence {
 }
 export function jailtime_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
   const modifier = Math.round(
     w.skills.perception - s.skills.perception + w.binaries.anti_authority * 4
   )
@@ -116,8 +117,9 @@ export function jailtime_check(suspect: string, watcher: string): Consequence {
   return { pass: false, type: 'neutral' }
 }
 export function snitch_check(suspect: string, watcher: string): Consequence {
+  print('snitch check suspect::', suspect)
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
     w.binaries.anti_authority * 5 +
