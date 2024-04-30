@@ -2,7 +2,7 @@ import { Npc, PlayerState, Skills } from '../../types/state'
 import { Consequence } from '../../types/tasks'
 import { roll_special_dice } from '../utils/dice'
 import { clamp, shuffle } from '../utils/utils'
-const { npcs } = globalThis.game.world
+const { npcs, player } = globalThis.game.world
 
 interface InventoryTable {
   [key: string]: InventoryTableItem

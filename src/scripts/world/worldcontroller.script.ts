@@ -63,9 +63,10 @@ export function on_message(
   if (messageId == hash('show_menu')) {
     this.is_level = false
     show(this.current_proxy, '#main_menu')
-  } else if (messageId == hash('show_info')) {
+  } else if (messageId == hash('toggle_info')) {
     this.is_level = false
-    show(this.current_proxy, '#info_gui')
+    // show(this.current_proxy, '#info_gui')
+    msg.post('proxies:/controller#infocontroller', 'toggle_info')
   } else if (messageId == hash('faint')) {
     globalThis.game.world.clock = globalThis.game.world.clock + 6
     globalThis.game.world.player.ap = globalThis.game.world.player.ap_max - 6
@@ -122,15 +123,6 @@ export function on_input(
       msg.post('#', 'show_menu')
     }
   } else if (action_id == hash('info_gui') && action.released) {
-    if (this.is_level == false) {
-      //back to game without interruption or changing state.
-      const params = {
-        enter_room: this.roomname,
-        load_type: 'return to game',
-      }
-      msg.post('#', 'pick_room', params)
-    } else {
-      msg.post('#', 'show_info')
-    }
+    msg.post('#', 'toggle_info')
   }
 }
