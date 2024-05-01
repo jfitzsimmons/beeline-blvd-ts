@@ -5,6 +5,7 @@ import WorldRooms from './rooms'
 import WorldPlayer from './player'
 import WorldNpcs from './npcs'
 import WorldTasks from './tasks'
+import WorldInfo from './info'
 import WorldNovel from './novel'
 import { AllQuestsMethods } from '../../types/tasks'
 
@@ -14,6 +15,7 @@ export default class World {
   npcs: WorldNpcs
   rooms: WorldRooms
   tasks: WorldTasks
+  info: WorldInfo
   novel: WorldNovel
   clock: number
 
@@ -27,6 +29,7 @@ export default class World {
       nq: this.npcs.quests,
     }
     this.tasks = new WorldTasks(params)
+    this.info = new WorldInfo(this.tasks.quests)
     this.novel = new WorldNovel(
       this.npcs.all.labor01,
       this.tasks.quests.tutorial.medic_assist.conditions[1]

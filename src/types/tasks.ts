@@ -1,5 +1,25 @@
 import { Npc, Npcs, Skills } from './state'
 
+export interface ObjectivesGroup
+  extends Record<string, Objectives | string | any> {
+  status: string
+}
+export interface Objectives extends Record<string, Objective | string | any> {
+  status: string
+}
+export interface Objective {
+  status: string
+  conditions: ObjectiveConditions
+  side_Objectives?: ObjectiveConditions
+}
+
+export interface ObjectiveConditions {
+  [key: string | number]: ObjectiveCondition
+}
+export interface ObjectiveCondition {
+  label: string
+  status: string
+}
 export interface Quests {
   [key: string]: Quest
 }
