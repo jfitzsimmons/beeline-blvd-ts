@@ -1,6 +1,10 @@
 import { Npc, Npcs, Skills } from './state'
 
-export interface ObjectivesGroup {
+type NoOptionals<T> = {
+  [K in keyof T]-?: T[K]
+}
+export type ObjectivesGroup = NoOptionals<ObjectivesGroupOpt>
+export interface ObjectivesGroupOpt {
   [key: string]: {
     status: string
     quest: { [key: string]: Objectives }

@@ -1,22 +1,11 @@
-import { WorldQuests, ObjectivesGroup } from '../../types/tasks'
+import {
+  WorldQuests,
+  ObjectivesGroup,
+  ObjectivesGroupOpt,
+} from '../../types/tasks'
 
 function build_objectives(quests: WorldQuests): ObjectivesGroup {
-  const objectives: ObjectivesGroup | null = {
-    tutorial: {
-      status: '',
-      quest: {
-        ['medic_assist']: {
-          status: '',
-          objective: {
-            [0]: {
-              status: '',
-              label: '',
-            },
-          },
-        },
-      },
-    },
-  }
+  const objectives: ObjectivesGroupOpt = {}
   //ex tutorial
   let cPoint: keyof typeof quests
   for (cPoint in quests) {
@@ -41,6 +30,8 @@ function build_objectives(quests: WorldQuests): ObjectivesGroup {
       let cNum: keyof typeof conditions
       for (cNum in conditions) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        // print('INFO::: cNum in conditions::', cNum, conditions[cNum].label)
+
         objectives[cPoint].quest[qKey].objective[cNum] = {
           status: 'none',
           label: conditions[cNum].label,
