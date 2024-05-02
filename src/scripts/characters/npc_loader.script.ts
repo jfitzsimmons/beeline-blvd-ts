@@ -59,7 +59,7 @@ export function on_message(
   } else if (messageId == hash('move_npc')) {
     move_npc(message.station)
   } else if (messageId == hash('show_npc')) {
-    show_npc(this.npc)
+    show_npc(message.npc)
   } else if (messageId == hash('trigger_response')) {
     if (message.enter) {
       const params = {
