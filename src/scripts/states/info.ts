@@ -1,30 +1,47 @@
 import { WorldQuests, ObjectivesGroup } from '../../types/tasks'
 
 function build_objectives(quests: WorldQuests): ObjectivesGroup {
-  const objectives: ObjectivesGroup = {
-    status: '',
+  const objectives: ObjectivesGroup | null = {
+    tutorial: {
+      status: '',
+      quest: {
+        ['medic_assist']: {
+          status: '',
+          objective: {
+            [0]: {
+              status: '',
+              label: '',
+            },
+          },
+        },
+      },
+    },
   }
   //ex tutorial
   let cPoint: keyof typeof quests
   for (cPoint in quests) {
+    print('INFO::: cPoint in quests::', cPoint)
     objectives[cPoint] = {
       status: 'none',
+      quest: {},
     }
     const checkpoint = quests[cPoint]
     //ex med_assist
     let qKey: keyof typeof checkpoint
     for (qKey in checkpoint) {
+      print('INFO::: qKey in checkpoint::', qKey)
+
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      objectives[cPoint][qKey] = {
+      objectives[cPoint].quest[qKey] = {
         status: 'none',
-        conditions: {},
+        objective: {},
       }
       const conditions = checkpoint[qKey].conditions
       //
       let cNum: keyof typeof conditions
       for (cNum in conditions) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        objectives[cPoint][qKey].conditions[cNum] = {
+        objectives[cPoint].quest[qKey].objective[cNum] = {
           status: 'none',
           label: conditions[cNum].label,
         }
