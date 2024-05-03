@@ -136,9 +136,14 @@ function set_interactions(
 ): cloneparent[] {
   const clones = []
   const spacing = 25
-  let nodepos = pos
-  let actorKey: keyof typeof actorsActions
+  const [ww, wh] = window.get_size()
+  const cw = ww / 2
+  const ch = wh / 2
+  const adjx = (cw - pos.x) / 6 + cw // = 10 - 700 = -690 / 10 = -69 + cw
+  const adjy = (ch - pos.y) / 6 + ch // = 10 - 400 = -390 / 10 = -39 + cw
 
+  let nodepos = vmath.vector3(adjx, adjy, pos.z)
+  let actorKey: keyof typeof actorsActions
   for (actorKey in actorsActions) {
     for (const action of actorsActions[actorKey]) {
       nodepos.y = nodepos.y + spacing
