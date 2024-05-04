@@ -70,6 +70,24 @@ animations {
   flip_vertical: 0
 }
 animations {
+  id: "custodian01body"
+  start_tile: 79
+  end_tile: 79
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "custodian02body"
+  start_tile: 80
+  end_tile: 80
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
   id: "doctors01body"
   start_tile: 32
   end_tile: 32
@@ -214,6 +232,24 @@ animations {
   flip_vertical: 0
 }
 animations {
+  id: "maintenance01body"
+  start_tile: 77
+  end_tile: 77
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "maintenance02body"
+  start_tile: 78
+  end_tile: 78
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
   id: "race01_01"
   start_tile: 17
   end_tile: 17
@@ -244,6 +280,15 @@ animations {
   id: "race01_04"
   start_tile: 20
   end_tile: 20
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race01_05"
+  start_tile: 53
+  end_tile: 53
   playback: PLAYBACK_ONCE_FORWARD
   fps: 0
   flip_horizontal: 0
@@ -286,6 +331,15 @@ animations {
   flip_vertical: 0
 }
 animations {
+  id: "race02_05"
+  start_tile: 52
+  end_tile: 52
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
   id: "race03_01"
   start_tile: 25
   end_tile: 25
@@ -322,6 +376,15 @@ animations {
   flip_vertical: 0
 }
 animations {
+  id: "race03_05"
+  start_tile: 54
+  end_tile: 54
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
   id: "race04_01"
   start_tile: 47
   end_tile: 47
@@ -352,6 +415,15 @@ animations {
   id: "race04_04"
   start_tile: 50
   end_tile: 50
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race04_05"
+  start_tile: 51
+  end_tile: 51
   playback: PLAYBACK_ONCE_FORWARD
   fps: 0
   flip_horizontal: 0

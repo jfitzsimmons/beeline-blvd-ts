@@ -86,6 +86,7 @@ function open_inventory(_this: props, actor: string, action: string) {
      * 		if self.is_npc == false then self.npcname = self.watcher end
      * self.script = novel.script_builder(self.npcname, nil, nil, self.
      *  consequence.type, false)
+     *
      */
     if (_this.isNpc == false) {
       _this.npcname = _this.watcher
@@ -139,8 +140,8 @@ function set_interactions(
   const [ww, wh] = window.get_size()
   const cw = ww / 2
   const ch = wh / 2
-  const adjx = (cw - pos.x) / 6 + cw // = 10 - 700 = -690 / 10 = -69 + cw
-  const adjy = (ch - pos.y) / 6 + ch // = 10 - 400 = -390 / 10 = -39 + cw
+  const adjx = (cw - pos.x) / 6 + cw
+  const adjy = (ch - pos.y) / 6 + ch
 
   let nodepos = vmath.vector3(adjx, adjy, pos.z)
   let actorKey: keyof typeof actorsActions

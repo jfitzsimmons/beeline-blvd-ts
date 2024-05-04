@@ -10,13 +10,14 @@ const securityRoom: Occupancy = {
 export const RoomsInitState = {
   security: { ...securityRoom },
   baggage: {
-    matrix: { x: 1, y: 4 },
+    matrix: { x: 0, y: 4 },
     roomname: 'baggage',
     stations: {
       guard: '',
       worker1: '',
       assistant: '',
       browse: '',
+      vipguest: '',
     },
     actors: {
       luggage_1: {
@@ -449,6 +450,7 @@ export const RoomsInitRoles = {
     'sexworkers',
     'labor',
     'security',
+    'maintenance',
   ],
   table: [
     'doctors',
@@ -459,12 +461,21 @@ export const RoomsInitRoles = {
     'sexworkers',
     'labor',
     'security',
+    'custodians',
   ],
-  bench: ['labor', 'contractors', 'gang1', 'gang3'],
-  browse: ['staff', 'labor', 'contractors', 'gang2', 'gang4', 'security'],
-  monitor: ['security', 'staff', 'corps', 'doctors'],
+  bench: ['labor', 'contractors', 'gang1', 'gang3', 'maintenance'],
+  browse: [
+    'staff',
+    'labor',
+    'contractors',
+    'gang2',
+    'gang4',
+    'security',
+    'custodian',
+  ],
+  monitor: ['security', 'staff', 'corps', 'doctors', 'maintenance'],
   guard: ['security', 'gang1', 'gang3'],
-  patrol: ['security', 'gang2', 'gang4', 'corps', 'staff'],
+  patrol: ['security', 'gang2', 'gang4', 'corps', 'staff', 'custodians'],
   loiter1: [
     'sexworkers',
     'visitors',
@@ -473,6 +484,7 @@ export const RoomsInitRoles = {
     'gang1',
     'gang2',
     'contractors',
+    'custodians',
   ],
   loiter2: [
     'sexworkers',
@@ -482,6 +494,7 @@ export const RoomsInitRoles = {
     'gang4',
     'contractors',
     'labor',
+    'maintenance',
   ],
   loiter3: [
     'doctors',
@@ -501,6 +514,7 @@ export const RoomsInitRoles = {
     'security',
     'gang4',
     'labor',
+    'custodians',
   ],
   lounge: [
     'doctors',
@@ -511,9 +525,10 @@ export const RoomsInitRoles = {
     'corps',
     'contractors',
     'labor',
+    'maintenance',
   ],
   worker1: ['labor', 'gang1', 'gang3', 'gang4', 'contractors'],
-  worker2: ['labor', 'gang2', 'gang4', 'contractors'],
+  worker2: ['labor', 'gang2', 'gang4', 'contractors', 'maintenance'],
   boss: ['corps', 'gang2', 'gang1', 'gang3', 'contractors'],
   assistant: ['gang2', 'gang1', 'gang3', 'contractors', 'staff', 'doctors'],
   aid: ['doctors', 'staff', 'labor', 'church', 'visitors', 'security'],
@@ -529,9 +544,19 @@ export const RoomsInitRoles = {
     'church',
     'sexworkers',
     'labor',
+    'custodians',
   ],
-  servants1: ['staff', 'gang1', 'gang2', 'gang3', 'gang4', 'church', 'labor'],
-  employee: ['staff', 'gang1', 'gang3'],
+  servants1: [
+    'staff',
+    'gang1',
+    'gang2',
+    'gang3',
+    'gang4',
+    'church',
+    'labor',
+    'custodians',
+  ],
+  employee: ['staff', 'gang1', 'gang3', 'maintenance'],
   gang: ['gang1', 'gang2', 'gang3', 'gang4'],
 }
 export const RoomsInitFallbacks = {

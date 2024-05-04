@@ -41,8 +41,18 @@ const initial_places = [
   'maintenance',
   'alley3',
 ]
-
+let count: { [key: string]: number } = {}
 function attempt_to_fill_station(room_list: string[], npc: string) {
+  //testjpf debug number of roomlist occurences
+
+  room_list.forEach((element) => {
+    if (count[element] != null) {
+      count[element] += 1
+    } else {
+      count[element] = 1
+    }
+  })
+
   let placed = false
   //const room = ''
   //const misses = {}
@@ -61,7 +71,7 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
         const station = ks[1]
         if (station == '' && rooms.roles[ks[0]].includes(npcs.all[npc].clan)) {
           //loop thru room stations see if empty or has correct role
-          /** 
+
           print(
             npc,
             ',went to ,',
@@ -73,7 +83,7 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
             npcs.all[npc].ai_path,
             ',TURNS,',
             npcs.all[npc].turns_since_encounter
-          )**/
+          )
           //fill station
           npcs.all[npc].exitroom = rooms.layout[current.y][current.x]!
           npcs.all[npc].currentroom = room
@@ -191,8 +201,10 @@ function set_room_priority(
 }
 function set_npc_target(direction: Direction, n: string) {
   const npc = npcs.all[n]
+  print(n)
   let target = { x: 0, y: 0 }
   if (npc.turns_since_encounter > 20) {
+    print('target is player matrix:::', player.matrix_y, player.matrix_x)
     target = player.matrix
   } else if (npc.ai_path == 'pinky') {
     //always targets 1 to 3 rooms infront of player
@@ -216,12 +228,10 @@ function set_npc_target(direction: Direction, n: string) {
     }
     if (distance > -2 && distance < 2) {
       target = npc.home
+    } else if (math.random() < 0.5) {
+      target = direction.right
     } else {
-      if (math.random() < 0.5) {
-        target = direction.right
-      } else {
-        target = direction.left
-      }
+      target = direction.left
     }
   } else if (npc.ai_path == 'clyde') {
     const distance =
@@ -405,6 +415,7 @@ export function place_npcs() {
   npcs.all[rooms.all.grounds.stations.worker1].hp = 0
 }
 export function ai_turn(player_room: string) {
+  count = {}
   rooms.clear_stations()
 
   const patients = Object.values(rooms.all.infirmary.occupants!).filter(
@@ -452,4 +463,11 @@ export function ai_turn(player_room: string) {
   }
 
   ai_actions(targets, injured)
+
+  let cKey: keyof typeof count
+
+  for (cKey in count) {
+    print(cKey, count[cKey])
+  }
+  print('npcs.order.length', npcs.order.length)
 }

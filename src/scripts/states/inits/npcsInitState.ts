@@ -19,6 +19,42 @@ const npc_defaults: NpcDefaults = {
   race: '',
 }
 export const NpcsInitState = {
+  custodian01: {
+    home: { x: 3, y: 1 }, //loading
+    labelname: 'custodian01',
+    inventory: ['tomato', 'banana'],
+    clearence: 1,
+    clan: 'custodians',
+    body: 'custodian01body',
+    ...npc_defaults,
+  },
+  custodian02: {
+    home: { x: 1, y: 1 }, //warehouse
+    labelname: 'custodian02',
+    inventory: ['mushroom03', 'vial01'],
+    clearence: 1,
+    clan: 'custodians',
+    body: 'custodian02body',
+    ...npc_defaults,
+  },
+  maintenance01: {
+    home: { x: 4, y: 1 }, //loading
+    labelname: 'maintenance01',
+    inventory: ['tomato', 'banana'],
+    clearence: 1,
+    clan: 'maintenance',
+    body: 'maintenance01body',
+    ...npc_defaults,
+  },
+  maintenance02: {
+    home: { x: 2, y: 3 }, //warehouse
+    labelname: 'maintenance02',
+    inventory: ['mushroom03', 'vial01'],
+    clearence: 1,
+    clan: 'maintenance',
+    body: 'maintenance02body',
+    ...npc_defaults,
+  },
   labor01: {
     home: { x: 0, y: 2 }, //loading
     labelname: 'labor01',
@@ -55,6 +91,33 @@ export const NpcsInitState = {
     body: 'labor04body',
     ...npc_defaults,
   },
+  labor05: {
+    home: { x: 2, y: 2 }, //maintenance
+    labelname: 'labor05',
+    inventory: ['vial02'],
+    clearence: 1,
+    clan: 'labor',
+    body: 'labor03body',
+    ...npc_defaults,
+  },
+  labor06: {
+    home: { x: 2, y: 0 },
+    labelname: 'labor06',
+    inventory: ['mushroom02'],
+    clearence: 1,
+    clan: 'labor',
+    body: 'labor04body',
+    ...npc_defaults,
+  },
+  doc03: {
+    home: { x: 1, y: 5 },
+    labelname: 'doc03',
+    inventory: ['orange'],
+    clearence: 1,
+    clan: 'doctors',
+    body: 'doctors01body',
+    ...npc_defaults,
+  },
   doc02: {
     home: { x: 0, y: 4 },
     labelname: 'doc02',
@@ -73,6 +136,15 @@ export const NpcsInitState = {
     body: 'doctors02body',
     ...npc_defaults,
   },
+  contractor03: {
+    home: { x: 3, y: 1 },
+    labelname: 'contractor03',
+    inventory: ['steak01'],
+    clearence: 0,
+    clan: 'contractors',
+    body: 'contractors01body',
+    ...npc_defaults,
+  },
   contractor02: {
     home: { x: 2, y: 2 },
     labelname: 'contractor02',
@@ -89,6 +161,15 @@ export const NpcsInitState = {
     clearence: 0,
     clan: 'contractors',
     body: 'contractors02body',
+    ...npc_defaults,
+  },
+  visitor03: {
+    home: { x: 4, y: 4 }, //grounds
+    labelname: 'visitor03',
+    inventory: ['mushroom02', 'tomato'],
+    clearence: 0,
+    clan: 'visitors',
+    body: 'visitors01body',
     ...npc_defaults,
   },
   visitor02: {
@@ -127,6 +208,15 @@ export const NpcsInitState = {
     body: 'sexworkers02body',
     ...npc_defaults,
   },
+  sexworker03: {
+    home: { x: 3, y: 3 }, //inn
+    labelname: 'sexworker03',
+    inventory: ['leaf01', 'cheese'],
+    clearence: 0,
+    clan: 'sexworkers',
+    body: 'sexworkers02body',
+    ...npc_defaults,
+  },
   church01: {
     home: { x: 3, y: 2 }, //chapel
     labelname: 'church01',
@@ -139,6 +229,15 @@ export const NpcsInitState = {
   church02: {
     home: { x: 4, y: 4 }, //store
     labelname: 'church02',
+    inventory: ['string', 'mushroom01'],
+    clearence: 0,
+    clan: 'church',
+    body: 'church01body',
+    ...npc_defaults,
+  },
+  church03: {
+    home: { x: 2, y: 1 }, //store
+    labelname: 'church03',
     inventory: ['string', 'mushroom01'],
     clearence: 0,
     clan: 'church',
@@ -190,6 +289,24 @@ export const NpcsInitState = {
     body: 'staff05body',
     ...npc_defaults,
   },
+  staff06: {
+    home: { x: 4, y: 5 }, //store
+    labelname: 'staff06',
+    inventory: ['fish01', 'gold'],
+    clearence: 1,
+    clan: 'staff',
+    body: 'staff04body',
+    ...npc_defaults,
+  },
+  staff07: {
+    home: { x: 1, y: 0 }, //alley3
+    labelname: 'staff07',
+    inventory: ['steak02', 'fish02'],
+    clearence: 1,
+    clan: 'staff',
+    body: 'staff05body',
+    ...npc_defaults,
+  },
   bruiser: {
     home: { x: 4, y: 1 }, //maint
     labelname: 'bruiser',
@@ -202,6 +319,15 @@ export const NpcsInitState = {
   lou: {
     home: { x: 1, y: 0 }, //alley2
     labelname: 'lou',
+    inventory: ['avacado', 'shrimp02'],
+    clearence: 1,
+    clan: 'gang1',
+    body: 'gang102body',
+    ...npc_defaults,
+  },
+  gang103: {
+    home: { x: 2, y: 1 }, //alley2
+    labelname: 'gang103',
     inventory: ['avacado', 'shrimp02'],
     clearence: 1,
     clan: 'gang1',
@@ -226,6 +352,15 @@ export const NpcsInitState = {
     body: 'gang202body',
     ...npc_defaults,
   },
+  gang203: {
+    home: { x: 4, y: 1 }, //alley2
+    labelname: 'gang203',
+    inventory: ['avacado', 'shrimp02'],
+    clearence: 1,
+    clan: 'gang1',
+    body: 'gang102body',
+    ...npc_defaults,
+  },
   gang302: {
     home: { x: 0, y: 0 },
     labelname: 'gang302',
@@ -238,6 +373,15 @@ export const NpcsInitState = {
   gang301: {
     home: { x: 3, y: 3 },
     labelname: 'gang301',
+    inventory: ['magicc5', 'steak02'],
+    clearence: 1,
+    clan: 'gang3',
+    body: 'gang302body',
+    ...npc_defaults,
+  },
+  gang303: {
+    home: { x: 2, y: 3 },
+    labelname: 'gang303',
     inventory: ['magicc5', 'steak02'],
     clearence: 1,
     clan: 'gang3',
@@ -262,6 +406,16 @@ export const NpcsInitState = {
     body: 'gang402body',
     ...npc_defaults,
   },
+  gang403: {
+    home: { x: 3, y: 4 },
+    labelname: 'gang403',
+    inventory: ['magicc5', 'steak02'],
+    clearence: 1,
+    clan: 'gang3',
+    body: 'gang302body',
+    ...npc_defaults,
+  },
+  //testjpf start on corps here!!!!
   corps02: {
     home: { x: 2, y: 4 }, //admin1
     labelname: 'corps02',
@@ -320,6 +474,15 @@ export const NpcsInitState = {
   security004: {
     home: { x: 4, y: 1 }, //maint
     labelname: 'security004',
+    inventory: ['coffeemug', 'orange'],
+    clearence: 2,
+    clan: 'security',
+    body: 'security04body',
+    ...npc_defaults,
+  },
+  security005: {
+    home: { x: 4, y: 1 }, //maint
+    labelname: 'security005',
     inventory: ['coffeemug', 'orange'],
     clearence: 2,
     clan: 'security',
