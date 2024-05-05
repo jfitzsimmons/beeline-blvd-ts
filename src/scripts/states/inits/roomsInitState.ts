@@ -372,6 +372,7 @@ export const RoomsInitState = {
       assistant: '',
       loiter2: '',
       gang: '',
+      browse: '',
     },
     actors: {},
   },
@@ -412,6 +413,7 @@ export const RoomsInitState = {
       loiter2: '',
       assistant: '',
       loiter4: '',
+      servants2: '',
     },
     occupants: { patient1: '', patient2: '', patient3: '', patient4: '' },
     actors: {
@@ -565,5 +567,9 @@ export const RoomsInitFallbacks = {
     security_passer: '',
     reception_unplaced: '',
     grounds_unplaced: '',
+    viplobby_outside1: '',
+    security_outside1: '',
+    infirmary_outside1: '',
+    dorms_outside1: '',
   },
 }

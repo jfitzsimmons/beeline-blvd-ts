@@ -41,7 +41,8 @@ const initial_places = [
   'maintenance',
   'alley3',
 ]
-let count: { [key: string]: number } = {}
+const count: { [key: string]: number } = {}
+const unplacedcount: { [key: string]: number } = {}
 function attempt_to_fill_station(room_list: string[], npc: string) {
   //testjpf debug number of roomlist occurences
 
@@ -113,11 +114,18 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
         npcs.all[npc].matrix = rooms.all['admin1'].matrix
       } else if (
         room_list.includes('security') &&
-        rooms.fallbacks.stations['admin1_passer'] == '' &&
+        rooms.fallbacks.stations['security_passer'] == '' &&
         rooms.layout[current.y][current.x] != 'security'
       ) {
         print(npc, 'passer Security')
         rooms.fallbacks.stations['security_passer'] = npc
+        npcs.all[npc].matrix = rooms.all['security'].matrix
+      } else if (
+        room_list.includes('security') &&
+        rooms.fallbacks.stations['security_outside1'] == ''
+      ) {
+        print(npc, 'outside Security')
+        rooms.fallbacks.stations['security_outside1'] = npc
         npcs.all[npc].matrix = rooms.all['security'].matrix
       } else if (
         room_list.includes('grounds') &&
@@ -127,13 +135,44 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
         rooms.fallbacks.stations['grounds_unplaced'] = npc
         npcs.all[npc].matrix = rooms.all['grounds'].matrix
       } else if (
+        room_list.includes('viplobby') &&
+        rooms.fallbacks.stations['viplobby_outside1'] == ''
+      ) {
+        print(npc, 'viplobby_outside')
+        rooms.fallbacks.stations['viplobby_outside1'] = npc
+        npcs.all[npc].matrix = rooms.all['viplobby'].matrix
+      } else if (
         room_list.includes('reception') &&
         rooms.fallbacks.stations['reception_unplaced'] == ''
       ) {
         print(npc, 'recpt_unplaced')
         rooms.fallbacks.stations['reception_unplaced'] = npc
         npcs.all[npc].matrix = rooms.all['reception'].matrix
+      } else if (
+        room_list.includes('infirmary') &&
+        rooms.fallbacks.stations['infirmary_outside1'] == ''
+      ) {
+        print(npc, 'infirmary_outside')
+        rooms.fallbacks.stations['infirmary_outside1'] = npc
+        npcs.all[npc].matrix = rooms.all['infirmary'].matrix
+      } else if (
+        room_list.includes('dorms') &&
+        rooms.fallbacks.stations['dorms_outside1'] == ''
+      ) {
+        print(npc, 'dorms_outside')
+        rooms.fallbacks.stations['dorms_outside1'] = npc
+        npcs.all[npc].matrix = rooms.all['dorms'].matrix
       } else {
+        if (unplacedcount[npc] != null) {
+          unplacedcount[npc] += 1
+        } else {
+          unplacedcount[npc] = 1
+        }
+        if (unplacedcount[rooms.layout[current.y][current.x]!] != null) {
+          unplacedcount[rooms.layout[current.y][current.x]!] += 1
+        } else {
+          unplacedcount[rooms.layout[current.y][current.x]!] = 1
+        }
         print(
           npc,
           'TESTJPF DID NOT PLACE AT ALL from: ',
@@ -415,7 +454,7 @@ export function place_npcs() {
   npcs.all[rooms.all.grounds.stations.worker1].hp = 0
 }
 export function ai_turn(player_room: string) {
-  count = {}
+  //count = {}
   rooms.clear_stations()
 
   const patients = Object.values(rooms.all.infirmary.occupants!).filter(
@@ -469,5 +508,12 @@ export function ai_turn(player_room: string) {
   for (cKey in count) {
     print(cKey, count[cKey])
   }
-  print('npcs.order.length', npcs.order.length)
+  print(':::: npcs.order.length ::::::::', npcs.order.length)
+
+  let uKey: keyof typeof unplacedcount
+
+  for (uKey in unplacedcount) {
+    print(uKey, unplacedcount[uKey])
+  }
+  //print('npcs.order.length', npcs.order.length)
 }
