@@ -17,6 +17,13 @@ export function returnfalse() {
   return false
 }
 
+export function does_equal(
+  args: [() => number | string, number | string]
+): boolean {
+  print(' args[0]() |  args[1]', args[0](), args[1])
+  return args[0]() == args[1] ? true : false
+}
+
 export function greater_than(args: [() => number, number]): boolean {
   const value = args[0]()
   return value > args[1] ? true : false

@@ -27,6 +27,17 @@ export function tutorialA(interval = 'turn') {
   }
 
   if (tasks.quests.tutorial.medic_assist.passed == false) {
+    if (tasks.quests.tutorial.medic_assist.conditions[0].passed == false) {
+      tasks.remove_heat(rooms.all.grounds.stations.worker1)
+      print('remove quest injury caution. testjpf :: what else??')
+      //testjpf probably need new caution
+      // doctors still need to ignore victim
+      //activate bonus quests / side quests
+      //probably need some way to remove quest cautions
+      //status or something //on address_quest a
+      //clean_up() calls whatever you need.
+      //add to tutorialstate? probably?!!
+    }
     if (
       tasks.quests.tutorial.medic_assist.conditions[1].passed == true &&
       interval == 'turn' &&
@@ -104,6 +115,16 @@ function doctorsScripts() {
   }
   return null
 }
+
+function worker1Scripts() {
+  print('worker1 script called', novel.reason)
+  if (tasks.quests.tutorial.medic_assist.conditions[0].passed == false) {
+    novel.reason = 'helpthatman'
+    print('worker2 script returned')
+    return 'tutorial/helpThatMan'
+  }
+  return null
+}
 function worker2Scripts() {
   print('worker2 script called', novel.reason)
   if (novel.npc.turns_since_convo > 0 && novel.reason == 'concern') {
@@ -132,6 +153,7 @@ function worker2Scripts() {
 const tutorialAlookup: { [key: string]: () => string | null } = {
   doctors: doctorsScripts,
   worker2: worker2Scripts,
+  worker1: worker1Scripts,
 }
 
 export function tutorialAscripts(actor: string): string[] {

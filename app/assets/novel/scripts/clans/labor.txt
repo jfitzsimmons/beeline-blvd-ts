@@ -1,0 +1,46 @@
+label laborer1
+n: Is this catcalling?
+jump quickclose
+
+label funnylaborer
+n: You meet a lot of sexy laborers?
+n: Is this a fetish?
+jump quickclose
+
+label laborer3
+n: I don't come to where you work pal!
+jump quickclose
+
+label genericlaborer
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump laborer1
+if dice > 50
+    jump laborer2
+if dice > 25
+    jump laborer3
+n: Move along buddy.
+jump quickclose
+
+label clanrandom1
+if npc.s.charisma > 6
+    jump funnylaborer
+if npc.s.speed < 4
+    jump stammeringlaborer
+if npc.b.aggressive > 0.4
+    jump stronglaborer
+jump genericlaborer
+
+label laborer2
+n: Don't you have somewhere else to be?
+jump quickclose
+
+label stammeringlaborer
+n: wha?! Well... You... Fuck you!
+jump quickclose
+
+label stronglaborer
+n: I'm also pretty strong from hard work.
+n: So watch out.
+jump quickclose

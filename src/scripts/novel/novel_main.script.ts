@@ -21,7 +21,8 @@ function script_builder(
   const paths: string[] = questScripts[player.checkpoint + 'scripts'](
     novel.npc.labelname
   )
-  if (paths.length > 0) novel.reason = 'quest'
+  //!!!!testjpf set novel reason along with questScript
+  //if (paths.length > 0) novel.reason = 'quest'
   paths.unshift('clans/' + novel.npc.clan)
 
   if (room) {
@@ -32,9 +33,22 @@ function script_builder(
     paths.unshift('stations/' + novel.npc.currentstation)
     paths.unshift(player.currentroom + '/' + novel.npc.currentstation)
   }
-  const caution = tasks.npc_has_caution(novel.npc.labelname, 'player')
+  const caution = tasks.npc_has_caution('any', novel.npc.labelname)
 
-  if (caution != null) novel.reason = caution.reason
+  if (caution != null) {
+    print(
+      'CAUTION:::',
+      caution.reason,
+      caution.label,
+      caution.npc,
+      caution.suspect,
+      caution.authority,
+      caution.type
+    )
+    // toso testjpf ahve to nail down these names whendone here with a few quests.
+    novel.reason = caution.reason
+    novel.quest.label = caution.type
+  }
   paths.push('reasons/' + novel.reason)
   //print('NOVEL>REASON:::', novel.reason)
   novel.scripts = paths
@@ -85,7 +99,7 @@ function novel_outcomes(reason: string) {
     })
   } else if (reason.substring(0, 6) == 'quest:') {
     //testjpf remove spaces??
-    novel.quest.solution = reason.substring(7)
+    novel.reason = reason.substring(7)
   }
   //if love positive. consolation checks. else negatice
   //only merits is positive
@@ -150,7 +164,7 @@ export function on_message(
     }
 
     npcs.all[novel.npc.labelname] = { ...novel.npc }
-    novel.reason = 'none'
+
     msg.post('proxies:/controller#novelcontroller', 'unload_novel')
     msg.post(player.currentroom + ':/shared/scripts#level', 'exit_gui')
   }

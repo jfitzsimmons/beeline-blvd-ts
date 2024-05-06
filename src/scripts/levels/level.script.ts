@@ -109,6 +109,7 @@ export function on_message(
     quest_checker('interact')
 
     tasks.address_quests('interact', player.checkpoint)
+    novel.reason = 'none'
     calculate_heat(this.roomname)
 
     // if (message.novel == true) {

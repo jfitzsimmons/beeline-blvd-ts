@@ -1,0 +1,11 @@
+
+label queststart
+n: Please, get some help.  I'm injured.
+> Yes
+    reason = "quest: helpthatman"
+    n: Thank you.  Please hurry.  Time Matters.
+    jump quickclose
+> No
+    npc.love = npc.love - 2
+    n: Why? Ow. Jerk.
+    jump quickclose

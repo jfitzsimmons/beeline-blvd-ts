@@ -10,7 +10,7 @@ import { AllQuestsMethods, Quests } from '../../../../types/tasks'
 import {
   any_has_value,
   convos_check,
-  //has_value,
+  does_equal,
   //max_skills,
   //returnfalse,
   //max_love,
@@ -20,7 +20,7 @@ import {
 //local player = require "main.states.playerstate"
 
 export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
-  const { nq, tq } = questmethods
+  const { nq, tq, nvq } = questmethods
   /**
    * testjpf
    * interval, funcs, and args need to all be a part of 1 object.
@@ -32,13 +32,34 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
       //testjpf for TS: so abstract
       //the binary passed: true/false
       // or pupulate the func and args from the World level??
+      //I need something that states wether they are active or not.
+      //am I redundant with my GUI Objectives logic.
+      // should delete state on tasks.quests when quest complete.
+      //check data is in objectives first!!
       conditions: {
-        [1]: {
+        [0]: {
           // testjpf whatif
           label: 'Somebody help that man!',
           solution: '',
           passed: false,
+          interval: ['interact'],
+
+          // testjpf pass down from NOVEL novel.get_reason
+
+          func: [does_equal],
+          // what if instead of nq.return_docs
+          // its quest.return doctors?
+          args: [[nvq.get_reason, 'helpthatman']],
+        }, //have you talked to a doctor?
+        [1]: {
+          // testjpf whatif
+          label: 'What is up doctor?!',
+          solution: '',
+          passed: false,
           interval: ['interact', 'turn'],
+
+          // testjpf pass down from NOVEL novel.get_reason
+
           func: [convos_check, greater_than],
           // what if instead of nq.return_docs
           // its quest.return doctors?

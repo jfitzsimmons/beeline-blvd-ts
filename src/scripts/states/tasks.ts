@@ -208,7 +208,8 @@ export default class WorldTasks {
               ) {
                 print('goal PASSED: GOAL', goal.label)
                 goal.passed = true
-                //         print('quest Condition passed::', goal.label)
+                print('quest Condition passed::', goal.label)
+                print('UPDATE OBJECTIVES!!!! TESTJPF::', goal.label)
                 break
               }
             }

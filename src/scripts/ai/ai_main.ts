@@ -452,6 +452,20 @@ export function place_npcs() {
   )
   npcs.all[rooms.all.reception.stations.guard].hp = 0
   npcs.all[rooms.all.grounds.stations.worker1].hp = 0
+  /**
+   * testjpf really this should be in a turorial sript
+   * if medic assist condition 0 ==
+   * !! NEEDED for
+   */
+  tasks.append_caution({
+    label: 'quest',
+    npc: npcs.all[rooms.all.grounds.stations.worker1].labelname,
+    authority: 'player',
+    time: 100,
+    suspect: npcs.all[rooms.all.grounds.stations.worker1].labelname,
+    reason: 'quest',
+    type: 'helpthatman',
+  })
 }
 export function ai_turn(player_room: string) {
   //count = {}

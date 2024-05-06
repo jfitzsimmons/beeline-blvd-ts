@@ -74,6 +74,7 @@ export interface QuestMethods {
     | Skills
     | number
     | void
+    | string
 }
 
 export interface Caution {

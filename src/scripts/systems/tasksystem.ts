@@ -83,7 +83,7 @@ function focused_acts(c: Caution) {
         c.time--
       }
     }
-  } else if (c.reason == 'field') {
+  } else if (c.reason == 'field' && c.authority == 'doctors') {
     if (c.time == 1) {
       send_to_infirmary(c.suspect, c.npc)
     } else {

@@ -1,0 +1,99 @@
+label nevergetsaraise
+n: Fiming. I asked for a raise months ago. 
+n: Boss walks passed me like it never happened.
+jump quickclose
+
+label debtiskillingme
+n: Just piling up debt. Slowly coming unglued.
+jump quickclose
+
+label takewhatineed
+n: Getting ready to rob this place blind.
+n: If they don't pay me.
+jump quickclose
+
+label illbetheboss
+n: I almost have enough saved to start my own business.
+n: I can quit this shit job.
+jump quickclose
+
+label worker1random1
+if npc.b.wealth < -0.3
+    jump workersplight
+if npc.b.authority < -0.3
+    jump damntheman
+if npc.s.constituion > 5
+    jump workaholictype
+jump genericwrkr1
+
+label workersplight
+if npc.b.aggressive < -0.4
+    jump nevergetsaraise
+if npc.s.constitution < 4
+    jump debtiskillingme
+if npc.b.lawful < -0.4
+    jump takewhatineed
+jump genericwrkr1
+
+label damntheman
+if npc.b.wealth > 0.4
+    jump illbetheboss
+if npc.s.intelligence < 4
+    jump whocontrolsthings
+if npc.s.strength > 4
+    jump kickbossass
+jump genericwrkr1
+
+label workaholictype
+if npc.b.authority > 0.4
+    jump houseandhome
+if npc.s.wisdom > 6
+    jump flowandpasstime
+if npc.s.wisdom < 4
+    jump itsameritocracy
+jump genericwrkr1
+
+label kickbossass
+n: I've been training hard to kick my bosses ass.
+jump quickclose
+
+label whocontrolsthings
+n: Getting bossed by a scum race.
+n: They control everything.
+jump quickclose
+
+label flowandpasstime
+n: Niced focused work to pass the time.
+jump quickclose
+
+label houseandhome
+n: Doing the right thing for my house and home.
+jump quickclose
+
+label itsameritocracy
+n: Being a hard worker and earning my dream.
+jump quickclose
+
+label genericwrkr1
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump genericwrk1
+if dice > 50
+    jump genericwrk3
+if dice > 25
+    jump genericwrk2
+n: I'm working.
+jump quickclose
+
+label genericwrk2
+n: Another day, another dollar.
+jump quickclose
+
+label genericwrk3
+n: Working for the weekend.
+jump quickclose
+
+label genericwrk1
+n: Just doing my job.
+jump quickclose
