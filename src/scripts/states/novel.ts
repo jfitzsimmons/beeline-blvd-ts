@@ -1,5 +1,5 @@
 import { Npc } from '../../types/state'
-import { QuestCondition, QuestMethods } from '../../types/tasks'
+import { QuestMethods } from '../../types/tasks'
 
 export default class WorldNovel {
   //private background: string
@@ -8,7 +8,7 @@ export default class WorldNovel {
   private _scripts: string[]
   //private _alertChange: number
   private _npc: Npc
-  private _quest: QuestCondition
+  //private _quest: QuestCondition
   quests: QuestMethods
 
   constructor(initnpc: Npc) {
@@ -18,25 +18,27 @@ export default class WorldNovel {
     this._scripts = []
     // this._alertChange = 0
     this._npc = { ...initnpc }
+    /** 
     this._quest = {
       label: '',
       passed: false,
       interval: [],
       func: [() => false],
       args: [],
-    }
+    }*/
     this.quests = {
       get_reason: () => this.reason,
     }
     //Have something here like this.sprites.smile .laugh .sad etc....
     // set the sprites in the same function you set npc! TESTJPF
   }
+  /*
   public get quest() {
     return this._quest
   }
   public set quest(c: QuestCondition) {
     this._quest = c
-  }
+  }*/
   public get reason() {
     return this._reason
   }

@@ -21,7 +21,6 @@ function script_builder(
   const paths: string[] = questScripts[player.checkpoint + 'scripts'](
     novel.npc.labelname
   )
-  //!!!!testjpf set novel reason along with questScript
   //if (paths.length > 0) novel.reason = 'quest'
   paths.unshift('clans/' + novel.npc.clan)
 
@@ -45,9 +44,9 @@ function script_builder(
       caution.authority,
       caution.type
     )
-    // toso testjpf ahve to nail down these names whendone here with a few quests.
+
     novel.reason = caution.reason
-    novel.quest.label = caution.type
+    //novel.quest.label = caution.type
   }
   paths.push('reasons/' + novel.reason)
   //print('NOVEL>REASON:::', novel.reason)
@@ -79,14 +78,11 @@ function consolation_outcomes(love: number) {
 
     if (consequence != 'neutral')
       tasks.caution_builder(novel.npc, consequence, 'player', 'unimpressed')
-    // testjpf else cautionbuilder(npc, "offender", player, harassment)
-    //cooldown???
   }
 }
 
 function novel_outcomes(reason: string) {
   print('novel outcome :: reason:', reason)
-  //testjpf create func() called+. emergencies()????
   if (reason == 'faint') {
     const params = {
       enter_room: tasks.spawn,
@@ -98,7 +94,6 @@ function novel_outcomes(reason: string) {
       enter_room: 'security',
     })
   } else if (reason.substring(0, 6) == 'quest:') {
-    //testjpf remove spaces??
     novel.reason = reason.substring(7)
   }
   //if love positive. consolation checks. else negatice

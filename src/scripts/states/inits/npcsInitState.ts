@@ -400,7 +400,7 @@ export const NpcsInitState = {
   gang401: {
     home: { x: 4, y: 5 },
     labelname: 'gang401',
-    inventory: ['eyeball02', 'sish01'],
+    inventory: ['eyeball02', 'fish01'],
     clearence: 1,
     clan: 'gang4',
     body: 'gang402body',
@@ -415,7 +415,6 @@ export const NpcsInitState = {
     body: 'gang302body',
     ...npc_defaults,
   },
-  //testjpf start on corps here!!!!
   corps02: {
     home: { x: 2, y: 4 }, //admin1
     labelname: 'corps02',

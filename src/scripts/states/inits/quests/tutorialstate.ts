@@ -1,68 +1,34 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-//local npcs = require "main.states.npcstates"
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
-//const questutils = require('../../../main.utils.quest')
-
-//TESTJPF THESE util imports require state
-//STATE hasnt been CREATED!
 import { AllQuestsMethods, Quests } from '../../../../types/tasks'
 import {
   any_has_value,
   convos_check,
   does_equal,
-  //max_skills,
-  //returnfalse,
-  //max_love,
   greater_than,
 } from '../../../utils/quest'
-//TESTJPF abovenot loaded yet on GAME STATE CREAT new game
-//local player = require "main.states.playerstate"
 
 export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
   const { nq, tq, nvq } = questmethods
-  /**
-   * testjpf
-   * interval, funcs, and args need to all be a part of 1 object.
-   * // i mean 1 object per so {[key: check1]: {func,arg,interval}}
-   */
+
   return {
     medic_assist: {
       passed: false,
-      //testjpf for TS: so abstract
-      //the binary passed: true/false
-      // or pupulate the func and args from the World level??
-      //I need something that states wether they are active or not.
-      //am I redundant with my GUI Objectives logic.
-      // should delete state on tasks.quests when quest complete.
-      //check data is in objectives first!!
       conditions: {
         [0]: {
-          // testjpf whatif
           label: 'Somebody help that man!',
           solution: '',
           passed: false,
+          status: 'inactive',
           interval: ['interact'],
-
-          // testjpf pass down from NOVEL novel.get_reason
-
           func: [does_equal],
-          // what if instead of nq.return_docs
-          // its quest.return doctors?
           args: [[nvq.get_reason, 'helpthatman']],
         }, //have you talked to a doctor?
         [1]: {
-          // testjpf whatif
           label: 'What is up doctor?!',
           solution: '',
           passed: false,
+          status: 'inactive',
           interval: ['interact', 'turn'],
-
-          // testjpf pass down from NOVEL novel.get_reason
-
           func: [convos_check, greater_than],
-          // what if instead of nq.return_docs
-          // its quest.return doctors?
           args: [
             [nq.return_doctors, 5],
             [tq.num_of_injuries, 5],
@@ -72,6 +38,7 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           label: 'get an apple!',
           solution: '',
           passed: false,
+          status: 'inactive',
           interval: ['interact'],
           func: [any_has_value],
           args: [[nq.return_doctors, 'apple01']],
@@ -80,6 +47,7 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           label: 'Get some meds!',
           solution: '',
           passed: false,
+          status: 'inactive',
           interval: ['interact'],
           func: [any_has_value],
           args: [[nq.return_doctors, 'vial02']],

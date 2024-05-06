@@ -1,6 +1,6 @@
-import { Occupants } from '../../types/state'
+import { Npc, Occupants } from '../../types/state'
 import { roll_special_dice } from '../utils/dice'
-import { clamp, shuffle } from '../utils/utils'
+import { clamp, shuffle, surrounding_room_matrix } from '../utils/utils'
 import { admirer_check, prejudice_check } from './effectsystem'
 import { bribe_check } from './inventorysystem'
 import {
@@ -10,6 +10,7 @@ import {
 } from './chaossystem'
 import { add_pledge, go_to_jail } from './systemshelpers'
 import { Caution, Consequence } from '../../types/tasks'
+import { Direction } from '../../types/ai'
 
 const { tasks, rooms, npcs, player } = globalThis.game.world
 const questioning_checks: Array<
@@ -23,17 +24,16 @@ const questioning_checks: Array<
   prejudice_check,
   unlucky_check,
 ]
-//TESTJPF WHAT ARE THESE USED FOR?
-//probably needs rolls and ADD MORE??!?!
 const thief_consolations = [
   snitch_check,
   merits_demerits,
   reckless_check,
   //society_check,
-] //testjpf makes people ...
+]
 //Crime Consolations
 
-//testjpf needs diceroll
+export const injured_npcs: string[] = []
+
 function merits_demerits(suspect: string, watcher: string): Consequence {
   print('merits_demertis:: suspect::', suspect)
   const w = npcs.all[watcher]
@@ -192,7 +192,7 @@ export function build_consequence(
   return consolation.type
 }
 function question_consequence(c: Caution) {
-  //npconly testjpf
+  //npconly
   print('QC::: ', c.npc, 'is NOW questioning:', c.suspect)
 
   const tempcons: Array<
@@ -214,7 +214,6 @@ export function npc_confrontation(s: string, c: Caution) {
 
 //medics:
 export function send_to_infirmary(v: string, doc: string) {
-  // remove all arrests for suspect(clear record)
   print('infirmed:', v, ' :::!!!!')
   tasks.remove_heat(v)
   const occupants: Occupants = rooms.all.infirmary.occupants!
@@ -231,12 +230,43 @@ export function send_to_infirmary(v: string, doc: string) {
       tasks.caution_builder(npcs.all[doc], 'mending', v, 'office')
       break
     }
-
-    //create caution mending, reason: office
-    // keep doc in aid position until caution wears off
-    // if a doc isnt already in aid position.
-    //patients heal faster when doc is in position.
   }
-  //TESTJPF
-  //ideally this would finish before stations are atempted to be filled.!!!
+}
+
+export function freeze_injured_npc(npc: Npc) {
+  rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
+
+  const limit = tasks.medicQueue.indexOf(npc.labelname)
+  if (limit < 0 || limit > 3) injured_npcs.push(npc.labelname)
+}
+
+export function doctor_ai_turn(
+  npc: Npc,
+  targets: Direction
+): [Direction, boolean] {
+  const patients = Object.values(rooms.all.infirmary.occupants!).filter(
+    (p) => p != ''
+  )
+  let docInOffice = false
+
+  if (tasks.get_field_docs().includes(npc.labelname) == true) {
+    //stay put
+    rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
+  } else if (
+    patients.length > 1 &&
+    math.random() + patients.length * 0.1 > 0.6
+  ) {
+    rooms.all.infirmary.stations.aid = npc.labelname
+    docInOffice = true
+  } else if (patients.length > 3) {
+    targets = surrounding_room_matrix(rooms.all.infirmary.matrix, npc.matrix)
+  } else if (injured_npcs.length > 0) {
+    //find emergency patient
+    targets = surrounding_room_matrix(
+      rooms.all[npcs.all[injured_npcs[0]].currentroom].matrix,
+      npc.matrix
+    )
+  }
+
+  return [targets, docInOffice]
 }

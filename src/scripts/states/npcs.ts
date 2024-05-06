@@ -2,6 +2,7 @@ import { NpcsInitState } from './inits/npcsInitState'
 import { Npc, Npcs } from '../../types/state'
 import { shuffle } from '../utils/utils'
 import { QuestMethods } from '../../types/tasks'
+
 interface BinaryLookupTable {
   [key: string]: BinaryLookupRow
 }
@@ -257,18 +258,5 @@ function random_attributes(npcs: Npcs, order: string[]) {
       npcs[kn].binaries[kb] = adjustment
       b_count = b_count + 1
     }
-
-    // inventory bonuses
-    // const inventory: hash[] = npcs[kn].inventory
-
-    /**TESTJPF TODO:::
-     * reapply this when youve replaced all
-
-    for (const item of npcs[kn].inventory) {
-      print('testjpf ITEM: ', item)
-      const params = { npc: npcs[kn], item }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      chest.add_chest_bonus(params)
-    }     */
   }
 }

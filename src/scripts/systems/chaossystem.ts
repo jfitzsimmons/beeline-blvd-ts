@@ -46,8 +46,6 @@ function love_boost(n: string): Consequence {
     roll_special_dice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2),
     roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   )
-  //const result =
-  // roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
   print('TESTJPF RESULT::: loveboost', result)
   if (result > 5 && result <= 10) return { pass: true, type: 'loveboost' }
@@ -76,15 +74,7 @@ function ap_boost(n: string): Consequence {
   return { pass: false, type: 'neutral' }
 }
 function charmed_merits(n: string): Consequence {
-  //testjpf GOOD time for a diceroll
   const npc = npcs.all[n]
-
-  //so
-  /**
-   * what advantages do we want to give? npc love? not a bin or skill
-
-   */
-
   const modifier = Math.round(
     (player.state.skills.charisma + npc.love) / 2 - npc.skills.constitution
   )
@@ -119,19 +109,13 @@ function love_drop(n: string): Consequence {
     roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1),
     roll_special_dice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2)
   )
-  //const result =
-  // roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
   if (result > 1 && result < 5) return { pass: true, type: 'lovedrop' }
 
   if (result <= 1) return { pass: true, type: 'critical' }
   return { pass: false, type: 'neutral' }
 }
-/** 
-function create_suspicious(suspect: string, watcher: string) {
-  tasks.caution_builder(npcs.all[watcher], 'questioning', suspect, 'suspicious')
-}
-**/
+
 // Misc. Checks
 export function suspicious_check(
   suspect: string,
@@ -221,14 +205,8 @@ export function watcher_punched_check(
   suspect: string,
   watcher: string
 ): Consequence {
-  //     p.binaries.passive_aggressive > 0.5 &&
-  //p.skills.wisdom < 4 &&
-  // p.skills.strength >= n.skills.speed
-
-  //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
-
   const modifier = Math.round(
     s.binaries.lawless_lawful * -5 +
       s.skills.strength -
@@ -258,12 +236,7 @@ export function watcher_punched_check(
 
   return { pass: false, type: 'neutral' }
 }
-//testjpf needs diceroll!!
 export function reckless_check(suspect: string, watcher: string): Consequence {
-  //testjpf was -.5 , 4
-
-  //   npcs.all[w].binaries.un_educated < -0.4 ||
-  //  npcs.all[w].skills.intelligence < 4
   print(suspect, 'reckless suspect!!!!')
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
@@ -296,16 +269,10 @@ export function reckless_check(suspect: string, watcher: string): Consequence {
 }
 //Checks and Helpers
 //misc.
-
 export function suspect_punched_check(
   suspect: string,
   watcher: string
 ): Consequence {
-  // ws.intelligence < 5 &&
-  // wb.evil_good < -0.3 &&
-  //  ws.constitution >= ss.speed
-
-  //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 

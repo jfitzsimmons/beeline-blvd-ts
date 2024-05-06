@@ -42,10 +42,7 @@ function open_novel(_this: props) {
   npcs.all[_this.npcname].convos = npcs.all[_this.npcname].convos + 1
   novel.npc = { ...npcs.all[_this.npcname] }
   novel.reason = _this.consequence.type
-  //testjpf cut out the #level middla man and use::
-  // msg.post('proxies:/controller#novelcontroller', 'show_scene')
-  // i thin with the Novel class we don't have to mess with level
-  //msg.post('/shared/scripts#level', 'show_scene', { confront: true })
+
   msg.post('proxies:/controller#novelcontroller', 'show_scene')
   msg.post('#', 'release_input_focus')
 }

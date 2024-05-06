@@ -55,6 +55,15 @@ export default class WorldTasks {
     //print('busy_doc:: docs[0]:', docs[0])
     return injuries
   }
+  remove_quest_cautions(npc: string) {
+    for (let i = this.cautions.length - 1; i >= 0; i--) {
+      const c = this.cautions[i]
+      if (c.suspect == npc && ['quest'].includes(c.label)) {
+        print('QUEST removed for', c.suspect, c.type, c.reason)
+        this.cautions.splice(i, 1)
+      }
+    }
+  }
   remove_heat(sus: string) {
     for (let i = this.cautions.length - 1; i >= 0; i--) {
       const c = this.cautions[i]
@@ -122,8 +131,6 @@ export default class WorldTasks {
     //explain why you need this testjpf
     //no nested ifs
     //cna this be done somewhere else?
-    //testjpfm something like:
-    // const reason = "theft"
     const append: Caution = {
       npc: n.labelname,
       time: 15,
@@ -137,9 +144,6 @@ export default class WorldTasks {
     if (c == 'snitch') {
       append.authority = 'security'
       append.type = 'clan'
-      //testjpf no way this ever worked?!?!?
-      //c.suspect cant be reached?? or defined?
-      //changed to just "s"
       if (s == 'player') {
         this.questmethods.pq.increase_alert_level()
       }

@@ -2,6 +2,7 @@ import { Confront } from '../../types/tasks'
 import { address_cautions } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
 import { ai_turn, place_npcs } from '../ai/ai_main'
+import { inventory_init } from '../systems/inventorysystem'
 
 const { world } = globalThis.game
 const { rooms, npcs, player, tasks, novel } = world
@@ -10,7 +11,7 @@ export function init() {
   //place_npcs()
 }
 function game_turn(room: string) {
-  ai_turn(room) // abstract to world controller?
+  ai_turn() // abstract to world controller?
   quest_checker('turn')
   tasks.address_quests('turn', player.checkpoint)
   player.ap = player.ap - 1
@@ -95,6 +96,7 @@ export function on_message(
         game_turn(message.roomname)
       } else if (message.load_type == 'new game') {
         place_npcs()
+        inventory_init()
         calculate_heat('grounds')
       }
 

@@ -20,7 +20,6 @@ function build_objectives(quests: WorldQuests): ObjectivesGroup {
     for (qKey in checkpoint) {
       print('INFO::: qKey in checkpoint::', qKey)
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       objectives[cPoint].quest[qKey] = {
         status: 'none',
         objective: {},
@@ -29,9 +28,6 @@ function build_objectives(quests: WorldQuests): ObjectivesGroup {
       //
       let cNum: keyof typeof conditions
       for (cNum in conditions) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        // print('INFO::: cNum in conditions::', cNum, conditions[cNum].label)
-
         objectives[cPoint].quest[qKey].objective[cNum] = {
           status: 'none',
           label: conditions[cNum].label,
@@ -45,13 +41,6 @@ export default class WorldInfo {
   objectives: ObjectivesGroup
 
   constructor(quests: WorldQuests) {
-    //testjpf
-    //need a function that uses the quests arg and
-    // builds objectives
     this.objectives = build_objectives(quests)
-    //this._cautions = []
-    // this._quests = build_quests(this.questmethods)
-    // this._spawn = 'grounds'
-    // this.medicQueue = []
   }
 }

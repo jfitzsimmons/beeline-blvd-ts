@@ -527,6 +527,19 @@ export const items: InventoryTable = {
     },
   },
 }
+
+export function inventory_init() {
+  let nKey: keyof typeof npcs.all
+  for (nKey in npcs.all) {
+    for (const item of npcs.all[nKey].inventory) {
+      add_chest_bonus(npcs.all[nKey], item)
+    }
+  }
+  for (const item of player.inventory) {
+    add_chest_bonus(player.state, item)
+  }
+}
+
 export const inventoryLookup: { [key: string]: string } = {}
 function buildLookup() {
   let itemKey: keyof typeof items
@@ -535,9 +548,6 @@ function buildLookup() {
   }
 }
 
-// testjpf generate_random_gift() food, supplies, money
-
-//testjpf may need a binaries_chest_bonus()
 export function remove_chest_bonus(actor: Npc | PlayerState, i: string) {
   const item: InventoryTableItem = items[i]
   let sKey: keyof typeof item.skills
@@ -653,11 +663,6 @@ export function get_extorted(s: string, w: string) {
   }
 }
 export function bribe_check(suspect: string, watcher: string): Consequence {
-  //     wb.lawless_lawful < -0.4 &&
-  // ws.strength >= ss.strength &&
-  //  sb.passive_aggressive < 0.0
-
-  //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 

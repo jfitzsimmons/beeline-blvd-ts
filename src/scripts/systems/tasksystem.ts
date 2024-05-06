@@ -74,10 +74,6 @@ function focused_acts(c: Caution) {
       npcs.all[c.suspect].hp = 5
       rooms.all.infirmary.occupants![npcs.all[c.suspect].currentstation] = ''
     } else {
-      //ideally testjpf the doctor would be released
-      //it could then go back out into the field if medic queue is long
-      //or stay infirmary if too many patients
-      //TESTJPF BELOW MAKES NO SENSE
       const aid = rooms.all.infirmary.stations.aid
       if (aid != '' && npcs.all[aid].clan == 'doctors') {
         c.time--
@@ -87,7 +83,6 @@ function focused_acts(c: Caution) {
     if (c.time == 1) {
       send_to_infirmary(c.suspect, c.npc)
     } else {
-      // testjpfsame code as ai_checks tendtopatient
       if (npcs.all[c.npc].currentroom == player.currentroom)
         msg.post(
           `/${npcs.all[c.npc].currentstation}#npc_loader`,
@@ -340,8 +335,6 @@ export function address_cautions() {
       )
       sortedCautions.splice(i, 1)
     }
-    //if (confront != null) break
   }
-  //testjpf could see adding more data to this return
   return confront
 }

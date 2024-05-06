@@ -15,6 +15,10 @@ import { roll_special_dice } from '../utils/dice'
 function tend_to_patient(v: string, doc: string) {
   print('tending to patient', doc, v)
   print('if tending then indexof is:', tasks.medicQueue.indexOf(v))
+  print(
+    'tasks.medicQueue.includes(patient) :: should be false?: BUG:: use filter?:',
+    tasks.medicQueue.includes(v)
+  )
   tasks.medicQueue.splice(tasks.medicQueue.indexOf(v), 1)
   print('now should be:', tasks.medicQueue.indexOf(v))
   tasks.remove_heat(v)
@@ -160,8 +164,6 @@ export function seen_check(s: string, w: string) {
     : { confront: false, type: 'neutral' }
 }
 export function confrontation_check(pname: string, nname: string) {
-  // testjpf for debugging you could check if player return false
-  //if (p.labelname == 'adam') return false
   const s = pname == 'player' ? player.state : npcs.all[pname]
   const w = npcs.all[nname]
 
@@ -196,7 +198,7 @@ function thief_consequences(
   }
   return c
 }
-// testjpf only being used between npcs (just tutorial luggage)
+// only being used between npcs (just tutorial luggage)
 export function steal_check(s: Npc, w: Npc, loot: string[]) {
   // accept strings not Npcs
   // const attempt = roll_Specia_dice
@@ -255,7 +257,7 @@ export function steal_check(s: Npc, w: Npc, loot: string[]) {
 
   s.cooldown = s.cooldown + 5
 }
-//testjpf player interact.gui related
+// player interact.gui related
 export function witness_player(w: string) {
   let consequence = {
     confront: false,

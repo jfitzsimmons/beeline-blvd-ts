@@ -1,5 +1,3 @@
-print('testjpf FIRST')
-
 import World from './world'
 
 export class Game {
@@ -10,5 +8,4 @@ export class Game {
     //this.settings
   }
 }
-//testjpf could us a game init state??
 globalThis.game = new Game()

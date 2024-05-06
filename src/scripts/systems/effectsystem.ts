@@ -23,8 +23,6 @@ export function chaotic_good_check(
 ): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  // watcher.binaries.evil_good > 0.5 &&
-  //watcher.skills.wisdom > 5
   const modifier = Math.round(w.skills.wisdom / 2 + w.binaries.evil_good * 5)
   const advantage = s.binaries.anti_authority > w.binaries.anti_authority
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
@@ -63,8 +61,6 @@ export function dumb_crook_check(
 ): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  //   watcher.binaries.lawless_lawful < -0.5 &&
-  // watcher.skills.intelligence < 4
   const modifier = Math.round(w.binaries.lawless_lawful * -5)
   const advantage = s.binaries.un_educated * -5 > w.skills.intelligence / 2
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
@@ -100,9 +96,6 @@ function add_ignorant(suspect: string, watcher: string) {
 export function ignorant_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  //    watcher.binaries.un_educated < -0.5 &&
-  //watcher.skills.perception < 4
-
   const modifier = Math.round(w.binaries.un_educated * -5)
   const advantage = s.skills.intelligence > w.skills.perception
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
@@ -139,8 +132,6 @@ function add_predator(suspect: string, watcher: string) {
 export function predator_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  //    watcher.binaries.evil_good < -0.6 &&
-  // watcher.binaries.passive_aggressive > 0.6
   const modifier = Math.round(w.binaries.evil_good * -5)
   const advantage = s.binaries.anti_authority > w.binaries.passive_aggressive
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
@@ -206,11 +197,6 @@ function add_angel(n: string) {
   add_effects_bonus(npcs.all[n], effect)
 }
 export function angel_check(suspect: string, watcher: string): Consequence {
-  //     p.skills.wisdom > 6 &&
-  //n.skills.wisdom > 5 &&
-  //p.binaries.evil_good + n.binaries.evil_good > 0.3
-
-  //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
@@ -243,19 +229,8 @@ function add_vanity(n: string) {
   add_effects_bonus(npcs.all[n], effect)
 }
 export function vanity_check(suspect: string, watcher: string): Consequence {
-  //     p.skills.charisma > 5 &&
-  // n.skills.intelligence < 5 &&
-  // p.binaries.evil_good < -0.2
-
-  //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  //so
-  /**
-   * what advantages do we want to give? w love? not a bin or skill
-
-   */
-
   const modifier = Math.round(
     s.skills.charisma - w.skills.intelligence + w.binaries.evil_good * -5
   )
@@ -288,19 +263,8 @@ function add_admirer(s: string, w: string) {
   add_effects_bonus(npcs.all[w], effect)
 }
 export function admirer_check(suspect: string, watcher: string): Consequence {
-  // ws.charisma <= ss.charisma &&
-  // wb.anti_authority < -0.3 &&
-  // ws.perception < 5
-
-  //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  //so
-  /**
-   * what advantages do we want to give? w love? not a bin or skill
-
-   */
-
   const modifier = Math.round(
     s.skills.charisma - w.skills.charisma + w.binaries.anti_authority * -5
   )
@@ -333,19 +297,8 @@ export function add_prejudice(s: string, w: string) {
   add_effects_bonus(npcs.all[w], effect)
 }
 export function prejudice_check(suspect: string, watcher: string): Consequence {
-  //     ws.wisdom < 4 &&
-  //  sb.poor_wealthy < wb.poor_wealthy &&
-  //  ws.charisma < ws.stealth
-
-  //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  //so
-  /**
-   * what advantages do we want to give? w love? not a bin or skill
-
-   */
-
   const modifier = Math.round(
     w.binaries.poor_wealthy * -5 + s.binaries.poor_wealthy * -5
   )

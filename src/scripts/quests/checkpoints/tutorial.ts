@@ -1,7 +1,7 @@
 import { Npc } from '../../../types/state'
 import { steal_check, take_or_stash } from '../../ai/ai_checks'
-import { npc_action_move, rooms_near_target } from '../../ai/ai_main'
-import { shuffle } from '../../utils/utils'
+import { npc_action_move } from '../../ai/ai_main'
+import { shuffle, surrounding_room_matrix } from '../../utils/utils'
 import { any_has_value } from '../../utils/quest'
 
 const { rooms, npcs, tasks, player, novel } = globalThis.game.world
@@ -30,6 +30,8 @@ export function tutorialA(interval = 'turn') {
     if (tasks.quests.tutorial.medic_assist.conditions[0].passed == false) {
       tasks.remove_heat(rooms.all.grounds.stations.worker1)
       print('remove quest injury caution. testjpf :: what else??')
+      //tasks.remove_quest_cautions(rooms.all.grounds.stations.worker1)
+
       //testjpf probably need new caution
       // doctors still need to ignore victim
       //activate bonus quests / side quests
@@ -53,7 +55,10 @@ export function tutorialA(interval = 'turn') {
         rooms.all.grounds.stations.aid = doc.labelname
         currentroom = 'grounds'
         currentstation = 'aid'
-        npc_action_move(replace, rooms_near_target(player.matrix))
+        npc_action_move(
+          replace,
+          surrounding_room_matrix(player.matrix, npcs.all[replace].matrix)
+        )
       }
     }
     /**
