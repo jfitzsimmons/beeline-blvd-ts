@@ -40,6 +40,7 @@ export interface Quests {
 
 export interface Quest {
   passed: boolean
+  status: 'active' | 'inactive'
   conditions: QuestConditions
   side_quests?: QuestConditions
 }

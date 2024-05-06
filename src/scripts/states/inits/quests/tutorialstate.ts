@@ -12,6 +12,7 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
   return {
     medic_assist: {
       passed: false,
+      status: 'active',
       conditions: {
         [0]: {
           label: 'Somebody help that man!',

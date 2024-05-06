@@ -21,7 +21,7 @@ function build_objectives(quests: WorldQuests): ObjectivesGroup {
       print('INFO::: qKey in checkpoint::', qKey)
 
       objectives[cPoint].quest[qKey] = {
-        status: 'none',
+        status: checkpoint[qKey].status,
         objective: {},
       }
       const conditions = checkpoint[qKey].conditions
@@ -29,7 +29,7 @@ function build_objectives(quests: WorldQuests): ObjectivesGroup {
       let cNum: keyof typeof conditions
       for (cNum in conditions) {
         objectives[cPoint].quest[qKey].objective[cNum] = {
-          status: 'none',
+          status: conditions[cNum].status,
           label: conditions[cNum].label,
         }
       }

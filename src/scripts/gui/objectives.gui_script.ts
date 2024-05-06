@@ -44,37 +44,45 @@ function set_interactions() {
     let qKey: keyof typeof cpoint.quest
     //ex med_assist
     for (qKey in cpoint.quest) {
-      print('OB GUI::: qKey::', qKey)
-      nodepos.y = nodepos.y - spacing
-      nodepos = vmath.vector3(nodepos)
-      const node = gui.get_node('quest')
-      //const testjpffart = tostring(qKey)
-      gui.set_text(node, tostring(qKey))
-      const clone = gui.clone(node)
-      gui.set_position(clone, nodepos)
-      gui.set_enabled(clone, true)
-
-      const objectives = info.objectives[cKey].quest[qKey].objective
-      let cNum: keyof typeof objectives
-      for (cNum in objectives) {
-        //testjpf
-        const objective = objectives[cNum]
-        print('INFO::: cNum in objectives::', cNum, objectives[cNum].label)
-
+      print('cpoint.quest[qKey].statusc', cpoint.quest[qKey].status)
+      if (cpoint.quest[qKey].status == 'active') {
+        print('OB GUI::: qKey::', qKey)
         nodepos.y = nodepos.y - spacing
-        //nodepos.x = nodepos.x - 25
+        nodepos = vmath.vector3(nodepos)
+        const node = gui.get_node('quest')
+        //const testjpffart = tostring(qKey)
+        gui.set_text(node, tostring(qKey))
+        const clone = gui.clone(node)
+        gui.set_position(clone, nodepos)
+        gui.set_enabled(clone, true)
 
-        const boxClone = gui.clone(gui.get_node('objective'))
-        const textClone = gui.clone(gui.get_node('objective_text'))
-        gui.set_text(textClone, objective.label)
-        gui.set_position(boxClone, nodepos)
-        gui.set_enabled(boxClone, true)
-        gui.set_position(textClone, vmath.vector3(nodepos.x + 16, nodepos.y, 1))
-        gui.set_enabled(textClone, true)
+        const objectives = info.objectives[cKey].quest[qKey].objective
+        let cNum: keyof typeof objectives
+        for (cNum in objectives) {
+          if (objectives[cNum].status == 'active') {
+            //testjpf
+            const objective = objectives[cNum]
+            print('INFO::: cNum in objectives::', cNum, objectives[cNum].label)
 
-        // const clone = gui.clone(node)
-        // gui.set_position(tree, nodepos)
-        // gui.set_enabled(tree, true)
+            nodepos.y = nodepos.y - spacing
+            //nodepos.x = nodepos.x - 25
+
+            const boxClone = gui.clone(gui.get_node('objective'))
+            const textClone = gui.clone(gui.get_node('objective_text'))
+            gui.set_text(textClone, objective.label)
+            gui.set_position(boxClone, nodepos)
+            gui.set_enabled(boxClone, true)
+            gui.set_position(
+              textClone,
+              vmath.vector3(nodepos.x + 16, nodepos.y, 1)
+            )
+            gui.set_enabled(textClone, true)
+
+            // const clone = gui.clone(node)
+            // gui.set_position(tree, nodepos)
+            // gui.set_enabled(tree, true)
+          }
+        }
       }
     }
   }
