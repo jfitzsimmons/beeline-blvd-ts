@@ -27,6 +27,7 @@ alert = _G.game.world.player.alert_level
 hp = _G.game.world.player.hp
 reason = _G.game.world.novel.reason
 convos =  _G.game.world.novel.npc.turns_since_convo
+activeq = _G.game.world.novel.active_quest
 
 n.name = _G.game.world.novel.npc.labelname
 n.scale = 3

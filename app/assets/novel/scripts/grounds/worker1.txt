@@ -5,6 +5,9 @@ if reason == "quest"
     jump queststart
 if reason == "concern"
     jump actualconcern
+jump defaultChoices
+
+label defaultChoices
 > How about these grounds?
     jump groundsrandom1
 > What are you up to?
@@ -17,7 +20,8 @@ if reason == "concern"
     jump reasonrandom1
 > test choices???
     jump testchoices
-jump quickclose
+> Bye
+    jump quickclose
 
 label testchoices
 n: are choices working???

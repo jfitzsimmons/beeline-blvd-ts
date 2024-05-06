@@ -17,7 +17,7 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           label: 'Somebody help that man!',
           solution: '',
           passed: false,
-          status: 'inactive',
+          status: 'active',
           interval: ['interact'],
           func: [does_equal],
           args: [[nvq.get_reason, 'helpthatman']],

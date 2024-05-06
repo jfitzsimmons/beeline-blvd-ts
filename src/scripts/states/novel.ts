@@ -5,6 +5,8 @@ export default class WorldNovel {
   //private background: string
   //private sprites: { [key: string]: string }
   private _reason: string
+  private _active_quest: boolean
+  private _npcsWithQuest: string[]
   private _scripts: string[]
   //private _alertChange: number
   private _npc: Npc
@@ -14,7 +16,9 @@ export default class WorldNovel {
   constructor(initnpc: Npc) {
     // this.background = ''
     //  this.sprites = {}
+    this._active_quest = false
     this._reason = 'none'
+    this._npcsWithQuest = []
     this._scripts = []
     // this._alertChange = 0
     this._npc = { ...initnpc }
@@ -31,7 +35,9 @@ export default class WorldNovel {
     }
     //Have something here like this.sprites.smile .laugh .sad etc....
     // set the sprites in the same function you set npc! TESTJPF
+    this.append_npc_quest = this.append_npc_quest.bind(this)
   }
+
   /*
   public get quest() {
     return this._quest
@@ -39,11 +45,23 @@ export default class WorldNovel {
   public set quest(c: QuestCondition) {
     this._quest = c
   }*/
+  public get npcsWithQuest(): string[] {
+    return this._npcsWithQuest
+  }
+  append_npc_quest(n: string) {
+    this._npcsWithQuest.push(n)
+  }
   public get reason() {
     return this._reason
   }
   public set reason(r: string) {
     this._reason = r
+  }
+  public get active_quest() {
+    return this._active_quest
+  }
+  public set active_quest(a: boolean) {
+    this._active_quest = a
   }
   public get scripts(): string[] {
     return this._scripts
@@ -55,6 +73,7 @@ export default class WorldNovel {
     return this._npc
   }
   public set npc(npc: Npc) {
+    this.active_quest = this.npcsWithQuest.includes(npc.labelname)
     this._npc = { ...npc }
   }
   addScript(s: string) {

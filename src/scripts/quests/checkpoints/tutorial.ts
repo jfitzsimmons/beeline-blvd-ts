@@ -5,6 +5,32 @@ import { shuffle, surrounding_room_matrix } from '../../utils/utils'
 import { any_has_value } from '../../utils/quest'
 
 const { rooms, npcs, tasks, player, novel } = globalThis.game.world
+function medic_assist_checks() {
+  const quest = tasks.quests.tutorial.medic_assist.conditions[0]
+  if (quest.passed == false) {
+    tasks.remove_heat(rooms.all.grounds.stations.worker1)
+    //tasks.remove_quest_cautions(rooms.all.grounds.stations.worker1)
+
+    //testjpf probably need new caution
+    // doctors still need to ignore victim
+    //activate bonus quests / side quests
+    //probably need some way to remove quest cautions
+    //status or something //on address_quest a
+    //clean_up() calls whatever you need.
+    //add to tutorialstate? probably?!!
+  } else if (quest.passed == true && quest.status == 'active') {
+    print('remove quest injury caution. testjpf :: what else??')
+    //tasks.remove_quest_cautions(rooms.all.grounds.stations.worker1)
+
+    //testjpf probably need new caution
+    // doctors still need to ignore victim
+    //activate bonus quests / side quests
+    //probably need some way to remove quest cautions
+    //status or something //on address_quest a
+    //clean_up() calls whatever you need.
+    //add to tutorialstate? probably?!!
+  }
+}
 
 export function tutorialA(interval = 'turn') {
   const luggage =
@@ -27,19 +53,7 @@ export function tutorialA(interval = 'turn') {
   }
 
   if (tasks.quests.tutorial.medic_assist.passed == false) {
-    if (tasks.quests.tutorial.medic_assist.conditions[0].passed == false) {
-      tasks.remove_heat(rooms.all.grounds.stations.worker1)
-      print('remove quest injury caution. testjpf :: what else??')
-      //tasks.remove_quest_cautions(rooms.all.grounds.stations.worker1)
-
-      //testjpf probably need new caution
-      // doctors still need to ignore victim
-      //activate bonus quests / side quests
-      //probably need some way to remove quest cautions
-      //status or something //on address_quest a
-      //clean_up() calls whatever you need.
-      //add to tutorialstate? probably?!!
-    }
+    medic_assist_checks()
     if (
       tasks.quests.tutorial.medic_assist.conditions[1].passed == true &&
       interval == 'turn' &&
@@ -109,13 +123,13 @@ export function tutorialA(interval = 'turn') {
   }
 }
 function doctorsScripts() {
-  const has_met = tasks.quests.tutorial.medic_assist.conditions[1].passed
-  tasks.quests.tutorial.medic_assist.conditions[1]
+  const has_met_victim = tasks.quests.tutorial.medic_assist.conditions[0].passed
   // bad??:: if reasonstring.startswith('quest - ')
   //then on novel_main novel.quest.solution = endof(message.reason)
-  if (has_met == false) {
+  if (has_met_victim == true) {
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
+
     return 'tutorial/tutorialAdoctor'
   }
   return null
@@ -123,7 +137,7 @@ function doctorsScripts() {
 
 function worker1Scripts() {
   print('worker1 script called', novel.reason)
-  if (tasks.quests.tutorial.medic_assist.conditions[0].passed == false) {
+  if (tasks.quests.tutorial.medic_assist.conditions[1].passed == false) {
     novel.reason = 'helpthatman'
     print('worker2 script returned')
     return 'tutorial/helpThatMan'
