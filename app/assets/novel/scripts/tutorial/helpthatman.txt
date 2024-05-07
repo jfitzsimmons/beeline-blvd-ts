@@ -1,6 +1,5 @@
 
 label queststart
-n: active quest? {activeq} 
 if activeq == "true"
     jump haveyoufound
 n: Please, get some help.  I'm injured.

@@ -4,7 +4,7 @@ import { npc_action_move } from '../../ai/ai_main'
 import { shuffle, surrounding_room_matrix } from '../../utils/utils'
 import { any_has_value } from '../../utils/quest'
 
-const { rooms, npcs, tasks, player, novel } = globalThis.game.world
+const { rooms, npcs, tasks, player, novel, info } = globalThis.game.world
 function medic_assist_checks() {
   const quest = tasks.quests.tutorial.medic_assist.conditions[0]
   if (quest.passed == false) {
@@ -18,17 +18,11 @@ function medic_assist_checks() {
     //status or something //on address_quest a
     //clean_up() calls whatever you need.
     //add to tutorialstate? probably?!!
-  } else if (quest.passed == true && quest.status == 'active') {
-    print('remove quest injury caution. testjpf :: what else??')
-    //tasks.remove_quest_cautions(rooms.all.grounds.stations.worker1)
-
-    //testjpf probably need new caution
-    // doctors still need to ignore victim
-    //activate bonus quests / side quests
-    //probably need some way to remove quest cautions
-    //status or something //on address_quest a
-    //clean_up() calls whatever you need.
-    //add to tutorialstate? probably?!!
+  } else if (quest.passed == true && quest.status == 'inactive') {
+    tasks.quests.tutorial.medic_assist.conditions[0].status = 'active'
+    tasks.quests.tutorial.medic_assist.status = 'active'
+    tasks.quests.tutorial.medic_assist.conditions[1].status = 'active'
+    info.rebuild_objectives(tasks.quests)
   }
 }
 
@@ -126,9 +120,21 @@ function doctorsScripts() {
   const has_met_victim = tasks.quests.tutorial.medic_assist.conditions[0].passed
   // bad??:: if reasonstring.startswith('quest - ')
   //then on novel_main novel.quest.solution = endof(message.reason)
-  if (has_met_victim == true) {
+  print(
+    ':novel 2 reason::',
+    novel.reason,
+    has_met_victim,
+    tasks.quests.tutorial.medic_assist.conditions[1].status
+  )
+
+  if (
+    has_met_victim == true &&
+    tasks.quests.tutorial.medic_assist.conditions[1].status == 'active'
+  ) {
+    novel.reason = 'quest'
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
+    print(':novel 3 reason::', novel.reason)
 
     return 'tutorial/tutorialAdoctor'
   }
@@ -138,7 +144,7 @@ function doctorsScripts() {
 function worker1Scripts() {
   print('worker1 script called', novel.reason)
   if (tasks.quests.tutorial.medic_assist.conditions[1].passed == false) {
-    novel.reason = 'helpthatman'
+    novel.reason = 'quest'
     print('worker2 script returned')
     return 'tutorial/helpThatMan'
   }

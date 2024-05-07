@@ -1,9 +1,9 @@
 label start
 show n
 n: It's so boring waiting to get through customs.
-if reason == "quest"
-    jump queststart
 if reason == "concern"
+    jump queststart
+if reason == "concern2"
     jump actualconcern
 > How about these grounds?
     jump groundsrandom1

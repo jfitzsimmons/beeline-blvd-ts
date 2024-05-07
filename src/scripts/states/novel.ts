@@ -31,11 +31,12 @@ export default class WorldNovel {
       args: [],
     }*/
     this.quests = {
-      get_reason: () => this.reason,
+      get_reason: this.get_reason,
     }
     //Have something here like this.sprites.smile .laugh .sad etc....
     // set the sprites in the same function you set npc! TESTJPF
     this.append_npc_quest = this.append_npc_quest.bind(this)
+    this.get_reason = this.get_reason.bind(this)
   }
 
   /*
@@ -51,6 +52,7 @@ export default class WorldNovel {
   append_npc_quest(n: string) {
     this._npcsWithQuest.push(n)
   }
+  get_reason = () => this._reason
   public get reason() {
     return this._reason
   }

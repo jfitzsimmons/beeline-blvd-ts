@@ -42,5 +42,9 @@ export default class WorldInfo {
 
   constructor(quests: WorldQuests) {
     this.objectives = build_objectives(quests)
+    this.rebuild_objectives = this.rebuild_objectives.bind(this)
+  }
+  rebuild_objectives(quests: WorldQuests) {
+    this.objectives = build_objectives(quests)
   }
 }

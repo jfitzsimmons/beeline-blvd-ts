@@ -108,9 +108,9 @@ export function on_message(
       if (confrontation != null) confrontation_scene(confrontation)
     }
   } else if (messageId == hash('exit_gui')) {
+    tasks.address_quests('interact', player.checkpoint)
     quest_checker('interact')
 
-    tasks.address_quests('interact', player.checkpoint)
     novel.reason = 'none'
     calculate_heat(this.roomname)
 

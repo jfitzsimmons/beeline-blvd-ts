@@ -12,13 +12,13 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
   return {
     medic_assist: {
       passed: false,
-      status: 'active',
+      status: 'inactive',
       conditions: {
         [0]: {
           label: 'Somebody help that man!',
           solution: '',
           passed: false,
-          status: 'active',
+          status: 'inactive',
           interval: ['interact'],
           func: [does_equal],
           args: [[nvq.get_reason, 'helpthatman']],
