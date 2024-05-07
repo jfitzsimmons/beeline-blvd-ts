@@ -1,0 +1,45 @@
+label security1
+n: Sometimes I'm first on the scene.
+jump quickclose
+
+label security2
+n: Making sure you're safe.
+jump quickclose
+
+label security3
+n: I'm in the middle of something
+jump quickclose
+
+label genericsecurity
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump security1
+if dice > 50
+    jump security2
+if dice > 25
+    jump security3
+n: Security.
+jump quickclose
+
+label clanrandom1
+if npc.b.authority > 0.4
+    jump youreinterferring
+if npc.b.lawful > 5
+    jump serveprotect
+if npc.s.perception > 6
+    jump eyeoneverything
+jump genericsecurity
+
+label youreinterferring
+n: Move along.  
+n: You're interferring with official security business.
+jump quickclose
+
+label serveprotect
+n: Protecting all the great people of The Hub.
+jump quickclose
+
+label eyeoneverything
+n: I have my eyes on all things at all times.
+jump quickclose
