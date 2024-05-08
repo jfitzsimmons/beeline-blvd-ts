@@ -21,8 +21,31 @@ function medic_assist_checks() {
   } else if (quest.passed == true && quest.status == 'inactive') {
     tasks.quests.tutorial.medic_assist.conditions[0].status = 'active'
     tasks.quests.tutorial.medic_assist.status = 'active'
-    tasks.quests.tutorial.medic_assist.conditions[1].status = 'active'
+    // tasks.quests.tutorial.medic_assist.conditions[1].status = 'active'
     info.rebuild_objectives(tasks.quests)
+  } else if (
+    novel.reason == 'getadoctor' &&
+    quest.passed == true &&
+    quest.status == 'active'
+  ) {
+    tasks.quests.tutorial.medic_assist.conditions[1].status = 'active'
+    tasks.append_caution({
+      label: 'mending',
+      time: 100,
+      type: 'quest',
+      reason: 'field',
+      npc: npcs.all[novel.npc.labelname].labelname,
+      suspect: npcs.all[rooms.all.grounds.stations.worker1].labelname,
+      authority: 'doctors',
+    })
+    msg.post(
+      `/${npcs.all[novel.npc.labelname].currentstation}#npc_loader`,
+      hash('move_npc'),
+      {
+        station: 'worker1',
+        npc: novel.npc.labelname,
+      }
+    )
   }
 }
 
@@ -127,10 +150,7 @@ function doctorsScripts() {
     tasks.quests.tutorial.medic_assist.conditions[1].status
   )
 
-  if (
-    has_met_victim == true &&
-    tasks.quests.tutorial.medic_assist.conditions[1].status == 'active'
-  ) {
+  if (has_met_victim == true) {
     novel.reason = 'quest'
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc

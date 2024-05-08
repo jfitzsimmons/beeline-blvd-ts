@@ -1,8 +1,21 @@
 label queststart
+if activeq == "true"
+    jump aretheyhealed
 > Talk to doctor about injured man?
     reason = "quest: getadoctor"
     p: You gotta help that person over there.
     n: Thanks kind stranger.
     jump quickclose
 > Other
+    jump defaultChoices
+
+
+label aretheyhealed
+p: Are they going to be okay?
+n: Do you have an apple?
+> Yes
+    n: Do you really?
+    jump quickclose
+> No
+    n: If you find one, come back.
     jump defaultChoices

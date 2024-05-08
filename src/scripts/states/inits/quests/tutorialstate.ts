@@ -1,13 +1,14 @@
 import { AllQuestsMethods, Quests } from '../../../../types/tasks'
 import {
   any_has_value,
-  convos_check,
+  //convos_check,
   does_equal,
-  greater_than,
+  // greater_than,
 } from '../../../utils/quest'
 
 export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
-  const { nq, tq, nvq } = questmethods
+  //const { nq, tq, nvq } = questmethods
+  const { nq, nvq } = questmethods
 
   return {
     medic_assist: {
@@ -28,12 +29,9 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           solution: '',
           passed: false,
           status: 'inactive',
-          interval: ['interact', 'turn'],
-          func: [convos_check, greater_than],
-          args: [
-            [nq.return_doctors, 5],
-            [tq.num_of_injuries, 5],
-          ],
+          interval: ['interact'],
+          func: [does_equal],
+          args: [[nvq.get_reason, 'getadoctor']],
         }, //have you talked to a doctor?
         [2]: {
           label: 'get an apple!',

@@ -461,7 +461,7 @@ export const items: InventoryTable = {
       wisdom: -1,
     },
   },
-  apple: {
+  apple02: {
     value: 2,
     level: 1,
     binaries: {},
