@@ -35,7 +35,7 @@ const thief_consolations = [
 export const injured_npcs: string[] = []
 
 function merits_demerits(suspect: string, watcher: string): Consequence {
-  print('merits_demertis:: suspect::', suspect)
+  //print('merits_demertis:: suspect::', suspect)
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
@@ -48,7 +48,7 @@ function merits_demerits(suspect: string, watcher: string): Consequence {
     7.5
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -1, 1)
 
-  print('TESTJPF RESULT::: evilmerits', result)
+  //print('TESTJPF RESULT::: evilmerits', result)
   if (result < 4) {
     return { pass: true, type: 'demerits' }
   }
@@ -71,20 +71,20 @@ function pledge_check(suspect: string, watcher: string): Consequence {
   const advantage = w.skills.wisdom > s.skills.constitution + 1
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
-  print('TESTJPF RESULT::: pledge', result)
+  //print('TESTJPF RESULT::: pledge', result)
   if (result > 5 && result <= 10) {
     add_pledge(suspect)
     return { pass: true, type: 'pledge' }
   }
 
   if (result > 10) {
-    print('SPECIAL pledge')
+    //print('SPECIAL pledge')
     add_pledge(suspect)
     add_pledge(suspect)
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER pledge')
+    //print('NEVER pledge')
     return { pass: true, type: 'critical' }
   }
 
@@ -99,25 +99,25 @@ export function jailtime_check(suspect: string, watcher: string): Consequence {
   const advantage = s.binaries.passive_aggressive < 0.2
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
-  print('TESTJPF RESULT::: jailed', result)
+  //print('TESTJPF RESULT::: jailed', result)
   if (result > 5 && result <= 10) {
     go_to_jail(suspect)
     return { pass: true, type: 'jailed' }
   }
 
   if (result > 10) {
-    print('SPECIAL jailed')
+    //print('SPECIAL jailed')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER jailed')
+    //print('NEVER jailed')
     return { pass: true, type: 'critical' }
   }
 
   return { pass: false, type: 'neutral' }
 }
 export function snitch_check(suspect: string, watcher: string): Consequence {
-  print('snitch check suspect::', suspect)
+  //print('snitch check suspect::', suspect)
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
@@ -130,17 +130,17 @@ export function snitch_check(suspect: string, watcher: string): Consequence {
     s.skills.stealth + +Math.abs(s.binaries.passive_aggressive * 5)
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
-  print('TESTJPF RESULT::: snitch', result)
+  //print('TESTJPF RESULT::: snitch', result)
   if (result > 5 && result <= 10) {
     return { pass: true, type: 'snitch' }
   }
 
   if (result > 10) {
-    print('SPECIAL snitch')
+    //print('SPECIAL snitch')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER snitch')
+    //print('NEVER snitch')
     return { pass: true, type: 'critical' }
   }
 
@@ -155,7 +155,7 @@ function thief_consolation_checks(s: string, w: string) {
     const consolation = c(s, w)
     if (consolation.pass == true) return consolation.type
   })
-  print('did nothing after witnessing a theft attempt')
+  //print('did nothing after witnessing a theft attempt')
   return 'neutral'
 }
 export function build_consequence(
@@ -182,18 +182,18 @@ export function build_consequence(
       )
       c.time = 0
     } else {
-      print(c.label, c.reason, 'ANY_consequence: no fx or cautions')
+      //print(c.label, c.reason, 'ANY_consequence: no fx or cautions')
     }
     //} else {
     //  npcs.all[c.npc].love = npcs.all[c.npc].love - 1
     // }
   }
-  print('BUILD CONEQUENCE return type::', consolation.type)
+  //print('BUILD CONEQUENCE return type::', consolation.type)
   return consolation.type
 }
 function question_consequence(c: Caution) {
   //npconly
-  print('QC::: ', c.npc, 'is NOW questioning:', c.suspect)
+  //print('QC::: ', c.npc, 'is NOW questioning:', c.suspect)
 
   const tempcons: Array<
     (s: string, w: string) => { pass: boolean; type: string }
@@ -207,14 +207,14 @@ export function npc_confrontation(s: string, c: Caution) {
     question_consequence(c)
   }
   if (c.label == 'arrest') {
-    print('CAUTION:: arrest.', c.npc, 'threw', s, 'in jail')
+    //print('CAUTION:: arrest.', c.npc, 'threw', s, 'in jail')
     go_to_jail(s)
   }
 }
 
 //medics:
 export function send_to_infirmary(v: string, doc: string) {
-  print('infirmed:', v, ' :::!!!!')
+  //print('infirmed:', v, ' :::!!!!')
   tasks.remove_heat(v)
   const occupants: Occupants = rooms.all.infirmary.occupants!
   let station: keyof typeof occupants
@@ -226,7 +226,7 @@ export function send_to_infirmary(v: string, doc: string) {
       npcs.all[v].cooldown = 8
       npcs.all[v].currentroom = 'infirmary'
       npcs.all[v].currentstation = station
-      print(v, 'infirmed for:', npcs.all[v].cooldown)
+      //print(v, 'infirmed for:', npcs.all[v].cooldown)
       tasks.caution_builder(npcs.all[doc], 'mending', v, 'office')
       break
     }

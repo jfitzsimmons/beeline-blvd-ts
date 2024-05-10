@@ -1,5 +1,4 @@
 import { novel_init, novel_start } from './matchanovel'
-print('novel main 4th??')
 const { npcs, tasks, player, novel } = globalThis.game.world
 
 import { questScripts } from '../quests/quests_main'
@@ -14,27 +13,14 @@ function script_builder(
   room: boolean | true = true,
   extend: boolean | false = false
 ) {
-  print('scriptbuilder')
   let checkpoint = player.checkpoint.slice(0, -1)
   if (extend == true) {
     checkpoint = player.checkpoint
   }
   const paths: string[] = []
-  print(':novel 1 reason::', novel.reason)
   const caution = tasks.npc_has_caution('any', novel.npc.labelname)
-  print(':novel 4 reason::', novel.reason)
 
   if (caution != null) {
-    print(
-      'CAUTION:::',
-      caution.reason,
-      caution.label,
-      caution.npc,
-      caution.suspect,
-      caution.authority,
-      caution.type
-    )
-
     novel.reason = caution.reason
     // reasons not set up with dialog
     //cautions work with dialog text level /grounds / station ex: worker.txt
@@ -61,21 +47,16 @@ function script_builder(
 
   paths.push(...quest_paths)
 
-  print('prepath scriptbuilder')
-
   novel.scripts = paths
-  for (const script of novel.scripts) {
-    print(script, 'sbuilder script <<<')
-  }
-  print('postpath scriptbuilder')
-  print(':novel 6 reason::', novel.reason)
+  //for (const script of novel.scripts) {
+  // print(script, 'sbuilder script <<<')
+  //}
 }
 
 function consolation_outcomes(love: number) {
   //print(novel.npc.love, '| novel.npc.love = love |', love)
   if (love > novel.npc.love) {
     const consequence = impressed_checks('player', novel.npc.labelname)
-    print('impressed consequence:: ', consequence)
     if (consequence != 'neutral')
       tasks.caution_builder(novel.npc, consequence, 'player', 'impressed')
 
@@ -92,7 +73,6 @@ function consolation_outcomes(love: number) {
     //could be ELSE
 
     const consequence = unimpressed_checks('player', novel.npc.labelname)
-    print('UNimpressed consequence:: ', consequence)
 
     if (consequence != 'neutral')
       tasks.caution_builder(novel.npc, consequence, 'player', 'unimpressed')
@@ -100,7 +80,6 @@ function consolation_outcomes(love: number) {
 }
 
 function novel_outcomes(reason: string) {
-  print('novel outcome :: reason:', reason)
   if (reason == 'faint') {
     const params = {
       enter_room: tasks.spawn,
@@ -166,9 +145,7 @@ export function on_message(
       )
     } else {
       if (message.love != novel.npc.love) {
-        print('novel.npc.love1', novel.npc.love, message.love)
         novel.npc.love = message.love
-        print('novel.npc.love1', novel.npc.love, message.love)
 
         //testjpf start here
         // you have player.heat now what??

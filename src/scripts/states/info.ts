@@ -9,7 +9,6 @@ function build_objectives(quests: WorldQuests): ObjectivesGroup {
   //ex tutorial
   let cPoint: keyof typeof quests
   for (cPoint in quests) {
-    print('INFO::: cPoint in quests::', cPoint)
     objectives[cPoint] = {
       status: 'none',
       quest: {},
@@ -18,8 +17,6 @@ function build_objectives(quests: WorldQuests): ObjectivesGroup {
     //ex med_assist
     let qKey: keyof typeof checkpoint
     for (qKey in checkpoint) {
-      print('INFO::: qKey in checkpoint::', qKey)
-
       objectives[cPoint].quest[qKey] = {
         status: checkpoint[qKey].status,
         objective: {},

@@ -142,7 +142,6 @@ export function on_message(
       targetpos.y = pos.y
     }
 
-    print('targetpos.x, targetpos.y', targetpos.x, targetpos.y)
     screen_to_world(targetpos.x, targetpos.y, 1, '#camera')
     go.set_position(targetpos)
     go.set_position(vmath.vector3(targetpos.x, targetpos.y, 1))

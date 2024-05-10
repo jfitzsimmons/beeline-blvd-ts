@@ -23,7 +23,6 @@ function handle_new_turn(load_type: string) {
       globalThis.game.world.clock = globalThis.game.world.clock - 24
     }
   } else if (load_type === 'new game') {
-    print('WORLD CONTROLLER NEW GAME NEW GAME NEW GAME')
     globalThis.game = new Game()
   }
 }
@@ -80,17 +79,11 @@ export function on_message(
     this.roomname = message.enter_room
     this.is_level = true
     this.load_type = message.load_type
-    print('--- === ::: NEW ROOM LOADED ::: === ---')
+    // print('--- === ::: NEW ROOM LOADED ::: === ---')
     handle_new_turn(this.load_type)
     show(this.current_proxy, '#' + this.roomname)
   } else if (messageId == hash('proxy_loaded')) {
-    print('proxy_loaded::: _sender::', _sender, this.is_level)
     this.current_proxy = _sender
-    print(
-      'proxy_loaded::: this.current_proxy::',
-      this.current_proxy,
-      this.is_level
-    )
     if (this.current_proxy !== null && this.is_level == true) {
       const params = {
         roomname: this.roomname,
@@ -98,8 +91,7 @@ export function on_message(
       }
       msg.post(this.roomname + ':/shared/scripts#level', 'room_load', params)
     }
-    print('CURR PROX:::', this.current_proxy)
-    print('CURR PROX FRAG::::', this.current_proxy.fragment)
+
     msg.post(_sender, 'enable')
   }
 }

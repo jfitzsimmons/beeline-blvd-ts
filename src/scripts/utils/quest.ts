@@ -20,7 +20,6 @@ export function returnfalse() {
 export function does_equal(
   args: [() => number | string, number | string]
 ): boolean {
-  print(' args[0]() |  args[1]', args[0](), args[1])
   return args[0]() == args[1] ? true : false
 }
 

@@ -21,6 +21,7 @@ shared_state = 1
 
 [html5]
 wasm_streaming = 0
+cssfile = /builtins/manifests/web/dark_theme.css
 
 [collection_proxy]
 max_count = 50

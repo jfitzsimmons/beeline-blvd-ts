@@ -13,6 +13,7 @@ interface InventoryTableItem {
   binaries: { [key: string]: number }
   skills: { [key: string]: number }
 }
+
 export const items: InventoryTable = {
   magica1: {
     value: 2,
@@ -628,8 +629,8 @@ export function remove_advantageous(
 export function remove_valuable(to_inv: string[], from_inv: string[]) {
   /** 
 	for _, iv in ipairs(from_inv) do
-		print("iv:",iv)
-		print("M.items[iv].value:",M.items[iv].value)
+		//print("iv:",iv)
+		//print("M.items[iv].value:",M.items[iv].value)
 	}
 	**/
   if (from_inv.length < 1) return ''
@@ -656,7 +657,7 @@ export function get_extorted(s: string, w: string) {
         w_inv.push(...loot)
         break
       } else {
-        print('bribe failed so punch???')
+        //print('bribe failed so punch???')
         // bribe failed so punch???
       }
     }
@@ -673,18 +674,18 @@ export function bribe_check(suspect: string, watcher: string): Consequence {
     s.binaries.passive_aggressive < w.binaries.passive_aggressive - 0.3
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
-  print('TESTJPF RESULT::: bribe', result)
+  //print('TESTJPF RESULT::: bribe', result)
   if (result > 5 && result <= 10) {
     get_extorted(suspect, watcher)
     return { pass: true, type: 'bribe' }
   }
 
   if (result > 10) {
-    print('SPECIAL bribe')
+    //print('SPECIAL bribe')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER bribe')
+    //print('NEVER bribe')
     return { pass: true, type: 'critical' }
   }
 

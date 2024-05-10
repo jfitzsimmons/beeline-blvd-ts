@@ -92,7 +92,7 @@ function focused_acts(c: Caution) {
             npc: c.npc,
           }
         )
-      print(c.npc, 'tending to', c.suspect, 'in the field')
+      // print(c.npc, 'tending to', c.suspect, 'in the field')
     }
   }
 }
@@ -124,7 +124,7 @@ function adjust_medic_queue(s: string) {
     if (tasks.medicQueue.indexOf(s) > 1)
       arraymove(tasks.medicQueue, tasks.medicQueue.indexOf(s), 0)
   } else {
-    print('cautions caused s:', s, 'to be added to medicQueue')
+    // print('cautions caused s:', s, 'to be added to medicQueue')
     tasks.medicQueue.push(s)
   }
 }
@@ -140,14 +140,14 @@ function merits_demerits(c: Caution, w: string) {
   if (effect.fx.type == 'attitudes') {
     effect.fx.stat = npcs.all[c.suspect].clan
   }
-  print(c.npc, 'found:', w, 'because merits.', w, 'has effect:', fx_labels[1])
+  // print(c.npc, 'found:', w, 'because merits.', w, 'has effect:', fx_labels[1])
   npcs.all[w].effects.push(effect)
   add_effects_bonus(npcs.all[w], effect)
 }
-function reckless_consequence(c: Caution, w: string) {
-  print('RC::: ', c.npc, ' is gossiping with', w)
+function reckless_consequence(c: Caution, _w: string) {
+  // print('RC::: ', c.npc, ' is gossiping with', w)
   //const watcher = npcs.all[w]
-  const checks: Array<(n: string, w: string) => Consequence> =
+  const checks: Array<(n: string, _w: string) => Consequence> =
     c.reason == 'theft'
       ? shuffle(reck_theft_checks)
       : shuffle(reck_harass_checks)
@@ -155,7 +155,7 @@ function reckless_consequence(c: Caution, w: string) {
   build_consequence(c, checks)
 }
 function snitch_to_security(c: Caution, watcher: string) {
-  print(c.npc, 'SNITCHED on:', c.suspect, 'TO:', watcher)
+  // print(c.npc, 'SNITCHED on:', c.suspect, 'TO:', watcher)
   const bulletin = tasks.already_hunting(watcher, c.suspect)
   const caution_state =
     c.suspect == 'player'
@@ -165,7 +165,6 @@ function snitch_to_security(c: Caution, watcher: string) {
   if (bulletin == null) {
     tasks.caution_builder(npcs.all[watcher], caution_state, c.suspect, c.reason)
   } else {
-    print('BULLETIN EXISTS + 666')
     bulletin.time = bulletin.time + 6
   }
 
@@ -230,7 +229,7 @@ export function unimpressed_checks(s: string, w: string) {
     const consolation = c(s, w)
     if (consolation.pass == true) return consolation.type
   })
-  print('did nothing after witnessing a theft attempt')
+
   return 'neutral'
 }
 export function impressed_checks(s: string, w: string) {
@@ -240,7 +239,7 @@ export function impressed_checks(s: string, w: string) {
     const consolation = c(s, w)
     if (consolation.pass == true) return consolation.type
   })
-  print('did nothing after witnessing a theft attempt')
+
   return 'neutral'
 }
 
@@ -327,12 +326,6 @@ export function address_cautions() {
   for (let i = sortedCautions.length - 1; i >= 0; i--) {
     sortedCautions[i].time--
     if (sortedCautions[i].time <= 0) {
-      print(
-        sortedCautions[i].label,
-        'expired for:',
-        sortedCautions[i].suspect,
-        sortedCautions[i].reason
-      )
       sortedCautions.splice(i, 1)
     }
   }

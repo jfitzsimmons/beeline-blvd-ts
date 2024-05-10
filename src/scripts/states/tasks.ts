@@ -59,7 +59,6 @@ export default class WorldTasks {
     for (let i = this.cautions.length - 1; i >= 0; i--) {
       const c = this.cautions[i]
       if (c.suspect == npc && ['quest'].includes(c.label)) {
-        print('QUEST removed for', c.suspect, c.type, c.reason)
         this.cautions.splice(i, 1)
       }
     }
@@ -73,7 +72,6 @@ export default class WorldTasks {
           c.label
         )
       ) {
-        print('heat removed for', c.suspect, c.type, c.reason)
         this.cautions.splice(i, 1)
       }
     }
@@ -112,7 +110,6 @@ export default class WorldTasks {
         c.suspect == sus &&
         (c.label == 'arrest' || c.label == 'questioning')
       ) {
-        print('IS WANTED TRUE!!!', sus, c.suspect)
         return true
       }
     }
@@ -170,7 +167,7 @@ export default class WorldTasks {
       append.time = 10
       append.reason = 'suspicious'
     }
-
+    /** 
     print(
       append.npc,
       'know that',
@@ -182,7 +179,7 @@ export default class WorldTasks {
       'for time:',
       append.time
     )
-
+*/
     this.append_caution(append)
   }
   append_caution(caution: Caution) {
@@ -210,10 +207,8 @@ export default class WorldTasks {
                 goal.interval[i] == interval &&
                 goal.func[i]!(goal.args[i]) == true
               ) {
-                print('goal PASSED: GOAL', goal.label)
+                //                print('goal PASSED: GOAL', goal.label)
                 goal.passed = true
-                print('quest Condition passed::', goal.label)
-                print('UPDATE OBJECTIVES!!!! TESTJPF::', goal.label)
                 break
               }
             }
@@ -222,7 +217,7 @@ export default class WorldTasks {
         }
         if (quest_passed == true) {
           quest.passed = true
-          print(questKey, 'quest COMPLETE!!!')
+          //   print(questKey, 'quest COMPLETE!!!')
         }
       }
     }

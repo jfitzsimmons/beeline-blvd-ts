@@ -1,5 +1,3 @@
-print('n controller top 3rd???')
-
 interface props {
   current_proxy: url | null
 }
@@ -9,7 +7,6 @@ interface url {
 
 function show(curr_proxy: url | null, proxy: string) {
   if (curr_proxy != null) {
-    print('TESTJPF : is curr_proxy for novel ever null??:::', curr_proxy)
     msg.post(curr_proxy, 'unload')
     curr_proxy = null
   }

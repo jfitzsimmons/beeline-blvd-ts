@@ -9,7 +9,6 @@ if activeq == "true"
 > Other
     jump defaultChoices
 
-
 label aretheyhealed
 p: Are they going to be okay?
 n: Do you have an apple?

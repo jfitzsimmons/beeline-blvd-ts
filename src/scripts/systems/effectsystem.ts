@@ -27,18 +27,18 @@ export function chaotic_good_check(
   const advantage = s.binaries.anti_authority > w.binaries.anti_authority
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
-  print('TESTJPF RESULT::: chaoticgood::', result)
+  // print('TESTJPF RESULT::: chaoticgood::', result)
   if (result > 5 && result <= 10) {
     add_chaotic_good
     return { pass: true, type: 'chaoticgood' }
   }
 
   if (result > 10) {
-    print('SPECIAL chaoticgood')
+    // print('SPECIAL chaoticgood')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER chaoticgood')
+    // print('NEVER chaoticgood')
     return { pass: true, type: 'critical' }
   }
 
@@ -65,18 +65,18 @@ export function dumb_crook_check(
   const advantage = s.binaries.un_educated * -5 > w.skills.intelligence / 2
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
-  print('TESTJPF RESULT::: dumbcrook::', result)
+  // print('TESTJPF RESULT::: dumbcrook::', result)
   if (result > 5 && result <= 10) {
     add_dumb_crook
     return { pass: true, type: 'dumbcrook' }
   }
 
   if (result > 10) {
-    print('SPECIAL dumbcrook')
+    // print('SPECIAL dumbcrook')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER dumbcrook')
+    // print('NEVER dumbcrook')
     return { pass: true, type: 'critical' }
   }
 
@@ -100,18 +100,18 @@ export function ignorant_check(suspect: string, watcher: string): Consequence {
   const advantage = s.skills.intelligence > w.skills.perception
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
-  print('TESTJPF RESULT::: ignorant::', result)
+  // print('TESTJPF RESULT::: ignorant::', result)
   if (result > 5 && result <= 10) {
     add_ignorant
     return { pass: true, type: 'ignorant' }
   }
 
   if (result > 10) {
-    print('SPECIAL ignorant')
+    // print('SPECIAL ignorant')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER ignorant')
+    // print('NEVER ignorant')
     return { pass: true, type: 'critical' }
   }
 
@@ -136,18 +136,18 @@ export function predator_check(suspect: string, watcher: string): Consequence {
   const advantage = s.binaries.anti_authority > w.binaries.passive_aggressive
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
-  print('TESTJPF RESULT::: predator::', result)
+  // print('TESTJPF RESULT::: predator::', result)
   if (result > 5 && result <= 10) {
     add_predator
     return { pass: true, type: 'predator' }
   }
 
   if (result > 10) {
-    print('SPECIAL predator')
+    // print('SPECIAL predator')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER predator')
+    // print('NEVER predator')
     return { pass: true, type: 'critical' }
   }
 
@@ -173,25 +173,25 @@ export function classy_check(suspect: string, watcher: string): Consequence {
   const advantage = w.skills.perception > s.skills.strength
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
-  print('TESTJPF RESULT::: classy::', result)
+  // print('TESTJPF RESULT::: classy::', result)
   if (result > 5 && result <= 10) {
     add_classy
     return { pass: true, type: 'classy' }
   }
 
   if (result > 10) {
-    print('SPECIAL classy')
+    // print('SPECIAL classy')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER classy')
+    // print('NEVER classy')
     return { pass: true, type: 'critical' }
   }
 
   return { pass: false, type: 'neutral' }
 }
 function add_angel(n: string) {
-  print('CC:: angel')
+  // print('CC:: angel')
   const effect: Effect = { ...fx.angel }
   npcs.all[n].effects.push(effect) // lawfulness increase?
   add_effects_bonus(npcs.all[n], effect)
@@ -205,25 +205,25 @@ export function angel_check(suspect: string, watcher: string): Consequence {
     Math.abs(s.binaries.evil_good) > Math.abs(w.binaries.evil_good)
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
-  print('TESTJPF RESULT::: angel:', result)
+  // print('TESTJPF RESULT::: angel:', result)
   if (result > 5 && result <= 10) {
     add_angel(watcher)
     return { pass: true, type: 'angel' }
   }
 
   if (result > 10) {
-    print('SPECIAL angel')
+    // print('SPECIAL angel')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER angel')
+    // print('NEVER angel')
     return { pass: true, type: 'critical' }
   }
 
   return { pass: false, type: 'neutral' }
 }
 function add_vanity(n: string) {
-  print('CC:: vanity')
+  // print('CC:: vanity')
   const effect: Effect = { ...fx.vanity }
   npcs.all[n].effects.push(effect) // lawfulness increase?
   add_effects_bonus(npcs.all[n], effect)
@@ -239,18 +239,18 @@ export function vanity_check(suspect: string, watcher: string): Consequence {
     w.skills.strength + w.binaries.un_educated * 5
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 2)
 
-  print('TESTJPF RESULT::: vanity', result)
+  // print('TESTJPF RESULT::: vanity', result)
   if (result > 5 && result <= 10) {
     add_vanity(watcher)
     return { pass: true, type: 'vanity' }
   }
 
   if (result > 10) {
-    print('SPECIAL VANITY')
+    // print('SPECIAL VANITY')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER VANITY')
+    // print('NEVER VANITY')
     return { pass: true, type: 'critical' }
   }
 
@@ -272,25 +272,25 @@ export function admirer_check(suspect: string, watcher: string): Consequence {
     s.skills.intelligence > w.skills.perception && w.skills.strength < 5
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
-  print('TESTJPF RESULT::: admirer', result)
+  // print('TESTJPF RESULT::: admirer', result)
   if (result > 5 && result <= 10) {
     add_admirer(suspect, watcher)
     return { pass: true, type: 'admirer' }
   }
 
   if (result > 10) {
-    print('SPECIAL ADMIRERER')
+    // print('SPECIAL ADMIRERER')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER ADMIRERER')
+    // print('NEVER ADMIRERER')
     return { pass: true, type: 'critical' }
   }
 
   return { pass: false, type: 'neutral' }
 }
 export function add_prejudice(s: string, w: string) {
-  print('QC:: prejudice')
+  // print('QC:: prejudice')
   const effect: Effect = { ...fx.prejudice }
   effect.fx.stat = npcs.all[s].clan
   npcs.all[w].effects.push(effect)
@@ -305,18 +305,18 @@ export function prejudice_check(suspect: string, watcher: string): Consequence {
   const advantage = w.skills.wisdom + w.skills.charisma < w.skills.stealth / 2
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
-  print('TESTJPF RESULT::: prejudice', result)
+  // print('TESTJPF RESULT::: prejudice', result)
   if (result > 5 && result <= 10) {
     add_prejudice(suspect, watcher)
     return { pass: true, type: 'prejudice' }
   }
 
   if (result > 10) {
-    print('SPECIAL prejudice')
+    // print('SPECIAL prejudice')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER prejudice')
+    // print('NEVER prejudice')
     return { pass: true, type: 'critical' }
   }
 
@@ -529,14 +529,6 @@ export function remove_effects_bonus(a: Npc, e: Effect) {
 }
 
 export function add_effects_bonus(a: Npc, e: Effect) {
-  print(
-    'add_effects_bonus',
-    a.labelname,
-    'type:',
-    e.fx.type,
-    'stat:',
-    e.fx.stat
-  )
   a[e.fx.type][e.fx.stat] = a[e.fx.type][e.fx.stat] + e.fx.adjustment
 }
 

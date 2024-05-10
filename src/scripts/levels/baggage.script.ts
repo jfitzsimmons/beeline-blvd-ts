@@ -6,7 +6,6 @@ function load_npcs() {
   let station: keyof typeof stations
   for (station in stations) {
     const npc = stations[station]
-    print(station, npc)
     station == 'desk'
       ? msg.post('desk#station', 'load_station', { npc, roomname })
       : msg.post(`/${station}#npc_loader`, 'load_npc', { npc })

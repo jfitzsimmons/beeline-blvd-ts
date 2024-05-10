@@ -217,7 +217,6 @@ function random_attributes(npcs: Npcs, order: string[]) {
 
   let kn: keyof typeof npcs
   for (kn in npcs) {
-    print('kn:', kn)
     order.splice(count, 0, kn)
     npcs[kn].turns_since_encounter = math.random(5, 15)
     npcs[kn].love = math.random(-1, 1)

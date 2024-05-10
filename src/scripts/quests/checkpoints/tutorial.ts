@@ -109,7 +109,6 @@ export function tutorialA(interval = 'turn') {
       player.inventory.includes('note') == false &&
       any_has_value([_return_docs, 'vial02']) == false
     ) {
-      print('launch novel about ...here is a keycard get some meds')
       player.inventory.push('note')
       const params = {
         path: 'grounds/tutorialmeds',
@@ -126,7 +125,6 @@ export function tutorialA(interval = 'turn') {
       player.inventory.includes('note') == true &&
       any_has_value([_return_docs, 'vial02']) == true
     ) {
-      //for (const item of player.inventory) {
       if (player.inventory.includes('note')) {
         const note = player.inventory.splice(
           player.inventory.indexOf('note'),
@@ -134,8 +132,6 @@ export function tutorialA(interval = 'turn') {
         )
         npcs.all[rooms.all['grounds'].stations.aid].inventory.push(note[0])
       }
-      //	}
-      print('testjpf TEXT script thank you, misson complete fri}.')
     }
   }
 }
@@ -143,37 +139,25 @@ function doctorsScripts() {
   const has_met_victim = tasks.quests.tutorial.medic_assist.conditions[0].passed
   // bad??:: if reasonstring.startswith('quest - ')
   //then on novel_main novel.quest.solution = endof(message.reason)
-  print(
-    ':novel 2 reason::',
-    novel.reason,
-    has_met_victim,
-    tasks.quests.tutorial.medic_assist.conditions[1].status
-  )
 
   if (has_met_victim == true) {
     novel.reason = 'quest'
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
-    print(':novel 3 reason::', novel.reason)
-
     return 'tutorial/tutorialAdoctor'
   }
   return null
 }
 
 function worker1Scripts() {
-  print('worker1 script called', novel.reason)
   if (tasks.quests.tutorial.medic_assist.conditions[1].passed == false) {
     novel.reason = 'quest'
-    print('worker2 script returned')
     return 'tutorial/helpThatMan'
   }
   return null
 }
 function worker2Scripts() {
-  print('worker2 script called', novel.reason)
   if (novel.npc.turns_since_convo > 0 && novel.reason == 'concern') {
-    print('worker2 script returned')
     return 'tutorial/concernLuggage'
   }
 

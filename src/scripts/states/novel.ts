@@ -82,7 +82,6 @@ export default class WorldNovel {
     this._scripts.push(s)
   }
   novelclose(love: number, alert: number, hp: number, reason: string) {
-    print('novel.novel close love:', love, alert, hp, reason)
     msg.post('novel:/main#main', 'sleep', {
       love,
       alert,

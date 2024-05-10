@@ -71,7 +71,7 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
         const station = ks[1]
         if (station == '' && rooms.roles[ks[0]].includes(npcs.all[npc].clan)) {
           //loop thru room stations see if empty or has correct role
-
+          /** 
           print(
             npc,
             ',went to ,',
@@ -84,6 +84,7 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
             ',TURNS,',
             npcs.all[npc].turns_since_encounter
           )
+          */
           //fill station
           npcs.all[npc].exitroom = rooms.layout[current.y][current.x]!
           npcs.all[npc].currentroom = room
@@ -108,7 +109,6 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
         rooms.fallbacks.stations['admin1_passer'] == '' &&
         rooms.layout[current.y][current.x] != 'admin1'
       ) {
-        print(npc, 'passer Admin1')
         rooms.fallbacks.stations['admin1_passer'] = npc
         npcs.all[npc].matrix = rooms.all['admin1'].matrix
       } else if (
@@ -116,49 +116,42 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
         rooms.fallbacks.stations['security_passer'] == '' &&
         rooms.layout[current.y][current.x] != 'security'
       ) {
-        print(npc, 'passer Security')
         rooms.fallbacks.stations['security_passer'] = npc
         npcs.all[npc].matrix = rooms.all['security'].matrix
       } else if (
         room_list.includes('security') &&
         rooms.fallbacks.stations['security_outside1'] == ''
       ) {
-        print(npc, 'outside Security')
         rooms.fallbacks.stations['security_outside1'] = npc
         npcs.all[npc].matrix = rooms.all['security'].matrix
       } else if (
         room_list.includes('grounds') &&
         rooms.fallbacks.stations['grounds_unplaced'] == ''
       ) {
-        print(npc, 'grounds_unplaced')
         rooms.fallbacks.stations['grounds_unplaced'] = npc
         npcs.all[npc].matrix = rooms.all['grounds'].matrix
       } else if (
         room_list.includes('viplobby') &&
         rooms.fallbacks.stations['viplobby_outside1'] == ''
       ) {
-        print(npc, 'viplobby_outside')
         rooms.fallbacks.stations['viplobby_outside1'] = npc
         npcs.all[npc].matrix = rooms.all['viplobby'].matrix
       } else if (
         room_list.includes('reception') &&
         rooms.fallbacks.stations['reception_unplaced'] == ''
       ) {
-        print(npc, 'recpt_unplaced')
         rooms.fallbacks.stations['reception_unplaced'] = npc
         npcs.all[npc].matrix = rooms.all['reception'].matrix
       } else if (
         room_list.includes('infirmary') &&
         rooms.fallbacks.stations['infirmary_outside1'] == ''
       ) {
-        print(npc, 'infirmary_outside')
         rooms.fallbacks.stations['infirmary_outside1'] = npc
         npcs.all[npc].matrix = rooms.all['infirmary'].matrix
       } else if (
         room_list.includes('dorms') &&
         rooms.fallbacks.stations['dorms_outside1'] == ''
       ) {
-        print(npc, 'dorms_outside')
         rooms.fallbacks.stations['dorms_outside1'] = npc
         npcs.all[npc].matrix = rooms.all['dorms'].matrix
       } else {
@@ -172,11 +165,6 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
         } else {
           unplacedcount[rooms.layout[current.y][current.x]!] = 1
         }
-        print(
-          npc,
-          'TESTJPF DID NOT PLACE AT ALL from: ',
-          rooms.layout[current.y][current.x]
-        )
       }
       placed = true
     }
@@ -302,7 +290,6 @@ function release_occupants(d: Direction) {
   for (station in prisoners) {
     const prisoner = prisoners[station]
     if (prisoner != '' && npcs.all[prisoner].cooldown <= 0) {
-      print('released from prison:', prisoner)
       npc_action_move(prisoner, d)
       rooms.all.security.occupants![station] = ''
     }
@@ -313,7 +300,6 @@ function release_occupants(d: Direction) {
     const patient = occupants[bed]
     if (patient != '' && npcs.all[patient].cooldown <= 0) {
       npcs.all[patient].hp = 10
-      print('released from infirmary:', patient)
       npc_action_move(patient, d)
       rooms.all.infirmary.occupants![bed] = ''
     }
@@ -375,7 +361,6 @@ export function place_npcs() {
             npc.currentstation = ks[0]
             npc.currentroom = p
 
-            print('RANDOM::: ', npc.labelname, 'placed in', ks[0], 'ROOM', p)
             placed = true
             break
           }

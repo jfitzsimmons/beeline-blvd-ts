@@ -34,19 +34,15 @@ function set_interactions() {
   const spacing = 48
   //testjpf do getnode
   let nodepos = gui.get_position(gui.get_node('quest'))
-  print('NODEPOS', nodepos.x, nodepos.y)
   let cKey: keyof typeof info.objectives
 
   for (cKey in info.objectives) {
     // ex tutorial
-    print('OB GUI::: cKey::', cKey)
     const cpoint = info.objectives[cKey]
     let qKey: keyof typeof cpoint.quest
     //ex med_assist
     for (qKey in cpoint.quest) {
-      print('cpoint.quest[qKey].statusc', cpoint.quest[qKey].status)
       if (cpoint.quest[qKey].status == 'active') {
-        print('OB GUI::: qKey::', qKey)
         nodepos.y = nodepos.y - spacing
         nodepos = vmath.vector3(nodepos)
         const node = gui.get_node('quest')
@@ -62,7 +58,6 @@ function set_interactions() {
           if (objectives[cNum].status == 'active') {
             //testjpf
             const objective = objectives[cNum]
-            print('INFO::: cNum in objectives::', cNum, objectives[cNum].label)
 
             nodepos.y = nodepos.y - spacing
             //nodepos.x = nodepos.x - 25
