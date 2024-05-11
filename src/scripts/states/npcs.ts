@@ -156,6 +156,14 @@ const binarylookup: BinaryLookupTable = {
     un_educated: -0.2,
     poor_wealthy: -0.2,
   },
+  mailroom: {
+    evil_good: -0.1,
+    passive_aggressive: 0.2,
+    lawless_lawful: -0.2,
+    anti_authority: 0.1,
+    un_educated: 0,
+    poor_wealthy: -0.1,
+  },
 }
 
 // need npcs interface?
@@ -229,7 +237,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
     if (path > 3) {
       count++
       path = 0
-      if (count > 5) count = 1
+      if (count > 6) count = 1
     }
     npcs[kn].race = `race0${path + 1}_0${count}`
     npcs[kn].ai_path = ai_paths[path]

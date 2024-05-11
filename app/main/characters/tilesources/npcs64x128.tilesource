@@ -232,6 +232,24 @@ animations {
   flip_vertical: 0
 }
 animations {
+  id: "mailroom01body"
+  start_tile: 81
+  end_tile: 81
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "mailroom02body"
+  start_tile: 82
+  end_tile: 82
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
   id: "maintenance01body"
   start_tile: 77
   end_tile: 77
@@ -295,6 +313,15 @@ animations {
   flip_vertical: 0
 }
 animations {
+  id: "race01_06"
+  start_tile: 56
+  end_tile: 56
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
   id: "race02_01"
   start_tile: 21
   end_tile: 21
@@ -334,6 +361,15 @@ animations {
   id: "race02_05"
   start_tile: 52
   end_tile: 52
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race02_06"
+  start_tile: 57
+  end_tile: 57
   playback: PLAYBACK_ONCE_FORWARD
   fps: 0
   flip_horizontal: 0
@@ -385,6 +421,15 @@ animations {
   flip_vertical: 0
 }
 animations {
+  id: "race03_06"
+  start_tile: 55
+  end_tile: 55
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
   id: "race04_01"
   start_tile: 47
   end_tile: 47
@@ -424,6 +469,15 @@ animations {
   id: "race04_05"
   start_tile: 51
   end_tile: 51
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 0
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "race04_06"
+  start_tile: 58
+  end_tile: 58
   playback: PLAYBACK_ONCE_FORWARD
   fps: 0
   flip_horizontal: 0

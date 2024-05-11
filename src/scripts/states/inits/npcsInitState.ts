@@ -19,6 +19,33 @@ const npc_defaults: NpcDefaults = {
   race: '',
 }
 export const NpcsInitState = {
+  mailroom01: {
+    home: { x: 3, y: 1 }, //loading
+    labelname: 'mailroom01',
+    inventory: ['tomato', 'banana'],
+    clearence: 1,
+    clan: 'mailroom',
+    body: 'mailroom01body',
+    ...npc_defaults,
+  },
+  mailroom02: {
+    home: { x: 1, y: 1 }, //warehouse
+    labelname: 'mailroom02',
+    inventory: ['mushroom03', 'vial01'],
+    clearence: 1,
+    clan: 'mailroom',
+    body: 'mailroom02body',
+    ...npc_defaults,
+  },
+  mailroom03: {
+    home: { x: 2, y: 4 }, //warehouse
+    labelname: 'mailroom03',
+    inventory: ['mushroom03', 'vial01'],
+    clearence: 1,
+    clan: 'mailroom',
+    body: 'mailroom01body',
+    ...npc_defaults,
+  },
   custodian01: {
     home: { x: 3, y: 1 }, //loading
     labelname: 'custodian01',
