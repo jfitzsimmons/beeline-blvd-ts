@@ -5,6 +5,7 @@ export default class WorldNovel {
   //private background: string
   //private sprites: { [key: string]: string }
   private _reason: string
+  private _item: string
   private _active_quest: boolean
   private _npcsWithQuest: string[]
   private _scripts: string[]
@@ -18,6 +19,7 @@ export default class WorldNovel {
     //  this.sprites = {}
     this._active_quest = false
     this._reason = 'none'
+    this._item = 'none'
     this._npcsWithQuest = []
     this._scripts = []
     // this._alertChange = 0
@@ -58,6 +60,12 @@ export default class WorldNovel {
   }
   public set reason(r: string) {
     this._reason = r
+  }
+  public get item() {
+    return this._item
+  }
+  public set item(i: string) {
+    this._item = i
   }
   public get active_quest() {
     return this._active_quest

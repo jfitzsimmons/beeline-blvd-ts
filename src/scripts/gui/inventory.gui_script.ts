@@ -10,7 +10,7 @@ import {
   remove_chest_bonus,
 } from '../systems/inventorysystem'
 
-const { player, npcs, rooms } = globalThis.game.world
+const { player, npcs, rooms, novel } = globalThis.game.world
 interface props {
   actorinventory: string[]
   watcher: string
@@ -162,6 +162,7 @@ function check_inventory_nodes(
       textureHash != hash('empty')
     ) {
       const item = inventoryLookup[hash_to_hex(textureHash)]
+      novel.item = 'item'
       hide_inventory_animation(node)
 
       if (i < 21) {

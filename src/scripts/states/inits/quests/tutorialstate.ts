@@ -34,6 +34,16 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           args: [[nvq.get_reason, 'getadoctor']],
         }, //have you talked to a doctor?
         [2]: {
+          label: 'Apple a day!',
+          solution: '',
+          passed: false,
+          status: 'inactive',
+          interval: ['interact'],
+          func: [any_has_value],
+          args: [[nq.return_doctors, 'apple01']],
+        },
+        /** 
+        [2]: {
           label: 'get an apple!',
           solution: '',
           passed: false,
@@ -41,7 +51,7 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           interval: ['interact'],
           func: [any_has_value],
           args: [[nq.return_doctors, 'apple01']],
-        }, // doc needs some item
+        },*/ // doc needs some item
         [3]: {
           label: 'Get some meds!',
           solution: '',

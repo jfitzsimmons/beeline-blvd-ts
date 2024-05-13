@@ -112,6 +112,7 @@ export function on_message(
     quest_checker('interact')
 
     novel.reason = 'none'
+    novel.item = 'none'
     calculate_heat(this.roomname)
 
     // if (message.novel == true) {

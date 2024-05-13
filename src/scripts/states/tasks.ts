@@ -195,19 +195,19 @@ export default class WorldTasks {
       const quest = quests[questKey]
       if (quest.passed == false) {
         let quest_passed = true
-        // print('questKey:', questKey)
+        print('questKey:', questKey)
         let condition: keyof typeof quest.conditions
         for (condition in quest.conditions) {
-          //   print('condition:', condition)
+          print('condition:', condition)
           const goal = quest.conditions[condition]
-          //    print('goal label', goal.label, goal.passed, goal.interval, interval)
+          print('goal label:', goal.label, goal.passed, goal.interval, interval)
           if (goal.passed == false) {
             for (let i: number = goal.func.length; i-- !== 0; ) {
               if (
                 goal.interval[i] == interval &&
                 goal.func[i]!(goal.args[i]) == true
               ) {
-                //                print('goal PASSED: GOAL', goal.label)
+                print('goal PASSED: GOAL', goal.label)
                 goal.passed = true
                 break
               }

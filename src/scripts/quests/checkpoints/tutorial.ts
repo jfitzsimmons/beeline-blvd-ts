@@ -24,6 +24,44 @@ function medic_assist_checks() {
     // tasks.quests.tutorial.medic_assist.conditions[1].status = 'active'
     info.rebuild_objectives(tasks.quests)
   } else if (
+    novel.reason == 'hungrydoc' &&
+    quest.passed == true &&
+    quest.status == 'active' &&
+    tasks.quests.tutorial.medic_assist.conditions[2].status == 'inactive'
+  ) {
+    tasks.quests.tutorial.medic_assist.conditions[2].status = 'active'
+    //testjpf
+    // i think jsut sets novel.reason in script builder.
+    //So for 100  turns, this npc will always talk to you about a quest
+    //which quest? the one that comes from quest directory scripts
+    // as seen in sbuilder:: const quest_paths
+    tasks.append_caution({
+      label: 'quest',
+      time: 100,
+      type: 'hungry',
+      reason: 'quest',
+      npc: npcs.all[novel.npc.labelname].labelname,
+      suspect: npcs.all[novel.npc.labelname].labelname,
+      authority: 'player',
+    })
+    info.rebuild_objectives(tasks.quests)
+    //testjpf
+    // need something to check if this doc was given food.
+    // in 'interact' gui send message to exit gui??
+    // containing item, maybe who from "npc" or "player"
+  } else if (
+    tasks.quests.tutorial.medic_assist.conditions[2].status == 'active' &&
+    tasks.quests.tutorial.medic_assist.conditions[2].passed == false
+  ) {
+    if (novel.item == 'apple01') {
+      tasks.quests.tutorial.medic_assist.conditions[2].passed = true
+    }
+    //testjpf open dialog with thanks and next task???
+    //testjpf
+    // need something to check if this doc was given food.
+    // in 'interact' gui send message to exit gui??
+    // containing item, maybe who from "npc" or "player"
+  } else if (
     novel.reason == 'getadoctor' &&
     quest.passed == true &&
     quest.status == 'active'
@@ -140,11 +178,21 @@ function doctorsScripts() {
   // bad??:: if reasonstring.startswith('quest - ')
   //then on novel_main novel.quest.solution = endof(message.reason)
 
-  if (has_met_victim == true) {
+  if (
+    has_met_victim == true &&
+    tasks.quests.tutorial.medic_assist.conditions[2].status == 'inactive'
+  ) {
     novel.reason = 'quest'
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
     return 'tutorial/tutorialAdoctor'
+  } else if (
+    tasks.quests.tutorial.medic_assist.conditions[2].status == 'active'
+  ) {
+    novel.reason = 'quest'
+    //testjpf could add conditional if encounters == 0 ) {
+    // "I'm going as fast as i can" -doc
+    return 'tutorial/hungrydoc'
   }
   return null
 }

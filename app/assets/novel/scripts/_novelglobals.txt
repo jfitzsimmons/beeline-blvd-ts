@@ -19,6 +19,7 @@ npc.s.strength = _G.game.world.novel.npc.skills.strength
 
 p.s.speed = _G.game.world.player.state.skills.speed
 p.s.charisma = _G.game.world.player.state.skills.charisma
+p.s.intelligence = _G.game.world.player.state.skills.intelligence
 
 p.b.authority = _G.game.world.player.state.binaries.anti_authority
 p.b.aggressive = _G.game.world.player.state.binaries.passive_aggressive
@@ -32,6 +33,8 @@ activeq = _G.game.world.novel.active_quest
 n.name = _G.game.world.novel.npc.labelname
 n.scale = 3
 n.y = 0.5
+
+p.name = "Player"
 
 label quickclose
 n: bye {npc.love}
