@@ -3,6 +3,7 @@ import {
   any_has_value,
   //convos_check,
   does_equal,
+  returnfalse,
   // greater_than,
 } from '../../../utils/quest'
 
@@ -39,8 +40,10 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           passed: false,
           status: 'inactive',
           interval: ['interact'],
-          func: [any_has_value],
-          args: [[nq.return_doctors, 'apple01']],
+          //testjpf need to rethink this!! TODO!!!
+          // use this if takes to long??? auto pass, last default?!!
+          func: [returnfalse],
+          args: [[returnfalse, false]],
         },
         /** 
         [2]: {

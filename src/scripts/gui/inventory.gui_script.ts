@@ -162,7 +162,7 @@ function check_inventory_nodes(
       textureHash != hash('empty')
     ) {
       const item = inventoryLookup[hash_to_hex(textureHash)]
-      novel.item = 'item'
+      novel.item = item
       hide_inventory_animation(node)
 
       if (i < 21) {

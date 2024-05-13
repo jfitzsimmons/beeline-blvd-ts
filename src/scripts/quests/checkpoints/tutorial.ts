@@ -2,15 +2,16 @@ import { Npc } from '../../../types/state'
 import { steal_check, take_or_stash } from '../../ai/ai_checks'
 import { npc_action_move } from '../../ai/ai_main'
 import { shuffle, surrounding_room_matrix } from '../../utils/utils'
-import { any_has_value } from '../../utils/quest'
+//import { any_has_value } from '../../utils/quest'
 
 const { rooms, npcs, tasks, player, novel, info } = globalThis.game.world
 function medic_assist_checks() {
+  print('medic assist check:: nove.reason:: ', novel.reason)
   const quest = tasks.quests.tutorial.medic_assist.conditions[0]
   if (quest.passed == false) {
     tasks.remove_heat(rooms.all.grounds.stations.worker1)
     //tasks.remove_quest_cautions(rooms.all.grounds.stations.worker1)
-
+    print('11111')
     //testjpf probably need new caution
     // doctors still need to ignore victim
     //activate bonus quests / side quests
@@ -19,6 +20,7 @@ function medic_assist_checks() {
     //clean_up() calls whatever you need.
     //add to tutorialstate? probably?!!
   } else if (quest.passed == true && quest.status == 'inactive') {
+    print('22222')
     tasks.quests.tutorial.medic_assist.conditions[0].status = 'active'
     tasks.quests.tutorial.medic_assist.status = 'active'
     // tasks.quests.tutorial.medic_assist.conditions[1].status = 'active'
@@ -30,6 +32,10 @@ function medic_assist_checks() {
     tasks.quests.tutorial.medic_assist.conditions[2].status == 'inactive'
   ) {
     tasks.quests.tutorial.medic_assist.conditions[2].status = 'active'
+    print(
+      'STATUS ACTIVE. ready for apple!! ?? ::',
+      tasks.quests.tutorial.medic_assist.conditions[2].status
+    )
     //testjpf
     // i think jsut sets novel.reason in script builder.
     //So for 100  turns, this npc will always talk to you about a quest
@@ -53,20 +59,29 @@ function medic_assist_checks() {
     tasks.quests.tutorial.medic_assist.conditions[2].status == 'active' &&
     tasks.quests.tutorial.medic_assist.conditions[2].passed == false
   ) {
+    print('PRE novel.item:: from tut:: apple01:?:', novel.item)
     if (novel.item == 'apple01') {
+      print(
+        'novel.item:: from tut:: apple01:?:',
+        novel.item,
+        tasks.quests.tutorial.medic_assist.conditions[2].passed
+      )
       tasks.quests.tutorial.medic_assist.conditions[2].passed = true
+      quest.status = 'complete'
+      tasks.remove_quest_cautions(novel.npc.labelname)
+      print(tasks.quests.tutorial.medic_assist.conditions[2].passed)
+      novel.reason = 'getadoctor'
+      msg.post('proxies:/controller#novelcontroller', 'show_scene')
     }
-    //testjpf open dialog with thanks and next task???
-    //testjpf
-    // need something to check if this doc was given food.
-    // in 'interact' gui send message to exit gui??
-    // containing item, maybe who from "npc" or "player"
   } else if (
-    novel.reason == 'getadoctor' &&
-    quest.passed == true &&
-    quest.status == 'active'
+    tasks.quests.tutorial.medic_assist.conditions[2].status == 'active' &&
+    tasks.quests.tutorial.medic_assist.conditions[2].passed == true
   ) {
-    tasks.quests.tutorial.medic_assist.conditions[1].status = 'active'
+    print('pre 3333', tasks.quests.tutorial.medic_assist.conditions[2].status)
+    tasks.quests.tutorial.medic_assist.conditions[2].status = 'complete'
+    // testjpf this is overwriting my scriptsdialog functions
+    print('3333', tasks.quests.tutorial.medic_assist.conditions[2].status)
+
     tasks.append_caution({
       label: 'mending',
       time: 100,
@@ -84,6 +99,37 @@ function medic_assist_checks() {
         npc: novel.npc.labelname,
       }
     )
+    if (
+      novel.reason == 'getsomemeds' &&
+      tasks.quests.tutorial.medic_assist.conditions[3].status == 'inactive'
+    ) {
+      print('PRE !!! notepushed')
+
+      tasks.quests.tutorial.medic_assist.conditions[3].status = 'active'
+      player.add_inventory('note')
+      print('noteadded')
+      // create caution for... 10 turns?
+      // i don't have cleareance logic setup!!
+      //testjpf add "note" to inventory
+    }
+    //testjpf open dialog with thanks and next task???
+    // use novel_init here jsut to laod the same tutorial/
+    //testjpf
+    // need something to check if this doc was given food.
+    // in 'interact' gui send message to exit gui??
+    // containing item, maybe who from "npc" or "player"
+  } else if (
+    novel.reason == 'getsomemeds' &&
+    tasks.quests.tutorial.medic_assist.conditions[3].status == 'inactive'
+  ) {
+    print('PRE !!! notepushed')
+
+    tasks.quests.tutorial.medic_assist.conditions[3].status = 'active'
+    player.add_inventory('note')
+    print('noteadded')
+    // create caution for... 10 turns?
+    // i don't have cleareance logic setup!!
+    //testjpf add "note" to inventory
   }
 }
 
@@ -138,7 +184,8 @@ export function tutorialA(interval = 'turn') {
      * lint still thinks it's type is the original vague one
      */
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    const _return_docs = npcs.return_doctors
+    // const _return_docs = npcs.return_doctors
+    /*
     if (
       tasks.quests.tutorial.medic_assist.conditions[1].passed == true &&
       interval == 'interact' &&
@@ -170,7 +217,7 @@ export function tutorialA(interval = 'turn') {
         )
         npcs.all[rooms.all['grounds'].stations.aid].inventory.push(note[0])
       }
-    }
+    }*/
   }
 }
 function doctorsScripts() {
@@ -187,12 +234,14 @@ function doctorsScripts() {
     // "I'm going as fast as i can" -doc
     return 'tutorial/tutorialAdoctor'
   } else if (
-    tasks.quests.tutorial.medic_assist.conditions[2].status == 'active'
+    tasks.quests.tutorial.medic_assist.conditions[2].status != 'inactive'
   ) {
     novel.reason = 'quest'
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
-    return 'tutorial/hungrydoc'
+    return tasks.quests.tutorial.medic_assist.conditions[2].passed == false
+      ? 'tutorial/hungrydoc'
+      : 'tutorial/getadoctor'
   }
   return null
 }

@@ -52,7 +52,7 @@ export interface QuestCondition {
   label: string
   solution?: string
   passed: boolean
-  status: 'inactive' | 'active'
+  status: 'inactive' | 'active' | 'complete'
   interval: string[]
   func: { (args: [() => any, any]): boolean }[]
   args: [() => any, any][]

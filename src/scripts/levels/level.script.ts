@@ -110,10 +110,11 @@ export function on_message(
   } else if (messageId == hash('exit_gui')) {
     tasks.address_quests('interact', player.checkpoint)
     quest_checker('interact')
+    print('exitgui reason::', novel.reason)
 
     novel.reason = 'none'
     novel.item = 'none'
-    calculate_heat(this.roomname)
+    //calculate_heat(this.roomname)
 
     // if (message.novel == true) {
     //  msg.post(this.roomname + ':/adam#interact', 'reload_script')

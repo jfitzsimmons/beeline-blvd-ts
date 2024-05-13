@@ -92,6 +92,7 @@ function novel_outcomes(reason: string) {
     })
   } else if (reason.substring(0, 6) == 'quest:') {
     novel.reason = reason.substring(7)
+    print('novel outcome reason::', novel.reason)
     novel.append_npc_quest(novel.npc.labelname)
   }
   //if love positive. consolation checks. else negatice

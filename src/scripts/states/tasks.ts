@@ -200,7 +200,7 @@ export default class WorldTasks {
         for (condition in quest.conditions) {
           print('condition:', condition)
           const goal = quest.conditions[condition]
-          print('goal label:', goal.label, goal.passed, goal.interval, interval)
+          print('goal label:', goal.label, goal.passed, goal.status)
           if (goal.passed == false) {
             for (let i: number = goal.func.length; i-- !== 0; ) {
               if (
