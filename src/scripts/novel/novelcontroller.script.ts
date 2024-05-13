@@ -1,5 +1,3 @@
-print('n controller top 3rd???')
-
 interface props {
   current_proxy: url | null
 }

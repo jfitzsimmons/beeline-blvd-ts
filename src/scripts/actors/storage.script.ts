@@ -26,16 +26,16 @@ export function on_message(
 ): void {
   if (messageId == hash('trigger_response') && message.enter) {
     const params = {
-      pos: go.get_position('adam'),
+      pos: go.get_position('/shared/adam'),
       actions: this.actions,
       room: this.roomname,
     }
-    msg.post('/adam#interact', 'shownode', params)
+    msg.post('/shared/adam#interact', 'shownode', params)
   } else if (messageId == hash('trigger_response') && message.exit) {
     const params = {
       texts: this.actions,
     }
-    msg.post('/adam#interact', 'hidenode', params)
+    msg.post('/shared/adam#interact', 'hidenode', params)
   } else if (messageId == hash('load_storage_inventory')) {
     this.storagename = message.storagename
     this.roomname = message.roomname

@@ -46,7 +46,7 @@ export function on_message(
     if (message.enter) {
       // <3>
       const params = {
-        pos: go.get_position('adam'), //must come from .script
+        pos: go.get_position('/shared/adam'), //must come from .script
         actions: this.actions, //generated from actors
         //script:this.script,
         //collision:"enter",
@@ -54,12 +54,12 @@ export function on_message(
         //parenturl:this.url,
         //room:this.roomname
       }
-      msg.post('adam#interact', 'shownode', params)
+      msg.post('/shared/adam#interact', 'shownode', params)
     } else {
       // for removing cloned nodes
       const params = { texts: this.actions }
 
-      msg.post('adam#interact', 'hidenode', params)
+      msg.post('/shared/adam#interact', 'hidenode', params)
     }
   } else if (messageId == hash('load_station')) {
     this.npc = message.npc //this.url = rooms.all[message.roomname].stationurl

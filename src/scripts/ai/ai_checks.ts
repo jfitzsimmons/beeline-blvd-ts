@@ -13,10 +13,7 @@ import { confrontation_consequence } from '../systems/tasksystem'
 import { roll_special_dice } from '../utils/dice'
 
 function tend_to_patient(v: string, doc: string) {
-  print('tending to patient', doc, v)
-  print('if tending then indexof is:', tasks.medicQueue.indexOf(v))
   tasks.medicQueue.splice(tasks.medicQueue.indexOf(v), 1)
-  print('now should be:', tasks.medicQueue.indexOf(v))
   tasks.remove_heat(v)
   if (npcs.all[doc].currentroom == player.currentroom)
     msg.post(`/${npcs.all[doc].currentstation}#npc_loader`, hash('move_npc'), {
@@ -44,7 +41,6 @@ export function aid_check(injured: string[]) {
         } else {
           if (math.random() > 0.9 && tasks.npc_has_caution(helper, i) == null) {
             tasks.caution_builder(npcs.all[helper], 'injury', i, 'injury')
-            print('injury caution created for', i, ' | HEL{ER::', helper)
             break
           }
         }
@@ -79,8 +75,6 @@ export function take_check(taker: Npc, actor: Npc | Actor) {
     chest_item = remove_random(taker.inventory, actor.inventory)
   }
   add_chest_bonus(taker, chest_item)
-
-  print(taker.labelname, 'TOOK an item')
 }
 export function stash_check(stasher: Npc, actor: Npc | Actor) {
   let modifier = stasher.inventory.length - actor.inventory.length
@@ -107,11 +101,8 @@ export function stash_check(stasher: Npc, actor: Npc | Actor) {
   }
   remove_chest_bonus(stasher, chest_item)
   // if victim == true ){ add_chest_bonus(n, chest_item) }
-
-  print(stasher.labelname, 'STASHED an item')
 }
 export function take_or_stash(attendant: Npc, actor: Npc | Actor) {
-  print('TAKE OR STASH SCTOR:::', attendant.labelname)
   if (
     actor.inventory.length > 0 &&
     (attendant.inventory.length == 0 || math.random() < 0.5)
@@ -145,23 +136,12 @@ export function seen_check(s: string, w: string) {
   if (result > 10) return { confront: false, type: 'seenspecial' }
   if (result < 0) return { confront: true, type: 'critcal' }
   const bossResult = roll_special_dice(7, true, 3, 2)
-  print(
-    w,
-    'saw',
-    s,
-    'SEEN CHECK:: bossResult: DICE ROLL:: boss >= result',
-    bossResult,
-    result
-  )
-
   const seen = result <= bossResult
   return seen === true
     ? { confront: false, type: 'seen' }
     : { confront: false, type: 'neutral' }
 }
 export function confrontation_check(pname: string, nname: string) {
-  // testjpf for debugging you could check if player return false
-  //if (p.labelname == 'adam') return false
   const s = pname == 'player' ? player.state : npcs.all[pname]
   const w = npcs.all[nname]
 
@@ -177,7 +157,6 @@ export function confrontation_check(pname: string, nname: string) {
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   const bossResult = roll_special_dice(5, true, 4, 2)
 
-  print('aiCHECKS::: confrontation_check:: boss > result', bossResult, result)
   return bossResult >= result
 }
 function thief_consequences(
@@ -196,7 +175,7 @@ function thief_consequences(
   }
   return c
 }
-// testjpf only being used between npcs (just tutorial luggage)
+// only being used between npcs (just tutorial luggage)
 export function steal_check(s: Npc, w: Npc, loot: string[]) {
   // accept strings not Npcs
   // const attempt = roll_Specia_dice
@@ -223,9 +202,7 @@ export function steal_check(s: Npc, w: Npc, loot: string[]) {
   }
   if (w != null) {
     consequence = seen_check(s.labelname, w.labelname)
-    print('SEEN CHECK CONSEQUNCE::', consequence.type)
     consequence = thief_consequences(s.labelname, w.labelname, consequence)
-    print('THIEF CONSEQUNCE::', consequence.type)
   }
   //consequence = confront.type
 
@@ -241,13 +218,7 @@ export function steal_check(s: Npc, w: Npc, loot: string[]) {
     } else {
       chest_item = remove_advantageous(s.inventory, loot, s.skills)
     }
-    print(
-      s.labelname,
-      'in room',
-      s.currentroom,
-      'stole following item:',
-      chest_item
-    )
+
     add_chest_bonus(s, chest_item)
     //if (victim == true ){ remove_chest_bonus(w, chest_item) }
     s.cooldown = math.random(5, 15)
@@ -255,7 +226,7 @@ export function steal_check(s: Npc, w: Npc, loot: string[]) {
 
   s.cooldown = s.cooldown + 5
 }
-//testjpf player interact.gui related
+// player interact.gui related
 export function witness_player(w: string) {
   let consequence = {
     confront: false,

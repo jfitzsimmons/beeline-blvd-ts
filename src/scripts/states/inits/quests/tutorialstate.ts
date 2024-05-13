@@ -1,64 +1,65 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-//local npcs = require "main.states.npcstates"
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
-//const questutils = require('../../../main.utils.quest')
-
-//TESTJPF THESE util imports require state
-//STATE hasnt been CREATED!
 import { AllQuestsMethods, Quests } from '../../../../types/tasks'
 import {
   any_has_value,
-  convos_check,
-  //has_value,
-  //max_skills,
-  //returnfalse,
-  //max_love,
-  greater_than,
+  //convos_check,
+  does_equal,
+  returnfalse,
+  // greater_than,
 } from '../../../utils/quest'
-//TESTJPF abovenot loaded yet on GAME STATE CREAT new game
-//local player = require "main.states.playerstate"
 
 export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
-  const { nq, tq } = questmethods
-  /**
-   * testjpf
-   * interval, funcs, and args need to all be a part of 1 object.
-   * // i mean 1 object per so {[key: check1]: {func,arg,interval}}
-   */
+  //const { nq, tq, nvq } = questmethods
+  const { nq, nvq } = questmethods
+
   return {
     medic_assist: {
       passed: false,
-      //testjpf for TS: so abstract
-      //the binary passed: true/false
-      // or pupulate the func and args from the World level??
+      status: 'inactive',
       conditions: {
-        [1]: {
-          // testjpf whatif
+        [0]: {
           label: 'Somebody help that man!',
           solution: '',
           passed: false,
-          interval: ['interact', 'turn'],
-          func: [convos_check, greater_than],
-          // what if instead of nq.return_docs
-          // its quest.return doctors?
-          args: [
-            [nq.return_doctors, 5],
-            [tq.num_of_injuries, 5],
-          ],
+          status: 'inactive',
+          interval: ['interact'],
+          func: [does_equal],
+          args: [[nvq.get_reason, 'helpthatman']],
         }, //have you talked to a doctor?
+        [1]: {
+          label: 'What is up doctor?!',
+          solution: '',
+          passed: false,
+          status: 'inactive',
+          interval: ['interact'],
+          func: [does_equal],
+          args: [[nvq.get_reason, 'getadoctor']],
+        }, //have you talked to a doctor?
+        [2]: {
+          label: 'Apple a day!',
+          solution: '',
+          passed: false,
+          status: 'inactive',
+          interval: ['interact'],
+          //testjpf need to rethink this!! TODO!!!
+          // use this if takes to long??? auto pass, last default?!!
+          func: [returnfalse],
+          args: [[returnfalse, false]],
+        },
+        /** 
         [2]: {
           label: 'get an apple!',
           solution: '',
           passed: false,
+          status: 'inactive',
           interval: ['interact'],
           func: [any_has_value],
           args: [[nq.return_doctors, 'apple01']],
-        }, // doc needs some item
+        },*/ // doc needs some item
         [3]: {
           label: 'Get some meds!',
           solution: '',
           passed: false,
+          status: 'inactive',
           interval: ['interact'],
           func: [any_has_value],
           args: [[nq.return_doctors, 'vial02']],

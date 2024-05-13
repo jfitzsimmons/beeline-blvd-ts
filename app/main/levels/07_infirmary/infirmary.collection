@@ -1,25 +1,5 @@
 name: "infirmary"
 instances {
-  id: "adam"
-  prototype: "/main/characters/adam.go"
-  position {
-    x: 569.0
-    y: 576.0
-    z: 0.5
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
   id: "to_security"
   prototype: "/main/actors/door2.go"
   position {
@@ -105,26 +85,6 @@ instances {
   position {
     x: 359.0
     y: 633.0
-    z: 0.1
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "hud"
-  prototype: "/main/gui/navigation/hud.go"
-  position {
-    x: 0.0
-    y: 0.0
     z: 0.1
   }
   rotation {
@@ -239,6 +199,66 @@ instances {
     z: 1.0
   }
 }
+instances {
+  id: "servants2"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 184.0
+    y: 724.0
+    z: 0.1
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "outside1"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 675.0
+    y: 12.0
+    z: 0.1
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+collection_instances {
+  id: "shared"
+  collection: "/main/levels/shared.collection"
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
 scale_along_z: 0
 embedded_instances {
   id: "level"
@@ -262,23 +282,6 @@ embedded_instances {
   "components {\n"
   "  id: \"infirmary\"\n"
   "  component: \"/scripts/levels/infirmary.script\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
-  "  property_decls {\n"
-  "  }\n"
-  "}\n"
-  "components {\n"
-  "  id: \"level\"\n"
-  "  component: \"/scripts/levels/level.script\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
@@ -669,52 +672,17 @@ embedded_instances {
   }
 }
 embedded_instances {
-  id: "inventories"
-  data: "components {\n"
-  "  id: \"inventory\"\n"
-  "  component: \"/main/gui/inventories/inventory.gui\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
-  "  property_decls {\n"
-  "  }\n"
-  "}\n"
-  ""
-  position {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-embedded_instances {
   id: "potential_npcs"
   children: "aid"
   children: "loiter1"
   children: "loiter2"
   children: "loiter4"
+  children: "outside1"
   children: "patient1"
   children: "patient2"
   children: "patient3"
   children: "patient4"
+  children: "servants2"
   data: ""
   position {
     x: 0.0

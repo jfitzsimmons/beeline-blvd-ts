@@ -46,10 +46,8 @@ function love_boost(n: string): Consequence {
     roll_special_dice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2),
     roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   )
-  //const result =
-  // roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
-  print('TESTJPF RESULT::: loveboost', result)
+  //print('TESTJPF RESULT::: loveboost', result)
   if (result > 5 && result <= 10) return { pass: true, type: 'loveboost' }
 
   if (result > 10) return { pass: true, type: 'special' }
@@ -69,22 +67,14 @@ function ap_boost(n: string): Consequence {
   const result =
     roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
-  print('TESTJPF RESULT::: apboost', result)
+  //print('TESTJPF RESULT::: apboost', result)
   if (result > 5 && result <= 10) return { pass: true, type: 'apboost' }
 
   if (result > 10) return { pass: true, type: 'special' }
   return { pass: false, type: 'neutral' }
 }
 function charmed_merits(n: string): Consequence {
-  //testjpf GOOD time for a diceroll
   const npc = npcs.all[n]
-
-  //so
-  /**
-   * what advantages do we want to give? npc love? not a bin or skill
-
-   */
-
   const modifier = Math.round(
     (player.state.skills.charisma + npc.love) / 2 - npc.skills.constitution
   )
@@ -94,7 +84,7 @@ function charmed_merits(n: string): Consequence {
   const result =
     roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
-  print('TESTJPF RESULT:::charmedmerits', result)
+  //print('TESTJPF RESULT:::charmedmerits', result)
   if (result > 5 && result <= 10) return { pass: true, type: 'merits' }
 
   if (result > 10) return { pass: true, type: 'special' }
@@ -119,26 +109,20 @@ function love_drop(n: string): Consequence {
     roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1),
     roll_special_dice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2)
   )
-  //const result =
-  // roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
   if (result > 1 && result < 5) return { pass: true, type: 'lovedrop' }
 
   if (result <= 1) return { pass: true, type: 'critical' }
   return { pass: false, type: 'neutral' }
 }
-/** 
-function create_suspicious(suspect: string, watcher: string) {
-  tasks.caution_builder(npcs.all[watcher], 'questioning', suspect, 'suspicious')
-}
-**/
+
 // Misc. Checks
 export function suspicious_check(
   suspect: string,
   watcher: string
 ): Consequence {
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
     w.skills.charisma -
@@ -149,19 +133,19 @@ export function suspicious_check(
   const advantage = w.binaries.lawless_lawful > s.binaries.lawless_lawful - 0.2
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   //startherer!!!!!!!!!!!!!!!!
-  print('TESTJPF RESULT suspicious:::', result)
+  //print('TESTJPF RESULT suspicious:::', result)
   if (result > 5 && result <= 10) {
     // create_suspicious(suspect, watcher)
     return { pass: true, type: 'suspicious' }
   }
 
   if (result > 10) {
-    print('SPECIAL suspicious')
+    //print('SPECIAL suspicious')
     //  go_to_jail(suspect)
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER suspicious')
+    //print('NEVER suspicious')
     //shuffle(pos_consolations)[0](suspect)
     return { pass: true, type: 'critical' }
   }
@@ -184,7 +168,7 @@ export function unlucky_check(watcher: string, suspect: string): Consequence {
   const advantage = math.random() > 0.5
   const result = roll_special_dice(5, advantage, 3, 2) + modifier
 
-  print('TESTJPF RESULT UNLUCKY:::', result)
+  //print('TESTJPF RESULT UNLUCKY:::', result)
   if (result > 5 && result <= 10) {
     shuffle([
       call_security,
@@ -197,12 +181,12 @@ export function unlucky_check(watcher: string, suspect: string): Consequence {
   }
 
   if (result > 10) {
-    print('SPECIAL unlucky')
+    //print('SPECIAL unlucky')
     call_security(suspect, watcher)
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER unlucky')
+    //print('NEVER unlucky')
     shuffle(pos_consolations)[0](suspect)
     return { pass: true, type: 'critical' }
   }
@@ -221,14 +205,8 @@ export function watcher_punched_check(
   suspect: string,
   watcher: string
 ): Consequence {
-  //     p.binaries.passive_aggressive > 0.5 &&
-  //p.skills.wisdom < 4 &&
-  // p.skills.strength >= n.skills.speed
-
-  //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
-
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
   const modifier = Math.round(
     s.binaries.lawless_lawful * -5 +
       s.skills.strength -
@@ -238,34 +216,30 @@ export function watcher_punched_check(
   const advantage = s.binaries.passive_aggressive * 7 > w.skills.speed
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
-  print('TESTJPF RESULT::: s punch w', result)
+  //print('TESTJPF RESULT::: s punch w', result)
   if (result > 5 && result <= 10) {
     sPunchW(suspect, watcher, 1)
     return { pass: true, type: 'sPunchW' }
   }
 
   if (result > 10) {
-    print('SPECIAL sPunchW')
+    //print('SPECIAL sPunchW')
     sPunchW(suspect, watcher, 3)
 
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER sPunchW')
+    //print('NEVER sPunchW')
     wPunchS(suspect, watcher, 2)
     return { pass: true, type: 'critical' }
   }
 
   return { pass: false, type: 'neutral' }
 }
-//testjpf needs diceroll!!
 export function reckless_check(suspect: string, watcher: string): Consequence {
-  //testjpf was -.5 , 4
-
-  //   npcs.all[w].binaries.un_educated < -0.4 ||
-  //  npcs.all[w].skills.intelligence < 4
+  //print(suspect, 'reckless suspect!!!!')
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
     w.binaries.evil_good * -5 -
@@ -277,17 +251,17 @@ export function reckless_check(suspect: string, watcher: string): Consequence {
     w.skills.intelligence < 5 || w.binaries.lawless_lawful < -0.1
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
-  print('TESTJPF RESULT::: reckless', result)
+  //print('TESTJPF RESULT::: reckless', result)
   if (result > 5 && result <= 10) {
     return { pass: true, type: 'reckless' }
   }
 
   if (result > 10) {
-    print('SPECIAL reckless')
+    //print('SPECIAL reckless')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER reckless')
+    //print('NEVER reckless')
     return { pass: true, type: 'critical' }
   }
 
@@ -295,18 +269,12 @@ export function reckless_check(suspect: string, watcher: string): Consequence {
 }
 //Checks and Helpers
 //misc.
-
 export function suspect_punched_check(
   suspect: string,
   watcher: string
 ): Consequence {
-  // ws.intelligence < 5 &&
-  // wb.evil_good < -0.3 &&
-  //  ws.constitution >= ss.speed
-
-  //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
     w.skills.constitution - s.skills.speed + w.binaries.evil_good * -0.5
@@ -315,19 +283,19 @@ export function suspect_punched_check(
     s.binaries.passive_aggressive < w.binaries.passive_aggressive - 0.3
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
-  print('TESTJPF RESULT::: w punch s', result)
+  //print('TESTJPF RESULT::: w punch s', result)
   if (result > 5 && result <= 10) {
     wPunchS(suspect, watcher, 1)
     return { pass: true, type: 'wPunchS' }
   }
 
   if (result > 10) {
-    print('SPECIAL wPunchS')
+    //print('SPECIAL wPunchS')
     wPunchS(suspect, watcher, 3)
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER wPunchS')
+    //print('NEVER wPunchS')
     sPunchW(suspect, watcher, 2)
     return { pass: true, type: 'critical' }
   }

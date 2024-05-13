@@ -1,10 +1,137 @@
 import { Npc } from '../../../types/state'
 import { steal_check, take_or_stash } from '../../ai/ai_checks'
-import { npc_action_move, rooms_near_target } from '../../ai/ai_main'
-import { shuffle } from '../../utils/utils'
-import { any_has_value } from '../../utils/quest'
+import { npc_action_move } from '../../ai/ai_main'
+import { shuffle, surrounding_room_matrix } from '../../utils/utils'
+//import { any_has_value } from '../../utils/quest'
 
-const { rooms, npcs, tasks, player, novel } = globalThis.game.world
+const { rooms, npcs, tasks, player, novel, info } = globalThis.game.world
+function medic_assist_checks() {
+  print('medic assist check:: nove.reason:: ', novel.reason)
+  const quest = tasks.quests.tutorial.medic_assist.conditions[0]
+  if (quest.passed == false) {
+    tasks.remove_heat(rooms.all.grounds.stations.worker1)
+    //tasks.remove_quest_cautions(rooms.all.grounds.stations.worker1)
+    print('11111')
+    //testjpf probably need new caution
+    // doctors still need to ignore victim
+    //activate bonus quests / side quests
+    //probably need some way to remove quest cautions
+    //status or something //on address_quest a
+    //clean_up() calls whatever you need.
+    //add to tutorialstate? probably?!!
+  } else if (quest.passed == true && quest.status == 'inactive') {
+    print('22222')
+    tasks.quests.tutorial.medic_assist.conditions[0].status = 'active'
+    tasks.quests.tutorial.medic_assist.status = 'active'
+    // tasks.quests.tutorial.medic_assist.conditions[1].status = 'active'
+    info.rebuild_objectives(tasks.quests)
+  } else if (
+    novel.reason == 'hungrydoc' &&
+    quest.passed == true &&
+    quest.status == 'active' &&
+    tasks.quests.tutorial.medic_assist.conditions[2].status == 'inactive'
+  ) {
+    tasks.quests.tutorial.medic_assist.conditions[2].status = 'active'
+    print(
+      'STATUS ACTIVE. ready for apple!! ?? ::',
+      tasks.quests.tutorial.medic_assist.conditions[2].status
+    )
+    //testjpf
+    // i think jsut sets novel.reason in script builder.
+    //So for 100  turns, this npc will always talk to you about a quest
+    //which quest? the one that comes from quest directory scripts
+    // as seen in sbuilder:: const quest_paths
+    tasks.append_caution({
+      label: 'quest',
+      time: 100,
+      type: 'hungry',
+      reason: 'quest',
+      npc: npcs.all[novel.npc.labelname].labelname,
+      suspect: npcs.all[novel.npc.labelname].labelname,
+      authority: 'player',
+    })
+    info.rebuild_objectives(tasks.quests)
+    //testjpf
+    // need something to check if this doc was given food.
+    // in 'interact' gui send message to exit gui??
+    // containing item, maybe who from "npc" or "player"
+  } else if (
+    tasks.quests.tutorial.medic_assist.conditions[2].status == 'active' &&
+    tasks.quests.tutorial.medic_assist.conditions[2].passed == false
+  ) {
+    print('PRE novel.item:: from tut:: apple01:?:', novel.item)
+    if (novel.item == 'apple01') {
+      print(
+        'novel.item:: from tut:: apple01:?:',
+        novel.item,
+        tasks.quests.tutorial.medic_assist.conditions[2].passed
+      )
+      tasks.quests.tutorial.medic_assist.conditions[2].passed = true
+      quest.status = 'complete'
+      tasks.remove_quest_cautions(novel.npc.labelname)
+      print(tasks.quests.tutorial.medic_assist.conditions[2].passed)
+      novel.reason = 'getadoctor'
+      msg.post('proxies:/controller#novelcontroller', 'show_scene')
+    }
+  } else if (
+    tasks.quests.tutorial.medic_assist.conditions[2].status == 'active' &&
+    tasks.quests.tutorial.medic_assist.conditions[2].passed == true
+  ) {
+    print('pre 3333', tasks.quests.tutorial.medic_assist.conditions[2].status)
+    tasks.quests.tutorial.medic_assist.conditions[2].status = 'complete'
+    // testjpf this is overwriting my scriptsdialog functions
+    print('3333', tasks.quests.tutorial.medic_assist.conditions[2].status)
+
+    tasks.append_caution({
+      label: 'mending',
+      time: 100,
+      type: 'quest',
+      reason: 'field',
+      npc: npcs.all[novel.npc.labelname].labelname,
+      suspect: npcs.all[rooms.all.grounds.stations.worker1].labelname,
+      authority: 'doctors',
+    })
+    msg.post(
+      `/${npcs.all[novel.npc.labelname].currentstation}#npc_loader`,
+      hash('move_npc'),
+      {
+        station: 'worker1',
+        npc: novel.npc.labelname,
+      }
+    )
+    if (
+      novel.reason == 'getsomemeds' &&
+      tasks.quests.tutorial.medic_assist.conditions[3].status == 'inactive'
+    ) {
+      print('PRE !!! notepushed')
+
+      tasks.quests.tutorial.medic_assist.conditions[3].status = 'active'
+      player.add_inventory('note')
+      print('noteadded')
+      // create caution for... 10 turns?
+      // i don't have cleareance logic setup!!
+      //testjpf add "note" to inventory
+    }
+    //testjpf open dialog with thanks and next task???
+    // use novel_init here jsut to laod the same tutorial/
+    //testjpf
+    // need something to check if this doc was given food.
+    // in 'interact' gui send message to exit gui??
+    // containing item, maybe who from "npc" or "player"
+  } else if (
+    novel.reason == 'getsomemeds' &&
+    tasks.quests.tutorial.medic_assist.conditions[3].status == 'inactive'
+  ) {
+    print('PRE !!! notepushed')
+
+    tasks.quests.tutorial.medic_assist.conditions[3].status = 'active'
+    player.add_inventory('note')
+    print('noteadded')
+    // create caution for... 10 turns?
+    // i don't have cleareance logic setup!!
+    //testjpf add "note" to inventory
+  }
+}
 
 export function tutorialA(interval = 'turn') {
   const luggage =
@@ -27,6 +154,7 @@ export function tutorialA(interval = 'turn') {
   }
 
   if (tasks.quests.tutorial.medic_assist.passed == false) {
+    medic_assist_checks()
     if (
       tasks.quests.tutorial.medic_assist.conditions[1].passed == true &&
       interval == 'turn' &&
@@ -42,7 +170,10 @@ export function tutorialA(interval = 'turn') {
         rooms.all.grounds.stations.aid = doc.labelname
         currentroom = 'grounds'
         currentstation = 'aid'
-        npc_action_move(replace, rooms_near_target(player.matrix))
+        npc_action_move(
+          replace,
+          surrounding_room_matrix(player.matrix, npcs.all[replace].matrix)
+        )
       }
     }
     /**
@@ -53,7 +184,8 @@ export function tutorialA(interval = 'turn') {
      * lint still thinks it's type is the original vague one
      */
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    const _return_docs = npcs.return_doctors
+    // const _return_docs = npcs.return_doctors
+    /*
     if (
       tasks.quests.tutorial.medic_assist.conditions[1].passed == true &&
       interval == 'interact' &&
@@ -62,7 +194,6 @@ export function tutorialA(interval = 'turn') {
       player.inventory.includes('note') == false &&
       any_has_value([_return_docs, 'vial02']) == false
     ) {
-      print('launch novel about ...here is a keycard get some meds')
       player.inventory.push('note')
       const params = {
         path: 'grounds/tutorialmeds',
@@ -79,7 +210,6 @@ export function tutorialA(interval = 'turn') {
       player.inventory.includes('note') == true &&
       any_has_value([_return_docs, 'vial02']) == true
     ) {
-      //for (const item of player.inventory) {
       if (player.inventory.includes('note')) {
         const note = player.inventory.splice(
           player.inventory.indexOf('note'),
@@ -87,27 +217,44 @@ export function tutorialA(interval = 'turn') {
         )
         npcs.all[rooms.all['grounds'].stations.aid].inventory.push(note[0])
       }
-      //	}
-      print('testjpf TEXT script thank you, misson complete fri}.')
-    }
+    }*/
   }
 }
 function doctorsScripts() {
-  const has_met = tasks.quests.tutorial.medic_assist.conditions[1].passed
-  tasks.quests.tutorial.medic_assist.conditions[1]
+  const has_met_victim = tasks.quests.tutorial.medic_assist.conditions[0].passed
   // bad??:: if reasonstring.startswith('quest - ')
   //then on novel_main novel.quest.solution = endof(message.reason)
-  if (has_met == false) {
+
+  if (
+    has_met_victim == true &&
+    tasks.quests.tutorial.medic_assist.conditions[2].status == 'inactive'
+  ) {
+    novel.reason = 'quest'
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
     return 'tutorial/tutorialAdoctor'
+  } else if (
+    tasks.quests.tutorial.medic_assist.conditions[2].status != 'inactive'
+  ) {
+    novel.reason = 'quest'
+    //testjpf could add conditional if encounters == 0 ) {
+    // "I'm going as fast as i can" -doc
+    return tasks.quests.tutorial.medic_assist.conditions[2].passed == false
+      ? 'tutorial/hungrydoc'
+      : 'tutorial/getadoctor'
+  }
+  return null
+}
+
+function worker1Scripts() {
+  if (tasks.quests.tutorial.medic_assist.conditions[1].passed == false) {
+    novel.reason = 'quest'
+    return 'tutorial/helpThatMan'
   }
   return null
 }
 function worker2Scripts() {
-  print('worker2 script called', novel.reason)
   if (novel.npc.turns_since_convo > 0 && novel.reason == 'concern') {
-    print('worker2 script returned')
     return 'tutorial/concernLuggage'
   }
 
@@ -132,6 +279,7 @@ function worker2Scripts() {
 const tutorialAlookup: { [key: string]: () => string | null } = {
   doctors: doctorsScripts,
   worker2: worker2Scripts,
+  worker1: worker1Scripts,
 }
 
 export function tutorialAscripts(actor: string): string[] {

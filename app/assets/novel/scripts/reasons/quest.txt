@@ -24,14 +24,8 @@ if dice > 25
 n: Holy. Holy.xqs
 jump quickclose
 
-label reasonsrandom1
-if npc.b.good < -0.3
-    jump smiteyouxsdftestjpf
-if npc.s.wisdom > 5
-    jump wiseqstreasonx
-if npc.s.strength > 4
-    jump strongqstreason
-jump genericqstreasonx
+label reasonrandom1
+jump queststart
 
 label smiteyouxsdftestjpf
 n: The lord will smite you.xqs

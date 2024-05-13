@@ -1,27 +1,15 @@
-//const world = require "main.states.worldstate"
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
-//const utils = require('../utils.utils')
 const { rooms } = globalThis.game.world
+
 function load_npcs() {
   const roomname = 'baggage' // testjpf remove hardcode string!
-
   const stations: { [key: string]: string } = rooms.all[roomname].stations
   let station: keyof typeof stations
   for (station in stations) {
     const npc = stations[station]
-    //  if (npc != '') {
     station == 'desk'
       ? msg.post('desk#station', 'load_station', { npc, roomname })
       : msg.post(`/${station}#npc_loader`, 'load_npc', { npc })
-    //   }
-    //params.script = params.roomname + "/" + world.player.checkpoint:sub(1, -2) + "aid"
   }
-
-  //TESTJPF do you need any of these sopecific level files?
-  //see how much you can move to main level.ts
-
-  const npc = rooms.fallbacks.stations.reception_unplaced
-  msg.post('/unplaced#npc_loader', 'load_npc', { npc })
 }
 
 function load_storage() {
@@ -31,12 +19,12 @@ function load_storage() {
     ani: 'luggage01',
   }
   msg.post('/luggage1#storage', 'load_storage_inventory', params)
-  sprite.play_flipbook('/luggage01#sprite', params.ani)
+  sprite.play_flipbook('/luggage1#sprite', params.ani)
 
   params.storagename = 'luggage_2'
   params.ani = 'luggage02'
   msg.post('/luggage2#storage', 'load_storage_inventory', params)
-  sprite.play_flipbook('/luggage02#sprite', params.ani)
+  sprite.play_flipbook('/luggage2#sprite', params.ani)
 }
 
 export function on_message(

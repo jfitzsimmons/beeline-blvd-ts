@@ -2,6 +2,7 @@ import { Confront } from '../../types/tasks'
 import { address_cautions } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
 import { ai_turn, place_npcs } from '../ai/ai_main'
+import { inventory_init } from '../systems/inventorysystem'
 
 const { world } = globalThis.game
 const { rooms, npcs, player, tasks, novel } = world
@@ -10,7 +11,7 @@ export function init() {
   //place_npcs()
 }
 function game_turn(room: string) {
-  ai_turn(room) // abstract to world controller?
+  ai_turn() // abstract to world controller?
   quest_checker('turn')
   tasks.address_quests('turn', player.checkpoint)
   player.ap = player.ap - 1
@@ -95,26 +96,30 @@ export function on_message(
         game_turn(message.roomname)
       } else if (message.load_type == 'new game') {
         place_npcs()
+        inventory_init()
         calculate_heat('grounds')
       }
 
       const confrontation: Confront | null = address_cautions()
-
-      msg.post('level#' + this.roomname, 'room_load')
+      //grounds:/shared/scripts#level
+      msg.post(this.roomname + ':/level#' + this.roomname, 'room_load')
       //position player on screen
-      msg.post('adam#adam', 'wake_up')
+      msg.post('/shared/adam#adam', 'wake_up')
       if (confrontation != null) confrontation_scene(confrontation)
     }
   } else if (messageId == hash('exit_gui')) {
-    quest_checker('interact')
-
     tasks.address_quests('interact', player.checkpoint)
-    calculate_heat(this.roomname)
+    quest_checker('interact')
+    print('exitgui reason::', novel.reason)
+
+    novel.reason = 'none'
+    novel.item = 'none'
+    //calculate_heat(this.roomname)
 
     // if (message.novel == true) {
     //  msg.post(this.roomname + ':/adam#interact', 'reload_script')
     // }
-    msg.post(this.roomname + ':/adam#adam', 'acquire_input_focus')
+    msg.post(this.roomname + ':/shared/adam#adam', 'acquire_input_focus')
     // } else if (messageId == hash('show_scene')) {
     //msg.post('hud#map', 'release_input_focus')
   } else if (messageId == hash('update_alert')) {

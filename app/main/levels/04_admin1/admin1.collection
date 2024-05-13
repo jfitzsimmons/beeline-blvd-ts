@@ -1,25 +1,5 @@
 name: "admin1"
 instances {
-  id: "adam"
-  prototype: "/main/characters/adam.go"
-  position {
-    x: 640.0
-    y: 384.0
-    z: 1.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
   id: "to_security"
   prototype: "/main/actors/door1.go"
   position {
@@ -67,26 +47,6 @@ instances {
     x: 131.0
     y: 60.0
     z: 0.1
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-instances {
-  id: "hud"
-  prototype: "/main/gui/navigation/hud.go"
-  position {
-    x: 0.0
-    y: 0.0
-    z: 0.0
   }
   rotation {
     x: 0.0
@@ -240,29 +200,32 @@ instances {
     z: 1.0
   }
 }
+collection_instances {
+  id: "shared"
+  collection: "/main/levels/shared.collection"
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
 scale_along_z: 0
 embedded_instances {
   id: "level"
   data: "components {\n"
   "  id: \"background\"\n"
   "  component: \"/main/levels/04_admin1/admin1lvl4.tilemap\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
-  "  property_decls {\n"
-  "  }\n"
-  "}\n"
-  "components {\n"
-  "  id: \"level\"\n"
-  "  component: \"/scripts/levels/level.script\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
@@ -401,43 +364,6 @@ embedded_instances {
   "    y: 0.0\n"
   "    z: 0.0\n"
   "    w: 1.0\n"
-  "  }\n"
-  "}\n"
-  ""
-  position {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-embedded_instances {
-  id: "inventories"
-  data: "components {\n"
-  "  id: \"inventory\"\n"
-  "  component: \"/main/gui/inventories/inventory.gui\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
-  "  property_decls {\n"
   "  }\n"
   "}\n"
   ""

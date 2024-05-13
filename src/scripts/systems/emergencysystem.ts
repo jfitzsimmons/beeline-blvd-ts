@@ -1,6 +1,6 @@
-import { Occupants } from '../../types/state'
+import { Npc, Occupants } from '../../types/state'
 import { roll_special_dice } from '../utils/dice'
-import { clamp, shuffle } from '../utils/utils'
+import { clamp, shuffle, surrounding_room_matrix } from '../utils/utils'
 import { admirer_check, prejudice_check } from './effectsystem'
 import { bribe_check } from './inventorysystem'
 import {
@@ -10,8 +10,9 @@ import {
 } from './chaossystem'
 import { add_pledge, go_to_jail } from './systemshelpers'
 import { Caution, Consequence } from '../../types/tasks'
+import { Direction } from '../../types/ai'
 
-const { tasks, rooms, npcs } = globalThis.game.world
+const { tasks, rooms, npcs, player } = globalThis.game.world
 const questioning_checks: Array<
   (s: string, w: string) => { pass: boolean; type: string }
 > = [
@@ -23,20 +24,20 @@ const questioning_checks: Array<
   prejudice_check,
   unlucky_check,
 ]
-//TESTJPF WHAT ARE THESE USED FOR?
-//probably needs rolls and ADD MORE??!?!
 const thief_consolations = [
   snitch_check,
   merits_demerits,
   reckless_check,
   //society_check,
-] //testjpf makes people ...
+]
 //Crime Consolations
 
-//testjpf needs diceroll
+export const injured_npcs: string[] = []
+
 function merits_demerits(suspect: string, watcher: string): Consequence {
+  //print('merits_demertis:: suspect::', suspect)
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
     (w.binaries.evil_good + w.binaries.lawless_lawful) * -2.5
@@ -47,7 +48,7 @@ function merits_demerits(suspect: string, watcher: string): Consequence {
     7.5
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -1, 1)
 
-  print('TESTJPF RESULT::: evilmerits', result)
+  //print('TESTJPF RESULT::: evilmerits', result)
   if (result < 4) {
     return { pass: true, type: 'demerits' }
   }
@@ -62,7 +63,7 @@ function merits_demerits(suspect: string, watcher: string): Consequence {
 //security
 function pledge_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
     w.binaries.passive_aggressive * -5 + s.binaries.passive_aggressive * 5
@@ -70,20 +71,20 @@ function pledge_check(suspect: string, watcher: string): Consequence {
   const advantage = w.skills.wisdom > s.skills.constitution + 1
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
-  print('TESTJPF RESULT::: pledge', result)
+  //print('TESTJPF RESULT::: pledge', result)
   if (result > 5 && result <= 10) {
     add_pledge(suspect)
     return { pass: true, type: 'pledge' }
   }
 
   if (result > 10) {
-    print('SPECIAL pledge')
+    //print('SPECIAL pledge')
     add_pledge(suspect)
     add_pledge(suspect)
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER pledge')
+    //print('NEVER pledge')
     return { pass: true, type: 'critical' }
   }
 
@@ -91,33 +92,34 @@ function pledge_check(suspect: string, watcher: string): Consequence {
 }
 export function jailtime_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
   const modifier = Math.round(
     w.skills.perception - s.skills.perception + w.binaries.anti_authority * 4
   )
   const advantage = s.binaries.passive_aggressive < 0.2
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
-  print('TESTJPF RESULT::: jailed', result)
+  //print('TESTJPF RESULT::: jailed', result)
   if (result > 5 && result <= 10) {
     go_to_jail(suspect)
     return { pass: true, type: 'jailed' }
   }
 
   if (result > 10) {
-    print('SPECIAL jailed')
+    //print('SPECIAL jailed')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER jailed')
+    //print('NEVER jailed')
     return { pass: true, type: 'critical' }
   }
 
   return { pass: false, type: 'neutral' }
 }
 export function snitch_check(suspect: string, watcher: string): Consequence {
+  //print('snitch check suspect::', suspect)
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
     w.binaries.anti_authority * 5 +
@@ -128,17 +130,17 @@ export function snitch_check(suspect: string, watcher: string): Consequence {
     s.skills.stealth + +Math.abs(s.binaries.passive_aggressive * 5)
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
-  print('TESTJPF RESULT::: snitch', result)
+  //print('TESTJPF RESULT::: snitch', result)
   if (result > 5 && result <= 10) {
     return { pass: true, type: 'snitch' }
   }
 
   if (result > 10) {
-    print('SPECIAL snitch')
+    //print('SPECIAL snitch')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER snitch')
+    //print('NEVER snitch')
     return { pass: true, type: 'critical' }
   }
 
@@ -153,7 +155,7 @@ function thief_consolation_checks(s: string, w: string) {
     const consolation = c(s, w)
     if (consolation.pass == true) return consolation.type
   })
-  print('did nothing after witnessing a theft attempt')
+  //print('did nothing after witnessing a theft attempt')
   return 'neutral'
 }
 export function build_consequence(
@@ -180,18 +182,18 @@ export function build_consequence(
       )
       c.time = 0
     } else {
-      print(c.label, c.reason, 'ANY_consequence: no fx or cautions')
+      //print(c.label, c.reason, 'ANY_consequence: no fx or cautions')
     }
     //} else {
     //  npcs.all[c.npc].love = npcs.all[c.npc].love - 1
     // }
   }
-  print('BUILD CONEQUENCE return type::', consolation.type)
+  //print('BUILD CONEQUENCE return type::', consolation.type)
   return consolation.type
 }
 function question_consequence(c: Caution) {
-  //npconly testjpf
-  print('QC::: ', c.npc, 'is NOW questioning:', c.suspect)
+  //npconly
+  //print('QC::: ', c.npc, 'is NOW questioning:', c.suspect)
 
   const tempcons: Array<
     (s: string, w: string) => { pass: boolean; type: string }
@@ -205,15 +207,14 @@ export function npc_confrontation(s: string, c: Caution) {
     question_consequence(c)
   }
   if (c.label == 'arrest') {
-    print('CAUTION:: arrest.', c.npc, 'threw', s, 'in jail')
+    //print('CAUTION:: arrest.', c.npc, 'threw', s, 'in jail')
     go_to_jail(s)
   }
 }
 
 //medics:
 export function send_to_infirmary(v: string, doc: string) {
-  // remove all arrests for suspect(clear record)
-  print('infirmed:', v, ' :::!!!!')
+  //print('infirmed:', v, ' :::!!!!')
   tasks.remove_heat(v)
   const occupants: Occupants = rooms.all.infirmary.occupants!
   let station: keyof typeof occupants
@@ -225,16 +226,47 @@ export function send_to_infirmary(v: string, doc: string) {
       npcs.all[v].cooldown = 8
       npcs.all[v].currentroom = 'infirmary'
       npcs.all[v].currentstation = station
-      print(v, 'infirmed for:', npcs.all[v].cooldown)
+      //print(v, 'infirmed for:', npcs.all[v].cooldown)
       tasks.caution_builder(npcs.all[doc], 'mending', v, 'office')
       break
     }
-
-    //create caution mending, reason: office
-    // keep doc in aid position until caution wears off
-    // if a doc isnt already in aid position.
-    //patients heal faster when doc is in position.
   }
-  //TESTJPF
-  //ideally this would finish before stations are atempted to be filled.!!!
+}
+
+export function freeze_injured_npc(npc: Npc) {
+  rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
+
+  const limit = tasks.medicQueue.indexOf(npc.labelname)
+  if (limit < 0 || limit > 3) injured_npcs.push(npc.labelname)
+}
+
+export function doctor_ai_turn(
+  npc: Npc,
+  targets: Direction
+): [Direction, boolean] {
+  const patients = Object.values(rooms.all.infirmary.occupants!).filter(
+    (p) => p != ''
+  )
+  let docInOffice = false
+
+  if (tasks.get_field_docs().includes(npc.labelname) == true) {
+    //stay put
+    rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
+  } else if (
+    patients.length > 1 &&
+    math.random() + patients.length * 0.1 > 0.6
+  ) {
+    rooms.all.infirmary.stations.aid = npc.labelname
+    docInOffice = true
+  } else if (patients.length > 3) {
+    targets = surrounding_room_matrix(rooms.all.infirmary.matrix, npc.matrix)
+  } else if (injured_npcs.length > 0) {
+    //find emergency patient
+    targets = surrounding_room_matrix(
+      rooms.all[npcs.all[injured_npcs[0]].currentroom].matrix,
+      npc.matrix
+    )
+  }
+
+  return [targets, docInOffice]
 }

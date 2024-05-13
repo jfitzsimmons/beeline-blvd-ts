@@ -27,7 +27,7 @@ if npc.b.lawful < -0.4
     jump copsdontstopme
 if npc.s.wisdom > 4
     jump outofyourelement
-if npc.s.perception > 0.4
+if npc.s.perception > 4
     jump looklikenarc
 jump generic2gang
 

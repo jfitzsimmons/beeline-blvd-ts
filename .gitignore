@@ -37,6 +37,8 @@ app/build
 *.pyc
 app/builtins
 dmengine*
+manifest.*
 
 # Local Support
 _support/
+_bundles/

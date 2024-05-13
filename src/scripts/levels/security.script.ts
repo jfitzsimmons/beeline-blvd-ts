@@ -29,6 +29,10 @@ function load_npcs() {
   msg.post('prisoner4#npc_loader', 'load_npc', {
     npc: rooms.all['security'].occupants!.prisoner4,
   })
+
+  msg.post('/outside1#npc_loader', 'load_npc', {
+    npc: rooms.fallbacks.stations.security_outside1,
+  })
 }
 
 export function on_message(messageId: hash, _sender: url): void {
