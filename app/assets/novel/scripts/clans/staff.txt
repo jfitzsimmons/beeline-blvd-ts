@@ -1,0 +1,47 @@
+label staff1
+n: A little bit of this, a little of that.
+jump quickclose
+
+label staff2
+n: Dreaming of hitting the bar.
+jump quickclose
+
+label staff3
+n: My shift never ends.
+jump quickclose
+
+label genericstaff
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump staff1
+if dice > 50
+    jump staff2
+if dice > 25
+    jump staff3
+n: Doing inventory.
+jump quickclose
+
+label clanrandom1
+if npc.b.educated < -0.4
+    jump imnottrainedforthis
+if npc.b.wealth < -0.5
+    jump nodocssalary
+if npc.p.perception > 5
+    jump watchingfallapart
+jump genericstaff
+
+label imnottrainedforthis
+n: I'm not trained for first aid.
+n: I try to step up when I can.
+jump quickclose
+
+label nodocssalary
+n: They better start giving me a doctors salary.
+n: The amount of bleeding people i deal with.
+jump quickclose
+
+label watchingfallapart
+n: Watching this place fall apart.
+n: I need to update my resume.
+jump quickclose

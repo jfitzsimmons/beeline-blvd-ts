@@ -5,7 +5,10 @@ interface props {
   current_anim: hash
   correction: vmath.vector3
 }
+
 export function init(this: props) {
+  msg.post('#camera', 'acquire_camera_focus')
+  msg.post('@render:', 'use_camera_projection')
   msg.post('#', 'acquire_input_focus')
 
   this.dir = vmath.vector3()

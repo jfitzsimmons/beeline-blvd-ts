@@ -1,0 +1,14 @@
+label queststart
+n: Do you have any food?
+> Give food?
+    n: Where is it?
+    jump quickclose
+> No
+    n: My stomach is growling!
+    jump defaultChoices
+
+label activeqtestjpf
+p: activeqtestjpf
+n: activeqtestjpf
+jump quickclose
+

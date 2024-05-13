@@ -1,0 +1,45 @@
+label 4gang1
+n: Another typical jerk.
+jump quickclose
+
+label 4gang2
+n: I got my eye on you.
+jump quickclose
+
+label 4gang3
+n: Watch your back.
+jump quickclose
+
+label generic4gang
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump 4gang1
+if dice > 50
+    jump 4gang2
+if dice > 25
+    jump 4gang3
+n: I'm going to lose it.
+jump quickclose
+
+label clanrandom1
+if npc.s.stealth > 6
+    jump forgetyousawme
+if npc.b.lawful > 0.5
+    jump notgoingtojail
+if npc.b.educated > 0.3
+    jump stopbeingignorant
+jump generic4gang
+
+label forgetyousawme
+n: You better start acting like you don't see me.
+jump quickclose
+
+label notgoingtojail
+n: I'm not talking to you.
+n: I'm not going back to jail.
+jump quickclose
+
+label stopbeingignorant
+n: Read a book you ignorant pig.
+jump quickclose

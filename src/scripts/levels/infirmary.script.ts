@@ -25,6 +25,11 @@ function load_npcs() {
   msg.post('patient4#npc_loader', 'load_npc', {
     npc: rooms.all['infirmary'].occupants!.patient4,
   })
+
+  //let npc = rooms.fallbacks.stations.infirmary_outside1
+  msg.post('/outside1#npc_loader', 'load_npc', {
+    npc: rooms.fallbacks.stations.infirmary_outside1,
+  })
 }
 
 export function on_message(

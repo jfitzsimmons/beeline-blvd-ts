@@ -1,0 +1,46 @@
+label aid1random1
+if npc.s.intelligence > 6
+    jump topofclass
+if npc.b.good < -0.3
+    jump cuttingopenbodies
+if npc.s.speed > 5
+    jump hurrytogolf
+jump genericaid
+
+
+label topofclass
+n: Apparently I'm the only one who knows first aid.
+jump quickclose
+
+label cuttingopenbodies
+n: Probably patching up one of these poor saps later.
+jump quickclose
+
+label hurrytogolf
+n: Trying to hurry up so I can get in 9 holes.
+jump quickclose
+
+
+label genericaid
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump genericl1
+if dice > 50
+    jump genericl3
+if dice > 25
+    jump genericl2
+n: Busy day.
+jump quickclose
+
+label genericl2
+n: People are always getting themselves hurt.
+jump quickclose
+
+label genericl3
+n: Waiting on a shipment of meds.
+jump quickclose
+
+label genericl1
+n: This place is a death trap.
+jump quickclose

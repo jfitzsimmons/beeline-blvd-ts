@@ -42,10 +42,7 @@ function open_novel(_this: props) {
   npcs.all[_this.npcname].convos = npcs.all[_this.npcname].convos + 1
   novel.npc = { ...npcs.all[_this.npcname] }
   novel.reason = _this.consequence.type
-  //testjpf cut out the #level middla man and use::
-  // msg.post('proxies:/controller#novelcontroller', 'show_scene')
-  // i thin with the Novel class we don't have to mess with level
-  //msg.post('level#level', 'show_scene', { confront: true })
+
   msg.post('proxies:/controller#novelcontroller', 'show_scene')
   msg.post('#', 'release_input_focus')
 }
@@ -86,6 +83,7 @@ function open_inventory(_this: props, actor: string, action: string) {
      * 		if self.is_npc == false then self.npcname = self.watcher end
      * self.script = novel.script_builder(self.npcname, nil, nil, self.
      *  consequence.type, false)
+     *
      */
     if (_this.isNpc == false) {
       _this.npcname = _this.watcher
@@ -99,7 +97,7 @@ function open_inventory(_this: props, actor: string, action: string) {
       watcher: _this.watcher,
       action: action,
     }
-    msg.post('inventories#inventory', 'opened_chest', params)
+    msg.post('/shared/guis#inventory', 'opened_chest', params)
     msg.post('#', 'release_input_focus')
   }
 }
@@ -136,9 +134,14 @@ function set_interactions(
 ): cloneparent[] {
   const clones = []
   const spacing = 25
-  let nodepos = pos
-  let actorKey: keyof typeof actorsActions
+  const [ww, wh] = window.get_size()
+  const cw = ww / 2
+  const ch = wh / 2
+  const adjx = (cw - pos.x) / 6 + cw
+  const adjy = (ch - pos.y) / 6 + ch
 
+  let nodepos = vmath.vector3(adjx, adjy, pos.z)
+  let actorKey: keyof typeof actorsActions
   for (actorKey in actorsActions) {
     for (const action of actorsActions[actorKey]) {
       nodepos.y = nodepos.y + spacing

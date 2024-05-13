@@ -10,7 +10,7 @@ import {
   remove_chest_bonus,
 } from '../systems/inventorysystem'
 
-const { player, npcs, rooms } = globalThis.game.world
+const { player, npcs, rooms, novel } = globalThis.game.world
 interface props {
   actorinventory: string[]
   watcher: string
@@ -162,6 +162,7 @@ function check_inventory_nodes(
       textureHash != hash('empty')
     ) {
       const item = inventoryLookup[hash_to_hex(textureHash)]
+      novel.item = item
       hide_inventory_animation(node)
 
       if (i < 21) {
@@ -213,8 +214,8 @@ function exit_inventory(actorname: string, actorinventory: string[]) {
   }
 
   reset_nodes()
-  msg.post('inventories#inventory', 'release_input_focus')
-  msg.post('level#level', 'exit_gui')
+  msg.post('/shared/guis#inventory', 'release_input_focus')
+  msg.post('/shared/scripts#level', 'exit_gui')
 }
 
 export function on_message(
@@ -243,7 +244,7 @@ export function on_message(
     }
     gui.set_text(name_node, this.actorname)
     gui.set_enabled(inventory_node, true)
-    msg.post('inventories#inventory', 'acquire_input_focus')
+    msg.post('/shared/guis#inventory', 'acquire_input_focus')
   }
 }
 
@@ -259,7 +260,7 @@ export function on_input(
       check_inventory_nodes(this.actorname, action)
 
       if (this.watcher != '' && this.watcher != null) {
-        msg.post('inventories#inventory', 'release_input_focus')
+        msg.post('/shared/guis#inventory', 'release_input_focus')
         timer.delay(0.9, false, function (this: props) {
           exit_inventory(this.actorname, this.actorinventory)
         })

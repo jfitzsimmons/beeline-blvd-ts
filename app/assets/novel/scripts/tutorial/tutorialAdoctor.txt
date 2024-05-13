@@ -1,9 +1,50 @@
 label queststart
-reason = "none"
-show n
+if activeq == "true"
+    jump aretheyhealed
 > Talk to doctor about injured man?
     p: You gotta help that person over there.
-    n: Thanks kind stranger.
-    jump quickclose
+    n: I can put them on the waiting list.
+    n: Unless you can help speed thing's up?
+    jump moralybribe
 > Other
-    jump start
+    jump defaultChoices
+
+label aretheyhealed
+p: Are they going to be okay?
+n: Do you have an apple?
+> Yes
+    n: Do you really?
+    jump quickclose
+> No
+    n: If you find one, come back.
+    jump defaultChoices
+
+label moralybribe
+> Money?
+    if npc.b.good < -0.5
+        npc.love = npc.love + 1
+        n: I like your style. I have someone I'd like you to meet.
+        jump quickclose
+    npc.love = npc.love - 1
+    n: God no!
+> A Nurse?
+    if p.s.intelligence > 7
+        n: Sure. You seem like a smart guy.
+        n: You'll speed things up.
+        jump quickclose
+    n: Not you. No offense.
+> Drugs?
+    if npc.b.lawful <  -0.5
+        npc.love = npc.love + 1
+        n: Another man of the game.
+        jump quickclose
+    n: Who do you take me for?
+> Like what?
+    jump missedlunch
+jump missedlunch
+
+label missedlunch
+n: I haven't eaten in a while.  Getting woozy.
+reason = "quest: hungrydoc"
+jump quickclose
+

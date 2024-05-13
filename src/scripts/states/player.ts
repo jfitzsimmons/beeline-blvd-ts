@@ -120,6 +120,9 @@ export default class WorldPlayer {
   public get checkpoint(): string {
     return this._state.checkpoint
   }
+  add_inventory(i: string) {
+    this._state.inventory.push(i)
+  }
   return_inventory(): string[] {
     return this._state.inventory
   }

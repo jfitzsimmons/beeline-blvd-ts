@@ -5,6 +5,7 @@ import WorldRooms from './rooms'
 import WorldPlayer from './player'
 import WorldNpcs from './npcs'
 import WorldTasks from './tasks'
+import WorldInfo from './info'
 import WorldNovel from './novel'
 import { AllQuestsMethods } from '../../types/tasks'
 
@@ -14,6 +15,7 @@ export default class World {
   npcs: WorldNpcs
   rooms: WorldRooms
   tasks: WorldTasks
+  info: WorldInfo
   novel: WorldNovel
   clock: number
 
@@ -22,15 +24,15 @@ export default class World {
     this.player = new WorldPlayer()
     this.npcs = new WorldNpcs()
     this.rooms = new WorldRooms()
-    const params: AllQuestsMethods = {
+    this.novel = new WorldNovel(this.npcs.all.labor01)
+    const allquestmethods: AllQuestsMethods = {
       pq: this.player.quests,
       nq: this.npcs.quests,
+      nvq: this.novel.quests,
     }
-    this.tasks = new WorldTasks(params)
-    this.novel = new WorldNovel(
-      this.npcs.all.labor01,
-      this.tasks.quests.tutorial.medic_assist.conditions[1]
-    )
+    this.tasks = new WorldTasks(allquestmethods)
+    this.info = new WorldInfo(this.tasks.quests)
+
     this.clock = 6
     this.stateMachine
       .addState('idle')

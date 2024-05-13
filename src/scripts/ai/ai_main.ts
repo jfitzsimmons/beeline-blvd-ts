@@ -1,16 +1,16 @@
-import { shuffle } from '../utils/utils'
-import {
-  // seen_check,
-  //confrontation_check,
-  aid_check,
-  // thief_consequences,
-} from './ai_checks'
+import { shuffle, surrounding_room_matrix } from '../utils/utils'
+import { aid_check } from './ai_checks'
 import { Direction } from '../../types/ai'
 import { Occupants } from '../../types/state'
 import { remove_effects } from '../systems/effectsystem'
 import { reception_checks } from './levels/reception'
 import { customs_checks } from './levels/customs'
 import { baggage_checks } from './levels/baggage'
+import {
+  doctor_ai_turn,
+  freeze_injured_npc,
+  injured_npcs,
+} from '../systems/emergencysystem'
 //import { thief_consolation_checks } from '../systems/tasksystem'
 
 const { tasks, rooms, npcs, player } = globalThis.game.world
@@ -41,8 +41,18 @@ const initial_places = [
   'maintenance',
   'alley3',
 ]
-
+const count: { [key: string]: number } = {}
+const unplacedcount: { [key: string]: number } = {}
 function attempt_to_fill_station(room_list: string[], npc: string) {
+  //testjpf debug number of roomlist occurences
+  room_list.forEach((element) => {
+    if (count[element] != null) {
+      count[element] += 1
+    } else {
+      count[element] = 1
+    }
+  })
+
   let placed = false
   //const room = ''
   //const misses = {}
@@ -73,7 +83,8 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
             npcs.all[npc].ai_path,
             ',TURNS,',
             npcs.all[npc].turns_since_encounter
-          )**/
+          )
+          */
           //fill station
           npcs.all[npc].exitroom = rooms.layout[current.y][current.x]!
           npcs.all[npc].currentroom = room
@@ -98,37 +109,62 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
         rooms.fallbacks.stations['admin1_passer'] == '' &&
         rooms.layout[current.y][current.x] != 'admin1'
       ) {
-        print(npc, 'passer Admin1')
         rooms.fallbacks.stations['admin1_passer'] = npc
         npcs.all[npc].matrix = rooms.all['admin1'].matrix
       } else if (
         room_list.includes('security') &&
-        rooms.fallbacks.stations['admin1_passer'] == '' &&
+        rooms.fallbacks.stations['security_passer'] == '' &&
         rooms.layout[current.y][current.x] != 'security'
       ) {
-        print(npc, 'passer Security')
         rooms.fallbacks.stations['security_passer'] = npc
+        npcs.all[npc].matrix = rooms.all['security'].matrix
+      } else if (
+        room_list.includes('security') &&
+        rooms.fallbacks.stations['security_outside1'] == ''
+      ) {
+        rooms.fallbacks.stations['security_outside1'] = npc
         npcs.all[npc].matrix = rooms.all['security'].matrix
       } else if (
         room_list.includes('grounds') &&
         rooms.fallbacks.stations['grounds_unplaced'] == ''
       ) {
-        print(npc, 'grounds_unplaced')
         rooms.fallbacks.stations['grounds_unplaced'] = npc
         npcs.all[npc].matrix = rooms.all['grounds'].matrix
+      } else if (
+        room_list.includes('viplobby') &&
+        rooms.fallbacks.stations['viplobby_outside1'] == ''
+      ) {
+        rooms.fallbacks.stations['viplobby_outside1'] = npc
+        npcs.all[npc].matrix = rooms.all['viplobby'].matrix
       } else if (
         room_list.includes('reception') &&
         rooms.fallbacks.stations['reception_unplaced'] == ''
       ) {
-        print(npc, 'recpt_unplaced')
         rooms.fallbacks.stations['reception_unplaced'] = npc
         npcs.all[npc].matrix = rooms.all['reception'].matrix
+      } else if (
+        room_list.includes('infirmary') &&
+        rooms.fallbacks.stations['infirmary_outside1'] == ''
+      ) {
+        rooms.fallbacks.stations['infirmary_outside1'] = npc
+        npcs.all[npc].matrix = rooms.all['infirmary'].matrix
+      } else if (
+        room_list.includes('dorms') &&
+        rooms.fallbacks.stations['dorms_outside1'] == ''
+      ) {
+        rooms.fallbacks.stations['dorms_outside1'] = npc
+        npcs.all[npc].matrix = rooms.all['dorms'].matrix
       } else {
-        print(
-          npc,
-          'TESTJPF DID NOT PLACE AT ALL from: ',
-          rooms.layout[current.y][current.x]
-        )
+        if (unplacedcount[npc] != null) {
+          unplacedcount[npc] += 1
+        } else {
+          unplacedcount[npc] = 1
+        }
+        if (unplacedcount[rooms.layout[current.y][current.x]!] != null) {
+          unplacedcount[rooms.layout[current.y][current.x]!] += 1
+        } else {
+          unplacedcount[rooms.layout[current.y][current.x]!] = 1
+        }
       }
       placed = true
     }
@@ -183,11 +219,10 @@ function set_room_priority(
   }
 
   room_list.push(rooms.layout[npcs.all[npc].home.y][npcs.all[npc].home.x])
-  // room_list = room_list.filter((r) => r !== null
   const filteredArray: string[] = room_list.filter(
     (s): s is string => s != null
   )
-  return filteredArray //.filter((r) => r !== null)
+  return filteredArray
 }
 function set_npc_target(direction: Direction, n: string) {
   const npc = npcs.all[n]
@@ -195,10 +230,10 @@ function set_npc_target(direction: Direction, n: string) {
   if (npc.turns_since_encounter > 20) {
     target = player.matrix
   } else if (npc.ai_path == 'pinky') {
-    //always targets 1 to 3 rooms infront of player
+    //always targets 0 to 2 rooms infront of player
     target = direction.front
   } else if (npc.ai_path == 'blinky') {
-    //always targets 1 room behind of player
+    //always targets 1 room behind player unless too far
     const distance = npc.matrix.x - npc.home.x + (npc.matrix.y - npc.home.y)
     if (distance < -5 || distance > 5) {
       target = npc.home
@@ -216,12 +251,10 @@ function set_npc_target(direction: Direction, n: string) {
     }
     if (distance > -2 && distance < 2) {
       target = npc.home
+    } else if (math.random() < 0.5) {
+      target = direction.right
     } else {
-      if (math.random() < 0.5) {
-        target = direction.right
-      } else {
-        target = direction.left
-      }
+      target = direction.left
     }
   } else if (npc.ai_path == 'clyde') {
     const distance =
@@ -257,7 +290,6 @@ function release_occupants(d: Direction) {
   for (station in prisoners) {
     const prisoner = prisoners[station]
     if (prisoner != '' && npcs.all[prisoner].cooldown <= 0) {
-      print('released from prison:', prisoner)
       npc_action_move(prisoner, d)
       rooms.all.security.occupants![station] = ''
     }
@@ -268,19 +300,15 @@ function release_occupants(d: Direction) {
     const patient = occupants[bed]
     if (patient != '' && npcs.all[patient].cooldown <= 0) {
       npcs.all[patient].hp = 10
-      print('released from infirmary:', patient)
       npc_action_move(patient, d)
       rooms.all.infirmary.occupants![bed] = ''
     }
   }
 }
-// testjpf naming conventions start getting vague
-function ai_actions(direction: Direction, injured: string[]) {
-  aid_check(injured)
-  release_occupants(direction)
 
-  //replace_injured(injured)
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+function ai_actions(direction: Direction) {
+  aid_check(injured_npcs)
+  release_occupants(direction)
   reception_checks()
   customs_checks()
   baggage_checks
@@ -291,70 +319,23 @@ export function npc_action_move(n: string, d: Direction) {
   const target = set_npc_target(d, n)
   const room_list: string[] = set_room_priority(target, n)
   attempt_to_fill_station(room_list, n)
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   remove_effects(npc)
   if (npc.cooldown > 0) npc.cooldown = npc.cooldown - 1
 }
-export function rooms_near_target(target: { x: number; y: number }) {
-  const exit = player.matrix
-  let direction = {
-    front: { x: 0, y: 0 },
-    back: { x: 0, y: 0 },
-    left: { x: 0, y: 0 },
-    right: { x: 0, y: 0 },
-  }
-  //get directions based on way exit is facing
-  if (exit.x > target.x) {
-    direction = {
-      front: { x: target.x - math.random(0, 2), y: target.y },
-      back: { x: target.x + 2, y: target.y },
-      left: { x: target.x, y: target.y + 1 },
-      right: { x: target.x, y: target.y - 1 },
-    }
-  } else if (exit.y < target.y) {
-    direction = {
-      front: { x: target.x, y: target.y + math.random(0, 2) },
-      back: { x: target.x, y: target.y - 2 },
-      left: { x: target.x + 1, y: target.y },
-      right: { x: target.x - 1, y: target.y },
-    }
-  } else if (exit.y > target.y) {
-    direction = {
-      front: { x: target.x, y: target.y - math.random(0, 2) },
-      back: { x: target.x, y: target.y + 2 },
-      left: { x: target.x - 1, y: target.y },
-      right: { x: target.x + 1, y: target.y },
-    }
-  } else {
-    direction = {
-      front: { x: target.x + math.random(0, 2), y: target.y },
-      back: { x: target.x - 2, y: target.y },
-      left: { x: target.x, y: target.y - 1 },
-      right: { x: target.x, y: target.y + 1 },
-    }
-  }
-  return direction
-}
-// testjpf So far this is just run on init
-export function place_npcs() {
-  // NPC with longest since encounter with p (Randomized on init)
 
+export function place_npcs() {
   npcs.sort_npcs_by_encounter()
 
-  //table.sort(npcs.order, function(a, b) return npcs.all[a].turns_since_encounter > npcs.all[b].turns_since_encounter end)
   npcs.order.forEach((n: string) => {
     const npc = npcs.all[n]
     let placed = false
-    //tries to place NPC at grounds - level 1
 
     const shuffled_stations: [string, string][] = shuffle(
       Object.entries(rooms.all.grounds.stations)
     )
 
-    //  let ks: keyof typeof shuffled_stations
     for (const ks of shuffled_stations) {
       const station = ks[1]
-      // const station = shuffled_stations[ks]
 
       if (station == '' && rooms.roles[ks[0]].includes(npc.clan)) {
         rooms.all.grounds.stations[ks[0]] = npc.labelname
@@ -371,10 +352,8 @@ export function place_npcs() {
           Object.entries(rooms.all[p].stations)
         )
 
-        //  let ks: keyof typeof shuffled_stations
         for (const ks of shuffled_stations) {
           const station = ks[1]
-          // const station = shuffled_stations[ks]
 
           if (station == '' && rooms.roles[ks[0]].includes(npc.clan)) {
             rooms.all[p].stations[ks[0]] = npc.labelname
@@ -382,7 +361,6 @@ export function place_npcs() {
             npc.currentstation = ks[0]
             npc.currentroom = p
 
-            print('RANDOM::: ', npc.labelname, 'placed in', ks[0], 'ROOM', p)
             placed = true
             break
           }
@@ -403,53 +381,65 @@ export function place_npcs() {
   )
   npcs.all[rooms.all.reception.stations.guard].hp = 0
   npcs.all[rooms.all.grounds.stations.worker1].hp = 0
+
+  tasks.append_caution({
+    label: 'quest',
+    npc: npcs.all[rooms.all.grounds.stations.worker1].labelname,
+    authority: 'player',
+    time: 100,
+    suspect: npcs.all[rooms.all.grounds.stations.worker1].labelname,
+    reason: 'quest',
+    type: 'helpthatman',
+  })
 }
-export function ai_turn(player_room: string) {
+export function ai_turn() {
+  //count = {}
   rooms.clear_stations()
 
   const patients = Object.values(rooms.all.infirmary.occupants!).filter(
     (p) => p != ''
   )
-  const busy_docs = tasks.get_field_docs()
   const immobile: string[] = [
     ...Object.values(rooms.all.security.occupants!),
     ...patients,
-    ...busy_docs,
+    ...tasks.get_field_docs(),
   ]
-  //injury unreported, or reprioritized
-  const injured: string[] = []
-  let targets: Direction = rooms_near_target(rooms.all[player_room].matrix)
+
+  let targets: Direction = surrounding_room_matrix(
+    rooms.all[player.exitroom].matrix,
+    player.matrix
+  )
 
   npcs.sort_npcs_by_encounter()
 
   for (let i = npcs.order.length; i-- !== 0; ) {
     const npc = npcs.all[npcs.order[i]]
-    //Injured in the field
     if (npc.hp <= 0 && patients.includes(npc.labelname) == false) {
-      rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
-
-      const limit = tasks.medicQueue.indexOf(npc.labelname)
-      if (limit < 0 || limit > 3) injured.push(npc.labelname)
+      freeze_injured_npc(npc)
     }
     if (npc.clan == 'doctors') {
-      if (busy_docs.includes(npc.labelname) == true) {
-        //stay put
-        rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
-      } else if (patients.length > 1 && math.random() < 0.5) {
-        rooms.all.infirmary.stations.aid = npc.labelname
-        immobile.push(npc.labelname)
-      } else if (patients.length > 3) {
-        targets = rooms_near_target(rooms.all.infirmary.matrix)
-      } else if (injured.length > 0) {
-        //find emergency patient
-        targets = rooms_near_target(
-          rooms.all[npcs.all[injured[0]].currentroom].matrix
-        )
-      }
+      const [docTargets, docInOffice] = doctor_ai_turn(npc, targets)
+      targets = docTargets
+      if (docInOffice == true) immobile.push(npc.labelname)
     }
     if (immobile.includes(npc.labelname) == false && npc.hp > 0)
       npc_action_move(npc.labelname, targets)
   }
 
-  ai_actions(targets, injured)
+  ai_actions(targets)
+
+  //TESTJPF DEBUG BELOW ::::
+  /** 
+  let cKey: keyof typeof count
+
+  for (cKey in count) {
+    print(cKey, count[cKey])
+  }
+
+  let uKey: keyof typeof unplacedcount
+
+  for (uKey in unplacedcount) {
+    print(uKey, unplacedcount[uKey])
+  }*/
+  //print('npcs.order.length', npcs.order.length)
 }

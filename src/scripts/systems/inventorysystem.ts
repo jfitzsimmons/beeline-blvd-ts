@@ -2,7 +2,7 @@ import { Npc, PlayerState, Skills } from '../../types/state'
 import { Consequence } from '../../types/tasks'
 import { roll_special_dice } from '../utils/dice'
 import { clamp, shuffle } from '../utils/utils'
-const { npcs } = globalThis.game.world
+const { npcs, player } = globalThis.game.world
 
 interface InventoryTable {
   [key: string]: InventoryTableItem
@@ -13,6 +13,7 @@ interface InventoryTableItem {
   binaries: { [key: string]: number }
   skills: { [key: string]: number }
 }
+
 export const items: InventoryTable = {
   magica1: {
     value: 2,
@@ -461,7 +462,7 @@ export const items: InventoryTable = {
       wisdom: -1,
     },
   },
-  apple: {
+  apple02: {
     value: 2,
     level: 1,
     binaries: {},
@@ -527,6 +528,19 @@ export const items: InventoryTable = {
     },
   },
 }
+
+export function inventory_init() {
+  let nKey: keyof typeof npcs.all
+  for (nKey in npcs.all) {
+    for (const item of npcs.all[nKey].inventory) {
+      add_chest_bonus(npcs.all[nKey], item)
+    }
+  }
+  for (const item of player.inventory) {
+    add_chest_bonus(player.state, item)
+  }
+}
+
 export const inventoryLookup: { [key: string]: string } = {}
 function buildLookup() {
   let itemKey: keyof typeof items
@@ -535,9 +549,6 @@ function buildLookup() {
   }
 }
 
-// testjpf generate_random_gift() food, supplies, money
-
-//testjpf may need a binaries_chest_bonus()
 export function remove_chest_bonus(actor: Npc | PlayerState, i: string) {
   const item: InventoryTableItem = items[i]
   let sKey: keyof typeof item.skills
@@ -618,8 +629,8 @@ export function remove_advantageous(
 export function remove_valuable(to_inv: string[], from_inv: string[]) {
   /** 
 	for _, iv in ipairs(from_inv) do
-		print("iv:",iv)
-		print("M.items[iv].value:",M.items[iv].value)
+		//print("iv:",iv)
+		//print("M.items[iv].value:",M.items[iv].value)
 	}
 	**/
   if (from_inv.length < 1) return ''
@@ -646,20 +657,15 @@ export function get_extorted(s: string, w: string) {
         w_inv.push(...loot)
         break
       } else {
-        print('bribe failed so punch???')
+        //print('bribe failed so punch???')
         // bribe failed so punch???
       }
     }
   }
 }
 export function bribe_check(suspect: string, watcher: string): Consequence {
-  //     wb.lawless_lawful < -0.4 &&
-  // ws.strength >= ss.strength &&
-  //  sb.passive_aggressive < 0.0
-
-  //testjpf GOOD time for a diceroll
   const w = npcs.all[watcher]
-  const s = npcs.all[suspect]
+  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
     w.binaries.lawless_lawful * -5 + w.skills.strength - s.skills.strength
@@ -668,18 +674,18 @@ export function bribe_check(suspect: string, watcher: string): Consequence {
     s.binaries.passive_aggressive < w.binaries.passive_aggressive - 0.3
   const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
-  print('TESTJPF RESULT::: bribe', result)
+  //print('TESTJPF RESULT::: bribe', result)
   if (result > 5 && result <= 10) {
     get_extorted(suspect, watcher)
     return { pass: true, type: 'bribe' }
   }
 
   if (result > 10) {
-    print('SPECIAL bribe')
+    //print('SPECIAL bribe')
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    print('NEVER bribe')
+    //print('NEVER bribe')
     return { pass: true, type: 'critical' }
   }
 

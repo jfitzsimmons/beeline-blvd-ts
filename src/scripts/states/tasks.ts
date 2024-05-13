@@ -55,6 +55,14 @@ export default class WorldTasks {
     //print('busy_doc:: docs[0]:', docs[0])
     return injuries
   }
+  remove_quest_cautions(npc: string) {
+    for (let i = this.cautions.length - 1; i >= 0; i--) {
+      const c = this.cautions[i]
+      if (c.suspect == npc && ['quest'].includes(c.label)) {
+        this.cautions.splice(i, 1)
+      }
+    }
+  }
   remove_heat(sus: string) {
     for (let i = this.cautions.length - 1; i >= 0; i--) {
       const c = this.cautions[i]
@@ -64,7 +72,6 @@ export default class WorldTasks {
           c.label
         )
       ) {
-        print('heat removed for', c.suspect, c.type, c.reason)
         this.cautions.splice(i, 1)
       }
     }
@@ -103,7 +110,6 @@ export default class WorldTasks {
         c.suspect == sus &&
         (c.label == 'arrest' || c.label == 'questioning')
       ) {
-        print('IS WANTED TRUE!!!', sus, c.suspect)
         return true
       }
     }
@@ -122,8 +128,6 @@ export default class WorldTasks {
     //explain why you need this testjpf
     //no nested ifs
     //cna this be done somewhere else?
-    //testjpfm something like:
-    // const reason = "theft"
     const append: Caution = {
       npc: n.labelname,
       time: 15,
@@ -137,9 +141,6 @@ export default class WorldTasks {
     if (c == 'snitch') {
       append.authority = 'security'
       append.type = 'clan'
-      //testjpf no way this ever worked?!?!?
-      //c.suspect cant be reached?? or defined?
-      //changed to just "s"
       if (s == 'player') {
         this.questmethods.pq.increase_alert_level()
       }
@@ -166,7 +167,7 @@ export default class WorldTasks {
       append.time = 10
       append.reason = 'suspicious'
     }
-
+    /** 
     print(
       append.npc,
       'know that',
@@ -178,7 +179,7 @@ export default class WorldTasks {
       'for time:',
       append.time
     )
-
+*/
     this.append_caution(append)
   }
   append_caution(caution: Caution) {
@@ -194,12 +195,12 @@ export default class WorldTasks {
       const quest = quests[questKey]
       if (quest.passed == false) {
         let quest_passed = true
-        // print('questKey:', questKey)
+        print('questKey:', questKey)
         let condition: keyof typeof quest.conditions
         for (condition in quest.conditions) {
-          //   print('condition:', condition)
+          print('condition:', condition)
           const goal = quest.conditions[condition]
-          //    print('goal label', goal.label, goal.passed, goal.interval, interval)
+          print('goal label:', goal.label, goal.passed, goal.status)
           if (goal.passed == false) {
             for (let i: number = goal.func.length; i-- !== 0; ) {
               if (
@@ -208,7 +209,6 @@ export default class WorldTasks {
               ) {
                 print('goal PASSED: GOAL', goal.label)
                 goal.passed = true
-                //         print('quest Condition passed::', goal.label)
                 break
               }
             }
@@ -217,7 +217,7 @@ export default class WorldTasks {
         }
         if (quest_passed == true) {
           quest.passed = true
-          print(questKey, 'quest COMPLETE!!!')
+          //   print(questKey, 'quest COMPLETE!!!')
         }
       }
     }

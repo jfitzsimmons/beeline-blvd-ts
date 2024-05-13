@@ -1,0 +1,44 @@
+label 3gang1
+n: But, I have tough friends.
+jump quickclose
+
+label 3gang2
+n: I dont fuck around.
+jump quickclose
+
+label 3gang3
+n: ...
+jump quickclose
+
+label generic3gang
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump 3gang1
+if dice > 50
+    jump 3gang2
+if dice > 25
+    jump 3gang3
+n: You talk too much.
+jump quickclose
+
+label clanrandom1
+if npc.s.perception > 6
+    jump imnosnitch
+if npc.b.good > 0.4
+    jump abovenegativity
+if npc.b.aggressive > 0.4
+    jump youdontknowme
+jump generic3gang
+
+label imnosnitch
+n: Nice try, you wont get anything out of me.
+jump quickclose
+
+label abovenegativity
+n: You look like a judgmental prick.
+jump quickclose
+
+label youdontknow
+n: You don't know me.  Better stop pretending like you do.
+jump quickclose

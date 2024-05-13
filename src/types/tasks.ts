@@ -1,11 +1,46 @@
 import { Npc, Npcs, Skills } from './state'
 
+type NoOptionals<T> = {
+  [K in keyof T]-?: T[K]
+}
+export type ObjectivesGroup = NoOptionals<ObjectivesGroupOpt>
+export interface ObjectivesGroupOpt {
+  [key: string]: {
+    status: string
+    quest: { [key: string]: Objectives }
+  }
+}
+export interface Objectives extends Record<string, Objective | string | any> {
+  status: string
+  objective: { [key: string | number]: Objective }
+}
+export interface Objective {
+  status: string
+  label: string
+  side_Objectives?: Objective
+}
+/** 
+export interface Objective {
+  status: string
+  data: ObjectiveConditions
+  side_Objectives?: ObjectiveConditions
+}
+
+export interface ObjectiveConditions {
+  [key: string | number]: ObjectiveCondition
+}
+export interface ObjectiveCondition {
+  label: string
+  status: string
+}
+*/
 export interface Quests {
   [key: string]: Quest
 }
 
 export interface Quest {
   passed: boolean
+  status: 'active' | 'inactive'
   conditions: QuestConditions
   side_quests?: QuestConditions
 }
@@ -14,9 +49,10 @@ export interface QuestConditions {
   [key: string | number]: QuestCondition
 }
 export interface QuestCondition {
-  label?: string
+  label: string
   solution?: string
   passed: boolean
+  status: 'inactive' | 'active' | 'complete'
   interval: string[]
   func: { (args: [() => any, any]): boolean }[]
   args: [() => any, any][]
@@ -40,6 +76,7 @@ export interface QuestMethods {
     | Skills
     | number
     | void
+    | string
 }
 
 export interface Caution {
