@@ -34,7 +34,7 @@ function calculate_heat(room: string) {
 
   heat +=
     (player.alert_level +
-      player.clearance +
+      rooms.all[room].clearance * 5 +
       tasks.number_of_cautions('player')) *
     2
 
@@ -43,6 +43,7 @@ function calculate_heat(room: string) {
     3
   cold +=
     (player.hp +
+      player.clearance +
       tasks.cautions.length +
       player.state.skills.stealth +
       player.state.skills.charisma) *
