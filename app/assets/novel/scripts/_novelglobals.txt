@@ -27,6 +27,7 @@ p.b.aggressive = _G.game.world.player.state.binaries.passive_aggressive
 alert = _G.game.world.player.alert_level
 hp = _G.game.world.player.hp
 reason = _G.game.world.novel.reason
+caution = _G.game.world.novel.caution.label
 convos =  _G.game.world.novel.npc.turns_since_convo
 activeq = _G.game.world.novel.active_quest
 
@@ -35,6 +36,11 @@ n.scale = 3
 n.y = 0.5
 
 p.name = "Player"
+
+label start
+if caution == "questioning"
+    jump questioningstart
+jump defaultstart
 
 label quickclose
 n: bye {npc.love}

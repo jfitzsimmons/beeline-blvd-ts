@@ -25,7 +25,7 @@ n: Its the global variables stupid!!!
   turns = turns + 1
   jump onboarding
 
-label start
+label defaultstart
 show n
 n: {npclogskills}
 n: {npclogbinaries}

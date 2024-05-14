@@ -115,6 +115,7 @@ export function on_message(
 
     novel.reason = 'none'
     novel.item = 'none'
+    novel.reset_caution()
     //calculate_heat(this.roomname)
 
     // if (message.novel == true) {

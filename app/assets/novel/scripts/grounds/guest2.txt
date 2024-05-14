@@ -1,4 +1,4 @@
-label start
+label defaultstart
 show n
 n: the v::reason {reason}
 if reason == "quest"

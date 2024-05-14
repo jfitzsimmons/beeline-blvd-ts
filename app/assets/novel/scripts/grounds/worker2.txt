@@ -1,4 +1,4 @@
-label start
+label defaultstart
 show n
 n: It's so boring waiting to get through customs.
 if reason == "concern"
