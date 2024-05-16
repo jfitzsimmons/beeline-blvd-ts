@@ -3,7 +3,7 @@ import { Caution, QuestMethods } from '../../types/tasks'
 
 const nullCaution: Caution = {
   type: '',
-  label: '',
+  label: 'none',
   time: 0,
   authority: '',
   suspect: '',
@@ -75,11 +75,11 @@ export default class WorldNovel {
   reset_caution() {
     this._caution = { ...nullCaution }
   }
-  public get caution(): Caution | null {
+  public get caution(): Caution {
     return this._caution
   }
   public set caution(c: Caution) {
-    this._caution = c
+    this._caution = { ...c }
   }
   public get item() {
     return this._item

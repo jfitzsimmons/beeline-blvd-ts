@@ -38,7 +38,7 @@ function love_boost(n: string): Consequence {
     Math.abs(player.state.binaries.evil_good) * 10 - npc.skills.speed
   )
   const advantage =
-    player.state.skills.charm +
+    player.state.skills.charisma +
       player.state.skills.intelligence +
       npc.binaries.anti_authority * 10 >
     npc.skills.intelligence + npc.skills.perception + player.state.skills.speed

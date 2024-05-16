@@ -1,12 +1,6 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-import {
-  Npc,
-  // Skills,
-} from '../../types/state'
+import { Npc } from '../../types/state'
 import { AllQuestsMethods, WorldQuests, Caution } from '../../types/tasks'
-//import { shuffle } from '../utils/utils'
 import { tutorialQuests } from './inits/quests/tutorialstate'
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
 
 function build_quests(questmethods: AllQuestsMethods): WorldQuests {
   return {
@@ -18,7 +12,7 @@ export default class WorldTasks {
   private _questmethods: AllQuestsMethods
   //private consolations: Array<(b: Skills, s: Skills) => Consolation>
   private _quests: WorldQuests
-  //spawn will be updated when checkpoints are passed
+  //spawn will be updated when checkpoints are passed.
   private _spawn: string
   medicQueue: string[]
 
@@ -167,7 +161,7 @@ export default class WorldTasks {
       append.time = 10
       append.reason = 'suspicious'
     }
-    /** 
+
     print(
       append.npc,
       'know that',
@@ -179,7 +173,7 @@ export default class WorldTasks {
       'for time:',
       append.time
     )
-*/
+
     this.append_caution(append)
   }
   append_caution(caution: Caution) {
@@ -195,19 +189,19 @@ export default class WorldTasks {
       const quest = quests[questKey]
       if (quest.passed == false) {
         let quest_passed = true
-        print('questKey:', questKey)
+        //print('questKey:', questKey)
         let condition: keyof typeof quest.conditions
         for (condition in quest.conditions) {
-          print('condition:', condition)
+          //print('condition:', condition)
           const goal = quest.conditions[condition]
-          print('goal label:', goal.label, goal.passed, goal.status)
+          //print('goal label:', goal.label, goal.passed, goal.status)
           if (goal.passed == false) {
             for (let i: number = goal.func.length; i-- !== 0; ) {
               if (
                 goal.interval[i] == interval &&
                 goal.func[i]!(goal.args[i]) == true
               ) {
-                print('goal PASSED: GOAL', goal.label)
+                //print('goal PASSED: GOAL', goal.label)
                 goal.passed = true
                 break
               }

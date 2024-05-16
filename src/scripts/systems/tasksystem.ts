@@ -1,5 +1,5 @@
 import { Npc, PlayerState } from '../../types/state'
-import { Caution, Effect, Consequence, Confront } from '../../types/tasks'
+import { Caution, Effect, Consequence } from '../../types/tasks'
 import { arraymove, shuffle } from '../utils/utils'
 import {
   fx,
@@ -92,20 +92,23 @@ function focused_acts(c: Caution) {
             npc: c.npc,
           }
         )
-      // print(c.npc, 'tending to', c.suspect, 'in the field')
+      print(c.npc, 'tending to', c.suspect, 'in the field')
     }
   }
 }
 
 //Passive reactions to cautions
 function player_snitch_check(b: boolean, w: string, reason: string): string {
+  ///testjpf still nrrd to figure out alert_level!!!
+  //do alert_level search
   let caution_state = 'questioning'
-  if (player.alert_level > 1) caution_state = 'arrest'
+  if (player.alert_level > 3) caution_state = 'arrest'
   player.alert_level =
     b == false ? player.alert_level + 1 : player.alert_level + 2
-  if (player.alert_level > 2 && tasks.plan_on_snitching(w, 'player') == false) {
+  if (player.alert_level > 5 && tasks.plan_on_snitching(w, 'player') == false) {
     tasks.caution_builder(npcs.all[w], 'snitch', 'player', reason)
   }
+  print('plauer snith chk :: alertlvl::', player.alert_level)
   return caution_state
 }
 function npc_snitch_check(w: string, s: string) {
@@ -124,7 +127,7 @@ function adjust_medic_queue(s: string) {
     if (tasks.medicQueue.indexOf(s) > 1)
       arraymove(tasks.medicQueue, tasks.medicQueue.indexOf(s), 0)
   } else {
-    // print('cautions caused s:', s, 'to be added to medicQueue')
+    print('cautions caused s:', s, 'to be added to medicQueue')
     tasks.medicQueue.push(s)
   }
 }
@@ -140,13 +143,12 @@ function merits_demerits(c: Caution, w: string) {
   if (effect.fx.type == 'attitudes') {
     effect.fx.stat = npcs.all[c.suspect].clan
   }
-  // print(c.npc, 'found:', w, 'because merits.', w, 'has effect:', fx_labels[1])
+  print(c.npc, 'found:', w, 'because merits.', w, 'has effect:', fx_labels[1])
   npcs.all[w].effects.push(effect)
   add_effects_bonus(npcs.all[w], effect)
 }
 function reckless_consequence(c: Caution, _w: string) {
-  // print('RC::: ', c.npc, ' is gossiping with', w)
-  //const watcher = npcs.all[w]
+  print('RC::: ', c.npc, ' is gossiping with', _w)
   const checks: Array<(n: string, _w: string) => Consequence> =
     c.reason == 'theft'
       ? shuffle(reck_theft_checks)
@@ -155,7 +157,7 @@ function reckless_consequence(c: Caution, _w: string) {
   build_consequence(c, checks)
 }
 function snitch_to_security(c: Caution, watcher: string) {
-  // print(c.npc, 'SNITCHED on:', c.suspect, 'TO:', watcher)
+  print(c.npc, 'SNITCHED on:', c.suspect, 'TO:', watcher)
   const bulletin = tasks.already_hunting(watcher, c.suspect)
   const caution_state =
     c.suspect == 'player'
@@ -244,8 +246,8 @@ export function impressed_checks(s: string, w: string) {
 }
 
 //Caution Categories
-function address_confrontations(cs: Caution[]) {
-  let confront: Confront | null = null
+function address_confrontations(cs: Caution[]): Caution | null {
+  //let confront: Confront | null = null
 
   for (let i = cs.length - 1; i >= 0; i--) {
     const c = cs[i]
@@ -260,19 +262,12 @@ function address_confrontations(cs: Caution[]) {
     ) {
       c.suspect !== 'player' && npc_confrontation(suspect.labelname, c)
       c.time = 0
-      confront =
-        c.suspect == 'player'
-          ? {
-              npc: c.npc,
-              station: '',
-              state: c.label,
-              reason: c.reason,
-            }
-          : null
+      // confront =
+      return c.suspect == 'player' ? c : null
     }
-    if (confront != null) break
+    // if (confront != null) break
   }
-  return confront
+  return null
 }
 function address_conversations(cs: Caution[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
@@ -318,7 +313,7 @@ export function address_cautions() {
     { medical: [], conversational: [] }
   )
 
-  const confront: Confront | null = address_confrontations(confrontational)
+  const confront: Caution | null = address_confrontations(confrontational)
 
   address_busy_acts(medical)
   address_conversations(conversational)

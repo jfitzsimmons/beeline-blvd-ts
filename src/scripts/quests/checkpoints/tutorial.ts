@@ -6,12 +6,12 @@ import { shuffle, surrounding_room_matrix } from '../../utils/utils'
 
 const { rooms, npcs, tasks, player, novel, info } = globalThis.game.world
 function medic_assist_checks() {
-  print('medic assist check:: nove.reason:: ', novel.reason)
+  //print('medic assist check:: nove.reason:: ', novel.reason)
   const quest = tasks.quests.tutorial.medic_assist.conditions[0]
   if (quest.passed == false) {
     tasks.remove_heat(rooms.all.grounds.stations.worker1)
     //tasks.remove_quest_cautions(rooms.all.grounds.stations.worker1)
-    print('11111')
+    //print('11111')
     //testjpf probably need new caution
     // doctors still need to ignore victim
     //activate bonus quests / side quests

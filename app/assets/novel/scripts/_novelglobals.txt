@@ -38,8 +38,13 @@ n.y = 0.5
 p.name = "Player"
 
 label start
+n: reason is {reason}  
+n: caution: {caution}
 if caution == "questioning"
-    jump questioningstart
+  jump questioningstart
+if caution == "arrest"
+  jump arreststart
+n: default start
 jump defaultstart
 
 label quickclose
