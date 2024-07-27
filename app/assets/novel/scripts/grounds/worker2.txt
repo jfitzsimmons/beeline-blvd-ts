@@ -1,6 +1,4 @@
-label start
-show n
-n: It's so boring waiting to get through customs.
+label defaultstart
 if reason == "concern"
     jump queststart
 if reason == "concern2"

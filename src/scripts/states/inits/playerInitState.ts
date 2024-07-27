@@ -15,7 +15,7 @@ export const PlayerInitState: PlayerState = {
   ap_max: 18,
   ap: 18,
   turns: 0,
-  clearance: 1,
+  clearance: 0,
   checkpoint: 'tutorialA',
   binaries: {
     evil_good: 0,

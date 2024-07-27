@@ -1,6 +1,0 @@
-npc.clan = _G.game.world.novel.npc.clan
-npc.speed = _G.game.world.novel.npc.skills.speed
-npc.love = _G.game.world.novel.npc.love
-n.name = _G.game.world.novel.npc.labelname
-n.scale = 3
-n.y = 0.5

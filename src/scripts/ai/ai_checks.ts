@@ -141,6 +141,25 @@ export function seen_check(s: string, w: string) {
     ? { confront: false, type: 'seen' }
     : { confront: false, type: 'neutral' }
 }
+export function clearance_checks(room = player.currentroom) {
+  if (player.clearance >= rooms.all[room].clearance) return
+  const stations = rooms.all[room].stations
+  let sKey: keyof typeof stations
+  for (sKey in stations) {
+    const watcher = stations[sKey]
+    if (watcher !== '' && npcs.all[watcher].clan == 'security') {
+      //testjpf needs a diceroll and create / return confrontation
+      if (confrontation_check('player', watcher) == true) {
+        tasks.caution_builder(
+          npcs.all[watcher],
+          'questioning',
+          'player',
+          'clearance'
+        )
+      }
+    }
+  }
+}
 export function confrontation_check(pname: string, nname: string) {
   const s = pname == 'player' ? player.state : npcs.all[pname]
   const w = npcs.all[nname]

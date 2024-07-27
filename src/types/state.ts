@@ -76,6 +76,7 @@ export interface Rooms {
 interface Room {
   matrix: { x: number; y: number }
   roomname: string
+  clearance: number
   stations: { [key: string]: string }
   actors: Actors
   props?: string[]

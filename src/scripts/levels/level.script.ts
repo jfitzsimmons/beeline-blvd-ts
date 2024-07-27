@@ -1,4 +1,4 @@
-import { Confront } from '../../types/tasks'
+import { Caution } from '../../types/tasks'
 import { address_cautions } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
 import { ai_turn, place_npcs } from '../ai/ai_main'
@@ -11,6 +11,10 @@ export function init() {
   //place_npcs()
 }
 function game_turn(room: string) {
+  novel.priority = false
+  novel.reason = 'none'
+  novel.item = 'none'
+  novel.reset_caution()
   ai_turn() // abstract to world controller?
   quest_checker('turn')
   tasks.address_quests('turn', player.checkpoint)
@@ -34,7 +38,7 @@ function calculate_heat(room: string) {
 
   heat +=
     (player.alert_level +
-      player.clearance +
+      rooms.all[room].clearance * 5 +
       tasks.number_of_cautions('player')) *
     2
 
@@ -43,6 +47,7 @@ function calculate_heat(room: string) {
     3
   cold +=
     (player.hp +
+      player.clearance +
       tasks.cautions.length +
       player.state.skills.stealth +
       player.state.skills.charisma) *
@@ -59,10 +64,15 @@ function update_hud() {
   //msg.post("hud#map", "acquire_input_focus")
 }
 
-function confrontation_scene(c: Confront) {
+function confrontation_scene(c: Caution) {
   npcs.all[c.npc].convos = npcs.all[c.npc].convos + 1
   novel.npc = npcs.all[c.npc]
+
+  //testjpf this is for player
+  //is not using script builder
   novel.reason = c.reason
+  novel.caution = { ...c }
+  novel.priority = true
   msg.post('proxies:/controller#novelcontroller', 'show_scene')
 }
 interface props {
@@ -100,7 +110,7 @@ export function on_message(
         calculate_heat('grounds')
       }
 
-      const confrontation: Confront | null = address_cautions()
+      const confrontation: Caution | null = address_cautions()
       //grounds:/shared/scripts#level
       msg.post(this.roomname + ':/level#' + this.roomname, 'room_load')
       //position player on screen
@@ -111,9 +121,10 @@ export function on_message(
     tasks.address_quests('interact', player.checkpoint)
     quest_checker('interact')
     print('exitgui reason::', novel.reason)
-
+    novel.priority = false
     novel.reason = 'none'
     novel.item = 'none'
+    novel.reset_caution()
     //calculate_heat(this.roomname)
 
     // if (message.novel == true) {
