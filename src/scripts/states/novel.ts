@@ -17,6 +17,7 @@ export default class WorldNovel {
   private _caution: Caution
   private _item: string
   private _active_quest: boolean
+  private _priority: boolean
   private _npcsWithQuest: string[]
   private _scripts: string[]
   //private _alertChange: number
@@ -28,6 +29,7 @@ export default class WorldNovel {
     // this.background = ''
     //  this.sprites = {}
     this._active_quest = false
+    this._priority = false
     this._reason = 'none'
     this._caution = nullCaution
     this._item = 'none'
@@ -86,6 +88,12 @@ export default class WorldNovel {
   }
   public set item(i: string) {
     this._item = i
+  }
+  public get priority() {
+    return this._priority
+  }
+  public set priority(p: boolean) {
+    this._priority = p
   }
   public get active_quest() {
     return this._active_quest

@@ -1,3 +1,9 @@
+label confrontstart
+if caution == "questioning"
+  jump questioningstart
+if caution == "arrest"
+  jump arreststart
+
 label questioningstart
 n: What are you doing in here?
 > Promise

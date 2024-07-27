@@ -11,6 +11,7 @@ export function init() {
   //place_npcs()
 }
 function game_turn(room: string) {
+  novel.priority = false
   novel.reason = 'none'
   novel.item = 'none'
   novel.reset_caution()
@@ -71,6 +72,7 @@ function confrontation_scene(c: Caution) {
   //is not using script builder
   novel.reason = c.reason
   novel.caution = { ...c }
+  novel.priority = true
   msg.post('proxies:/controller#novelcontroller', 'show_scene')
 }
 interface props {
@@ -119,7 +121,7 @@ export function on_message(
     tasks.address_quests('interact', player.checkpoint)
     quest_checker('interact')
     print('exitgui reason::', novel.reason)
-
+    novel.priority = false
     novel.reason = 'none'
     novel.item = 'none'
     novel.reset_caution()

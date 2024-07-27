@@ -1,3 +1,9 @@
+label confrontstart
+if caution == "questioning"
+  jump questioningstart
+if caution == "arrest"
+  jump arreststart
+
 label arreststart
 n: YOU ARE UNDER ARREST for {reason}!!!
 npc.love = npc.love -1 

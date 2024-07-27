@@ -254,24 +254,16 @@ function worker1Scripts() {
   return null
 }
 function worker2Scripts() {
-  if (novel.npc.turns_since_convo > 0 && novel.reason == 'concern') {
-    return 'tutorial/concernLuggage'
-  }
-
-  if (
-    novel.reason == 'offender' ||
-    (novel.reason == 'concern' &&
-      novel.npc.turns_since_convo < 3 &&
-      novel.npc.love < -4)
-  )
-    return 'tutorial/offenderLuggage'
-
   //testjpf maybe have another fedUpLuggage that is majority alerts?
   //also, just add a lot more love chcks to the concern and offender
   //more alert checks as well
   //by checks i mean choices with checks
 
-  if (novel.reason == 'concern') return 'tutorial/concernLuggage'
+  if (novel.reason == 'concern') {
+    novel.priority = true
+    novel.reason = 'quest'
+    return 'tutorial/concernLuggage'
+  }
 
   return null
 }
