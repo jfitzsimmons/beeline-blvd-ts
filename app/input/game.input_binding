@@ -42,3 +42,11 @@ mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "touch"
 }
+key_trigger {
+  input: KEY_LSHIFT
+  action: "leftflip"
+}
+key_trigger {
+  input: KEY_RSHIFT
+  action: "rightflip"
+}
