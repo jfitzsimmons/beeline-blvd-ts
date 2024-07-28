@@ -1,0 +1,44 @@
+label defaultstart
+n: YOU ARE UNDER ARREST for {reason}!!!
+npc.love = npc.love -1 
+> Run
+  if npc.love > -2 and npc.b.aggressive < 0.8 and math.random() < .5
+    n: need a function that player has to behave for some turns
+    jump quickclose
+  if npc.b.lawless_lawful < -0.6
+    n: PUNCH
+    hp = hp - 1
+    jump quickclose
+  if npc.b.authority < -0.6
+    n: rob function???
+    jump quickclose
+  n: your word is no good.
+  n: do something like slander??? worse?
+  jump quickclose
+> Submit
+  n: You're under arrest! 
+  reason = "arrested" 
+  jump quickclose
+> Fight
+  if p.s.charisma > 6 and npc.b.aggressive < -0.5
+    npc.love = npc.love + 2
+    n: get out of here
+    n: remove alert??
+    jump quickclose
+  if p.s.charisma > 5 and npc.s.constitution < 4
+    npc.love = npc.love - 1
+    n: I'm too tired to deal with this
+    n: remove caution but alert stays??
+    jump quickclose
+  if p.s.charisma > 4 and npc.s.wisdom > 8
+    n: This is disappointing
+    n: lose npc.love
+    npc.love = npc.love - 2
+    jump quickclose
+  n: You're under arrest!  
+  reason = "arrested"
+  jump quickclose
+> Bribe
+  n: need Bribe logic
+  jump quickclose
+

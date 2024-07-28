@@ -38,6 +38,18 @@ key_trigger {
   input: KEY_I
   action: "info_gui"
 }
+key_trigger {
+  input: KEY_LSHIFT
+  action: "leftflip"
+}
+key_trigger {
+  input: KEY_RSHIFT
+  action: "rightflip"
+}
+key_trigger {
+  input: KEY_P
+  action: "pinball"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "touch"

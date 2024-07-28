@@ -25,7 +25,7 @@ n: Is there anything I can help you with?
   turns = turns + 1
   jump onboarding
 
-label start
+label defaultstart
 show n
 n: {npclogskills}
 n: {npclogbinaries}

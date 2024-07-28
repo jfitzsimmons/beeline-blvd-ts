@@ -1,5 +1,5 @@
 import { shuffle, surrounding_room_matrix } from '../utils/utils'
-import { aid_check } from './ai_checks'
+import { aid_check, clearance_checks } from './ai_checks'
 import { Direction } from '../../types/ai'
 import { Occupants } from '../../types/state'
 import { remove_effects } from '../systems/effectsystem'
@@ -54,8 +54,7 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
   })
 
   let placed = false
-  //const room = ''
-  //const misses = {}
+
   const current = npcs.all[npc].matrix
 
   //loop through priority room_list
@@ -307,6 +306,7 @@ function release_occupants(d: Direction) {
 }
 
 function ai_actions(direction: Direction) {
+  clearance_checks()
   aid_check(injured_npcs)
   release_occupants(direction)
   reception_checks()
