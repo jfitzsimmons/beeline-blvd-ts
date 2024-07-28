@@ -31,3 +31,7 @@ default_texture_min_filter = nearest
 default_texture_mag_filter = nearest
 texture_profiles = /builtins/graphics/default.texture_profiles
 
+[physics]
+gravity_y = -800.0
+scale = 0.02
+

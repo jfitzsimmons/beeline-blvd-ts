@@ -71,7 +71,7 @@ embedded_components {
   "blend_mode: BLEND_MODE_ALPHA\n"
   "textures {\n"
   "  sampler: \"texture_sampler\"\n"
-  "  texture: \"/main/actors/pinball/pinball.atlas\"\n"
+  "  texture: \"/main/levels/pinball/pinball.atlas\"\n"
   "}\n"
   ""
   position {
