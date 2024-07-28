@@ -3,8 +3,8 @@ instances {
   id: "ball"
   prototype: "/main/levels/pinball/ball.go"
   position {
-    x: 203.0
-    y: 592.0
+    x: 913.0
+    y: 143.0
     z: 1.0
   }
   rotation {
@@ -27,9 +27,9 @@ embedded_instances {
   "  type: \"collisionobject\"\n"
   "  data: \"collision_shape: \\\"\\\"\\n"
   "type: COLLISION_OBJECT_TYPE_DYNAMIC\\n"
-  "mass: 100.0\\n"
-  "friction: 1.0\\n"
-  "restitution: 1.0\\n"
+  "mass: 90.0\\n"
+  "friction: 0.4\\n"
+  "restitution: 0.3\\n"
   "group: \\\"flipper\\\"\\n"
   "mask: \\\"ball\\\"\\n"
   "embedded_collision_shape {\\n"
@@ -176,8 +176,8 @@ embedded_instances {
   "  data: \"collision_shape: \\\"\\\"\\n"
   "type: COLLISION_OBJECT_TYPE_STATIC\\n"
   "mass: 0.0\\n"
-  "friction: 0.1\\n"
-  "restitution: 0.5\\n"
+  "friction: 0.2\\n"
+  "restitution: 0.1\\n"
   "group: \\\"default\\\"\\n"
   "mask: \\\"default\\\"\\n"
   "embedded_collision_shape {\\n"
@@ -323,7 +323,7 @@ embedded_instances {
   "type: COLLISION_OBJECT_TYPE_STATIC\\n"
   "mass: 0.0\\n"
   "friction: 0.1\\n"
-  "restitution: 0.5\\n"
+  "restitution: 0.4\\n"
   "group: \\\"wall\\\"\\n"
   "mask: \\\"ball\\\"\\n"
   "embedded_collision_shape {\\n"
@@ -450,9 +450,9 @@ embedded_instances {
   "  type: \"collisionobject\"\n"
   "  data: \"collision_shape: \\\"\\\"\\n"
   "type: COLLISION_OBJECT_TYPE_DYNAMIC\\n"
-  "mass: 100.0\\n"
-  "friction: 0.1\\n"
-  "restitution: 0.1\\n"
+  "mass: 90.0\\n"
+  "friction: 0.4\\n"
+  "restitution: 0.3\\n"
   "group: \\\"flipper\\\"\\n"
   "mask: \\\"ball\\\"\\n"
   "embedded_collision_shape {\\n"
@@ -599,8 +599,8 @@ embedded_instances {
   "  data: \"collision_shape: \\\"\\\"\\n"
   "type: COLLISION_OBJECT_TYPE_STATIC\\n"
   "mass: 0.0\\n"
-  "friction: 0.1\\n"
-  "restitution: 0.5\\n"
+  "friction: 0.2\\n"
+  "restitution: 0.1\\n"
   "group: \\\"default\\\"\\n"
   "mask: \\\"default\\\"\\n"
   "embedded_collision_shape {\\n"
@@ -666,7 +666,7 @@ embedded_instances {
   ""
   position {
     x: 913.0
-    y: 66.0
+    y: 64.0
     z: 1.0
   }
   rotation {
@@ -682,7 +682,7 @@ embedded_instances {
   }
 }
 embedded_instances {
-  id: "shapes"
+  id: "bumpers"
   data: "embedded_components {\n"
   "  id: \"collisionobject\"\n"
   "  type: \"collisionobject\"\n"
@@ -690,7 +690,7 @@ embedded_instances {
   "type: COLLISION_OBJECT_TYPE_STATIC\\n"
   "mass: 0.0\\n"
   "friction: 0.1\\n"
-  "restitution: 0.5\\n"
+  "restitution: 0.9\\n"
   "group: \\\"wall\\\"\\n"
   "mask: \\\"ball\\\"\\n"
   "embedded_collision_shape {\\n"
@@ -752,6 +752,52 @@ embedded_instances {
   "    w: 1.0\n"
   "  }\n"
   "}\n"
+  "embedded_components {\n"
+  "  id: \"lbump1\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"bumper1ani\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "blend_mode: BLEND_MODE_ALPHA\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/main/levels/pinball/pinball.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 417.0\n"
+  "    y: 105.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"rbump1\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"bumper1anir\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "blend_mode: BLEND_MODE_ALPHA\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/main/levels/pinball/pinball.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 983.0\n"
+  "    y: 105.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
   ""
   position {
     x: 0.0
@@ -778,8 +824,8 @@ embedded_instances {
   "  data: \"collision_shape: \\\"\\\"\\n"
   "type: COLLISION_OBJECT_TYPE_STATIC\\n"
   "mass: 0.0\\n"
-  "friction: 0.1\\n"
-  "restitution: 0.5\\n"
+  "friction: 0.0\\n"
+  "restitution: 0.0\\n"
   "group: \\\"respawn\\\"\\n"
   "mask: \\\"ball\\\"\\n"
   "embedded_collision_shape {\\n"
@@ -846,9 +892,9 @@ embedded_instances {
   "  type: \"collisionobject\"\n"
   "  data: \"collision_shape: \\\"\\\"\\n"
   "type: COLLISION_OBJECT_TYPE_DYNAMIC\\n"
-  "mass: 100.0\\n"
-  "friction: 0.1\\n"
-  "restitution: 0.1\\n"
+  "mass: 90.0\\n"
+  "friction: 0.4\\n"
+  "restitution: 0.3\\n"
   "group: \\\"flipper\\\"\\n"
   "mask: \\\"ball\\\"\\n"
   "embedded_collision_shape {\\n"
@@ -972,7 +1018,7 @@ embedded_instances {
   ""
   position {
     x: 913.0
-    y: 66.0
+    y: 64.0
     z: 1.0
   }
   rotation {
@@ -995,8 +1041,8 @@ embedded_instances {
   "  data: \"collision_shape: \\\"\\\"\\n"
   "type: COLLISION_OBJECT_TYPE_STATIC\\n"
   "mass: 0.0\\n"
-  "friction: 0.1\\n"
-  "restitution: 0.5\\n"
+  "friction: 0.2\\n"
+  "restitution: 0.1\\n"
   "group: \\\"default\\\"\\n"
   "mask: \\\"default\\\"\\n"
   "embedded_collision_shape {\\n"
@@ -1084,9 +1130,9 @@ embedded_instances {
   "  type: \"collisionobject\"\n"
   "  data: \"collision_shape: \\\"\\\"\\n"
   "type: COLLISION_OBJECT_TYPE_DYNAMIC\\n"
-  "mass: 100.0\\n"
-  "friction: 1.0\\n"
-  "restitution: 1.0\\n"
+  "mass: 90.0\\n"
+  "friction: 0.4\\n"
+  "restitution: 0.3\\n"
   "group: \\\"flipper\\\"\\n"
   "mask: \\\"ball\\\"\\n"
   "embedded_collision_shape {\\n"
@@ -1233,8 +1279,8 @@ embedded_instances {
   "  data: \"collision_shape: \\\"\\\"\\n"
   "type: COLLISION_OBJECT_TYPE_STATIC\\n"
   "mass: 0.0\\n"
-  "friction: 0.1\\n"
-  "restitution: 0.5\\n"
+  "friction: 0.2\\n"
+  "restitution: 0.1\\n"
   "group: \\\"default\\\"\\n"
   "mask: \\\"default\\\"\\n"
   "embedded_collision_shape {\\n"

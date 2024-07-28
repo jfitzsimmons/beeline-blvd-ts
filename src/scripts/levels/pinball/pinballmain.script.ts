@@ -14,8 +14,8 @@ function create_flipper_joint(flipper: string, hinge: string) {
     enable_limit: true, // A flag to enable joint limits.
     //testjpf flip neg and psitive for left flip??
     reference_angle: math.rad(0), // The bodyB angle minus bodyA angle in the reference state (radians).
-    lower_angle: math.rad(-25), // The lower angle for the joint limit (radians).
-    upper_angle: math.rad(25), // The upper angle for the joint limit (radians).
+    lower_angle: math.rad(-30), // The lower angle for the joint limit (radians).
+    upper_angle: math.rad(30), // The upper angle for the joint limit (radians).
     max_motor_torque: null, // The maximum motor torque used to achieve the desired motor speed. Usually in N-m.
     motor_speed: null, // The desired motor speed. Usually in radians per second.
     enable_motor: false, // A flag to enable the joint motor.
@@ -54,12 +54,18 @@ export function init(this: props) {
 
 export function update(this: props, _dt: number) {
   if (this.left) {
-    apply_flipper_force('lflipper#collisionobject', vmath.vector3(150, 0, 0))
-    apply_flipper_force('llflipper#collisionobject', vmath.vector3(150, 0, 0))
+    apply_flipper_force('lflipper#collisionobject', vmath.vector3(300, 0, 0))
+    apply_flipper_force('llflipper#collisionobject', vmath.vector3(300, 0, 0))
+  } else {
+    apply_flipper_force('lflipper#collisionobject', vmath.vector3(-75, 0, 0))
+    apply_flipper_force('llflipper#collisionobject', vmath.vector3(-75, 0, 0))
   }
   if (this.right) {
-    apply_flipper_force('rflipper#collisionobject', vmath.vector3(-150, 0, 0))
-    apply_flipper_force('rrflipper#collisionobject', vmath.vector3(-150, 0, 0))
+    apply_flipper_force('rflipper#collisionobject', vmath.vector3(-300, 0, 0))
+    apply_flipper_force('rrflipper#collisionobject', vmath.vector3(-300, 0, 0))
+  } else {
+    apply_flipper_force('rflipper#collisionobject', vmath.vector3(75, 0, 0))
+    apply_flipper_force('rrflipper#collisionobject', vmath.vector3(75, 0, 0))
   }
 }
 
