@@ -50,6 +50,10 @@ key_trigger {
   input: KEY_P
   action: "pinball"
 }
+key_trigger {
+  input: KEY_ENTER
+  action: "actionbtn"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "touch"
