@@ -69,6 +69,7 @@ export function on_message(
   } else if (messageId == hash('faint')) {
     globalThis.game.world.clock = globalThis.game.world.clock + 6
     globalThis.game.world.player.ap = globalThis.game.world.player.ap_max - 6
+    globalThis.game.world.player.hp = globalThis.game.world.player.hp_max - 1
     msg.post('#', 'pick_room', message)
   } else if (messageId == hash('arrested')) {
     globalThis.game.world.clock = globalThis.game.world.clock + 6

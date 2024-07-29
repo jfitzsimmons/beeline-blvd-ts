@@ -73,6 +73,12 @@ export default class WorldPlayer {
   public get ap() {
     return this._state.ap
   }
+  public set hp_max(n: number) {
+    this._state.hp_max = n
+  }
+  public get hp_max() {
+    return this._state.hp_max
+  }
   public set ap_max(n: number) {
     this._state.ap_max = n
   }

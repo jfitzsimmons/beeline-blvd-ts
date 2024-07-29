@@ -20,6 +20,7 @@ export default class WorldTasks {
     this._questmethods = questmethods
     this._questmethods.tq = {
       num_of_injuries: this.num_of_injuries.bind(this),
+      percent_tutorial: this.percent_tutorial.bind(this),
     }
     this._cautions = []
     this._quests = build_quests(this.questmethods)
@@ -43,6 +44,17 @@ export default class WorldTasks {
   }
   public get questmethods() {
     return this._questmethods
+  }
+  percent_tutorial(): number {
+    let qKey: keyof typeof this.quests
+    let count = 0
+    let passed = 0
+    for (qKey in this.quests['tutorial']) {
+      if (this.quests['tutorial'][qKey].passed == true) passed = passed + 1
+      count = count + 1
+    }
+
+    return Math.round((passed / count) * 100)
   }
   num_of_injuries(): number {
     const injuries = this.cautions.filter((c) => c.label == 'injury').length
@@ -189,19 +201,19 @@ export default class WorldTasks {
       const quest = quests[questKey]
       if (quest.passed == false) {
         let quest_passed = true
-        //print('questKey:', questKey)
+        print('questKey:', questKey)
         let condition: keyof typeof quest.conditions
         for (condition in quest.conditions) {
-          //print('condition:', condition)
+          print('condition:', condition)
           const goal = quest.conditions[condition]
-          //print('goal label:', goal.label, goal.passed, goal.status)
+          print('goal label:', goal.label, goal.passed, goal.status)
           if (goal.passed == false) {
             for (let i: number = goal.func.length; i-- !== 0; ) {
               if (
                 goal.interval[i] == interval &&
                 goal.func[i]!(goal.args[i]) == true
               ) {
-                //print('goal PASSED: GOAL', goal.label)
+                print('goal PASSED: GOAL', goal.label)
                 goal.passed = true
                 break
               }
@@ -211,7 +223,7 @@ export default class WorldTasks {
         }
         if (quest_passed == true) {
           quest.passed = true
-          //   print(questKey, 'quest COMPLETE!!!')
+          print(questKey, 'quest COMPLETE!!!')
         }
       }
     }

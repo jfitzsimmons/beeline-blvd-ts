@@ -105,7 +105,7 @@ function consolation_outcomes(love: number) {
 }
 
 function novel_outcomes(reason: string) {
-  if (reason == 'faint') {
+  if (reason == 'faint' || player.hp <= 0) {
     const params = {
       enter_room: tasks.spawn,
     }

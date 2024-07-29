@@ -20,7 +20,6 @@ function medic_assist_checks() {
     //clean_up() calls whatever you need.
     //add to tutorialstate? probably?!!
   } else if (quest.passed == true && quest.status == 'inactive') {
-    print('22222')
     tasks.quests.tutorial.medic_assist.conditions[0].status = 'active'
     tasks.quests.tutorial.medic_assist.status = 'active'
     // tasks.quests.tutorial.medic_assist.conditions[1].status = 'active'

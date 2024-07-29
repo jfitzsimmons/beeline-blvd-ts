@@ -1,15 +1,16 @@
 import { AllQuestsMethods, Quests } from '../../../../types/tasks'
 import {
   any_has_value,
-  //convos_check,
+  max_love,
   does_equal,
+  greater_than,
   returnfalse,
   // greater_than,
 } from '../../../utils/quest'
 
 export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
   //const { nq, tq, nvq } = questmethods
-  const { nq, nvq } = questmethods
+  const { nq, nvq, tq } = questmethods
 
   return {
     medic_assist: {
@@ -65,21 +66,39 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           args: [[nq.return_doctors, 'vial02']],
         }, //gets keycard, goes to infirmary, gets meds
       },
+    },
+    pass_customs: {
+      passed: false,
+      status: 'active',
+      conditions: {
+        [0]: {
+          label: 'I need some ID!',
+          solution: '',
+          passed: false,
+          status: 'active',
+          interval: ['turn'],
+          func: [greater_than],
+          args: [[tq.percent_tutorial, 90]],
+        }, //have you talked to a doctor?
+      },
     }, // charmer
-    /** 
+
     npcs_like_you: {
       passed: false,
+      status: 'inactive',
       conditions: {
         [1]: {
           label: 'Make them like you!',
           solution: '',
           passed: false,
-          interval: 'interact',
+          status: 'inactive',
+          interval: ['interact'],
           func: [max_love],
           args: [[nq.return_order_all, 5]],
         }, //1st // labor003
       },
     }, // charmer
+    /** 
     maxout_skill: {
       passed: false,
       conditions: {

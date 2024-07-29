@@ -1,12 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-
 import { clamp } from '../utils/utils'
-
-//import { clamp } from '../utils/utils'
-
-//import { interactionsGroup } from '../../types/tasks'
 
 const { info, player } = globalThis.game.world
 
@@ -28,17 +20,8 @@ interface props {
   isNpc: boolean
 }
 
-export function init(this: props): void {
-  this.clones = []
-  set_interactions('interaction')
-  set_interactions('rumor')
-  set_stats()
-  set_ranks()
-}
-
 function absolute_binaries(): [string, number][] {
   const bins = player.state.binaries
-  print('vil_good ', bins.evil_good)
   const newbins: Array<[string, number]> = [
     [
       bins.evil_good < 0 ? 'evil' : 'good',
@@ -83,20 +66,13 @@ function absolute_binaries(): [string, number][] {
 }
 
 function set_stats() {
-  //testjpf
-  // get skills kvp and bin kvp and combine into one
-  // bins need to be multiplied by ten
-  //and negative ones need to be removed
-
   const stats = absolute_binaries()
-
   const spacing = 28
   let nodepos = gui.get_position(gui.get_node('stats'))
-  //let cKey: keyof typeof stats
-  //const screentype = screen == 'interaction' ? info.interactions : info.rumors
   nodepos.y = nodepos.y + spacing - 30
   nodepos.x = nodepos.x + spacing + 12
   let count = 1
+
   for (const s of stats) {
     print(s[0], '|', s[1])
     nodepos.y = nodepos.y - spacing
@@ -158,15 +134,11 @@ function set_ranks() {
 }
 
 function set_interactions(screen: string) {
-  //TESTJPF do same for rumors
-  //combine into 1 function
-  //const clones = []
   const spacing = 32
-  //testjpf do getnode
   let nodepos = gui.get_position(gui.get_node(screen))
-  //let cKey: keyof typeof info.interactions
   const screentype = screen == 'interaction' ? info.interactions : info.rumors
   nodepos.y = nodepos.y + spacing
+
   for (const bullet of screentype) {
     nodepos.y = nodepos.y - spacing
     nodepos = vmath.vector3(nodepos)
@@ -180,4 +152,12 @@ function set_interactions(screen: string) {
     gui.set_position(textClone, vmath.vector3(nodepos.x + 8, nodepos.y, 1))
     gui.set_enabled(textClone, true)
   }
+}
+
+export function init(this: props): void {
+  this.clones = []
+  set_interactions('interaction')
+  set_interactions('rumor')
+  set_stats()
+  set_ranks()
 }

@@ -12,6 +12,7 @@ export const PlayerInitState: PlayerState = {
   heat: 0,
   alert_level: 0,
   hp: 3,
+  hp_max: 3,
   ap_max: 18,
   ap: 18,
   turns: 0,

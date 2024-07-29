@@ -118,8 +118,8 @@ export function on_message(
       if (confrontation != null) confrontation_scene(confrontation)
     }
   } else if (messageId == hash('exit_gui')) {
-    tasks.address_quests('interact', player.checkpoint)
     quest_checker('interact')
+    tasks.address_quests('interact', player.checkpoint)
     print('exitgui reason::', novel.reason)
     novel.priority = false
     novel.reason = 'none'

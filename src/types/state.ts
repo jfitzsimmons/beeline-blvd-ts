@@ -52,6 +52,7 @@ export interface PlayerState {
   alert_level: number
   clearance: number
   hp: number
+  hp_max: number
   ap_max: number
   ap: number
   turns: number
