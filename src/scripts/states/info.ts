@@ -36,12 +36,68 @@ function build_objectives(quests: WorldQuests): ObjectivesGroup {
 }
 export default class WorldInfo {
   objectives: ObjectivesGroup
+  interactions: [
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string
+  ]
+  rumors: [
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string
+  ]
 
   constructor(quests: WorldQuests) {
+    this.interactions = [
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+    ]
+    this.rumors = [
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+    ]
     this.objectives = build_objectives(quests)
     this.rebuild_objectives = this.rebuild_objectives.bind(this)
   }
   rebuild_objectives(quests: WorldQuests) {
     this.objectives = build_objectives(quests)
+  }
+  add_interaction(i: string) {
+    this.interactions.pop()
+    this.interactions.unshift(i)
+  }
+  add_rumor(r: string) {
+    this.rumors.pop()
+    this.rumors.unshift(r)
   }
 }

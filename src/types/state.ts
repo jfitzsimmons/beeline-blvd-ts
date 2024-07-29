@@ -59,6 +59,8 @@ export interface PlayerState {
   binaries: Skills
   skills: Skills
   effects: string[]
+  factions: { [key: string]: number }
+  gangs: { [key: string]: number }
 }
 
 export interface RoomsState {

@@ -26,6 +26,8 @@ const binaries = {
   anti_authority: 0,
   un_educated: 0,
   poor_wealthy: 0,
+  mystical_logical: 0,
+  noir_color: 0,
 }
 const binarylookup: BinaryLookupTable = {
   ais: {
@@ -35,6 +37,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: -0.2,
     un_educated: 0,
     poor_wealthy: -0.1,
+    mystical_logical: 0,
+    noir_color: 0,
   },
   church: {
     evil_good: 0,
@@ -43,6 +47,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: 0.2,
     un_educated: -0.3,
     poor_wealthy: 0.1,
+    mystical_logical: -0.2,
+    noir_color: 0,
   },
   contractors: {
     evil_good: 0.1,
@@ -51,6 +57,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: 0.1,
     un_educated: 0.3,
     poor_wealthy: 0.2,
+    mystical_logical: 0.1,
+    noir_color: 0,
   },
   corps: {
     evil_good: -0.3,
@@ -59,6 +67,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: -0.1,
     un_educated: 0.2,
     poor_wealthy: 0.3,
+    mystical_logical: 0,
+    noir_color: 0,
   },
   gang1: {
     evil_good: -0.2,
@@ -67,6 +77,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: 0.1,
     un_educated: -0.2,
     poor_wealthy: -0.1,
+    mystical_logical: -0.1,
+    noir_color: 0,
   },
   gang2: {
     evil_good: -0.2,
@@ -75,6 +87,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: -0.1,
     un_educated: -0.2,
     poor_wealthy: 0.2,
+    mystical_logical: 0,
+    noir_color: 0.1,
   },
   gang3: {
     evil_good: -0.1,
@@ -83,6 +97,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: 0.2,
     un_educated: -0.1,
     poor_wealthy: 0,
+    mystical_logical: 0,
+    noir_color: 0,
   },
   gang4: {
     evil_good: 0.1,
@@ -91,6 +107,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: -0.2,
     un_educated: 0.2,
     poor_wealthy: -0.2,
+    mystical_logical: 0,
+    noir_color: 0,
   },
   labor: {
     evil_good: 0.2,
@@ -99,6 +117,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: -0.3,
     un_educated: -0.1,
     poor_wealthy: -0.3,
+    mystical_logical: 0,
+    noir_color: 0,
   },
   security: {
     evil_good: -0.1,
@@ -107,6 +127,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: 0.3,
     un_educated: -0.1,
     poor_wealthy: 0.1,
+    mystical_logical: 0,
+    noir_color: 0,
   },
   staff: {
     evil_good: 0.2,
@@ -115,6 +137,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: 0,
     un_educated: 0.1,
     poor_wealthy: -0.2,
+    mystical_logical: 0,
+    noir_color: 0,
   },
   visitors: {
     evil_good: 0,
@@ -123,6 +147,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: 0,
     un_educated: 0,
     poor_wealthy: 0,
+    mystical_logical: 0,
+    noir_color: 0,
   },
   sexworkers: {
     evil_good: 0,
@@ -131,6 +157,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: -0.1,
     un_educated: -0.1,
     poor_wealthy: -0.1,
+    mystical_logical: 0,
+    noir_color: -0.1,
   },
   doctors: {
     evil_good: 0,
@@ -139,6 +167,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: 0,
     un_educated: 0.1,
     poor_wealthy: 0.1,
+    mystical_logical: 0.2,
+    noir_color: 0,
   },
   maintenance: {
     evil_good: 0,
@@ -147,6 +177,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: 0.1,
     un_educated: -0.1,
     poor_wealthy: -0.1,
+    mystical_logical: 0.1,
+    noir_color: 0,
   },
   custodians: {
     evil_good: 0.1,
@@ -155,6 +187,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: -0.1,
     un_educated: -0.2,
     poor_wealthy: -0.2,
+    mystical_logical: -0.1,
+    noir_color: 0,
   },
   mailroom: {
     evil_good: -0.1,
@@ -163,6 +197,8 @@ const binarylookup: BinaryLookupTable = {
     anti_authority: 0.1,
     un_educated: 0,
     poor_wealthy: -0.1,
+    mystical_logical: 0,
+    noir_color: 0,
   },
 }
 
@@ -206,7 +242,7 @@ export default class WorldNpcs {
 }
 
 function adjust_binaries(value: number, clan: string, binary: string) {
-  let adj = binarylookup[clan][binary] + value + math.random(-4, 4) / 10
+  let adj = binarylookup[clan][binary] + value + math.random(-0.4, 0.4)
   if (adj > 1) {
     adj = 1
   } else if (adj < -1) {
@@ -219,7 +255,7 @@ function adjust_binaries(value: number, clan: string, binary: string) {
 function random_attributes(npcs: Npcs, order: string[]) {
   const ai_paths = ['inky', 'blinky', 'pinky', 'clyde']
   const startskills = [1, 2, 3, 5, 7, 7, 8, 8]
-  const startbins = [-1, -0.5, -0.1, 0.1, 0.5, 1]
+  const startbins = [-0.3, 0.3, -1, -0.5, -0.1, 0.1, 0.5, 1]
   let path = 0
   let count = 1
 
