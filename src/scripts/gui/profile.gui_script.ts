@@ -33,6 +33,7 @@ export function init(this: props): void {
   set_interactions('interaction')
   set_interactions('rumor')
   set_stats()
+  set_ranks()
 }
 
 function absolute_binaries(): [string, number][] {
@@ -113,6 +114,45 @@ function set_stats() {
     gui.set_size(clone, vmath.vector3(clamp(s[1], 0, 10) * 16, 26, 1))
     gui.set_enabled(clone, true)
     nodepos.x = nodepos.x - 8
+    count = count + 1
+  }
+}
+
+function set_ranks() {
+  const factions = [...Object.entries(player.state.factions)].sort(function (
+    a,
+    b
+  ) {
+    return b[1] - a[1]
+  })
+  const gangs = [...Object.entries(player.state.gangs)].sort(function (a, b) {
+    return b[1] - a[1]
+  })
+  const spacing = 28
+  let nodepos = gui.get_position(gui.get_node('factions'))
+  nodepos.y = nodepos.y + spacing - 30
+  let count = 1
+  for (const faction of factions) {
+    nodepos.y = nodepos.y - spacing
+    nodepos = vmath.vector3(nodepos)
+    const node = gui.get_node('faction_text')
+    const clone = gui.clone(node)
+    gui.set_text(clone, `${count}. ${faction[0]}`)
+    gui.set_position(clone, nodepos)
+    gui.set_enabled(clone, true)
+    count = count + 1
+  }
+  nodepos = gui.get_position(gui.get_node('gangs'))
+  nodepos.y = nodepos.y + spacing - 30
+  count = 1
+  for (const gang of gangs) {
+    nodepos.y = nodepos.y - spacing
+    nodepos = vmath.vector3(nodepos)
+    const node = gui.get_node('gang_text')
+    const clone = gui.clone(node)
+    gui.set_text(clone, `${count}. ${gang[0]}`)
+    gui.set_position(clone, nodepos)
+    gui.set_enabled(clone, true)
     count = count + 1
   }
 }

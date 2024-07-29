@@ -12,11 +12,11 @@ function random_skills(skills: Skills, bins: Skills) {
     count++
   }
 
-  tempvals = shuffle([0, 0, -0.1, 0.1, -0.2, 0.2, -0.3, 0.3])
+  tempvals = shuffle([-0.5, 0.5, -0.1, 0.1, -0.2, 0.2, -0.3, 0.3])
   count = 0
   let kb: keyof typeof bins // Type is "one" | "two" | "three"
   for (kb in bins) {
-    bins[kb] = tempvals[count] + math.random(-0.1, 0.1)
+    bins[kb] = tempvals[count] + math.random(-0.2, 0.2)
     count++
   }
 }
