@@ -122,13 +122,13 @@ function npc_snitch_check(w: string, s: string) {
   }
   return caution_state
 }
-function adjust_medic_queue(s: string) {
-  if (tasks.medicQueue.includes(s) == true) {
-    if (tasks.medicQueue.indexOf(s) > 1)
-      arraymove(tasks.medicQueue, tasks.medicQueue.indexOf(s), 0)
+function adjust_medic_queue(patient: string) {
+  if (tasks.mendingQueue.includes(patient) == true) {
+    if (tasks.mendingQueue.indexOf(patient) > 1)
+      arraymove(tasks.mendingQueue, tasks.mendingQueue.indexOf(patient), 0)
   } else {
-    print('cautions caused s:', s, 'to be added to medicQueue')
-    tasks.medicQueue.push(s)
+    print('cautions caused patient:', patient, 'to be added to mendingQueue')
+    tasks.mendingQueue.push(patient)
   }
 }
 function merits_demerits(c: Caution, w: string) {

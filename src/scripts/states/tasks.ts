@@ -14,7 +14,7 @@ export default class WorldTasks {
   private _quests: WorldQuests
   //spawn will be updated when checkpoints are passed.
   private _spawn: string
-  medicQueue: string[]
+  mendingQueue: string[]
 
   constructor(questmethods: AllQuestsMethods) {
     this._questmethods = questmethods
@@ -25,7 +25,7 @@ export default class WorldTasks {
     this._cautions = []
     this._quests = build_quests(this.questmethods)
     this._spawn = 'grounds'
-    this.medicQueue = []
+    this.mendingQueue = []
   }
   public set spawn(s: string) {
     this._spawn = s
@@ -201,10 +201,10 @@ export default class WorldTasks {
       const quest = quests[questKey]
       if (quest.passed == false) {
         let quest_passed = true
-        print('questKey:', questKey)
+        //print('questKey:', questKey)
         let condition: keyof typeof quest.conditions
         for (condition in quest.conditions) {
-          print('condition:', condition)
+          // print('condition:', condition)
           const goal = quest.conditions[condition]
           print('goal label:', goal.label, goal.passed, goal.status)
           if (goal.passed == false) {
@@ -236,5 +236,17 @@ export default class WorldTasks {
       .map((c) => c.npc)
 
     return docs
+  }
+  has_ignore_caution(n: string): boolean {
+    //if mending and in field busy
+    //if mending in office and office full
+    const ignored = this._cautions.filter(
+      (c) => c.label == 'ignore' && c.npc == n
+    )
+    print(
+      'ignored.length > 0 ? true : false',
+      ignored.length > 0 ? true : false
+    )
+    return ignored.length > 0 ? true : false
   }
 }

@@ -10,10 +10,12 @@ import {
   remove_chest_bonus,
 } from '../systems/inventorysystem'
 import { confrontation_consequence } from '../systems/tasksystem'
+import { injured_npcs } from '../systems/emergencysystem'
 import { roll_special_dice } from '../utils/dice'
 
 function tend_to_patient(v: string, doc: string) {
-  tasks.medicQueue.splice(tasks.medicQueue.indexOf(v), 1)
+  print('tend_to_patient:: v: string, doc: string', v, doc)
+  tasks.mendingQueue.splice(tasks.mendingQueue.indexOf(v), 1)
   tasks.remove_heat(v)
   if (npcs.all[doc].currentroom == player.currentroom)
     msg.post(`/${npcs.all[doc].currentstation}#npc_loader`, hash('move_npc'), {
@@ -23,26 +25,38 @@ function tend_to_patient(v: string, doc: string) {
   tasks.caution_builder(npcs.all[doc], 'mending', v, 'field')
 }
 
-export function aid_check(injured: string[]) {
-  const allInjured = [...tasks.medicQueue, ...injured]
+export function aid_check() {
+  //testjpf
+  // we combined those 2 confusing arrays
+  const allInjured = [...tasks.mendingQueue, ...injured_npcs]
   for (const i of allInjured) {
+    print('i:::', i)
     const stations = rooms.all[npcs.all[i].currentroom].stations
     let sKey: keyof typeof stations
     for (sKey in stations) {
       const helper = stations[sKey]
-      if (helper != '' && helper != i && math.random() < 0.3) {
+      //check each station for a chance for them to help injured
+      if (helper != '' && helper != i && math.random() < 0.4) {
+        //doctors start mending after RNG weighted by patient priority
+        print(
+          'ID CHECK:: tasks.mendingQueue.indexOf(i):',
+          tasks.mendingQueue.indexOf(i)
+        )
         if (
           npcs.all[helper].clan == 'doctors' &&
-          tasks.medicQueue.indexOf(i) != -1 &&
-          tasks.medicQueue.indexOf(i) < math.random(0, 5)
+          tasks.mendingQueue.indexOf(i) != -1 &&
+          tasks.mendingQueue.indexOf(i) < math.random(0, 5)
         ) {
           tend_to_patient(i, helper)
           break
-        } else {
-          if (math.random() > 0.9 && tasks.npc_has_caution(helper, i) == null) {
-            tasks.caution_builder(npcs.all[helper], 'injury', i, 'injury')
-            break
-          }
+        } else if (
+          math.random() > 0.96 &&
+          tasks.npc_has_caution(helper, i) == null &&
+          tasks.has_ignore_caution(i) == false
+        ) {
+          //if not a doctor, create injury caution if haven't already
+          tasks.caution_builder(npcs.all[helper], 'injury', i, 'injury')
+          break
         }
       }
     }

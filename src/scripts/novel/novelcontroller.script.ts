@@ -34,7 +34,8 @@ export function on_message(
     }
   } else if (messageId == hash('proxy_loaded')) {
     this.current_proxy = _sender
-
+    //testjpf here you could have conditionals based on novel state.
+    // not just use wake up.!!!
     if (_sender.fragment == hash('novel')) {
       msg.post('novel:/main#main', 'wake_up')
     }
