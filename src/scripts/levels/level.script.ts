@@ -17,7 +17,7 @@ function game_turn(room: string) {
   novel.reset_caution()
   ai_turn() // abstract to world controller?
   quest_checker('turn')
-  tasks.address_quests('turn', player.checkpoint)
+  tasks.update_quests_state('turn', player.checkpoint)
   player.ap = player.ap - 1
   player.turns = player.turns + 1
   calculate_heat(room)
@@ -119,7 +119,7 @@ export function on_message(
     }
   } else if (messageId == hash('exit_gui')) {
     quest_checker('interact')
-    tasks.address_quests('interact', player.checkpoint)
+    tasks.update_quests_state('interact', player.checkpoint)
     print('exitgui reason::', novel.reason)
     novel.priority = false
     novel.reason = 'none'
@@ -128,7 +128,7 @@ export function on_message(
     //calculate_heat(this.roomname)
 
     // if (message.novel == true) {
-    //  msg.post(this.roomname + ':/adam#interact', 'reload_script')
+    //msg.post(this.roomname + ':/adam#interact', 'reload_script')
     // }
     msg.post(this.roomname + ':/shared/adam#adam', 'acquire_input_focus')
     // } else if (messageId == hash('show_scene')) {

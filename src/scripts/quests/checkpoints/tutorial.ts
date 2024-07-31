@@ -4,11 +4,12 @@ import { npc_action_move } from '../../ai/ai_main'
 import { shuffle, surrounding_room_matrix } from '../../utils/utils'
 //import { any_has_value } from '../../utils/quest'
 
-const { rooms, npcs, tasks, player, novel, info } = globalThis.game.world
+const { rooms, npcs, tasks, player, novel } = globalThis.game.world
 function medic_assist_checks() {
   //print('medic assist check:: nove.reason:: ', novel.reason)
   const quest = tasks.quests.tutorial.medic_assist.conditions[0]
   if (quest.passed == false) {
+    // TESTJPF why remove heat from worker1??/
     tasks.remove_heat(rooms.all.grounds.stations.worker1)
     //tasks.remove_quest_cautions(rooms.all.grounds.stations.worker1)
     //print('11111')
@@ -19,11 +20,13 @@ function medic_assist_checks() {
     //status or something //on address_quest a
     //clean_up() calls whatever you need.
     //add to tutorialstate? probably?!!
+
+    //
   } else if (quest.passed == true && quest.status == 'inactive') {
+    print('HELP THAT MAN ACTIVE!!!')
     tasks.quests.tutorial.medic_assist.conditions[0].status = 'active'
     tasks.quests.tutorial.medic_assist.status = 'active'
     // tasks.quests.tutorial.medic_assist.conditions[1].status = 'active'
-    info.rebuild_objectives(tasks.quests)
   } else if (
     novel.reason == 'hungrydoc' &&
     quest.passed == true &&
@@ -49,7 +52,7 @@ function medic_assist_checks() {
       suspect: npcs.all[novel.npc.labelname].labelname,
       authority: 'player',
     })
-    info.rebuild_objectives(tasks.quests)
+    //info.build_objectives(tasks.quests)
     //testjpf
     // need something to check if this doc was given food.
     // in 'interact' gui send message to exit gui??
@@ -65,7 +68,7 @@ function medic_assist_checks() {
         novel.item,
         tasks.quests.tutorial.medic_assist.conditions[2].passed
       )
-      tasks.quests.tutorial.medic_assist.conditions[2].passed = true
+      // tasks.quests.tutorial.medic_assist.conditions[2].passed = true
       quest.status = 'complete'
       tasks.remove_quest_cautions(novel.npc.labelname)
       print(tasks.quests.tutorial.medic_assist.conditions[2].passed)

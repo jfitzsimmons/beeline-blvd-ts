@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
-//import { ObjectivesGroup } from '../../types/tasks'
+//import { ObjectivesGroupOpt } from '../../types/tasks'
 
-const { info } = globalThis.game.world
+const { info, tasks } = globalThis.game.world
 
 interface cloneparent {
   clone: node
@@ -24,15 +24,8 @@ interface props {
   isNpc: boolean
 }
 
-export function init(this: props): void {
-  this.clones = []
-  set_interactions()
-}
-
-function set_interactions() {
-  //const clones = []
+function set_objectives() {
   const spacing = 48
-  //testjpf do getnode
   let nodepos = gui.get_position(gui.get_node('quest'))
   let cKey: keyof typeof info.objectives
 
@@ -83,15 +76,16 @@ function set_interactions() {
   }
 }
 
+export function init(this: props): void {
+  info.build_objectives(tasks.quests)
+  set_objectives()
+}
+
 export function on_message(this: props, messageId: hash, _sender: url): void {
   if (messageId == hash('shownode')) {
     //populate text nodes && show them
     // set_interactions() //GO.pos cannot come from gui script
   } else if (messageId == hash('hidenode')) {
-    for (const clone of this.clones) {
-      gui.delete_node(clone.clone)
-    }
-    this.clones = []
-    this.watcher = ''
+    //testjpf delete???
   }
 }

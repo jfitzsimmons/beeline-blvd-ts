@@ -4,38 +4,8 @@ import {
   ObjectivesGroupOpt,
 } from '../../types/tasks'
 
-function build_objectives(quests: WorldQuests): ObjectivesGroup {
-  const objectives: ObjectivesGroupOpt = {}
-  //ex tutorial
-  let cPoint: keyof typeof quests
-  for (cPoint in quests) {
-    objectives[cPoint] = {
-      status: 'none',
-      quest: {},
-    }
-    const checkpoint = quests[cPoint]
-    //ex med_assist
-    let qKey: keyof typeof checkpoint
-    for (qKey in checkpoint) {
-      objectives[cPoint].quest[qKey] = {
-        status: checkpoint[qKey].status,
-        objective: {},
-      }
-      const conditions = checkpoint[qKey].conditions
-      //
-      let cNum: keyof typeof conditions
-      for (cNum in conditions) {
-        objectives[cPoint].quest[qKey].objective[cNum] = {
-          status: conditions[cNum].status,
-          label: conditions[cNum].label,
-        }
-      }
-    }
-  }
-  return objectives
-}
 export default class WorldInfo {
-  objectives: ObjectivesGroup
+  private _objectives: ObjectivesGroup
   interactions: [
     string,
     string,
@@ -86,11 +56,46 @@ export default class WorldInfo {
       'asdf',
       'asdf',
     ]
-    this.objectives = build_objectives(quests)
-    this.rebuild_objectives = this.rebuild_objectives.bind(this)
+    this.build_objectives = this.build_objectives.bind(this)
+    this._objectives = {}
+    this.build_objectives({ ...quests })
   }
-  rebuild_objectives(quests: WorldQuests) {
-    this.objectives = build_objectives(quests)
+  public set objectives(o: ObjectivesGroup) {
+    this._objectives = { ...o }
+  }
+  public get objectives() {
+    return this._objectives
+  }
+
+  build_objectives(quests: WorldQuests) {
+    const objectives: ObjectivesGroupOpt = {}
+    //ex tutorial
+    let cPoint: keyof typeof quests
+    for (cPoint in quests) {
+      objectives[cPoint] = {
+        status: 'none',
+        quest: {},
+      }
+      const checkpoint = quests[cPoint]
+      //ex med_assist
+      let qKey: keyof typeof checkpoint
+      for (qKey in checkpoint) {
+        objectives[cPoint].quest[qKey] = {
+          status: checkpoint[qKey].status,
+          objective: {},
+        }
+        const conditions = checkpoint[qKey].conditions
+        //
+        let cNum: keyof typeof conditions
+        for (cNum in conditions) {
+          objectives[cPoint].quest[qKey].objective[cNum] = {
+            status: conditions[cNum].status,
+            label: conditions[cNum].label,
+          }
+        }
+      }
+    }
+    this.objectives = { ...objectives }
   }
   add_interaction(i: string) {
     this.interactions.pop()

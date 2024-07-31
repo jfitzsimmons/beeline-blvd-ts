@@ -13,6 +13,7 @@ function script_builder(
   room: boolean | true = true,
   extend: boolean | false = false
 ) {
+  //TESTJPF could move some logic to novelcontroller
   let checkpoint = player.checkpoint.slice(0, -1)
   if (extend == true) {
     checkpoint = player.checkpoint

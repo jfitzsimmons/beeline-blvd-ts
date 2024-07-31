@@ -2,7 +2,7 @@ import { Npc } from '../../types/state'
 import { AllQuestsMethods, WorldQuests, Caution } from '../../types/tasks'
 import { tutorialQuests } from './inits/quests/tutorialstate'
 
-function build_quests(questmethods: AllQuestsMethods): WorldQuests {
+function build_quests_state(questmethods: AllQuestsMethods): WorldQuests {
   return {
     tutorial: tutorialQuests(questmethods),
   }
@@ -23,7 +23,7 @@ export default class WorldTasks {
       percent_tutorial: this.percent_tutorial.bind(this),
     }
     this._cautions = []
-    this._quests = build_quests(this.questmethods)
+    this._quests = build_quests_state(this.questmethods)
     this._spawn = 'grounds'
     this.mendingQueue = []
   }
@@ -192,7 +192,7 @@ export default class WorldTasks {
     this.cautions.push(caution)
   }
   // checks quest completion after interactions and turns
-  address_quests = (interval: string, checkpoint: string) => {
+  update_quests_state = (interval: string, checkpoint: string) => {
     //  print('checkpoint.slice(0, -1)', checkpoint.slice(0, -1))
     const quests = this.quests[checkpoint.slice(0, -1)]
 
@@ -206,7 +206,7 @@ export default class WorldTasks {
         for (condition in quest.conditions) {
           // print('condition:', condition)
           const goal = quest.conditions[condition]
-          print('goal label:', goal.label, goal.passed, goal.status)
+          //print('PREgoal label:', goal.label, goal.passed, goal.status)
           if (goal.passed == false) {
             for (let i: number = goal.func.length; i-- !== 0; ) {
               if (
@@ -215,10 +215,14 @@ export default class WorldTasks {
               ) {
                 print('goal PASSED: GOAL', goal.label)
                 goal.passed = true
+                goal.status = 'active'
+                quest.status = 'active'
                 break
               }
             }
           }
+          //print('POSTgoal label:', goal.label, goal.passed, goal.status)
+
           if (goal.passed == false) quest_passed = false
         }
         if (quest_passed == true) {

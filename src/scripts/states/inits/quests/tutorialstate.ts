@@ -18,7 +18,7 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
       status: 'inactive',
       conditions: {
         [0]: {
-          label: 'Somebody help that man!',
+          label: 'Agree to help injured man',
           solution: '',
           passed: false,
           status: 'inactive',
