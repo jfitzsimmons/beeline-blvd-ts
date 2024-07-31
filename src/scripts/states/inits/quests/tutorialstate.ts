@@ -46,16 +46,6 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           func: [returnfalse],
           args: [[returnfalse, false]],
         },
-        /** 
-        [2]: {
-          label: 'get an apple!',
-          solution: '',
-          passed: false,
-          status: 'inactive',
-          interval: ['interact'],
-          func: [any_has_value],
-          args: [[nq.return_doctors, 'apple01']],
-        },*/ // doc needs some item
         [3]: {
           label: 'Get some meds!',
           solution: '',
