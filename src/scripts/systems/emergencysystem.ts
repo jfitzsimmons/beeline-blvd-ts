@@ -210,8 +210,7 @@ function question_consequence(c: Caution) {
 export function npc_confrontation(s: string, c: Caution) {
   if (c.label == 'questioning') {
     question_consequence(c)
-  }
-  if (c.label == 'arrest') {
+  } else if (c.label == 'arrest') {
     //print('CAUTION:: arrest.', c.npc, 'threw', s, 'in jail')
     go_to_jail(s)
   }

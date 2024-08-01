@@ -5,6 +5,12 @@ if caution == "arrest"
   jump arreststart
 
 label questioningstart
+n: clearance is {p.clearance}
+if p.clearance == "1"
+  n: Do you have a pass?
+  p: Sure do.
+  n: Make it quick.
+  jump quickclose
 n: What are you doing in here?
 > Promise
   if npc.love > -2 and npc.b.aggressive < 0.8 and math.random() < .5

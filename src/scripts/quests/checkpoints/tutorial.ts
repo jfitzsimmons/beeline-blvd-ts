@@ -101,6 +101,18 @@ function medic_assist_checks() {
       doctor.currentstation,
       'to worker1'
     )
+
+    tasks.append_caution({
+      label: 'clearance',
+      time: 8,
+      type: 'type1',
+      reason: 'medical',
+      npc: injured.labelname,
+      suspect: 'player',
+      authority: 'security',
+    })
+    info.add_interaction(`${doctor.labelname}'s gave you clearance for 8 turns`)
+
     msg.post(`/${doctor.currentstation}#npc_loader`, hash('move_npc'), {
       station: 'worker1',
       npc: doctor.labelname,

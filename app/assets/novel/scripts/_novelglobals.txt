@@ -24,6 +24,7 @@ p.s.intelligence = _G.game.world.player.state.skills.intelligence
 p.b.authority = _G.game.world.player.state.binaries.anti_authority
 p.b.aggressive = _G.game.world.player.state.binaries.passive_aggressive
 
+p.clearance = _G.game.world.player.state.clearance
 alert = _G.game.world.player.alert_level
 hp = _G.game.world.player.hp
 reason = _G.game.world.novel.reason

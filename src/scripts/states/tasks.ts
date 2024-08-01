@@ -116,6 +116,14 @@ export default class WorldTasks {
     }
     return null
   }
+  has_clearance(sus: string): boolean {
+    for (const c of this.cautions) {
+      if (c.suspect == sus && c.label == 'clearance') {
+        return true
+      }
+    }
+    return false
+  }
   npc_is_wanted(sus: string): boolean {
     for (const c of this.cautions) {
       if (
