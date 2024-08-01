@@ -219,8 +219,8 @@ export function npc_confrontation(s: string, c: Caution) {
 
 //medics:
 export function send_to_infirmary(v: string, doc: string) {
-  //print('infirmed:', v, ' :::!!!!')
   tasks.remove_heat(v)
+  tasks.remove_mend(v)
   const occupants: Occupants = rooms.all.infirmary.occupants!
   let station: keyof typeof occupants
   for (station in occupants) {

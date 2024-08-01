@@ -1,8 +1,8 @@
 label defaultstart
 show n
 n: the v::reason {reason}
-if reason == "quest"
-    jump queststart
+
+    
 n: Got to keep an eye on your luggage.
 > What's with the workers here?
     jump guest2random1

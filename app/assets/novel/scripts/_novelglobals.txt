@@ -39,15 +39,17 @@ n.y = 0.5
 p.name = "Player"
 
 label start
-n: priority: {priority}
+n: priority is {priority}
 n: reason is {reason}  
-n: caution: {caution}
+n: caution is {caution}
+n: activeq is {activeq}
 if priority == "true"
   jump prioritystart
 n: default start
 jump defaultstart
 
 label prioritystart
+n: prioritstart WORKS!!!
 if caution == "questioning"
   jump questioningstart
 if caution == "arrest"

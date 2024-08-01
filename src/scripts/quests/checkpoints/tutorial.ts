@@ -3,24 +3,27 @@ import { steal_check, take_or_stash } from '../../ai/ai_checks'
 import { npc_action_move } from '../../ai/ai_main'
 import { shuffle, surrounding_room_matrix } from '../../utils/utils'
 
-const { rooms, npcs, tasks, player, novel } = globalThis.game.world
+const { rooms, npcs, tasks, player, novel, info } = globalThis.game.world
 
 function medic_assist_checks() {
+  const injured = npcs.all[rooms.all.grounds.stations.worker1]
+  const doctor = npcs.all[novel.npc.labelname]
   const quest = tasks.quests.tutorial.medic_assist
   const { conditions: cons } = quest
   //const {0:injury,1:doc, 2:apple} = cons
   const { 0: injury, 2: apple, 3: meds } = cons
   if (quest.passed == false) {
     //overly cautious? TESTJPF make sure injured doesnt get into other trouble???
-    tasks.remove_heat(rooms.all.grounds.stations.worker1)
+    tasks.remove_heat(injured.labelname)
   }
+
   if (injury.status == 'inactive' && injury.passed == true) {
-    print('HELP THAT MAN ACTIVE!!!')
     injury.status = 'active'
     quest.status = 'active'
-    print('is apple active???EARLY???', apple.status)
-
-    // injury.status = 'active'
+    injured.love = injured.love + 1
+    info.add_interaction(
+      `${injured.labelname} likes that you are helping them.`
+    )
   } else if (
     //TESTJPF !!! Here is where you would have the other options
     // not just apple, but bribe, drugs...
@@ -28,7 +31,6 @@ function medic_assist_checks() {
     injury.status == 'active' &&
     apple.status == 'inactive'
   ) {
-    print('is apple active???', apple.status)
     apple.status = 'active'
     //testjpf
     // i think jsut sets novel.reason in script builder.
@@ -41,10 +43,11 @@ function medic_assist_checks() {
       time: 100,
       type: 'hungry',
       reason: 'quest',
-      npc: npcs.all[novel.npc.labelname].labelname,
-      suspect: npcs.all[novel.npc.labelname].labelname,
+      npc: doctor.labelname,
+      suspect: doctor.labelname,
       authority: 'player',
     })
+    info.add_interaction(`${doctor.labelname} needs drugs, money or food.`)
     //info.build_objectives(tasks.quests)
     //testjpf
     // need something to check if this doc was given food.
@@ -56,33 +59,32 @@ function medic_assist_checks() {
     apple.passed == false
   ) {
     //check if last item clicked was apple? testjpf
-
+    //TESTJPF Pass condition is changed HERE not in state
     apple.passed = true
     apple.status = 'complete'
-    tasks.remove_quest_cautions(novel.npc.labelname)
-    novel.reason = 'getadoctor'
-    msg.post('proxies:/controller#novelcontroller', 'show_scene')
-  } else if (apple.status == 'active' && apple.passed == true) {
-    apple.status = 'complete'
-    // testjpf this is overwriting my scriptsdialog functions
 
+    tasks.remove_quest_cautions(doctor.labelname)
+    novel.remove_npc_quest(doctor.labelname)
+    novel.reason = 'getadoctor'
+    info.add_interaction(`${doctor.labelname} likes that you fed them.`)
+    doctor.love = doctor.love + 1
+
+    // testjpf this is overwriting my scriptsdialog functions
+    novel.npc = { ...doctor }
+    novel.priority = true
     tasks.append_caution({
       label: 'mending',
       time: 100,
       type: 'quest',
       reason: 'field',
-      npc: npcs.all[novel.npc.labelname].labelname,
-      suspect: npcs.all[rooms.all.grounds.stations.worker1].labelname,
+      npc: doctor.labelname,
+      suspect: injured.labelname,
       authority: 'doctors',
     })
-    msg.post(
-      `/${npcs.all[novel.npc.labelname].currentstation}#npc_loader`,
-      hash('move_npc'),
-      {
-        station: 'worker1',
-        npc: novel.npc.labelname,
-      }
-    )
+    info.add_interaction(`${injured.labelname} likes that you got a doctor.`)
+    injured.love = injured.love + 1
+    msg.post('proxies:/controller#novelcontroller', 'show_scene')
+
     //testjpf open dialog with thanks and next task???
     // use novel_init here jsut to laod the same tutorial/
     //testjpf
@@ -92,17 +94,47 @@ function medic_assist_checks() {
   } else if (novel.reason == 'getsomemeds' && meds.status == 'inactive') {
     meds.status = 'active'
     player.add_inventory('note')
+    print(
+      'TRY TO MOVE:',
+      doctor.labelname,
+      'from:',
+      doctor.currentstation,
+      'to worker1'
+    )
+    msg.post(`/${doctor.currentstation}#npc_loader`, hash('move_npc'), {
+      station: 'worker1',
+      npc: doctor.labelname,
+    })
+
+    // create caution for... 10 turns?
+    // i don't have cleareance logic setup!!
+    //testjpf add "note" to inventory
+  } else if (novel.reason == 'rejectmeds') {
+    info.add_interaction(`${doctor.labelname} doesn't like you wont help.`)
+    injured.love = injured.love - 1
+    print(
+      'TRY TO MOVE:',
+      doctor.labelname,
+      'from:',
+      doctor.currentstation,
+      'to worker1'
+    )
+    msg.post(`/${doctor.currentstation}#npc_loader`, hash('move_npc'), {
+      station: 'worker1',
+      npc: doctor.labelname,
+    })
     // create caution for... 10 turns?
     // i don't have cleareance logic setup!!
     //testjpf add "note" to inventory
   }
+  //TESTJPF ELSE if quest complete dialog, xp / money???
 }
 
 export function tutorialA(interval = 'turn') {
   const quest = tasks.quests.tutorial.medic_assist
   const { conditions: cons } = quest
   //const {0:injury,1:doc,2: apple, 3: meds} = cons
-  const { 0: injury } = cons
+  const { 0: injury, 2: apple } = cons
   const luggage =
     math.random() > 0.5
       ? rooms.all.grounds.actors.player_luggage
@@ -122,15 +154,18 @@ export function tutorialA(interval = 'turn') {
     }
   }
 
-  if (tasks.quests.tutorial.medic_assist.passed == false) {
-    medic_assist_checks()
+  if (apple.passed == false) {
     if (
       injury.passed == true &&
       interval == 'turn' &&
       rooms.all['grounds'].stations.worker1 != ''
     ) {
       const replace = rooms.all.grounds.stations.aid
-      if (replace != '' && npcs.all[replace].clan != 'doctors') {
+      if (
+        replace != '' &&
+        npcs.all[replace].clan != 'doctors' &&
+        npcs.all[replace].currentroom != 'grounds'
+      ) {
         //const docs = shuffle(npcs.return_doctors())
         const doc: Npc = shuffle(npcs.return_doctors())[0]
         let { currentroom, currentstation } = doc
@@ -145,6 +180,7 @@ export function tutorialA(interval = 'turn') {
         )
       }
     }
+
     /**
      * so testjpf we have a propert that accepts multipl type of export functions and returns
      *
@@ -188,22 +224,24 @@ export function tutorialA(interval = 'turn') {
       }
     }*/
   }
+  medic_assist_checks()
 }
 function doctorsScripts() {
   const quest = tasks.quests.tutorial.medic_assist
   const { conditions: cons } = quest
   //const {0:injury,1:doc,2: apple, 3: meds} = cons
   const { 0: injury, 2: apple } = cons
-  const has_met_victim = injury.passed
   // bad??:: if reasonstring.startswith('quest - ')
   //then on novel_main novel.quest.solution = endof(message.reason)
 
-  if (has_met_victim == true && apple.status == 'inactive') {
+  if (injury.passed == true && apple.status == 'inactive') {
     novel.reason = 'quest'
+    novel.priority = true
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
     return 'tutorial/tutorialAdoctor'
   } else if (apple.status != 'inactive') {
+    novel.priority = true
     novel.reason = 'quest'
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
@@ -218,6 +256,7 @@ function worker1Scripts() {
   //const {0:injury,1:doc,2: apple, 3: meds} = cons
   const { 0: injury } = cons
   if (injury.passed == false) {
+    novel.priority = true
     novel.reason = 'quest'
     return 'tutorial/helpThatMan'
   }

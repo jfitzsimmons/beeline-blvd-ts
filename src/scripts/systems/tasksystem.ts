@@ -291,6 +291,7 @@ function address_busy_acts(cs: Caution[]) {
 
 //LEVEL Cautions
 export function address_cautions() {
+  //testjpf why sort by time??
   const sortedCautions = tasks.cautions.sort(
     (a: Caution, b: Caution) => a.time - b.time
   )
@@ -312,13 +313,17 @@ export function address_cautions() {
     },
     { medical: [], conversational: [] }
   )
-
   const confront: Caution | null = address_confrontations(confrontational)
 
   address_busy_acts(medical)
   address_conversations(conversational)
 
   for (let i = sortedCautions.length - 1; i >= 0; i--) {
+    print(
+      'sortedCautions[i].label & NPC',
+      sortedCautions[i].label,
+      sortedCautions[i].npc
+    )
     sortedCautions[i].time--
     if (sortedCautions[i].time <= 0) {
       sortedCautions.splice(i, 1)

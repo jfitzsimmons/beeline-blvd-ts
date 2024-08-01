@@ -69,14 +69,20 @@ export default class WorldTasks {
       }
     }
   }
+  remove_mend(sus: string) {
+    for (let i = this.cautions.length - 1; i >= 0; i--) {
+      const c = this.cautions[i]
+      if (c.suspect == sus && ['mending'].includes(c.label)) {
+        this.cautions.splice(i, 1)
+      }
+    }
+  }
   remove_heat(sus: string) {
     for (let i = this.cautions.length - 1; i >= 0; i--) {
       const c = this.cautions[i]
       if (
         c.suspect == sus &&
-        ['questioning', 'arrest', 'snitch', 'injury', 'mending'].includes(
-          c.label
-        )
+        ['questioning', 'arrest', 'snitch', 'injury'].includes(c.label)
       ) {
         this.cautions.splice(i, 1)
       }
@@ -189,6 +195,7 @@ export default class WorldTasks {
     this.append_caution(append)
   }
   append_caution(caution: Caution) {
+    print('NEW::: Appended caution::', caution.label, caution.npc)
     this.cautions.push(caution)
   }
   // checks quest completion after interactions and turns
@@ -215,7 +222,7 @@ export default class WorldTasks {
               ) {
                 print('goal PASSED: GOAL', goal.label)
                 goal.passed = true
-                goal.status = 'active'
+                // goal.status = 'active'
                 quest.status = 'active'
                 break
               }

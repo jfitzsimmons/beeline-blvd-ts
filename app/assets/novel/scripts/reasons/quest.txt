@@ -25,7 +25,7 @@ n: Holy. Holy.xqs
 jump quickclose
 
 label reasonrandom1
-jump queststart
+
 
 label smiteyouxsdftestjpf
 n: The lord will smite you.xqs

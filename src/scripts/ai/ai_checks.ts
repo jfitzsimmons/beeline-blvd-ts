@@ -16,7 +16,6 @@ import { roll_special_dice } from '../utils/dice'
 function tend_to_patient(v: string, doc: string) {
   print('tend_to_patient:: v: string, doc: string', v, doc)
   tasks.mendingQueue.splice(tasks.mendingQueue.indexOf(v), 1)
-  tasks.remove_heat(v)
   if (npcs.all[doc].currentroom == player.currentroom)
     msg.post(`/${npcs.all[doc].currentstation}#npc_loader`, hash('move_npc'), {
       station: npcs.all[v].currentstation,
