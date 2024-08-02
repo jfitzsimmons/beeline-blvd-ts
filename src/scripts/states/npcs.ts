@@ -213,10 +213,12 @@ export default class WorldNpcs {
     random_attributes(this.all, this.order)
     this.quests = {
       return_doctors: this.return_doctors.bind(this),
+      return_security: this.return_doctors.bind(this),
       return_all: this.return_all.bind(this),
       return_order_all: this.return_order_all.bind(this),
     }
     this.return_doctors = this.return_doctors.bind(this)
+    this.return_security = this.return_security.bind(this)
   }
   public get all(): Npcs {
     return this._all
@@ -224,8 +226,18 @@ export default class WorldNpcs {
   set_an_npc(n: Npc) {
     this.all[n.labelname] = { ...n }
   }
+  //testjpf Dont hardcode!?
   return_doctors(): Npc[] {
-    return [this.all.doc01, this.all.doc02]
+    return [this.all.doc01, this.all.doc02, this.all.doc03]
+  }
+  return_security(): Npc[] {
+    return [
+      this.all.security001,
+      this.all.security002,
+      this.all.security003,
+      this.all.security004,
+      this.all.security005,
+    ]
   }
   return_all(): Npcs {
     return this.all

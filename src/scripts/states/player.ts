@@ -32,6 +32,7 @@ export default class WorldPlayer {
       return_inventory: this.return_inventory.bind(this),
       return_skills: this.return_skills.bind(this),
       increase_alert_level: this.increase_alert_level.bind(this),
+      return_playerroom: this.return_playerroom.bind(this),
     }
   }
   public set pos(p: { x: number; y: number }) {
@@ -133,6 +134,9 @@ export default class WorldPlayer {
   }
   return_skills(): Skills {
     return this._state.skills
+  }
+  return_playerroom(): string {
+    return this._state.currentroom
   }
   increase_alert_level() {
     this.alert_level += 1

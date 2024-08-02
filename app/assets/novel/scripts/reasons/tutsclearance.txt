@@ -1,0 +1,6 @@
+label questioningstart
+n: clearance is {p.clearance}
+n: Do you have a pass?
+p: Sure do.
+n: Make it quick.
+jump quickclose

@@ -1,6 +1,7 @@
 import { Npc } from '../../../types/state'
 import { steal_check, take_or_stash } from '../../ai/ai_checks'
 import { npc_action_move } from '../../ai/ai_main'
+import { from_same_room } from '../../utils/quest'
 import { shuffle, surrounding_room_matrix } from '../../utils/utils'
 
 const { rooms, npcs, tasks, player, novel, info } = globalThis.game.world
@@ -105,13 +106,18 @@ function medic_assist_checks() {
     tasks.append_caution({
       label: 'clearance',
       time: 8,
-      type: 'type1',
+      type: 'type3',
       reason: 'medical',
-      npc: injured.labelname,
+      npc: doctor.labelname,
       suspect: 'player',
       authority: 'security',
     })
     info.add_interaction(`${doctor.labelname}'s gave you clearance for 8 turns`)
+
+    //TESTJPF ACTIVEATE SIDE QUEST HERE
+    //not in else ifs
+    quest.side_quests![1].status = 'active'
+    player.clearance = 3
 
     msg.post(`/${doctor.currentstation}#npc_loader`, hash('move_npc'), {
       station: 'worker1',
@@ -138,6 +144,20 @@ function medic_assist_checks() {
     // create caution for... 10 turns?
     // i don't have cleareance logic setup!!
     //testjpf add "note" to inventory
+  } else if (
+    quest.side_quests![1].status == 'active' &&
+    meds.status == 'active' &&
+    player.clearance - 3 < rooms.all[player.currentroom].clearance &&
+    from_same_room(npcs.return_security(), player.currentroom) != null
+  ) {
+    novel.caution.label = 'questioning'
+    novel.caution.reason = 'tutsclearance'
+    novel.priority = true
+    novel.npc = from_same_room(npcs.return_security(), player.currentroom)!
+    quest.side_quests![1].passed = true
+    quest.side_quests![1].status = 'complete'
+
+    msg.post('proxies:/controller#novelcontroller', 'show_scene')
   }
   //TESTJPF ELSE if quest complete dialog, xp / money???
 }

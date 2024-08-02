@@ -5,7 +5,6 @@ import {
   does_equal,
   greater_than,
   returnfalse,
-  // greater_than,
 } from '../../../utils/quest'
 
 export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
@@ -55,6 +54,17 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           func: [any_has_value],
           args: [[nq.return_doctors, 'vial02']],
         }, //gets keycard, goes to infirmary, gets meds
+      },
+      side_quests: {
+        [1]: {
+          label: 'Basically a doctor.',
+          solution: '',
+          passed: false,
+          status: 'inactive',
+          interval: ['turn'],
+          func: [returnfalse],
+          args: [[returnfalse, false]],
+        },
       },
     },
     pass_customs: {

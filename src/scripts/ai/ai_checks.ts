@@ -29,7 +29,7 @@ export function aid_check() {
   // we combined those 2 confusing arrays
   const allInjured = [...tasks.mendingQueue, ...injured_npcs]
   for (const i of allInjured) {
-    print('i:::', i)
+    // print('i:::', i)
     const stations = rooms.all[npcs.all[i].currentroom].stations
     let sKey: keyof typeof stations
     for (sKey in stations) {
@@ -37,10 +37,6 @@ export function aid_check() {
       //check each station for a chance for them to help injured
       if (helper != '' && helper != i && math.random() < 0.4) {
         //doctors start mending after RNG weighted by patient priority
-        print(
-          'ID CHECK:: tasks.mendingQueue.indexOf(i):',
-          tasks.mendingQueue.indexOf(i)
-        )
         if (
           npcs.all[helper].clan == 'doctors' &&
           tasks.mendingQueue.indexOf(i) != -1 &&
