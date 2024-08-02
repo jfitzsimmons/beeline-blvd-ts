@@ -4,44 +4,105 @@ import {
   ObjectivesGroupOpt,
 } from '../../types/tasks'
 
-function build_objectives(quests: WorldQuests): ObjectivesGroup {
-  const objectives: ObjectivesGroupOpt = {}
-  //ex tutorial
-  let cPoint: keyof typeof quests
-  for (cPoint in quests) {
-    objectives[cPoint] = {
-      status: 'none',
-      quest: {},
-    }
-    const checkpoint = quests[cPoint]
-    //ex med_assist
-    let qKey: keyof typeof checkpoint
-    for (qKey in checkpoint) {
-      objectives[cPoint].quest[qKey] = {
-        status: checkpoint[qKey].status,
-        objective: {},
+export default class WorldInfo {
+  private _objectives: ObjectivesGroup
+  interactions: [
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string
+  ]
+  rumors: [
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string
+  ]
+
+  constructor(quests: WorldQuests) {
+    this.interactions = [
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+    ]
+    this.rumors = [
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+      'asdf',
+    ]
+    this.build_objectives = this.build_objectives.bind(this)
+    this._objectives = {}
+    this.build_objectives({ ...quests })
+  }
+  public set objectives(o: ObjectivesGroup) {
+    this._objectives = { ...o }
+  }
+  public get objectives() {
+    return this._objectives
+  }
+
+  build_objectives(quests: WorldQuests) {
+    const objectives: ObjectivesGroupOpt = {}
+    //ex tutorial
+    let cPoint: keyof typeof quests
+    for (cPoint in quests) {
+      objectives[cPoint] = {
+        status: 'none',
+        quest: {},
       }
-      const conditions = checkpoint[qKey].conditions
-      //
-      let cNum: keyof typeof conditions
-      for (cNum in conditions) {
-        objectives[cPoint].quest[qKey].objective[cNum] = {
-          status: conditions[cNum].status,
-          label: conditions[cNum].label,
+      const checkpoint = quests[cPoint]
+      //ex med_assist
+      let qKey: keyof typeof checkpoint
+      for (qKey in checkpoint) {
+        objectives[cPoint].quest[qKey] = {
+          status: checkpoint[qKey].status,
+          objective: {},
+        }
+        const conditions = checkpoint[qKey].conditions
+        //
+        let cNum: keyof typeof conditions
+        for (cNum in conditions) {
+          objectives[cPoint].quest[qKey].objective[cNum] = {
+            status: conditions[cNum].status,
+            label: conditions[cNum].label,
+          }
         }
       }
     }
+    this.objectives = { ...objectives }
   }
-  return objectives
-}
-export default class WorldInfo {
-  objectives: ObjectivesGroup
-
-  constructor(quests: WorldQuests) {
-    this.objectives = build_objectives(quests)
-    this.rebuild_objectives = this.rebuild_objectives.bind(this)
+  add_interaction(i: string) {
+    this.interactions.pop()
+    this.interactions.unshift(i)
   }
-  rebuild_objectives(quests: WorldQuests) {
-    this.objectives = build_objectives(quests)
+  add_rumor(r: string) {
+    this.rumors.pop()
+    this.rumors.unshift(r)
   }
 }

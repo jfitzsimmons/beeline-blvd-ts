@@ -52,6 +52,7 @@ export interface PlayerState {
   alert_level: number
   clearance: number
   hp: number
+  hp_max: number
   ap_max: number
   ap: number
   turns: number
@@ -59,6 +60,8 @@ export interface PlayerState {
   binaries: Skills
   skills: Skills
   effects: string[]
+  factions: { [key: string]: number }
+  gangs: { [key: string]: number }
 }
 
 export interface RoomsState {

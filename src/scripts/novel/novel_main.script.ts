@@ -13,6 +13,7 @@ function script_builder(
   room: boolean | true = true,
   extend: boolean | false = false
 ) {
+  //TESTJPF could move some logic to novelcontroller
   let checkpoint = player.checkpoint.slice(0, -1)
   if (extend == true) {
     checkpoint = player.checkpoint
@@ -105,7 +106,7 @@ function consolation_outcomes(love: number) {
 }
 
 function novel_outcomes(reason: string) {
-  if (reason == 'faint') {
+  if (reason == 'faint' || player.hp <= 0) {
     const params = {
       enter_room: tasks.spawn,
     }

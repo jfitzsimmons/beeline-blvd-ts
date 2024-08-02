@@ -1,23 +1,22 @@
 import { PlayerState, Skills } from '../../types/state'
 import { QuestMethods } from '../../types/tasks'
 import { PlayerInitState } from './inits/playerInitState'
+import { shuffle } from '../utils/utils'
 
-function shuffle(arrN: number[]): number[]
-function shuffle(arrS: string[]): string[]
-function shuffle(array: Array<string | number>): Array<string | number> {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[array[i], array[j]] = [array[j], array[i]]
-  }
-  return array
-}
-
-function random_skills(skills: Skills) {
-  const tempvals: number[] = shuffle([1, 1, 3, 4, 5, 6, 6, 7])
+function random_skills(skills: Skills, bins: Skills) {
+  let tempvals: number[] = shuffle([1, 1, 3, 4, 5, 6, 6, 7])
   let count = 0
   let ks: keyof typeof skills // Type is "one" | "two" | "three"
   for (ks in skills) {
     skills[ks] = tempvals[count] + math.random(-1, 1)
+    count++
+  }
+
+  tempvals = shuffle([-0.5, 0.5, -0.1, 0.1, -0.2, 0.2, -0.3, 0.3])
+  count = 0
+  let kb: keyof typeof bins // Type is "one" | "two" | "three"
+  for (kb in bins) {
+    bins[kb] = tempvals[count] + math.random(-0.2, 0.2)
     count++
   }
 }
@@ -28,11 +27,12 @@ export default class WorldPlayer {
 
   constructor() {
     this._state = { ...PlayerInitState }
-    random_skills(this._state.skills)
+    random_skills(this._state.skills, this._state.binaries)
     this.quests = {
       return_inventory: this.return_inventory.bind(this),
       return_skills: this.return_skills.bind(this),
       increase_alert_level: this.increase_alert_level.bind(this),
+      return_playerroom: this.return_playerroom.bind(this),
     }
   }
   public set pos(p: { x: number; y: number }) {
@@ -73,6 +73,12 @@ export default class WorldPlayer {
   }
   public get ap() {
     return this._state.ap
+  }
+  public set hp_max(n: number) {
+    this._state.hp_max = n
+  }
+  public get hp_max() {
+    return this._state.hp_max
   }
   public set ap_max(n: number) {
     this._state.ap_max = n
@@ -128,6 +134,9 @@ export default class WorldPlayer {
   }
   return_skills(): Skills {
     return this._state.skills
+  }
+  return_playerroom(): string {
+    return this._state.currentroom
   }
   increase_alert_level() {
     this.alert_level += 1

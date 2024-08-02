@@ -13,6 +13,21 @@ export function any_has_value(t: [() => Npc[], string]) {
   return false
 }
 
+export function is_same_room(t: [() => Npc[], string]) {
+  const npcs = t[0]()
+  for (const npc of npcs) {
+    if (npc.currentroom == t[1]) return true
+  }
+  return false
+}
+
+export function from_same_room(npcs: Npc[], room: string) {
+  for (const npc of npcs) {
+    if (npc.currentroom == room) return npc
+  }
+  return null
+}
+
 export function returnfalse() {
   return false
 }

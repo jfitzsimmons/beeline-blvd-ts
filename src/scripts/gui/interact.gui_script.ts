@@ -54,7 +54,7 @@ function open_inventory(_this: props, actor: string, action: string) {
     // the actual npc assigned to that station
     if (station != undefined) _this.watcher = room.stations[station]
   } else if (action == 'trade' || action == 'give' || action == 'pockets') {
-    // testjpf trade will need "acceptanace"???
+    // testjpf trade will need "acceptanace"????
     _this.watcher = actor
   }
   if (_this.watcher != '' && _this.watcher != null) {

@@ -2,7 +2,7 @@ import { Npc } from '../../types/state'
 import { AllQuestsMethods, WorldQuests, Caution } from '../../types/tasks'
 import { tutorialQuests } from './inits/quests/tutorialstate'
 
-function build_quests(questmethods: AllQuestsMethods): WorldQuests {
+function build_quests_state(questmethods: AllQuestsMethods): WorldQuests {
   return {
     tutorial: tutorialQuests(questmethods),
   }
@@ -14,17 +14,18 @@ export default class WorldTasks {
   private _quests: WorldQuests
   //spawn will be updated when checkpoints are passed.
   private _spawn: string
-  medicQueue: string[]
+  mendingQueue: string[]
 
   constructor(questmethods: AllQuestsMethods) {
     this._questmethods = questmethods
     this._questmethods.tq = {
       num_of_injuries: this.num_of_injuries.bind(this),
+      percent_tutorial: this.percent_tutorial.bind(this),
     }
     this._cautions = []
-    this._quests = build_quests(this.questmethods)
+    this._quests = build_quests_state(this.questmethods)
     this._spawn = 'grounds'
-    this.medicQueue = []
+    this.mendingQueue = []
   }
   public set spawn(s: string) {
     this._spawn = s
@@ -44,6 +45,17 @@ export default class WorldTasks {
   public get questmethods() {
     return this._questmethods
   }
+  percent_tutorial(): number {
+    let qKey: keyof typeof this.quests
+    let count = 0
+    let passed = 0
+    for (qKey in this.quests['tutorial']) {
+      if (this.quests['tutorial'][qKey].passed == true) passed = passed + 1
+      count = count + 1
+    }
+
+    return Math.round((passed / count) * 100)
+  }
   num_of_injuries(): number {
     const injuries = this.cautions.filter((c) => c.label == 'injury').length
     //print('busy_doc:: docs[0]:', docs[0])
@@ -57,14 +69,20 @@ export default class WorldTasks {
       }
     }
   }
+  remove_mend(sus: string) {
+    for (let i = this.cautions.length - 1; i >= 0; i--) {
+      const c = this.cautions[i]
+      if (c.suspect == sus && ['mending'].includes(c.label)) {
+        this.cautions.splice(i, 1)
+      }
+    }
+  }
   remove_heat(sus: string) {
     for (let i = this.cautions.length - 1; i >= 0; i--) {
       const c = this.cautions[i]
       if (
         c.suspect == sus &&
-        ['questioning', 'arrest', 'snitch', 'injury', 'mending'].includes(
-          c.label
-        )
+        ['questioning', 'arrest', 'snitch', 'injury'].includes(c.label)
       ) {
         this.cautions.splice(i, 1)
       }
@@ -97,6 +115,14 @@ export default class WorldTasks {
       }
     }
     return null
+  }
+  has_clearance(sus: string): boolean {
+    for (const c of this.cautions) {
+      if (c.suspect == sus && c.label == 'clearance') {
+        return true
+      }
+    }
+    return false
   }
   npc_is_wanted(sus: string): boolean {
     for (const c of this.cautions) {
@@ -177,10 +203,11 @@ export default class WorldTasks {
     this.append_caution(append)
   }
   append_caution(caution: Caution) {
+    print('NEW::: Appended caution::', caution.label, caution.npc)
     this.cautions.push(caution)
   }
   // checks quest completion after interactions and turns
-  address_quests = (interval: string, checkpoint: string) => {
+  update_quests_state = (interval: string, checkpoint: string) => {
     //  print('checkpoint.slice(0, -1)', checkpoint.slice(0, -1))
     const quests = this.quests[checkpoint.slice(0, -1)]
 
@@ -192,26 +219,30 @@ export default class WorldTasks {
         //print('questKey:', questKey)
         let condition: keyof typeof quest.conditions
         for (condition in quest.conditions) {
-          //print('condition:', condition)
+          // print('condition:', condition)
           const goal = quest.conditions[condition]
-          //print('goal label:', goal.label, goal.passed, goal.status)
+          //print('PREgoal label:', goal.label, goal.passed, goal.status)
           if (goal.passed == false) {
             for (let i: number = goal.func.length; i-- !== 0; ) {
               if (
                 goal.interval[i] == interval &&
                 goal.func[i]!(goal.args[i]) == true
               ) {
-                //print('goal PASSED: GOAL', goal.label)
+                print('goal PASSED: GOAL', goal.label)
                 goal.passed = true
+                // goal.status = 'active'
+                quest.status = 'active'
                 break
               }
             }
           }
+          //print('POSTgoal label:', goal.label, goal.passed, goal.status)
+
           if (goal.passed == false) quest_passed = false
         }
         if (quest_passed == true) {
           quest.passed = true
-          //   print(questKey, 'quest COMPLETE!!!')
+          print(questKey, 'quest COMPLETE!!!')
         }
       }
     }
@@ -224,5 +255,17 @@ export default class WorldTasks {
       .map((c) => c.npc)
 
     return docs
+  }
+  has_ignore_caution(n: string): boolean {
+    //if mending and in field busy
+    //if mending in office and office full
+    const ignored = this._cautions.filter(
+      (c) => c.label == 'ignore' && c.npc == n
+    )
+    print(
+      'ignored.length > 0 ? true : false',
+      ignored.length > 0 ? true : false
+    )
+    return ignored.length > 0 ? true : false
   }
 }

@@ -67,6 +67,9 @@ export default class WorldNovel {
   append_npc_quest(n: string) {
     this._npcsWithQuest.push(n)
   }
+  remove_npc_quest(r: string) {
+    this._npcsWithQuest = this._npcsWithQuest.filter((n) => n !== r)
+  }
   get_reason = () => this._reason
   public get reason() {
     return this._reason
