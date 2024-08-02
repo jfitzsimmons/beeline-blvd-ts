@@ -310,6 +310,7 @@ function address_busy_acts(cs: Caution[]) {
 //LEVEL Cautions
 export function address_cautions() {
   //testjpf why sort by time??
+  //needs better naming conventions
   const sortedCautions = tasks.cautions.sort(
     (a: Caution, b: Caution) => a.time - b.time
   )

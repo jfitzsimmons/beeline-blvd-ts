@@ -40,7 +40,7 @@ export interface Quests {
 
 export interface Quest {
   passed: boolean
-  status: 'active' | 'inactive'
+  status: 'active' | 'inactive' | 'complete'
   conditions: QuestConditions
   side_quests?: QuestConditions
 }
@@ -52,7 +52,7 @@ export interface QuestCondition {
   label: string
   solution?: string
   passed: boolean
-  status: 'inactive' | 'active' | 'complete'
+  status: 'inactive' | 'active' | 'complete' | 'standby'
   interval: string[]
   func: { (args: [() => any, any]): boolean }[]
   args: [() => any, any][]

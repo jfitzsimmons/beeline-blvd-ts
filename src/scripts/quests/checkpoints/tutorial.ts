@@ -12,15 +12,16 @@ function medic_assist_checks() {
   const quest = tasks.quests.tutorial.medic_assist
   const { conditions: cons } = quest
   //const {0:injury,1:doc, 2:apple} = cons
-  const { 0: injury, 2: apple, 3: meds } = cons
+  const { 0: injury, 1: doc, 2: apple, 3: meds } = cons
   if (quest.passed == false) {
     //overly cautious? TESTJPF make sure injured doesnt get into other trouble???
     tasks.remove_heat(injured.labelname)
   }
 
-  if (injury.status == 'inactive' && injury.passed == true) {
+  if (injury.status == 'standby' && injury.passed == true) {
     injury.status = 'active'
     quest.status = 'active'
+    doc.status = 'standby'
     injured.love = injured.love + 1
     info.add_interaction(
       `${injured.labelname} likes that you are helping them.`
@@ -54,6 +55,36 @@ function medic_assist_checks() {
     // need something to check if this doc was given food.
     // in 'interact' gui send message to exit gui??
     // containing item, maybe who from "npc" or "player"
+  } else if (
+    //TESTJPF !!! Here is where you would have the other options
+    // not just apple, but bribe, drugs...
+    novel.reason == 'druggiedoc' &&
+    apple.status == 'inactive'
+  ) {
+    apple.status = 'active'
+    //testjpf
+    // i think jsut sets novel.reason in script builder.
+    //So for 100  turns, this npc will always talk to you about a quest
+    //which quest? the one that comes from quest directory scripts
+    // as seen in sbuilder:: const quest_paths
+    //testjpf need to debug txt scripts related to this quest
+    tasks.append_caution({
+      label: 'quest',
+      time: 100,
+      type: 'hungry',
+      reason: 'quest',
+      npc: doctor.labelname,
+      suspect: doctor.labelname,
+      authority: 'player',
+    })
+    info.add_interaction(`${doctor.labelname} needs drugs, money or food.`)
+    //info.build_objectives(tasks.quests)
+    //testjpf
+    // need something to check if this doc was given food.
+    // in 'interact' gui send message to exit gui??
+    // containing item, maybe who from "npc" or "player"
+    //testjpf add same conditons for drugs and money
+    //and change inactive to standby???
   } else if (
     apple.status == 'active' &&
     novel.item == 'apple01' &&
