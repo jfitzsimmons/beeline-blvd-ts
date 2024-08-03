@@ -17,6 +17,7 @@ function medic_assist_checks() {
     //overly cautious? TESTJPF make sure injured doesnt get into other trouble???
     tasks.remove_heat(injured.labelname)
   }
+  print('TUTS:::', apple.status, novel.item, apple.passed)
 
   if (injury.status == 'standby' && injury.passed == true) {
     injury.status = 'active'
@@ -91,7 +92,7 @@ function medic_assist_checks() {
     apple.passed == false
   ) {
     //check if last item clicked was apple? testjpf
-    //TESTJPF Pass condition is changed HERE not in state
+    //TESTJPF Pass condition is changed HERE not in statekj
     apple.passed = true
     apple.status = 'complete'
 
@@ -143,6 +144,15 @@ function medic_assist_checks() {
       suspect: 'player',
       authority: 'security',
     })
+    tasks.append_caution({
+      label: 'quest',
+      time: 50,
+      type: 'medassist',
+      reason: 'waitingformeds',
+      npc: doctor.labelname,
+      suspect: doctor.labelname,
+      authority: 'player',
+    })
     info.add_interaction(`${doctor.labelname}'s gave you clearance for 8 turns`)
 
     //TESTJPF ACTIVEATE SIDE QUEST HERE
@@ -158,6 +168,8 @@ function medic_assist_checks() {
     // create caution for... 10 turns?
     // i don't have cleareance logic setup!!
     //testjpf add "note" to inventory
+  } else if (meds.passed == true && meds.status == 'active') {
+    tasks.remove_quest_cautions(doctor.labelname)
   } else if (novel.reason == 'rejectmeds') {
     info.add_interaction(`${doctor.labelname} doesn't like you wont help.`)
     injured.love = injured.love - 1

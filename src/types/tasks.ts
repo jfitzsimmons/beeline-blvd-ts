@@ -66,7 +66,7 @@ export interface AllQuestsMethods {
 }
 export interface QuestMethods {
   [key: string]: (
-    args?: unknown | [() => Npcs, number]
+    args: [() => Npcs, number] | string | void
   ) =>
     | Npc[]
     | boolean
@@ -77,6 +77,7 @@ export interface QuestMethods {
     | number
     | void
     | string
+    | null
 }
 
 export interface Caution {
