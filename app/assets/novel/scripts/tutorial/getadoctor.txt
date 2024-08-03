@@ -21,6 +21,9 @@ n: If you have time, I need meds if you can help.
         jump defaultChoices
 
 label shortmedsspeech
+if reason == "medical"
+    caution = "receivemeds"
+    jump medicalstart
 n: Do you want that pass now?
 > Yes
     n: Here's a pass.

@@ -58,6 +58,8 @@ function open_inventory(_this: props, actor: string, action: string) {
     _this.watcher = actor
   }
   if (_this.watcher != '' && _this.watcher != null) {
+    novel.npc = { ...npcs.all[_this.npcname] }
+
     const prev_caution = tasks.npc_has_caution(_this.watcher, 'player')
 
     if (prev_caution != null) {

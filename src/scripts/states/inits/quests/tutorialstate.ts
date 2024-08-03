@@ -20,7 +20,7 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           label: 'Agree to help injured man',
           solution: '',
           passed: false,
-          status: 'inactive',
+          status: 'standby',
           interval: ['interact'],
           func: [does_equal],
           args: [[nvq.get_reason, 'helpthatman']],

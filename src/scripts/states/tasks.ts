@@ -45,6 +45,15 @@ export default class WorldTasks {
   public get questmethods() {
     return this._questmethods
   }
+  caution_has_npc(reason: string): string | null {
+    for (let i = this.cautions.length - 1; i >= 0; i--) {
+      const c = this.cautions[i]
+      if (c.reason == reason) {
+        return this.cautions[i].npc
+      }
+    }
+    return null
+  }
   percent_tutorial(): number {
     let qKey: keyof typeof this.quests
     let count = 0
@@ -230,7 +239,7 @@ export default class WorldTasks {
               ) {
                 print('goal PASSED: GOAL', goal.label)
                 goal.passed = true
-                // goal.status = 'active'
+                //goal.status = 'complete'
                 quest.status = 'active'
                 break
               }
@@ -242,6 +251,7 @@ export default class WorldTasks {
         }
         if (quest_passed == true) {
           quest.passed = true
+          quest.status = 'complete'
           print(questKey, 'quest COMPLETE!!!')
         }
       }

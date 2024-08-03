@@ -8,19 +8,23 @@ const { rooms, npcs, tasks, player, novel, info } = globalThis.game.world
 
 function medic_assist_checks() {
   const injured = npcs.all[rooms.all.grounds.stations.worker1]
+  // BUG::: testjpf I think this will
+  // let you interact with any doctor
   const doctor = npcs.all[novel.npc.labelname]
   const quest = tasks.quests.tutorial.medic_assist
   const { conditions: cons } = quest
   //const {0:injury,1:doc, 2:apple} = cons
-  const { 0: injury, 2: apple, 3: meds } = cons
+  const { 0: injury, 1: doc, 2: apple, 3: meds } = cons
   if (quest.passed == false) {
     //overly cautious? TESTJPF make sure injured doesnt get into other trouble???
     tasks.remove_heat(injured.labelname)
   }
-
-  if (injury.status == 'inactive' && injury.passed == true) {
+  print('TUTS:::', meds.status, novel.item, meds.passed)
+  print('TUTS::: i.status i passed::', injury.status, injury.passed)
+  if (injury.status == 'standby' && injury.passed == true) {
     injury.status = 'active'
     quest.status = 'active'
+    doc.status = 'standby'
     injured.love = injured.love + 1
     info.add_interaction(
       `${injured.labelname} likes that you are helping them.`
@@ -55,12 +59,42 @@ function medic_assist_checks() {
     // in 'interact' gui send message to exit gui??
     // containing item, maybe who from "npc" or "player"
   } else if (
+    //TESTJPF !!! Here is where you would have the other options
+    // not just apple, but bribe, drugs...
+    novel.reason == 'druggiedoc' &&
+    apple.status == 'inactive'
+  ) {
+    apple.status = 'active'
+    //testjpf
+    // i think jsut sets novel.reason in script builder.
+    //So for 100  turns, this npc will always talk to you about a quest
+    //which quest? the one that comes from quest directory scripts
+    // as seen in sbuilder:: const quest_paths
+    //testjpf need to debug txt scripts related to this quest
+    tasks.append_caution({
+      label: 'quest',
+      time: 100,
+      type: 'hungry',
+      reason: 'quest',
+      npc: doctor.labelname,
+      suspect: doctor.labelname,
+      authority: 'player',
+    })
+    info.add_interaction(`${doctor.labelname} needs drugs, money or food.`)
+    //info.build_objectives(tasks.quests)
+    //testjpf
+    // need something to check if this doc was given food.
+    // in 'interact' gui send message to exit gui??
+    // containing item, maybe who from "npc" or "player"
+    //testjpf add same conditons for drugs and money
+    //and change inactive to standby???
+  } else if (
     apple.status == 'active' &&
     novel.item == 'apple01' &&
     apple.passed == false
   ) {
     //check if last item clicked was apple? testjpf
-    //TESTJPF Pass condition is changed HERE not in state
+    //TESTJPF Pass condition is changed HERE not in statekj
     apple.passed = true
     apple.status = 'complete'
 
@@ -112,6 +146,15 @@ function medic_assist_checks() {
       suspect: 'player',
       authority: 'security',
     })
+    tasks.append_caution({
+      label: 'quest',
+      time: 50,
+      type: 'medassist',
+      reason: 'medical',
+      npc: doctor.labelname,
+      suspect: doctor.labelname,
+      authority: 'player',
+    })
     info.add_interaction(`${doctor.labelname}'s gave you clearance for 8 turns`)
 
     //TESTJPF ACTIVEATE SIDE QUEST HERE
@@ -158,6 +201,48 @@ function medic_assist_checks() {
     quest.side_quests![1].status = 'complete'
 
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
+  } else if (
+    meds.status == 'active' &&
+    novel.item == 'vial02' &&
+    meds.passed == true
+  ) {
+    novel.priority = true
+    const waiting = tasks.caution_has_npc('waitingformeds')
+    //testjpf doesnt work if you talk to someone else!!! BUG
+    if (novel.npc.labelname == waiting) {
+      print('WAITING DOES ANYHTING???!!!')
+      //meds.passed = true
+      meds.status = 'complete'
+
+      novel.reason = 'medical'
+      info.add_interaction(`${waiting} likes that you gave them meds.`)
+      doctor.love = doctor.love + 1
+      novel.npc = { ...npcs.all[waiting] }
+    } else {
+      //tasks.remove_quest_cautions(doctor.labelname)
+      //novel.remove_npc_quest(doctor.labelname)
+      novel.reason = 'favordoctorquest'
+
+      // testjpf this is overwriting my scriptsdialog functions
+      novel.npc = { ...doctor }
+      //novel.priority = true
+      tasks.append_caution({
+        label: 'favor',
+        time: 15,
+        type: 'quest',
+        reason: 'favordoctorquest',
+        npc: doctor.labelname,
+        suspect: npcs.all[waiting!].labelname,
+        authority: 'player',
+      })
+    }
+    //  info.add_interaction(`${injured.labelname} likes that you got a doctor.`)
+    // injured.love = injured.love + 1
+    msg.post('proxies:/controller#novelcontroller', 'show_scene')
+    if (waiting != null) {
+      tasks.remove_quest_cautions(waiting)
+      novel.remove_npc_quest(waiting)
+    }
   }
   //TESTJPF ELSE if quest complete dialog, xp / money???
 }
