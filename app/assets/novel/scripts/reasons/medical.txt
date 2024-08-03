@@ -1,0 +1,38 @@
+label medicalstart
+if caution = "receivemeds"
+    n: Thanks for the meds. I'll get this patient to the infirmary.
+    jump quickclose
+n: can we help each other out?
+jump quickclose
+
+label medical1x
+n: I'll pray for youx qs
+jump quickclose
+
+label medical2x
+n: Peace be with you.xqs
+jump quickclose
+
+label medical3x
+n: Merx bless us all.xqs
+jump quickclose
+
+label genericmedicalx
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump medical1x
+if dice > 50
+    jump medical2x
+if dice > 25
+    jump medical3x
+n: Holy. Holy.xqs
+jump quickclose
+
+label wisemedicalx
+n: Everyone is a worthy person.xqs
+jump quickclose
+
+label strongmedicalx
+n: The lord has imbued me with great strength!xvvqs
+jump quickclose

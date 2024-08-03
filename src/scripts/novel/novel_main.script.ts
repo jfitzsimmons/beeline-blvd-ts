@@ -54,6 +54,7 @@ function script_builder(
   //if confrontation of player or not??
   if (['questioning', 'arrest'].includes(novel.caution.label))
     novel.reason = novel.caution.reason
+  print('n.reason in script builder', novel.reason)
   paths.push(`reasons/${novel.reason}`)
   //if (paths.length > 0) novel.reason = 'quest'
   paths.unshift('clans/' + novel.npc.clan)

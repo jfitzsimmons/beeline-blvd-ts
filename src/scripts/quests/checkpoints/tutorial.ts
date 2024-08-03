@@ -8,6 +8,8 @@ const { rooms, npcs, tasks, player, novel, info } = globalThis.game.world
 
 function medic_assist_checks() {
   const injured = npcs.all[rooms.all.grounds.stations.worker1]
+  // BUG::: testjpf I think this will
+  // let you interact with any doctor
   const doctor = npcs.all[novel.npc.labelname]
   const quest = tasks.quests.tutorial.medic_assist
   const { conditions: cons } = quest
@@ -17,8 +19,8 @@ function medic_assist_checks() {
     //overly cautious? TESTJPF make sure injured doesnt get into other trouble???
     tasks.remove_heat(injured.labelname)
   }
-  print('TUTS:::', apple.status, novel.item, apple.passed)
-
+  print('TUTS:::', meds.status, novel.item, meds.passed)
+  print('TUTS::: i.status i passed::', injury.status, injury.passed)
   if (injury.status == 'standby' && injury.passed == true) {
     injury.status = 'active'
     quest.status = 'active'
@@ -148,7 +150,7 @@ function medic_assist_checks() {
       label: 'quest',
       time: 50,
       type: 'medassist',
-      reason: 'waitingformeds',
+      reason: 'medical',
       npc: doctor.labelname,
       suspect: doctor.labelname,
       authority: 'player',
@@ -168,8 +170,6 @@ function medic_assist_checks() {
     // create caution for... 10 turns?
     // i don't have cleareance logic setup!!
     //testjpf add "note" to inventory
-  } else if (meds.passed == true && meds.status == 'active') {
-    tasks.remove_quest_cautions(doctor.labelname)
   } else if (novel.reason == 'rejectmeds') {
     info.add_interaction(`${doctor.labelname} doesn't like you wont help.`)
     injured.love = injured.love - 1
@@ -201,6 +201,48 @@ function medic_assist_checks() {
     quest.side_quests![1].status = 'complete'
 
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
+  } else if (
+    meds.status == 'active' &&
+    novel.item == 'vial02' &&
+    meds.passed == true
+  ) {
+    novel.priority = true
+    const waiting = tasks.caution_has_npc('waitingformeds')
+    //testjpf doesnt work if you talk to someone else!!! BUG
+    if (novel.npc.labelname == waiting) {
+      print('WAITING DOES ANYHTING???!!!')
+      //meds.passed = true
+      meds.status = 'complete'
+
+      novel.reason = 'medical'
+      info.add_interaction(`${waiting} likes that you gave them meds.`)
+      doctor.love = doctor.love + 1
+      novel.npc = { ...npcs.all[waiting] }
+    } else {
+      //tasks.remove_quest_cautions(doctor.labelname)
+      //novel.remove_npc_quest(doctor.labelname)
+      novel.reason = 'favordoctorquest'
+
+      // testjpf this is overwriting my scriptsdialog functions
+      novel.npc = { ...doctor }
+      //novel.priority = true
+      tasks.append_caution({
+        label: 'favor',
+        time: 15,
+        type: 'quest',
+        reason: 'favordoctorquest',
+        npc: doctor.labelname,
+        suspect: npcs.all[waiting!].labelname,
+        authority: 'player',
+      })
+    }
+    //  info.add_interaction(`${injured.labelname} likes that you got a doctor.`)
+    // injured.love = injured.love + 1
+    msg.post('proxies:/controller#novelcontroller', 'show_scene')
+    if (waiting != null) {
+      tasks.remove_quest_cautions(waiting)
+      novel.remove_npc_quest(waiting)
+    }
   }
   //TESTJPF ELSE if quest complete dialog, xp / money???
 }

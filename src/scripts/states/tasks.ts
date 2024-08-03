@@ -231,7 +231,7 @@ export default class WorldTasks {
           // print('condition:', condition)
           const goal = quest.conditions[condition]
           //print('PREgoal label:', goal.label, goal.passed, goal.status)
-          if (goal.passed == false || goal.status == 'standby') {
+          if (goal.passed == false) {
             for (let i: number = goal.func.length; i-- !== 0; ) {
               if (
                 goal.interval[i] == interval &&
@@ -239,7 +239,7 @@ export default class WorldTasks {
               ) {
                 print('goal PASSED: GOAL', goal.label)
                 goal.passed = true
-                goal.status = 'complete'
+                //goal.status = 'complete'
                 quest.status = 'active'
                 break
               }
