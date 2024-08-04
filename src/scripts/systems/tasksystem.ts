@@ -346,9 +346,10 @@ export function address_cautions() {
 
   for (let i = sortedCautions.length - 1; i >= 0; i--) {
     print(
-      'sortedCautions[i].label & NPC',
+      'sortedCautions[i].label & NPC & sus::',
       sortedCautions[i].label,
-      sortedCautions[i].npc
+      sortedCautions[i].npc,
+      sortedCautions[i].suspect
     )
     sortedCautions[i].time--
     if (sortedCautions[i].time <= 0) {

@@ -1,26 +1,28 @@
 import { Npc } from '../../../types/state'
+import { QuestConditions } from '../../../types/tasks'
 import { steal_check, take_or_stash } from '../../ai/ai_checks'
 import { npc_action_move } from '../../ai/ai_main'
 import { from_same_room } from '../../utils/quest'
 import { shuffle, surrounding_room_matrix } from '../../utils/utils'
 
 const { rooms, npcs, tasks, player, novel, info } = globalThis.game.world
-
-function medic_assist_checks() {
+function injured_checks(conditions: QuestConditions) {
+  const { 0: injury, 1: doc } = conditions
+  const quest = tasks.quests.tutorial.medic_assist
+  /**  if (quest.passed == false) {
+     //overly cautious? TESTJPF make sure injured doesnt get into other trouble???
+     tasks.remove_heat(injured.labelname)
+   }**/
+  //need doctor checks and "non-doctor" cjecks?
+  //testjpf if novel.npc isn't a doctor::: RETURN!!!????
   const injured = npcs.all[rooms.all.grounds.stations.worker1]
   // BUG::: testjpf I think this will
   // let you interact with any doctor
-  const doctor = npcs.all[novel.npc.labelname]
-  const quest = tasks.quests.tutorial.medic_assist
-  const { conditions: cons } = quest
+  //const doctor = npcs.all[novel.npc.labelname]
+
+  // const { conditions: cons } = quest
   //const {0:injury,1:doc, 2:apple} = cons
-  const { 0: injury, 1: doc, 2: apple, 3: meds } = cons
-  if (quest.passed == false) {
-    //overly cautious? TESTJPF make sure injured doesnt get into other trouble???
-    tasks.remove_heat(injured.labelname)
-  }
-  print('TUTS:::', meds.status, novel.item, meds.passed)
-  print('TUTS::: i.status i passed::', injury.status, injury.passed)
+
   if (injury.status == 'standby' && injury.passed == true) {
     injury.status = 'active'
     quest.status = 'active'
@@ -29,7 +31,19 @@ function medic_assist_checks() {
     info.add_interaction(
       `${injured.labelname} likes that you are helping them.`
     )
-  } else if (
+  }
+}
+function doctor_checks(conditions: QuestConditions) {
+  const quest = tasks.quests.tutorial.medic_assist
+
+  const injured = npcs.all[rooms.all.grounds.stations.worker1]
+  // BUG::: testjpf I think this will
+  // let you interact with any doctor
+  const doctor = npcs.all[novel.npc.labelname]
+  const { 0: injury, 2: apple, 3: meds } = conditions
+  // testjpf future have side_quesct_checks()????
+
+  if (
     //TESTJPF !!! Here is where you would have the other options
     // not just apple, but bribe, drugs...
     novel.reason == 'hungrydoc' &&
@@ -43,7 +57,7 @@ function medic_assist_checks() {
     //which quest? the one that comes from quest directory scripts
     // as seen in sbuilder:: const quest_paths
     //testjpf need to debug txt scripts related to this quest
-    tasks.append_caution({
+    /**tasks.append_caution({
       label: 'quest',
       time: 100,
       type: 'hungry',
@@ -51,7 +65,10 @@ function medic_assist_checks() {
       npc: doctor.labelname,
       suspect: doctor.labelname,
       authority: 'player',
-    })
+    })**/
+    tasks.caution_builder(doctor, 'quest', injured.labelname, 'quest')
+    novel.append_npc_quest(doctor.labelname)
+
     info.add_interaction(`${doctor.labelname} needs drugs, money or food.`)
     //info.build_objectives(tasks.quests)
     //testjpf
@@ -71,7 +88,7 @@ function medic_assist_checks() {
     //which quest? the one that comes from quest directory scripts
     // as seen in sbuilder:: const quest_paths
     //testjpf need to debug txt scripts related to this quest
-    tasks.append_caution({
+    /**tasks.append_caution({
       label: 'quest',
       time: 100,
       type: 'hungry',
@@ -79,7 +96,10 @@ function medic_assist_checks() {
       npc: doctor.labelname,
       suspect: doctor.labelname,
       authority: 'player',
-    })
+    })*/
+    novel.append_npc_quest(doctor.labelname)
+    tasks.caution_builder(doctor, 'quest', injured.labelname, 'quest')
+
     info.add_interaction(`${doctor.labelname} needs drugs, money or food.`)
     //info.build_objectives(tasks.quests)
     //testjpf
@@ -98,8 +118,10 @@ function medic_assist_checks() {
     apple.passed = true
     apple.status = 'complete'
 
-    tasks.remove_quest_cautions(doctor.labelname)
+    //tasks.remove_quest_cautions(doctor.labelname)
     novel.remove_npc_quest(doctor.labelname)
+    tasks.remove_quest_cautions(doctor.labelname)
+
     novel.reason = 'getadoctor'
     info.add_interaction(`${doctor.labelname} likes that you fed them.`)
     doctor.love = doctor.love + 1
@@ -146,6 +168,9 @@ function medic_assist_checks() {
       suspect: 'player',
       authority: 'security',
     })
+    novel.append_npc_quest(doctor.labelname)
+
+    /** 
     tasks.append_caution({
       label: 'quest',
       time: 50,
@@ -154,7 +179,7 @@ function medic_assist_checks() {
       npc: doctor.labelname,
       suspect: doctor.labelname,
       authority: 'player',
-    })
+    })*/
     info.add_interaction(`${doctor.labelname}'s gave you clearance for 8 turns`)
 
     //TESTJPF ACTIVEATE SIDE QUEST HERE
@@ -207,6 +232,7 @@ function medic_assist_checks() {
     meds.passed == true
   ) {
     novel.priority = true
+    //TESTjpf start here
     const waiting = tasks.caution_has_npc('waitingformeds')
     //testjpf doesnt work if you talk to someone else!!! BUG
     if (novel.npc.labelname == waiting) {
@@ -219,8 +245,20 @@ function medic_assist_checks() {
       doctor.love = doctor.love + 1
       novel.npc = { ...npcs.all[waiting] }
     } else {
-      //tasks.remove_quest_cautions(doctor.labelname)
-      //novel.remove_npc_quest(doctor.labelname)
+      //testjpf start here
+      //set up address)cautions for favors and quests TODO
+      // need to really think out logic here
+      /**
+       * youd talk to them (reason = quest, label queststart)((doctorsScripts!!!))
+       * if accept reason = quest: favormedquest
+       * this creates favor caution
+       * address_cautions should look for nearby docs
+       * decide wether to give them meds,
+       * (if they even haven't lost the yet)
+       * if so, goal passed = true
+       * quest complete when talk to doc again?? with timeout??
+       * remove any related npcs from npcsWithQuest
+       */
       novel.reason = 'favordoctorquest'
 
       // testjpf this is overwriting my scriptsdialog functions
@@ -236,14 +274,34 @@ function medic_assist_checks() {
         authority: 'player',
       })
     }
-    //  info.add_interaction(`${injured.labelname} likes that you got a doctor.`)
-    // injured.love = injured.love + 1
+
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
+    // removed after scene
     if (waiting != null) {
       tasks.remove_quest_cautions(waiting)
       novel.remove_npc_quest(waiting)
     }
   }
+}
+function medic_assist_checks() {
+  const quest = tasks.quests.tutorial.medic_assist
+  /**  if (quest.passed == false) {
+    //overly cautious? TESTJPF make sure injured doesnt get into other trouble???
+    tasks.remove_heat(injured.labelname)
+  }**/
+  //need doctor checks and "non-doctor" cjecks?
+  //testjpf if novel.npc isn't a doctor::: RETURN!!!????
+  // const injured = npcs.all[rooms.all.grounds.stations.worker1]
+  // BUG::: testjpf I think this will
+  // let you interact with any doctor
+  //const doctor = npcs.all[novel.npc.labelname].
+
+  const { conditions: cons } = quest
+  //const {0:injury,1:doc, 2:apple} = cons
+  //const { 0: injury, 1: doc, 2: apple, 3: meds } = cons
+
+  if (npcs.all[novel.npc.labelname].clan == 'doctors') doctor_checks(cons)
+  if (cons[0].passed == true) injured_checks(cons)
   //TESTJPF ELSE if quest complete dialog, xp / money???
 }
 

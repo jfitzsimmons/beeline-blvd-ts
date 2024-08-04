@@ -73,20 +73,6 @@ function open_inventory(_this: props, actor: string, action: string) {
     }
   }
   if (_this.consequence.confront == true) {
-    /**
-     * ued to send confront info though script builder.
-     * use Novel class!! testjpf
-     * maybe send in message.
-     *
-     * still confused as to where other consequrnces happen
-     * tutoral quests?
-     * ai levels!!??
-     *
-     * 		if self.is_npc == false then self.npcname = self.watcher end
-     * self.script = novel.script_builder(self.npcname, nil, nil, self.
-     *  consequence.type, false)
-     *
-     */
     if (_this.isNpc == false) {
       _this.npcname = _this.watcher
     }
