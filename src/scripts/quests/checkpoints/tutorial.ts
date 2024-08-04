@@ -43,7 +43,7 @@ function medic_assist_checks() {
     //which quest? the one that comes from quest directory scripts
     // as seen in sbuilder:: const quest_paths
     //testjpf need to debug txt scripts related to this quest
-    tasks.append_caution({
+    /**tasks.append_caution({
       label: 'quest',
       time: 100,
       type: 'hungry',
@@ -51,7 +51,9 @@ function medic_assist_checks() {
       npc: doctor.labelname,
       suspect: doctor.labelname,
       authority: 'player',
-    })
+    })**/
+    novel.append_npc_quest(doctor.labelname)
+
     info.add_interaction(`${doctor.labelname} needs drugs, money or food.`)
     //info.build_objectives(tasks.quests)
     //testjpf
@@ -71,7 +73,7 @@ function medic_assist_checks() {
     //which quest? the one that comes from quest directory scripts
     // as seen in sbuilder:: const quest_paths
     //testjpf need to debug txt scripts related to this quest
-    tasks.append_caution({
+    /**tasks.append_caution({
       label: 'quest',
       time: 100,
       type: 'hungry',
@@ -79,7 +81,9 @@ function medic_assist_checks() {
       npc: doctor.labelname,
       suspect: doctor.labelname,
       authority: 'player',
-    })
+    })*/
+    novel.append_npc_quest(doctor.labelname)
+
     info.add_interaction(`${doctor.labelname} needs drugs, money or food.`)
     //info.build_objectives(tasks.quests)
     //testjpf
@@ -98,7 +102,7 @@ function medic_assist_checks() {
     apple.passed = true
     apple.status = 'complete'
 
-    tasks.remove_quest_cautions(doctor.labelname)
+    //tasks.remove_quest_cautions(doctor.labelname)
     novel.remove_npc_quest(doctor.labelname)
     novel.reason = 'getadoctor'
     info.add_interaction(`${doctor.labelname} likes that you fed them.`)
@@ -146,6 +150,9 @@ function medic_assist_checks() {
       suspect: 'player',
       authority: 'security',
     })
+    novel.append_npc_quest(doctor.labelname)
+
+    /** 
     tasks.append_caution({
       label: 'quest',
       time: 50,
@@ -154,7 +161,7 @@ function medic_assist_checks() {
       npc: doctor.labelname,
       suspect: doctor.labelname,
       authority: 'player',
-    })
+    })*/
     info.add_interaction(`${doctor.labelname}'s gave you clearance for 8 turns`)
 
     //TESTJPF ACTIVEATE SIDE QUEST HERE
@@ -207,6 +214,7 @@ function medic_assist_checks() {
     meds.passed == true
   ) {
     novel.priority = true
+    //TESTjpf start here
     const waiting = tasks.caution_has_npc('waitingformeds')
     //testjpf doesnt work if you talk to someone else!!! BUG
     if (novel.npc.labelname == waiting) {

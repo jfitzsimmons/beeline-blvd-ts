@@ -232,6 +232,7 @@ export default class WorldTasks {
           const goal = quest.conditions[condition]
           //print('PREgoal label:', goal.label, goal.passed, goal.status)
           if (goal.passed == false) {
+            // arg:func is array in case need for more than 1 check
             for (let i: number = goal.func.length; i-- !== 0; ) {
               if (
                 goal.interval[i] == interval &&
