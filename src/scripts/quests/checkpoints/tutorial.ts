@@ -294,14 +294,14 @@ function medic_assist_checks() {
   // const injured = npcs.all[rooms.all.grounds.stations.worker1]
   // BUG::: testjpf I think this will
   // let you interact with any doctor
-  //const doctor = npcs.all[novel.npc.labelname]
+  //const doctor = npcs.all[novel.npc.labelname].
 
   const { conditions: cons } = quest
   //const {0:injury,1:doc, 2:apple} = cons
   //const { 0: injury, 1: doc, 2: apple, 3: meds } = cons
 
   if (npcs.all[novel.npc.labelname].clan == 'doctors') doctor_checks(cons)
-  if (cons.injury.passed == true) injured_checks(cons)
+  if (cons[0].passed == true) injured_checks(cons)
   //TESTJPF ELSE if quest complete dialog, xp / money???
 }
 
