@@ -1,6 +1,11 @@
 import { Npc, Occupants } from '../../types/state'
 import { roll_special_dice } from '../utils/dice'
-import { clamp, shuffle, surrounding_room_matrix } from '../utils/utils'
+import {
+  arraymove,
+  clamp,
+  shuffle,
+  surrounding_room_matrix,
+} from '../utils/utils'
 import { admirer_check, prejudice_check } from './effectsystem'
 import { bribe_check } from './inventorysystem'
 import {
@@ -205,8 +210,7 @@ function question_consequence(c: Caution) {
 export function npc_confrontation(s: string, c: Caution) {
   if (c.label == 'questioning') {
     question_consequence(c)
-  }
-  if (c.label == 'arrest') {
+  } else if (c.label == 'arrest') {
     //print('CAUTION:: arrest.', c.npc, 'threw', s, 'in jail')
     go_to_jail(s)
   }
@@ -214,8 +218,8 @@ export function npc_confrontation(s: string, c: Caution) {
 
 //medics:
 export function send_to_infirmary(v: string, doc: string) {
-  //print('infirmed:', v, ' :::!!!!')
   tasks.remove_heat(v)
+  tasks.remove_mend(v)
   const occupants: Occupants = rooms.all.infirmary.occupants!
   let station: keyof typeof occupants
   for (station in occupants) {
@@ -234,10 +238,17 @@ export function send_to_infirmary(v: string, doc: string) {
 }
 
 export function freeze_injured_npc(npc: Npc) {
+  //reset npc into current position
   rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
-
-  const limit = tasks.medicQueue.indexOf(npc.labelname)
-  if (limit < 0 || limit > 3) injured_npcs.push(npc.labelname)
+  //check if and where injured is located in Doctors' queue
+  const limit = tasks.mendingQueue.indexOf(npc.labelname)
+  //if npc isn't in q, put them on all NPC's radar for caution creation
+  if (limit < 0 && injured_npcs.includes(npc.labelname) == false) {
+    injured_npcs.push(npc.labelname)
+  } else if (limit > 3) {
+    //if npc isn't in q, put them on Doctors' radar
+    arraymove(tasks.mendingQueue, limit, 0)
+  }
 }
 
 export function doctor_ai_turn(
@@ -248,7 +259,8 @@ export function doctor_ai_turn(
     (p) => p != ''
   )
   let docInOffice = false
-
+  let t = targets
+  // does doctor have a field caution?
   if (tasks.get_field_docs().includes(npc.labelname) == true) {
     //stay put
     rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
@@ -256,17 +268,19 @@ export function doctor_ai_turn(
     patients.length > 1 &&
     math.random() + patients.length * 0.1 > 0.6
   ) {
+    //RNG weighted by num of patients. Sends doc to infirmary.
     rooms.all.infirmary.stations.aid = npc.labelname
     docInOffice = true
   } else if (patients.length > 3) {
-    targets = surrounding_room_matrix(rooms.all.infirmary.matrix, npc.matrix)
-  } else if (injured_npcs.length > 0) {
-    //find emergency patient
-    targets = surrounding_room_matrix(
-      rooms.all[npcs.all[injured_npcs[0]].currentroom].matrix,
+    //Force Doc to infirmary if overwhelmed
+    t = surrounding_room_matrix(rooms.all.infirmary.matrix, npc.matrix)
+  } else if (tasks.mendingQueue.length > 0) {
+    //find priority emergency patient
+    t = surrounding_room_matrix(
+      rooms.all[npcs.all[tasks.mendingQueue[0]].currentroom].matrix,
       npc.matrix
     )
   }
 
-  return [targets, docInOffice]
+  return [t, docInOffice]
 }

@@ -1,6 +1,6 @@
 label defaultstart
 if reason == "concern"
-    jump queststart
+    
 if reason == "concern2"
     jump actualconcern
 > How about these grounds?

@@ -6,11 +6,7 @@ import { remove_effects } from '../systems/effectsystem'
 import { reception_checks } from './levels/reception'
 import { customs_checks } from './levels/customs'
 import { baggage_checks } from './levels/baggage'
-import {
-  doctor_ai_turn,
-  freeze_injured_npc,
-  injured_npcs,
-} from '../systems/emergencysystem'
+import { doctor_ai_turn, freeze_injured_npc } from '../systems/emergencysystem'
 //import { thief_consolation_checks } from '../systems/tasksystem'
 
 const { tasks, rooms, npcs, player } = globalThis.game.world
@@ -307,7 +303,7 @@ function release_occupants(d: Direction) {
 
 function ai_actions(direction: Direction) {
   clearance_checks()
-  aid_check(injured_npcs)
+  aid_check()
   release_occupants(direction)
   reception_checks()
   customs_checks()
@@ -383,9 +379,9 @@ export function place_npcs() {
   npcs.all[rooms.all.grounds.stations.worker1].hp = 0
 
   tasks.append_caution({
-    label: 'quest',
+    label: 'ignore',
     npc: npcs.all[rooms.all.grounds.stations.worker1].labelname,
-    authority: 'player',
+    authority: 'doctors',
     time: 100,
     suspect: npcs.all[rooms.all.grounds.stations.worker1].labelname,
     reason: 'quest',
@@ -393,15 +389,19 @@ export function place_npcs() {
   })
 }
 export function ai_turn() {
-  //count = {}
+  //testjpf
+  //ai turn is called on level load
+
   rooms.clear_stations()
 
-  const patients = Object.values(rooms.all.infirmary.occupants!).filter(
+  const infirmed = Object.values(rooms.all.infirmary.occupants!).filter(
     (p) => p != ''
   )
+  //infirmed, inmates, and doctors in the field dont have actions
+  //in office docs are case by case
   const immobile: string[] = [
     ...Object.values(rooms.all.security.occupants!),
-    ...patients,
+    ...infirmed,
     ...tasks.get_field_docs(),
   ]
 
@@ -414,15 +414,23 @@ export function ai_turn() {
 
   for (let i = npcs.order.length; i-- !== 0; ) {
     const npc = npcs.all[npcs.order[i]]
-    if (npc.hp <= 0 && patients.includes(npc.labelname) == false) {
+    if (npc.hp <= 0 && infirmed.includes(npc.labelname) == false) {
+      ///testjpf
+      //confusing because tasks.medicq and
+      //emergency injured_npc seem redundant
       freeze_injured_npc(npc)
+      immobile.push(npc.labelname)
     }
     if (npc.clan == 'doctors') {
+      //Docs target field or infirmary
       const [docTargets, docInOffice] = doctor_ai_turn(npc, targets)
       targets = docTargets
+      //In-office docs dont have actions
       if (docInOffice == true) immobile.push(npc.labelname)
     }
-    if (immobile.includes(npc.labelname) == false && npc.hp > 0)
+
+    //default mobile actions
+    if (immobile.includes(npc.labelname) == false)
       npc_action_move(npc.labelname, targets)
   }
 

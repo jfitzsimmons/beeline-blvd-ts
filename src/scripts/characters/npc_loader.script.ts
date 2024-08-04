@@ -15,6 +15,7 @@ function show_npc(name: string) {
 }
 
 function move_npc(station: string) {
+  print('STation to be moved:::', station)
   const pos = go.get_position(station)
   pos.y = pos.y - 64
   pos.x = pos.x - 28

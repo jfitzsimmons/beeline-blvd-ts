@@ -122,13 +122,26 @@ function npc_snitch_check(w: string, s: string) {
   }
   return caution_state
 }
-function adjust_medic_queue(s: string) {
-  if (tasks.medicQueue.includes(s) == true) {
-    if (tasks.medicQueue.indexOf(s) > 1)
-      arraymove(tasks.medicQueue, tasks.medicQueue.indexOf(s), 0)
+function adjust_medic_queue(patient: string) {
+  if (tasks.mendingQueue.includes(patient) == true) {
+    if (tasks.mendingQueue.indexOf(patient) > 1)
+      arraymove(tasks.mendingQueue, tasks.mendingQueue.indexOf(patient), 0)
   } else {
-    print('cautions caused s:', s, 'to be added to medicQueue')
-    tasks.medicQueue.push(s)
+    print('cautions caused patient:', patient, 'to be added to mendingQueue')
+    tasks.mendingQueue.push(patient)
+  }
+}
+function handle_temp_clearance(level: string, cleared: string, time: number) {
+  const levelNum: number = tonumber(level.charAt(level.length - 1))!
+  print('time clearance too low::??', time)
+  if (time > 1) {
+    cleared == 'player'
+      ? (player.clearance = levelNum)
+      : (npcs.all[cleared].clearence = levelNum)
+  } else {
+    cleared == 'player'
+      ? (player.clearance = player.clearance - levelNum)
+      : (npcs.all[cleared].clearence = npcs.all[cleared].clearence - levelNum)
   }
 }
 function merits_demerits(c: Caution, w: string) {
@@ -175,6 +188,8 @@ function snitch_to_security(c: Caution, watcher: string) {
 function passive_acts(c: Caution, w: string) {
   if (c.label == 'reckless') {
     reckless_consequence(c, w)
+  } else if (c.label == 'injury') {
+    adjust_medic_queue(c.suspect)
   } else if (
     c.authority == 'security' &&
     c.label == 'snitch' &&
@@ -187,8 +202,6 @@ function passive_acts(c: Caution, w: string) {
       npcs.all[c.npc].attitudes[npcs.all[w].clan] > 0)
   ) {
     merits_demerits(c, w)
-  } else if (c.label == 'injury') {
-    adjust_medic_queue(c.suspect)
   }
 }
 
@@ -283,6 +296,11 @@ function address_conversations(cs: Caution[]) {
     }
   }
 }
+function address_admin(cs: Caution[]) {
+  for (let i = cs.length - 1; i >= 0; i--) {
+    handle_temp_clearance(cs[i].type, cs[i].suspect, cs[i].time)
+  }
+}
 function address_busy_acts(cs: Caution[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
     focused_acts(cs[i])
@@ -291,6 +309,8 @@ function address_busy_acts(cs: Caution[]) {
 
 //LEVEL Cautions
 export function address_cautions() {
+  //testjpf why sort by time??
+  //needs better naming conventions
   const sortedCautions = tasks.cautions.sort(
     (a: Caution, b: Caution) => a.time - b.time
   )
@@ -312,13 +332,25 @@ export function address_cautions() {
     },
     { medical: [], conversational: [] }
   )
-
+  const { clearance, conversational2 } = conversational.reduce(
+    (r: { [key: string]: Caution[] }, o: Caution) => {
+      r[o.label == 'clearance' ? 'clearance' : 'conversational2'].push(o)
+      return r
+    },
+    { clearance: [], conversational2: [] }
+  )
+  address_admin(clearance)
+  address_conversations(conversational2)
+  address_busy_acts(medical)
   const confront: Caution | null = address_confrontations(confrontational)
 
-  address_busy_acts(medical)
-  address_conversations(conversational)
-
   for (let i = sortedCautions.length - 1; i >= 0; i--) {
+    print(
+      'sortedCautions[i].label & NPC & sus::',
+      sortedCautions[i].label,
+      sortedCautions[i].npc,
+      sortedCautions[i].suspect
+    )
     sortedCautions[i].time--
     if (sortedCautions[i].time <= 0) {
       sortedCautions.splice(i, 1)

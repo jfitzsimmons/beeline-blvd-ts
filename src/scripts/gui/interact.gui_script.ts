@@ -54,10 +54,12 @@ function open_inventory(_this: props, actor: string, action: string) {
     // the actual npc assigned to that station
     if (station != undefined) _this.watcher = room.stations[station]
   } else if (action == 'trade' || action == 'give' || action == 'pockets') {
-    // testjpf trade will need "acceptanace"???
+    // testjpf trade will need "acceptanace"????
     _this.watcher = actor
   }
   if (_this.watcher != '' && _this.watcher != null) {
+    novel.npc = { ...npcs.all[_this.npcname] }
+
     const prev_caution = tasks.npc_has_caution(_this.watcher, 'player')
 
     if (prev_caution != null) {
@@ -71,20 +73,6 @@ function open_inventory(_this: props, actor: string, action: string) {
     }
   }
   if (_this.consequence.confront == true) {
-    /**
-     * ued to send confront info though script builder.
-     * use Novel class!! testjpf
-     * maybe send in message.
-     *
-     * still confused as to where other consequrnces happen
-     * tutoral quests?
-     * ai levels!!??
-     *
-     * 		if self.is_npc == false then self.npcname = self.watcher end
-     * self.script = novel.script_builder(self.npcname, nil, nil, self.
-     *  consequence.type, false)
-     *
-     */
     if (_this.isNpc == false) {
       _this.npcname = _this.watcher
     }

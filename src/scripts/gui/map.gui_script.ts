@@ -24,6 +24,8 @@ export function on_input(
 ) {
   if (action_id == hash('touch') && action.released) {
     check_room_nodes(action)
+  } else if (action_id == hash('actionbtn') && action.released) {
+    msg.post('proxies:/controller#infocontroller', 'show_menu')
   }
 }
 

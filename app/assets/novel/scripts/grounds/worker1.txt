@@ -1,8 +1,8 @@
 label defaultstart
 show n
 n: It's so boring waiting to get through customs.
-if reason == "quest"
-    jump queststart
+
+    
 if reason == "concern"
     jump actualconcern
 jump defaultChoices

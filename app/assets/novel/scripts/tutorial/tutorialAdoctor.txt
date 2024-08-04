@@ -12,6 +12,7 @@ if activeq == "true"
 label aretheyhealed
 p: Are they going to be okay?
 n: Do you have an apple?
+reason = "quest: hungrydoc"
 > Yes
     n: Do you really?
     jump quickclose
