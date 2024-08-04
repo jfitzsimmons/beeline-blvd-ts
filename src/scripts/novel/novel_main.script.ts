@@ -1,7 +1,7 @@
 import { novel_init, novel_start } from './matchanovel'
 const { npcs, tasks, player, novel } = globalThis.game.world
 
-import { questScripts } from '../quests/quests_main'
+import { prepareQuestTxts } from '../quests/quests_main'
 import { impressed_checks, unimpressed_checks } from '../systems/tasksystem'
 
 interface props {
@@ -9,14 +9,14 @@ interface props {
   cause: string
 }
 
-function script_builder(
+function prepare_novel_txts(
   room: boolean | true = true,
   extend: boolean | false = false
 ) {
   //TESTJPF could move some logic to novelcontroller
   const paths: string[] = []
   const caution = tasks.npc_has_caution('any', novel.npc.labelname)
-  const quest_paths: string[] = questScripts[player.checkpoint + 'scripts'](
+  const quest_paths: string[] = prepareQuestTxts[player.checkpoint + 'scripts'](
     novel.npc.labelname
   )
   let checkpoint = player.checkpoint.slice(0, -1)
@@ -54,6 +54,12 @@ function script_builder(
   paths.push(`reasons/${novel.reason}`)
   paths.unshift('clans/' + novel.npc.clan)
   paths.unshift(checkpoint + '/default')
+
+  //TESTJPF one of these will/should have "label queststart"????
+  //so reason will be quest and questScript will load appropriate txts
+  // ex tutorial/getadoctor.txt
+  // so stop worrying about reason = "quest"
+  //you'll find a reason to use /reasons/quest.txt defaults
   paths.push(...quest_paths)
 
   novel.scripts = paths
@@ -131,7 +137,7 @@ export function on_message(
   _sender: url
 ): void {
   if (messageId == hash('wake_up')) {
-    script_builder()
+    prepare_novel_txts()
     // novel.alertChange = player.alert_level
     novel_init(novel.scripts)
     novel_start()

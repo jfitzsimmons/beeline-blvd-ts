@@ -16,7 +16,7 @@ function game_turn(room: string) {
   novel.item = 'none'
   novel.reset_caution()
   ai_turn() // abstract to world controller?
-  tasks.update_quests_state('turn', player.checkpoint)
+  tasks.update_quests_progress('turn', player.checkpoint)
   quest_checker('turn')
   player.ap = player.ap - 1
   player.turns = player.turns + 1
@@ -118,7 +118,7 @@ export function on_message(
       if (confrontation != null) confrontation_scene(confrontation)
     }
   } else if (messageId == hash('exit_gui')) {
-    tasks.update_quests_state('interact', player.checkpoint)
+    tasks.update_quests_progress('interact', player.checkpoint)
     quest_checker('interact')
 
     print('exitgui reason::', novel.reason)

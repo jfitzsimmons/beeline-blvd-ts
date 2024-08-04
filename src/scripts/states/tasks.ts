@@ -195,6 +195,9 @@ export default class WorldTasks {
       append.type = 'clan'
       append.time = 10
       append.reason = 'suspicious'
+    } else if (c == 'quest') {
+      append.time = 72
+      append.authority = 'player'
     }
 
     print(
@@ -216,7 +219,7 @@ export default class WorldTasks {
     this.cautions.push(caution)
   }
   // checks quest completion after interactions and turns
-  update_quests_state = (interval: string, checkpoint: string) => {
+  update_quests_progress = (interval: string, checkpoint: string) => {
     //  print('checkpoint.slice(0, -1)', checkpoint.slice(0, -1))
     const quests = this.quests[checkpoint.slice(0, -1)]
 
@@ -231,7 +234,7 @@ export default class WorldTasks {
           // print('condition:', condition)
           const goal = quest.conditions[condition]
           //print('PREgoal label:', goal.label, goal.passed, goal.status)
-          if (goal.passed == false) {
+          if (goal.passed == false && goal.status != 'failed') {
             // arg:func is array in case need for more than 1 check
             for (let i: number = goal.func.length; i-- !== 0; ) {
               if (
