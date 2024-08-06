@@ -1,0 +1,12 @@
+label queststart
+n: What are you looking for?
+p: The doc needs meds.
+n: Here.
+reason = "quest: favormedquest"
+jump quickclose
+
+label activeqtestjpf
+p: activeqtestjpf
+n: activeqtestjpf
+jump quickclose
+

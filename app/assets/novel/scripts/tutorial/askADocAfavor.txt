@@ -1,0 +1,11 @@
+label queststart
+p: Can you deliver these for me?
+n: Sure.
+reason = "quest: docdelivervial"
+jump quickclose
+
+label activeqtestjpf
+p: activeqtestjpf
+n: activeqtestjpf
+jump quickclose
+
