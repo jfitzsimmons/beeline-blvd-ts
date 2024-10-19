@@ -7,14 +7,14 @@ n: If you have time, I need meds if you can help.
     n: I can write you a temporary pass to get to the infirmary.
     > Yes
         n: Here's a pass.
-        reason = "quest: getsomemeds"
+        reason = "quest: getsomemedsyes"
     > No
         n: I understand.
-        reason = "quest: rejectmeds"
+        reason = "quest: getsomemedsno"
     jump quickclose
 > No
     n: Let me know if you need anything.
-    reason = "quest: rejectmeds"
+    reason = "quest: getsomemedsno"
     > Bye
         jump quickclose
     > Other
@@ -27,7 +27,7 @@ if reason == "medical"
 n: Do you want that pass now?
 > Yes
     n: Here's a pass.
-    reason = "quest: getsomemeds"
+    reason = "quest: getsomemedsyes"
 > No
     n: Okay
 > Other

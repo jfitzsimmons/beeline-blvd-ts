@@ -4,11 +4,12 @@ if activeq == "true"
     jump haveyoufound
 n: Please, get some help.  I'm injured.
 > Yes
-    reason = "quest: helpthatman"
+    reason = "quest: helpperson"
     n: Thank you.  Please hurry.  Time Matters.
     jump quickclose
 > No
     npc.love = npc.love - 2
+    reason = "quest: helpmaybelater"
     n: Why? Ow. Jerk.
     jump defaultChoices
 

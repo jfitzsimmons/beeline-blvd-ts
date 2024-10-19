@@ -23,7 +23,7 @@ function injured_checks(conditions: QuestConditions) {
   // const { conditions: cons } = quest
   //const {0:injury,1:doc, 2:apple} = cons
 
-  if (injury.status == 'standby' && injury.passed == true) {
+  if (injury.status == 'inactive' && injury.passed == true) {
     injury.status = 'active'
     quest.status = 'active'
     doc.status = 'standby'
@@ -135,7 +135,7 @@ function doctor_checks(conditions: QuestConditions) {
     novel.remove_npc_quest(doctor.labelname)
     tasks.remove_quest_cautions(doctor.labelname)
 
-    novel.reason = 'getadoctor'
+    novel.reason = 'convinceddoctor'
     info.add_interaction(`${doctor.labelname} likes that you fed them.`)
     doctor.love = doctor.love + 1
 
@@ -449,7 +449,9 @@ function doctorsScripts() {
     // "I'm going as fast as i can" -doc
     //testjpf future naming files may be better:
     //docAsksForFavor, docActiveFavor
-    return apple.passed == false ? 'tutorial/hungrydoc' : 'tutorial/getadoctor'
+    return apple.passed == false
+      ? 'tutorial/hungrydoc'
+      : 'tutorial/convinceddoctor'
   } else if (cons[5].status == 'active') {
     novel.priority = true
     novel.reason = 'quest'
