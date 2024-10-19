@@ -1,0 +1,11 @@
+label queststart
+n: You did it! My hero.
+npc.love = npc.love + 1
+reason = "quest: medassistcomplete"
+jump quickclose
+
+label activeqtestjpf
+p: activeqtestjpf
+n: activeqtestjpf
+jump quickclose
+

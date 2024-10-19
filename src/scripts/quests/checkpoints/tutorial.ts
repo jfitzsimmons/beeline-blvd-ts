@@ -1,5 +1,5 @@
 import { Npc } from '../../../types/state'
-import { QuestConditions } from '../../../types/tasks'
+import { QuestCondition, QuestConditions } from '../../../types/tasks'
 import { steal_check, take_or_stash } from '../../ai/ai_checks'
 import { npc_action_move } from '../../ai/ai_main'
 import { from_same_room } from '../../utils/quest'
@@ -31,6 +31,20 @@ function injured_checks(conditions: QuestConditions) {
     info.add_interaction(
       `${injured.labelname} likes that you are helping them.`
     )
+  }
+}
+function infirmary_checks(delivery: QuestCondition) {
+  print('INFIRMARY CHECKS::: reaon / delivery::', novel.reason, delivery.status)
+  if (
+    //testjpf this only works if talking to doctors
+    // doctor sripts only gets called for doctors!!!
+    novel.reason == 'favormedquest' &&
+    delivery.status == 'inactive'
+  ) {
+    delivery.status = 'active'
+    player.add_inventory('vial02')
+
+    //info.add_interaction(`${doctor.labelname}'s gave you clearance for 8 turns`)
   }
 }
 function doctor_checks(conditions: QuestConditions) {
@@ -116,7 +130,6 @@ function doctor_checks(conditions: QuestConditions) {
     //check if last item clicked was apple? testjpf
     //TESTJPF Pass condition is changed HERE not in statekj
     apple.passed = true
-    apple.status = 'complete'
 
     //tasks.remove_quest_cautions(doctor.labelname)
     novel.remove_npc_quest(doctor.labelname)
@@ -141,6 +154,7 @@ function doctor_checks(conditions: QuestConditions) {
     info.add_interaction(`${injured.labelname} likes that you got a doctor.`)
     injured.love = injured.love + 1
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
+    // complete after talking
 
     //testjpf open dialog with thanks and next task???
     // use novel_init here jsut to laod the same tutorial/
@@ -150,6 +164,7 @@ function doctor_checks(conditions: QuestConditions) {
     // containing item, maybe who from "npc" or "player"
   } else if (novel.reason == 'getsomemeds' && meds.status == 'inactive') {
     meds.status = 'active'
+    apple.status = 'complete'
     player.add_inventory('note')
     print(
       'TRY TO MOVE:',
@@ -168,7 +183,10 @@ function doctor_checks(conditions: QuestConditions) {
       suspect: 'player',
       authority: 'security',
     })
+    novel.remove_npc_quest(doctor.labelname)
+    tasks.remove_quest_cautions(doctor.labelname)
     novel.append_npc_quest(doctor.labelname)
+    tasks.caution_builder(doctor, 'quest', injured.labelname, 'waitingformeds')
 
     /** 
     tasks.append_caution({
@@ -185,6 +203,10 @@ function doctor_checks(conditions: QuestConditions) {
     //TESTJPF ACTIVEATE SIDE QUEST HERE
     //not in else ifs
     quest.side_quests![1].status = 'active'
+    print(
+      'Is security clearance side quest acvtive::',
+      quest.side_quests![1].status
+    )
     player.clearance = 3
 
     msg.post(`/${doctor.currentstation}#npc_loader`, hash('move_npc'), {
@@ -196,6 +218,7 @@ function doctor_checks(conditions: QuestConditions) {
     // i don't have cleareance logic setup!!
     //testjpf add "note" to inventory
   } else if (novel.reason == 'rejectmeds') {
+    apple.status = 'complete'
     info.add_interaction(`${doctor.labelname} doesn't like you wont help.`)
     injured.love = injured.love - 1
     print(
@@ -219,7 +242,7 @@ function doctor_checks(conditions: QuestConditions) {
     from_same_room(npcs.return_security(), player.currentroom) != null
   ) {
     novel.caution.label = 'questioning'
-    novel.caution.reason = 'tutsclearance'
+    novel.reason = 'tutsclearance'
     novel.priority = true
     novel.npc = from_same_room(npcs.return_security(), player.currentroom)!
     quest.side_quests![1].passed = true
@@ -239,11 +262,12 @@ function doctor_checks(conditions: QuestConditions) {
       print('WAITING DOES ANYHTING???!!!')
       //meds.passed = true
       meds.status = 'complete'
-
-      novel.reason = 'medical'
       info.add_interaction(`${waiting} likes that you gave them meds.`)
       doctor.love = doctor.love + 1
       novel.npc = { ...npcs.all[waiting] }
+      novel.reason = 'docquestcomplete'
+      novel.remove_npc_quest(doctor.labelname)
+      tasks.remove_quest_cautions(doctor.labelname)
     } else {
       //testjpf start here
       //set up address)cautions for favors and quests TODO
@@ -259,8 +283,6 @@ function doctor_checks(conditions: QuestConditions) {
        * quest complete when talk to doc again?? with timeout??
        * remove any related npcs from npcsWithQuest
        */
-      novel.reason = 'favordoctorquest'
-
       // testjpf this is overwriting my scriptsdialog functions
       novel.npc = { ...doctor }
       //novel.priority = true
@@ -273,8 +295,9 @@ function doctor_checks(conditions: QuestConditions) {
         suspect: npcs.all[waiting!].labelname,
         authority: 'player',
       })
+      novel.reason = 'askdocafavor'
     }
-
+    novel.priority = true
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
     // removed after scene
     if (waiting != null) {
@@ -299,9 +322,13 @@ function medic_assist_checks() {
   const { conditions: cons } = quest
   //const {0:injury,1:doc, 2:apple} = cons
   //const { 0: injury, 1: doc, 2: apple, 3: meds } = cons
-
-  if (npcs.all[novel.npc.labelname].clan == 'doctors') doctor_checks(cons)
   if (cons[0].passed == true) injured_checks(cons)
+  if (npcs.all[novel.npc.labelname].clan == 'doctors') {
+    doctor_checks(cons)
+  } else if (npcs.all[novel.npc.labelname].currentroom == 'infirmary') {
+    print('novel reason pre infirm check', novel.reason)
+    infirmary_checks(cons[5])
+  }
   //TESTJPF ELSE if quest complete dialog, xp / money???
 }
 
@@ -415,12 +442,38 @@ function doctorsScripts() {
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
     return 'tutorial/tutorialAdoctor'
-  } else if (apple.status != 'inactive') {
+  } else if (apple.status == 'active') {
     novel.priority = true
     novel.reason = 'quest'
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
+    //testjpf future naming files may be better:
+    //docAsksForFavor, docActiveFavor
     return apple.passed == false ? 'tutorial/hungrydoc' : 'tutorial/getadoctor'
+  } else if (cons[5].status == 'active') {
+    novel.priority = true
+    novel.reason = 'quest'
+    //testjpf could add conditional if encounters == 0 ) {
+    // "I'm going as fast as i can" -doc
+
+    //testjpf future naming files may be better:
+    //docAsksForFavor, docActiveFavor
+    return tasks.caution_has_npc('waitingformeds') == null
+      ? 'tutorial/askDocAfavor'
+      : 'tutorial/medAssistComplete'
+  }
+  return null
+}
+
+function infirmaryScripts() {
+  const quest = tasks.quests.tutorial.medic_assist
+  const { conditions: cons } = quest
+  //const {0:injury,1:doc,2: apple, 3: meds} = cons
+  const { 3: meds } = cons
+  if (meds.status == 'active' && novel.npc.currentstation == 'assistant') {
+    novel.priority = true
+    novel.reason = 'quest'
+    return 'tutorial/giveMeMeds'
   }
   return null
 }
@@ -453,9 +506,11 @@ function worker2Scripts() {
 }
 
 const tutorialAlookup: { [key: string]: () => string | null } = {
+  //assistant: assistantScripts,
   doctors: doctorsScripts,
   worker2: worker2Scripts,
   worker1: worker1Scripts,
+  infirmary: infirmaryScripts,
 }
 
 export function tutorialAscripts(actor: string): string[] {
@@ -465,6 +520,8 @@ export function tutorialAscripts(actor: string): string[] {
     scripts.push(tutorialAlookup[npcs.all[actor].clan]())
   if (tutorialAlookup[npcs.all[actor].currentstation] != null)
     scripts.push(tutorialAlookup[npcs.all[actor].currentstation]())
+  if (tutorialAlookup[npcs.all[actor].currentroom] != null)
+    scripts.push(tutorialAlookup[npcs.all[actor].currentroom]())
 
   return scripts.filter((s: string | null): s is string => s != null)
 }
