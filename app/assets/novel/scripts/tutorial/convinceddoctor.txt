@@ -1,0 +1,35 @@
+label queststart
+if activeq == "true"
+    jump shortmedsspeech
+n: Thanks for the food. I'll head over there now. 
+n: If you have time, I need meds if you can help.
+> How?
+    n: I can write you a temporary pass to get to the infirmary.
+    > Yes
+        n: Here's a pass.
+        reason = "quest: getsomemedsyes"
+    > No
+        n: I understand.
+        reason = "quest: getsomemedsno"
+    jump quickclose
+> No
+    n: Let me know if you need anything.
+    reason = "quest: getsomemedsno"
+    > Bye
+        jump quickclose
+    > Other
+        jump defaultChoices
+
+label shortmedsspeech
+if reason == "medical"
+    caution = "receivemeds"
+    jump medicalstart
+n: Do you want that pass now?
+> Yes
+    n: Here's a pass.
+    reason = "quest: getsomemedsyes"
+> No
+    n: Okay
+> Other
+    jump defaultChoices
+jump quickclose
