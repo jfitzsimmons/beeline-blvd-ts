@@ -57,7 +57,7 @@ function prepare_novel_txts(
 
   //TESTJPF one of these will/should have "label queststart"????
   //so reason will be quest and questScript will load appropriate txts
-  // ex tutorial/getadoctor.txt
+  // ex tutorial/convinceddoctor.txt
   // so stop worrying about reason = "quest"
   //you'll find a reason to use /reasons/quest.txt defaults
   paths.push(...quest_paths)

@@ -7,6 +7,56 @@ import {
   returnfalse,
 } from '../../../utils/quest'
 
+const tutorialSubQuests = (questmethods: AllQuestsMethods): SubQuests => {
+  const { nq, nvq, tq } = questmethods
+
+  return {
+    [1]: {
+      keys: ['helpinjured'],
+      label: 'Mind my bleeding.',
+      solution: '',
+      passed: false,
+      status: 'inactive',
+      interval: ['interact'],
+      func_active: [does_equal],
+      active_args: [[nvq.get_reason, 'helpmaybelater']],
+      func_passed: [does_equal],
+      //could add second function if goal passed
+      //testjpf would need a[ tq.is_goal_padded, helpinjured]
+      //instead of does_equal, we need is_true()??!!
+      //
+      passed_args: [[nvq.get_reason, 'helpperson']],
+    },
+    [2]: {
+      keys: ['dochasneeds'],
+      label: 'Apple a day!',
+      solution: '',
+      passed: false,
+      status: 'inactive',
+      interval: ['interact'],
+      //testjpf need to rethink this!! TODO!!!
+      // use this if takes to long??? auto pass, last default?!!
+      func: [returnfalse],
+      args: [[returnfalse, false]],
+    },
+    /** 
+ * testjpf, this one will have many options
+ * including the option to come back later
+ * so needs to be active.  could use that other funcs
+ * for seting active!!!
+[2]: {
+  label: 'What is up doctor?!',
+  solution: '',
+  passed: false,
+  status: 'inactive',
+  interval: ['interact'],
+  func: [does_equal],
+  args: [[nvq.get_reason, 'convinceddoctor']],
+}, //have you talked to a doctor?
+*/
+  }
+}
+
 export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
   //const { nq, tq, nvq } = questmethods
   const { nq, nvq, tq } = questmethods
@@ -16,35 +66,50 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
       passed: false,
       status: 'inactive',
       conditions: {
-        [0]: {
+        ['helpinjured']: {
           label: 'Agree to help injured man',
-          solution: '',
-          passed: false,
-          status: 'standby',
-          interval: ['interact'],
-          func: [does_equal],
-          args: [[nvq.get_reason, 'helpthatman']],
-        }, //have you talked to a doctor?
-        [1]: {
-          label: 'What is up doctor?!',
           solution: '',
           passed: false,
           status: 'inactive',
           interval: ['interact'],
-          func: [does_equal],
-          args: [[nvq.get_reason, 'getadoctor']],
+          func_active: [begins_with],
+          active_args: [
+            [nvq.get_reason, 'helpperson'],
+            //  [nvq.get_reason, 'helppersonnow'],
+            // [nvq.get_reason, 'helppersonlater'],
+          ],
+          // wont pass until they get to infimary
+          //one way or another TESTJPF TODO
+          func_passed: [does_equal, does_equal],
+          passed_args: [
+            [nvq.get_reason, 'TESTJPF'],
+            [nvq.get_reason, 'TESTJPF'],
+          ],
+          //testjpf so here i qould::
+          // subquests: {
+
+          //}
         }, //have you talked to a doctor?
-        [2]: {
-          label: 'Apple a day!',
+        ['dochasneeds']: {
+          label: 'Doc needs something.',
           solution: '',
           passed: false,
           status: 'inactive',
           interval: ['interact'],
           //testjpf need to rethink this!! TODO!!!
           // use this if takes to long??? auto pass, last default?!!
-          func: [returnfalse],
-          args: [[returnfalse, false]],
+          //for active you could change does_equal to ends_with() or begins with
+          // so reasons would be:: docneedsapple, docneedsdrugs, docneedsmoney, docneedsnurse, or docneedssomething
+          func_active: [begins_with],
+          active_args: [
+            [nvq.get_reason, 'docneeds'],
+            //  [nvq.get_reason, 'helppersonnow'],
+            // [nvq.get_reason, 'helppersonlater'],
+          ],
+          func_passed: [begins_with],
+          passed_args: [[nvq.get_reason, 'getsomemeds']],
         },
+
         [3]: {
           label: 'Get some meds!',
           solution: '',
