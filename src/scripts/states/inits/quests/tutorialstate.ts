@@ -54,6 +54,33 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           func: [any_has_value],
           args: [[nq.return_doctors, 'vial02']],
         }, //gets keycard, goes to infirmary, gets meds
+        [4]: {
+          label: 'Got those meds!',
+          solution: '',
+          passed: false,
+          status: 'inactive',
+          interval: ['interact'],
+          func: [does_equal],
+          args: [[nvq.get_reason, 'favormedsquest']],
+        }, //have you talked to a doctor?
+        [5]: {
+          label: 'Delive these meds?',
+          solution: '',
+          passed: false,
+          status: 'inactive',
+          interval: ['interact'],
+          func: [returnfalse],
+          args: [[returnfalse, false]],
+        }, //have you talked to a doctor?
+        [6]: {
+          label: 'Meds delivered',
+          solution: '',
+          passed: false,
+          status: 'inactive',
+          interval: ['interact'],
+          func: [does_equal],
+          args: [[nvq.get_reason, 'medassistcomplete']],
+        }, //have you talked to a doctor?
       },
       side_quests: {
         [1]: {
