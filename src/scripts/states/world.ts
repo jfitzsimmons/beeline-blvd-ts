@@ -34,6 +34,11 @@ export default class World {
     this.info = new WorldInfo(this.tasks.quests)
 
     this.clock = 6
+    /**
+     * so in world/worldcontroller room transition would be a state
+     * menu, save, load
+     * - sub states like arrested, enterdoor, faint
+     */
     this.stateMachine
       .addState('idle')
       .addState('world', {

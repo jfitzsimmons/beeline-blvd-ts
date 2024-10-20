@@ -391,6 +391,7 @@ export function place_npcs() {
 export function ai_turn() {
   //testjpf
   //ai turn is called on level load
+  //  now testjpf this should have fsm .updates()
 
   rooms.clear_stations()
 
@@ -399,6 +400,8 @@ export function ai_turn() {
   )
   //infirmed, inmates, and doctors in the field dont have actions
   //in office docs are case by case
+  // now part of you immobile state update, enter, exit testjpf
+  //
   const immobile: string[] = [
     ...Object.values(rooms.all.security.occupants!),
     ...infirmed,

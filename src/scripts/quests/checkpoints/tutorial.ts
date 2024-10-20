@@ -1,7 +1,7 @@
-import { Npc } from '../../../types/state'
 import { QuestCondition, QuestConditions } from '../../../types/tasks'
 import { steal_check, take_or_stash } from '../../ai/ai_checks'
 import { npc_action_move } from '../../ai/ai_main'
+import NpcState from '../../states/npc'
 import { from_same_room } from '../../utils/quest'
 import { shuffle, surrounding_room_matrix } from '../../utils/utils'
 
@@ -140,7 +140,7 @@ function doctor_checks(conditions: QuestConditions) {
     doctor.love = doctor.love + 1
 
     // testjpf this is overwriting my scriptsdialog functions
-    novel.npc = { ...doctor }
+    novel.npc = doctor
     novel.priority = true
     tasks.append_caution({
       label: 'mending',
@@ -264,7 +264,7 @@ function doctor_checks(conditions: QuestConditions) {
       meds.status = 'complete'
       info.add_interaction(`${waiting} likes that you gave them meds.`)
       doctor.love = doctor.love + 1
-      novel.npc = { ...npcs.all[waiting] }
+      novel.npc = npcs.all[waiting]
       novel.reason = 'docquestcomplete'
       novel.remove_npc_quest(doctor.labelname)
       tasks.remove_quest_cautions(doctor.labelname)
@@ -284,7 +284,7 @@ function doctor_checks(conditions: QuestConditions) {
        * remove any related npcs from npcsWithQuest
        */
       // testjpf this is overwriting my scriptsdialog functions
-      novel.npc = { ...doctor }
+      novel.npc = doctor
       //novel.priority = true
       tasks.append_caution({
         label: 'favor',
@@ -369,7 +369,7 @@ export function tutorialA(interval = 'turn') {
         npcs.all[replace].currentroom != 'grounds'
       ) {
         //const docs = shuffle(npcs.return_doctors())
-        const doc: Npc = shuffle(npcs.return_doctors())[0]
+        const doc: NpcState = shuffle(npcs.return_doctors())[0]
         let { currentroom, currentstation } = doc
 
         rooms.all[currentroom].stations[currentstation] = ''

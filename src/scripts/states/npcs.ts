@@ -1,7 +1,11 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { NpcsInitState } from './inits/npcsInitState'
-import { Npc, Npcs } from '../../types/state'
+import StateMachine from './stateMachine'
+
+import { Npcs } from '../../types/state'
 import { shuffle } from '../utils/utils'
 import { QuestMethods } from '../../types/tasks'
+import NpcState from './npc'
 
 interface BinaryLookupTable {
   [key: string]: BinaryLookupRow
@@ -204,11 +208,15 @@ const binarylookup: BinaryLookupTable = {
 
 // need npcs interface?
 export default class WorldNpcs {
+  private stateMachine: StateMachine
+
   private _all: Npcs
   order: string[]
   quests: QuestMethods
   constructor() {
-    this._all = { ...NpcsInitState }
+    //testjpf npcs need their own statemachine.
+    //this._all = { ...NpcsInitState }
+    this._all = seedNpcs()
     this.order = []
     random_attributes(this.all, this.order)
     this.quests = {
@@ -217,20 +225,63 @@ export default class WorldNpcs {
       return_all: this.return_all.bind(this),
       return_order_all: this.return_order_all.bind(this),
     }
+    this.stateMachine = new StateMachine(this, 'npcs')
+
+    this.stateMachine
+      .addState('idle')
+      .addState('injury', {
+        //game??
+        //onInit?
+        // what more could i do beside adjust cool downs
+        // can i access any other systems?? testjpf
+        //how to use instead of cautions?
+        // adjust stats? add remove bonuses/
+        //on update could be like onInteraction.
+        // if you talk to or rob someone in that state x will happen?
+        //should i be using script.ts?!?!?!
+        // need to go through what could happen on an Aio_turn
+        // maybbe interation too? / the if elses
+        // keep .update in mind.  everything needs a .update
+        onEnter: this.onInjuryStart.bind(this),
+        onUpdate: this.onInjuryUpdate.bind(this),
+        onExit: this.onInjuryEnd.bind(this),
+      })
+      .addState('arrest', {
+        onEnter: this.onArrestEnter.bind(this),
+        onUpdate: this.onArrestUpdate.bind(this),
+        onExit: this.onArrestExit.bind(this),
+      })
+      .addState('move', {
+        onEnter: this.onMoveEnter.bind(this),
+        onUpdate: this.onMoveUpdate.bind(this),
+        onExit: this.onMoveExit.bind(this),
+      })
+
+    this.stateMachine.setState('idle')
     this.return_doctors = this.return_doctors.bind(this)
     this.return_security = this.return_security.bind(this)
   }
+  private onInjuryStart(): void {}
+  private onInjuryUpdate(): void {}
+  private onInjuryEnd(): void {}
+  private onArrestEnter(): void {}
+  private onArrestUpdate(): void {}
+  private onArrestExit(): void {}
+  private onMoveEnter(): void {}
+  private onMoveUpdate(): void {}
+  private onMoveExit(): void {}
+
   public get all(): Npcs {
     return this._all
   }
-  set_an_npc(n: Npc) {
-    this.all[n.labelname] = { ...n }
-  }
+  //set_an_npc(n: Npc) {
+  //  this.all[n.labelname] = { ...n }
+  //}
   //testjpf Dont hardcode!?
-  return_doctors(): Npc[] {
+  return_doctors(): NpcState[] {
     return [this.all.doc01, this.all.doc02, this.all.doc03]
   }
-  return_security(): Npc[] {
+  return_security(): NpcState[] {
     return [
       this.all.security001,
       this.all.security002,
@@ -262,6 +313,18 @@ function adjust_binaries(value: number, clan: string, binary: string) {
   }
 
   return adj
+}
+
+function seedNpcs() {
+  const seeded: Npcs = {}
+  //const inits = { ...NpcsInitState }
+  let ki: keyof typeof NpcsInitState
+  for (ki in NpcsInitState) {
+    // creat npc class constructor todo now testjpf
+    // seeded.push({ [ki]: new NpcState(ki) })
+    seeded[ki] = new NpcState(ki)
+  }
+  return seeded
 }
 
 function random_attributes(npcs: Npcs, order: string[]) {

@@ -1,3 +1,4 @@
+import NpcState from '../scripts/states/npc'
 import { Effect } from './tasks'
 
 export interface NpcsState {
@@ -8,7 +9,7 @@ export interface NpcsState {
 }
 
 export interface Npcs {
-  [key: string]: Npc
+  [key: string]: NpcState
 }
 export interface Npc extends NpcDefaults {
   home: { x: number; y: number }

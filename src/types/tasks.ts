@@ -1,4 +1,5 @@
-import { Npc, Npcs, Skills } from './state'
+import NpcState from '../scripts/states/npc'
+import { Npcs, Skills } from './state'
 
 type NoOptionals<T> = {
   [K in keyof T]-?: T[K]
@@ -68,7 +69,7 @@ export interface QuestMethods {
   [key: string]: (
     args: [() => Npcs, number] | string | void
   ) =>
-    | Npc[]
+    | NpcState[]
     | boolean
     | Npcs
     | [string[], Npcs]

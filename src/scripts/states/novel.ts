@@ -1,5 +1,5 @@
-import { Npc } from '../../types/state'
 import { Caution, QuestMethods } from '../../types/tasks'
+import NpcState from './npc'
 
 const nullCaution: Caution = {
   type: '',
@@ -21,11 +21,11 @@ export default class WorldNovel {
   private _npcsWithQuest: string[]
   private _scripts: string[]
   //private _alertChange: number
-  private _npc: Npc
+  private _npc: NpcState
   //private _quest: QuestCondition
   quests: QuestMethods
 
-  constructor(initnpc: Npc) {
+  constructor(initnpc: NpcState) {
     // this.background = ''
     //  this.sprites = {}
     this._active_quest = false
@@ -36,7 +36,7 @@ export default class WorldNovel {
     this._npcsWithQuest = []
     this._scripts = []
     // this._alertChange = 0
-    this._npc = { ...initnpc }
+    this._npc = initnpc
     /** 
     this._quest = {
       label: '',
@@ -110,12 +110,12 @@ export default class WorldNovel {
   public set scripts(s: string[]) {
     this._scripts = s
   }
-  public get npc(): Npc {
+  public get npc(): NpcState {
     return this._npc
   }
-  public set npc(npc: Npc) {
+  public set npc(npc: NpcState) {
     this.active_quest = this.npcsWithQuest.includes(npc.labelname)
-    this._npc = { ...npc }
+    this._npc = npc
   }
   addScript(s: string) {
     this._scripts.push(s)

@@ -1,5 +1,5 @@
-import { NpcDefaults } from '../../../types/state'
-const npc_defaults: NpcDefaults = {
+import { Npc, NpcDefaults } from '../../../types/state'
+export const npc_defaults: NpcDefaults = {
   convos: 0,
   actions: ['talk', 'give', 'trade', 'pockets'],
   ai_path: '',
@@ -18,7 +18,7 @@ const npc_defaults: NpcDefaults = {
   currentstation: '',
   race: '',
 }
-export const NpcsInitState = {
+export const NpcsInitState: { [key: string]: Npc } = {
   mailroom01: {
     home: { x: 3, y: 1 }, //loading
     labelname: 'mailroom01',

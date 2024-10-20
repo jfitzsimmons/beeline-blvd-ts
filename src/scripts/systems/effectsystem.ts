@@ -1,5 +1,5 @@
-import { Npc } from '../../types/state'
 import { Effect, Consequence } from '../../types/tasks'
+import NpcState from '../states/npc'
 import { roll_special_dice } from '../utils/dice'
 import { clamp, shuffle } from '../utils/utils'
 const { npcs, player } = globalThis.game.world
@@ -524,15 +524,15 @@ export const fx: { [key: string]: Effect } = {
   },
 }
 
-export function remove_effects_bonus(a: Npc, e: Effect) {
+export function remove_effects_bonus(a: NpcState, e: Effect) {
   a[e.fx.type][e.fx.stat] = a[e.fx.type][e.fx.stat] - e.fx.adjustment
 }
 
-export function add_effects_bonus(a: Npc, e: Effect) {
+export function add_effects_bonus(a: NpcState, e: Effect) {
   a[e.fx.type][e.fx.stat] = a[e.fx.type][e.fx.stat] + e.fx.adjustment
 }
 
-export function remove_effects(a: Npc) {
+export function remove_effects(a: NpcState) {
   if (a.effects.length > 0) {
     //let eKey: keyof typeof
     for (const effect of a.effects) {
