@@ -21,6 +21,7 @@ function game_turn(room: string) {
   player.ap = player.ap - 1
   player.turns = player.turns + 1
   calculate_heat(room)
+  rooms.all[room].fsm.setState('focus')
 }
 
 function calculate_heat(room: string) {
@@ -108,6 +109,7 @@ export function on_message(
         place_npcs()
         inventory_init()
         calculate_heat('grounds')
+        rooms.all.grounds.fsm.setState('focus')
       }
 
       const confrontation: Caution | null = address_cautions()

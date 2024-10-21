@@ -39,6 +39,7 @@ const initial_places = [
 ]
 const count: { [key: string]: number } = {}
 const unplacedcount: { [key: string]: number } = {}
+
 function attempt_to_fill_station(room_list: string[], npc: string) {
   //testjpf debug number of roomlist occurences
   room_list.forEach((element) => {
@@ -80,8 +81,9 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
             npcs.all[npc].turns_since_encounter
           )
           */
-          //fill station
-          npcs.all[npc].exitroom = rooms.layout[current.y][current.x]!
+          //fill station testjpf abstract maybe for NPCS turn state?
+          //npcs.all[npc].exitroom = rooms.layout[current.y][current.x]!
+
           npcs.all[npc].currentroom = room
           rooms.all[room].stations[ks[0]] = npc
           npcs.all[npc].matrix = rooms.all[room].matrix
@@ -93,6 +95,7 @@ function attempt_to_fill_station(room_list: string[], npc: string) {
           } else {
             npcs.all[npc].turns_since_encounter = 0
           }
+
           return
         }
       }
@@ -312,6 +315,8 @@ function ai_actions(direction: Direction) {
 
 export function npc_action_move(n: string, d: Direction) {
   const npc = npcs.all[n]
+  print('THIS should be NPC onMoveUpdate')
+  npc.fsm.update(math.randomseed(os.time()))
   const target = set_npc_target(d, n)
   const room_list: string[] = set_room_priority(target, n)
   attempt_to_fill_station(room_list, n)
@@ -338,6 +343,7 @@ export function place_npcs() {
         npc.matrix = rooms.all.grounds.matrix
         npc.currentstation = ks[0]
         npc.currentroom = 'grounds'
+        npcs.all[npc.labelname].fsm.setState('move')
         placed = true
         break
       }
@@ -362,6 +368,7 @@ export function place_npcs() {
           }
         }
         if (placed == true) {
+          npcs.all[npc.labelname].fsm.setState('move')
           break
         }
       }
@@ -393,7 +400,7 @@ export function ai_turn() {
   //ai turn is called on level load
   //  now testjpf this should have fsm .updates()
 
-  rooms.clear_stations()
+  rooms.fsm.setState('turn')
 
   const infirmed = Object.values(rooms.all.infirmary.occupants!).filter(
     (p) => p != ''

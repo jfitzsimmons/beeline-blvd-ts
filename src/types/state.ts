@@ -1,4 +1,5 @@
 import NpcState from '../scripts/states/npc'
+import RoomState from '../scripts/states/room'
 import { Effect } from './tasks'
 
 export interface NpcsState {
@@ -75,9 +76,9 @@ export interface Fallbacks {
   stations: { [key: string]: string }
 }
 export interface Rooms {
-  [key: string]: Room | Occupancy
+  [key: string]: RoomState //| Occupancy
 }
-interface Room {
+export interface Room {
   matrix: { x: number; y: number }
   roomname: string
   clearance: number
@@ -86,11 +87,12 @@ interface Room {
   props?: string[]
   occupants?: Occupants
 }
-
+/** 
 export interface Occupancy extends Room {
   occupants: Occupants
 }
-interface Actors {
+  */
+export interface Actors {
   [key: string]: Actor
 }
 export interface Actor {

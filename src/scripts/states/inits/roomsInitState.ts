@@ -1,21 +1,20 @@
-import { Occupancy, Rooms } from '../../../types/state'
+import { Room } from '../../../types/state'
 
-const securityRoom: Occupancy = {
-  matrix: { x: 2, y: 5 },
-  roomname: 'security',
-  clearance: 3,
-  stations: {
-    guard: '',
-    authority: '',
-    assistant: '',
-    guest: '',
-    servants2: '',
+export const RoomsInitState: { [key: string]: Room } = {
+  security: {
+    matrix: { x: 2, y: 5 },
+    roomname: 'security',
+    clearance: 3,
+    stations: {
+      guard: '',
+      authority: '',
+      assistant: '',
+      guest: '',
+      servants2: '',
+    },
+    occupants: { prisoner1: '', prisoner2: '', prisoner3: '', prisoner4: '' },
+    actors: {},
   },
-  occupants: { prisoner1: '', prisoner2: '', prisoner3: '', prisoner4: '' },
-  actors: {},
-}
-export const RoomsInitState: Rooms = {
-  security: { ...securityRoom },
   baggage: {
     matrix: { x: 0, y: 4 },
     roomname: 'baggage',

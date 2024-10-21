@@ -10,7 +10,7 @@ import WorldNovel from './novel'
 import { AllQuestsMethods } from '../../types/tasks'
 
 export default class World {
-  private stateMachine: StateMachine
+  private fsm: StateMachine
   player: WorldPlayer
   npcs: WorldNpcs
   rooms: WorldRooms
@@ -20,7 +20,7 @@ export default class World {
   clock: number
 
   constructor() {
-    this.stateMachine = new StateMachine(this, 'world')
+    this.fsm = new StateMachine(this, 'world')
     this.player = new WorldPlayer()
     this.npcs = new WorldNpcs()
     this.rooms = new WorldRooms()
@@ -39,7 +39,7 @@ export default class World {
      * menu, save, load
      * - sub states like arrested, enterdoor, faint
      */
-    this.stateMachine
+    this.fsm
       .addState('idle')
       .addState('world', {
         //game??
@@ -68,11 +68,11 @@ export default class World {
         onExit: this.onTaskDelete.bind(this),
       })
 
-    this.stateMachine.setState('idle')
+    this.fsm.setState('idle')
   }
 
   update(dt: number) {
-    this.stateMachine.update(dt)
+    this.fsm.update(dt)
   }
 
   // so what next. start with world.init in lua file

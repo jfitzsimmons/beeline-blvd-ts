@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { NpcsInitState } from './inits/npcsInitState'
 import StateMachine from './stateMachine'
-
 import { Skills } from '../../types/state'
 import { Effect } from '../../types/tasks'
+import { RoomsInitLayout } from './inits/roomsInitState'
 
 // need npcs interface?
 export default class NpcState {
-  private stateMachine: StateMachine
+  fsm: StateMachine
   home: { x: number; y: number }
   labelname: string
   inventory: string[]
@@ -41,7 +41,7 @@ export default class NpcState {
     this.clearence = NpcsInitState[n].clearence
     this.clan = NpcsInitState[n].clan
     this.body = NpcsInitState[n].body
-    this.stateMachine = new StateMachine(this, 'npc' + n)
+    this.fsm = new StateMachine(this, 'npc' + n)
     this.convos = 0
     this.actions = ['talk', 'give', 'trade', 'pockets']
     this.ai_path = ''
@@ -60,7 +60,7 @@ export default class NpcState {
     this.currentstation = ''
     this.race = ''
 
-    this.stateMachine
+    this.fsm
       .addState('idle')
       .addState('injury', {
         //game??
@@ -90,7 +90,7 @@ export default class NpcState {
         onExit: this.onMoveExit.bind(this),
       })
 
-    this.stateMachine.setState('idle')
+    this.fsm.setState('idle')
   }
   private onInjuryStart(): void {}
   private onInjuryUpdate(): void {}
@@ -98,7 +98,14 @@ export default class NpcState {
   private onArrestEnter(): void {}
   private onArrestUpdate(): void {}
   private onArrestExit(): void {}
-  private onMoveEnter(): void {}
-  private onMoveUpdate(): void {}
-  private onMoveExit(): void {}
+  private onMoveEnter(): void {
+    print(this.labelname, 'has entered MOVE STATE')
+  }
+  private onMoveUpdate(): void {
+    this.exitroom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
+    print(this.labelname, 'has UPDATED MOVE STATE', this.exitroom)
+  }
+  private onMoveExit(): void {
+    print(this.labelname, 'has exited move state')
+  }
 }

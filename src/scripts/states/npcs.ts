@@ -208,7 +208,7 @@ const binarylookup: BinaryLookupTable = {
 
 // need npcs interface?
 export default class WorldNpcs {
-  private stateMachine: StateMachine
+  private fsm: StateMachine
 
   private _all: Npcs
   order: string[]
@@ -225,9 +225,9 @@ export default class WorldNpcs {
       return_all: this.return_all.bind(this),
       return_order_all: this.return_order_all.bind(this),
     }
-    this.stateMachine = new StateMachine(this, 'npcs')
+    this.fsm = new StateMachine(this, 'npcs')
 
-    this.stateMachine
+    this.fsm
       .addState('idle')
       .addState('injury', {
         //game??
@@ -257,7 +257,7 @@ export default class WorldNpcs {
         onExit: this.onMoveExit.bind(this),
       })
 
-    this.stateMachine.setState('idle')
+    this.fsm.setState('idle')
     this.return_doctors = this.return_doctors.bind(this)
     this.return_security = this.return_security.bind(this)
   }
