@@ -18,12 +18,20 @@ export default class World {
   info: WorldInfo
   novel: WorldNovel
   clock: number
+  clear_station: (room: string, station: string) => void
 
   constructor() {
     this.fsm = new StateMachine(this, 'world')
     this.player = new WorldPlayer()
-    this.npcs = new WorldNpcs()
     this.rooms = new WorldRooms()
+    this.clear_station = this.rooms.clear_station.bind(this)
+
+    const roommethods: {
+      [key: string]: (room: string, station: string) => void
+    } = {
+      clear_station: this.clear_station,
+    }
+    this.npcs = new WorldNpcs(roommethods)
     this.novel = new WorldNovel(this.npcs.all.labor01)
     const allquestmethods: AllQuestsMethods = {
       pq: this.player.quests,

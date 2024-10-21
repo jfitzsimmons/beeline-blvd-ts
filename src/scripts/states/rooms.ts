@@ -32,12 +32,21 @@ export default class WorldRooms {
       onExit: this.onTurnEnd.bind(this),
     })
 
+    this.fsm.addState('transition', {
+      onEnter: this.onTransitionStart.bind(this),
+      onUpdate: this.onTransitionUpdate.bind(this),
+      onExit: this.onTransitionEnd.bind(this),
+    })
+
     this.fsm.setState('idle')
+    this.clear_station = this.clear_station.bind(this)
   }
   public get all(): Rooms {
     return this._all
   }
-
+  clear_station(room: string, station: string) {
+    this.all[room].stations[station] = ''
+  }
   clear_stations() {
     let kr: keyof typeof this._all
     for (kr in this._all) {
@@ -53,12 +62,27 @@ export default class WorldRooms {
     }
   }
   private onTurnStart(): void {
-    this.clear_stations()
+    //todo
   }
   private onTurnUpdate(): void {
-    //not bad to handle interactions
+    //give each npc the ability to delete their own station!!
+    // this.clear_stations()
+    //this is what whould go througheach room and click update
+    //makes sense for npcs, but rooms??? testjpf
+    //with placing npcs you have to take into account each npcs priority
+    //not sure what else i could automate/optimize here:::
+    //FUTURE gnerate money, food, stealing?
   }
   private onTurnEnd(): void {
+    //todo
+  }
+  private onTransitionStart(): void {
+    //todo
+  }
+  private onTransitionUpdate(): void {
+    //not bad to handle interactions
+  }
+  private onTransitionEnd(): void {
     //todo
   }
 }

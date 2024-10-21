@@ -65,6 +65,14 @@ export interface WorldQuests {
 export interface AllQuestsMethods {
   [key: string]: QuestMethods
 }
+
+export interface NpcMethod {
+  add_infirmed(n: string): void
+  remove_infirmed(n: string): void
+  add_injured(n: string): void
+  remove_injured(n: string): void
+  clear_station(room: string, ststion: string): void
+}
 export interface QuestMethods {
   [key: string]: (
     args: [() => Npcs, number] | string | void

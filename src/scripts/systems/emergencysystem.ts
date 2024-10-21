@@ -1,7 +1,7 @@
 import { Occupants } from '../../types/state'
 import { roll_special_dice } from '../utils/dice'
 import {
-  arraymove,
+  //arraymove,
   clamp,
   shuffle,
   surrounding_room_matrix,
@@ -242,18 +242,22 @@ export function freeze_injured_npc(npc: NpcState) {
   //reset npc into current position
   // now testjpf func to npcstatemachine
   // pass rooms all to npc class
+  // change npc state to injury!!
   rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
   //check if and where injured is located in Doctors' queue
   //mending should be a state. q moved to NpcStates
-  const limit = tasks.mendingQueue.indexOf(npc.labelname)
+  //,move to npc add responder state
+  //TESTJPF TODO NOW //needs to be movedto npc mending state
+  //const limit = tasks.mendingQueue.indexOf(npc.labelname)
   //if npc isn't in q, put them on all NPC's radar for caution creation
   //instead us harmed state
+  /** 
   if (limit < 0 && injured_npcs.includes(npc.labelname) == false) {
     injured_npcs.push(npc.labelname)
   } else if (limit > 3) {
     //if npc isn't in q, put them on Doctors' radar
-    arraymove(tasks.mendingQueue, limit, 0)
-  }
+    //(tasks.mendingQueue, limit, 0)
+  }*/
 }
 
 export function doctor_ai_turn(

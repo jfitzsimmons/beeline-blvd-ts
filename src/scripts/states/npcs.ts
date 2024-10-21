@@ -4,7 +4,7 @@ import StateMachine from './stateMachine'
 
 import { Npcs } from '../../types/state'
 import { shuffle } from '../utils/utils'
-import { QuestMethods } from '../../types/tasks'
+import { NpcMethod, QuestMethods } from '../../types/tasks'
 import NpcState from './npc'
 
 interface BinaryLookupTable {
@@ -208,68 +208,66 @@ const binarylookup: BinaryLookupTable = {
 
 // need npcs interface?
 export default class WorldNpcs {
-  private fsm: StateMachine
-
+  fsm: StateMachine
   private _all: Npcs
   order: string[]
   quests: QuestMethods
-  constructor() {
+  npcLists: NpcMethod
+  infirmed: string[]
+  injured: string[]
+
+  constructor(roommethods: {
+    [key: string]: (room: string, station: string) => void
+  }) {
     //testjpf npcs need their own statemachine.
     //this._all = { ...NpcsInitState }
-    this._all = seedNpcs()
+
+    this.infirmed = []
+    this.injured = []
     this.order = []
-    random_attributes(this.all, this.order)
     this.quests = {
       return_doctors: this.return_doctors.bind(this),
       return_security: this.return_doctors.bind(this),
       return_all: this.return_all.bind(this),
       return_order_all: this.return_order_all.bind(this),
     }
+    this.npcLists = {
+      add_infirmed: this.add_infirmed.bind(this),
+      remove_infirmed: this.remove_infirmed.bind(this),
+      add_injured: this.add_injured.bind(this),
+      remove_injured: this.remove_injured.bind(this),
+      clear_station: roommethods.clear_station,
+    }
+    this._all = seedNpcs(this.npcLists)
+    random_attributes(this.all, this.order)
+
     this.fsm = new StateMachine(this, 'npcs')
 
-    this.fsm
-      .addState('idle')
-      .addState('injury', {
-        //game??
-        //onInit?
-        // what more could i do beside adjust cool downs
-        // can i access any other systems?? testjpf
-        //how to use instead of cautions?
-        // adjust stats? add remove bonuses/
-        //on update could be like onInteraction.
-        // if you talk to or rob someone in that state x will happen?
-        //should i be using script.ts?!?!?!
-        // need to go through what could happen on an Aio_turn
-        // maybbe interation too? / the if elses
-        // keep .update in mind.  everything needs a .update
-        onEnter: this.onInjuryStart.bind(this),
-        onUpdate: this.onInjuryUpdate.bind(this),
-        onExit: this.onInjuryEnd.bind(this),
-      })
-      .addState('arrest', {
-        onEnter: this.onArrestEnter.bind(this),
-        onUpdate: this.onArrestUpdate.bind(this),
-        onExit: this.onArrestExit.bind(this),
-      })
-      .addState('move', {
-        onEnter: this.onMoveEnter.bind(this),
-        onUpdate: this.onMoveUpdate.bind(this),
-        onExit: this.onMoveExit.bind(this),
-      })
+    this.fsm.addState('idle')
+    this.fsm.addState('turn', {
+      onEnter: this.onTurnEnter.bind(this),
+      onUpdate: this.onTurnUpdate.bind(this),
+      onExit: this.onTurnExit.bind(this),
+    })
 
     this.fsm.setState('idle')
     this.return_doctors = this.return_doctors.bind(this)
     this.return_security = this.return_security.bind(this)
   }
-  private onInjuryStart(): void {}
-  private onInjuryUpdate(): void {}
-  private onInjuryEnd(): void {}
-  private onArrestEnter(): void {}
-  private onArrestUpdate(): void {}
-  private onArrestExit(): void {}
-  private onMoveEnter(): void {}
-  private onMoveUpdate(): void {}
-  private onMoveExit(): void {}
+
+  private onTurnEnter(): void {
+    print('npcsturnenter')
+  }
+  private onTurnUpdate(): void {
+    const dt = math.randomseed(os.time())
+    print('npcsturnupdate')
+    this.sort_npcs_by_encounter()
+    for (let i = this.order.length; i-- !== 0; ) {
+      const npc = this.all[this.order[i]]
+      npc.fsm.update(dt)
+    }
+  }
+  private onTurnExit(): void {}
 
   public get all(): Npcs {
     return this._all
@@ -278,6 +276,18 @@ export default class WorldNpcs {
   //  this.all[n.labelname] = { ...n }
   //}
   //testjpf Dont hardcode!?
+  add_infirmed(n: string): void {
+    this.infirmed.push(n)
+  }
+  remove_infirmed(n: string): void {
+    this.infirmed.splice(this.infirmed.indexOf(n), 1)
+  }
+  add_injured(n: string): void {
+    this.injured.push(n)
+  }
+  remove_injured(n: string): void {
+    this.injured.splice(this.infirmed.indexOf(n), 1)
+  }
   return_doctors(): NpcState[] {
     return [this.all.doc01, this.all.doc02, this.all.doc03]
   }
@@ -315,14 +325,14 @@ function adjust_binaries(value: number, clan: string, binary: string) {
   return adj
 }
 
-function seedNpcs() {
+function seedNpcs(lists: NpcMethod) {
   const seeded: Npcs = {}
   //const inits = { ...NpcsInitState }
   let ki: keyof typeof NpcsInitState
   for (ki in NpcsInitState) {
     // creat npc class constructor todo now testjpf
     // seeded.push({ [ki]: new NpcState(ki) })
-    seeded[ki] = new NpcState(ki)
+    seeded[ki] = new NpcState(ki, lists)
   }
   return seeded
 }
