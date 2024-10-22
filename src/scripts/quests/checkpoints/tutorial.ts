@@ -1,9 +1,9 @@
 import { QuestCondition, QuestConditions } from '../../../types/tasks'
 import { steal_check, take_or_stash } from '../../ai/ai_checks'
-import { npc_action_move } from '../../ai/ai_main'
+//import { npc_action_move } from '../../ai/ai_main'
 import NpcState from '../../states/npc'
 import { from_same_room } from '../../utils/quest'
-import { shuffle, surrounding_room_matrix } from '../../utils/utils'
+import { shuffle } from '../../utils/utils'
 
 const { rooms, npcs, tasks, player, novel, info } = globalThis.game.world
 function injured_checks(conditions: QuestConditions) {
@@ -376,10 +376,11 @@ export function tutorialA(interval = 'turn') {
         rooms.all.grounds.stations.aid = doc.labelname
         currentroom = 'grounds'
         currentstation = 'aid'
+        /**todo testjpf ≈
         npc_action_move(
           replace,
           surrounding_room_matrix(player.matrix, npcs.all[replace].matrix)
-        )
+        )√*/
       }
     }
 

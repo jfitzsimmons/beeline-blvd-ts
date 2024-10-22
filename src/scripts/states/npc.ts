@@ -3,7 +3,12 @@ import { NpcsInitState } from './inits/npcsInitState'
 import StateMachine from './stateMachine'
 import { Skills } from '../../types/state'
 import { Effect, NpcMethod } from '../../types/tasks'
-import { RoomsInitLayout } from './inits/roomsInitState'
+import { RoomsInitLayout, RoomsInitState } from './inits/roomsInitState'
+import {
+  attempt_to_fill_station,
+  set_npc_target,
+  set_room_priority,
+} from '../ai/ai_main'
 
 // need npcs interface?
 export default class NpcState {
@@ -118,8 +123,6 @@ export default class NpcState {
         onUpdate: this.onMoveUpdate.bind(this),
         onExit: this.onMoveExit.bind(this),
       })
-
-    this.fsm.setState('idle')
   }
   private onInfirmStart(): void {
     this.parent.add_infirmed(this.labelname)
@@ -145,16 +148,86 @@ export default class NpcState {
   private onMenderUpdate(): void {}
   private onMenderExit(): void {}
   private onMoveEnter(): void {
-    print(this.labelname, 'has entered MOVE STATE')
+    // print(this.labelname, 'has entered MOVE STATE')
   }
   private onMoveUpdate(): void {
     this.exitroom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
-    print(this.labelname, 'has UPDATED MOVE STATE', this.exitroom)
-    this.hp <= 0
-      ? this.fsm.setState('injury')
-      : this.parent.clear_station(this.currentroom, this.currentstation)
+    //print(this.labelname, 'has UPDATED MOVE STATE', this.exitroom)
+
+    if (this.hp > 0) {
+      this.parent.clear_station(
+        this.currentroom,
+        this.currentstation,
+        this.labelname
+      )
+      const npcPriorityProps = {
+        matrix: this.matrix,
+        home: this.home,
+        //labelname: this.labelname,
+      }
+      const npcMoveProps = {
+        turns_since_encounter: this.turns_since_encounter,
+        ai_path: this.ai_path,
+        player: RoomsInitState[this.parent.get_player_room()].matrix,
+        ...npcPriorityProps,
+      }
+
+      const priorityroomlist = set_room_priority(
+        set_npc_target(this.parent.getVicinityTargets(), npcMoveProps),
+        npcPriorityProps
+      )
+      const { chosenRoom, chosenStation } = attempt_to_fill_station(
+        priorityroomlist,
+        this.labelname,
+        this.matrix,
+        this.clan,
+        this.parent.get_station_map()
+      )
+
+      this.currentroom = chosenRoom
+      this.parent.set_station(chosenRoom, chosenStation, this.labelname)
+      this.matrix = RoomsInitState[chosenRoom].matrix
+      this.currentstation = chosenStation
+      if (chosenRoom != this.parent.get_player_room()) {
+        this.turns_since_encounter = this.turns_since_encounter + 1
+      } else {
+        this.turns_since_encounter = 0
+      }
+      //TESTJPFNEXT TODO send roomlist to fillstation!!!
+      //move attempt to Rooms class? pass function to npc?!?!
+      //accepst room list and this.labelname
+      //sets room station agent
+      //returns room and station
+    } else {
+      this.fsm.setState('injury')
+    }
+    //now need to set station
+    //move from ai_main fill station
+    //tesjpf
+    /**
+     * so use ai_main to find new room and station
+     * change state and pass room and station?
+     */
+    this.remove_effects(this.effects)
+    if (this.cooldown > 0) this.cooldown = this.cooldown - 1
   }
   private onMoveExit(): void {
     print(this.labelname, 'has exited move state')
+  }
+  remove_effects_bonus(e: Effect) {
+    this[e.fx.type][e.fx.stat] = this[e.fx.type][e.fx.stat] - e.fx.adjustment
+  }
+  remove_effects(effects: Effect[]) {
+    if (effects.length > 0) {
+      //let eKey: keyof typeof
+      for (const effect of effects) {
+        if (effect.turns < 0) {
+          this.remove_effects_bonus(effect)
+          effects.splice(effects.indexOf(effect), 1)
+        } else {
+          effect.turns = effect.turns - 1
+        }
+      }
+    }
   }
 }

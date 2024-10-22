@@ -1,4 +1,5 @@
 import NpcState from '../scripts/states/npc'
+import { Direction } from './ai'
 import { Npcs, Skills } from './state'
 
 type NoOptionals<T> = {
@@ -66,12 +67,20 @@ export interface AllQuestsMethods {
   [key: string]: QuestMethods
 }
 
-export interface NpcMethod {
+export interface RoomMethod {
+  get_player_room(): string
+  clear_station(room: string, station: string, npc: string): void
+  set_station(room: string, station: string, npc: string): void
+  prune_station_map(room: string, station: string): void
+  get_station_map(): { [key: string]: { [key: string]: string } }
+  reset_station_map(): void
+}
+export interface NpcMethod extends RoomMethod {
   add_infirmed(n: string): void
   remove_infirmed(n: string): void
   add_injured(n: string): void
   remove_injured(n: string): void
-  clear_station(room: string, ststion: string): void
+  getVicinityTargets(): Direction
 }
 export interface QuestMethods {
   [key: string]: (

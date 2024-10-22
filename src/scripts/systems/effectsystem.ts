@@ -524,12 +524,13 @@ export const fx: { [key: string]: Effect } = {
   },
 }
 
-export function remove_effects_bonus(a: NpcState, e: Effect) {
-  a[e.fx.type][e.fx.stat] = a[e.fx.type][e.fx.stat] - e.fx.adjustment
-}
-
 export function add_effects_bonus(a: NpcState, e: Effect) {
   a[e.fx.type][e.fx.stat] = a[e.fx.type][e.fx.stat] + e.fx.adjustment
+}
+/**  moved to npc state
+ * 
+ * export function remove_effects_bonus(a: NpcState, e: Effect) {
+  a[e.fx.type][e.fx.stat] = a[e.fx.type][e.fx.stat] - e.fx.adjustment
 }
 
 export function remove_effects(a: NpcState) {
@@ -546,3 +547,4 @@ export function remove_effects(a: NpcState) {
     }
   }
 }
+*/

@@ -33,8 +33,6 @@ export default class RoomState {
         onUpdate: this.onArrestUpdate.bind(this),
         onExit: this.onArrestExit.bind(this),
       })
-
-    this.fsm.setState('idle')
   }
   private onFocusStart(): void {
     //highlight room neighbors and directions

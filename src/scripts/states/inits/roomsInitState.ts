@@ -473,7 +473,7 @@ export const RoomsInitLayout = [
   ['grounds', 'reception', 'admin1', 'gym', 'store'],
   ['entrance', 'viplobby', 'security', 'infirmary', 'dorms'],
 ]
-export const RoomsInitRoles = {
+export const RoomsInitRoles: { [key: string]: string[] } = {
   desk: ['staff', 'security'],
   host: ['staff', 'gang1', 'gang2'],
   tender: ['staff', 'gang3', 'gang4'],

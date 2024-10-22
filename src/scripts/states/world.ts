@@ -7,10 +7,13 @@ import WorldNpcs from './npcs'
 import WorldTasks from './tasks'
 import WorldInfo from './info'
 import WorldNovel from './novel'
-import { AllQuestsMethods } from '../../types/tasks'
+import { AllQuestsMethods, RoomMethod } from '../../types/tasks'
+import { surrounding_room_matrix } from '../utils/utils'
+
+const dt = math.randomseed(os.time())
 
 export default class World {
-  private fsm: StateMachine
+  fsm: StateMachine
   player: WorldPlayer
   npcs: WorldNpcs
   rooms: WorldRooms
@@ -18,18 +21,19 @@ export default class World {
   info: WorldInfo
   novel: WorldNovel
   clock: number
-  clear_station: (room: string, station: string) => void
 
   constructor() {
     this.fsm = new StateMachine(this, 'world')
     this.player = new WorldPlayer()
     this.rooms = new WorldRooms()
-    this.clear_station = this.rooms.clear_station.bind(this)
 
-    const roommethods: {
-      [key: string]: (room: string, station: string) => void
-    } = {
-      clear_station: this.clear_station,
+    const roommethods: RoomMethod = {
+      clear_station: this.rooms.clear_station.bind(this),
+      set_station: this.rooms.set_station.bind(this),
+      prune_station_map: this.rooms.prune_station_map.bind(this),
+      get_station_map: this.rooms.get_station_map.bind(this),
+      reset_station_map: this.rooms.reset_station_map.bind(this),
+      get_player_room: this.player.get_player_room.bind(this),
     }
     this.npcs = new WorldNpcs(roommethods)
     this.novel = new WorldNovel(this.npcs.all.labor01)
@@ -49,7 +53,7 @@ export default class World {
      */
     this.fsm
       .addState('idle')
-      .addState('world', {
+      .addState('start', {
         //game??
         //onInit?
         onEnter: this.onGameStart.bind(this),
@@ -60,7 +64,7 @@ export default class World {
         //onInit?
         onUpdate: this.onPlayerUpdate.bind(this),
       })
-      .addState('testjpfrooms', {
+      .addState('room', {
         onEnter: this.onRoomEnter.bind(this),
         onUpdate: this.onRoomUpdate.bind(this),
         onExit: this.onRoomExit.bind(this),
@@ -87,8 +91,21 @@ export default class World {
   private onGameStart(): void {}
   private onGameUpdate(): void {}
   private onGameEnd(): void {}
-  private onRoomEnter(): void {}
-  private onRoomUpdate(): void {}
+  private onRoomEnter(): void {
+    this.rooms.fsm.setState('turn')
+    this.npcs.vicinityTargets = surrounding_room_matrix(
+      this.rooms.all[this.player.exitroom].matrix,
+      this.player.matrix
+    )
+    this.npcs.fsm.setState('turn')
+    //this is where you'd have npc, room, functions
+    //prob rooms.update() npcs.update()
+    //tasks too???ntestjpf
+  }
+  private onRoomUpdate(): void {
+    this.rooms.fsm.update(dt)
+    this.npcs.fsm.update(dt)
+  }
   private onRoomExit(): void {}
   private onNpcEnter(): void {}
   private onNpcUpdate(): void {}

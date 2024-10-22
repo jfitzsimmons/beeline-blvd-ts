@@ -4,8 +4,9 @@ import StateMachine from './stateMachine'
 
 import { Npcs } from '../../types/state'
 import { shuffle } from '../utils/utils'
-import { NpcMethod, QuestMethods } from '../../types/tasks'
+import { NpcMethod, QuestMethods, RoomMethod } from '../../types/tasks'
 import NpcState from './npc'
+import { Direction } from '../../types/ai'
 
 interface BinaryLookupTable {
   [key: string]: BinaryLookupRow
@@ -215,13 +216,18 @@ export default class WorldNpcs {
   npcLists: NpcMethod
   infirmed: string[]
   injured: string[]
+  private _vicinityTargets: Direction
 
-  constructor(roommethods: {
-    [key: string]: (room: string, station: string) => void
-  }) {
+  constructor(roommethods: RoomMethod) {
     //testjpf npcs need their own statemachine.
     //this._all = { ...NpcsInitState }
-
+    this._vicinityTargets = {
+      center: { x: 0, y: 0 },
+      left: { x: 0, y: 0 },
+      right: { x: 0, y: 0 },
+      front: { x: 0, y: 0 },
+      back: { x: 0, y: 0 },
+    }
     this.infirmed = []
     this.injured = []
     this.order = []
@@ -231,12 +237,19 @@ export default class WorldNpcs {
       return_all: this.return_all.bind(this),
       return_order_all: this.return_order_all.bind(this),
     }
+
     this.npcLists = {
+      get_player_room: roommethods.get_player_room.bind(this),
       add_infirmed: this.add_infirmed.bind(this),
       remove_infirmed: this.remove_infirmed.bind(this),
       add_injured: this.add_injured.bind(this),
       remove_injured: this.remove_injured.bind(this),
-      clear_station: roommethods.clear_station,
+      getVicinityTargets: this.getVicinityTargets.bind(this),
+      clear_station: roommethods.clear_station.bind(this),
+      set_station: roommethods.set_station.bind(this),
+      prune_station_map: roommethods.prune_station_map.bind(this),
+      get_station_map: roommethods.get_station_map.bind(this),
+      reset_station_map: roommethods.reset_station_map.bind(this),
     }
     this._all = seedNpcs(this.npcLists)
     random_attributes(this.all, this.order)
@@ -250,7 +263,6 @@ export default class WorldNpcs {
       onExit: this.onTurnExit.bind(this),
     })
 
-    this.fsm.setState('idle')
     this.return_doctors = this.return_doctors.bind(this)
     this.return_security = this.return_security.bind(this)
   }
@@ -272,10 +284,21 @@ export default class WorldNpcs {
   public get all(): Npcs {
     return this._all
   }
+
+  getVicinityTargets(): Direction {
+    return this._vicinityTargets
+  }
+  public get vicinityTargets(): Direction {
+    return this._vicinityTargets
+  }
+  public set vicinityTargets(vt: Direction) {
+    this._vicinityTargets = vt
+  }
   //set_an_npc(n: Npc) {
   //  this.all[n.labelname] = { ...n }
   //}
   //testjpf Dont hardcode!?
+  set_vicinity_targets() {}
   add_infirmed(n: string): void {
     this.infirmed.push(n)
   }
