@@ -3,7 +3,11 @@ import { NpcsInitState } from './inits/npcsInitState'
 import StateMachine from './stateMachine'
 import { Skills } from '../../types/state'
 import { Effect, NpcMethod } from '../../types/tasks'
-import { RoomsInitLayout, RoomsInitState } from './inits/roomsInitState'
+import {
+  RoomsInitLayout,
+  RoomsInitPriority,
+  RoomsInitState,
+} from './inits/roomsInitState'
 import {
   attempt_to_fill_station,
   set_npc_target,
@@ -123,6 +127,11 @@ export default class NpcState {
         onUpdate: this.onMoveUpdate.bind(this),
         onExit: this.onMoveExit.bind(this),
       })
+      .addState('new', {
+        onEnter: this.onNewEnter.bind(this),
+        onUpdate: this.onNewUpdate.bind(this),
+        onExit: this.onNewExit.bind(this),
+      })
   }
   private onInfirmStart(): void {
     this.parent.add_infirmed(this.labelname)
@@ -147,6 +156,32 @@ export default class NpcState {
   private onMenderEnter(): void {}
   private onMenderUpdate(): void {}
   private onMenderExit(): void {}
+  private onNewEnter(): void {}
+
+  private onNewUpdate(): void {
+    if (this.hp > 0) {
+      const { chosenRoom, chosenStation } = attempt_to_fill_station(
+        RoomsInitPriority,
+        this.labelname,
+        this.matrix,
+        this.clan,
+        this.parent.get_station_map()
+      )
+      this.currentroom = chosenRoom
+      this.parent.set_station(chosenRoom, chosenStation, this.labelname)
+      this.matrix = RoomsInitState[chosenRoom].matrix
+      this.currentstation = chosenStation
+      if (chosenRoom != this.parent.get_player_room()) {
+        this.turns_since_encounter = this.turns_since_encounter + 1
+      } else {
+        this.turns_since_encounter = 0
+      }
+    } else {
+      this.fsm.setState('injury')
+    }
+    this.fsm.setState('move')
+  }
+  private onNewExit(): void {}
   private onMoveEnter(): void {
     // print(this.labelname, 'has entered MOVE STATE')
   }

@@ -9,8 +9,9 @@ import { RoomsInitLayout, RoomsInitRoles } from '../states/inits/roomsInitState'
 //import { baggage_checks } from './levels/baggage'
 //import { doctor_ai_turn, freeze_injured_npc } from '../systems/emergencysystem'
 //import { thief_consolation_checks } from '../systems/tasksystem'
-const { world } = globalThis.game
-//onst { tasks, rooms, npcs, player } = world
+//const { world } = globalThis.game
+//const { tasks, rooms, npcs, player } = world
+/** 
 const initial_places = [
   'reception',
   'baggage',
@@ -37,7 +38,7 @@ const initial_places = [
   'store',
   'maintenance',
   'alley3',
-]
+]*/
 const count: { [key: string]: number } = {}
 const unplacedcount: { [key: string]: number } = {}
 
@@ -275,8 +276,8 @@ export function set_npc_target(
 
   return target
 }
-function release_occupants() {
-  /**
+//function release_occupants() {
+/**
   const prisoners: Occupants = rooms.all.security.occupants!
   let station: keyof typeof prisoners
   for (station in prisoners) {
@@ -299,16 +300,16 @@ function release_occupants() {
     }
   }
      */
-}
+//}
 
-function ai_actions() {
-  //clearance_checks()
-  //aid_check()
-  release_occupants()
-  //reception_checks()
-  //customs_checks()
-  //baggage_checks
-}
+//function ai_actions() {
+//clearance_checks()
+//aid_check()
+//release_occupants()
+//reception_checks()
+//customs_checks()
+//baggage_checks
+//}
 
 //export function npc_action_move(n: string, d: Direction) {
 //const npc = npcs.all[n]
@@ -319,65 +320,10 @@ function ai_actions() {
 //attempt_to_fill_station(room_list, n)
 //}
 // test todo move to an FSM
-export function place_npcs() {
-  npcs.sort_npcs_by_encounter()
-
-  npcs.order.forEach((n: string) => {
-    const npc = npcs.all[n]
-    let placed = false
-
-    const shuffled_stations: [string, string][] = shuffle(
-      Object.entries(rooms.all.grounds.stations)
-    )
-
-    for (const ks of shuffled_stations) {
-      const station = ks[1]
-
-      if (station == '' && rooms.roles[ks[0]].includes(npc.clan)) {
-        print(
-          npc.labelname,
-          ',PLACED GROUNDS INIT ,',
-          ks[0],
-          ',using,',
-          npc.ai_path
-        )
-        rooms.all.grounds.stations[ks[0]] = npc.labelname
-        npc.matrix = rooms.all.grounds.matrix
-        npc.currentstation = ks[0]
-        npc.currentroom = 'grounds'
-        npcs.all[npc.labelname].fsm.setState('move')
-        placed = true
-        break
-      }
-    }
-    if (placed == false) {
-      for (const p of initial_places) {
-        const shuffled_stations: [string, string][] = shuffle(
-          Object.entries(rooms.all[p].stations)
-        )
-
-        for (const ks of shuffled_stations) {
-          const station = ks[1]
-
-          if (station == '' && rooms.roles[ks[0]].includes(npc.clan)) {
-            rooms.all[p].stations[ks[0]] = npc.labelname
-            npc.matrix = rooms.all[p].matrix
-            npc.currentstation = ks[0]
-            npc.currentroom = p
-
-            placed = true
-            break
-          }
-        }
-        if (placed == true) {
-          npcs.all[npc.labelname].fsm.setState('move')
-          break
-        }
-      }
-    }
-  })
-
-  //TESTJPF  TEST SETTINGS:::
+//export function place_npcs() {
+//npcs.sort_npcs_by_encounter()
+//TESTJPF  TEST SETTINGS:::
+/** 
   tasks.caution_builder(
     npcs.all['security004'],
     'questioning',
@@ -396,61 +342,62 @@ export function place_npcs() {
     reason: 'quest',
     type: 'helpthatman',
   })
-}
-export function ai_turn() {
-  //testjpf
-  //ai turn is called on level load
-  // this clears stations only!!!
-  const dt = math.randomseed(os.time())
-  world.fsm.setState('room')
-  world.fsm.update(dt)
+    */
+//}
+//export function ai_turn() {
+//testjpf
+//ai turn is called on level load
+// this clears stations only!!!
+//const dt = math.randomseed(os.time())
+//world.fsm.setState('room')
+//world.fsm.update(dt)
 
-  //NOW MOVE ALL TO NPCS TURN! HOPEFULLY!! TESTJPF
-  ///npc state infirmed. on enter add to infirmed list. exit remove!!!
-  /** const infirmed = Object.values(rooms.all.infirmary.occupants!).filter(
+//NOW MOVE ALL TO NPCS TURN! HOPEFULLY!! TESTJPF
+///npc state infirmed. on enter add to infirmed list. exit remove!!!
+/** const infirmed = Object.values(rooms.all.infirmary.occupants!).filter(
     (p) => p != ''
   )*/
-  //infirmed, inmates, and doctors in the field dont have actions
-  //in office docs are case by case
-  // now part of you immobile state update, enter, exit testjpf
+//infirmed, inmates, and doctors in the field dont have actions
+//in office docs are case by case
+// now part of you immobile state update, enter, exit testjpf
 
-  //move to npc!!
-  //const immobile: string[] = [...infirmed, ...tasks.get_field_docs()]
-  //npcs.sort_npcs_by_encounter()
+//move to npc!!
+//const immobile: string[] = [...infirmed, ...tasks.get_field_docs()]
+//npcs.sort_npcs_by_encounter()
 
-  //move to Rooms and room!!
+//move to Rooms and room!!
 
-  //testjpf move loop to NPCS turnupdate
-  for (let i = npcs.order.length; i-- !== 0; ) {
-    //injure needs to freeze / not move
-    const npc = npcs.all[npcs.order[i]]
-    //npc.fsm.update(math.randomseed(os.time()))
-    // npc.fsm.setState('injury')
-    ///testjpf above should be injured not infirm
-    //!infirm in infirmary
-    //confusing because tasks.medicq and
-    //emergency injured_npc seem redundant
-    //freeze_injured_npc(npc)
-    //immobile.push(npc.labelname)
-    // }
-    if (npc.clan == 'doctors') {
-      //testjpf need lots of target changes mostly
-      // decipher in in fieldmending, infirmarymending, else move
-      //Docs target field or infirmary
-      //const [docTargets, docInOffice] = doctor_ai_turn(npc, targets)
-      // targets = docTargets
-      //In-office docs dont have actions
-      // if (docInOffice == true) print('TODO TESTJPF') //immobile.push(npc.labelname)
-    }
+//testjpf move loop to NPCS turnupdate
+//for (let i = npcs.order.length; i-- !== 0; ) {
+//injure needs to freeze / not move
+//const npc = npcs.all[npcs.order[i]]
+//npc.fsm.update(math.randomseed(os.time()))
+// npc.fsm.setState('injury')
+///testjpf above should be injured not infirm
+//!infirm in infirmary
+//confusing because tasks.medicq and
+//emergency injured_npc seem redundant
+//freeze_injured_npc(npc)
+//immobile.push(npc.labelname)
+// }
+//if (npc.clan == 'doctors') {
+//testjpf need lots of target changes mostly
+// decipher in in fieldmending, infirmarymending, else move
+//Docs target field or infirmary
+//const [docTargets, docInOffice] = doctor_ai_turn(npc, targets)
+// targets = docTargets
+//In-office docs dont have actions
+// if (docInOffice == true) print('TODO TESTJPF') //immobile.push(npc.labelname)
+//}
 
-    //default mobile actions
-    //if (npc.fsm.isCurrentState('move')) npc_action_move(npc.labelname, targets)
-  }
+//default mobile actions
+//if (npc.fsm.isCurrentState('move')) npc_action_move(npc.labelname, targets)
+//}
 
-  ai_actions()
+//ai_actions()
 
-  //TESTJPF DEBUG BELOW ::::
-  /** 
+//TESTJPF DEBUG BELOW ::::
+/** 
   let cKey: keyof typeof count
 
   for (cKey in count) {
@@ -462,5 +409,5 @@ export function ai_turn() {
   for (uKey in unplacedcount) {
     print(uKey, unplacedcount[uKey])
   }*/
-  //print('npcs.order.length', npcs.order.length)
-}
+//print('npcs.order.length', npcs.order.length)
+//}

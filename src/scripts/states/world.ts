@@ -8,7 +8,7 @@ import WorldTasks from './tasks'
 import WorldInfo from './info'
 import WorldNovel from './novel'
 import { AllQuestsMethods, RoomMethod } from '../../types/tasks'
-import { surrounding_room_matrix } from '../utils/utils'
+//import { surrounding_room_matrix } from '../utils/utils'
 
 const dt = math.randomseed(os.time())
 
@@ -21,12 +21,12 @@ export default class World {
   info: WorldInfo
   novel: WorldNovel
   clock: number
-
+  loadType: string
   constructor() {
     this.fsm = new StateMachine(this, 'world')
     this.player = new WorldPlayer()
     this.rooms = new WorldRooms()
-
+    this.loadType = 'new game'
     const roommethods: RoomMethod = {
       clear_station: this.rooms.clear_station.bind(this),
       set_station: this.rooms.set_station.bind(this),
@@ -53,66 +53,71 @@ export default class World {
      */
     this.fsm
       .addState('idle')
-      .addState('start', {
+      .addState('new', {
         //game??
         //onInit?
-        onEnter: this.onGameStart.bind(this),
-        onUpdate: this.onGameUpdate.bind(this),
-        onExit: this.onGameEnd.bind(this),
+        onEnter: this.onNewEnter.bind(this),
+        onUpdate: this.onNewUpdate.bind(this),
+        onExit: this.onNewExit.bind(this),
       })
       .addState('player', {
         //onInit?
         onUpdate: this.onPlayerUpdate.bind(this),
+      })
+      .addState('faint', {
+        onEnter: this.onFaintEnter.bind(this),
+        onUpdate: this.onFaintUpdate.bind(this),
+        onExit: this.onFaintExit.bind(this),
+      })
+      .addState('arrest', {
+        onEnter: this.onArrestEnter.bind(this),
+        onUpdate: this.onArrestUpdate.bind(this),
+        onExit: this.onArrestExit.bind(this),
       })
       .addState('room', {
         onEnter: this.onRoomEnter.bind(this),
         onUpdate: this.onRoomUpdate.bind(this),
         onExit: this.onRoomExit.bind(this),
       })
-      .addState('npcs', {
-        onEnter: this.onNpcEnter.bind(this),
-        onUpdate: this.onNpcUpdate.bind(this),
-        onExit: this.onNpcExit.bind(this),
-      })
-      .addState('tasks', {
-        onEnter: this.onTaskAdd.bind(this),
-        onUpdate: this.onTaskUpdate.bind(this),
-        onExit: this.onTaskDelete.bind(this),
-      })
 
     this.fsm.setState('idle')
   }
-
+  //testjpf this is why fsm was set to private
   update(dt: number) {
     this.fsm.update(dt)
   }
 
   // so what next. start with world.init in lua file
-  private onGameStart(): void {}
-  private onGameUpdate(): void {}
-  private onGameEnd(): void {}
+  private onNewEnter(): void {
+    this.npcs.fsm.setState('new')
+    this.player.currentroom = 'grounds'
+  }
+  private onNewUpdate(): void {}
+  private onNewExit(): void {}
+  private onFaintEnter(): void {
+    this.clock = this.clock + 6
+    this.player.ap = this.player.ap_max - 6
+    this.player.hp = this.player.hp_max - 1
+  }
+  private onFaintUpdate(): void {}
+  private onFaintExit(): void {}
+  private onArrestEnter(): void {
+    this.clock = this.clock + 6
+    this.player.alert_level = 0
+    this.player.ap = this.player.ap_max - 6
+  }
+  private onArrestUpdate(): void {}
+  private onArrestExit(): void {}
   private onRoomEnter(): void {
-    this.rooms.fsm.setState('turn')
-    this.npcs.vicinityTargets = surrounding_room_matrix(
-      this.rooms.all[this.player.exitroom].matrix,
-      this.player.matrix
-    )
-    this.npcs.fsm.setState('turn')
-    //this is where you'd have npc, room, functions
-    //prob rooms.update() npcs.update()
-    //tasks too???ntestjpf
+    this.clock = this.clock + 1
+    if (this.clock > 23) {
+      this.clock = this.clock - 24
+    }
   }
   private onRoomUpdate(): void {
-    this.rooms.fsm.update(dt)
     this.npcs.fsm.update(dt)
   }
   private onRoomExit(): void {}
-  private onNpcEnter(): void {}
-  private onNpcUpdate(): void {}
-  private onNpcExit(): void {}
-  private onTaskAdd(): void {}
-  private onTaskUpdate(): void {}
-  private onTaskDelete(): void {}
   private onPlayerUpdate(): void {}
 
   // ...

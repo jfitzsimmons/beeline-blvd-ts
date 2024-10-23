@@ -1,8 +1,9 @@
 import { Caution } from '../../types/tasks'
 import { address_cautions } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
-import { ai_turn, place_npcs } from '../ai/ai_main'
+//import { ai_turn } from '../ai/ai_main'
 import { inventory_init } from '../systems/inventorysystem'
+const dt = math.randomseed(os.time())
 
 const { world } = globalThis.game
 const { rooms, npcs, player, tasks, novel } = world
@@ -15,7 +16,9 @@ function game_turn(room: string) {
   novel.reason = 'none'
   novel.item = 'none'
   novel.reset_caution()
-  ai_turn() // abstract to world controller?
+  //ai_turn() // abstract to world controller?
+  world.fsm.setState('room')
+  world.fsm.update(dt)
   tasks.update_quests_progress('turn', player.checkpoint)
   quest_checker('turn')
   player.ap = player.ap - 1
@@ -106,7 +109,8 @@ export function on_message(
       if (message.load_type == 'room transition') {
         game_turn(message.roomname)
       } else if (message.load_type == 'new game') {
-        place_npcs()
+        //place_npcs()
+        world.fsm.setState('new')
         inventory_init()
         calculate_heat('grounds')
         rooms.all.grounds.fsm.setState('focus')

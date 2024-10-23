@@ -206,6 +206,7 @@ const binarylookup: BinaryLookupTable = {
     noir_color: 0,
   },
 }
+const dt = math.randomseed(os.time())
 
 // need npcs interface?
 export default class WorldNpcs {
@@ -262,16 +263,32 @@ export default class WorldNpcs {
       onUpdate: this.onTurnUpdate.bind(this),
       onExit: this.onTurnExit.bind(this),
     })
+    this.fsm.addState('new', {
+      onEnter: this.onNewEnter.bind(this),
+      onUpdate: this.onNewUpdate.bind(this),
+      onExit: this.onNewExit.bind(this),
+    })
 
     this.return_doctors = this.return_doctors.bind(this)
     this.return_security = this.return_security.bind(this)
   }
-
+  private onNewEnter(): void {
+    print('npcsNewenter')
+  }
+  private onNewUpdate(): void {
+    print('npcsNewupdate')
+    this.sort_npcs_by_encounter()
+    for (let i = this.order.length; i-- !== 0; ) {
+      const npc = this.all[this.order[i]]
+      npc.fsm.update(dt)
+    }
+    this.fsm.setState('turn')
+  }
+  private onNewExit(): void {}
   private onTurnEnter(): void {
     print('npcsturnenter')
   }
   private onTurnUpdate(): void {
-    const dt = math.randomseed(os.time())
     print('npcsturnupdate')
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
