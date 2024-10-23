@@ -66,11 +66,13 @@ export function attempt_to_fill_station(
   //const current = npcs.all[npc].matrix
 
   //loop through priority room_list
+  //testjpf. not sure why it needs me to reverse.??
+  room_list.reverse()
   while (placed == false) {
     //    room_list.forEach((room: string) => {
     for (const room of room_list) {
       const shuffled_stations: [string, string][] = shuffle(
-        Object.entries(stationMap[room].stations)
+        Object.entries(stationMap[room])
       )
       //  let ks: keyof typeof shuffled_stations
       for (const ks of shuffled_stations) {

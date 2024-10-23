@@ -111,11 +111,11 @@ export function on_message(
       } else if (message.load_type == 'new game') {
         //place_npcs()
         world.fsm.setState('new')
+        npcs.fsm.update(dt)
         inventory_init()
         calculate_heat('grounds')
         rooms.all.grounds.fsm.setState('focus')
       }
-
       const confrontation: Caution | null = address_cautions()
       //grounds:/shared/scripts#level
       msg.post(this.roomname + ':/level#' + this.roomname, 'room_load')

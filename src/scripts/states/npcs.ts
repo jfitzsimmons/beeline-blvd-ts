@@ -238,7 +238,6 @@ export default class WorldNpcs {
       return_all: this.return_all.bind(this),
       return_order_all: this.return_order_all.bind(this),
     }
-
     this.npcLists = {
       get_player_room: roommethods.get_player_room.bind(this),
       add_infirmed: this.add_infirmed.bind(this),
@@ -272,14 +271,14 @@ export default class WorldNpcs {
     this.return_doctors = this.return_doctors.bind(this)
     this.return_security = this.return_security.bind(this)
   }
-  private onNewEnter(): void {
-    print('npcsNewenter')
-  }
+
+  private onNewEnter(): void {}
   private onNewUpdate(): void {
     print('npcsNewupdate')
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
+      npc.fsm.setState('new')
       npc.fsm.update(dt)
     }
     this.fsm.setState('turn')

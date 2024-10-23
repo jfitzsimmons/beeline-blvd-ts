@@ -60,7 +60,6 @@ export default class WorldRooms {
     this.stationsMap = createStationsMap()
   }
   set_station(room: string, station: string, npc: string) {
-    print('setstation: ', room, station)
     this.all[room].stations[station] = npc
   }
   clear_station(room: string, station: string, npc: string) {
@@ -113,7 +112,7 @@ function createStationsMap() {
   for (ki in RoomsInitState) {
     // creat npc class constructor todo now testjpf
     // seeded.push({ [ki]: new NpcState(ki) })
-    stationMap[ki] = RoomsInitState[ki].stations
+    stationMap[ki] = { ...RoomsInitState[ki].stations }
   }
   return stationMap
 }
