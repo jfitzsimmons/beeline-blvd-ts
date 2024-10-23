@@ -74,23 +74,18 @@ export default class World {
         onUpdate: this.onArrestUpdate.bind(this),
         onExit: this.onArrestExit.bind(this),
       })
-      .addState('room', {
-        onEnter: this.onRoomEnter.bind(this),
-        onUpdate: this.onRoomUpdate.bind(this),
-        onExit: this.onRoomExit.bind(this),
+      .addState('turn', {
+        onEnter: this.onTurnEnter.bind(this),
+        onUpdate: this.onTurnUpdate.bind(this),
+        onExit: this.onTurnExit.bind(this),
       })
-
-    this.fsm.setState('idle')
-  }
-  //testjpf this is why fsm was set to private
-  update(dt: number) {
-    this.fsm.update(dt)
   }
 
   // so what next. start with world.init in lua file
   private onNewEnter(): void {
     this.npcs.fsm.setState('new')
     this.player.currentroom = 'grounds'
+    this.npcs.fsm.update(dt)
   }
   private onNewUpdate(): void {}
   private onNewExit(): void {}
@@ -108,16 +103,18 @@ export default class World {
   }
   private onArrestUpdate(): void {}
   private onArrestExit(): void {}
-  private onRoomEnter(): void {
+  private onTurnEnter(): void {
+    print('WORLD TURN ENTER')
     this.clock = this.clock + 1
     if (this.clock > 23) {
       this.clock = this.clock - 24
     }
   }
-  private onRoomUpdate(): void {
+  private onTurnUpdate(): void {
+    print('WORLD TURNUPDATE')
     this.npcs.fsm.update(dt)
   }
-  private onRoomExit(): void {}
+  private onTurnExit(): void {}
   private onPlayerUpdate(): void {}
 
   // ...

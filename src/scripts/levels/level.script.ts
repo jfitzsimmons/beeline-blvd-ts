@@ -17,7 +17,7 @@ function game_turn(room: string) {
   novel.item = 'none'
   novel.reset_caution()
   //ai_turn() // abstract to world controller?
-  world.fsm.setState('room')
+  print('game turn!!')
   world.fsm.update(dt)
   tasks.update_quests_progress('turn', player.checkpoint)
   quest_checker('turn')
@@ -110,8 +110,6 @@ export function on_message(
         game_turn(message.roomname)
       } else if (message.load_type == 'new game') {
         //place_npcs()
-        world.fsm.setState('new')
-        npcs.fsm.update(dt)
         inventory_init()
         calculate_heat('grounds')
         rooms.all.grounds.fsm.setState('focus')

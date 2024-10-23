@@ -285,7 +285,7 @@ export function set_npc_target(
   for (station in prisoners) {
     const prisoner = prisoners[station]
     if (prisoner != '' && npcs.all[prisoner].cooldown <= 0) {
-      npcs.all[prisoner].fsm.setState('move')
+      npcs.all[prisoner].fsm.setState('turn')
       //npc_action_move(prisoner, d)
       rooms.all.security.occupants![station] = ''
     }
@@ -296,7 +296,7 @@ export function set_npc_target(
     const patient = occupants[bed]
     if (patient != '' && npcs.all[patient].cooldown <= 0) {
       npcs.all[patient].hp = 10
-      npcs.all[patient].fsm.setState('move')
+      npcs.all[patient].fsm.setState('turn')
       //npc_action_move(patient, d)
       rooms.all.infirmary.occupants![bed] = ''
     }
@@ -351,7 +351,6 @@ export function set_npc_target(
 //ai turn is called on level load
 // this clears stations only!!!
 //const dt = math.randomseed(os.time())
-//world.fsm.setState('room')
 //world.fsm.update(dt)
 
 //NOW MOVE ALL TO NPCS TURN! HOPEFULLY!! TESTJPF

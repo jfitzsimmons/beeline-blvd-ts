@@ -20,9 +20,9 @@ export default class WorldRooms {
   fallbacks: Fallbacks
   stationsMap: { [key: string]: { [key: string]: string } }
   constructor() {
-    this._all = seedRooms()
+    this._all = { ...seedRooms() }
     this.fsm = new StateMachine(this, 'rooms')
-    this.stationsMap = createStationsMap()
+    this.stationsMap = this.createStationsMap()
     //this._all = { ...RoomsInitState }
     this.layout = [...RoomsInitLayout]
     this.roles = { ...RoomsInitRoles }
@@ -57,10 +57,15 @@ export default class WorldRooms {
     return this.stationsMap
   }
   reset_station_map() {
-    this.stationsMap = createStationsMap()
+    this.stationsMap = this.createStationsMap()
   }
   set_station(room: string, station: string, npc: string) {
     this.all[room].stations[station] = npc
+    print(
+      'roommethods::: setstation:: npc,  this.all[room].stations[station]',
+      npc,
+      this.all[room].stations[station]
+    )
   }
   clear_station(room: string, station: string, npc: string) {
     if (npc == this.all[room].stations[station]) print('clear: ', room, station)
@@ -105,16 +110,16 @@ export default class WorldRooms {
   private onTransitionEnd(): void {
     //todo
   }
-}
-function createStationsMap() {
-  const stationMap: { [key: string]: { [key: string]: string } } = {}
-  let ki: keyof typeof RoomsInitState
-  for (ki in RoomsInitState) {
-    // creat npc class constructor todo now testjpf
-    // seeded.push({ [ki]: new NpcState(ki) })
-    stationMap[ki] = { ...RoomsInitState[ki].stations }
+  createStationsMap() {
+    const stationMap: { [key: string]: { [key: string]: string } } = {}
+    let ki: keyof typeof RoomsInitState
+    for (ki in RoomsInitState) {
+      // creat npc class constructor todo now testjpf
+      // seeded.push({ [ki]: new NpcState(ki) })
+      stationMap[ki] = { ...this.all[ki].stations }
+    }
+    return stationMap
   }
-  return stationMap
 }
 
 function seedRooms() {

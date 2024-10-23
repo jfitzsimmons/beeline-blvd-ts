@@ -23,7 +23,7 @@ interface props {
 //then just set states testjpf
 function handle_new_turn(load_type: string) {
   if (load_type === 'room transition') {
-    world.fsm.setState('room')
+    world.fsm.setState('turn')
   } else if (load_type === 'new game') {
     game.fsm.setState('new')
 
@@ -82,7 +82,7 @@ export function on_message(
     this.roomname = message.enter_room
     this.is_level = true
     this.load_type = message.load_type
-    // print('--- === ::: NEW ROOM LOADED ::: === ---')
+    print('--- === ::: NEW ROOM LOADED ::: === ---')
     handle_new_turn(this.load_type)
     show(this.current_proxy, '#' + this.roomname)
   } else if (messageId == hash('proxy_loaded')) {

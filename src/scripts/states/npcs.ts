@@ -281,6 +281,7 @@ export default class WorldNpcs {
       npc.fsm.setState('new')
       npc.fsm.update(dt)
     }
+    this.npcLists.reset_station_map()
     this.fsm.setState('turn')
   }
   private onNewExit(): void {}
@@ -292,8 +293,10 @@ export default class WorldNpcs {
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
+
       npc.fsm.update(dt)
     }
+    this.npcLists.reset_station_map()
   }
   private onTurnExit(): void {}
 
