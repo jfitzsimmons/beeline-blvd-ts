@@ -1,6 +1,6 @@
-import { Npc } from '../../types/state'
 import { AllQuestsMethods, WorldQuests, Caution } from '../../types/tasks'
 import { tutorialQuests } from './inits/quests/tutorialstate'
+import NpcState from './npc'
 
 function build_quests_state(questmethods: AllQuestsMethods): WorldQuests {
   return {
@@ -153,7 +153,7 @@ export default class WorldTasks {
     }
     return count
   }
-  caution_builder(n: Npc, c: string, s: string, reason = 'theft') {
+  caution_builder(n: NpcState, c: string, s: string, reason = 'theft') {
     //explain why you need this testjpf
     //no nested ifs
     //cna this be done somewhere else?

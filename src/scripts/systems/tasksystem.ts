@@ -1,4 +1,4 @@
-import { Npc, PlayerState } from '../../types/state'
+import { PlayerState } from '../../types/state'
 import { Caution, Effect, Consequence } from '../../types/tasks'
 import { arraymove, shuffle } from '../utils/utils'
 import {
@@ -27,6 +27,7 @@ import {
   unlucky_check,
   watcher_punched_check,
 } from './chaossystem'
+import NpcState from '../states/npc'
 
 const { tasks, rooms, npcs, player } = globalThis.game.world
 
@@ -265,7 +266,7 @@ function address_confrontations(cs: Caution[]): Caution | null {
   for (let i = cs.length - 1; i >= 0; i--) {
     const c = cs[i]
     const agent = npcs.all[c.npc]
-    const suspect: Npc | PlayerState =
+    const suspect: NpcState | PlayerState =
       c.suspect === 'player' ? player.state : npcs.all[c.suspect]
 
     if (

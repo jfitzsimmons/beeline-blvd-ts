@@ -167,7 +167,7 @@ export function on_message(
       }
     }
 
-    npcs.all[novel.npc.labelname] = { ...novel.npc }
+    npcs.all[novel.npc.labelname] = novel.npc
 
     msg.post('proxies:/controller#novelcontroller', 'unload_novel')
     msg.post(player.currentroom + ':/shared/scripts#level', 'exit_gui')

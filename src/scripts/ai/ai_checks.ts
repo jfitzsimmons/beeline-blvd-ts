@@ -12,6 +12,7 @@ import {
 import { confrontation_consequence } from '../systems/tasksystem'
 import { injured_npcs } from '../systems/emergencysystem'
 import { roll_special_dice } from '../utils/dice'
+import NpcState from '../states/npc'
 
 function tend_to_patient(v: string, doc: string) {
   print('tend_to_patient:: v: string, doc: string', v, doc)
@@ -57,7 +58,7 @@ export function aid_check() {
     }
   }
 }
-export function take_check(taker: Npc, actor: Npc | Actor) {
+export function take_check(taker: NpcState, actor: Npc | Actor) {
   let modifier = Math.round(
     taker.skills.stealth -
       taker.skills.charisma +
@@ -85,7 +86,7 @@ export function take_check(taker: Npc, actor: Npc | Actor) {
   }
   add_chest_bonus(taker, chest_item)
 }
-export function stash_check(stasher: Npc, actor: Npc | Actor) {
+export function stash_check(stasher: NpcState, actor: NpcState | Actor) {
   let modifier = stasher.inventory.length - actor.inventory.length
 
   if (tasks.npc_has_caution('any', stasher.labelname) != null) {
@@ -111,7 +112,7 @@ export function stash_check(stasher: Npc, actor: Npc | Actor) {
   remove_chest_bonus(stasher, chest_item)
   // if victim == true ){ add_chest_bonus(n, chest_item) }
 }
-export function take_or_stash(attendant: Npc, actor: Npc | Actor) {
+export function take_or_stash(attendant: NpcState, actor: NpcState | Actor) {
   if (
     actor.inventory.length > 0 &&
     (attendant.inventory.length == 0 || math.random() < 0.5)
@@ -204,7 +205,7 @@ function thief_consequences(
   return c
 }
 // only being used between npcs (just tutorial luggage)
-export function steal_check(s: Npc, w: Npc, loot: string[]) {
+export function steal_check(s: NpcState, w: Npc, loot: string[]) {
   // accept strings not Npcs
   // const attempt = roll_Specia_dice
   if (s.cooldown > 0) return

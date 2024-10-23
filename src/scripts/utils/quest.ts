@@ -1,11 +1,12 @@
-import { Npc, Npcs, Skills } from '../../types/state'
+import { Npcs, Skills } from '../../types/state'
+import NpcState from '../states/npc'
 //import { shuffle } from './utils'
 
 export function has_value(t: [() => string[], string]) {
   return t[0]().includes(t[1])
 }
 
-export function any_has_value(t: [() => Npc[], string]) {
+export function any_has_value(t: [() => NpcState[], string]) {
   const npcs = t[0]()
   for (const npc of npcs) {
     if (npc.inventory.includes(t[1])) return true
@@ -13,7 +14,7 @@ export function any_has_value(t: [() => Npc[], string]) {
   return false
 }
 
-export function is_same_room(t: [() => Npc[], string]) {
+export function is_same_room(t: [() => NpcState[], string]) {
   const npcs = t[0]()
   for (const npc of npcs) {
     if (npc.currentroom == t[1]) return true
@@ -21,7 +22,7 @@ export function is_same_room(t: [() => Npc[], string]) {
   return false
 }
 
-export function from_same_room(npcs: Npc[], room: string) {
+export function from_same_room(npcs: NpcState[], room: string) {
   for (const npc of npcs) {
     if (npc.currentroom == room) return npc
   }

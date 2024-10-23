@@ -34,6 +34,10 @@ export default class WorldPlayer {
       increase_alert_level: this.increase_alert_level.bind(this),
       return_playerroom: this.return_playerroom.bind(this),
     }
+    this.get_player_room = this.get_player_room.bind(this)
+  }
+  get_player_room(): string {
+    return this.currentroom
   }
   public set pos(p: { x: number; y: number }) {
     this._state.pos = p

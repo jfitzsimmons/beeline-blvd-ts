@@ -39,41 +39,34 @@ export function surrounding_room_matrix(
   exit: { x: number; y: number }
 ) {
   // const exit = player.matrix
-  let direction = {
+  const d = {
+    center: target,
     front: { x: 0, y: 0 },
     back: { x: 0, y: 0 },
     left: { x: 0, y: 0 },
     right: { x: 0, y: 0 },
   }
-  //get directions based on way exit is facing
+  //get ds based on way exit is facing
   if (exit.x > target.x) {
-    direction = {
-      front: { x: target.x - math.random(0, 2), y: target.y },
-      back: { x: target.x + 2, y: target.y },
-      left: { x: target.x, y: target.y + 1 },
-      right: { x: target.x, y: target.y - 1 },
-    }
+    d.front = { x: target.x - math.random(0, 2), y: target.y }
+    d.back = { x: target.x + 2, y: target.y }
+    d.left = { x: target.x, y: target.y + 1 }
+    d.right = { x: target.x, y: target.y - 1 }
   } else if (exit.y < target.y) {
-    direction = {
-      front: { x: target.x, y: target.y + math.random(0, 2) },
-      back: { x: target.x, y: target.y - 2 },
-      left: { x: target.x + 1, y: target.y },
-      right: { x: target.x - 1, y: target.y },
-    }
+    d.front = { x: target.x, y: target.y + math.random(0, 2) }
+    d.back = { x: target.x, y: target.y - 2 }
+    d.left = { x: target.x + 1, y: target.y }
+    d.right = { x: target.x - 1, y: target.y }
   } else if (exit.y > target.y) {
-    direction = {
-      front: { x: target.x, y: target.y - math.random(0, 2) },
-      back: { x: target.x, y: target.y + 2 },
-      left: { x: target.x - 1, y: target.y },
-      right: { x: target.x + 1, y: target.y },
-    }
+    d.front = { x: target.x, y: target.y - math.random(0, 2) }
+    d.back = { x: target.x, y: target.y + 2 }
+    d.left = { x: target.x - 1, y: target.y }
+    d.right = { x: target.x + 1, y: target.y }
   } else {
-    direction = {
-      front: { x: target.x + math.random(0, 2), y: target.y },
-      back: { x: target.x - 2, y: target.y },
-      left: { x: target.x, y: target.y - 1 },
-      right: { x: target.x, y: target.y + 1 },
-    }
+    d.front = { x: target.x + math.random(0, 2), y: target.y }
+    d.back = { x: target.x - 2, y: target.y }
+    d.left = { x: target.x, y: target.y - 1 }
+    d.right = { x: target.x, y: target.y + 1 }
   }
-  return direction
+  return d
 }
