@@ -221,7 +221,6 @@ export default class NpcState {
       )
 
       this.currentroom = chosenRoom
-
       this.parent.set_station(chosenRoom, chosenStation, this.labelname)
       this.parent.prune_station_map(chosenRoom, chosenStation)
 

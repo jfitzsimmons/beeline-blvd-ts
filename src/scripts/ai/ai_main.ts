@@ -60,6 +60,7 @@ export function attempt_to_fill_station(
   })
 
   let placed = false
+  //let fallback = false
   let chosenRoom = ''
   let chosenStation = ''
 
@@ -67,7 +68,7 @@ export function attempt_to_fill_station(
 
   //loop through priority room_list
   //testjpf. not sure why it needs me to reverse.??
-  room_list.reverse()
+  //room_list.reverse()
   while (placed == false) {
     //    room_list.forEach((room: string) => {
     for (const room of room_list) {
@@ -100,9 +101,19 @@ export function attempt_to_fill_station(
           break
         }
       }
+      if (placed == true) break
     }
     // fallback stations
+    /**
+     * else if (
+        room_list.includes('grounds') &&
+        rooms.fallbacks.stations['grounds_unplaced'] == ''
+      ) {
+        rooms.fallbacks.stations['grounds_unplaced'] = npc
+        npcs.all[npc].matrix = rooms.all['grounds'].matrix
+     */
     if (placed == false) {
+      //fallback = true
       if (
         room_list.includes('admin1') &&
         RoomsInitLayout[matrix.y][matrix.x] != 'admin1'
@@ -148,6 +159,7 @@ export function attempt_to_fill_station(
       placed = true
     }
   }
+  print('FILLSTATIONEND:::', chosenRoom, chosenStation, npc)
   return { chosenRoom, chosenStation }
 }
 /**

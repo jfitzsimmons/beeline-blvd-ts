@@ -22,11 +22,11 @@ export default class WorldRooms {
   constructor() {
     this._all = { ...seedRooms() }
     this.fsm = new StateMachine(this, 'rooms')
+    this.fallbacks = { ...RoomsInitFallbacks }
     this.stationsMap = this.createStationsMap()
     //this._all = { ...RoomsInitState }
     this.layout = [...RoomsInitLayout]
     this.roles = { ...RoomsInitRoles }
-    this.fallbacks = { ...RoomsInitFallbacks }
     this.fsm.addState('idle').addState('turn', {
       onEnter: this.onTurnStart.bind(this),
       onUpdate: this.onTurnUpdate.bind(this),
@@ -50,28 +50,27 @@ export default class WorldRooms {
     return this._all
   }
   prune_station_map(room: string, station: string) {
-    print('prune station: ', room, station)
-    delete this.stationsMap[room][station]
+    this.stationsMap[room][station] !== null
+      ? delete this.stationsMap[room][station]
+      : delete this.stationsMap.fallbacks[station]
   }
   get_station_map(): { [key: string]: { [key: string]: string } } {
     return this.stationsMap
   }
   reset_station_map() {
-    this.stationsMap = this.createStationsMap()
+    this.stationsMap = { ...this.createStationsMap() }
   }
   set_station(room: string, station: string, npc: string) {
-    this.all[room].stations[station] = npc
-    print(
-      'roommethods::: setstation::',
-      room,
-      station,
-      this.all[room].stations[station]
-    )
+    this.all[room].stations[station] !== null
+      ? (this.all[room].stations[station] = npc)
+      : (this.fallbacks.stations[station] = npc)
   }
   clear_station(room: string, station: string, npc: string) {
-    if (npc == this.all[room].stations[station]) print('clear: ', room, station)
-    if (npc == this.all[room].stations[station])
+    if (npc == this.all[room].stations[station]) {
       this.all[room].stations[station] = ''
+    } else if (npc == this.fallbacks.stations[station]) {
+      this.fallbacks.stations[station] = ''
+    }
   }
   clear_stations() {
     let kr: keyof typeof this._all
@@ -119,6 +118,7 @@ export default class WorldRooms {
       // seeded.push({ [ki]: new NpcState(ki) })
       stationMap[ki] = { ...this.all[ki].stations }
     }
+    stationMap['fallbacks'] = { ...this.fallbacks.stations }
     return stationMap
   }
 }
