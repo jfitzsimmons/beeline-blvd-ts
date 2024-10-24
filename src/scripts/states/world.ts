@@ -8,6 +8,9 @@ import WorldTasks from './tasks'
 import WorldInfo from './info'
 import WorldNovel from './novel'
 import { AllQuestsMethods, RoomMethod } from '../../types/tasks'
+import { surrounding_room_matrix } from '../utils/utils'
+import { RoomsInitState } from './inits/roomsInitState'
+import { Direction } from '../../types/ai'
 //import { surrounding_room_matrix } from '../utils/utils'
 
 const dt = math.randomseed(os.time())
@@ -25,7 +28,11 @@ export default class World {
   constructor() {
     this.fsm = new StateMachine(this, 'world')
     this.player = new WorldPlayer()
-    this.rooms = new WorldRooms()
+    const playerMethods = {
+      set_room_info: this.player.set_room_info.bind(this),
+      get_player_room: this.player.get_player_room.bind(this),
+    }
+    this.rooms = new WorldRooms(playerMethods)
     this.loadType = 'new game'
     const roommethods: RoomMethod = {
       clear_station: this.rooms.clear_station.bind(this),
@@ -34,6 +41,7 @@ export default class World {
       get_station_map: this.rooms.get_station_map.bind(this),
       reset_station_map: this.rooms.reset_station_map.bind(this),
       get_player_room: this.player.get_player_room.bind(this),
+      getVicinityTargets: this.getVicinityTargets.bind(this),
     }
     this.npcs = new WorldNpcs(roommethods)
     this.novel = new WorldNovel(this.npcs.all.labor01)
@@ -74,23 +82,20 @@ export default class World {
         onUpdate: this.onArrestUpdate.bind(this),
         onExit: this.onArrestExit.bind(this),
       })
-      .addState('room', {
-        onEnter: this.onRoomEnter.bind(this),
-        onUpdate: this.onRoomUpdate.bind(this),
-        onExit: this.onRoomExit.bind(this),
+      .addState('turn', {
+        onEnter: this.onTurnEnter.bind(this),
+        onUpdate: this.onTurnUpdate.bind(this),
+        onExit: this.onTurnExit.bind(this),
       })
-
-    this.fsm.setState('idle')
-  }
-  //testjpf this is why fsm was set to private
-  update(dt: number) {
-    this.fsm.update(dt)
   }
 
   // so what next. start with world.init in lua file
   private onNewEnter(): void {
-    this.npcs.fsm.setState('new')
+    this.player.fsm.setState('turn')
+    this.rooms.fsm.setState('turn')
     this.player.currentroom = 'grounds'
+    this.npcs.fsm.setState('new')
+    this.npcs.fsm.update(dt)
   }
   private onNewUpdate(): void {}
   private onNewExit(): void {}
@@ -108,17 +113,27 @@ export default class World {
   }
   private onArrestUpdate(): void {}
   private onArrestExit(): void {}
-  private onRoomEnter(): void {
+  private onTurnEnter(): void {
+    print('WORLD TURN ENTER')
     this.clock = this.clock + 1
     if (this.clock > 23) {
       this.clock = this.clock - 24
     }
   }
-  private onRoomUpdate(): void {
+  private onTurnUpdate(): void {
+    print('WORLD TURNUPDATE')
+    this.player.fsm.update(dt)
     this.npcs.fsm.update(dt)
+    this.rooms.fsm.update(dt)
   }
-  private onRoomExit(): void {}
+  private onTurnExit(): void {}
   private onPlayerUpdate(): void {}
 
-  // ...
+  getVicinityTargets(): Direction {
+    return surrounding_room_matrix(
+      RoomsInitState[this.player.exitroom].matrix,
+      this.player.matrix
+    )
+    //return this._vicinityTargets
+  }
 }

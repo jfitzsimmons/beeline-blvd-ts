@@ -2,6 +2,8 @@ import { PlayerState, Skills } from '../../types/state'
 import { QuestMethods } from '../../types/tasks'
 import { PlayerInitState } from './inits/playerInitState'
 import { shuffle } from '../utils/utils'
+import { RoomsInitLayout, RoomsInitState } from './inits/roomsInitState'
+import StateMachine from './stateMachine'
 
 function random_skills(skills: Skills, bins: Skills) {
   let tempvals: number[] = shuffle([1, 1, 3, 4, 5, 6, 6, 7])
@@ -23,9 +25,11 @@ function random_skills(skills: Skills, bins: Skills) {
 
 export default class WorldPlayer {
   private _state: PlayerState
+  fsm: StateMachine
   quests: QuestMethods
 
   constructor() {
+    this.fsm = new StateMachine(this, 'player')
     this._state = { ...PlayerInitState }
     random_skills(this._state.skills, this._state.binaries)
     this.quests = {
@@ -34,7 +38,43 @@ export default class WorldPlayer {
       increase_alert_level: this.increase_alert_level.bind(this),
       return_playerroom: this.return_playerroom.bind(this),
     }
+
+    this.fsm.addState('idle').addState('turn', {
+      //game??
+      //onInit?
+      // what more could i do beside adjust cool downs
+      // can i access any other systems?? testjpf
+      //how to use instead of cautions?
+      // adjust stats? add remove bonuses/
+      //on update could be like onInteraction.
+      // if you talk to or rob someone in that state x will happen?
+      //should i be using script.ts?!?!?!
+      // need to go through what could happen on an Aio_turn
+      // maybbe interation too? / the if elses
+      // keep .update in mind.  everything needs a .update
+      onEnter: this.onTurnEnter.bind(this),
+      onUpdate: this.onTurnUpdate.bind(this),
+      onExit: this.onTurnExit.bind(this),
+    })
+
     this.get_player_room = this.get_player_room.bind(this)
+    this.set_room_info = this.set_room_info.bind(this)
+  }
+  private onTurnEnter(): void {
+    print('PLAYER entered Turn STATE')
+  }
+  private onTurnUpdate(): void {
+    //todo
+    print('PLAYER UPDATE FSM')
+  }
+  private onTurnExit(): void {
+    // print(this.labelname, 'has entered MOVE STATE')
+  }
+  set_room_info(r: string) {
+    this.exitroom = RoomsInitLayout[this.matrix_y][this.matrix_x]!
+    this.currentroom = r
+    print('setroominfo:: exit,curr:', this.exitroom, this.currentroom)
+    this.matrix = RoomsInitState[r].matrix
   }
   get_player_room(): string {
     return this.currentroom

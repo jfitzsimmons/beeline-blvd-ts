@@ -3,7 +3,7 @@ import StateMachine from './stateMachine'
 import World from './world'
 
 export class Game {
-  public world: World
+  world: World
   fsm: StateMachine
 
   constructor() {
@@ -20,8 +20,9 @@ export class Game {
     })
   }
   private onNewEnter(): void {
-    //testjpf probably need something line this.world.init
-    this.world = new World()
+    //testjpf NEEDS FIX TODO!!!
+    //this.world = new World()
+    this.world.fsm.setState('new')
   }
   private onNewUpdate(): void {}
   private onNewExit(): void {}

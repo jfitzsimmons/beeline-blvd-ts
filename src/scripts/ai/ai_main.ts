@@ -60,17 +60,20 @@ export function attempt_to_fill_station(
   })
 
   let placed = false
+  //let fallback = false
   let chosenRoom = ''
   let chosenStation = ''
 
   //const current = npcs.all[npc].matrix
 
   //loop through priority room_list
+  //testjpf. not sure why it needs me to reverse.??
+  //room_list.reverse()
   while (placed == false) {
     //    room_list.forEach((room: string) => {
     for (const room of room_list) {
       const shuffled_stations: [string, string][] = shuffle(
-        Object.entries(stationMap[room].stations)
+        Object.entries(stationMap[room])
       )
       //  let ks: keyof typeof shuffled_stations
       for (const ks of shuffled_stations) {
@@ -98,9 +101,19 @@ export function attempt_to_fill_station(
           break
         }
       }
+      if (placed == true) break
     }
     // fallback stations
+    /**
+     * else if (
+        room_list.includes('grounds') &&
+        rooms.fallbacks.stations['grounds_unplaced'] == ''
+      ) {
+        rooms.fallbacks.stations['grounds_unplaced'] = npc
+        npcs.all[npc].matrix = rooms.all['grounds'].matrix
+     */
     if (placed == false) {
+      //fallback = true
       if (
         room_list.includes('admin1') &&
         RoomsInitLayout[matrix.y][matrix.x] != 'admin1'
@@ -146,6 +159,7 @@ export function attempt_to_fill_station(
       placed = true
     }
   }
+  print('FILLSTATIONEND:::', chosenRoom, chosenStation, npc)
   return { chosenRoom, chosenStation }
 }
 /**
@@ -283,7 +297,7 @@ export function set_npc_target(
   for (station in prisoners) {
     const prisoner = prisoners[station]
     if (prisoner != '' && npcs.all[prisoner].cooldown <= 0) {
-      npcs.all[prisoner].fsm.setState('move')
+      npcs.all[prisoner].fsm.setState('turn')
       //npc_action_move(prisoner, d)
       rooms.all.security.occupants![station] = ''
     }
@@ -294,7 +308,7 @@ export function set_npc_target(
     const patient = occupants[bed]
     if (patient != '' && npcs.all[patient].cooldown <= 0) {
       npcs.all[patient].hp = 10
-      npcs.all[patient].fsm.setState('move')
+      npcs.all[patient].fsm.setState('turn')
       //npc_action_move(patient, d)
       rooms.all.infirmary.occupants![bed] = ''
     }
@@ -349,7 +363,6 @@ export function set_npc_target(
 //ai turn is called on level load
 // this clears stations only!!!
 //const dt = math.randomseed(os.time())
-//world.fsm.setState('room')
 //world.fsm.update(dt)
 
 //NOW MOVE ALL TO NPCS TURN! HOPEFULLY!! TESTJPF

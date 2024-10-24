@@ -66,7 +66,10 @@ export interface WorldQuests {
 export interface AllQuestsMethods {
   [key: string]: QuestMethods
 }
-
+export interface PlayerMethod {
+  set_room_info(r: string): void
+  get_player_room(): string
+}
 export interface RoomMethod {
   get_player_room(): string
   clear_station(room: string, station: string, npc: string): void
@@ -74,6 +77,7 @@ export interface RoomMethod {
   prune_station_map(room: string, station: string): void
   get_station_map(): { [key: string]: { [key: string]: string } }
   reset_station_map(): void
+  getVicinityTargets(): Direction
 }
 export interface NpcMethod extends RoomMethod {
   add_infirmed(n: string): void

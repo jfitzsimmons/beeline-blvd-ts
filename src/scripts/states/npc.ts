@@ -122,10 +122,10 @@ export default class NpcState {
         onUpdate: this.onArresteeUpdate.bind(this),
         onExit: this.onArresteeExit.bind(this),
       })
-      .addState('move', {
-        onEnter: this.onMoveEnter.bind(this),
-        onUpdate: this.onMoveUpdate.bind(this),
-        onExit: this.onMoveExit.bind(this),
+      .addState('turn', {
+        onEnter: this.onTurnEnter.bind(this),
+        onUpdate: this.onTurnUpdate.bind(this),
+        onExit: this.onTurnExit.bind(this),
       })
       .addState('new', {
         onEnter: this.onNewEnter.bind(this),
@@ -169,6 +169,7 @@ export default class NpcState {
       )
       this.currentroom = chosenRoom
       this.parent.set_station(chosenRoom, chosenStation, this.labelname)
+      this.parent.prune_station_map(chosenRoom, chosenStation)
       this.matrix = RoomsInitState[chosenRoom].matrix
       this.currentstation = chosenStation
       if (chosenRoom != this.parent.get_player_room()) {
@@ -179,13 +180,13 @@ export default class NpcState {
     } else {
       this.fsm.setState('injury')
     }
-    this.fsm.setState('move')
+    this.fsm.setState('turn')
   }
   private onNewExit(): void {}
-  private onMoveEnter(): void {
+  private onTurnEnter(): void {
     // print(this.labelname, 'has entered MOVE STATE')
   }
-  private onMoveUpdate(): void {
+  private onTurnUpdate(): void {
     this.exitroom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
     //print(this.labelname, 'has UPDATED MOVE STATE', this.exitroom)
 
@@ -200,7 +201,7 @@ export default class NpcState {
         home: this.home,
         //labelname: this.labelname,
       }
-      const npcMoveProps = {
+      const npcTurnProps = {
         turns_since_encounter: this.turns_since_encounter,
         ai_path: this.ai_path,
         player: RoomsInitState[this.parent.get_player_room()].matrix,
@@ -208,7 +209,7 @@ export default class NpcState {
       }
 
       const priorityroomlist = set_room_priority(
-        set_npc_target(this.parent.getVicinityTargets(), npcMoveProps),
+        set_npc_target(this.parent.getVicinityTargets(), npcTurnProps),
         npcPriorityProps
       )
       const { chosenRoom, chosenStation } = attempt_to_fill_station(
@@ -221,6 +222,8 @@ export default class NpcState {
 
       this.currentroom = chosenRoom
       this.parent.set_station(chosenRoom, chosenStation, this.labelname)
+      this.parent.prune_station_map(chosenRoom, chosenStation)
+
       this.matrix = RoomsInitState[chosenRoom].matrix
       this.currentstation = chosenStation
       if (chosenRoom != this.parent.get_player_room()) {
@@ -233,6 +236,7 @@ export default class NpcState {
       //accepst room list and this.labelname
       //sets room station agent
       //returns room and station
+      // print('END END END')
     } else {
       this.fsm.setState('injury')
     }
@@ -246,7 +250,7 @@ export default class NpcState {
     this.remove_effects(this.effects)
     if (this.cooldown > 0) this.cooldown = this.cooldown - 1
   }
-  private onMoveExit(): void {
+  private onTurnExit(): void {
     print(this.labelname, 'has exited move state')
   }
   remove_effects_bonus(e: Effect) {
