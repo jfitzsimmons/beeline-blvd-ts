@@ -66,7 +66,10 @@ export interface WorldQuests {
 export interface AllQuestsMethods {
   [key: string]: QuestMethods
 }
-
+export interface PlayerMethod {
+  set_room_info(r: string): void
+  get_player_room(): string
+}
 export interface RoomMethod {
   get_player_room(): string
   clear_station(room: string, station: string, npc: string): void

@@ -28,7 +28,11 @@ export default class World {
   constructor() {
     this.fsm = new StateMachine(this, 'world')
     this.player = new WorldPlayer()
-    this.rooms = new WorldRooms()
+    const playerMethods = {
+      set_room_info: this.player.set_room_info.bind(this),
+      get_player_room: this.player.get_player_room.bind(this),
+    }
+    this.rooms = new WorldRooms(playerMethods)
     this.loadType = 'new game'
     const roommethods: RoomMethod = {
       clear_station: this.rooms.clear_station.bind(this),
@@ -87,8 +91,10 @@ export default class World {
 
   // so what next. start with world.init in lua file
   private onNewEnter(): void {
-    this.npcs.fsm.setState('new')
+    this.player.fsm.setState('turn')
+    this.rooms.fsm.setState('turn')
     this.player.currentroom = 'grounds'
+    this.npcs.fsm.setState('new')
     this.npcs.fsm.update(dt)
   }
   private onNewUpdate(): void {}
@@ -116,7 +122,9 @@ export default class World {
   }
   private onTurnUpdate(): void {
     print('WORLD TURNUPDATE')
+    this.player.fsm.update(dt)
     this.npcs.fsm.update(dt)
+    this.rooms.fsm.update(dt)
   }
   private onTurnExit(): void {}
   private onPlayerUpdate(): void {}

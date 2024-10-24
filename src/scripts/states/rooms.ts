@@ -7,6 +7,7 @@ import {
 import { Rooms, Roles, Fallbacks } from '../../types/state'
 import RoomState from './room'
 import StateMachine from './stateMachine'
+import { PlayerMethod } from '../../types/tasks'
 
 // todo TESTJPF needs room call like npcstate
 // the have a avtive, player, neighbor state? something that automatically makes direction for npcs to target. up down left right...
@@ -17,26 +18,32 @@ export default class WorldRooms {
   private _all: Rooms
   layout: Array<Array<string | null>>
   roles: Roles
+  roomsLists: PlayerMethod
   fallbacks: Fallbacks
   stationsMap: { [key: string]: { [key: string]: string } }
-  constructor() {
-    this._all = { ...seedRooms() }
+  constructor(playerMethods: PlayerMethod) {
     this.fsm = new StateMachine(this, 'rooms')
     this.fallbacks = { ...RoomsInitFallbacks }
-    this.stationsMap = this.createStationsMap()
+
     //this._all = { ...RoomsInitState }
     this.layout = [...RoomsInitLayout]
     this.roles = { ...RoomsInitRoles }
+    this.roomsLists = {
+      set_room_info: playerMethods.set_room_info.bind(this),
+      get_player_room: playerMethods.get_player_room.bind(this),
+    }
+    this._all = { ...seedRooms(this.roomsLists) }
+    this.stationsMap = this.createStationsMap()
     this.fsm.addState('idle').addState('turn', {
-      onEnter: this.onTurnStart.bind(this),
+      onEnter: this.onTurnEnter.bind(this),
       onUpdate: this.onTurnUpdate.bind(this),
-      onExit: this.onTurnEnd.bind(this),
+      onExit: this.onTurnExit.bind(this),
     })
 
     this.fsm.addState('transition', {
-      onEnter: this.onTransitionStart.bind(this),
+      onEnter: this.onTransitionEnter.bind(this),
       onUpdate: this.onTransitionUpdate.bind(this),
-      onExit: this.onTransitionEnd.bind(this),
+      onExit: this.onTransitionExit.bind(this),
     })
 
     this.clear_station = this.clear_station.bind(this)
@@ -48,6 +55,9 @@ export default class WorldRooms {
   }
   public get all(): Rooms {
     return this._all
+  }
+  unfocus_room() {
+    this.all[this.roomsLists.get_player_room()].fsm.setState('idle')
   }
   prune_station_map(room: string, station: string) {
     this.stationsMap[room][station] !== null
@@ -86,7 +96,7 @@ export default class WorldRooms {
       this.fallbacks.stations[kfs] = ''
     }
   }
-  private onTurnStart(): void {
+  private onTurnEnter(): void {
     //todo
   }
   private onTurnUpdate(): void {
@@ -98,16 +108,16 @@ export default class WorldRooms {
     //not sure what else i could automate/optimize here:::
     //FUTURE gnerate money, food, stealing?
   }
-  private onTurnEnd(): void {
+  private onTurnExit(): void {
     //todo
   }
-  private onTransitionStart(): void {
+  private onTransitionEnter(): void {
     //todo
   }
   private onTransitionUpdate(): void {
     //not bad to handle interactions
   }
-  private onTransitionEnd(): void {
+  private onTransitionExit(): void {
     //todo
   }
   createStationsMap() {
@@ -123,14 +133,14 @@ export default class WorldRooms {
   }
 }
 
-function seedRooms() {
+function seedRooms(lists: PlayerMethod) {
   const seeded: Rooms = {}
   //const inits = { ...NpcsInitState }
   let ki: keyof typeof RoomsInitState
   for (ki in RoomsInitState) {
     // creat npc class constructor todo now testjpf
     // seeded.push({ [ki]: new NpcState(ki) })
-    seeded[ki] = new RoomState(ki)
+    seeded[ki] = new RoomState(ki, lists)
   }
   return seeded
 }

@@ -18,13 +18,14 @@ function game_turn(room: string) {
   novel.reset_caution()
   //ai_turn() // abstract to world controller?
   print('game turn!!')
+  rooms.unfocus_room()
+  rooms.all[room].fsm.setState('focus')
   world.fsm.update(dt)
   tasks.update_quests_progress('turn', player.checkpoint)
   quest_checker('turn')
   player.ap = player.ap - 1
   player.turns = player.turns + 1
   calculate_heat(room)
-  rooms.all[room].fsm.setState('focus')
 }
 
 function calculate_heat(room: string) {
@@ -102,9 +103,9 @@ export function on_message(
       msg.post('proxies:/controller#worldcontroller', 'faint', params)
     } else {
       this.roomname = message.roomname
-      player.exitroom = rooms.layout[player.matrix_y][player.matrix_x]!
-      player.currentroom = this.roomname
-      player.matrix = rooms.all[this.roomname].matrix
+      //  player.exitroom = rooms.layout[player.matrix_y][player.matrix_x]!
+      //  player.currentroom = this.roomname
+      //player.matrix = rooms.all[this.roomname].matrix
 
       if (message.load_type == 'room transition') {
         game_turn(message.roomname)

@@ -281,10 +281,10 @@ export default class WorldNpcs {
     print('npcsturnenter')
   }
   private onTurnUpdate(): void {
-    print('npcsturnupdate')
+    // print('npcsturnupdate')
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
-      print('npc', i)
+      // print('npc', i)
       const npc = this.all[this.order[i]]
 
       npc.fsm.update(dt)
