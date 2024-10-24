@@ -5,6 +5,9 @@
 math.randomseed(os.time())
 
 import { Game } from '../states/gamesystem2'
+globalThis.game = new Game()
+const game = globalThis.game
+const { world } = game
 //const save = require('../../../main/states/gamesave.lua')
 import { gamesave, gamesettings } from '../../types/legacylua'
 
@@ -15,15 +18,16 @@ interface props {
   current_proxy: url | null
   load_type: string
 }
-
+//mpve transition to world state
+//new game to game state
+//then just set states testjpf
 function handle_new_turn(load_type: string) {
   if (load_type === 'room transition') {
-    globalThis.game.world.clock = globalThis.game.world.clock + 1
-    if (globalThis.game.world.clock > 23) {
-      globalThis.game.world.clock = globalThis.game.world.clock - 24
-    }
+    world.fsm.setState('turn')
   } else if (load_type === 'new game') {
-    globalThis.game = new Game()
+    game.fsm.setState('new')
+
+    //globalThis.game = new Game()
   }
 }
 interface url {
@@ -59,6 +63,8 @@ export function on_message(
   },
   _sender: url
 ): void {
+  //eabch hash should be it's own fsm world state
+  // show menu should be on Gamestate?testjpf
   if (messageId == hash('show_menu')) {
     this.is_level = false
     show(this.current_proxy, '#main_menu')
@@ -67,20 +73,16 @@ export function on_message(
     // show(this.current_proxy, '#info_gui')
     msg.post('proxies:/controller#infocontroller', 'toggle_info')
   } else if (messageId == hash('faint')) {
-    globalThis.game.world.clock = globalThis.game.world.clock + 6
-    globalThis.game.world.player.ap = globalThis.game.world.player.ap_max - 6
-    globalThis.game.world.player.hp = globalThis.game.world.player.hp_max - 1
+    world.fsm.setState('faint')
     msg.post('#', 'pick_room', message)
-  } else if (messageId == hash('arrested')) {
-    globalThis.game.world.clock = globalThis.game.world.clock + 6
-    globalThis.game.world.player.alert_level = 0
-    globalThis.game.world.player.ap = globalThis.game.world.player.ap_max - 6
+  } else if (messageId == hash('arrest')) {
+    world.fsm.setState('arrest')
     msg.post('#', 'pick_room', message)
   } else if (messageId == hash('pick_room')) {
     this.roomname = message.enter_room
     this.is_level = true
     this.load_type = message.load_type
-    // print('--- === ::: NEW ROOM LOADED ::: === ---')
+    print('--- === ::: NEW ROOM LOADED ::: === ---')
     handle_new_turn(this.load_type)
     show(this.current_proxy, '#' + this.roomname)
   } else if (messageId == hash('proxy_loaded')) {

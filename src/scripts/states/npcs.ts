@@ -1,7 +1,11 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { NpcsInitState } from './inits/npcsInitState'
-import { Npc, Npcs } from '../../types/state'
+import StateMachine from './stateMachine'
+
+import { Npcs } from '../../types/state'
 import { shuffle } from '../utils/utils'
-import { QuestMethods } from '../../types/tasks'
+import { NpcMethod, QuestMethods, RoomMethod } from '../../types/tasks'
+import NpcState from './npc'
 
 interface BinaryLookupTable {
   [key: string]: BinaryLookupRow
@@ -201,36 +205,114 @@ const binarylookup: BinaryLookupTable = {
     noir_color: 0,
   },
 }
+const dt = math.randomseed(os.time())
 
 // need npcs interface?
 export default class WorldNpcs {
+  fsm: StateMachine
   private _all: Npcs
   order: string[]
   quests: QuestMethods
-  constructor() {
-    this._all = { ...NpcsInitState }
+  npcLists: NpcMethod
+  infirmed: string[]
+  injured: string[]
+
+  constructor(roommethods: RoomMethod) {
+    //testjpf npcs need their own statemachine.
+    //this._all = { ...NpcsInitState }
+
+    this.infirmed = []
+    this.injured = []
     this.order = []
-    random_attributes(this.all, this.order)
     this.quests = {
       return_doctors: this.return_doctors.bind(this),
       return_security: this.return_doctors.bind(this),
       return_all: this.return_all.bind(this),
       return_order_all: this.return_order_all.bind(this),
     }
+    this.npcLists = {
+      get_player_room: roommethods.get_player_room.bind(this),
+      add_infirmed: this.add_infirmed.bind(this),
+      remove_infirmed: this.remove_infirmed.bind(this),
+      add_injured: this.add_injured.bind(this),
+      remove_injured: this.remove_injured.bind(this),
+      getVicinityTargets: roommethods.getVicinityTargets.bind(this),
+      clear_station: roommethods.clear_station.bind(this),
+      set_station: roommethods.set_station.bind(this),
+      prune_station_map: roommethods.prune_station_map.bind(this),
+      get_station_map: roommethods.get_station_map.bind(this),
+      reset_station_map: roommethods.reset_station_map.bind(this),
+    }
+    this._all = seedNpcs(this.npcLists)
+    random_attributes(this.all, this.order)
+
+    this.fsm = new StateMachine(this, 'npcs')
+
+    this.fsm.addState('idle')
+    this.fsm.addState('turn', {
+      onEnter: this.onTurnEnter.bind(this),
+      onUpdate: this.onTurnUpdate.bind(this),
+      onExit: this.onTurnExit.bind(this),
+    })
+    this.fsm.addState('new', {
+      onEnter: this.onNewEnter.bind(this),
+      onUpdate: this.onNewUpdate.bind(this),
+      onExit: this.onNewExit.bind(this),
+    })
+
     this.return_doctors = this.return_doctors.bind(this)
     this.return_security = this.return_security.bind(this)
   }
+
+  private onNewEnter(): void {}
+  private onNewUpdate(): void {
+    print('npcsNewupdate')
+    this.sort_npcs_by_encounter()
+    for (let i = this.order.length; i-- !== 0; ) {
+      const npc = this.all[this.order[i]]
+      npc.fsm.setState('new')
+      npc.fsm.update(dt)
+    }
+    this.npcLists.reset_station_map()
+    this.fsm.setState('turn')
+  }
+  private onNewExit(): void {}
+  private onTurnEnter(): void {
+    print('npcsturnenter')
+  }
+  private onTurnUpdate(): void {
+    // print('npcsturnupdate')
+    this.sort_npcs_by_encounter()
+    for (let i = this.order.length; i-- !== 0; ) {
+      // print('npc', i)
+      const npc = this.all[this.order[i]]
+
+      npc.fsm.update(dt)
+    }
+    this.npcLists.reset_station_map()
+  }
+  private onTurnExit(): void {}
+
   public get all(): Npcs {
     return this._all
   }
-  set_an_npc(n: Npc) {
-    this.all[n.labelname] = { ...n }
+
+  add_infirmed(n: string): void {
+    this.infirmed.push(n)
   }
-  //testjpf Dont hardcode!?
-  return_doctors(): Npc[] {
+  remove_infirmed(n: string): void {
+    this.infirmed.splice(this.infirmed.indexOf(n), 1)
+  }
+  add_injured(n: string): void {
+    this.injured.push(n)
+  }
+  remove_injured(n: string): void {
+    this.injured.splice(this.infirmed.indexOf(n), 1)
+  }
+  return_doctors(): NpcState[] {
     return [this.all.doc01, this.all.doc02, this.all.doc03]
   }
-  return_security(): Npc[] {
+  return_security(): NpcState[] {
     return [
       this.all.security001,
       this.all.security002,
@@ -245,7 +327,7 @@ export default class WorldNpcs {
   sort_npcs_by_encounter() {
     this.order.sort(
       (a: string, b: string) =>
-        this.all[b].turns_since_encounter - this.all[a].turns_since_encounter
+        this.all[a].turns_since_encounter - this.all[b].turns_since_encounter
     )
   }
   return_order_all(): [string[], Npcs] {
@@ -262,6 +344,18 @@ function adjust_binaries(value: number, clan: string, binary: string) {
   }
 
   return adj
+}
+
+function seedNpcs(lists: NpcMethod) {
+  const seeded: Npcs = {}
+  //const inits = { ...NpcsInitState }
+  let ki: keyof typeof NpcsInitState
+  for (ki in NpcsInitState) {
+    // creat npc class constructor todo now testjpf
+    // seeded.push({ [ki]: new NpcState(ki) })
+    seeded[ki] = new NpcState(ki, lists)
+  }
+  return seeded
 }
 
 function random_attributes(npcs: Npcs, order: string[]) {

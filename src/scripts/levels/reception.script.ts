@@ -9,6 +9,7 @@ function load_npcs() {
   let station: keyof typeof stations
   for (station in stations) {
     const npc = stations[station]
+    print('reception load level:::: ', npc, station)
     //  if (npc != '') {
     station == 'desk'
       ? msg.post('desk#station', 'load_station', { npc, roomname })

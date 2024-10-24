@@ -1,5 +1,6 @@
-import { Npc, PlayerState, Skills } from '../../types/state'
+import { PlayerState, Skills } from '../../types/state'
 import { Consequence } from '../../types/tasks'
+import NpcState from '../states/npc'
 import { roll_special_dice } from '../utils/dice'
 import { clamp, shuffle } from '../utils/utils'
 const { npcs, player } = globalThis.game.world
@@ -549,7 +550,7 @@ function buildLookup() {
   }
 }
 
-export function remove_chest_bonus(actor: Npc | PlayerState, i: string) {
+export function remove_chest_bonus(actor: NpcState | PlayerState, i: string) {
   const item: InventoryTableItem = items[i]
   let sKey: keyof typeof item.skills
 
@@ -562,7 +563,7 @@ export function remove_chest_bonus(actor: Npc | PlayerState, i: string) {
     actor.binaries[bKey] = actor.binaries[bKey] - items[i].binaries[bKey]
 }
 
-export function add_chest_bonus(actor: Npc | PlayerState, i: string) {
+export function add_chest_bonus(actor: NpcState | PlayerState, i: string) {
   const item: InventoryTableItem = items[i]
   let sKey: keyof typeof item.skills
   for (sKey in items[i].skills)

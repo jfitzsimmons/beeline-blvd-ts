@@ -1,7 +1,7 @@
-import { Npc, Occupants } from '../../types/state'
+import { Occupants } from '../../types/state'
 import { roll_special_dice } from '../utils/dice'
 import {
-  arraymove,
+  //arraymove,
   clamp,
   shuffle,
   surrounding_room_matrix,
@@ -16,6 +16,7 @@ import {
 import { add_pledge, go_to_jail } from './systemshelpers'
 import { Caution, Consequence } from '../../types/tasks'
 import { Direction } from '../../types/ai'
+import NpcState from '../states/npc'
 
 const { tasks, rooms, npcs, player } = globalThis.game.world
 const questioning_checks: Array<
@@ -237,22 +238,30 @@ export function send_to_infirmary(v: string, doc: string) {
   }
 }
 
-export function freeze_injured_npc(npc: Npc) {
+export function freeze_injured_npc(npc: NpcState) {
   //reset npc into current position
+  // now testjpf func to npcstatemachine
+  // pass rooms all to npc class
+  // change npc state to injury!!
   rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
   //check if and where injured is located in Doctors' queue
-  const limit = tasks.mendingQueue.indexOf(npc.labelname)
+  //mending should be a state. q moved to NpcStates
+  //,move to npc add responder state
+  //TESTJPF TODO NOW //needs to be movedto npc mending state
+  //const limit = tasks.mendingQueue.indexOf(npc.labelname)
   //if npc isn't in q, put them on all NPC's radar for caution creation
+  //instead us harmed state
+  /** 
   if (limit < 0 && injured_npcs.includes(npc.labelname) == false) {
     injured_npcs.push(npc.labelname)
   } else if (limit > 3) {
     //if npc isn't in q, put them on Doctors' radar
-    arraymove(tasks.mendingQueue, limit, 0)
-  }
+    //(tasks.mendingQueue, limit, 0)
+  }*/
 }
 
 export function doctor_ai_turn(
-  npc: Npc,
+  npc: NpcState,
   targets: Direction
 ): [Direction, boolean] {
   const patients = Object.values(rooms.all.infirmary.occupants!).filter(

@@ -1,4 +1,6 @@
-import { Npc, Npcs, Skills } from './state'
+import NpcState from '../scripts/states/npc'
+import { Direction } from './ai'
+import { Npcs, Skills } from './state'
 
 type NoOptionals<T> = {
   [K in keyof T]-?: T[K]
@@ -64,11 +66,31 @@ export interface WorldQuests {
 export interface AllQuestsMethods {
   [key: string]: QuestMethods
 }
+export interface PlayerMethod {
+  set_room_info(r: string): void
+  get_player_room(): string
+}
+export interface RoomMethod {
+  get_player_room(): string
+  clear_station(room: string, station: string, npc: string): void
+  set_station(room: string, station: string, npc: string): void
+  prune_station_map(room: string, station: string): void
+  get_station_map(): { [key: string]: { [key: string]: string } }
+  reset_station_map(): void
+  getVicinityTargets(): Direction
+}
+export interface NpcMethod extends RoomMethod {
+  add_infirmed(n: string): void
+  remove_infirmed(n: string): void
+  add_injured(n: string): void
+  remove_injured(n: string): void
+  getVicinityTargets(): Direction
+}
 export interface QuestMethods {
   [key: string]: (
     args: [() => Npcs, number] | string | void
   ) =>
-    | Npc[]
+    | NpcState[]
     | boolean
     | Npcs
     | [string[], Npcs]
