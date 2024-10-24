@@ -93,14 +93,15 @@ function consolation_outcomes(love: number) {
 
 function novel_outcomes(reason: string) {
   if (reason == 'faint' || player.hp <= 0) {
-    const params = {
+    msg.post('proxies:/controller#worldcontroller', 'pick_room', {
       enter_room: tasks.spawn,
-    }
-    msg.post('proxies:/controller#worldcontroller', 'faint', params)
+      load_type: 'faint',
+    })
   } else if (reason == 'arrested') {
     tasks.remove_heat('player')
-    msg.post('proxies:/controller#worldcontroller', 'arrested', {
+    msg.post('proxies:/controller#worldcontroller', 'pick_room', {
       enter_room: 'security',
+      load_type: 'arrest',
     })
   } else if (reason.substring(0, 6) == 'quest:') {
     novel.reason = reason.substring(7)

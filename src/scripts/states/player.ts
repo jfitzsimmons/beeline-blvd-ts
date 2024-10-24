@@ -1,9 +1,10 @@
-import { PlayerState, Skills } from '../../types/state'
+import { InventoryTableItem, PlayerState, Skills } from '../../types/state'
 import { QuestMethods } from '../../types/tasks'
 import { PlayerInitState } from './inits/playerInitState'
 import { shuffle } from '../utils/utils'
 import { RoomsInitLayout, RoomsInitState } from './inits/roomsInitState'
 import StateMachine from './stateMachine'
+import { itemStateInit } from './inits/inventoryInitState'
 
 function random_skills(skills: Skills, bins: Skills) {
   let tempvals: number[] = shuffle([1, 1, 3, 4, 5, 6, 6, 7])
@@ -38,7 +39,7 @@ export default class WorldPlayer {
       increase_alert_level: this.increase_alert_level.bind(this),
       return_playerroom: this.return_playerroom.bind(this),
     }
-
+    this.inventory_init()
     this.fsm.addState('idle').addState('turn', {
       //game??
       //onInit?
@@ -66,6 +67,8 @@ export default class WorldPlayer {
   private onTurnUpdate(): void {
     //todo
     print('PLAYER UPDATE FSM')
+    this.ap = this.ap - 1
+    this.turns = this.turns + 1
   }
   private onTurnExit(): void {
     // print(this.labelname, 'has entered MOVE STATE')
@@ -78,6 +81,34 @@ export default class WorldPlayer {
   }
   get_player_room(): string {
     return this.currentroom
+  }
+  remove_inventory_bonus(i: string) {
+    const item: InventoryTableItem = itemStateInit[i]
+    let sKey: keyof typeof item.skills
+
+    for (sKey in itemStateInit[i].skills)
+      this.state.skills[sKey] =
+        this.state.skills[sKey] - itemStateInit[i].skills[sKey]
+
+    let bKey: keyof typeof item.binaries
+
+    for (bKey in itemStateInit[i].binaries)
+      this.state.binaries[bKey] =
+        this.state.binaries[bKey] - itemStateInit[i].binaries[bKey]
+  }
+
+  add_inventory_bonus(i: string) {
+    const item: InventoryTableItem = itemStateInit[i]
+    let sKey: keyof typeof item.skills
+    for (sKey in itemStateInit[i].skills)
+      this.state.skills[sKey] =
+        this.state.skills[sKey] + itemStateInit[i].skills[sKey]
+
+    let bKey: keyof typeof item.binaries
+
+    for (bKey in itemStateInit[i].binaries)
+      this.state.binaries[bKey] =
+        this.state.binaries[bKey] + itemStateInit[i].binaries[bKey]
   }
   public set pos(p: { x: number; y: number }) {
     this._state.pos = p
@@ -184,5 +215,10 @@ export default class WorldPlayer {
   }
   increase_alert_level() {
     this.alert_level += 1
+  }
+  inventory_init() {
+    for (const item of this.state.inventory) {
+      this.add_inventory_bonus(item)
+    }
   }
 }

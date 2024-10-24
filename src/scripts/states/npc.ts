@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { NpcsInitState } from './inits/npcsInitState'
 import StateMachine from './stateMachine'
-import { Skills } from '../../types/state'
+import { InventoryTableItem, Skills } from '../../types/state'
 import { Effect, NpcMethod } from '../../types/tasks'
 import {
   RoomsInitLayout,
@@ -13,6 +13,7 @@ import {
   set_npc_target,
   set_room_priority,
 } from '../ai/ai_main'
+import { itemStateInit } from './inits/inventoryInitState'
 
 // need npcs interface?
 export default class NpcState {
@@ -252,6 +253,32 @@ export default class NpcState {
   }
   private onTurnExit(): void {
     print(this.labelname, 'has exited move state')
+  }
+  remove_inventory_bonus(i: string) {
+    const item: InventoryTableItem = itemStateInit[i]
+    let sKey: keyof typeof item.skills
+
+    for (sKey in itemStateInit[i].skills)
+      this.skills[sKey] = this.skills[sKey] - itemStateInit[i].skills[sKey]
+
+    let bKey: keyof typeof item.binaries
+
+    for (bKey in itemStateInit[i].binaries)
+      this.binaries[bKey] =
+        this.binaries[bKey] - itemStateInit[i].binaries[bKey]
+  }
+
+  add_inventory_bonus(i: string) {
+    const item: InventoryTableItem = itemStateInit[i]
+    let sKey: keyof typeof item.skills
+    for (sKey in itemStateInit[i].skills)
+      this.skills[sKey] = this.skills[sKey] + itemStateInit[i].skills[sKey]
+
+    let bKey: keyof typeof item.binaries
+
+    for (bKey in itemStateInit[i].binaries)
+      this.binaries[bKey] =
+        this.binaries[bKey] + itemStateInit[i].binaries[bKey]
   }
   remove_effects_bonus(e: Effect) {
     this[e.fx.type][e.fx.stat] = this[e.fx.type][e.fx.stat] - e.fx.adjustment

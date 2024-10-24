@@ -4,11 +4,7 @@
 //const world = require "main.states.worldstate"
 //const utils = require "main.utils.utils"
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import {
-  inventoryLookup,
-  add_chest_bonus,
-  remove_chest_bonus,
-} from '../systems/inventorysystem'
+import { inventoryLookup } from '../systems/inventorysystem'
 
 const { player, npcs, rooms, novel } = globalThis.game.world
 interface props {
@@ -26,19 +22,19 @@ export function init(this: props) {
 
 function add_item_player(item: string) {
   player.inventory.push(item)
-  add_chest_bonus(player.state, item)
+  player.add_inventory_bonus(item)
 }
 
 function remove_item_player(item: string) {
   const itemIndex = player.inventory.indexOf(item)
   const removed = player.inventory.splice(itemIndex, 1)
-  remove_chest_bonus(player.state, removed[0])
+  player.add_inventory_bonus(removed[0])
 }
 
 function add_item_actor(actor: string, room: string, inv_item: string) {
   if (npcs.all[actor] != null) {
     npcs.all[actor].inventory[npcs.all[actor].inventory.length] = inv_item
-    add_chest_bonus(npcs.all[actor], inv_item)
+    npcs.all[actor].add_inventory_bonus(inv_item)
   } else {
     rooms.all[room].actors[actor].inventory[
       rooms.all[room].actors[actor].inventory.length
@@ -50,7 +46,7 @@ function remove_item_actor(actor: string, room: string, item: string) {
   if (npcs.all[actor] != null) {
     const itemIndex = npcs.all[actor].inventory.indexOf(item)
     const removed = npcs.all[actor].inventory.splice(itemIndex, 1)
-    remove_chest_bonus(npcs.all[actor], removed[0])
+    npcs.all[actor].remove_inventory_bonus(removed[0])
   } else {
     const itemIndex = rooms.all[room].actors[actor].inventory.indexOf(item)
     itemIndex > -1

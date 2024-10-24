@@ -6,8 +6,6 @@ import {
   remove_valuable,
   remove_last,
   remove_random,
-  add_chest_bonus,
-  remove_chest_bonus,
 } from '../systems/inventorysystem'
 import { confrontation_consequence } from '../systems/tasksystem'
 import { injured_npcs } from '../systems/emergencysystem'
@@ -84,7 +82,7 @@ export function take_check(taker: NpcState, actor: Npc | Actor) {
   } else {
     chest_item = remove_random(taker.inventory, actor.inventory)
   }
-  add_chest_bonus(taker, chest_item)
+  taker.add_inventory_bonus(chest_item)
 }
 export function stash_check(stasher: NpcState, actor: NpcState | Actor) {
   let modifier = stasher.inventory.length - actor.inventory.length
@@ -109,7 +107,7 @@ export function stash_check(stasher: NpcState, actor: NpcState | Actor) {
   } else {
     chest_item = remove_last(actor.inventory, stasher.inventory)
   }
-  remove_chest_bonus(stasher, chest_item)
+  stasher.remove_inventory_bonus(chest_item)
   // if victim == true ){ add_chest_bonus(n, chest_item) }
 }
 export function take_or_stash(attendant: NpcState, actor: NpcState | Actor) {
@@ -248,7 +246,7 @@ export function steal_check(s: NpcState, w: Npc, loot: string[]) {
       chest_item = remove_advantageous(s.inventory, loot, s.skills)
     }
 
-    add_chest_bonus(s, chest_item)
+    s.add_inventory_bonus(chest_item)
     //if (victim == true ){ remove_chest_bonus(w, chest_item) }
     s.cooldown = math.random(5, 15)
   }

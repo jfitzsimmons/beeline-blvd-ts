@@ -93,6 +93,7 @@ export default class World {
   private onNewEnter(): void {
     this.player.fsm.setState('turn')
     this.rooms.fsm.setState('turn')
+    this.rooms.all.grounds.fsm.setState('focus')
     this.player.currentroom = 'grounds'
     this.npcs.fsm.setState('new')
     this.npcs.fsm.update(dt)
@@ -129,7 +130,7 @@ export default class World {
   private onTurnExit(): void {}
   private onPlayerUpdate(): void {}
 
-  getVicinityTargets(): Direction {
+  private getVicinityTargets(): Direction {
     return surrounding_room_matrix(
       RoomsInitState[this.player.exitroom].matrix,
       this.player.matrix

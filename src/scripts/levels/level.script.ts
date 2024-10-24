@@ -1,32 +1,14 @@
 import { Caution } from '../../types/tasks'
 import { address_cautions } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
-//import { ai_turn } from '../ai/ai_main'
-import { inventory_init } from '../systems/inventorysystem'
-const dt = math.randomseed(os.time())
 
+const dt = math.randomseed(os.time())
 const { world } = globalThis.game
 const { rooms, npcs, player, tasks, novel } = world
 
-export function init() {
-  //place_npcs()
-}
-function game_turn(room: string) {
-  novel.priority = false
-  novel.reason = 'none'
-  novel.item = 'none'
-  novel.reset_caution()
-  //ai_turn() // abstract to world controller?
-  print('game turn!!')
-  rooms.unfocus_room()
-  rooms.all[room].fsm.setState('focus')
-  world.fsm.update(dt)
-  tasks.update_quests_progress('turn', player.checkpoint)
-  quest_checker('turn')
-  player.ap = player.ap - 1
-  player.turns = player.turns + 1
-  calculate_heat(room)
-}
+//export function init() {
+//place_npcs()
+//}
 
 function calculate_heat(room: string) {
   let heat = 0
@@ -80,6 +62,19 @@ function confrontation_scene(c: Caution) {
   novel.priority = true
   msg.post('proxies:/controller#novelcontroller', 'show_scene')
 }
+function game_turn(room: string) {
+  novel.priority = false
+  novel.reason = 'none'
+  novel.item = 'none'
+  novel.reset_caution()
+  //ai_turn() // abstract to world controller?
+  print('game turn!!')
+  rooms.unfocus_room()
+  rooms.all[room].fsm.setState('focus')
+  world.fsm.update(dt)
+  tasks.update_quests_progress('turn', player.checkpoint)
+  quest_checker('turn')
+}
 interface props {
   roomname: string
   storagename: string
@@ -96,32 +91,16 @@ export function on_message(
   _sender: url
 ): void {
   if (messageId == hash('room_load')) {
-    if (player.ap <= 0) {
-      const params = {
-        enter_room: tasks.spawn,
-      }
-      msg.post('proxies:/controller#worldcontroller', 'faint', params)
-    } else {
-      this.roomname = message.roomname
-      //  player.exitroom = rooms.layout[player.matrix_y][player.matrix_x]!
-      //  player.currentroom = this.roomname
-      //player.matrix = rooms.all[this.roomname].matrix
+    this.roomname = message.roomname
+    //TESTJPF can this whole conditional be moved to fsms???
+    if (message.load_type == 'room transition') game_turn(message.roomname)
+    calculate_heat(this.roomname)
 
-      if (message.load_type == 'room transition') {
-        game_turn(message.roomname)
-      } else if (message.load_type == 'new game') {
-        //place_npcs()
-        inventory_init()
-        calculate_heat('grounds')
-        rooms.all.grounds.fsm.setState('focus')
-      }
-      const confrontation: Caution | null = address_cautions()
-      //grounds:/shared/scripts#level
-      msg.post(this.roomname + ':/level#' + this.roomname, 'room_load')
-      //position player on screen
-      msg.post('/shared/adam#adam', 'wake_up')
-      if (confrontation != null) confrontation_scene(confrontation)
-    }
+    const confrontation: Caution | null = address_cautions()
+    msg.post(this.roomname + ':/level#' + this.roomname, 'room_load')
+    //position player on screen
+    msg.post('/shared/adam#adam', 'wake_up')
+    if (confrontation != null) confrontation_scene(confrontation)
   } else if (messageId == hash('exit_gui')) {
     tasks.update_quests_progress('interact', player.checkpoint)
     quest_checker('interact')
