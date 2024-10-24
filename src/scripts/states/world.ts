@@ -8,6 +8,9 @@ import WorldTasks from './tasks'
 import WorldInfo from './info'
 import WorldNovel from './novel'
 import { AllQuestsMethods, RoomMethod } from '../../types/tasks'
+import { surrounding_room_matrix } from '../utils/utils'
+import { RoomsInitState } from './inits/roomsInitState'
+import { Direction } from '../../types/ai'
 //import { surrounding_room_matrix } from '../utils/utils'
 
 const dt = math.randomseed(os.time())
@@ -34,6 +37,7 @@ export default class World {
       get_station_map: this.rooms.get_station_map.bind(this),
       reset_station_map: this.rooms.reset_station_map.bind(this),
       get_player_room: this.player.get_player_room.bind(this),
+      getVicinityTargets: this.getVicinityTargets.bind(this),
     }
     this.npcs = new WorldNpcs(roommethods)
     this.novel = new WorldNovel(this.npcs.all.labor01)
@@ -117,5 +121,11 @@ export default class World {
   private onTurnExit(): void {}
   private onPlayerUpdate(): void {}
 
-  // ...
+  getVicinityTargets(): Direction {
+    return surrounding_room_matrix(
+      RoomsInitState[this.player.exitroom].matrix,
+      this.player.matrix
+    )
+    //return this._vicinityTargets
+  }
 }

@@ -74,6 +74,7 @@ export interface RoomMethod {
   prune_station_map(room: string, station: string): void
   get_station_map(): { [key: string]: { [key: string]: string } }
   reset_station_map(): void
+  getVicinityTargets(): Direction
 }
 export interface NpcMethod extends RoomMethod {
   add_infirmed(n: string): void

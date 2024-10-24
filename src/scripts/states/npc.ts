@@ -212,7 +212,6 @@ export default class NpcState {
         set_npc_target(this.parent.getVicinityTargets(), npcTurnProps),
         npcPriorityProps
       )
-      print('priorities created')
       const { chosenRoom, chosenStation } = attempt_to_fill_station(
         priorityroomlist,
         this.labelname,
@@ -220,14 +219,11 @@ export default class NpcState {
         this.clan,
         this.parent.get_station_map()
       )
-      print('station filled')
 
       this.currentroom = chosenRoom
-      print('pre room station ')
+
       this.parent.set_station(chosenRoom, chosenStation, this.labelname)
       this.parent.prune_station_map(chosenRoom, chosenStation)
-
-      print('post room station ')
 
       this.matrix = RoomsInitState[chosenRoom].matrix
       this.currentstation = chosenStation
@@ -241,7 +237,7 @@ export default class NpcState {
       //accepst room list and this.labelname
       //sets room station agent
       //returns room and station
-      print('END END END')
+      // print('END END END')
     } else {
       this.fsm.setState('injury')
     }

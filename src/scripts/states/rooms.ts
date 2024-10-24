@@ -62,8 +62,9 @@ export default class WorldRooms {
   set_station(room: string, station: string, npc: string) {
     this.all[room].stations[station] = npc
     print(
-      'roommethods::: setstation:: npc,  this.all[room].stations[station]',
-      npc,
+      'roommethods::: setstation::',
+      room,
+      station,
       this.all[room].stations[station]
     )
   }

@@ -6,7 +6,6 @@ import { Npcs } from '../../types/state'
 import { shuffle } from '../utils/utils'
 import { NpcMethod, QuestMethods, RoomMethod } from '../../types/tasks'
 import NpcState from './npc'
-import { Direction } from '../../types/ai'
 
 interface BinaryLookupTable {
   [key: string]: BinaryLookupRow
@@ -217,18 +216,11 @@ export default class WorldNpcs {
   npcLists: NpcMethod
   infirmed: string[]
   injured: string[]
-  private _vicinityTargets: Direction
 
   constructor(roommethods: RoomMethod) {
     //testjpf npcs need their own statemachine.
     //this._all = { ...NpcsInitState }
-    this._vicinityTargets = {
-      center: { x: 0, y: 0 },
-      left: { x: 0, y: 0 },
-      right: { x: 0, y: 0 },
-      front: { x: 0, y: 0 },
-      back: { x: 0, y: 0 },
-    }
+
     this.infirmed = []
     this.injured = []
     this.order = []
@@ -244,7 +236,7 @@ export default class WorldNpcs {
       remove_infirmed: this.remove_infirmed.bind(this),
       add_injured: this.add_injured.bind(this),
       remove_injured: this.remove_injured.bind(this),
-      getVicinityTargets: this.getVicinityTargets.bind(this),
+      getVicinityTargets: roommethods.getVicinityTargets.bind(this),
       clear_station: roommethods.clear_station.bind(this),
       set_station: roommethods.set_station.bind(this),
       prune_station_map: roommethods.prune_station_map.bind(this),
@@ -292,6 +284,7 @@ export default class WorldNpcs {
     print('npcsturnupdate')
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
+      print('npc', i)
       const npc = this.all[this.order[i]]
 
       npc.fsm.update(dt)
@@ -304,20 +297,6 @@ export default class WorldNpcs {
     return this._all
   }
 
-  getVicinityTargets(): Direction {
-    return this._vicinityTargets
-  }
-  public get vicinityTargets(): Direction {
-    return this._vicinityTargets
-  }
-  public set vicinityTargets(vt: Direction) {
-    this._vicinityTargets = vt
-  }
-  //set_an_npc(n: Npc) {
-  //  this.all[n.labelname] = { ...n }
-  //}
-  //testjpf Dont hardcode!?
-  set_vicinity_targets() {}
   add_infirmed(n: string): void {
     this.infirmed.push(n)
   }
@@ -348,7 +327,7 @@ export default class WorldNpcs {
   sort_npcs_by_encounter() {
     this.order.sort(
       (a: string, b: string) =>
-        this.all[b].turns_since_encounter - this.all[a].turns_since_encounter
+        this.all[a].turns_since_encounter - this.all[b].turns_since_encounter
     )
   }
   return_order_all(): [string[], Npcs] {
