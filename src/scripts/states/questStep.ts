@@ -1,18 +1,25 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
-import { Quest } from '../../types/tasks'
-import QuestStep from './questStep'
+import { QuestCondition } from '../../types/tasks'
 //const dt = math.randomseed(os.time())
 
-export default class QuestState {
+export default class QuestStep {
   //private _questmethods: AllQuestsMethods
+  label: string
+  solution?: string
   passed: boolean
+  //status: 'inactive' | 'active' | 'complete' | 'standby' | 'failed'
+  interval: string[]
+  func: { (args: [() => any, any]): boolean }[]
+  args: [() => any, any][]
   fsm: StateMachine
-  conditions: { [key: string]: QuestStep }
-  constructor(questparams: Quest) {
+  constructor(step: QuestCondition) {
     this.fsm = new StateMachine(this, 'quest')
-    this.passed = questparams.passed
-    this.conditions = questparams.conditions
+    this.label = step.label
+    this.passed = step.passed
+    this.interval = step.interval
+    this.func = step.func
+    this.args = step.args
     //this._spawn = 'grounds'
     //this.mendingQueue = []
     this.fsm.addState('idle')

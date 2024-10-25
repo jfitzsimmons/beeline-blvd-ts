@@ -7,6 +7,7 @@ import {
   returnfalse,
 } from '../../../utils/quest'
 import QuestState from '../../quest'
+import QuestStep from '../../questStep'
 
 export const tutorialQuests = (
   questmethods: AllQuestsMethods
@@ -19,83 +20,76 @@ export const tutorialQuests = (
       passed: false,
       conditions: {
         //testjfpf like new QuestState but new QuestStep()
-        ['0']: {
+        ['0']: new QuestStep({
           label: 'Agree to help injured man',
           solution: '',
           passed: false,
-          status: 'standby',
           interval: ['interact'],
           func: [does_equal],
           args: [[nvq.get_reason, 'helpthatman']],
-        }, //have you talked to a doctor?
-        ['1']: {
+        }), //have you talked to a doctor?
+        ['1']: new QuestStep({
           label: 'What is up doctor?!',
           solution: '',
           passed: false,
-          status: 'inactive',
           interval: ['interact'],
           func: [does_equal],
           args: [[nvq.get_reason, 'getadoctor']],
-        }, //have you talked to a doctor?
-        ['2']: {
+        }), //have you talked to a doctor?
+        ['2']: new QuestStep({
           label: 'Apple a day!',
           solution: '',
           passed: false,
-          status: 'inactive',
           interval: ['interact'],
           //testjpf need to rethink this!! TODO!!!
           // use this if takes to long??? auto pass, last default?!!
           func: [returnfalse],
           args: [[returnfalse, false]],
-        },
-        ['3']: {
+        }),
+        ['3']: new QuestStep({
           label: 'Get some meds!',
           solution: '',
           passed: false,
-          status: 'inactive',
           interval: ['interact'],
           func: [any_has_value],
           args: [[nq.return_doctors, 'vial02']],
-        }, //gets keycard, goes to infirmary, gets meds
-        ['4']: {
+        }), //gets keycard, goes to infirmary, gets meds
+        ['4']: new QuestStep({
           label: 'Got those meds!',
           solution: '',
           passed: false,
-          status: 'inactive',
           interval: ['interact'],
           func: [does_equal],
           args: [[nvq.get_reason, 'favormedsquest']],
-        }, //have you talked to a doctor?
-        ['5']: {
+        }), //have you talked to a doctor?
+        ['5']: new QuestStep({
           label: 'Delive these meds?',
           solution: '',
           passed: false,
-          status: 'inactive',
           interval: ['interact'],
           func: [returnfalse],
           args: [[returnfalse, false]],
-        }, //have you talked to a doctor?
-        ['6']: {
+        }), //have you talked to a doctor?
+        ['6']: new QuestStep({
           label: 'Meds delivered',
           solution: '',
           passed: false,
-          status: 'inactive',
           interval: ['interact'],
           func: [does_equal],
           args: [[nvq.get_reason, 'medassistcomplete']],
-        }, //have you talked to a doctor?
+        }), //have you talked to a doctor?
       },
+      /** 
       side_quests: {
-        [1]: {
+        ['1']: {
           label: 'Basically a doctor.',
           solution: '',
           passed: false,
-          status: 'inactive',
           interval: ['turn'],
           func: [returnfalse],
           args: [[returnfalse, false]],
         },
-      },
+      },*/
     }),
   }
 

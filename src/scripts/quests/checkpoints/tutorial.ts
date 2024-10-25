@@ -1,5 +1,6 @@
-import { QuestCondition, QuestConditions } from '../../../types/tasks'
+import { QuestConditions } from '../../../types/tasks'
 import { steal_check, take_or_stash } from '../../ai/ai_checks'
+import QuestStep from '../../states/questStep'
 //import { npc_action_move } from '../../ai/ai_main'
 //import NpcState from '../../states/npc'
 import { from_same_room } from '../../utils/quest'
@@ -24,26 +25,30 @@ function injured_checks(conditions: QuestConditions) {
   // const { conditions: cons } = quest
   //const {"0":injury,"1":doc, "2":apple} = cons
 
-  if (injury.status == 'standby' && injury.passed == true) {
+  if (injury.fsm.getState() == 'standby' && injury.passed == true) {
     //todo testjpf should all be condition FSM states!!!
-    injury.status = 'active'
+    injury.fsm.setState('active')
     quest.fsm.setState('active')
-    doc.status = 'standby'
+    doc.fsm.setState('standby')
     injured.love = injured.love + 1
     info.add_interaction(
       `${injured.labelname} likes that you are helping them.`
     )
   }
 }
-function infirmary_checks(delivery: QuestCondition) {
-  print('INFIRMARY CHECKS::: reaon / delivery::', novel.reason, delivery.status)
+function infirmary_checks(delivery: QuestStep) {
+  print(
+    'INFIRMARY CHECKS::: reaon / delivery::',
+    novel.reason,
+    delivery.fsm.getState()
+  )
   if (
     //testjpf this only works if talking to doctors
     // doctor sripts only gets called for doctors!!!
     novel.reason == 'favormedquest' &&
-    delivery.status == 'inactive'
+    delivery.fsm.getState() == 'inactive'
   ) {
-    delivery.status = 'active'
+    delivery.fsm.setState('active')
     player.add_inventory('vial02')
 
     //info.add_interaction(`${doctor.labelname}'s gave you clearance for 8 turns`)
@@ -63,10 +68,10 @@ function doctor_checks(conditions: QuestConditions) {
     //TESTJPF !!! Here is where you would have the other options
     // not just apple, but bribe, drugs...
     novel.reason == 'hungrydoc' &&
-    injury.status == 'active' &&
-    apple.status == 'inactive'
+    injury.fsm.getState() == 'active' &&
+    apple.fsm.getState() == 'inactive'
   ) {
-    apple.status = 'active'
+    apple.fsm.setState('active')
     //testjpf ABOVE IS FSM TODO
     // i think jsut sets novel.reason in script builder.
     //So for 100  turns, this npc will always talk to you about a quest
@@ -99,9 +104,9 @@ function doctor_checks(conditions: QuestConditions) {
     //TESTJPF !!! Here is where you would have the other options
     // not just apple, but bribe, drugs...
     novel.reason == 'druggiedoc' &&
-    apple.status == 'inactive'
+    apple.fsm.getState() == 'inactive'
   ) {
-    apple.status = 'active'
+    apple.fsm.setState('active')
     //testjpf
     // i think jsut sets novel.reason in script builder.
     //So for 100  turns, this npc will always talk to you about a quest
@@ -129,7 +134,7 @@ function doctor_checks(conditions: QuestConditions) {
     //testjpf add same conditons for drugs and money
     //and change inactive to standby???
   } else if (
-    apple.status == 'active' &&
+    apple.fsm.getState() == 'active' &&
     novel.item == 'apple01' &&
     apple.passed == false
   ) {
@@ -168,9 +173,12 @@ function doctor_checks(conditions: QuestConditions) {
     // need something to check if this doc was given food.
     // in 'interact' gui send message to exit gui??
     // containing item, maybe who from "npc" or "player"
-  } else if (novel.reason == 'getsomemeds' && meds.status == 'inactive') {
-    meds.status = 'active'
-    apple.status = 'complete'
+  } else if (
+    novel.reason == 'getsomemeds' &&
+    meds.fsm.getState() == 'inactive'
+  ) {
+    meds.fsm.setState('active')
+    apple.fsm.setState('complete')
     player.add_inventory('note')
     print(
       'TRY TO MOVE:',
@@ -208,7 +216,7 @@ function doctor_checks(conditions: QuestConditions) {
 
     //TESTJPF ACTIVEATE SIDE QUEST HERE
     //not in else ifs
-    // quest.side_quests![1].status = 'active'
+    // quest.side_quests![1].fsm.getState() = 'active'
 
     player.clearance = 3
 
@@ -221,7 +229,7 @@ function doctor_checks(conditions: QuestConditions) {
     // i don't have cleareance logic setup!!
     //testjpf add "note" to inventory
   } else if (novel.reason == 'rejectmeds') {
-    apple.status = 'complete'
+    apple.fsm.setState('complete')
     info.add_interaction(`${doctor.labelname} doesn't like you wont help.`)
     injured.love = injured.love - 1
     print(
@@ -239,8 +247,8 @@ function doctor_checks(conditions: QuestConditions) {
     // i don't have cleareance logic setup!!
     //testjpf add "note" to inventory
   } else if (
-    // quest.side_quests![1].status == 'active' &&
-    meds.status == 'active' &&
+    // quest.side_quests![1].fsm.getState() == 'active' &&
+    meds.fsm.getState() == 'active' &&
     player.clearance - 3 < rooms.all[player.currentroom].clearance &&
     from_same_room(npcs.return_security(), player.currentroom) != null
   ) {
@@ -249,11 +257,11 @@ function doctor_checks(conditions: QuestConditions) {
     novel.priority = true
     novel.npc = from_same_room(npcs.return_security(), player.currentroom)!
     //quest.side_quests![1].passed = true
-    // quest.side_quests![1].status = 'complete'
+    // quest.side_quests![1].fsm.getState() = 'complete'
 
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
   } else if (
-    meds.status == 'active' &&
+    meds.fsm.getState() == 'active' &&
     novel.item == 'vial02' &&
     meds.passed == true
   ) {
@@ -264,7 +272,7 @@ function doctor_checks(conditions: QuestConditions) {
     if (novel.npc.labelname == waiting) {
       print('WAITING DOES ANYHTING???!!!')
       //meds.passed = true
-      meds.status = 'complete'
+      meds.fsm.setState('complete')
       info.add_interaction(`${waiting} likes that you gave them meds.`)
       doctor.love = doctor.love + 1
       novel.npc = npcs.all[waiting]
@@ -445,13 +453,13 @@ function doctorsScripts() {
   // bad??:: if reasonstring.startswith('quest - ')
   //then on novel_main novel.quest.solution = endof(message.reason)
 
-  if (injury.passed == true && apple.status == 'inactive') {
+  if (injury.passed == true && apple.fsm.getState() == 'inactive') {
     novel.reason = 'quest'
     novel.priority = true
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
     return 'tutorial/tutorialAdoctor'
-  } else if (apple.status == 'active') {
+  } else if (apple.fsm.getState() == 'active') {
     novel.priority = true
     novel.reason = 'quest'
     //testjpf could add conditional if encounters == 0 ) {
@@ -459,7 +467,7 @@ function doctorsScripts() {
     //testjpf future naming files may be better:
     //docAsksForFavor, docActiveFavor
     return apple.passed == false ? 'tutorial/hungrydoc' : 'tutorial/getadoctor'
-  } else if (cons[5].status == 'active') {
+  } else if (cons[5].fsm.getState() == 'active') {
     novel.priority = true
     novel.reason = 'quest'
     //testjpf could add conditional if encounters == 0 ) {
@@ -479,7 +487,10 @@ function infirmaryScripts() {
   const { conditions: cons } = quest
   //const {"0":injury,"1":doc,"2": apple, "3": meds} = cons
   const { '3': meds } = cons
-  if (meds.status == 'active' && novel.npc.currentstation == 'assistant') {
+  if (
+    meds.fsm.getState() == 'active' &&
+    novel.npc.currentstation == 'assistant'
+  ) {
     novel.priority = true
     novel.reason = 'quest'
     return 'tutorial/giveMeMeds'

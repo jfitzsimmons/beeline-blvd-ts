@@ -1,5 +1,6 @@
 import NpcState from '../scripts/states/npc'
 import QuestState from '../scripts/states/quest'
+import QuestStep from '../scripts/states/questStep'
 import { Direction } from './ai'
 import { Npcs, Skills } from './state'
 
@@ -39,13 +40,13 @@ export interface ObjectiveCondition {
 */
 
 export interface QuestConditions {
-  [key: string | number]: QuestCondition
+  [key: string | number]: QuestStep
 }
 export interface QuestCondition {
   label: string
   solution?: string
   passed: boolean
-  status: 'inactive' | 'active' | 'complete' | 'standby' | 'failed'
+  //status: 'inactive' | 'active' | 'complete' | 'standby' | 'failed'
   interval: string[]
   func: { (args: [() => any, any]): boolean }[]
   args: [() => any, any][]
