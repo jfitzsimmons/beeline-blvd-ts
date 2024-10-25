@@ -11,6 +11,7 @@ import { AllQuestsMethods, RoomMethod } from '../../types/tasks'
 import { surrounding_room_matrix } from '../utils/utils'
 import { RoomsInitState } from './inits/roomsInitState'
 import { Direction } from '../../types/ai'
+import WorldQuests from './quests'
 //import { surrounding_room_matrix } from '../utils/utils'
 
 const dt = math.randomseed(os.time())
@@ -21,6 +22,7 @@ export default class World {
   npcs: WorldNpcs
   rooms: WorldRooms
   tasks: WorldTasks
+  quests: WorldQuests
   info: WorldInfo
   novel: WorldNovel
   clock: number
@@ -45,13 +47,16 @@ export default class World {
     }
     this.npcs = new WorldNpcs(roommethods)
     this.novel = new WorldNovel(this.npcs.all.labor01)
+
+    this.tasks = new WorldTasks()
     const allquestmethods: AllQuestsMethods = {
       pq: this.player.quests,
       nq: this.npcs.quests,
       nvq: this.novel.quests,
+      tq: this.tasks.quests,
     }
-    this.tasks = new WorldTasks(allquestmethods)
-    this.info = new WorldInfo(this.tasks.quests)
+    this.quests = new WorldQuests(allquestmethods)
+    this.info = new WorldInfo(this.quests.all)
 
     this.clock = 6
     /**
@@ -97,6 +102,7 @@ export default class World {
     this.player.currentroom = 'grounds'
     this.npcs.fsm.setState('new')
     this.npcs.fsm.update(dt)
+    this.quests.fsm.setState('turn')
   }
   private onNewUpdate(): void {}
   private onNewExit(): void {}
@@ -126,6 +132,7 @@ export default class World {
     this.player.fsm.update(dt)
     this.npcs.fsm.update(dt)
     this.rooms.fsm.update(dt)
+    this.quests.fsm.update(dt)
   }
   private onTurnExit(): void {}
   private onPlayerUpdate(): void {}
