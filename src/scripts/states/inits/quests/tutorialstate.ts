@@ -1,22 +1,25 @@
-import { AllQuestsMethods, Quests } from '../../../../types/tasks'
+import { AllQuestsMethods } from '../../../../types/tasks'
 import {
   any_has_value,
-  max_love,
+  // max_love,
   does_equal,
-  greater_than,
+  //greater_than,
   returnfalse,
 } from '../../../utils/quest'
+import QuestState from '../../quest'
 
-export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
+export const tutorialQuests = (
+  questmethods: AllQuestsMethods
+): { [key: string]: QuestState } => {
   //const { nq, tq, nvq } = questmethods
-  const { nq, nvq, tq } = questmethods
-
+  const { nq, nvq } = questmethods
+  //testjpf tod need to add options to class params
   return {
-    medic_assist: {
+    medic_assist: new QuestState({
       passed: false,
-      status: 'inactive',
       conditions: {
-        [0]: {
+        //testjfpf like new QuestState but new QuestStep()
+        ['0']: {
           label: 'Agree to help injured man',
           solution: '',
           passed: false,
@@ -25,7 +28,7 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           func: [does_equal],
           args: [[nvq.get_reason, 'helpthatman']],
         }, //have you talked to a doctor?
-        [1]: {
+        ['1']: {
           label: 'What is up doctor?!',
           solution: '',
           passed: false,
@@ -34,7 +37,7 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           func: [does_equal],
           args: [[nvq.get_reason, 'getadoctor']],
         }, //have you talked to a doctor?
-        [2]: {
+        ['2']: {
           label: 'Apple a day!',
           solution: '',
           passed: false,
@@ -45,7 +48,7 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           func: [returnfalse],
           args: [[returnfalse, false]],
         },
-        [3]: {
+        ['3']: {
           label: 'Get some meds!',
           solution: '',
           passed: false,
@@ -54,7 +57,7 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           func: [any_has_value],
           args: [[nq.return_doctors, 'vial02']],
         }, //gets keycard, goes to infirmary, gets meds
-        [4]: {
+        ['4']: {
           label: 'Got those meds!',
           solution: '',
           passed: false,
@@ -63,7 +66,7 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           func: [does_equal],
           args: [[nvq.get_reason, 'favormedsquest']],
         }, //have you talked to a doctor?
-        [5]: {
+        ['5']: {
           label: 'Delive these meds?',
           solution: '',
           passed: false,
@@ -72,7 +75,7 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           func: [returnfalse],
           args: [[returnfalse, false]],
         }, //have you talked to a doctor?
-        [6]: {
+        ['6']: {
           label: 'Meds delivered',
           solution: '',
           passed: false,
@@ -93,7 +96,11 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           args: [[returnfalse, false]],
         },
       },
-    },
+    }),
+  }
+
+  /** 
+  new QuestState({
     pass_customs: {
       passed: false,
       status: 'active',
@@ -108,8 +115,10 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           args: [[tq.percent_tutorial, 90]],
         }, //have you talked to a doctor?
       },
-    }, // charmer
+    },
+  })
 
+  new QuestState({
     npcs_like_you: {
       passed: false,
       status: 'inactive',
@@ -124,159 +133,6 @@ export const tutorialQuests = (questmethods: AllQuestsMethods): Quests => {
           args: [[nq.return_order_all, 5]],
         }, //1st // labor003
       },
-    }, // charmer
-    /** 
-    maxout_skill: {
-      passed: false,
-      conditions: {
-        [1]: {
-          passed: false,
-          interval: 'interact',
-          func: [max_skills],
-          args: [[pq.return_skills, 3]],
-        }, // speed
-      },
-    }, // go getter
-    ai_puzzle: {
-      passed: false,
-      conditions: {
-        [1]: {
-          passed: false,
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        }, // flag maintenance
-        [2]: {
-          passed: false,
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        }, // "unscrew monitor"
-        [3]: {
-          passed: false,
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        }, // help maintenance
-      },
-    }, // technician
-    obtain_luggage: {
-      passed: false,
-      conditions: {
-        [1]: {
-          passed: false,
-          interval: 'interact',
-          func: [has_value],
-          args: [[pq.return_inventory, 'berry01']],
-        },
-        [2]: {
-          passed: false,
-          interval: 'interact',
-          func: [has_value],
-          args: [[pq.return_inventory, 'feather01']],
-        },
-        [3]: {
-          passed: false,
-          interval: 'interact',
-          func: [has_value],
-          args: [[pq.return_inventory, 'magica1']],
-        },
-      },
-    }, // DIY
-    key_card: {
-      passed: false,
-      conditions: {
-        [1]: {
-          passed: false,
-          interval: 'interact',
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        }, // steal a key card
-        [2]: {
-          interval: 'turn',
-          passed: false,
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        }, // find blank id form
-        [3]: {
-          interval: 'turn',
-          passed: false,
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        }, // learn to make a forgery
-      },
-    }, // fake id
-    charm_authority: {
-      passed: false,
-      conditions: {
-        [1]: {
-          interval: 'turn',
-          passed: false,
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        }, // pass a "perfect" charm check
-        [2]: {
-          interval: 'turn',
-          passed: false,
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        }, // complete a side quest
-        [3]: {
-          interval: 'turn',
-          passed: false,
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        }, // at least 1 church, security and corps love
-      },
-      side_quests: {
-        [1]: {
-          interval: 'turn',
-          passed: false,
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        },
-        [2]: {
-          interval: 'turn',
-          passed: false,
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        }, // key card
-      },
-    }, // vouged for
-    charm_gangs: {
-      passed: false,
-      conditions: {
-        [1]: {
-          interval: 'turn',
-          passed: false,
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        }, // pass a "perfect" charm check
-        [2]: {
-          interval: 'turn',
-          passed: false,
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        }, // complete a side quest
-        [3]: {
-          interval: 'turn',
-          passed: false,
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        }, // 3 of 4 gang loves
-      },
-      side_quests: {
-        [1]: {
-          interval: 'turn',
-          passed: false,
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        },
-        [2]: {
-          interval: 'turn',
-          passed: false,
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        }, // ai maintenace
-      },
-    }, // vouged for
-    **/
-  }
+    },
+  })*/
 }

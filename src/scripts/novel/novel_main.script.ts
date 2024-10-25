@@ -15,7 +15,7 @@ function prepare_novel_txts(
 ) {
   //TESTJPF could move some logic to novelcontroller
   const paths: string[] = []
-  const caution = tasks.npc_has_caution('any', novel.npc.labelname)
+  const caution = tasks.npc_has_task('any', novel.npc.labelname)
   const quest_paths: string[] = prepareQuestTxts[player.checkpoint + 'scripts'](
     novel.npc.labelname
   )
@@ -28,7 +28,7 @@ function prepare_novel_txts(
     novel.caution = { ...caution }
     //used for ai witnessing player and failing confrontation check
     //questioning without accusation
-    if (!['concern'].includes(novel.reason)) novel.reason = caution.reason
+    if (!['concern'].includes(novel.reason)) novel.reason = caution.cause
     /**TESTJPF
      * this is checking if npcs has arrest or caution.
      * Player is checked on level
@@ -42,7 +42,7 @@ function prepare_novel_txts(
       !['questioning', 'arrest'].includes(novel.reason) &&
       ['questioning', 'arrest'].includes(novel.caution.label)
     )
-      novel.reason = novel.caution.reason
+      novel.reason = novel.caution.cause
   }
   if (novel.npcsWithQuest.includes(novel.npc.labelname)) novel.reason = 'quest'
 
@@ -70,7 +70,7 @@ function consolation_outcomes(love: number) {
   if (love > novel.npc.love) {
     const consequence = impressed_checks('player', novel.npc.labelname)
     if (consequence != 'neutral')
-      tasks.caution_builder(novel.npc, consequence, 'player', 'impressed')
+      tasks.task_builder(novel.npc, consequence, 'player', 'impressed')
 
     novel.npc.love = love
     // they try to rob you?
@@ -87,20 +87,21 @@ function consolation_outcomes(love: number) {
     const consequence = unimpressed_checks('player', novel.npc.labelname)
 
     if (consequence != 'neutral')
-      tasks.caution_builder(novel.npc, consequence, 'player', 'unimpressed')
+      tasks.task_builder(novel.npc, consequence, 'player', 'unimpressed')
   }
 }
 
 function novel_outcomes(reason: string) {
   if (reason == 'faint' || player.hp <= 0) {
-    const params = {
+    msg.post('proxies:/controller#worldcontroller', 'pick_room', {
       enter_room: tasks.spawn,
-    }
-    msg.post('proxies:/controller#worldcontroller', 'faint', params)
+      load_type: 'faint',
+    })
   } else if (reason == 'arrested') {
     tasks.remove_heat('player')
-    msg.post('proxies:/controller#worldcontroller', 'arrested', {
+    msg.post('proxies:/controller#worldcontroller', 'pick_room', {
       enter_room: 'security',
+      load_type: 'arrest',
     })
   } else if (reason.substring(0, 6) == 'quest:') {
     novel.reason = reason.substring(7)
@@ -149,7 +150,7 @@ export function on_message(
     if (player.alert_level != message.alert) {
       player.alert_level = message.alert
       if (tasks.plan_on_snitching(novel.npc.labelname, 'player') == false) {
-        tasks.caution_builder(novel.npc, 'snitch', 'player', 'harassing')
+        tasks.task_builder(novel.npc, 'snitch', 'player', 'harassing')
       }
       msg.post(
         player.currentroom + ':/shared/scripts#level',

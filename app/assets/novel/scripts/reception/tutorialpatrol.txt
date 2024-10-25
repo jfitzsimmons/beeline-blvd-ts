@@ -133,7 +133,7 @@ n: North.
   if turns > 0 and merits < -2
     n: SECURITY!
     jump quickclose
-  if turns > 0 and player.skills.speed < 4 and npc.npc.binaries.evil_good > 0.3 and npc.binaries.un_educated < -0.3
+  if turns > 0 and player.skills.speed < 4 and npc.owner.binaries.evil_good > 0.3 and npc.binaries.un_educated < -0.3
     merits = merits + 2
     n: You're not too quick, are you?
     jump quickclose

@@ -24,8 +24,6 @@ export default class WorldRooms {
   constructor(playerMethods: PlayerMethod) {
     this.fsm = new StateMachine(this, 'rooms')
     this.fallbacks = { ...RoomsInitFallbacks }
-
-    //this._all = { ...RoomsInitState }
     this.layout = [...RoomsInitLayout]
     this.roles = { ...RoomsInitRoles }
     this.roomsLists = {

@@ -1,5 +1,5 @@
 import { PlayerState } from '../../types/state'
-import { Caution, Effect, Consequence } from '../../types/tasks'
+import { Task, Effect, Consequence } from '../../types/tasks'
 import { arraymove, shuffle } from '../utils/utils'
 import {
   fx,
@@ -69,31 +69,32 @@ const reck_theft_checks = [ignorant_check, dumb_crook_check, chaotic_good_check]
 const reck_harass_checks = [classy_check, predator_check]
 
 //Focused actions
-function focused_acts(c: Caution) {
-  if (c.reason == 'office') {
-    if (c.time == 1) {
-      npcs.all[c.suspect].hp = 5
-      rooms.all.infirmary.occupants![npcs.all[c.suspect].currentstation] = ''
+//todo doctor npc state
+function focused_acts(c: Task) {
+  if (c.cause == 'office') {
+    if (c.turns == 1) {
+      npcs.all[c.target].hp = 5
+      rooms.all.infirmary.occupants![npcs.all[c.target].currentstation] = ''
     } else {
       const aid = rooms.all.infirmary.stations.aid
       if (aid != '' && npcs.all[aid].clan == 'doctors') {
-        c.time--
+        c.turns--
       }
     }
-  } else if (c.reason == 'field' && c.authority == 'doctors') {
-    if (c.time == 1) {
-      send_to_infirmary(c.suspect, c.npc)
+  } else if (c.cause == 'field' && c.authority == 'doctors') {
+    if (c.turns == 1) {
+      send_to_infirmary(c.target, c.owner)
     } else {
-      if (npcs.all[c.npc].currentroom == player.currentroom)
+      if (npcs.all[c.owner].currentroom == player.currentroom)
         msg.post(
-          `/${npcs.all[c.npc].currentstation}#npc_loader`,
+          `/${npcs.all[c.owner].currentstation}#npc_loader`,
           hash('move_npc'),
           {
-            station: npcs.all[c.suspect].currentstation,
-            npc: c.npc,
+            station: npcs.all[c.target].currentstation,
+            npc: c.owner,
           }
         )
-      print(c.npc, 'tending to', c.suspect, 'in the field')
+      print(c.owner, 'tending to', c.target, 'in the field')
     }
   }
 }
@@ -107,7 +108,7 @@ function player_snitch_check(b: boolean, w: string, reason: string): string {
   player.alert_level =
     b == false ? player.alert_level + 1 : player.alert_level + 2
   if (player.alert_level > 5 && tasks.plan_on_snitching(w, 'player') == false) {
-    tasks.caution_builder(npcs.all[w], 'snitch', 'player', reason)
+    tasks.task_builder(npcs.all[w], 'snitch', 'player', reason)
   }
   print('plauer snith chk :: alertlvl::', player.alert_level)
   return caution_state
@@ -133,6 +134,8 @@ function adjust_medic_queue(patient: string) {
   }
 }
 function handle_temp_clearance(level: string, cleared: string, time: number) {
+  //testjpf previously/ player or npc should have had state switched to promote
+  //when times up set state to demote
   const levelNum: number = tonumber(level.charAt(level.length - 1))!
   print('time clearance too low::??', time)
   if (time > 1) {
@@ -145,8 +148,8 @@ function handle_temp_clearance(level: string, cleared: string, time: number) {
       : (npcs.all[cleared].clearence = npcs.all[cleared].clearence - levelNum)
   }
 }
-function merits_demerits(c: Caution, w: string) {
-  if (c.suspect === 'player') {
+function merits_demerits(c: Task, w: string) {
+  if (c.target === 'player') {
     const adj = c.label === 'merits' ? 1 : -1
     npcs.all[w].love = npcs.all[w].love + adj
   }
@@ -155,42 +158,42 @@ function merits_demerits(c: Caution, w: string) {
   const fx_labels = shuffle(fxArray)
   const effect: Effect = fx[fx_labels[0]]!
   if (effect.fx.type == 'attitudes') {
-    effect.fx.stat = npcs.all[c.suspect].clan
+    effect.fx.stat = npcs.all[c.target].clan
   }
-  print(c.npc, 'found:', w, 'because merits.', w, 'has effect:', fx_labels[1])
+  print(c.owner, 'found:', w, 'because merits.', w, 'has effect:', fx_labels[1])
   npcs.all[w].effects.push(effect)
   add_effects_bonus(npcs.all[w], effect)
 }
-function reckless_consequence(c: Caution, _w: string) {
-  print('RC::: ', c.npc, ' is gossiping with', _w)
+function reckless_consequence(c: Task, _w: string) {
+  print('RC::: ', c.owner, ' is gossiping with', _w)
   const checks: Array<(n: string, _w: string) => Consequence> =
-    c.reason == 'theft'
+    c.cause == 'theft'
       ? shuffle(reck_theft_checks)
       : shuffle(reck_harass_checks)
 
   build_consequence(c, checks)
 }
-function snitch_to_security(c: Caution, watcher: string) {
-  print(c.npc, 'SNITCHED on:', c.suspect, 'TO:', watcher)
-  const bulletin = tasks.already_hunting(watcher, c.suspect)
+function snitch_to_security(c: Task, watcher: string) {
+  print(c.owner, 'SNITCHED on:', c.target, 'TO:', watcher)
+  const bulletin = tasks.already_hunting(watcher, c.target)
   const caution_state =
-    c.suspect == 'player'
-      ? player_snitch_check(bulletin == null, watcher, c.reason)
-      : npc_snitch_check(watcher, c.suspect)
+    c.target == 'player'
+      ? player_snitch_check(bulletin == null, watcher, c.cause)
+      : npc_snitch_check(watcher, c.target)
 
   if (bulletin == null) {
-    tasks.caution_builder(npcs.all[watcher], caution_state, c.suspect, c.reason)
+    tasks.task_builder(npcs.all[watcher], caution_state, c.target, c.cause)
   } else {
-    bulletin.time = bulletin.time + 6
+    bulletin.turns = bulletin.turns + 6
   }
 
-  c.time = 0
+  c.turns = 0
 }
-function passive_acts(c: Caution, w: string) {
+function passive_acts(c: Task, w: string) {
   if (c.label == 'reckless') {
     reckless_consequence(c, w)
   } else if (c.label == 'injury') {
-    adjust_medic_queue(c.suspect)
+    adjust_medic_queue(c.target)
   } else if (
     c.authority == 'security' &&
     c.label == 'snitch' &&
@@ -200,7 +203,7 @@ function passive_acts(c: Caution, w: string) {
   } else if (
     (c.label == 'merits' || c.label == 'demerits') &&
     (npcs.all[w].clan == c.authority ||
-      npcs.all[c.npc].attitudes[npcs.all[w].clan] > 0)
+      npcs.all[c.owner].attitudes[npcs.all[w].clan] > 0)
   ) {
     merits_demerits(c, w)
   }
@@ -219,14 +222,14 @@ export function confrontation_consequence(
     tempcons = shuffle(confrontation_checks)
     //precheck = false
   }
-  const caution: Caution = {
-    npc: w,
-    time: 1,
+  const caution: Task = {
+    owner: w,
+    turns: 1,
     label: 'confront',
-    type: 'clan',
+    scope: 'clan',
     authority: npcs.all[w].clan,
-    suspect: s,
-    reason: 'theft',
+    target: s,
+    cause: 'theft',
   }
   const consequence = build_consequence(
     caution,
@@ -259,64 +262,66 @@ export function impressed_checks(s: string, w: string) {
   return 'neutral'
 }
 
-//Caution Categories
-function address_confrontations(cs: Caution[]): Caution | null {
+//Task Categories
+function address_confrontations(cs: Task[]): Task | null {
   //let confront: Confront | null = null
 
   for (let i = cs.length - 1; i >= 0; i--) {
     const c = cs[i]
-    const agent = npcs.all[c.npc]
+    const agent = npcs.all[c.owner]
     const suspect: NpcState | PlayerState =
-      c.suspect === 'player' ? player.state : npcs.all[c.suspect]
+      c.target === 'player' ? player.state : npcs.all[c.target]
 
     if (
       agent.currentroom == suspect.currentroom ||
       (agent.currentroom == suspect.exitroom &&
         agent.exitroom == suspect.currentroom)
     ) {
-      c.suspect !== 'player' && npc_confrontation(suspect.labelname, c)
-      c.time = 0
+      c.target !== 'player' && npc_confrontation(suspect.labelname, c)
+      c.turns = 0
       // confront =
-      return c.suspect == 'player' ? c : null
+      return c.target == 'player' ? c : null
     }
     // if (confront != null) break
   }
   return null
 }
-function address_conversations(cs: Caution[]) {
+function address_conversations(cs: Task[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
-    const agent = npcs.all[cs[i].npc]
+    const agent = npcs.all[cs[i].owner]
     const stations = rooms.all[agent.currentroom].stations
     let station: keyof typeof stations
     for (station in stations) {
       const watcher = stations[station]
       //loop through stations in room of task agent
-      if (watcher != '' && watcher != cs[i].npc && watcher != cs[i].suspect) {
+      if (watcher != '' && watcher != cs[i].owner && watcher != cs[i].target) {
         passive_acts(cs[i], watcher)
       }
     }
   }
 }
-function address_admin(cs: Caution[]) {
+function address_admin(cs: Task[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
-    handle_temp_clearance(cs[i].type, cs[i].suspect, cs[i].time)
+    handle_temp_clearance(cs[i].scope, cs[i].target, cs[i].turns)
   }
 }
-function address_busy_acts(cs: Caution[]) {
+function address_busy_acts(cs: Task[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
     focused_acts(cs[i])
   }
 }
 
-//LEVEL Cautions
+//so this will be Tasks state turn which will loop thru
+// each Task. I think each task's state should be set to it's
+//label "clearance", "reckless" on creation
+// then task.update()
+//LEVEL Tasks
 export function address_cautions() {
   //testjpf why sort by time??
   //needs better naming conventions
-  const sortedCautions = tasks.cautions.sort(
-    (a: Caution, b: Caution) => a.time - b.time
-  )
-  const { confrontational, leftovercautions } = sortedCautions.reduce(
-    (r: { [key: string]: Caution[] }, o: Caution) => {
+  const sortedTasks = tasks.all.sort((a: Task, b: Task) => a.turns - b.turns)
+  const { confrontational, leftovercautions } = sortedTasks.reduce(
+    (r: { [key: string]: Task[] }, o: Task) => {
       r[
         o.label == 'questioning' || o.label == 'arrest'
           ? 'confrontational'
@@ -327,14 +332,14 @@ export function address_cautions() {
     { confrontational: [], leftovercautions: [] }
   )
   const { medical, conversational } = leftovercautions.reduce(
-    (r: { [key: string]: Caution[] }, o: Caution) => {
+    (r: { [key: string]: Task[] }, o: Task) => {
       r[o.label == 'mending' ? 'medical' : 'conversational'].push(o)
       return r
     },
     { medical: [], conversational: [] }
   )
   const { clearance, conversational2 } = conversational.reduce(
-    (r: { [key: string]: Caution[] }, o: Caution) => {
+    (r: { [key: string]: Task[] }, o: Task) => {
       r[o.label == 'clearance' ? 'clearance' : 'conversational2'].push(o)
       return r
     },
@@ -343,18 +348,18 @@ export function address_cautions() {
   address_admin(clearance)
   address_conversations(conversational2)
   address_busy_acts(medical)
-  const confront: Caution | null = address_confrontations(confrontational)
+  const confront: Task | null = address_confrontations(confrontational)
 
-  for (let i = sortedCautions.length - 1; i >= 0; i--) {
+  for (let i = sortedTasks.length - 1; i >= 0; i--) {
     print(
-      'sortedCautions[i].label & NPC & sus::',
-      sortedCautions[i].label,
-      sortedCautions[i].npc,
-      sortedCautions[i].suspect
+      'sortedTasks[i].label & NPC & sus::',
+      sortedTasks[i].label,
+      sortedTasks[i].owner,
+      sortedTasks[i].target
     )
-    sortedCautions[i].time--
-    if (sortedCautions[i].time <= 0) {
-      sortedCautions.splice(i, 1)
+    sortedTasks[i].turns--
+    if (sortedTasks[i].turns <= 0) {
+      sortedTasks.splice(i, 1)
     }
   }
   return confront

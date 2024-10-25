@@ -1,4 +1,4 @@
-const { player } = globalThis.game.world
+const { player, tasks } = globalThis.game.world
 const room_lookup = {
   [hash_to_hex(hash('/to_baggage'))]: 'baggage',
   [hash_to_hex(hash('/to_grounds'))]: 'grounds',
@@ -9,11 +9,16 @@ const room_lookup = {
   [hash_to_hex(hash('/to_infirmary'))]: 'infirmary',
 }
 function transition() {
-  const params = {
+  let params = {
     load_type: 'room transition',
     enter_room: room_lookup[hash_to_hex(go.get_id())],
   }
-
+  if (player.ap <= 0) {
+    params = {
+      enter_room: tasks.spawn,
+      load_type: 'faint',
+    }
+  }
   player.pos = go.get_position()
   msg.post('proxies:/controller#worldcontroller', 'pick_room', params)
 }

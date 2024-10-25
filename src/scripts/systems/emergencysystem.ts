@@ -14,7 +14,7 @@ import {
   unlucky_check,
 } from './chaossystem'
 import { add_pledge, go_to_jail } from './systemshelpers'
-import { Caution, Consequence } from '../../types/tasks'
+import { Task, Consequence } from '../../types/tasks'
 import { Direction } from '../../types/ai'
 import NpcState from '../states/npc'
 
@@ -165,54 +165,50 @@ function thief_consolation_checks(s: string, w: string) {
   return 'neutral'
 }
 export function build_consequence(
-  c: Caution,
+  c: Task,
   checks: Array<(n: string, w: string) => Consequence>,
   precheck = false
 ) {
   let consolation = { pass: precheck, type: 'neutral' }
 
   for (let i = checks.length; i-- !== 0; ) {
-    consolation = checks[i](c.suspect, c.npc)
+    consolation = checks[i](c.target, c.owner)
     if (consolation.pass == true) break
   }
 
   if (consolation.pass == false) {
-    //if (c.suspect != 'player') {
-    consolation.type = thief_consolation_checks(c.suspect, c.npc)
+    //if (c.target != 'player') {
+    consolation.type = thief_consolation_checks(c.target, c.owner)
     if (consolation.type != 'neutral') {
-      tasks.caution_builder(
-        npcs.all[c.npc],
-        consolation.type,
-        c.suspect,
-        c.reason
-      )
-      c.time = 0
+      //this will probably be new tasks()
+      tasks.task_builder(npcs.all[c.owner], consolation.type, c.target, c.cause)
+      c.turns = 0
     } else {
-      //print(c.label, c.reason, 'ANY_consequence: no fx or cautions')
+      //print(c.label, c.cause, 'ANY_consequence: no fx or cautions')
     }
     //} else {
-    //  npcs.all[c.npc].love = npcs.all[c.npc].love - 1
+    //  npcs.all[c.owner].love = npcs.all[c.owner].love - 1
     // }
   }
   //print('BUILD CONEQUENCE return type::', consolation.type)
   return consolation.type
 }
-function question_consequence(c: Caution) {
+function question_consequence(c: Task) {
   //npconly
-  //print('QC::: ', c.npc, 'is NOW questioning:', c.suspect)
+  //print('QC::: ', c.owner, 'is NOW questioning:', c.target)
 
   const tempcons: Array<
     (s: string, w: string) => { pass: boolean; type: string }
   > = shuffle(questioning_checks)
 
   build_consequence(c, tempcons)
-  c.time = 0
+  c.turns = 0
 }
-export function npc_confrontation(s: string, c: Caution) {
+export function npc_confrontation(s: string, c: Task) {
   if (c.label == 'questioning') {
     question_consequence(c)
   } else if (c.label == 'arrest') {
-    //print('CAUTION:: arrest.', c.npc, 'threw', s, 'in jail')
+    //print('CAUTION:: arrest.', c.owner, 'threw', s, 'in jail')
     go_to_jail(s)
   }
 }
@@ -232,7 +228,7 @@ export function send_to_infirmary(v: string, doc: string) {
       npcs.all[v].currentroom = 'infirmary'
       npcs.all[v].currentstation = station
       //print(v, 'infirmed for:', npcs.all[v].cooldown)
-      tasks.caution_builder(npcs.all[doc], 'mending', v, 'office')
+      tasks.task_builder(npcs.all[doc], 'mending', v, 'office')
       break
     }
   }

@@ -4,7 +4,7 @@
 
 //import { ObjectivesGroupOpt } from '../../types/tasks'
 
-const { info, tasks } = globalThis.game.world
+const { info, quests } = globalThis.game.world
 
 interface cloneparent {
   clone: node
@@ -77,7 +77,7 @@ function set_objectives() {
 }
 
 export function init(this: props): void {
-  info.build_objectives(tasks.quests)
+  info.build_objectives(quests.all)
   set_objectives()
 }
 
