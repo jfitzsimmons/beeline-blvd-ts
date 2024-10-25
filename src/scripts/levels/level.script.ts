@@ -75,7 +75,7 @@ function game_turn(room: string) {
   //if i can incorporate confrontations
   //i can move the rest of this to various Turn fsm states
   //prob something like tasks.setState(progress)
-  quests.update_quests_progress('turn')
+  //quests.update_quests_progress('turn')
   //tasks.setState()
   quest_checker('turn')
 }

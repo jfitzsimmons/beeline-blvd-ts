@@ -48,9 +48,10 @@ export default class WorldQuests {
   private onNewExit(): void {}
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {
-    // let i = this.all.length
-    //probably update_quests_progress()!!
     this.update_quests_progress('turn')
+    //testjpf should loop thru each quest and update
+    //each quest should go through each condition and update
+    //quest and conditions should have active, waiting, complete, archivve type states
   }
   private onTurnExit(): void {}
   private onInteractEnter(): void {}
@@ -103,7 +104,8 @@ export default class WorldQuests {
                 print('goal PASSED: GOAL', goal.label)
                 goal.passed = true
                 //goal.status = 'complete'
-                quest.status = 'active'
+                quest.fsm.setState('active')
+                //quest.status = 'active'
                 break
               }
             }
@@ -114,7 +116,7 @@ export default class WorldQuests {
         }
         if (quest_passed == true) {
           quest.passed = true
-          quest.status = 'complete'
+          quest.fsm.setState('complete')
           print(questKey, 'quest COMPLETE!!!')
         }
       }

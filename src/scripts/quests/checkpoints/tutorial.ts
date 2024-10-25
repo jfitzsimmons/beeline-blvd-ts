@@ -27,7 +27,7 @@ function injured_checks(conditions: QuestConditions) {
   if (injury.status == 'standby' && injury.passed == true) {
     //todo testjpf should all be condition FSM states!!!
     injury.status = 'active'
-    quest.status = 'active'
+    quest.fsm.setState('active')
     doc.status = 'standby'
     injured.love = injured.love + 1
     info.add_interaction(
@@ -50,7 +50,7 @@ function infirmary_checks(delivery: QuestCondition) {
   }
 }
 function doctor_checks(conditions: QuestConditions) {
-  const quest = quests.all.tutorial.medic_assist
+  //const quest = quests.all.tutorial.medic_assist
 
   const injured = npcs.all[rooms.all.grounds.stations.worker1]
   // BUG::: testjpf I think this will
@@ -208,11 +208,8 @@ function doctor_checks(conditions: QuestConditions) {
 
     //TESTJPF ACTIVEATE SIDE QUEST HERE
     //not in else ifs
-    quest.side_quests![1].status = 'active'
-    print(
-      'Is security clearance side quest acvtive::',
-      quest.side_quests![1].status
-    )
+    // quest.side_quests![1].status = 'active'
+
     player.clearance = 3
 
     msg.post(`/${doctor.currentstation}#npc_loader`, hash('move_npc'), {
@@ -242,7 +239,7 @@ function doctor_checks(conditions: QuestConditions) {
     // i don't have cleareance logic setup!!
     //testjpf add "note" to inventory
   } else if (
-    quest.side_quests![1].status == 'active' &&
+    // quest.side_quests![1].status == 'active' &&
     meds.status == 'active' &&
     player.clearance - 3 < rooms.all[player.currentroom].clearance &&
     from_same_room(npcs.return_security(), player.currentroom) != null
@@ -251,8 +248,8 @@ function doctor_checks(conditions: QuestConditions) {
     novel.reason = 'tutsclearance'
     novel.priority = true
     novel.npc = from_same_room(npcs.return_security(), player.currentroom)!
-    quest.side_quests![1].passed = true
-    quest.side_quests![1].status = 'complete'
+    //quest.side_quests![1].passed = true
+    // quest.side_quests![1].status = 'complete'
 
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
   } else if (

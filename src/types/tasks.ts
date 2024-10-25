@@ -1,4 +1,5 @@
 import NpcState from '../scripts/states/npc'
+import QuestState from '../scripts/states/quest'
 import { Direction } from './ai'
 import { Npcs, Skills } from './state'
 
@@ -36,16 +37,6 @@ export interface ObjectiveCondition {
   status: string
 }
 */
-export interface Quests {
-  [key: string]: Quest
-}
-
-export interface Quest {
-  passed: boolean
-  status: 'active' | 'inactive' | 'complete'
-  conditions: QuestConditions
-  side_quests?: QuestConditions
-}
 
 export interface QuestConditions {
   [key: string | number]: QuestCondition
@@ -61,7 +52,17 @@ export interface QuestCondition {
 }
 
 export interface QuestsState {
-  [key: string]: Quests
+  [key: string]: { [key: string]: QuestState }
+}
+export interface Quests {
+  [key: string]: QuestState
+}
+
+export interface Quest {
+  passed: boolean
+  // status: 'active' | 'inactive' | 'complete'
+  conditions: QuestConditions
+  side_quests?: QuestConditions
 }
 export interface AllQuestsMethods {
   [key: string]: QuestMethods

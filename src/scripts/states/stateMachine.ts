@@ -49,7 +49,13 @@ export default class StateMachine {
 
     return this
   }
+  getState(): string {
+    if (!this.currentState) {
+      return ''
+    }
 
+    return this.currentState.name
+  }
   setState(name: string) {
     if (!this.states.has(name)) {
       print(`Tried to change to unknown state: ${name}`)

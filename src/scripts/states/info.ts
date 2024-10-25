@@ -81,7 +81,7 @@ export default class WorldInfo {
       let qKey: keyof typeof checkpoint
       for (qKey in checkpoint) {
         objectives[cPoint].quest[qKey] = {
-          status: checkpoint[qKey].status,
+          status: checkpoint[qKey].fsm.getState(),
           objective: {},
         }
         const conditions = checkpoint[qKey].conditions

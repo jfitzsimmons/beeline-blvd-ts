@@ -102,6 +102,7 @@ export default class World {
     this.player.currentroom = 'grounds'
     this.npcs.fsm.setState('new')
     this.npcs.fsm.update(dt)
+    this.quests.fsm.setState('turn')
   }
   private onNewUpdate(): void {}
   private onNewExit(): void {}
@@ -131,6 +132,7 @@ export default class World {
     this.player.fsm.update(dt)
     this.npcs.fsm.update(dt)
     this.rooms.fsm.update(dt)
+    this.quests.fsm.update(dt)
   }
   private onTurnExit(): void {}
   private onPlayerUpdate(): void {}
