@@ -6,11 +6,13 @@ import QuestStep from './questStep'
 
 export default class QuestState {
   //private _questmethods: AllQuestsMethods
+  id: string
   passed: boolean
   fsm: StateMachine
   conditions: { [key: string]: QuestStep }
   constructor(questparams: Quest) {
-    this.fsm = new StateMachine(this, 'quest')
+    this.id = questparams.id
+    this.fsm = new StateMachine(this, 'quest' + this.id)
     this.passed = questparams.passed
     this.conditions = questparams.conditions
     //this._spawn = 'grounds'

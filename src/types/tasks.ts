@@ -43,6 +43,7 @@ export interface QuestConditions {
   [key: string | number]: QuestStep
 }
 export interface QuestCondition {
+  id: string
   label: string
   solution?: string
   passed: boolean
@@ -60,6 +61,7 @@ export interface Quests {
 }
 
 export interface Quest {
+  id: string
   passed: boolean
   // status: 'active' | 'inactive' | 'complete'
   conditions: QuestConditions

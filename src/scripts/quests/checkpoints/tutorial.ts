@@ -9,14 +9,8 @@ import { from_same_room } from '../../utils/quest'
 const { rooms, npcs, tasks, player, novel, info, quests } =
   globalThis.game.world
 function injured_checks(conditions: QuestConditions) {
-  const { '0': injury, '1': doc } = conditions
+  const { '0': injury } = conditions
   const quest = quests.all.tutorial.medic_assist
-  /**  if (quest.passed == false) {
-     //overly cautious? TESTJPF make sure injured doesnt get into other trouble???
-     tasks.remove_heat(injured.labelname)
-   }**/
-  //need doctor checks and "non-doctor" cjecks?
-  //testjpf if novel.npc isn't a doctor::: RETURN!!!????
   const injured = npcs.all[rooms.all.grounds.stations.worker1]
   // BUG::: testjpf I think this will
   // let you interact with any doctor
@@ -25,11 +19,11 @@ function injured_checks(conditions: QuestConditions) {
   // const { conditions: cons } = quest
   //const {"0":injury,"1":doc, "2":apple} = cons
 
-  if (injury.fsm.getState() == 'standby' && injury.passed == true) {
+  if (injury.fsm.getState() == 'idle' && injury.passed == true) {
     //todo testjpf should all be condition FSM states!!!
     injury.fsm.setState('active')
     quest.fsm.setState('active')
-    doc.fsm.setState('standby')
+    //doc.fsm.setState('standby')
     injured.love = injured.love + 1
     info.add_interaction(
       `${injured.labelname} likes that you are helping them.`
@@ -46,7 +40,7 @@ function infirmary_checks(delivery: QuestStep) {
     //testjpf this only works if talking to doctors
     // doctor sripts only gets called for doctors!!!
     novel.reason == 'favormedquest' &&
-    delivery.fsm.getState() == 'inactive'
+    delivery.fsm.getState() == 'idle'
   ) {
     delivery.fsm.setState('active')
     player.add_inventory('vial02')
@@ -69,7 +63,7 @@ function doctor_checks(conditions: QuestConditions) {
     // not just apple, but bribe, drugs...
     novel.reason == 'hungrydoc' &&
     injury.fsm.getState() == 'active' &&
-    apple.fsm.getState() == 'inactive'
+    apple.fsm.getState() == 'idle'
   ) {
     apple.fsm.setState('active')
     //testjpf ABOVE IS FSM TODO
@@ -104,7 +98,7 @@ function doctor_checks(conditions: QuestConditions) {
     //TESTJPF !!! Here is where you would have the other options
     // not just apple, but bribe, drugs...
     novel.reason == 'druggiedoc' &&
-    apple.fsm.getState() == 'inactive'
+    apple.fsm.getState() == 'idle'
   ) {
     apple.fsm.setState('active')
     //testjpf
@@ -132,7 +126,7 @@ function doctor_checks(conditions: QuestConditions) {
     // in 'interact' gui send message to exit gui??
     // containing item, maybe who from "npc" or "player"
     //testjpf add same conditons for drugs and money
-    //and change inactive to standby???
+    //and change idle to standby???
   } else if (
     apple.fsm.getState() == 'active' &&
     novel.item == 'apple01' &&
@@ -173,10 +167,7 @@ function doctor_checks(conditions: QuestConditions) {
     // need something to check if this doc was given food.
     // in 'interact' gui send message to exit gui??
     // containing item, maybe who from "npc" or "player"
-  } else if (
-    novel.reason == 'getsomemeds' &&
-    meds.fsm.getState() == 'inactive'
-  ) {
+  } else if (novel.reason == 'getsomemeds' && meds.fsm.getState() == 'idle') {
     meds.fsm.setState('active')
     apple.fsm.setState('complete')
     player.add_inventory('note')
@@ -338,7 +329,7 @@ function medic_assist_checks() {
     doctor_checks(cons)
   } else if (npcs.all[novel.npc.labelname].currentroom == 'infirmary') {
     print('novel reason pre infirm check', novel.reason)
-    infirmary_checks(cons[5])
+    infirmary_checks(cons['5'])
   }
   //TESTJPF ELSE if quest complete dialog, xp / money???
 }
@@ -453,7 +444,7 @@ function doctorsScripts() {
   // bad??:: if reasonstring.startswith('quest - ')
   //then on novel_main novel.quest.solution = endof(message.reason)
 
-  if (injury.passed == true && apple.fsm.getState() == 'inactive') {
+  if (injury.fsm.getState() == 'active' && apple.fsm.getState() == 'idle') {
     novel.reason = 'quest'
     novel.priority = true
     //testjpf could add conditional if encounters == 0 ) {
@@ -467,7 +458,7 @@ function doctorsScripts() {
     //testjpf future naming files may be better:
     //docAsksForFavor, docActiveFavor
     return apple.passed == false ? 'tutorial/hungrydoc' : 'tutorial/getadoctor'
-  } else if (cons[5].fsm.getState() == 'active') {
+  } else if (cons['5'].fsm.getState() == 'active') {
     novel.priority = true
     novel.reason = 'quest'
     //testjpf could add conditional if encounters == 0 ) {

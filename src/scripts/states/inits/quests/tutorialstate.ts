@@ -17,10 +17,12 @@ export const tutorialQuests = (
   //testjpf tod need to add options to class params
   return {
     medic_assist: new QuestState({
+      id: 'qma',
       passed: false,
       conditions: {
         //testjfpf like new QuestState but new QuestStep()
         ['0']: new QuestStep({
+          id: 'htm',
           label: 'Agree to help injured man',
           solution: '',
           passed: false,
@@ -29,6 +31,7 @@ export const tutorialQuests = (
           args: [[nvq.get_reason, 'helpthatman']],
         }), //have you talked to a doctor?
         ['1']: new QuestStep({
+          id: 'gad',
           label: 'What is up doctor?!',
           solution: '',
           passed: false,
@@ -37,6 +40,7 @@ export const tutorialQuests = (
           args: [[nvq.get_reason, 'getadoctor']],
         }), //have you talked to a doctor?
         ['2']: new QuestStep({
+          id: 'aad',
           label: 'Apple a day!',
           solution: '',
           passed: false,
@@ -47,6 +51,7 @@ export const tutorialQuests = (
           args: [[returnfalse, false]],
         }),
         ['3']: new QuestStep({
+          id: 'gsm',
           label: 'Get some meds!',
           solution: '',
           passed: false,
@@ -55,6 +60,7 @@ export const tutorialQuests = (
           args: [[nq.return_doctors, 'vial02']],
         }), //gets keycard, goes to infirmary, gets meds
         ['4']: new QuestStep({
+          id: 'fmq',
           label: 'Got those meds!',
           solution: '',
           passed: false,
@@ -63,6 +69,7 @@ export const tutorialQuests = (
           args: [[nvq.get_reason, 'favormedsquest']],
         }), //have you talked to a doctor?
         ['5']: new QuestStep({
+          id: 'dtm',
           label: 'Delive these meds?',
           solution: '',
           passed: false,
@@ -71,6 +78,7 @@ export const tutorialQuests = (
           args: [[returnfalse, false]],
         }), //have you talked to a doctor?
         ['6']: new QuestStep({
+          id: 'mac',
           label: 'Meds delivered',
           solution: '',
           passed: false,
