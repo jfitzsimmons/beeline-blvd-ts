@@ -60,7 +60,7 @@ export interface QuestCondition {
   args: [() => any, any][]
 }
 
-export interface WorldQuests {
+export interface QuestsState {
   [key: string]: Quests
 }
 export interface AllQuestsMethods {

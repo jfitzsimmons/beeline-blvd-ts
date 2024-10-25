@@ -1,40 +1,37 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
-import { AllQuestsMethods, Task, WorldQuests } from '../../types/tasks'
-import { tutorialQuests } from './inits/quests/tutorialstate'
+import { QuestMethods, Task } from '../../types/tasks'
 import NpcState from './npc'
 import TaskState from './task'
 
 const dt = math.randomseed(os.time())
-
+/** 
 function build_quests_state(questmethods: AllQuestsMethods): WorldQuests {
   return {
     tutorial: tutorialQuests(questmethods),
   }
-}
+}*/
 export default class WorldTasks {
   private _all: TaskState[]
-  private _questmethods: AllQuestsMethods
   //private consolations: Array<(b: Skills, s: Skills) => Consolation>
-  private _quests: WorldQuests
+  //private _quests: WorldQuests
   //spawn will be updated when checkpoints are passed.
   private _spawn: string
   fsm: StateMachine
-
+  quests: QuestMethods
   mendingQueue: string[]
 
-  constructor(questmethods: AllQuestsMethods) {
+  constructor() {
     this.fsm = new StateMachine(this, 'tasks')
-
-    this._questmethods = questmethods
-    this._questmethods.tq = {
-      num_of_injuries: this.num_of_injuries.bind(this),
-      percent_tutorial: this.percent_tutorial.bind(this),
-    }
     this._all = []
-    this._quests = build_quests_state(this.questmethods)
+    // this._quests = build_quests_state(this.questmethods)
     this._spawn = 'grounds'
     this.mendingQueue = []
+
+    this.quests = {
+      num_of_injuries: this.num_of_injuries.bind(this),
+    }
+
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
       onEnter: this.onTurnEnter.bind(this),
@@ -67,17 +64,15 @@ export default class WorldTasks {
   public get spawn() {
     return this._spawn
   }
+  /** 
   public set quests(s: WorldQuests) {
     this._quests = s
   }
   public get quests() {
     return this._quests
-  }
+  }*/
   public get all() {
     return this._all
-  }
-  public get questmethods() {
-    return this._questmethods
   }
   task_has_npc(cause: string): string | null {
     for (let i = this.all.length - 1; i >= 0; i--) {
@@ -87,17 +82,6 @@ export default class WorldTasks {
       }
     }
     return null
-  }
-  percent_tutorial(): number {
-    let qKey: keyof typeof this.quests
-    let count = 0
-    let passed = 0
-    for (qKey in this.quests['tutorial']) {
-      if (this.quests['tutorial'][qKey].passed == true) passed = passed + 1
-      count = count + 1
-    }
-
-    return Math.round((passed / count) * 100)
   }
   num_of_injuries(): number {
     const injuries = this.all.filter((c) => c.label == 'injury').length
@@ -208,7 +192,7 @@ export default class WorldTasks {
       append.authority = 'security'
       append.scope = 'clan'
       if (s == 'player') {
-        this.questmethods.pq.increase_alert_level()
+        //this.questmethods.pq.increase_alert_level()
       }
     } else if (c == 'merits') {
       if (s == 'player') {
@@ -257,48 +241,8 @@ export default class WorldTasks {
   }
   // checks quest completion after interactions and turns
   //TESTJPF all FSM stuff for quest turn
-  update_quests_progress = (interval: string, checkpoint: string) => {
-    //  print('checkpoint.slice(0, -1)', checkpoint.slice(0, -1))
-    const quests = this.quests[checkpoint.slice(0, -1)]
+  //update_quests_progress = (interval: string, checkpoint: string) {}
 
-    let questKey: keyof typeof quests
-    for (questKey in quests) {
-      const quest = quests[questKey]
-      if (quest.passed == false) {
-        let quest_passed = true
-        //print('questKey:', questKey)
-        let condition: keyof typeof quest.conditions
-        for (condition in quest.conditions) {
-          // print('condition:', condition)
-          const goal = quest.conditions[condition]
-          //print('PREgoal label:', goal.label, goal.passed, goal.status)
-          if (goal.passed == false && goal.status != 'failed') {
-            // arg:func is array in case need for more than 1 check
-            for (let i: number = goal.func.length; i-- !== 0; ) {
-              if (
-                goal.interval[i] == interval &&
-                goal.func[i]!(goal.args[i]) == true
-              ) {
-                print('goal PASSED: GOAL', goal.label)
-                goal.passed = true
-                //goal.status = 'complete'
-                quest.status = 'active'
-                break
-              }
-            }
-          }
-          //print('POSTgoal label:', goal.label, goal.passed, goal.status)
-
-          if (goal.passed == false) quest_passed = false
-        }
-        if (quest_passed == true) {
-          quest.passed = true
-          quest.status = 'complete'
-          print(questKey, 'quest COMPLETE!!!')
-        }
-      }
-    }
-  }
   get_field_docs(): string[] {
     //if mending and in field busy
     //if mending in office and office full

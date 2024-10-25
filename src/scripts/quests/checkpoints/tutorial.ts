@@ -5,10 +5,11 @@ import { steal_check, take_or_stash } from '../../ai/ai_checks'
 import { from_same_room } from '../../utils/quest'
 //import { shuffle } from '../../utils/utils'
 
-const { rooms, npcs, tasks, player, novel, info } = globalThis.game.world
+const { rooms, npcs, tasks, player, novel, info, quests } =
+  globalThis.game.world
 function injured_checks(conditions: QuestConditions) {
   const { 0: injury, 1: doc } = conditions
-  const quest = tasks.quests.tutorial.medic_assist
+  const quest = quests.all.tutorial.medic_assist
   /**  if (quest.passed == false) {
      //overly cautious? TESTJPF make sure injured doesnt get into other trouble???
      tasks.remove_heat(injured.labelname)
@@ -49,7 +50,7 @@ function infirmary_checks(delivery: QuestCondition) {
   }
 }
 function doctor_checks(conditions: QuestConditions) {
-  const quest = tasks.quests.tutorial.medic_assist
+  const quest = quests.all.tutorial.medic_assist
 
   const injured = npcs.all[rooms.all.grounds.stations.worker1]
   // BUG::: testjpf I think this will
@@ -312,7 +313,7 @@ function doctor_checks(conditions: QuestConditions) {
   }
 }
 function medic_assist_checks() {
-  const quest = tasks.quests.tutorial.medic_assist
+  const quest = quests.all.tutorial.medic_assist
   /**  if (quest.passed == false) {
     //overly cautious? TESTJPF make sure injured doesnt get into other trouble???
     tasks.remove_heat(injured.labelname)
@@ -338,7 +339,7 @@ function medic_assist_checks() {
 }
 
 export function tutorialA(interval = 'turn') {
-  const quest = tasks.quests.tutorial.medic_assist
+  const quest = quests.all.tutorial.medic_assist
   const { conditions: cons } = quest
   //const {0:injury,1:doc,2: apple, 3: meds} = cons
   const { 2: apple } = cons
@@ -441,7 +442,7 @@ export function tutorialA(interval = 'turn') {
   medic_assist_checks()
 }
 function doctorsScripts() {
-  const quest = tasks.quests.tutorial.medic_assist
+  const quest = quests.all.tutorial.medic_assist
   const { conditions: cons } = quest
   //const {0:injury,1:doc,2: apple, 3: meds} = cons
   const { 0: injury, 2: apple } = cons
@@ -478,7 +479,7 @@ function doctorsScripts() {
 }
 
 function infirmaryScripts() {
-  const quest = tasks.quests.tutorial.medic_assist
+  const quest = quests.all.tutorial.medic_assist
   const { conditions: cons } = quest
   //const {0:injury,1:doc,2: apple, 3: meds} = cons
   const { 3: meds } = cons
@@ -491,7 +492,7 @@ function infirmaryScripts() {
 }
 
 function worker1Scripts() {
-  const quest = tasks.quests.tutorial.medic_assist
+  const quest = quests.all.tutorial.medic_assist
   const { conditions: cons } = quest
   //const {0:injury,1:doc,2: apple, 3: meds} = cons
   const { 0: injury } = cons

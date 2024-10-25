@@ -1,7 +1,7 @@
 import {
-  WorldQuests,
   ObjectivesGroup,
   ObjectivesGroupOpt,
+  QuestsState,
 } from '../../types/tasks'
 
 export default class WorldInfo {
@@ -31,7 +31,7 @@ export default class WorldInfo {
     string
   ]
 
-  constructor(quests: WorldQuests) {
+  constructor(quests: QuestsState) {
     this.interactions = [
       'asdf',
       'asdf',
@@ -67,7 +67,7 @@ export default class WorldInfo {
     return this._objectives
   }
 
-  build_objectives(quests: WorldQuests) {
+  build_objectives(quests: QuestsState) {
     const objectives: ObjectivesGroupOpt = {}
     //ex tutorial
     let cPoint: keyof typeof quests

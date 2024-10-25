@@ -4,7 +4,7 @@ import { quest_checker } from '../quests/quests_main'
 
 const dt = math.randomseed(os.time())
 const { world } = globalThis.game
-const { rooms, npcs, player, tasks, novel } = world
+const { rooms, npcs, player, tasks, novel, quests } = world
 
 //export function init() {
 //place_npcs()
@@ -72,8 +72,10 @@ function game_turn(room: string) {
   rooms.unfocus_room()
   rooms.all[room].fsm.setState('focus')
   world.fsm.update(dt)
+  //if i can incorporate confrontations
+  //i can move the rest of this to various Turn fsm states
   //prob something like tasks.setState(progress)
-  tasks.update_quests_progress('turn', player.checkpoint)
+  quests.update_quests_progress('turn')
   //tasks.setState()
   quest_checker('turn')
 }
@@ -104,7 +106,7 @@ export function on_message(
     msg.post('/shared/adam#adam', 'wake_up')
     if (confrontation != null) confrontation_scene(confrontation)
   } else if (messageId == hash('exit_gui')) {
-    tasks.update_quests_progress('interact', player.checkpoint)
+    quests.update_quests_progress('interact')
     quest_checker('interact')
 
     print('exitgui reason::', novel.reason)
