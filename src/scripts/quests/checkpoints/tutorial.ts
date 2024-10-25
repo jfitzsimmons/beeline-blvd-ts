@@ -8,7 +8,7 @@ import { from_same_room } from '../../utils/quest'
 const { rooms, npcs, tasks, player, novel, info, quests } =
   globalThis.game.world
 function injured_checks(conditions: QuestConditions) {
-  const { 0: injury, 1: doc } = conditions
+  const { '0': injury, '1': doc } = conditions
   const quest = quests.all.tutorial.medic_assist
   /**  if (quest.passed == false) {
      //overly cautious? TESTJPF make sure injured doesnt get into other trouble???
@@ -22,7 +22,7 @@ function injured_checks(conditions: QuestConditions) {
   //const doctor = npcs.all[novel.npc.labelname]
 
   // const { conditions: cons } = quest
-  //const {0:injury,1:doc, 2:apple} = cons
+  //const {"0":injury,"1":doc, "2":apple} = cons
 
   if (injury.status == 'standby' && injury.passed == true) {
     //todo testjpf should all be condition FSM states!!!
@@ -56,7 +56,7 @@ function doctor_checks(conditions: QuestConditions) {
   // BUG::: testjpf I think this will
   // let you interact with any doctor
   const doctor = npcs.all[novel.npc.labelname]
-  const { 0: injury, 2: apple, 3: meds } = conditions
+  const { '0': injury, '2': apple, '3': meds } = conditions
   // testjpf future have side_quesct_checks()????
 
   if (
@@ -323,9 +323,9 @@ function medic_assist_checks() {
   //const doctor = npcs.all[novel.npc.labelname].
 
   const { conditions: cons } = quest
-  //const {0:injury,1:doc, 2:apple} = cons
-  //const { 0: injury, 1: doc, 2: apple, 3: meds } = cons
-  if (cons[0].passed == true) injured_checks(cons)
+  //const {"0":injury,"1":doc, "2":apple} = cons
+  //const { "0": injury, "1": doc, "2": apple, "3": meds } = cons
+  if (cons['0'].passed == true) injured_checks(cons)
   if (npcs.all[novel.npc.labelname].clan == 'doctors') {
     doctor_checks(cons)
   } else if (npcs.all[novel.npc.labelname].currentroom == 'infirmary') {
@@ -338,8 +338,8 @@ function medic_assist_checks() {
 export function tutorialA(interval = 'turn') {
   const quest = quests.all.tutorial.medic_assist
   const { conditions: cons } = quest
-  //const {0:injury,1:doc,2: apple, 3: meds} = cons
-  const { 2: apple } = cons
+  //const {"0":injury,"1":doc,"2": apple, "3": meds} = cons
+  const { '2': apple } = cons
   //testjpg NEW move rooms logic to grounds room state?
   //logic makes sense. these are dice rolls
   //add remove item methods for all states!!! todo
@@ -364,7 +364,6 @@ export function tutorialA(interval = 'turn') {
         : steal_check(guest2, worker2, luggage.inventory)
     }
   }
-
   if (apple.passed == false) {
     /**   if (
       injury.passed == true &&
@@ -441,8 +440,8 @@ export function tutorialA(interval = 'turn') {
 function doctorsScripts() {
   const quest = quests.all.tutorial.medic_assist
   const { conditions: cons } = quest
-  //const {0:injury,1:doc,2: apple, 3: meds} = cons
-  const { 0: injury, 2: apple } = cons
+  //const {"0":injury,"1":doc,"2": apple, "3": meds} = cons
+  const { '0': injury, '2': apple } = cons
   // bad??:: if reasonstring.startswith('quest - ')
   //then on novel_main novel.quest.solution = endof(message.reason)
 
@@ -478,8 +477,8 @@ function doctorsScripts() {
 function infirmaryScripts() {
   const quest = quests.all.tutorial.medic_assist
   const { conditions: cons } = quest
-  //const {0:injury,1:doc,2: apple, 3: meds} = cons
-  const { 3: meds } = cons
+  //const {"0":injury,"1":doc,"2": apple, "3": meds} = cons
+  const { '3': meds } = cons
   if (meds.status == 'active' && novel.npc.currentstation == 'assistant') {
     novel.priority = true
     novel.reason = 'quest'
@@ -491,8 +490,8 @@ function infirmaryScripts() {
 function worker1Scripts() {
   const quest = quests.all.tutorial.medic_assist
   const { conditions: cons } = quest
-  //const {0:injury,1:doc,2: apple, 3: meds} = cons
-  const { 0: injury } = cons
+  //const {"0":injury,"1":doc,"2": apple, "3": meds} = cons
+  const { '0': injury } = cons
   if (injury.passed == false) {
     novel.priority = true
     novel.reason = 'quest'
