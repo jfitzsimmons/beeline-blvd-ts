@@ -102,14 +102,14 @@ export interface QuestMethods {
     | null
 }
 
-export interface Caution {
-  npc: string
-  time: number
+export interface Task {
+  owner: string
+  turns: number
   label: string // merits
-  type: string
+  scope: string
   authority: string //ex; labor
-  suspect: string
-  reason: string
+  target: string
+  cause: string
 }
 
 export interface Confront {

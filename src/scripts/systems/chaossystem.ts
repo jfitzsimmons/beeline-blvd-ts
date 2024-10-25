@@ -155,7 +155,7 @@ export function suspicious_check(
 function call_security(watcher: string, suspect: string) {
   npcs.all[watcher].clan == 'security'
     ? go_to_jail(suspect)
-    : tasks.caution_builder(
+    : tasks.task_builder(
         npcs.all[watcher],
         math.random() > 0.33 ? 'questioning' : 'arrest',
         suspect,

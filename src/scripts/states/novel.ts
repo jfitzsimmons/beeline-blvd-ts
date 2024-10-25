@@ -1,20 +1,20 @@
-import { Caution, QuestMethods } from '../../types/tasks'
+import { Task, QuestMethods } from '../../types/tasks'
 import NpcState from './npc'
 
-const nullCaution: Caution = {
-  type: '',
+const nullTask: Task = {
+  scope: '',
   label: 'none',
-  time: 0,
+  turns: 0,
   authority: '',
-  suspect: '',
-  npc: '',
-  reason: '',
+  target: '',
+  owner: '',
+  cause: '',
 }
 export default class WorldNovel {
   //private background: string
   //private sprites: { [key: string]: string }
   private _reason: string
-  private _caution: Caution
+  private _caution: Task
   private _item: string
   private _active_quest: boolean
   private _priority: boolean
@@ -31,7 +31,7 @@ export default class WorldNovel {
     this._active_quest = false
     this._priority = false
     this._reason = 'none'
-    this._caution = nullCaution
+    this._caution = nullTask
     this._item = 'none'
     this._npcsWithQuest = []
     this._scripts = []
@@ -78,12 +78,12 @@ export default class WorldNovel {
     this._reason = r
   }
   reset_caution() {
-    this._caution = { ...nullCaution }
+    this._caution = { ...nullTask }
   }
-  public get caution(): Caution {
+  public get caution(): Task {
     return this._caution
   }
-  public set caution(c: Caution) {
+  public set caution(c: Task) {
     this._caution = { ...c }
   }
   public get item() {

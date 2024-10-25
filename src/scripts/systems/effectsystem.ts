@@ -158,6 +158,8 @@ function add_classy(suspect: string, watcher: string) {
     const effects_list = ['crimewave', 'inshape', 'readup', 'modesty']
     const effect: Effect = fx[shuffle(effects_list)[0]]
     if (effect.fx.type == 'attitudes') effect.fx.stat = npcs.all[suspect].clan
+    //tesjpf need to add to npc and player
+    // already have remove
     add_effects_bonus(npcs.all[watcher], effect)
     npcs.all[watcher].effects.push(effect)
   } else {
@@ -175,7 +177,7 @@ export function classy_check(suspect: string, watcher: string): Consequence {
 
   // print('TESTJPF RESULT::: classy::', result)
   if (result > 5 && result <= 10) {
-    add_classy
+    add_classy(suspect, watcher)
     return { pass: true, type: 'classy' }
   }
 
@@ -523,7 +525,7 @@ export const fx: { [key: string]: Effect } = {
     },
   },
 }
-
+//TESTJPF ADD TO PLAYER AND NPC TODO
 export function add_effects_bonus(a: NpcState, e: Effect) {
   a[e.fx.type][e.fx.stat] = a[e.fx.type][e.fx.stat] + e.fx.adjustment
 }

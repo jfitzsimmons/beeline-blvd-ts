@@ -85,13 +85,11 @@ export default class WorldPlayer {
   remove_inventory_bonus(i: string) {
     const item: InventoryTableItem = itemStateInit[i]
     let sKey: keyof typeof item.skills
-
     for (sKey in itemStateInit[i].skills)
       this.state.skills[sKey] =
         this.state.skills[sKey] - itemStateInit[i].skills[sKey]
 
     let bKey: keyof typeof item.binaries
-
     for (bKey in itemStateInit[i].binaries)
       this.state.binaries[bKey] =
         this.state.binaries[bKey] - itemStateInit[i].binaries[bKey]
@@ -105,7 +103,6 @@ export default class WorldPlayer {
         this.state.skills[sKey] + itemStateInit[i].skills[sKey]
 
     let bKey: keyof typeof item.binaries
-
     for (bKey in itemStateInit[i].binaries)
       this.state.binaries[bKey] =
         this.state.binaries[bKey] + itemStateInit[i].binaries[bKey]
@@ -216,7 +213,7 @@ export default class WorldPlayer {
   increase_alert_level() {
     this.alert_level += 1
   }
-  inventory_init() {
+  private inventory_init() {
     for (const item of this.state.inventory) {
       this.add_inventory_bonus(item)
     }

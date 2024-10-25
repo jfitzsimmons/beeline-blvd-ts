@@ -1,4 +1,4 @@
-import { Caution } from '../../types/tasks'
+import { Task } from '../../types/tasks'
 import { address_cautions } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
 
@@ -26,7 +26,7 @@ function calculate_heat(room: string) {
   heat +=
     (player.alert_level +
       rooms.all[room].clearance * 5 +
-      tasks.number_of_cautions('player')) *
+      tasks.number_of_tasks('player')) *
     2
 
   cold +=
@@ -35,7 +35,7 @@ function calculate_heat(room: string) {
   cold +=
     (player.hp +
       player.clearance +
-      tasks.cautions.length +
+      tasks.all.length +
       player.state.skills.stealth +
       player.state.skills.charisma) *
     2
@@ -51,13 +51,13 @@ function update_hud() {
   //msg.post("hud#map", "acquire_input_focus")
 }
 
-function confrontation_scene(c: Caution) {
-  npcs.all[c.npc].convos = npcs.all[c.npc].convos + 1
-  novel.npc = npcs.all[c.npc]
+function confrontation_scene(c: Task) {
+  npcs.all[c.owner].convos = npcs.all[c.owner].convos + 1
+  novel.npc = npcs.all[c.owner]
 
   //testjpf this is for player
   //is not using script builder
-  novel.reason = c.reason
+  novel.reason = c.owner
   novel.caution = { ...c }
   novel.priority = true
   msg.post('proxies:/controller#novelcontroller', 'show_scene')
@@ -72,7 +72,9 @@ function game_turn(room: string) {
   rooms.unfocus_room()
   rooms.all[room].fsm.setState('focus')
   world.fsm.update(dt)
+  //prob something like tasks.setState(progress)
   tasks.update_quests_progress('turn', player.checkpoint)
+  //tasks.setState()
   quest_checker('turn')
 }
 interface props {
@@ -96,7 +98,7 @@ export function on_message(
     if (message.load_type == 'room transition') game_turn(message.roomname)
     calculate_heat(this.roomname)
 
-    const confrontation: Caution | null = address_cautions()
+    const confrontation: Task | null = address_cautions()
     msg.post(this.roomname + ':/level#' + this.roomname, 'room_load')
     //position player on screen
     msg.post('/shared/adam#adam', 'wake_up')

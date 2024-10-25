@@ -158,7 +158,6 @@ export default class NpcState {
   private onMenderUpdate(): void {}
   private onMenderExit(): void {}
   private onNewEnter(): void {}
-
   private onNewUpdate(): void {
     if (this.hp > 0) {
       const { chosenRoom, chosenStation } = attempt_to_fill_station(
@@ -257,12 +256,10 @@ export default class NpcState {
   remove_inventory_bonus(i: string) {
     const item: InventoryTableItem = itemStateInit[i]
     let sKey: keyof typeof item.skills
-
     for (sKey in itemStateInit[i].skills)
       this.skills[sKey] = this.skills[sKey] - itemStateInit[i].skills[sKey]
 
     let bKey: keyof typeof item.binaries
-
     for (bKey in itemStateInit[i].binaries)
       this.binaries[bKey] =
         this.binaries[bKey] - itemStateInit[i].binaries[bKey]
@@ -275,7 +272,6 @@ export default class NpcState {
       this.skills[sKey] = this.skills[sKey] + itemStateInit[i].skills[sKey]
 
     let bKey: keyof typeof item.binaries
-
     for (bKey in itemStateInit[i].binaries)
       this.binaries[bKey] =
         this.binaries[bKey] + itemStateInit[i].binaries[bKey]

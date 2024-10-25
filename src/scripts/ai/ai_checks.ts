@@ -20,7 +20,7 @@ function tend_to_patient(v: string, doc: string) {
       station: npcs.all[v].currentstation,
       npc: doc,
     })
-  tasks.caution_builder(npcs.all[doc], 'mending', v, 'field')
+  tasks.task_builder(npcs.all[doc], 'mending', v, 'field')
 }
 
 export function aid_check() {
@@ -45,11 +45,11 @@ export function aid_check() {
           break
         } else if (
           math.random() > 0.96 &&
-          tasks.npc_has_caution(helper, i) == null &&
-          tasks.has_ignore_caution(i) == false
+          tasks.npc_has_task(helper, i) == null &&
+          tasks.has_ignore_task(i) == false
         ) {
           //if not a doctor, create injury caution if haven't already
-          tasks.caution_builder(npcs.all[helper], 'injury', i, 'injury')
+          tasks.task_builder(npcs.all[helper], 'injury', i, 'injury')
           break
         }
       }
@@ -62,7 +62,7 @@ export function take_check(taker: NpcState, actor: Npc | Actor) {
       taker.skills.charisma +
       taker.binaries.passive_aggressive * -5
   )
-  if (tasks.npc_has_caution('any', taker.labelname) != null) {
+  if (tasks.npc_has_task('any', taker.labelname) != null) {
     modifier = modifier - 1
   }
   const advantage =
@@ -87,7 +87,7 @@ export function take_check(taker: NpcState, actor: Npc | Actor) {
 export function stash_check(stasher: NpcState, actor: NpcState | Actor) {
   let modifier = stasher.inventory.length - actor.inventory.length
 
-  if (tasks.npc_has_caution('any', stasher.labelname) != null) {
+  if (tasks.npc_has_task('any', stasher.labelname) != null) {
     modifier = modifier + 1
   }
 
@@ -158,7 +158,7 @@ export function clearance_checks(room = player.currentroom) {
     if (watcher !== '' && npcs.all[watcher].clan == 'security') {
       //testjpf needs a diceroll and create / return confrontation
       if (confrontation_check('player', watcher) == true) {
-        tasks.caution_builder(
+        tasks.task_builder(
           npcs.all[watcher],
           'questioning',
           'player',
@@ -198,7 +198,7 @@ function thief_consequences(
   }
 
   if (c.confront == false && c.type != 'neutral') {
-    tasks.caution_builder(npcs.all[w], c.type, s, 'theft')
+    tasks.task_builder(npcs.all[w], c.type, s, 'theft')
   }
   return c
 }
