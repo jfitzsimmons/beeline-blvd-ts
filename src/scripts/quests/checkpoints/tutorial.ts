@@ -1,9 +1,9 @@
 import { QuestCondition, QuestConditions } from '../../../types/tasks'
 import { steal_check, take_or_stash } from '../../ai/ai_checks'
 //import { npc_action_move } from '../../ai/ai_main'
-import NpcState from '../../states/npc'
+//import NpcState from '../../states/npc'
 import { from_same_room } from '../../utils/quest'
-import { shuffle } from '../../utils/utils'
+//import { shuffle } from '../../utils/utils'
 
 const { rooms, npcs, tasks, player, novel, info } = globalThis.game.world
 function injured_checks(conditions: QuestConditions) {
@@ -24,6 +24,7 @@ function injured_checks(conditions: QuestConditions) {
   //const {0:injury,1:doc, 2:apple} = cons
 
   if (injury.status == 'standby' && injury.passed == true) {
+    //todo testjpf should all be condition FSM states!!!
     injury.status = 'active'
     quest.status = 'active'
     doc.status = 'standby'
@@ -65,22 +66,26 @@ function doctor_checks(conditions: QuestConditions) {
     apple.status == 'inactive'
   ) {
     apple.status = 'active'
-    //testjpf
+    //testjpf ABOVE IS FSM TODO
     // i think jsut sets novel.reason in script builder.
     //So for 100  turns, this npc will always talk to you about a quest
     //which quest? the one that comes from quest directory scripts
     // as seen in sbuilder:: const quest_paths
     //testjpf need to debug txt scripts related to this quest
-    /**tasks.append_caution({
+    /**tasks.append_task({
       label: 'quest',
-      time: 100,
-      type: 'hungry',
-      reason: 'quest',
-      npc: doctor.labelname,
-      suspect: doctor.labelname,
+      turns: 100,
+      scope: 'hungry',
+     cause: 'quest',
+      owner: doctor.labelname,
+      target: doctor.labelname,
       authority: 'player',
     })**/
-    tasks.caution_builder(doctor, 'quest', injured.labelname, 'quest')
+    //I think we'll still need something like this.
+    // probably doesnt need to be so general.
+    // could be a simple as creating new Task() that has own FSM//
+    //NOT BAD.
+    tasks.task_builder(doctor, 'quest', injured.labelname, 'quest')
     novel.append_npc_quest(doctor.labelname)
 
     info.add_interaction(`${doctor.labelname} needs drugs, money or food.`)
@@ -102,17 +107,17 @@ function doctor_checks(conditions: QuestConditions) {
     //which quest? the one that comes from quest directory scripts
     // as seen in sbuilder:: const quest_paths
     //testjpf need to debug txt scripts related to this quest
-    /**tasks.append_caution({
+    /**tasks.append_task({
       label: 'quest',
-      time: 100,
-      type: 'hungry',
-      reason: 'quest',
-      npc: doctor.labelname,
-      suspect: doctor.labelname,
+      turns: 100,
+      scope: 'hungry',
+     cause: 'quest',
+      owner: doctor.labelname,
+      target: doctor.labelname,
       authority: 'player',
     })*/
     novel.append_npc_quest(doctor.labelname)
-    tasks.caution_builder(doctor, 'quest', injured.labelname, 'quest')
+    tasks.task_builder(doctor, 'quest', injured.labelname, 'quest')
 
     info.add_interaction(`${doctor.labelname} needs drugs, money or food.`)
     //info.build_objectives(tasks.quests)
@@ -133,7 +138,7 @@ function doctor_checks(conditions: QuestConditions) {
 
     //tasks.remove_quest_cautions(doctor.labelname)
     novel.remove_npc_quest(doctor.labelname)
-    tasks.remove_quest_cautions(doctor.labelname)
+    tasks.remove_quest_tasks(doctor.labelname)
 
     novel.reason = 'getadoctor'
     info.add_interaction(`${doctor.labelname} likes that you fed them.`)
@@ -142,13 +147,13 @@ function doctor_checks(conditions: QuestConditions) {
     // testjpf this is overwriting my scriptsdialog functions
     novel.npc = doctor
     novel.priority = true
-    tasks.append_caution({
+    tasks.append_task({
       label: 'mending',
-      time: 100,
-      type: 'quest',
-      reason: 'field',
-      npc: doctor.labelname,
-      suspect: injured.labelname,
+      turns: 100,
+      scope: 'quest',
+      cause: 'field',
+      owner: doctor.labelname,
+      target: injured.labelname,
       authority: 'doctors',
     })
     info.add_interaction(`${injured.labelname} likes that you got a doctor.`)
@@ -174,28 +179,28 @@ function doctor_checks(conditions: QuestConditions) {
       'to worker1'
     )
 
-    tasks.append_caution({
+    tasks.append_task({
       label: 'clearance',
-      time: 8,
-      type: 'type3',
-      reason: 'medical',
-      npc: doctor.labelname,
-      suspect: 'player',
+      turns: 8,
+      scope: 'type3',
+      cause: 'medical',
+      owner: doctor.labelname,
+      target: 'player',
       authority: 'security',
     })
     novel.remove_npc_quest(doctor.labelname)
-    tasks.remove_quest_cautions(doctor.labelname)
+    tasks.remove_quest_tasks(doctor.labelname)
     novel.append_npc_quest(doctor.labelname)
-    tasks.caution_builder(doctor, 'quest', injured.labelname, 'waitingformeds')
+    tasks.task_builder(doctor, 'quest', injured.labelname, 'waitingformeds')
 
     /** 
-    tasks.append_caution({
+    tasks.append_task({
       label: 'quest',
-      time: 50,
-      type: 'medassist',
-      reason: 'medical',
-      npc: doctor.labelname,
-      suspect: doctor.labelname,
+      turns: 50,
+      scope: 'medassist',
+     cause: 'medical',
+      owner: doctor.labelname,
+      target: doctor.labelname,
       authority: 'player',
     })*/
     info.add_interaction(`${doctor.labelname}'s gave you clearance for 8 turns`)
@@ -211,7 +216,7 @@ function doctor_checks(conditions: QuestConditions) {
 
     msg.post(`/${doctor.currentstation}#npc_loader`, hash('move_npc'), {
       station: 'worker1',
-      npc: doctor.labelname,
+      owner: doctor.labelname,
     })
 
     // create caution for... 10 turns?
@@ -230,7 +235,7 @@ function doctor_checks(conditions: QuestConditions) {
     )
     msg.post(`/${doctor.currentstation}#npc_loader`, hash('move_npc'), {
       station: 'worker1',
-      npc: doctor.labelname,
+      owner: doctor.labelname,
     })
     // create caution for... 10 turns?
     // i don't have cleareance logic setup!!
@@ -256,7 +261,7 @@ function doctor_checks(conditions: QuestConditions) {
   ) {
     novel.priority = true
     //TESTjpf start here
-    const waiting = tasks.caution_has_npc('waitingformeds')
+    const waiting = tasks.task_has_npc('waitingformeds')
     //testjpf doesnt work if you talk to someone else!!! BUG
     if (novel.npc.labelname == waiting) {
       print('WAITING DOES ANYHTING???!!!')
@@ -267,7 +272,7 @@ function doctor_checks(conditions: QuestConditions) {
       novel.npc = npcs.all[waiting]
       novel.reason = 'docquestcomplete'
       novel.remove_npc_quest(doctor.labelname)
-      tasks.remove_quest_cautions(doctor.labelname)
+      tasks.remove_quest_tasks(doctor.labelname)
     } else {
       //testjpf start here
       //set up address)cautions for favors and quests TODO
@@ -286,13 +291,13 @@ function doctor_checks(conditions: QuestConditions) {
       // testjpf this is overwriting my scriptsdialog functions
       novel.npc = doctor
       //novel.priority = true
-      tasks.append_caution({
+      tasks.append_task({
         label: 'favor',
-        time: 15,
-        type: 'quest',
-        reason: 'favordoctorquest',
-        npc: doctor.labelname,
-        suspect: npcs.all[waiting!].labelname,
+        turns: 15,
+        scope: 'quest',
+        cause: 'favordoctorquest',
+        owner: doctor.labelname,
+        target: npcs.all[waiting!].labelname,
         authority: 'player',
       })
       novel.reason = 'askdocafavor'
@@ -301,7 +306,7 @@ function doctor_checks(conditions: QuestConditions) {
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
     // removed after scene
     if (waiting != null) {
-      tasks.remove_quest_cautions(waiting)
+      tasks.remove_quest_tasks(waiting)
       novel.remove_npc_quest(waiting)
     }
   }
@@ -336,7 +341,13 @@ export function tutorialA(interval = 'turn') {
   const quest = tasks.quests.tutorial.medic_assist
   const { conditions: cons } = quest
   //const {0:injury,1:doc,2: apple, 3: meds} = cons
-  const { 0: injury, 2: apple } = cons
+  const { 2: apple } = cons
+  //testjpg NEW move rooms logic to grounds room state?
+  //logic makes sense. these are dice rolls
+  //add remove item methods for all states!!! todo
+  //grounds.fsm.setState('quest')???
+  //attach at least some quest stuff to room/rooms makes sense
+
   const luggage =
     math.random() > 0.5
       ? rooms.all.grounds.actors.player_luggage
@@ -357,7 +368,7 @@ export function tutorialA(interval = 'turn') {
   }
 
   if (apple.passed == false) {
-    if (
+    /**   if (
       injury.passed == true &&
       interval == 'turn' &&
       rooms.all['grounds'].stations.worker1 != ''
@@ -371,19 +382,19 @@ export function tutorialA(interval = 'turn') {
         //const docs = shuffle(npcs.return_doctors())
         const doc: NpcState = shuffle(npcs.return_doctors())[0]
         let { currentroom, currentstation } = doc
-
+        //BAD should be handled by set doc npc state
+        //TODO TESTjpf
         rooms.all[currentroom].stations[currentstation] = ''
         rooms.all.grounds.stations.aid = doc.labelname
         currentroom = 'grounds'
-        currentstation = 'aid'
-        /**todo testjpf ≈
+        currentstation = 'aid'*/
+    /**todo testjpf ≈
         npc_action_move(
           replace,
           surrounding_room_matrix(player.matrix, npcs.all[replace].matrix)
         )√*/
-      }
-    }
-
+    //   }
+    //  }
     /**
      * so testjpf we have a propert that accepts multipl type of export functions and returns
      *
@@ -405,8 +416,8 @@ export function tutorialA(interval = 'turn') {
       player.inventory.push('note')
       const params = {
         path: 'grounds/tutorialmeds',
-        npc: rooms.all['grounds'].stations.aid,
-        reason: 'apple',
+        owner: rooms.all['grounds'].stations.aid,
+       cause: 'apple',
         roomname: 'grounds',
       }
       msg.post('proxies:/controller#novelcontroller', 'show_scene', params)
@@ -459,7 +470,7 @@ function doctorsScripts() {
 
     //testjpf future naming files may be better:
     //docAsksForFavor, docActiveFavor
-    return tasks.caution_has_npc('waitingformeds') == null
+    return tasks.task_has_npc('waitingformeds') == null
       ? 'tutorial/askDocAfavor'
       : 'tutorial/medAssistComplete'
   }

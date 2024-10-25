@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-math.randomseed(os.time())
-
+// math.randomseed(os.time())
 import { Game } from '../states/gamesystem2'
+import { gamesave, gamesettings } from '../../types/legacylua'
+import { url } from '../../types/utils'
+
 globalThis.game = new Game()
 const game = globalThis.game
 const { world } = game
-//const save = require('../../../main/states/gamesave.lua')
-import { gamesave, gamesettings } from '../../types/legacylua'
 
 interface props {
   is_level: boolean
@@ -21,17 +19,17 @@ interface props {
 //mpve transition to world state
 //new game to game state
 //then just set states testjpf
-function handle_new_turn(load_type: string) {
+function handleTurnStates(load_type: string) {
+  //testjpf what about adding faint and arrest
   if (load_type === 'room transition') {
     world.fsm.setState('turn')
+  } else if (load_type === 'faint') {
+    world.fsm.setState('faint')
+  } else if (load_type === 'arrest') {
+    world.fsm.setState('arrest')
   } else if (load_type === 'new game') {
     game.fsm.setState('new')
-
-    //globalThis.game = new Game()
   }
-}
-interface url {
-  fragment: hash
 }
 
 function show(current_proxy: url | null, p: string) {
@@ -42,9 +40,9 @@ function show(current_proxy: url | null, p: string) {
   msg.post(p, 'async_load')
 }
 
+//init from bootstrap (main.collection)
 export function init(this: props) {
   this.is_level = false
-  //init from bootstrap (main.collection)
   this.current_proxy = null
   this.load_type = 'none'
 
@@ -63,31 +61,19 @@ export function on_message(
   },
   _sender: url
 ): void {
-  //eabch hash should be it's own fsm world state
-  // show menu should be on Gamestate?testjpf
-  if (messageId == hash('show_menu')) {
-    this.is_level = false
-    show(this.current_proxy, '#main_menu')
-  } else if (messageId == hash('toggle_info')) {
-    this.is_level = false
-    // show(this.current_proxy, '#info_gui')
-    msg.post('proxies:/controller#infocontroller', 'toggle_info')
-  } else if (messageId == hash('faint')) {
-    world.fsm.setState('faint')
-    msg.post('#', 'pick_room', message)
-  } else if (messageId == hash('arrest')) {
-    world.fsm.setState('arrest')
-    msg.post('#', 'pick_room', message)
-  } else if (messageId == hash('pick_room')) {
+  //PICK_ROOM
+  if (messageId == hash('pick_room')) {
     this.roomname = message.enter_room
     this.is_level = true
     this.load_type = message.load_type
     print('--- === ::: NEW ROOM LOADED ::: === ---')
-    handle_new_turn(this.load_type)
+    handleTurnStates(this.load_type)
     show(this.current_proxy, '#' + this.roomname)
-  } else if (messageId == hash('proxy_loaded')) {
+  }
+  //PROXY_LOADED
+  else if (messageId == hash('proxy_loaded')) {
     this.current_proxy = _sender
-    if (this.current_proxy !== null && this.is_level == true) {
+    if (this.is_level == true && this.current_proxy !== null) {
       const params = {
         roomname: this.roomname,
         load_type: this.load_type,
@@ -96,6 +82,17 @@ export function on_message(
     }
 
     msg.post(_sender, 'enable')
+  }
+  //SHOW_MENU
+  else if (messageId == hash('show_menu')) {
+    this.is_level = false
+    // should eventually change game state fsm // testjpf
+    show(this.current_proxy, '#main_menu')
+  }
+  //TOGGLE_INFO
+  else if (messageId == hash('toggle_info')) {
+    this.is_level = false
+    msg.post('proxies:/controller#infocontroller', 'toggle_info')
   }
 }
 

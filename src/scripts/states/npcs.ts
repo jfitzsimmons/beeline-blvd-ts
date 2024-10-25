@@ -245,6 +245,7 @@ export default class WorldNpcs {
     }
     this._all = seedNpcs(this.npcLists)
     random_attributes(this.all, this.order)
+    this.inventory_init()
 
     this.fsm = new StateMachine(this, 'npcs')
 
@@ -332,6 +333,14 @@ export default class WorldNpcs {
   }
   return_order_all(): [string[], Npcs] {
     return [shuffle(this.order), this.all]
+  }
+  inventory_init() {
+    let nKey: keyof typeof this.all
+    for (nKey in this.all) {
+      for (const item of this.all[nKey].inventory) {
+        this.all[nKey].add_inventory_bonus(item)
+      }
+    }
   }
 }
 

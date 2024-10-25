@@ -338,7 +338,7 @@ export function set_npc_target(
 //npcs.sort_npcs_by_encounter()
 //TESTJPF  TEST SETTINGS:::
 /** 
-  tasks.caution_builder(
+  tasks.task_builder(
     npcs.all['security004'],
     'questioning',
     rooms.all.grounds.stations.assistant,

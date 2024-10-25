@@ -106,3 +106,13 @@ export interface Occupants {
 export interface Roles {
   [key: string]: string[]
 }
+
+export interface InventoryTable {
+  [key: string]: InventoryTableItem
+}
+export interface InventoryTableItem {
+  value: number
+  level: number
+  binaries: { [key: string]: number }
+  skills: { [key: string]: number }
+}

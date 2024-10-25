@@ -6,8 +6,6 @@ import {
   remove_valuable,
   remove_last,
   remove_random,
-  add_chest_bonus,
-  remove_chest_bonus,
 } from '../systems/inventorysystem'
 import { confrontation_consequence } from '../systems/tasksystem'
 import { injured_npcs } from '../systems/emergencysystem'
@@ -22,7 +20,7 @@ function tend_to_patient(v: string, doc: string) {
       station: npcs.all[v].currentstation,
       npc: doc,
     })
-  tasks.caution_builder(npcs.all[doc], 'mending', v, 'field')
+  tasks.task_builder(npcs.all[doc], 'mending', v, 'field')
 }
 
 export function aid_check() {
@@ -47,11 +45,11 @@ export function aid_check() {
           break
         } else if (
           math.random() > 0.96 &&
-          tasks.npc_has_caution(helper, i) == null &&
-          tasks.has_ignore_caution(i) == false
+          tasks.npc_has_task(helper, i) == null &&
+          tasks.has_ignore_task(i) == false
         ) {
           //if not a doctor, create injury caution if haven't already
-          tasks.caution_builder(npcs.all[helper], 'injury', i, 'injury')
+          tasks.task_builder(npcs.all[helper], 'injury', i, 'injury')
           break
         }
       }
@@ -64,7 +62,7 @@ export function take_check(taker: NpcState, actor: Npc | Actor) {
       taker.skills.charisma +
       taker.binaries.passive_aggressive * -5
   )
-  if (tasks.npc_has_caution('any', taker.labelname) != null) {
+  if (tasks.npc_has_task('any', taker.labelname) != null) {
     modifier = modifier - 1
   }
   const advantage =
@@ -84,12 +82,12 @@ export function take_check(taker: NpcState, actor: Npc | Actor) {
   } else {
     chest_item = remove_random(taker.inventory, actor.inventory)
   }
-  add_chest_bonus(taker, chest_item)
+  taker.add_inventory_bonus(chest_item)
 }
 export function stash_check(stasher: NpcState, actor: NpcState | Actor) {
   let modifier = stasher.inventory.length - actor.inventory.length
 
-  if (tasks.npc_has_caution('any', stasher.labelname) != null) {
+  if (tasks.npc_has_task('any', stasher.labelname) != null) {
     modifier = modifier + 1
   }
 
@@ -109,7 +107,7 @@ export function stash_check(stasher: NpcState, actor: NpcState | Actor) {
   } else {
     chest_item = remove_last(actor.inventory, stasher.inventory)
   }
-  remove_chest_bonus(stasher, chest_item)
+  stasher.remove_inventory_bonus(chest_item)
   // if victim == true ){ add_chest_bonus(n, chest_item) }
 }
 export function take_or_stash(attendant: NpcState, actor: NpcState | Actor) {
@@ -160,7 +158,7 @@ export function clearance_checks(room = player.currentroom) {
     if (watcher !== '' && npcs.all[watcher].clan == 'security') {
       //testjpf needs a diceroll and create / return confrontation
       if (confrontation_check('player', watcher) == true) {
-        tasks.caution_builder(
+        tasks.task_builder(
           npcs.all[watcher],
           'questioning',
           'player',
@@ -200,7 +198,7 @@ function thief_consequences(
   }
 
   if (c.confront == false && c.type != 'neutral') {
-    tasks.caution_builder(npcs.all[w], c.type, s, 'theft')
+    tasks.task_builder(npcs.all[w], c.type, s, 'theft')
   }
   return c
 }
@@ -248,7 +246,7 @@ export function steal_check(s: NpcState, w: Npc, loot: string[]) {
       chest_item = remove_advantageous(s.inventory, loot, s.skills)
     }
 
-    add_chest_bonus(s, chest_item)
+    s.add_inventory_bonus(chest_item)
     //if (victim == true ){ remove_chest_bonus(w, chest_item) }
     s.cooldown = math.random(5, 15)
   }
