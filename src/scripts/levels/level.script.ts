@@ -7,10 +7,6 @@ const dt = math.randomseed(os.time())
 const { world } = globalThis.game
 const { rooms, npcs, player, tasks, novel, quests } = world
 
-//export function init() {
-//place_npcs()
-//}
-
 function calculate_heat(room: string) {
   let heat = 0
   let cold = 0

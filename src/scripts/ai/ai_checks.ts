@@ -15,7 +15,7 @@ import NpcState from '../states/npc'
 function tend_to_patient(p: string, doc: string) {
   npcs.all[doc].fsm.setState('mender')
   npcs.all[p].fsm.setState('mendee')
-  npcs.remove_injured(p)
+  //npcs.remove_injured(p)
   //print('tend_to_patient:: v: string, doc: string', v, doc)
   tasks.mendingQueue.splice(tasks.mendingQueue.indexOf(p), 1)
   if (npcs.all[doc].currentroom == player.currentroom)
@@ -24,7 +24,8 @@ function tend_to_patient(p: string, doc: string) {
       npc: doc,
     })
   //testjpf not sure i need this task:::
-  //tasks.task_builder(npcs.all[doc], 'mending', p, 'field')
+  //  tasks.task_builder(npcs.all[doc], 'mending', p, 'field')
+  tasks.task_builder(npcs.all[doc], 'mender', p, 'injury')
 }
 
 export function aid_check() {
@@ -41,7 +42,7 @@ export function aid_check() {
   for (const i of npcs.injured.filter(
     (n): n is string => !npcs.ignore.includes(n)
   )) {
-    // print('i:::', i)
+    print('Needsadoc!:::', i)
     const stations = rooms.all[npcs.all[i].currentroom].stations
     let sKey: keyof typeof stations
     for (sKey in stations) {
@@ -53,12 +54,12 @@ export function aid_check() {
         if (
           npcs.all[helper].clan == 'doctors' &&
           ((ticket != -1 && ticket < math.random(0, 5)) ||
-            (ticket == -1 && math.random() > 0.8))
+            (ticket == -1 && math.random() > 0.2))
         ) {
           tend_to_patient(i, helper)
           break
         } else if (
-          math.random() > 0.96 &&
+          math.random() > 0.36 &&
           tasks.npc_has_task(helper, i) == null &&
           tasks.has_ignore_task(i) == false
         ) {

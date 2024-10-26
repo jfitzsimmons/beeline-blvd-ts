@@ -135,6 +135,12 @@ export default class NpcState {
       })
   }
   private onInfirmStart(): void {
+    this.parent.clear_station(
+      this.currentroom,
+      this.currentstation,
+      this.labelname
+    )
+    this.turns_since_encounter = 99
     this.parent.add_infirmed(this.labelname)
     this.matrix = RoomsInitState.infirmary.matrix
     this.cooldown = 8
@@ -147,8 +153,11 @@ export default class NpcState {
   }
   private onInfirmEnd(): void {
     this.parent.remove_infirmed(this.labelname)
+    this.parent.remove_injured(this.labelname)
+    this.parent.remove_ignore(this.labelname)
   }
   private onInjuryStart(): void {
+    this.turns_since_encounter = 99
     this.parent.add_injured(this.labelname)
     this.hp = 0
   }
@@ -162,9 +171,12 @@ export default class NpcState {
   private onArresteeEnter(): void {}
   private onArresteeUpdate(): void {}
   private onArresteeExit(): void {}
-  private onMendeeEnter(): void {}
+  private onMendeeEnter(): void {
+    this.turns_since_encounter = 98
+    this.parent.add_ignore(this.labelname)
+  }
   private onMendeeUpdate(): void {
-    this.turns_since_encounter = 99
+    this.turns_since_encounter = 98
     if (this.hp > 4) {
       const vacancy = this.parent.send_to_infirmary(this.labelname)
       if (vacancy != null) {
@@ -174,15 +186,27 @@ export default class NpcState {
     } else {
       this.hp = this.hp + 1
     }
+    this.parent.prune_station_map(this.currentroom, this.currentstation)
   }
   private onMendeeExit(): void {}
-  private onMenderEnter(): void {}
-  private onMenderUpdate(): void {
-    this.turns_since_encounter = 99
+  private onMenderEnter(): void {
+    this.turns_since_encounter = 98
+    //TESTJPF STUCK
+    //create mender task??
+    //just when player enters room look for npcs with mender state?
+    //move them to mendee state?
+    //  this.parent.add_ignore(this.labelname)
   }
-  private onMenderExit(): void {}
-  private onNewEnter(): void {}
-  private onNewUpdate(): void {
+  private onMenderUpdate(): void {
+    this.turns_since_encounter = 98
+    //call func with current room as parameter
+    //if same as palyer room!!
+    this.parent.prune_station_map(this.currentroom, this.currentstation)
+  }
+  private onMenderExit(): void {
+    // this.parent.remove_ignore(this.labelname)
+  }
+  private onNewEnter(): void {
     if (this.hp > 0) {
       const { chosenRoom, chosenStation } = attempt_to_fill_station(
         RoomsInitPriority,
@@ -204,6 +228,8 @@ export default class NpcState {
     } else {
       this.fsm.setState('injury')
     }
+  }
+  private onNewUpdate(): void {
     this.fsm.setState('turn')
   }
   private onNewExit(): void {}

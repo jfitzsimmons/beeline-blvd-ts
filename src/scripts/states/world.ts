@@ -102,9 +102,11 @@ export default class World {
     this.rooms.all.grounds.fsm.setState('focus')
     this.player.currentroom = 'grounds'
     this.npcs.fsm.setState('new')
-    this.npcs.fsm.update(dt)
+
+    // this.npcs.fsm.update(dt)
     this.quests.fsm.setState('turn')
     //debug defaults
+    this.npcs.all[this.rooms.all.reception.stations.guest].hp = 0
     this.npcs.all[this.rooms.all.reception.stations.guest].fsm.setState(
       'injury'
     )
@@ -115,6 +117,7 @@ export default class World {
       'testing'
     )
     //quest
+    this.npcs.all[this.rooms.all.grounds.stations.worker1].hp = 0
     this.npcs.all[this.rooms.all.grounds.stations.worker1].fsm.setState(
       'injury'
     )

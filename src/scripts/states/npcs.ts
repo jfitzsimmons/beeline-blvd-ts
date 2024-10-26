@@ -238,6 +238,8 @@ export default class WorldNpcs {
       remove_infirmed: this.remove_infirmed.bind(this),
       add_injured: this.add_injured.bind(this),
       remove_injured: this.remove_injured.bind(this),
+      add_ignore: this.add_ignore.bind(this),
+      remove_ignore: this.remove_ignore.bind(this),
       ...roommethods,
       /** 
       getVicinityTargets: roommethods.getVicinityTargets.bind(this),
@@ -270,18 +272,18 @@ export default class WorldNpcs {
     this.return_security = this.return_security.bind(this)
   }
 
-  private onNewEnter(): void {}
-  private onNewUpdate(): void {
+  private onNewEnter(): void {
     print('npcsNewupdate')
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
       npc.fsm.setState('new')
-      npc.fsm.update(dt)
+      // npc.fsm.update(dt)
     }
     this.npcLists.reset_station_map()
     this.fsm.setState('turn')
   }
+  private onNewUpdate(): void {}
   private onNewExit(): void {}
   private onTurnEnter(): void {
     print('npcsturnenter')

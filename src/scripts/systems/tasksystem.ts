@@ -81,22 +81,30 @@ function focused_acts(c: Task) {
         c.turns--
       }
     }
-  } /**else if (c.cause == 'field' && c.authority == 'doctors') {
-    if (c.turns == 1) {
-      send_to_infirmary(c.target, c.owner)
-    } else {
-      if (npcs.all[c.owner].currentroom == player.currentroom)
-        msg.post(
-          `/${npcs.all[c.owner].currentstation}#npc_loader`,
-          hash('move_npc'),
-          {
-            station: npcs.all[c.target].currentstation,
-            npc: c.owner,
-          }
-        )
-      print(c.owner, 'tending to', c.target, 'in the field')
+  } else if (c.cause == 'injury' && c.label == 'mender') {
+    const hurt = npcs.all[c.target].hp < 4
+    if (npcs.all[c.owner].currentroom == player.currentroom && hurt == true) {
+      msg.post(
+        `/${npcs.all[c.owner].currentstation}#npc_loader`,
+        hash('move_npc'),
+        {
+          station: npcs.all[c.target].currentstation,
+          npc: c.owner,
+        }
+      )
+      print(
+        c.owner,
+        'STATION MOVE VIA TASK mending',
+        c.target,
+        'in',
+        npcs.all[c.owner].currentroom
+      )
     }
-  }*/
+    if (hurt == false) {
+      c.turns = 0
+      npcs.all[c.owner].fsm.setState('turn')
+    }
+  }
 }
 
 //Passive reactions to cautions
@@ -333,7 +341,7 @@ export function address_cautions() {
   )
   const { medical, conversational } = leftovercautions.reduce(
     (r: { [key: string]: Task[] }, o: Task) => {
-      r[o.label == 'mending' ? 'medical' : 'conversational'].push(o)
+      r[o.label == 'mender' ? 'medical' : 'conversational'].push(o)
       return r
     },
     { medical: [], conversational: [] }

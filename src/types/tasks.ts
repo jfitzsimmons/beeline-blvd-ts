@@ -89,6 +89,8 @@ export interface NpcMethod extends RoomMethod {
   remove_infirmed(n: string): void
   add_injured(n: string): void
   remove_injured(n: string): void
+  add_ignore(n: string): void
+  remove_ignore(n: string): void
   getVicinityTargets(): Direction
 }
 export interface QuestMethods {
