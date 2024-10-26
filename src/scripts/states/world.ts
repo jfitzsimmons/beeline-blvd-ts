@@ -42,6 +42,7 @@ export default class World {
       prune_station_map: this.rooms.prune_station_map.bind(this),
       get_station_map: this.rooms.get_station_map.bind(this),
       reset_station_map: this.rooms.reset_station_map.bind(this),
+      send_to_infirmary: this.rooms.send_to_infirmary.bind(this),
       get_player_room: this.player.get_player_room.bind(this),
       getVicinityTargets: this.getVicinityTargets.bind(this),
     }
@@ -103,6 +104,21 @@ export default class World {
     this.npcs.fsm.setState('new')
     this.npcs.fsm.update(dt)
     this.quests.fsm.setState('turn')
+    //debug defaults
+    this.npcs.all[this.rooms.all.reception.stations.guest].fsm.setState(
+      'injury'
+    )
+    this.tasks.task_builder(
+      this.npcs.all['security004'],
+      'questioning',
+      this.rooms.all.grounds.stations.assistant,
+      'testing'
+    )
+    //quest
+    this.npcs.all[this.rooms.all.grounds.stations.worker1].fsm.setState(
+      'injury'
+    )
+    this.npcs.add_ignore(this.rooms.all.grounds.stations.worker1)
   }
   private onNewUpdate(): void {}
   private onNewExit(): void {}

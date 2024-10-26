@@ -16,7 +16,7 @@ import {
 import {
   build_consequence,
   npc_confrontation,
-  send_to_infirmary,
+  //send_to_infirmary,
   snitch_check,
 } from './emergencysystem'
 import {
@@ -81,7 +81,7 @@ function focused_acts(c: Task) {
         c.turns--
       }
     }
-  } else if (c.cause == 'field' && c.authority == 'doctors') {
+  } /**else if (c.cause == 'field' && c.authority == 'doctors') {
     if (c.turns == 1) {
       send_to_infirmary(c.target, c.owner)
     } else {
@@ -96,7 +96,7 @@ function focused_acts(c: Task) {
         )
       print(c.owner, 'tending to', c.target, 'in the field')
     }
-  }
+  }*/
 }
 
 //Passive reactions to cautions

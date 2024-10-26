@@ -1,6 +1,7 @@
 import { Task } from '../../types/tasks'
 import { address_cautions } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
+import { aiActions } from '../ai/ai_main'
 
 const dt = math.randomseed(os.time())
 const { world } = globalThis.game
@@ -62,21 +63,21 @@ function confrontation_scene(c: Task) {
   novel.priority = true
   msg.post('proxies:/controller#novelcontroller', 'show_scene')
 }
-function game_turn(room: string) {
+function game_turn() {
   novel.priority = false
   novel.reason = 'none'
   novel.item = 'none'
   novel.reset_caution()
   //ai_turn() // abstract to world controller?
+
   print('game turn!!')
-  rooms.unfocus_room()
-  rooms.all[room].fsm.setState('focus')
   world.fsm.update(dt)
   //if i can incorporate confrontations
   //i can move the rest of this to various Turn fsm states
   //prob something like tasks.setState(progress)
   //quests.update_quests_progress('turn')
   //tasks.setState()
+  aiActions()
   quest_checker('turn')
 }
 interface props {
@@ -97,7 +98,7 @@ export function on_message(
   if (messageId == hash('room_load')) {
     this.roomname = message.roomname
     //TESTJPF can this whole conditional be moved to fsms???
-    if (message.load_type == 'room transition') game_turn(message.roomname)
+    if (message.load_type == 'room transition') game_turn()
     calculate_heat(this.roomname)
 
     const confrontation: Task | null = address_cautions()

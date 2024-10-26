@@ -82,6 +82,7 @@ export interface RoomMethod {
   get_station_map(): { [key: string]: { [key: string]: string } }
   reset_station_map(): void
   getVicinityTargets(): Direction
+  send_to_infirmary(npc: string): string | null
 }
 export interface NpcMethod extends RoomMethod {
   add_infirmed(n: string): void

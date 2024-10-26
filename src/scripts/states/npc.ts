@@ -136,26 +136,50 @@ export default class NpcState {
   }
   private onInfirmStart(): void {
     this.parent.add_infirmed(this.labelname)
+    this.matrix = RoomsInitState.infirmary.matrix
+    this.cooldown = 8
+    this.currentroom = 'infirmary'
   }
-  private onInfirmUpdate(): void {}
+  private onInfirmUpdate(): void {
+    this.hp = this.hp + 1
+    this.turns_since_encounter = 99
+    if (this.hp > 9) this.fsm.setState('turn')
+  }
   private onInfirmEnd(): void {
     this.parent.remove_infirmed(this.labelname)
   }
   private onInjuryStart(): void {
     this.parent.add_injured(this.labelname)
+    this.hp = 0
   }
   private onInjuryUpdate(): void {
-    this.parent.remove_injured(this.labelname)
+    this.turns_since_encounter = 99
+    this.parent.prune_station_map(this.currentroom, this.currentstation)
   }
-  private onInjuryEnd(): void {}
+  private onInjuryEnd(): void {
+    // this.parent.remove_injured(this.labelname)
+  }
   private onArresteeEnter(): void {}
   private onArresteeUpdate(): void {}
   private onArresteeExit(): void {}
   private onMendeeEnter(): void {}
-  private onMendeeUpdate(): void {}
+  private onMendeeUpdate(): void {
+    this.turns_since_encounter = 99
+    if (this.hp > 4) {
+      const vacancy = this.parent.send_to_infirmary(this.labelname)
+      if (vacancy != null) {
+        this.currentstation = vacancy
+        this.fsm.setState('infirm')
+      }
+    } else {
+      this.hp = this.hp + 1
+    }
+  }
   private onMendeeExit(): void {}
   private onMenderEnter(): void {}
-  private onMenderUpdate(): void {}
+  private onMenderUpdate(): void {
+    this.turns_since_encounter = 99
+  }
   private onMenderExit(): void {}
   private onNewEnter(): void {}
   private onNewUpdate(): void {

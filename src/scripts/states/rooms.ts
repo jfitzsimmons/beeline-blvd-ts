@@ -50,9 +50,24 @@ export default class WorldRooms {
     this.prune_station_map = this.prune_station_map.bind(this)
     this.get_station_map = this.get_station_map.bind(this)
     this.reset_station_map = this.reset_station_map.bind(this)
+    this.send_to_infirmary = this.send_to_infirmary.bind(this)
   }
   public get all(): Rooms {
     return this._all
+  }
+  send_to_infirmary(npc: string): string | null {
+    const occs = this.all.infirmary.occupants!
+    let ko: keyof typeof occs
+    for (ko in occs) {
+      if (occs[ko] == '') {
+        occs[ko] = npc
+        return ko
+      }
+    }
+    return null
+  }
+  send_to_jail() {
+    // testjpf todo this.all[this.roomsLists.get_player_room()].fsm.setState('idle')
   }
   unfocus_room() {
     this.all[this.roomsLists.get_player_room()].fsm.setState('idle')
@@ -94,10 +109,13 @@ export default class WorldRooms {
       this.fallbacks.stations[kfs] = ''
     }
   }
+
   private onTurnEnter(): void {
     //todo
   }
   private onTurnUpdate(): void {
+    this.unfocus_room()
+
     //give each npc the ability to delete their own station!!
     // this.clear_stations()
     //this is what whould go througheach room and click update

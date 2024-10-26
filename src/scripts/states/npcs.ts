@@ -216,6 +216,7 @@ export default class WorldNpcs {
   npcLists: NpcMethod
   infirmed: string[]
   injured: string[]
+  ignore: string[]
 
   constructor(roommethods: RoomMethod) {
     //testjpf npcs need their own statemachine.
@@ -223,6 +224,7 @@ export default class WorldNpcs {
 
     this.infirmed = []
     this.injured = []
+    this.ignore = []
     this.order = []
     this.quests = {
       return_doctors: this.return_doctors.bind(this),
@@ -231,17 +233,20 @@ export default class WorldNpcs {
       return_order_all: this.return_order_all.bind(this),
     }
     this.npcLists = {
-      get_player_room: roommethods.get_player_room.bind(this),
+      //get_player_room: roommethods.get_player_room.bind(this),
       add_infirmed: this.add_infirmed.bind(this),
       remove_infirmed: this.remove_infirmed.bind(this),
       add_injured: this.add_injured.bind(this),
       remove_injured: this.remove_injured.bind(this),
+      ...roommethods,
+      /** 
       getVicinityTargets: roommethods.getVicinityTargets.bind(this),
       clear_station: roommethods.clear_station.bind(this),
       set_station: roommethods.set_station.bind(this),
       prune_station_map: roommethods.prune_station_map.bind(this),
       get_station_map: roommethods.get_station_map.bind(this),
       reset_station_map: roommethods.reset_station_map.bind(this),
+      */
     }
     this._all = seedNpcs(this.npcLists)
     random_attributes(this.all, this.order)
@@ -297,7 +302,12 @@ export default class WorldNpcs {
   public get all(): Npcs {
     return this._all
   }
-
+  add_ignore(n: string): void {
+    this.ignore.push(n)
+  }
+  remove_ignore(n: string): void {
+    this.ignore.splice(this.ignore.indexOf(n), 1)
+  }
   add_infirmed(n: string): void {
     this.infirmed.push(n)
   }

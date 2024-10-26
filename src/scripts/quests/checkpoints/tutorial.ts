@@ -8,16 +8,11 @@ import { from_same_room } from '../../utils/quest'
 
 const { rooms, npcs, tasks, player, novel, info, quests } =
   globalThis.game.world
+
 function injured_checks(conditions: QuestConditions) {
   const { '0': injury } = conditions
   const quest = quests.all.tutorial.medic_assist
   const injured = npcs.all[rooms.all.grounds.stations.worker1]
-  // BUG::: testjpf I think this will
-  // let you interact with any doctor
-  //const doctor = npcs.all[novel.npc.labelname]
-
-  // const { conditions: cons } = quest
-  //const {"0":injury,"1":doc, "2":apple} = cons
 
   if (injury.fsm.getState() == 'idle' && injury.passed == true) {
     //todo testjpf should all be condition FSM states!!!
