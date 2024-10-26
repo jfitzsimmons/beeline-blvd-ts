@@ -34,7 +34,12 @@ export default class QuestState {
       onExit: this.onNewExit.bind(this),
     })
   }
-  private onNewEnter(): void {}
+  private onNewEnter(): void {
+    let kc: keyof typeof this.conditions
+    for (kc in this.conditions) {
+      this.conditions[kc].fsm.setState('idle')
+    }
+  }
   private onNewUpdate(): void {}
   private onNewExit(): void {}
   private onTurnEnter(): void {}

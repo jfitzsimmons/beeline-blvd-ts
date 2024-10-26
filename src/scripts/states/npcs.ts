@@ -296,6 +296,7 @@ export default class WorldNpcs {
       npc.fsm.update(dt)
     }
     this.npcLists.reset_station_map()
+    //this.aiChecks()
   }
   private onTurnExit(): void {}
 
@@ -352,6 +353,14 @@ export default class WorldNpcs {
       }
     }
   }
+  /** 
+  aidChecks() {
+    for (const i of this.injured.filter(
+      (n): n is string => !this.ignore.includes(n)
+    )) {
+      //externalaidcheck(i)
+    }
+  }*/
 }
 
 function adjust_binaries(value: number, clan: string, binary: string) {

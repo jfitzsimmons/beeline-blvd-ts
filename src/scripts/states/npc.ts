@@ -8,12 +8,12 @@ import {
   RoomsInitPriority,
   RoomsInitState,
 } from './inits/roomsInitState'
+import { itemStateInit } from './inits/inventoryInitState'
 import {
   attempt_to_fill_station,
-  set_npc_target,
   set_room_priority,
-} from '../ai/ai_main'
-import { itemStateInit } from './inits/inventoryInitState'
+  set_npc_target,
+} from '../utils/ai'
 
 // need npcs interface?
 export default class NpcState {

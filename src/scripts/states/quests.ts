@@ -46,7 +46,12 @@ export default class WorldQuests {
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
   private onNewExit(): void {}
-  private onTurnEnter(): void {}
+  private onTurnEnter(): void {
+    let kq: keyof typeof this.all.tutorial
+    for (kq in this.all.tutorial) {
+      this.all.tutorial[kq].fsm.setState('new')
+    }
+  }
   private onTurnUpdate(): void {
     this.update_quests_progress('turn')
     //testjpf should loop thru each quest and update

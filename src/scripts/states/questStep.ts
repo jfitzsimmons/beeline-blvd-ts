@@ -38,10 +38,10 @@ export default class QuestStep {
       onUpdate: this.onNewUpdate.bind(this),
       onExit: this.onNewExit.bind(this),
     })
-
+  }
+  private onNewEnter(): void {
     this.fsm.setState('idle')
   }
-  private onNewEnter(): void {}
   private onNewUpdate(): void {}
   private onNewExit(): void {}
   private onTurnEnter(): void {}
