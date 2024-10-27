@@ -33,6 +33,11 @@ export default class QuestStep {
       onUpdate: this.onActiveUpdate.bind(this),
       onExit: this.onActiveExit.bind(this),
     })
+    this.fsm.addState('complete', {
+      onEnter: this.onCompleteEnter.bind(this),
+      onUpdate: this.onCompleteUpdate.bind(this),
+      onExit: this.onCompleteExit.bind(this),
+    })
     this.fsm.addState('new', {
       onEnter: this.onNewEnter.bind(this),
       onUpdate: this.onNewUpdate.bind(this),
@@ -52,4 +57,7 @@ export default class QuestStep {
   private onActiveEnter(): void {}
   private onActiveUpdate(): void {}
   private onActiveExit(): void {}
+  private onCompleteEnter(): void {}
+  private onCompleteUpdate(): void {}
+  private onCompleteExit(): void {}
 }

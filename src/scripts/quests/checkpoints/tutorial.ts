@@ -37,7 +37,6 @@ function infirmary_checks(delivery: QuestStep) {
     novel.reason == 'favormedquest' &&
     delivery.fsm.getState() == 'idle'
   ) {
-    delivery.fsm.setState('active')
     player.add_inventory('vial02')
 
     //info.add_interaction(`${doctor.labelname}'s gave you clearance for 8 turns`)
@@ -50,7 +49,7 @@ function doctor_checks(conditions: QuestConditions) {
   // BUG::: testjpf I think this will
   // let you interact with any doctor
   const doctor = npcs.all[novel.npc.labelname]
-  const { '0': injury, '2': apple, '3': meds } = conditions
+  const { '0': injury, '2': apple, '3': meds, '5': delivery } = conditions
   // testjpf future have side_quesct_checks()????
 
   if (
@@ -182,8 +181,8 @@ function doctor_checks(conditions: QuestConditions) {
       target: 'player',
       authority: 'security',
     })
-    novel.remove_npc_quest(doctor.labelname)
-    tasks.remove_quest_tasks(doctor.labelname)
+    //novel.remove_npc_quest(doctor.labelname)
+    // tasks.remove_quest_tasks(doctor.labelname)
     novel.append_npc_quest(doctor.labelname)
     tasks.task_builder(doctor, 'quest', injured.labelname, 'waitingformeds')
 
@@ -234,7 +233,7 @@ function doctor_checks(conditions: QuestConditions) {
   } else if (
     // quest.side_quests![1].fsm.getState() == 'active' &&
     meds.fsm.getState() == 'active' &&
-    player.clearance - 3 < rooms.all[player.currentroom].clearance &&
+    player.clearance - 1 < rooms.all[player.currentroom].clearance &&
     from_same_room(npcs.return_security(), player.currentroom) != null
   ) {
     novel.caution.label = 'questioning'
@@ -250,6 +249,9 @@ function doctor_checks(conditions: QuestConditions) {
     novel.item == 'vial02' &&
     meds.passed == true
   ) {
+    print('goesoffalot?!?!?')
+    delivery.fsm.setState('active')
+
     novel.priority = true
     //TESTjpf start here
     const waiting = tasks.task_has_npc('waitingformeds')
@@ -264,6 +266,8 @@ function doctor_checks(conditions: QuestConditions) {
       novel.reason = 'docquestcomplete'
       novel.remove_npc_quest(doctor.labelname)
       tasks.remove_quest_tasks(doctor.labelname)
+      npcs.all[injured.labelname].fsm.setState('infirm')
+      npcs.all[doctor.labelname].fsm.setState('turn')
     } else {
       //testjpf start here
       //set up address)cautions for favors and quests TODO
@@ -294,12 +298,16 @@ function doctor_checks(conditions: QuestConditions) {
       novel.reason = 'askdocafavor'
     }
     novel.priority = true
+
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
     // removed after scene
+    /** 
     if (waiting != null) {
+      print('does this get calledhuhuh???')
       tasks.remove_quest_tasks(waiting)
       novel.remove_npc_quest(waiting)
-    }
+      
+    }**/
   }
 }
 function medic_assist_checks() {
@@ -321,6 +329,7 @@ function medic_assist_checks() {
   if (cons['0'].passed == true) injured_checks(cons)
   if (npcs.all[novel.npc.labelname].clan == 'doctors') {
     doctor_checks(cons)
+    //TESTJPF
   } else if (npcs.all[novel.npc.labelname].currentroom == 'infirmary') {
     print('novel reason pre infirm check', novel.reason)
     infirmary_checks(cons['5'])

@@ -88,7 +88,7 @@ export default class NpcState {
         // need to go through what could happen on an Aio_turn
         // maybbe interation too? / the if elses
         // keep .update in mind.  everything needs a .update
-        onEnter: this.onInfirmStart.bind(this),
+        onEnter: this.onInfirmEnter.bind(this),
         onUpdate: this.onInfirmUpdate.bind(this),
         onExit: this.onInfirmEnd.bind(this),
       })
@@ -145,7 +145,8 @@ export default class NpcState {
         onExit: this.onNewExit.bind(this),
       })
   }
-  private onInfirmStart(): void {
+  private onInfirmEnter(): void {
+    this.hp = 5
     this.parent.clear_station(
       this.currentroom,
       this.currentstation,

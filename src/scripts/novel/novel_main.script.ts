@@ -15,20 +15,25 @@ function prepare_novel_txts(
 ) {
   //TESTJPF could move some logic to novelcontroller
   const paths: string[] = []
-  const caution = tasks.npc_has_task('any', novel.npc.labelname)
+
   const quest_paths: string[] = prepareQuestTxts[player.checkpoint + 'scripts'](
     novel.npc.labelname
   )
+  print('NOVELVOVEL1:: questpaths', quest_paths[0])
+
   let checkpoint = player.checkpoint.slice(0, -1)
 
   if (extend == true) {
     checkpoint = player.checkpoint
   }
+  const caution = tasks.npc_has_task('any', novel.npc.labelname)
   if (caution != null) {
+    print('NOVELVOVEL2 Caution1:', caution?.label)
     novel.caution = { ...caution }
     //used for ai witnessing player and failing confrontation check
     //questioning without accusation
     if (!['concern'].includes(novel.reason)) novel.reason = caution.cause
+    print('NOVELVOVEL2 Caution2: novel.reason:', novel.reason)
     /**TESTJPF
      * this is checking if npcs has arrest or caution.
      * Player is checked on level
@@ -43,14 +48,18 @@ function prepare_novel_txts(
       ['questioning', 'arrest'].includes(novel.caution.label)
     )
       novel.reason = novel.caution.cause
+    print('NOVELVOVEL2 Caution3: novel.reason:', novel.reason)
   }
   if (novel.npcsWithQuest.includes(novel.npc.labelname)) novel.reason = 'quest'
+  print('NOVELVOVEL3 quest??: novel.reason:', novel.reason)
 
   if (room) paths.unshift(player.currentroom + '/default')
   if (novel.npc.currentstation != null) {
     paths.unshift('stations/' + novel.npc.currentstation)
     paths.unshift(player.currentroom + '/' + novel.npc.currentstation)
   }
+  print('NOVELVOVEL4 LAST reaso:', novel.reason)
+
   paths.push(`reasons/${novel.reason}`)
   paths.unshift('clans/' + novel.npc.clan)
   paths.unshift(checkpoint + '/default')
