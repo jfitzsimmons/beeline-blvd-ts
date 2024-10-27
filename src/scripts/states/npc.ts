@@ -8,12 +8,13 @@ import {
   RoomsInitPriority,
   RoomsInitState,
 } from './inits/roomsInitState'
+import { itemStateInit } from './inits/inventoryInitState'
 import {
   attempt_to_fill_station,
-  set_npc_target,
   set_room_priority,
-} from '../ai/ai_main'
-import { itemStateInit } from './inits/inventoryInitState'
+  set_npc_target,
+} from '../utils/ai'
+import { surrounding_room_matrix } from '../utils/utils'
 
 // need npcs interface?
 export default class NpcState {
@@ -108,6 +109,16 @@ export default class NpcState {
         onUpdate: this.onInjuryUpdate.bind(this),
         onExit: this.onInjuryEnd.bind(this),
       })
+      .addState('erfull', {
+        onEnter: this.onERfullEnter.bind(this),
+        onUpdate: this.onERfullUpdate.bind(this),
+        onExit: this.onERfullExit.bind(this),
+      })
+      .addState('paramedic', {
+        onEnter: this.onParamedicEnter.bind(this),
+        onUpdate: this.onParamedicUpdate.bind(this),
+        onExit: this.onParamedicExit.bind(this),
+      })
       .addState('mendee', {
         onEnter: this.onMendeeEnter.bind(this),
         onUpdate: this.onMendeeUpdate.bind(this),
@@ -135,51 +146,118 @@ export default class NpcState {
       })
   }
   private onInfirmStart(): void {
+    this.parent.clear_station(
+      this.currentroom,
+      this.currentstation,
+      this.labelname
+    )
+    this.turns_since_encounter = 99
     this.parent.add_infirmed(this.labelname)
+    this.matrix = RoomsInitState.infirmary.matrix
+    this.cooldown = 8
+    this.currentroom = 'infirmary'
   }
-  private onInfirmUpdate(): void {}
+  private onInfirmUpdate(): void {
+    this.hp = this.hp + 1
+    this.turns_since_encounter = 99
+    if (this.hp > 9) this.fsm.setState('turn')
+  }
   private onInfirmEnd(): void {
     this.parent.remove_infirmed(this.labelname)
+    this.parent.remove_injured(this.labelname)
+    this.parent.remove_ignore(this.labelname)
   }
   private onInjuryStart(): void {
+    this.turns_since_encounter = 99
     this.parent.add_injured(this.labelname)
+    this.hp = 0
   }
   private onInjuryUpdate(): void {
-    this.parent.remove_injured(this.labelname)
+    this.turns_since_encounter = 99
+    this.parent.prune_station_map(this.currentroom, this.currentstation)
   }
-  private onInjuryEnd(): void {}
+  private onInjuryEnd(): void {
+    // this.parent.remove_injured(this.labelname)
+  }
+  private onParamedicEnter(): void {}
+  private onParamedicUpdate(): void {
+    if (this.parent.getMendingQueue().length < 1) {
+      this.fsm.setState('turn')
+      return
+    }
+    const target = RoomsInitState[this.parent.returnMendeeLocation()].matrix
+    const rooms = this.makePriorityRoomList(target)
+    this.findRoomPlaceStation(rooms)
+  }
+  private onParamedicExit(): void {}
+
+  private onERfullEnter(): void {}
+  private onERfullUpdate(): void {
+    this.turns_since_encounter = 97
+    const patients = this.parent.get_infirmed()
+
+    if (math.random() + patients.length * 0.2 > 1) {
+      this.clearStation()
+      this.parent.set_station('infirmary', 'aid', this.labelname)
+      this.parent.prune_station_map('infirmary', 'aid')
+    } else if (patients.length > 3) {
+      const target = RoomsInitState.infirmary.matrix
+      const rooms = this.makePriorityRoomList(target)
+      this.findRoomPlaceStation(rooms)
+      if (this.parent.get_infirmed().length < 2) this.fsm.setState('turn')
+      //Force Doc to infirmary if overwhelmed
+    }
+  }
+  private onERfullExit(): void {}
   private onArresteeEnter(): void {}
   private onArresteeUpdate(): void {}
   private onArresteeExit(): void {}
-  private onMendeeEnter(): void {}
-  private onMendeeUpdate(): void {}
-  private onMendeeExit(): void {}
-  private onMenderEnter(): void {}
-  private onMenderUpdate(): void {}
-  private onMenderExit(): void {}
-  private onNewEnter(): void {}
-  private onNewUpdate(): void {
-    if (this.hp > 0) {
-      const { chosenRoom, chosenStation } = attempt_to_fill_station(
-        RoomsInitPriority,
-        this.labelname,
-        this.matrix,
-        this.clan,
-        this.parent.get_station_map()
-      )
-      this.currentroom = chosenRoom
-      this.parent.set_station(chosenRoom, chosenStation, this.labelname)
-      this.parent.prune_station_map(chosenRoom, chosenStation)
-      this.matrix = RoomsInitState[chosenRoom].matrix
-      this.currentstation = chosenStation
-      if (chosenRoom != this.parent.get_player_room()) {
-        this.turns_since_encounter = this.turns_since_encounter + 1
-      } else {
-        this.turns_since_encounter = 0
+  private onMendeeEnter(): void {
+    this.turns_since_encounter = 98
+    this.parent.add_ignore(this.labelname)
+    //testjpf need to remove injury tasks
+  }
+  private onMendeeUpdate(): void {
+    this.turns_since_encounter = 98
+    //print('MENDEEUP::: hp', this.hp)
+    this.hp = this.hp + 1
+    if (this.hp > 4) {
+      const vacancy = this.parent.send_to_infirmary(this.labelname)
+      if (vacancy != null) {
+        this.currentstation = vacancy
+        this.fsm.setState('infirm')
       }
+    } else {
+      this.parent.prune_station_map(this.currentroom, this.currentstation)
+    }
+  }
+  private onMendeeExit(): void {
+    this.parent.clear_station(
+      this.currentroom,
+      this.currentstation,
+      this.labelname
+    )
+  }
+  private onMenderEnter(): void {
+    this.turns_since_encounter = 98
+  }
+  private onMenderUpdate(): void {
+    this.turns_since_encounter = 98
+    //call func with current room as parameter
+    //if same as palyer room!!
+    this.parent.prune_station_map(this.currentroom, this.currentstation)
+  }
+  private onMenderExit(): void {
+    // this.parent.remove_ignore(this.labelname)
+  }
+  private onNewEnter(): void {
+    if (this.hp > 0) {
+      this.findRoomPlaceStation(RoomsInitPriority)
     } else {
       this.fsm.setState('injury')
     }
+  }
+  private onNewUpdate(): void {
     this.fsm.setState('turn')
   }
   private onNewExit(): void {}
@@ -188,70 +266,69 @@ export default class NpcState {
   }
   private onTurnUpdate(): void {
     this.exitroom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
-    //print(this.labelname, 'has UPDATED MOVE STATE', this.exitroom)
-
-    if (this.hp > 0) {
-      this.parent.clear_station(
-        this.currentroom,
-        this.currentstation,
-        this.labelname
-      )
-      const npcPriorityProps = {
-        matrix: this.matrix,
-        home: this.home,
-        //labelname: this.labelname,
-      }
-      const npcTurnProps = {
-        turns_since_encounter: this.turns_since_encounter,
-        ai_path: this.ai_path,
-        player: RoomsInitState[this.parent.get_player_room()].matrix,
-        ...npcPriorityProps,
-      }
-
-      const priorityroomlist = set_room_priority(
-        set_npc_target(this.parent.getVicinityTargets(), npcTurnProps),
-        npcPriorityProps
-      )
-      const { chosenRoom, chosenStation } = attempt_to_fill_station(
-        priorityroomlist,
-        this.labelname,
-        this.matrix,
-        this.clan,
-        this.parent.get_station_map()
-      )
-
-      this.currentroom = chosenRoom
-      this.parent.set_station(chosenRoom, chosenStation, this.labelname)
-      this.parent.prune_station_map(chosenRoom, chosenStation)
-
-      this.matrix = RoomsInitState[chosenRoom].matrix
-      this.currentstation = chosenStation
-      if (chosenRoom != this.parent.get_player_room()) {
-        this.turns_since_encounter = this.turns_since_encounter + 1
-      } else {
-        this.turns_since_encounter = 0
-      }
-      //TESTJPFNEXT TODO send roomlist to fillstation!!!
-      //move attempt to Rooms class? pass function to npc?!?!
-      //accepst room list and this.labelname
-      //sets room station agent
-      //returns room and station
-      // print('END END END')
-    } else {
-      this.fsm.setState('injury')
-    }
-    //now need to set station
-    //move from ai_main fill station
-    //tesjpf
-    /**
-     * so use ai_main to find new room and station
-     * change state and pass room and station?
-     */
     this.remove_effects(this.effects)
     if (this.cooldown > 0) this.cooldown = this.cooldown - 1
+    if (this.hp < 1) {
+      this.fsm.setState('injury')
+      return
+    }
+    this.clearStation()
+    const target = RoomsInitState[this.parent.get_player_room()].matrix
+    const rooms = this.makePriorityRoomList(target)
+    this.findRoomPlaceStation(rooms)
   }
   private onTurnExit(): void {
     print(this.labelname, 'has exited move state')
+  }
+
+  clearStation() {
+    this.parent.clear_station(
+      this.currentroom,
+      this.currentstation,
+      this.labelname
+    )
+  }
+  makePriorityRoomList(target: { x: number; y: number }): string[] {
+    const npcPriorityProps = {
+      matrix: this.matrix,
+      home: this.home,
+    }
+    const npcTurnProps = {
+      turns_since_encounter: this.turns_since_encounter,
+      ai_path: this.ai_path,
+      target: target,
+      ...npcPriorityProps,
+    }
+
+    return set_room_priority(
+      set_npc_target(
+        surrounding_room_matrix(target, this.matrix),
+        npcTurnProps
+      ),
+      npcPriorityProps
+    )
+  }
+
+  findRoomPlaceStation(rooms: string[]): void {
+    for (const test of rooms) print('TESTTOOMS ROOM:: ', test)
+    const { chosenRoom, chosenStation } = attempt_to_fill_station(
+      rooms,
+      this.labelname,
+      this.matrix,
+      this.clan,
+      this.parent.get_station_map()
+    )
+
+    this.currentroom = chosenRoom
+    this.parent.set_station(chosenRoom, chosenStation, this.labelname)
+    this.parent.prune_station_map(chosenRoom, chosenStation)
+    this.matrix = RoomsInitState[chosenRoom].matrix
+    this.currentstation = chosenStation
+    if (chosenRoom != this.parent.get_player_room()) {
+      this.turns_since_encounter = this.turns_since_encounter + 1
+    } else {
+      this.turns_since_encounter = 0
+    }
   }
   remove_inventory_bonus(i: string) {
     const item: InventoryTableItem = itemStateInit[i]

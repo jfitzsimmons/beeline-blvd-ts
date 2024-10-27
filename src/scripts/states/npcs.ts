@@ -216,6 +216,7 @@ export default class WorldNpcs {
   npcLists: NpcMethod
   infirmed: string[]
   injured: string[]
+  ignore: string[]
 
   constructor(roommethods: RoomMethod) {
     //testjpf npcs need their own statemachine.
@@ -223,6 +224,7 @@ export default class WorldNpcs {
 
     this.infirmed = []
     this.injured = []
+    this.ignore = []
     this.order = []
     this.quests = {
       return_doctors: this.return_doctors.bind(this),
@@ -231,17 +233,29 @@ export default class WorldNpcs {
       return_order_all: this.return_order_all.bind(this),
     }
     this.npcLists = {
-      get_player_room: roommethods.get_player_room.bind(this),
+      //get_player_room: roommethods.get_player_room.bind(this),
       add_infirmed: this.add_infirmed.bind(this),
+      get_infirmed: this.get_infirmed.bind(this),
+      get_injured: this.get_injured.bind(this),
       remove_infirmed: this.remove_infirmed.bind(this),
       add_injured: this.add_injured.bind(this),
       remove_injured: this.remove_injured.bind(this),
+      add_ignore: this.add_ignore.bind(this),
+      remove_ignore: this.remove_ignore.bind(this),
+      ...roommethods,
+      returnMendeeLocation: this.returnMendeeLocation.bind(this),
+      return_doctors: this.return_doctors.bind(this),
+      return_security: this.return_doctors.bind(this),
+      return_all: this.return_all.bind(this),
+      return_order_all: this.return_order_all.bind(this),
+      /** 
       getVicinityTargets: roommethods.getVicinityTargets.bind(this),
       clear_station: roommethods.clear_station.bind(this),
       set_station: roommethods.set_station.bind(this),
       prune_station_map: roommethods.prune_station_map.bind(this),
       get_station_map: roommethods.get_station_map.bind(this),
       reset_station_map: roommethods.reset_station_map.bind(this),
+      */
     }
     this._all = seedNpcs(this.npcLists)
     random_attributes(this.all, this.order)
@@ -265,18 +279,18 @@ export default class WorldNpcs {
     this.return_security = this.return_security.bind(this)
   }
 
-  private onNewEnter(): void {}
-  private onNewUpdate(): void {
+  private onNewEnter(): void {
     print('npcsNewupdate')
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
       npc.fsm.setState('new')
-      npc.fsm.update(dt)
+      // npc.fsm.update(dt)
     }
     this.npcLists.reset_station_map()
     this.fsm.setState('turn')
   }
+  private onNewUpdate(): void {}
   private onNewExit(): void {}
   private onTurnEnter(): void {
     print('npcsturnenter')
@@ -291,15 +305,51 @@ export default class WorldNpcs {
       npc.fsm.update(dt)
     }
     this.npcLists.reset_station_map()
+    this.medical()
+
+    //this.aiChecks()
   }
   private onTurnExit(): void {}
 
   public get all(): Npcs {
     return this._all
   }
+  returnMendeeLocation() {
+    return this.all[this.npcLists.getMendingQueue()[0]].currentroom
+  }
+  medical() {
+    let count = this.infirmed.length
 
+    //const count = this.npcLists.getMendingQueue().length
+    for (const doc of this.return_doctors()) {
+      const mobile = !['mender', 'mendee', 'injury', 'infirm'].includes(
+        doc.fsm.getState()
+      )
+      //testjpf todo unhardcode
+      //have a const that lists immobile states.!!!
+      if (mobile && count > 0) {
+        doc.fsm.setState('erfull')
+        count = count - 1
+      } else if (
+        mobile &&
+        count < 1 &&
+        this.npcLists.getMendingQueue().length > 0
+      ) {
+        doc.fsm.setState('paramedic')
+      }
+    }
+  }
+  add_ignore(n: string): void {
+    this.ignore.push(n)
+  }
+  remove_ignore(n: string): void {
+    this.ignore.splice(this.ignore.indexOf(n), 1)
+  }
   add_infirmed(n: string): void {
     this.infirmed.push(n)
+  }
+  get_infirmed(): string[] {
+    return this.infirmed
   }
   remove_infirmed(n: string): void {
     this.infirmed.splice(this.infirmed.indexOf(n), 1)
@@ -307,8 +357,11 @@ export default class WorldNpcs {
   add_injured(n: string): void {
     this.injured.push(n)
   }
+  get_injured(): string[] {
+    return this.injured
+  }
   remove_injured(n: string): void {
-    this.injured.splice(this.infirmed.indexOf(n), 1)
+    this.injured.splice(this.injured.indexOf(n), 1)
   }
   return_doctors(): NpcState[] {
     return [this.all.doc01, this.all.doc02, this.all.doc03]
@@ -342,6 +395,14 @@ export default class WorldNpcs {
       }
     }
   }
+  /** 
+  aidChecks() {
+    for (const i of this.injured.filter(
+      (n): n is string => !this.ignore.includes(n)
+    )) {
+      //externalaidcheck(i)
+    }
+  }*/
 }
 
 function adjust_binaries(value: number, clan: string, binary: string) {

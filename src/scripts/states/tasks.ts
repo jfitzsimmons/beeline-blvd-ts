@@ -43,6 +43,7 @@ export default class WorldTasks {
       onUpdate: this.onNewUpdate.bind(this),
       onExit: this.onNewExit.bind(this),
     })
+    this.getMendingQueue = this.getMendingQueue.bind(this)
   }
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
@@ -73,6 +74,9 @@ export default class WorldTasks {
   }*/
   public get all() {
     return this._all
+  }
+  getMendingQueue(): string[] {
+    return this.mendingQueue
   }
   task_has_npc(cause: string): string | null {
     for (let i = this.all.length - 1; i >= 0; i--) {
@@ -174,51 +178,58 @@ export default class WorldTasks {
 
   //TEstjpf need add task remove task
   //add_task_assist
-  task_builder(n: NpcState, c: string, s: string, cause = 'theft') {
+  task_builder(
+    owner: NpcState,
+    label: string,
+    target: string,
+    cause = 'theft'
+  ) {
     //explain why you need this testjpf
     //no nested ifs
     //cna this be done somewhere else?
     const append: Task = {
-      owner: n.labelname,
+      owner: owner.labelname,
       turns: 15,
-      label: c, // merits //testjpf state is a bad name
+      label, // merits //testjpf state is a bad name
       scope: 'npc',
-      authority: n.clan, //ex; labor
-      target: s,
+      authority: owner.clan, //ex; labor
+      target,
       cause,
     }
     //testjpf this is getting bad.  cleanup code
-    if (c == 'snitch') {
+    if (label == 'snitch') {
       append.authority = 'security'
       append.scope = 'clan'
-      if (s == 'player') {
+      if (target == 'player') {
         //this.questmethods.pq.increase_alert_level()
       }
-    } else if (c == 'merits') {
-      if (s == 'player') {
-        n.love = n.love + 1
+    } else if (label == 'merits') {
+      if (target == 'player') {
+        owner.love = owner.love + 1
       }
       append.turns = 3
-    } else if (c == 'demerits') {
-      if (s == 'player') {
-        n.love = n.love - 1
+    } else if (label == 'demerits') {
+      if (target == 'player') {
+        owner.love = owner.love - 1
       }
       append.turns = 3
-    } else if (c == 'reckless') {
+    } else if (label == 'reckless') {
       append.turns = 3
-    } else if (c == 'injury') {
+    } else if (label == 'injury') {
       append.authority = 'doctors'
       append.scope = 'clan'
       append.turns = 30
-    } else if (c == 'suspicious') {
+    } else if (label == 'suspicious') {
       append.label = 'snitch'
       append.authority = 'security'
       append.scope = 'clan'
       append.turns = 10
       append.cause = 'suspicious'
-    } else if (c == 'quest') {
+    } else if (label == 'quest') {
       append.turns = 72
       append.authority = 'player'
+    } else if (label == 'mender') {
+      append.turns = 99
     }
 
     print(

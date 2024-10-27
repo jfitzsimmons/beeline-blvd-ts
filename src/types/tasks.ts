@@ -1,5 +1,6 @@
 import NpcState from '../scripts/states/npc'
 import QuestState from '../scripts/states/quest'
+import QuestStep from '../scripts/states/questStep'
 import { Direction } from './ai'
 import { Npcs, Skills } from './state'
 
@@ -39,13 +40,14 @@ export interface ObjectiveCondition {
 */
 
 export interface QuestConditions {
-  [key: string | number]: QuestCondition
+  [key: string | number]: QuestStep
 }
 export interface QuestCondition {
+  id: string
   label: string
   solution?: string
   passed: boolean
-  status: 'inactive' | 'active' | 'complete' | 'standby' | 'failed'
+  //status: 'inactive' | 'active' | 'complete' | 'standby' | 'failed'
   interval: string[]
   func: { (args: [() => any, any]): boolean }[]
   args: [() => any, any][]
@@ -59,6 +61,7 @@ export interface Quests {
 }
 
 export interface Quest {
+  id: string
   passed: boolean
   // status: 'active' | 'inactive' | 'complete'
   conditions: QuestConditions
@@ -79,13 +82,24 @@ export interface RoomMethod {
   get_station_map(): { [key: string]: { [key: string]: string } }
   reset_station_map(): void
   getVicinityTargets(): Direction
+  send_to_infirmary(npc: string): string | null
+  getMendingQueue(): string[]
 }
 export interface NpcMethod extends RoomMethod {
   add_infirmed(n: string): void
+  get_infirmed(): string[]
   remove_infirmed(n: string): void
   add_injured(n: string): void
+  get_injured(): string[]
   remove_injured(n: string): void
+  add_ignore(n: string): void
+  remove_ignore(n: string): void
   getVicinityTargets(): Direction
+  return_doctors(): NpcState[]
+  return_security(): NpcState[]
+  return_all(): Npcs
+  return_order_all(): [string[], Npcs]
+  returnMendeeLocation(): string
 }
 export interface QuestMethods {
   [key: string]: (

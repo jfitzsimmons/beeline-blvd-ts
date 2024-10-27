@@ -50,12 +50,24 @@ export default class WorldRooms {
     this.prune_station_map = this.prune_station_map.bind(this)
     this.get_station_map = this.get_station_map.bind(this)
     this.reset_station_map = this.reset_station_map.bind(this)
+    this.send_to_infirmary = this.send_to_infirmary.bind(this)
   }
   public get all(): Rooms {
     return this._all
   }
-  unfocus_room() {
-    this.all[this.roomsLists.get_player_room()].fsm.setState('idle')
+  send_to_infirmary(npc: string): string | null {
+    const occs = this.all.infirmary.occupants!
+    let ko: keyof typeof occs
+    for (ko in occs) {
+      if (occs[ko] == '') {
+        occs[ko] = npc
+        return ko
+      }
+    }
+    return null
+  }
+  send_to_jail() {
+    // testjpf todo this.all[this.roomsLists.get_player_room()].fsm.setState('idle')
   }
   prune_station_map(room: string, station: string) {
     this.stationsMap[room][station] !== null
@@ -78,6 +90,11 @@ export default class WorldRooms {
       this.all[room].stations[station] = ''
     } else if (npc == this.fallbacks.stations[station]) {
       this.fallbacks.stations[station] = ''
+    } else if (
+      this.all[room].occupants !== undefined &&
+      npc == this.all[room].occupants![station]
+    ) {
+      this.all[room].occupants![station] = ''
     }
   }
   clear_stations() {
@@ -94,6 +111,7 @@ export default class WorldRooms {
       this.fallbacks.stations[kfs] = ''
     }
   }
+
   private onTurnEnter(): void {
     //todo
   }

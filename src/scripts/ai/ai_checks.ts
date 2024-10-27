@@ -8,43 +8,59 @@ import {
   remove_random,
 } from '../systems/inventorysystem'
 import { confrontation_consequence } from '../systems/tasksystem'
-import { injured_npcs } from '../systems/emergencysystem'
+//import { injured_npcs } from '../systems/emergencysystem'
 import { roll_special_dice } from '../utils/dice'
 import NpcState from '../states/npc'
 
-function tend_to_patient(v: string, doc: string) {
-  print('tend_to_patient:: v: string, doc: string', v, doc)
-  tasks.mendingQueue.splice(tasks.mendingQueue.indexOf(v), 1)
+function tend_to_patient(p: string, doc: string) {
+  npcs.all[doc].fsm.setState('mender')
+  npcs.all[p].fsm.setState('mendee')
+  tasks.remove_heat(p)
+  //npcs.remove_injured(p)
+  //print('tend_to_patient:: v: string, doc: string', v, doc)
+  tasks.mendingQueue.splice(tasks.mendingQueue.indexOf(p), 1)
   if (npcs.all[doc].currentroom == player.currentroom)
     msg.post(`/${npcs.all[doc].currentstation}#npc_loader`, hash('move_npc'), {
-      station: npcs.all[v].currentstation,
+      station: npcs.all[p].currentstation,
       npc: doc,
     })
-  tasks.task_builder(npcs.all[doc], 'mending', v, 'field')
+  //testjpf not sure i need this task:::
+  //  tasks.task_builder(npcs.all[doc], 'mending', p, 'field')
+  tasks.task_builder(npcs.all[doc], 'mender', p, 'injury')
 }
 
 export function aid_check() {
+  /**
+   * loop thru injured, see whos in the room.
+   * if not a doctor add an injury task??
+   * if doctor set state to mending move station to patient via message.
+   */
+
   //testjpf
   // we combined those 2 confusing arrays
-  const allInjured = [...tasks.mendingQueue, ...injured_npcs]
-  for (const i of allInjured) {
-    // print('i:::', i)
+  //const allInjured = [...tasks.mendingQueue, ...npcs.injured]
+
+  for (const i of npcs.injured.filter(
+    (n): n is string => !npcs.ignore.includes(n)
+  )) {
+    print('Needsadoc!:::', i)
     const stations = rooms.all[npcs.all[i].currentroom].stations
     let sKey: keyof typeof stations
     for (sKey in stations) {
       const helper = stations[sKey]
       //check each station for a chance for them to help injured
-      if (helper != '' && helper != i && math.random() < 0.4) {
+      if (helper != '' && helper != i) {
         //doctors start mending after RNG weighted by patient priority
+        const ticket = tasks.mendingQueue.indexOf(i)
         if (
           npcs.all[helper].clan == 'doctors' &&
-          tasks.mendingQueue.indexOf(i) != -1 &&
-          tasks.mendingQueue.indexOf(i) < math.random(0, 5)
+          ((ticket != -1 && ticket < math.random(0, 5)) ||
+            (ticket == -1 && math.random() > 0.2))
         ) {
           tend_to_patient(i, helper)
           break
         } else if (
-          math.random() > 0.96 &&
+          math.random() > 0.36 &&
           tasks.npc_has_task(helper, i) == null &&
           tasks.has_ignore_task(i) == false
         ) {

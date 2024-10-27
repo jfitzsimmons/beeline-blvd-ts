@@ -1,22 +1,27 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
-import { Quest } from '../../types/tasks'
-import QuestStep from './questStep'
+import { QuestCondition } from '../../types/tasks'
 //const dt = math.randomseed(os.time())
 
-export default class QuestState {
+export default class QuestStep {
   //private _questmethods: AllQuestsMethods
-  id: string
+  label: string
+  solution?: string
   passed: boolean
+  //status: 'Active' | 'active' | 'complete' | 'standby' | 'failed'
+  interval: string[]
+  func: { (args: [() => any, any]): boolean }[]
+  args: [() => any, any][]
   fsm: StateMachine
-  conditions: { [key: string]: QuestStep }
-  constructor(questparams: Quest) {
-    this.id = questparams.id
-    this.fsm = new StateMachine(this, 'quest' + this.id)
-    this.passed = questparams.passed
-    this.conditions = questparams.conditions
+  constructor(step: QuestCondition) {
+    this.label = step.label
+    this.passed = step.passed
+    this.interval = step.interval
+    this.func = step.func
+    this.args = step.args
     //this._spawn = 'grounds'
     //this.mendingQueue = []
+    this.fsm = new StateMachine(this, 'step' + step.id)
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
       onEnter: this.onTurnEnter.bind(this),
@@ -35,10 +40,7 @@ export default class QuestState {
     })
   }
   private onNewEnter(): void {
-    let kc: keyof typeof this.conditions
-    for (kc in this.conditions) {
-      this.conditions[kc].fsm.setState('idle')
-    }
+    this.fsm.setState('idle')
   }
   private onNewUpdate(): void {}
   private onNewExit(): void {}

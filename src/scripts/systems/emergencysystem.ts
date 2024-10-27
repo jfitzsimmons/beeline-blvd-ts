@@ -1,10 +1,9 @@
-import { Occupants } from '../../types/state'
+//import { Occupants } from '../../types/state'
 import { roll_special_dice } from '../utils/dice'
 import {
   //arraymove,
   clamp,
   shuffle,
-  surrounding_room_matrix,
 } from '../utils/utils'
 import { admirer_check, prejudice_check } from './effectsystem'
 import { bribe_check } from './inventorysystem'
@@ -15,10 +14,8 @@ import {
 } from './chaossystem'
 import { add_pledge, go_to_jail } from './systemshelpers'
 import { Task, Consequence } from '../../types/tasks'
-import { Direction } from '../../types/ai'
-import NpcState from '../states/npc'
 
-const { tasks, rooms, npcs, player } = globalThis.game.world
+const { tasks, npcs, player } = globalThis.game.world
 const questioning_checks: Array<
   (s: string, w: string) => { pass: boolean; type: string }
 > = [
@@ -38,7 +35,7 @@ const thief_consolations = [
 ]
 //Crime Consolations
 
-export const injured_npcs: string[] = []
+//export const injured_npcs: string[] = []
 
 function merits_demerits(suspect: string, watcher: string): Consequence {
   //print('merits_demertis:: suspect::', suspect)
@@ -214,6 +211,7 @@ export function npc_confrontation(s: string, c: Task) {
 }
 
 //medics:
+/** 
 export function send_to_infirmary(v: string, doc: string) {
   tasks.remove_heat(v)
   tasks.remove_mend(v)
@@ -222,60 +220,57 @@ export function send_to_infirmary(v: string, doc: string) {
   for (station in occupants) {
     const patient = occupants[station]
     if (patient == '') {
-      rooms.all.infirmary.occupants![station] = v
-      npcs.all[v].matrix = rooms.all.infirmary.matrix
-      npcs.all[v].cooldown = 8
-      npcs.all[v].currentroom = 'infirmary'
-      npcs.all[v].currentstation = station
+      // rooms.all.infirmary.occupants![station] = v
+      // npcs.all[v].matrix = rooms.all.infirmary.matrix
+      // npcs.all[v].cooldown = 8
+      //  npcs.all[v].currentroom = 'infirmary'
+      //  npcs.all[v].currentstation = station
       //print(v, 'infirmed for:', npcs.all[v].cooldown)
-      tasks.task_builder(npcs.all[doc], 'mending', v, 'office')
+
+      //TESTJPF::::
+      // handled on doc turn state, or maybe a new FSM respond state
+      // tasks.task_builder(npcs.all[doc], 'mending', v, 'office')
       break
     }
   }
-}
+}*/
 
-export function freeze_injured_npc(npc: NpcState) {
-  //reset npc into current position
-  // now testjpf func to npcstatemachine
-  // pass rooms all to npc class
-  // change npc state to injury!!
-  rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
-  //check if and where injured is located in Doctors' queue
-  //mending should be a state. q moved to NpcStates
-  //,move to npc add responder state
-  //TESTJPF TODO NOW //needs to be movedto npc mending state
-  //const limit = tasks.mendingQueue.indexOf(npc.labelname)
-  //if npc isn't in q, put them on all NPC's radar for caution creation
-  //instead us harmed state
-  /** 
+//export function freeze_injured_npc(npc: NpcState) {
+//reset npc into current position
+// now testjpf func to npcstatemachine
+// pass rooms all to npc class
+// change npc state to injury!!
+//rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
+//check if and where injured is located in Doctors' queue
+//mending should be a state. q moved to NpcStates
+//,move to npc add responder state
+//TESTJPF TODO NOW //needs to be movedto npc mending state
+//const limit = tasks.mendingQueue.indexOf(npc.labelname)
+//if npc isn't in q, put them on all NPC's radar for caution creation
+//instead us harmed state
+/** 
   if (limit < 0 && injured_npcs.includes(npc.labelname) == false) {
     injured_npcs.push(npc.labelname)
   } else if (limit > 3) {
     //if npc isn't in q, put them on Doctors' radar
     //(tasks.mendingQueue, limit, 0)
   }*/
-}
-
+//}
+/** 
 export function doctor_ai_turn(
-  npc: NpcState,
-  targets: Direction
+  npc: NpcState
+  //targets: Direction
 ): [Direction, boolean] {
   const patients = Object.values(rooms.all.infirmary.occupants!).filter(
     (p) => p != ''
   )
-  let docInOffice = false
-  let t = targets
+  //let docInOffice = false
+  let t: Direction = {}
   // does doctor have a field caution?
-  if (tasks.get_field_docs().includes(npc.labelname) == true) {
-    //stay put
-    rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
-  } else if (
-    patients.length > 1 &&
-    math.random() + patients.length * 0.1 > 0.6
-  ) {
+  if (patients.length > 1 && math.random() + patients.length * 0.1 > 0.6) {
     //RNG weighted by num of patients. Sends doc to infirmary.
     rooms.all.infirmary.stations.aid = npc.labelname
-    docInOffice = true
+    // docInOffice = true
   } else if (patients.length > 3) {
     //Force Doc to infirmary if overwhelmed
     t = surrounding_room_matrix(rooms.all.infirmary.matrix, npc.matrix)
@@ -287,5 +282,6 @@ export function doctor_ai_turn(
     )
   }
 
-  return [t, docInOffice]
+  return t
 }
+*/

@@ -89,7 +89,7 @@ export default class WorldInfo {
         let cNum: keyof typeof conditions
         for (cNum in conditions) {
           objectives[cPoint].quest[qKey].objective[cNum] = {
-            status: conditions[cNum].status,
+            status: conditions[cNum].fsm.getState(),
             label: conditions[cNum].label,
           }
         }
