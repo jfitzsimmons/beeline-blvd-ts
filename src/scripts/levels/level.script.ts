@@ -64,8 +64,6 @@ function game_turn() {
   novel.reason = 'none'
   novel.item = 'none'
   novel.reset_caution()
-  //ai_turn() // abstract to world controller?
-
   print('game turn!!')
   world.fsm.update(dt)
   //if i can incorporate confrontations

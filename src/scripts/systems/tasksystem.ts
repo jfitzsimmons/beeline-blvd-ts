@@ -1,6 +1,6 @@
 import { PlayerState } from '../../types/state'
 import { Task, Effect, Consequence } from '../../types/tasks'
-import { arraymove, shuffle } from '../utils/utils'
+import { shuffle } from '../utils/utils'
 import {
   fx,
   add_effects_bonus,
@@ -132,28 +132,22 @@ function npc_snitch_check(w: string, s: string) {
   }
   return caution_state
 }
-function adjust_medic_queue(patient: string) {
-  if (tasks.mendingQueue.includes(patient) == true) {
-    if (tasks.mendingQueue.indexOf(patient) > 1)
-      arraymove(tasks.mendingQueue, tasks.mendingQueue.indexOf(patient), 0)
-  } else {
-    print('cautions caused patient:', patient, 'to be added to mendingQueue')
-    tasks.mendingQueue.push(patient)
-  }
-}
-function handle_temp_clearance(level: string, cleared: string, time: number) {
+
+//testjpf now this should probably be moved to player and npc??
+//how?
+function handle_temp_clearance(scope: string, owner: string, turns: number) {
   //testjpf previously/ player or npc should have had state switched to promote
-  //when times up set state to demote
-  const levelNum: number = tonumber(level.charAt(level.length - 1))!
-  print('time clearance too low::??', time)
-  if (time > 1) {
-    cleared == 'player'
-      ? (player.clearance = levelNum)
-      : (npcs.all[cleared].clearence = levelNum)
+  //when turnss up set state to demote
+  const scopeNum: number = tonumber(scope.charAt(scope.length - 1))!
+  print('turns clearance too low::??', turns)
+  if (turns > 1) {
+    owner == 'player'
+      ? (player.clearance = scopeNum)
+      : (npcs.all[owner].clearence = scopeNum)
   } else {
-    cleared == 'player'
-      ? (player.clearance = player.clearance - levelNum)
-      : (npcs.all[cleared].clearence = npcs.all[cleared].clearence - levelNum)
+    owner == 'player'
+      ? (player.clearance = player.clearance - scopeNum)
+      : (npcs.all[owner].clearence = npcs.all[owner].clearence - scopeNum)
   }
 }
 function merits_demerits(c: Task, w: string) {
@@ -200,8 +194,13 @@ function snitch_to_security(c: Task, watcher: string) {
 function passive_acts(c: Task, w: string) {
   if (c.label == 'reckless') {
     reckless_consequence(c, w)
-  } else if (c.label == 'injury') {
-    adjust_medic_queue(c.target)
+  } else if (
+    c.authority == 'doctors' &&
+    c.label == 'injury' &&
+    (c.authority == npcs.all[w].clan || c.authority == npcs.all[w].labelname)
+  ) {
+    tasks.addAdjustMendingQueue(c.target)
+    c.turns = 0
   } else if (
     c.authority == 'security' &&
     c.label == 'snitch' &&
@@ -327,6 +326,7 @@ function address_busy_acts(cs: Task[]) {
 export function address_cautions() {
   //testjpf why sort by time??
   //needs better naming conventions
+  //This should be handles be TASKS.fsm.update(dt)!!!
   const sortedTasks = tasks.all.sort((a: Task, b: Task) => a.turns - b.turns)
   const { confrontational, leftovercautions } = sortedTasks.reduce(
     (r: { [key: string]: Task[] }, o: Task) => {

@@ -3,6 +3,7 @@ import StateMachine from './stateMachine'
 import { QuestMethods, Task } from '../../types/tasks'
 import NpcState from './npc'
 import TaskState from './task'
+import { arraymove } from '../utils/utils'
 
 const dt = math.randomseed(os.time())
 /** 
@@ -77,6 +78,15 @@ export default class WorldTasks {
   }
   getMendingQueue(): string[] {
     return this.mendingQueue
+  }
+  addAdjustMendingQueue(patient: string) {
+    if (this.mendingQueue.includes(patient) == true) {
+      if (this.mendingQueue.indexOf(patient) > 1)
+        arraymove(this.mendingQueue, this.mendingQueue.indexOf(patient), 0)
+    } else {
+      print('cautions caused patient:', patient, 'to be added to mendingQueue')
+      this.mendingQueue.push(patient)
+    }
   }
   task_has_npc(cause: string): string | null {
     for (let i = this.all.length - 1; i >= 0; i--) {
