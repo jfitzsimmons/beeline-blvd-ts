@@ -321,7 +321,7 @@ export default class WorldNpcs {
     this.injured.push(n)
   }
   remove_injured(n: string): void {
-    this.injured.splice(this.infirmed.indexOf(n), 1)
+    this.injured.splice(this.injured.indexOf(n), 1)
   }
   return_doctors(): NpcState[] {
     return [this.all.doc01, this.all.doc02, this.all.doc03]

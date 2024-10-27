@@ -142,15 +142,14 @@ function doctor_checks(conditions: QuestConditions) {
     // testjpf this is overwriting my scriptsdialog functions
     novel.npc = doctor
     novel.priority = true
-    tasks.append_task({
-      label: 'mending',
-      turns: 100,
-      scope: 'quest',
-      cause: 'field',
-      owner: doctor.labelname,
-      target: injured.labelname,
-      authority: 'doctors',
-    })
+    npcs.all[doctor.labelname].fsm.setState('mender')
+    tasks.task_builder(
+      npcs.all[doctor.labelname],
+      'mender',
+      rooms.all.grounds.stations.worker1,
+      'injury'
+    )
+
     info.add_interaction(`${injured.labelname} likes that you got a doctor.`)
     injured.love = injured.love + 1
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
@@ -344,9 +343,15 @@ export function tutorialA(interval = 'turn') {
     math.random() > 0.5
       ? rooms.all.grounds.actors.player_luggage
       : rooms.all.grounds.actors.other_luggage
-  if (luggage.inventory.length > 0 && interval == 'turn') {
+
+  const guest2 = npcs.all[rooms.all['grounds'].stations.guest2]
+  if (
+    luggage.inventory.length > 0 &&
+    interval == 'turn' &&
+    guest2 != null &&
+    guest2.clan != 'doctors'
+  ) {
     const worker2 = npcs.all[rooms.all['grounds'].stations.worker2]
-    const guest2 = npcs.all[rooms.all['grounds'].stations.guest2]
 
     if (worker2 != null && worker2.cooldown <= 0) {
       guest2 == null

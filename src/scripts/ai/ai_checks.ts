@@ -15,6 +15,7 @@ import NpcState from '../states/npc'
 function tend_to_patient(p: string, doc: string) {
   npcs.all[doc].fsm.setState('mender')
   npcs.all[p].fsm.setState('mendee')
+  tasks.remove_heat(p)
   //npcs.remove_injured(p)
   //print('tend_to_patient:: v: string, doc: string', v, doc)
   tasks.mendingQueue.splice(tasks.mendingQueue.indexOf(p), 1)

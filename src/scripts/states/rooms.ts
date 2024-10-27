@@ -69,9 +69,6 @@ export default class WorldRooms {
   send_to_jail() {
     // testjpf todo this.all[this.roomsLists.get_player_room()].fsm.setState('idle')
   }
-  unfocus_room() {
-    this.all[this.roomsLists.get_player_room()].fsm.setState('idle')
-  }
   prune_station_map(room: string, station: string) {
     this.stationsMap[room][station] !== null
       ? delete this.stationsMap[room][station]
@@ -93,6 +90,11 @@ export default class WorldRooms {
       this.all[room].stations[station] = ''
     } else if (npc == this.fallbacks.stations[station]) {
       this.fallbacks.stations[station] = ''
+    } else if (
+      this.all[room].occupants !== undefined &&
+      npc == this.all[room].occupants![station]
+    ) {
+      this.all[room].occupants![station] = ''
     }
   }
   clear_stations() {
@@ -114,8 +116,6 @@ export default class WorldRooms {
     //todo
   }
   private onTurnUpdate(): void {
-    this.unfocus_room()
-
     //give each npc the ability to delete their own station!!
     // this.clear_stations()
     //this is what whould go througheach room and click update

@@ -82,7 +82,7 @@ function focused_acts(c: Task) {
       }
     }
   } else if (c.cause == 'injury' && c.label == 'mender') {
-    const hurt = npcs.all[c.target].hp < 4
+    const hurt = npcs.all[c.target].hp < 5
     if (npcs.all[c.owner].currentroom == player.currentroom && hurt == true) {
       msg.post(
         `/${npcs.all[c.owner].currentstation}#npc_loader`,

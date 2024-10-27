@@ -23,10 +23,10 @@ export default class QuestState {
       onUpdate: this.onTurnUpdate.bind(this),
       onExit: this.onTurnExit.bind(this),
     })
-    this.fsm.addState('inactive', {
-      onEnter: this.onInactiveEnter.bind(this),
-      onUpdate: this.onInactiveUpdate.bind(this),
-      onExit: this.onInactiveExit.bind(this),
+    this.fsm.addState('active', {
+      onEnter: this.onActiveEnter.bind(this),
+      onUpdate: this.onActiveUpdate.bind(this),
+      onExit: this.onActiveExit.bind(this),
     })
     this.fsm.addState('new', {
       onEnter: this.onNewEnter.bind(this),
@@ -47,7 +47,7 @@ export default class QuestState {
     //testjpf
   }
   private onTurnExit(): void {}
-  private onInactiveEnter(): void {}
-  private onInactiveUpdate(): void {}
-  private onInactiveExit(): void {}
+  private onActiveEnter(): void {}
+  private onActiveUpdate(): void {}
+  private onActiveExit(): void {}
 }

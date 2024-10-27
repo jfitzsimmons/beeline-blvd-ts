@@ -174,9 +174,12 @@ export default class NpcState {
   private onMendeeEnter(): void {
     this.turns_since_encounter = 98
     this.parent.add_ignore(this.labelname)
+    //testjpf need to remove injury tasks
   }
   private onMendeeUpdate(): void {
     this.turns_since_encounter = 98
+    //print('MENDEEUP::: hp', this.hp)
+    this.hp = this.hp + 1
     if (this.hp > 4) {
       const vacancy = this.parent.send_to_infirmary(this.labelname)
       if (vacancy != null) {
@@ -184,11 +187,16 @@ export default class NpcState {
         this.fsm.setState('infirm')
       }
     } else {
-      this.hp = this.hp + 1
+      this.parent.prune_station_map(this.currentroom, this.currentstation)
     }
-    this.parent.prune_station_map(this.currentroom, this.currentstation)
   }
-  private onMendeeExit(): void {}
+  private onMendeeExit(): void {
+    this.parent.clear_station(
+      this.currentroom,
+      this.currentstation,
+      this.labelname
+    )
+  }
   private onMenderEnter(): void {
     this.turns_since_encounter = 98
     //TESTJPF STUCK

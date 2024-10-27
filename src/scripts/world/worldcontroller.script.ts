@@ -8,7 +8,7 @@ import { url } from '../../types/utils'
 globalThis.game = new Game()
 const game = globalThis.game
 const { world } = game
-const { rooms } = world
+const { rooms, player } = world
 
 interface props {
   is_level: boolean
@@ -69,6 +69,7 @@ export function on_message(
     this.load_type = message.load_type
     print('--- === ::: NEW ROOM LOADED ::: === ---')
     handleTurnStates(this.load_type)
+    rooms.all[player.currentroom].fsm.setState('idle')
     rooms.all[this.roomname].fsm.setState('focus')
 
     show(this.current_proxy, '#' + this.roomname)
