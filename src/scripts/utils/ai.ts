@@ -174,7 +174,7 @@ export function set_npc_target(
     turns_since_encounter: number
     ai_path: string
     matrix: { x: number; y: number }
-    player: { x: number; y: number }
+    target: { x: number; y: number }
     home: { x: number; y: number }
   }
 ) {
@@ -210,7 +210,7 @@ export function set_npc_target(
       target = direction.left
     }
   } else if (n.ai_path == 'clyde') {
-    const distance = n.matrix.x - n.player.x + (n.matrix.y - direction.center.y)
+    const distance = n.matrix.x - n.target.x + (n.matrix.y - direction.center.y)
     //random front, back, left, right unless too close and fail 50/50 check
     if (distance > -2 && distance < 2 && math.random() > 0.5) {
       target = n.home

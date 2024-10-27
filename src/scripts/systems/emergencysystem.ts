@@ -4,7 +4,6 @@ import {
   //arraymove,
   clamp,
   shuffle,
-  surrounding_room_matrix,
 } from '../utils/utils'
 import { admirer_check, prejudice_check } from './effectsystem'
 import { bribe_check } from './inventorysystem'
@@ -15,10 +14,8 @@ import {
 } from './chaossystem'
 import { add_pledge, go_to_jail } from './systemshelpers'
 import { Task, Consequence } from '../../types/tasks'
-import { Direction } from '../../types/ai'
-import NpcState from '../states/npc'
 
-const { tasks, rooms, npcs, player } = globalThis.game.world
+const { tasks, npcs, player } = globalThis.game.world
 const questioning_checks: Array<
   (s: string, w: string) => { pass: boolean; type: string }
 > = [
@@ -259,27 +256,21 @@ export function send_to_infirmary(v: string, doc: string) {
     //(tasks.mendingQueue, limit, 0)
   }*/
 //}
-
+/** 
 export function doctor_ai_turn(
-  npc: NpcState,
-  targets: Direction
+  npc: NpcState
+  //targets: Direction
 ): [Direction, boolean] {
   const patients = Object.values(rooms.all.infirmary.occupants!).filter(
     (p) => p != ''
   )
-  let docInOffice = false
-  let t = targets
+  //let docInOffice = false
+  let t: Direction = {}
   // does doctor have a field caution?
-  if (tasks.get_field_docs().includes(npc.labelname) == true) {
-    //stay put
-    rooms.all[npc.currentroom].stations[npc.currentstation] = npc.labelname
-  } else if (
-    patients.length > 1 &&
-    math.random() + patients.length * 0.1 > 0.6
-  ) {
+  if (patients.length > 1 && math.random() + patients.length * 0.1 > 0.6) {
     //RNG weighted by num of patients. Sends doc to infirmary.
     rooms.all.infirmary.stations.aid = npc.labelname
-    docInOffice = true
+    // docInOffice = true
   } else if (patients.length > 3) {
     //Force Doc to infirmary if overwhelmed
     t = surrounding_room_matrix(rooms.all.infirmary.matrix, npc.matrix)
@@ -291,5 +282,6 @@ export function doctor_ai_turn(
     )
   }
 
-  return [t, docInOffice]
+  return t
 }
+*/

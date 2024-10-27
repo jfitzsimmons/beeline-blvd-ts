@@ -83,15 +83,23 @@ export interface RoomMethod {
   reset_station_map(): void
   getVicinityTargets(): Direction
   send_to_infirmary(npc: string): string | null
+  getMendingQueue(): string[]
 }
 export interface NpcMethod extends RoomMethod {
   add_infirmed(n: string): void
+  get_infirmed(): string[]
   remove_infirmed(n: string): void
   add_injured(n: string): void
+  get_injured(): string[]
   remove_injured(n: string): void
   add_ignore(n: string): void
   remove_ignore(n: string): void
   getVicinityTargets(): Direction
+  return_doctors(): NpcState[]
+  return_security(): NpcState[]
+  return_all(): Npcs
+  return_order_all(): [string[], Npcs]
+  returnMendeeLocation(): string
 }
 export interface QuestMethods {
   [key: string]: (

@@ -43,6 +43,7 @@ export default class WorldTasks {
       onUpdate: this.onNewUpdate.bind(this),
       onExit: this.onNewExit.bind(this),
     })
+    this.getMendingQueue = this.getMendingQueue.bind(this)
   }
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
@@ -73,6 +74,9 @@ export default class WorldTasks {
   }*/
   public get all() {
     return this._all
+  }
+  getMendingQueue(): string[] {
+    return this.mendingQueue
   }
   task_has_npc(cause: string): string | null {
     for (let i = this.all.length - 1; i >= 0; i--) {

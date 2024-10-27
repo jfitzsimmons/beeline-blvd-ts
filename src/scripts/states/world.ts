@@ -29,6 +29,7 @@ export default class World {
   loadType: string
   constructor() {
     this.fsm = new StateMachine(this, 'world')
+    this.tasks = new WorldTasks()
     this.player = new WorldPlayer()
     const playerMethods = {
       set_room_info: this.player.set_room_info.bind(this),
@@ -45,11 +46,11 @@ export default class World {
       send_to_infirmary: this.rooms.send_to_infirmary.bind(this),
       get_player_room: this.player.get_player_room.bind(this),
       getVicinityTargets: this.getVicinityTargets.bind(this),
+      getMendingQueue: this.tasks.getMendingQueue.bind(this),
     }
     this.npcs = new WorldNpcs(roommethods)
     this.novel = new WorldNovel(this.npcs.all.labor01)
 
-    this.tasks = new WorldTasks()
     const allquestmethods: AllQuestsMethods = {
       pq: this.player.quests,
       nq: this.npcs.quests,
