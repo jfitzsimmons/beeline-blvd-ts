@@ -143,11 +143,11 @@ function handle_temp_clearance(scope: string, owner: string, turns: number) {
   if (turns > 1) {
     owner == 'player'
       ? (player.clearance = scopeNum)
-      : (npcs.all[owner].clearence = scopeNum)
+      : (npcs.all[owner].clearance = scopeNum)
   } else {
     owner == 'player'
       ? (player.clearance = player.clearance - scopeNum)
-      : (npcs.all[owner].clearence = npcs.all[owner].clearence - scopeNum)
+      : (npcs.all[owner].clearance = npcs.all[owner].clearance - scopeNum)
   }
 }
 function merits_demerits(c: Task, w: string) {
@@ -276,15 +276,15 @@ function address_confrontations(cs: Task[]): Task | null {
   for (let i = cs.length - 1; i >= 0; i--) {
     const c = cs[i]
     const agent = npcs.all[c.owner]
-    const suspect: NpcState | PlayerState =
+    const target: NpcState | PlayerState =
       c.target === 'player' ? player.state : npcs.all[c.target]
 
     if (
-      agent.currentroom == suspect.currentroom ||
-      (agent.currentroom == suspect.exitroom &&
-        agent.exitroom == suspect.currentroom)
+      agent.currentroom == target.currentroom ||
+      (agent.currentroom == target.exitroom &&
+        agent.exitroom == target.currentroom)
     ) {
-      c.target !== 'player' && npc_confrontation(suspect.labelname, c)
+      c.target !== 'player' && npc_confrontation(target.labelname, c)
       c.turns = 0
       // confront =
       return c.target == 'player' ? c : null
@@ -327,6 +327,7 @@ export function address_cautions() {
   //testjpf why sort by time??
   //needs better naming conventions
   //This should be handles be TASKS.fsm.update(dt)!!!
+  // need playerconfront prop on TASKS??
   const sortedTasks = tasks.all.sort((a: Task, b: Task) => a.turns - b.turns)
   const { confrontational, leftovercautions } = sortedTasks.reduce(
     (r: { [key: string]: Task[] }, o: Task) => {

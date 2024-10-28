@@ -19,14 +19,14 @@ function prepare_novel_txts(
   const quest_paths: string[] = prepareQuestTxts[player.checkpoint + 'scripts'](
     novel.npc.labelname
   )
-  print('NOVELVOVEL1:: questpaths', quest_paths[0])
+  print('NOVELVOVEL1:: questpaths', quest_paths[0], novel.npc.labelname)
 
   let checkpoint = player.checkpoint.slice(0, -1)
 
   if (extend == true) {
     checkpoint = player.checkpoint
   }
-  const caution = tasks.npc_has_task('any', novel.npc.labelname)
+  const caution = tasks.npc_has_task(novel.npc.labelname, 'player')
   if (caution != null) {
     print('NOVELVOVEL2 Caution1:', caution?.label)
     novel.caution = { ...caution }

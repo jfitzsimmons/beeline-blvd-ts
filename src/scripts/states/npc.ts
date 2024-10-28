@@ -22,7 +22,7 @@ export default class NpcState {
   home: { x: number; y: number }
   labelname: string
   inventory: string[]
-  clearence: number
+  clearance: number
   clan: string
   body: string
   convos: number
@@ -50,7 +50,7 @@ export default class NpcState {
     this.home = NpcsInitState[n].home
     this.labelname = NpcsInitState[n].labelname
     this.inventory = NpcsInitState[n].inventory
-    this.clearence = NpcsInitState[n].clearence
+    this.clearance = NpcsInitState[n].clearance
     this.clan = NpcsInitState[n].clan
     this.body = NpcsInitState[n].body
     this.fsm = new StateMachine(this, 'npc' + n)

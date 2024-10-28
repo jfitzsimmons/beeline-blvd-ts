@@ -16,7 +16,7 @@ export interface Npc extends NpcDefaults {
   home: { x: number; y: number }
   labelname: string
   inventory: string[]
-  clearence: number
+  clearance: number
   clan: string
   body: string
 }

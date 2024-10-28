@@ -96,7 +96,10 @@ export function on_message(
     //TESTJPF can this whole conditional be moved to fsms???
     if (message.load_type == 'room transition') game_turn()
     calculate_heat(this.roomname)
-
+    //testjpf im guessing the issue is that address_Cautions
+    //is already imported.
+    //if i moved it to Tasks.fsm i bet it would be ok
+    //and it would find new clearance caution form aiActions()
     const confrontation: Task | null = address_cautions()
     msg.post(this.roomname + ':/level#' + this.roomname, 'room_load')
     //position player on screen

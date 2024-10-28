@@ -45,6 +45,7 @@ export default class WorldTasks {
       onExit: this.onNewExit.bind(this),
     })
     this.getMendingQueue = this.getMendingQueue.bind(this)
+    this.npc_has_task = this.npc_has_task.bind(this)
   }
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
@@ -157,9 +158,11 @@ export default class WorldTasks {
     }
     return false
   }
-  npc_has_task(owner: string, sus: string): TaskState | null {
+  npc_has_task(owner: string, target: string): TaskState | null {
+    print('npc_has_task', owner, target)
     for (const c of this.all) {
-      if ((owner == 'any' || c.owner == owner) && c.target == sus) {
+      print('npc_has_task:: C:', c.owner, c.target, c.label)
+      if ((owner == 'any' || c.owner == owner) && c.target == target) {
         return c
       }
     }
