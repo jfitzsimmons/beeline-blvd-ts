@@ -54,13 +54,15 @@ function confrontation_scene(c: Task) {
 
   //testjpf this is for player
   //is not using script builder
+  //novel.reason is not the same thing as task.cause
+  //novel may need better naming conventions
   novel.reason = c.owner
   novel.caution = { ...c }
-  novel.priority = true
+  novel.forced = true
   msg.post('proxies:/controller#novelcontroller', 'show_scene')
 }
 function game_turn() {
-  novel.priority = false
+  novel.forced = false
   novel.reason = 'none'
   novel.item = 'none'
   novel.reset_caution()
@@ -105,7 +107,7 @@ export function on_message(
     quest_checker('interact')
 
     print('exitgui reason::', novel.reason)
-    novel.priority = false
+    novel.forced = false
     novel.reason = 'none'
     novel.item = 'none'
     novel.reset_caution()

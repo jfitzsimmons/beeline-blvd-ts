@@ -311,7 +311,7 @@ export default class NpcState {
   }
 
   findRoomPlaceStation(rooms: string[]): void {
-    for (const test of rooms) print('TESTTOOMS ROOM:: ', test)
+    //for (const test of rooms) print('TESTTOOMS ROOM:: ', test)
     const { chosenRoom, chosenStation } = attempt_to_fill_station(
       rooms,
       this.labelname,

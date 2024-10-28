@@ -102,10 +102,18 @@ export default class WorldTasks {
     //print('busy_doc:: docs[0]:', docs[0])
     return injuries
   }
+  removeTaskByLabel(owner: string, label: string) {
+    for (let i = this.all.length - 1; i >= 0; i--) {
+      const c = this.all[i]
+      if (c.owner == owner && [label].includes(c.label)) {
+        this.all.splice(i, 1)
+      }
+    }
+  }
   remove_quest_tasks(owner: string) {
     for (let i = this.all.length - 1; i >= 0; i--) {
       const c = this.all[i]
-      if (c.target == owner && ['quest'].includes(c.label)) {
+      if (c.owner == owner && ['quest'].includes(c.label)) {
         this.all.splice(i, 1)
       }
     }
@@ -157,9 +165,9 @@ export default class WorldTasks {
     }
     return null
   }
-  has_clearance(sus: string): boolean {
+  has_clearance(owner: string): boolean {
     for (const c of this.all) {
-      if (c.target == sus && c.label == 'clearance') {
+      if (c.owner == owner && c.label == 'clearance') {
         return true
       }
     }

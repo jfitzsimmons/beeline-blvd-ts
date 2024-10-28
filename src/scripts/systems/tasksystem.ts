@@ -309,7 +309,7 @@ function address_conversations(cs: Task[]) {
 }
 function address_admin(cs: Task[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
-    handle_temp_clearance(cs[i].scope, cs[i].target, cs[i].turns)
+    handle_temp_clearance(cs[i].scope, cs[i].owner, cs[i].turns)
   }
 }
 function address_busy_acts(cs: Task[]) {

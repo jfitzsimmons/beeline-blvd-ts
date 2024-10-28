@@ -31,7 +31,7 @@ reason = _G.game.world.novel.reason
 caution = _G.game.world.novel.caution.label
 convos =  _G.game.world.novel.npc.turns_since_convo
 activeq = _G.game.world.novel.active_quest
-priority = _G.game.world.novel.priority
+priority = _G.game.world.novel.forced
 
 n.name = _G.game.world.novel.npc.labelname
 n.scale = 3

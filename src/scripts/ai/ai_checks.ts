@@ -16,17 +16,14 @@ function tend_to_patient(p: string, doc: string) {
   npcs.all[doc].fsm.setState('mender')
   npcs.all[p].fsm.setState('mendee')
   tasks.remove_heat(p)
-  //npcs.remove_injured(p)
-  //print('tend_to_patient:: v: string, doc: string', v, doc)
+  tasks.task_builder(npcs.all[doc], 'mender', p, 'injury')
   tasks.mendingQueue.splice(tasks.mendingQueue.indexOf(p), 1)
+
   if (npcs.all[doc].currentroom == player.currentroom)
     msg.post(`/${npcs.all[doc].currentstation}#npc_loader`, hash('move_npc'), {
       station: npcs.all[p].currentstation,
       npc: doc,
     })
-  //testjpf not sure i need this task:::
-  //  tasks.task_builder(npcs.all[doc], 'mending', p, 'field')
-  tasks.task_builder(npcs.all[doc], 'mender', p, 'injury')
 }
 
 export function aid_check() {
