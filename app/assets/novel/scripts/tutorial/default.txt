@@ -131,7 +131,7 @@ n: Make friends I guess.
 jump quickclose
 
 label tutsnext2
-n: You can't do anything without clearence.
+n: You can't do anything without clearance.
 jump quickclose
 
 label tutsnext3

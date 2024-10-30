@@ -1,4 +1,4 @@
-import { aid_check } from './ai_checks'
+import { aid_check, clearance_checks } from './ai_checks'
 import { baggage_checks } from './levels/baggage'
 import { customs_checks } from './levels/customs'
 import { reception_checks } from './levels/reception'
@@ -45,7 +45,7 @@ tasks.task_builder(
 export function aiActions() {
   //release_occupants()
 
-  //clearance_checks()
+  clearance_checks()
   aid_check()
 
   reception_checks()

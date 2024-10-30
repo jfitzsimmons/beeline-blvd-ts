@@ -22,7 +22,7 @@ export default class NpcState {
   home: { x: number; y: number }
   labelname: string
   inventory: string[]
-  clearence: number
+  clearance: number
   clan: string
   body: string
   convos: number
@@ -50,7 +50,7 @@ export default class NpcState {
     this.home = NpcsInitState[n].home
     this.labelname = NpcsInitState[n].labelname
     this.inventory = NpcsInitState[n].inventory
-    this.clearence = NpcsInitState[n].clearence
+    this.clearance = NpcsInitState[n].clearance
     this.clan = NpcsInitState[n].clan
     this.body = NpcsInitState[n].body
     this.fsm = new StateMachine(this, 'npc' + n)
@@ -88,7 +88,7 @@ export default class NpcState {
         // need to go through what could happen on an Aio_turn
         // maybbe interation too? / the if elses
         // keep .update in mind.  everything needs a .update
-        onEnter: this.onInfirmStart.bind(this),
+        onEnter: this.onInfirmEnter.bind(this),
         onUpdate: this.onInfirmUpdate.bind(this),
         onExit: this.onInfirmEnd.bind(this),
       })
@@ -129,6 +129,21 @@ export default class NpcState {
         onUpdate: this.onMenderUpdate.bind(this),
         onExit: this.onMenderExit.bind(this),
       })
+      .addState('interrogate', {
+        onEnter: this.onInterrogateEnter.bind(this),
+        onUpdate: this.onInterrogateUpdate.bind(this),
+        onExit: this.onInterrogateExit.bind(this),
+      })
+      .addState('questioned', {
+        onEnter: this.onQuestionedEnter.bind(this),
+        onUpdate: this.onQuestionedUpdate.bind(this),
+        onExit: this.onQuestionedExit.bind(this),
+      })
+      .addState('trespass', {
+        onEnter: this.onTrespassEnter.bind(this),
+        onUpdate: this.onTrespassUpdate.bind(this),
+        onExit: this.onTrespassExit.bind(this),
+      })
       .addState('arrestee', {
         onEnter: this.onArresteeEnter.bind(this),
         onUpdate: this.onArresteeUpdate.bind(this),
@@ -145,7 +160,14 @@ export default class NpcState {
         onExit: this.onNewExit.bind(this),
       })
   }
-  private onInfirmStart(): void {
+  private onQuestionedEnter(): void {}
+  private onQuestionedUpdate(): void {}
+  private onQuestionedExit(): void {}
+  private onInterrogateEnter(): void {}
+  private onInterrogateUpdate(): void {}
+  private onInterrogateExit(): void {}
+  private onInfirmEnter(): void {
+    this.hp = 5
     this.parent.clear_station(
       this.currentroom,
       this.currentstation,
@@ -209,6 +231,9 @@ export default class NpcState {
     }
   }
   private onERfullExit(): void {}
+  private onTrespassEnter(): void {}
+  private onTrespassUpdate(): void {}
+  private onTrespassExit(): void {}
   private onArresteeEnter(): void {}
   private onArresteeUpdate(): void {}
   private onArresteeExit(): void {}
@@ -310,7 +335,7 @@ export default class NpcState {
   }
 
   findRoomPlaceStation(rooms: string[]): void {
-    for (const test of rooms) print('TESTTOOMS ROOM:: ', test)
+    //for (const test of rooms) print('TESTTOOMS ROOM:: ', test)
     const { chosenRoom, chosenStation } = attempt_to_fill_station(
       rooms,
       this.labelname,
@@ -321,6 +346,9 @@ export default class NpcState {
 
     this.currentroom = chosenRoom
     this.parent.set_station(chosenRoom, chosenStation, this.labelname)
+    // if (RoomsInitState[chosenRoom].clearance > this.clearance)
+    //this.fsm.setState('trespass')
+    //testjpf apply or delete above
     this.parent.prune_station_map(chosenRoom, chosenStation)
     this.matrix = RoomsInitState[chosenRoom].matrix
     this.currentstation = chosenStation

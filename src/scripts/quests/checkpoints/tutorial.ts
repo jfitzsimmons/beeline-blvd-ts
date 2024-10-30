@@ -26,232 +26,123 @@ function injured_checks(conditions: QuestConditions) {
   }
 }
 function infirmary_checks(delivery: QuestStep) {
-  print(
-    'INFIRMARY CHECKS::: reaon / delivery::',
-    novel.reason,
-    delivery.fsm.getState()
-  )
   if (
     //testjpf this only works if talking to doctors
     // doctor sripts only gets called for doctors!!!
     novel.reason == 'favormedquest' &&
     delivery.fsm.getState() == 'idle'
   ) {
-    delivery.fsm.setState('active')
     player.add_inventory('vial02')
-
-    //info.add_interaction(`${doctor.labelname}'s gave you clearance for 8 turns`)
+    info.add_interaction(`${novel.npc.labelname}'s gave you meds for a doctor`)
   }
 }
 function doctor_checks(conditions: QuestConditions) {
-  //const quest = quests.all.tutorial.medic_assist
-
   const injured = npcs.all[rooms.all.grounds.stations.worker1]
-  // BUG::: testjpf I think this will
-  // let you interact with any doctor
+  // let's you interact with any doctor
   const doctor = npcs.all[novel.npc.labelname]
-  const { '0': injury, '2': apple, '3': meds } = conditions
-  // testjpf future have side_quesct_checks()????
-
+  const { '0': injury, '2': apple, '3': meds, '5': delivery } = conditions
   if (
-    //TESTJPF !!! Here is where you would have the other options
-    // not just apple, but bribe, drugs...
     novel.reason == 'hungrydoc' &&
     injury.fsm.getState() == 'active' &&
     apple.fsm.getState() == 'idle'
   ) {
     apple.fsm.setState('active')
-    //testjpf ABOVE IS FSM TODO
-    // i think jsut sets novel.reason in script builder.
-    //So for 100  turns, this npc will always talk to you about a quest
-    //which quest? the one that comes from quest directory scripts
-    // as seen in sbuilder:: const quest_paths
-    //testjpf need to debug txt scripts related to this quest
-    /**tasks.append_task({
-      label: 'quest',
-      turns: 100,
-      scope: 'hungry',
-     cause: 'quest',
-      owner: doctor.labelname,
-      target: doctor.labelname,
-      authority: 'player',
-    })**/
-    //I think we'll still need something like this.
-    // probably doesnt need to be so general.
-    // could be a simple as creating new Task() that has own FSM//
-    //NOT BAD.
     tasks.task_builder(doctor, 'quest', injured.labelname, 'quest')
     novel.append_npc_quest(doctor.labelname)
-
-    info.add_interaction(`${doctor.labelname} needs drugs, money or food.`)
-    //info.build_objectives(tasks.quests)
-    //testjpf
-    // need something to check if this doc was given food.
-    // in 'interact' gui send message to exit gui??
-    // containing item, maybe who from "npc" or "player"
+    info.add_interaction(`${doctor.labelname} needs food.`)
   } else if (
-    //TESTJPF !!! Here is where you would have the other options
-    // not just apple, but bribe, drugs...
+    //testjpf TODO:::
     novel.reason == 'druggiedoc' &&
     apple.fsm.getState() == 'idle'
   ) {
-    apple.fsm.setState('active')
-    //testjpf
-    // i think jsut sets novel.reason in script builder.
-    //So for 100  turns, this npc will always talk to you about a quest
-    //which quest? the one that comes from quest directory scripts
-    // as seen in sbuilder:: const quest_paths
-    //testjpf need to debug txt scripts related to this quest
-    /**tasks.append_task({
-      label: 'quest',
-      turns: 100,
-      scope: 'hungry',
-     cause: 'quest',
-      owner: doctor.labelname,
-      target: doctor.labelname,
-      authority: 'player',
-    })*/
     novel.append_npc_quest(doctor.labelname)
     tasks.task_builder(doctor, 'quest', injured.labelname, 'quest')
-
-    info.add_interaction(`${doctor.labelname} needs drugs, money or food.`)
-    //info.build_objectives(tasks.quests)
-    //testjpf
-    // need something to check if this doc was given food.
-    // in 'interact' gui send message to exit gui??
-    // containing item, maybe who from "npc" or "player"
-    //testjpf add same conditons for drugs and money
-    //and change idle to standby???
+    info.add_interaction(`${doctor.labelname} needs drugs.`)
   } else if (
-    apple.fsm.getState() == 'active' &&
     novel.item == 'apple01' &&
-    apple.passed == false
+    apple.passed == true &&
+    apple.fsm.getState() == 'active'
   ) {
-    //check if last item clicked was apple? testjpf
-    //TESTJPF Pass condition is changed HERE not in statekj
-    apple.passed = true
-
-    //tasks.remove_quest_cautions(doctor.labelname)
-    novel.remove_npc_quest(doctor.labelname)
+    /**
+     * changing apple passed to Quests
+     * means it's pass before this check
+     * might need to do "ask a favor" like with vial02
+     * TODOTESTJPF
+     *
+     */
+    //apple.passed = true
     tasks.remove_quest_tasks(doctor.labelname)
+    tasks.task_builder(doctor, 'mender', injured.labelname, 'injury')
 
+    novel.remove_npc_quest(doctor.labelname)
     novel.reason = 'getadoctor'
+    novel.npc = doctor
+    //testjpf needed for non optional dialog.
+    // optional quest options need TODO
+    novel.forced = true
+
     info.add_interaction(`${doctor.labelname} likes that you fed them.`)
     doctor.love = doctor.love + 1
-
-    // testjpf this is overwriting my scriptsdialog functions
-    novel.npc = doctor
-    novel.priority = true
+    // testjpf this is overwriting my scriptsdialog functions???
     npcs.all[doctor.labelname].fsm.setState('mender')
-    tasks.task_builder(
-      npcs.all[doctor.labelname],
-      'mender',
-      rooms.all.grounds.stations.worker1,
-      'injury'
-    )
 
     info.add_interaction(`${injured.labelname} likes that you got a doctor.`)
     injured.love = injured.love + 1
-    msg.post('proxies:/controller#novelcontroller', 'show_scene')
-    // complete after talking
 
-    //testjpf open dialog with thanks and next task???
-    // use novel_init here jsut to laod the same tutorial/
-    //testjpf
-    // need something to check if this doc was given food.
-    // in 'interact' gui send message to exit gui??
-    // containing item, maybe who from "npc" or "player"
+    msg.post('proxies:/controller#novelcontroller', 'show_scene')
   } else if (novel.reason == 'getsomemeds' && meds.fsm.getState() == 'idle') {
     meds.fsm.setState('active')
     apple.fsm.setState('complete')
-    player.add_inventory('note')
-    print(
-      'TRY TO MOVE:',
-      doctor.labelname,
-      'from:',
-      doctor.currentstation,
-      'to worker1'
-    )
 
+    player.add_inventory('note')
+    player.clearance = 3
+    //tesjpf change to label: 'hallpass'??
     tasks.append_task({
       label: 'clearance',
       turns: 8,
       scope: 'type3',
       cause: 'medical',
-      owner: doctor.labelname,
-      target: 'player',
+      owner: 'player',
+      target: 'infirmary',
       authority: 'security',
     })
-    novel.remove_npc_quest(doctor.labelname)
-    tasks.remove_quest_tasks(doctor.labelname)
-    novel.append_npc_quest(doctor.labelname)
     tasks.task_builder(doctor, 'quest', injured.labelname, 'waitingformeds')
-
-    /** 
-    tasks.append_task({
-      label: 'quest',
-      turns: 50,
-      scope: 'medassist',
-     cause: 'medical',
-      owner: doctor.labelname,
-      target: doctor.labelname,
-      authority: 'player',
-    })*/
+    novel.append_npc_quest(doctor.labelname)
     info.add_interaction(`${doctor.labelname}'s gave you clearance for 8 turns`)
-
-    //TESTJPF ACTIVEATE SIDE QUEST HERE
-    //not in else ifs
-    // quest.side_quests![1].fsm.getState() = 'active'
-
-    player.clearance = 3
 
     msg.post(`/${doctor.currentstation}#npc_loader`, hash('move_npc'), {
       station: 'worker1',
       owner: doctor.labelname,
     })
-
-    // create caution for... 10 turns?
-    // i don't have cleareance logic setup!!
-    //testjpf add "note" to inventory
   } else if (novel.reason == 'rejectmeds') {
     apple.fsm.setState('complete')
     info.add_interaction(`${doctor.labelname} doesn't like you wont help.`)
     injured.love = injured.love - 1
-    print(
-      'TRY TO MOVE:',
-      doctor.labelname,
-      'from:',
-      doctor.currentstation,
-      'to worker1'
-    )
+
     msg.post(`/${doctor.currentstation}#npc_loader`, hash('move_npc'), {
       station: 'worker1',
       owner: doctor.labelname,
     })
-    // create caution for... 10 turns?
-    // i don't have cleareance logic setup!!
-    //testjpf add "note" to inventory
   } else if (
-    // quest.side_quests![1].fsm.getState() == 'active' &&
     meds.fsm.getState() == 'active' &&
-    player.clearance - 3 < rooms.all[player.currentroom].clearance &&
+    player.clearance - 2 < rooms.all[player.currentroom].clearance &&
     from_same_room(npcs.return_security(), player.currentroom) != null
   ) {
     novel.caution.label = 'questioning'
-    novel.reason = 'tutsclearance'
-    novel.priority = true
+    novel.caution.cause = 'tutsclearance'
+    novel.forced = true
     novel.npc = from_same_room(npcs.return_security(), player.currentroom)!
-    //quest.side_quests![1].passed = true
-    // quest.side_quests![1].fsm.getState() = 'complete'
+    print('tutsclearances', novel.reason, novel.npc.labelname)
 
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
   } else if (
-    meds.fsm.getState() == 'active' &&
     novel.item == 'vial02' &&
-    meds.passed == true
+    meds.passed == true &&
+    meds.fsm.getState() == 'active'
   ) {
-    novel.priority = true
+    novel.forced = true
     //TESTjpf start here
+    delivery.fsm.setState('active')
     const waiting = tasks.task_has_npc('waitingformeds')
     //testjpf doesnt work if you talk to someone else!!! BUG
     if (novel.npc.labelname == waiting) {
@@ -263,7 +154,9 @@ function doctor_checks(conditions: QuestConditions) {
       novel.npc = npcs.all[waiting]
       novel.reason = 'docquestcomplete'
       novel.remove_npc_quest(doctor.labelname)
-      tasks.remove_quest_tasks(doctor.labelname)
+      tasks.removeTaskByLabel(doctor.labelname, 'mender')
+      npcs.all[injured.labelname].fsm.setState('infirm')
+      npcs.all[doctor.labelname].fsm.setState('turn')
     } else {
       //testjpf start here
       //set up address)cautions for favors and quests TODO
@@ -281,7 +174,7 @@ function doctor_checks(conditions: QuestConditions) {
        */
       // testjpf this is overwriting my scriptsdialog functions
       novel.npc = doctor
-      //novel.priority = true
+      //novel.forced = true
       tasks.append_task({
         label: 'favor',
         turns: 15,
@@ -293,13 +186,22 @@ function doctor_checks(conditions: QuestConditions) {
       })
       novel.reason = 'askdocafavor'
     }
-    novel.priority = true
+    novel.forced = true
+
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
     // removed after scene
+    /** 
     if (waiting != null) {
+      print('does this get calledhuhuh???')
       tasks.remove_quest_tasks(waiting)
       novel.remove_npc_quest(waiting)
-    }
+      
+    }**/
+  } else if (
+    novel.reason == 'docquestcomplete' &&
+    meds.fsm.getState() == 'complete'
+  ) {
+    tasks.remove_quest_tasks(doctor.labelname)
   }
 }
 function medic_assist_checks() {
@@ -321,6 +223,7 @@ function medic_assist_checks() {
   if (cons['0'].passed == true) injured_checks(cons)
   if (npcs.all[novel.npc.labelname].clan == 'doctors') {
     doctor_checks(cons)
+    //TESTJPF
   } else if (npcs.all[novel.npc.labelname].currentroom == 'infirmary') {
     print('novel reason pre infirm check', novel.reason)
     infirmary_checks(cons['5'])
@@ -440,30 +343,29 @@ function doctorsScripts() {
   const quest = quests.all.tutorial.medic_assist
   const { conditions: cons } = quest
   //const {"0":injury,"1":doc,"2": apple, "3": meds} = cons
-  const { '0': injury, '2': apple } = cons
+  const { '0': injury, '2': apple, '5': delivery } = cons
   // bad??:: if reasonstring.startswith('quest - ')
   //then on novel_main novel.quest.solution = endof(message.reason)
 
   if (injury.fsm.getState() == 'active' && apple.fsm.getState() == 'idle') {
     novel.reason = 'quest'
-    novel.priority = true
+    novel.forced = true
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
     return 'tutorial/tutorialAdoctor'
   } else if (apple.fsm.getState() == 'active') {
-    novel.priority = true
+    novel.forced = true
     novel.reason = 'quest'
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
     //testjpf future naming files may be better:
     //docAsksForFavor, docActiveFavor
     return apple.passed == false ? 'tutorial/hungrydoc' : 'tutorial/getadoctor'
-  } else if (cons['5'].fsm.getState() == 'active') {
-    novel.priority = true
+  } else if (delivery.fsm.getState() == 'active') {
+    novel.forced = true
     novel.reason = 'quest'
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
-
     //testjpf future naming files may be better:
     //docAsksForFavor, docActiveFavor
     return tasks.task_has_npc('waitingformeds') == null
@@ -482,7 +384,7 @@ function infirmaryScripts() {
     meds.fsm.getState() == 'active' &&
     novel.npc.currentstation == 'assistant'
   ) {
-    novel.priority = true
+    novel.forced = true
     novel.reason = 'quest'
     return 'tutorial/giveMeMeds'
   }
@@ -495,7 +397,7 @@ function worker1Scripts() {
   //const {"0":injury,"1":doc,"2": apple, "3": meds} = cons
   const { '0': injury } = cons
   if (injury.passed == false) {
-    novel.priority = true
+    novel.forced = true
     novel.reason = 'quest'
     return 'tutorial/helpThatMan'
   }
@@ -508,7 +410,7 @@ function worker2Scripts() {
   //by checks i mean choices with checks
 
   if (novel.reason == 'concern') {
-    novel.priority = true
+    novel.forced = true
     novel.reason = 'quest'
     return 'tutorial/concernLuggage'
   }

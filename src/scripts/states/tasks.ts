@@ -3,6 +3,7 @@ import StateMachine from './stateMachine'
 import { QuestMethods, Task } from '../../types/tasks'
 import NpcState from './npc'
 import TaskState from './task'
+import { arraymove } from '../utils/utils'
 
 const dt = math.randomseed(os.time())
 /** 
@@ -44,6 +45,7 @@ export default class WorldTasks {
       onExit: this.onNewExit.bind(this),
     })
     this.getMendingQueue = this.getMendingQueue.bind(this)
+    this.npc_has_task = this.npc_has_task.bind(this)
   }
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
@@ -78,6 +80,15 @@ export default class WorldTasks {
   getMendingQueue(): string[] {
     return this.mendingQueue
   }
+  addAdjustMendingQueue(patient: string) {
+    if (this.mendingQueue.includes(patient) == true) {
+      if (this.mendingQueue.indexOf(patient) > 1)
+        arraymove(this.mendingQueue, this.mendingQueue.indexOf(patient), 0)
+    } else {
+      print('cautions caused patient:', patient, 'to be added to mendingQueue')
+      this.mendingQueue.push(patient)
+    }
+  }
   task_has_npc(cause: string): string | null {
     for (let i = this.all.length - 1; i >= 0; i--) {
       const c = this.all[i]
@@ -92,10 +103,18 @@ export default class WorldTasks {
     //print('busy_doc:: docs[0]:', docs[0])
     return injuries
   }
+  removeTaskByLabel(owner: string, label: string) {
+    for (let i = this.all.length - 1; i >= 0; i--) {
+      const c = this.all[i]
+      if (c.owner == owner && [label].includes(c.label)) {
+        this.all.splice(i, 1)
+      }
+    }
+  }
   remove_quest_tasks(owner: string) {
     for (let i = this.all.length - 1; i >= 0; i--) {
       const c = this.all[i]
-      if (c.target == owner && ['quest'].includes(c.label)) {
+      if (c.owner == owner && ['quest'].includes(c.label)) {
         this.all.splice(i, 1)
       }
     }
@@ -139,17 +158,19 @@ export default class WorldTasks {
     }
     return false
   }
-  npc_has_task(owner: string, sus: string): TaskState | null {
+  npc_has_task(owner: string, target: string): TaskState | null {
+    print('npc_has_task', owner, target)
     for (const c of this.all) {
-      if ((owner == 'any' || c.owner == owner) && c.target == sus) {
+      print('npc_has_task:: C:', c.owner, c.target, c.label)
+      if ((owner == 'any' || c.owner == owner) && c.target == target) {
         return c
       }
     }
     return null
   }
-  has_clearance(sus: string): boolean {
+  has_clearance(owner: string): boolean {
     for (const c of this.all) {
-      if (c.target == sus && c.label == 'clearance') {
+      if (c.owner == owner && c.label == 'clearance') {
         return true
       }
     }

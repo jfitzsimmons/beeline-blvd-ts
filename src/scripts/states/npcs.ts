@@ -306,6 +306,7 @@ export default class WorldNpcs {
     }
     this.npcLists.reset_station_map()
     this.medical()
+    //this.security()
 
     //this.aiChecks()
   }

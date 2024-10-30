@@ -13,44 +13,63 @@ function prepare_novel_txts(
   room: boolean | true = true,
   extend: boolean | false = false
 ) {
+  print('PNT::: ', novel.reason, novel.npc.labelname)
   //TESTJPF could move some logic to novelcontroller
   const paths: string[] = []
-  const caution = tasks.npc_has_task('any', novel.npc.labelname)
+
   const quest_paths: string[] = prepareQuestTxts[player.checkpoint + 'scripts'](
     novel.npc.labelname
   )
+  print(
+    'NOVELVOVEL1:: questpaths',
+    quest_paths[0],
+    novel.npc.labelname,
+    novel.reason
+  )
+
   let checkpoint = player.checkpoint.slice(0, -1)
 
   if (extend == true) {
     checkpoint = player.checkpoint
   }
-  if (caution != null) {
-    novel.caution = { ...caution }
+  const task = tasks.npc_has_task(novel.npc.labelname, 'player')
+  if (task != null) {
+    print('NOVELVOVEL2 task1:', task.label)
+    //could use this at level addresstasks testjpf
+    novel.caution = { ...task }
     //used for ai witnessing player and failing confrontation check
     //questioning without accusation
-    if (!['concern'].includes(novel.reason)) novel.reason = caution.cause
+    if (!['concern'].includes(novel.reason)) novel.reason = task.cause
+    print('NOVELVOVEL2 task2: novel.reason:', novel.reason)
     /**TESTJPF
-     * this is checking if npcs has arrest or caution.
+     * this is checking if npcs has arrest or task.
      * Player is checked on level
-     * I believe this will overwrite player if NPX also has one of these cautions
+     * I believe this will overwrite player if NPX also has one of these tasks
      * could test with test npc on grounds
      * FIX:::
      * this checks if already set
      * naming could be better
      */
-    if (
-      !['questioning', 'arrest'].includes(novel.reason) &&
-      ['questioning', 'arrest'].includes(novel.caution.label)
-    )
-      novel.reason = novel.caution.cause
   }
+  print('posttaskchk', novel.reason)
+  if (
+    !['questioning', 'arrest'].includes(novel.reason) &&
+    ['questioning', 'arrest'].includes(novel.caution.label)
+  ) {
+    novel.reason = novel.caution.cause
+  }
+  print('NOVELVOVEL2 task3: novel.reason:', novel.reason)
+
   if (novel.npcsWithQuest.includes(novel.npc.labelname)) novel.reason = 'quest'
+  print('NOVELVOVEL3 quest??: novel.reason:', novel.reason)
 
   if (room) paths.unshift(player.currentroom + '/default')
   if (novel.npc.currentstation != null) {
     paths.unshift('stations/' + novel.npc.currentstation)
     paths.unshift(player.currentroom + '/' + novel.npc.currentstation)
   }
+  print('NOVELVOVEL4 LAST reaso:', novel.reason)
+
   paths.push(`reasons/${novel.reason}`)
   paths.unshift('clans/' + novel.npc.clan)
   paths.unshift(checkpoint + '/default')

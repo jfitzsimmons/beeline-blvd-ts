@@ -16,17 +16,14 @@ function tend_to_patient(p: string, doc: string) {
   npcs.all[doc].fsm.setState('mender')
   npcs.all[p].fsm.setState('mendee')
   tasks.remove_heat(p)
-  //npcs.remove_injured(p)
-  //print('tend_to_patient:: v: string, doc: string', v, doc)
+  tasks.task_builder(npcs.all[doc], 'mender', p, 'injury')
   tasks.mendingQueue.splice(tasks.mendingQueue.indexOf(p), 1)
+
   if (npcs.all[doc].currentroom == player.currentroom)
     msg.post(`/${npcs.all[doc].currentstation}#npc_loader`, hash('move_npc'), {
       station: npcs.all[p].currentstation,
       npc: doc,
     })
-  //testjpf not sure i need this task:::
-  //  tasks.task_builder(npcs.all[doc], 'mending', p, 'field')
-  tasks.task_builder(npcs.all[doc], 'mender', p, 'injury')
 }
 
 export function aid_check() {
@@ -165,22 +162,44 @@ export function seen_check(s: string, w: string) {
     ? { confront: false, type: 'seen' }
     : { confront: false, type: 'neutral' }
 }
-export function clearance_checks(room = player.currentroom) {
-  if (player.clearance >= rooms.all[room].clearance) return
-  const stations = rooms.all[room].stations
-  let sKey: keyof typeof stations
-  for (sKey in stations) {
-    const watcher = stations[sKey]
-    if (watcher !== '' && npcs.all[watcher].clan == 'security') {
-      //testjpf needs a diceroll and create / return confrontation
-      if (confrontation_check('player', watcher) == true) {
-        tasks.task_builder(
-          npcs.all[watcher],
-          'questioning',
-          'player',
-          'clearance'
-        )
+
+export function clearance_checks() {
+  if (player.clearance < rooms.all[player.currentroom].clearance) {
+    print('PLAYER::: NEWQUESTIONED!!!')
+    player.fsm.setState('trespass')
+  }
+
+  const cops = npcs.return_security()
+  for (const cop of cops) {
+    const stations = rooms.all[cop.currentroom].stations
+    let sKey: keyof typeof stations
+    let target = ''
+    for (sKey in stations) {
+      target = stations[sKey]
+      if (
+        target !== '' &&
+        npcs.all[target].fsm.getState() === 'trespass' &&
+        target !== cop.labelname &&
+        confrontation_check(target, cop.labelname) == true
+        //  target !== tasks.task_has_npc(target)
+      ) {
+        print('NEWQUESTIONED!!!')
+        npcs.all[target].fsm.setState('questioned')
+        cop.fsm.setState('interrogate')
+        tasks.task_builder(cop, 'questioning', target, 'clearance')
+        break
+        //testjpf needs a diceroll and create / return confrontation
       }
+      target = 'player'
+    }
+    if (
+      target == 'player' &&
+      player.fsm.getState() == 'trespass' &&
+      confrontation_check('player', cop.labelname) == true
+    ) {
+      player.fsm.setState('questioned')
+      cop.fsm.setState('interrogate')
+      tasks.task_builder(cop, 'questioning', 'player', 'clearance')
     }
   }
 }

@@ -159,6 +159,7 @@ function check_inventory_nodes(
     ) {
       const item = inventoryLookup[hash_to_hex(textureHash)]
       novel.item = item
+      if (npcs.all[actorname] != null) novel.npc = npcs.all[actorname]
       hide_inventory_animation(node)
 
       if (i < 21) {

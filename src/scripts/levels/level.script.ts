@@ -54,19 +54,24 @@ function confrontation_scene(c: Task) {
 
   //testjpf this is for player
   //is not using script builder
+  //novel.reason is not the same thing as task.cause
+  //novel may need better naming conventions
+
+  // testjpf. not using this in noveltxts???
+  //these are always player /address_cautions related.
+  print('Con SCENE::: t owner/causereason::', c.owner, c.cause)
   novel.reason = c.owner
   novel.caution = { ...c }
-  novel.priority = true
+  novel.forced = true
   msg.post('proxies:/controller#novelcontroller', 'show_scene')
 }
 function game_turn() {
-  novel.priority = false
+  novel.forced = false
   novel.reason = 'none'
   novel.item = 'none'
   novel.reset_caution()
-  //ai_turn() // abstract to world controller?
-
   print('game turn!!')
+  //TESTJPF time has come for pre post turn! enter exit?!
   world.fsm.update(dt)
   //if i can incorporate confrontations
   //i can move the rest of this to various Turn fsm states
@@ -96,7 +101,10 @@ export function on_message(
     //TESTJPF can this whole conditional be moved to fsms???
     if (message.load_type == 'room transition') game_turn()
     calculate_heat(this.roomname)
-
+    //testjpf im guessing the issue is that address_Cautions
+    //is already imported.
+    //if i moved it to Tasks.fsm i bet it would be ok
+    //and it would find new clearance caution form aiActions()
     const confrontation: Task | null = address_cautions()
     msg.post(this.roomname + ':/level#' + this.roomname, 'room_load')
     //position player on screen
@@ -107,7 +115,7 @@ export function on_message(
     quest_checker('interact')
 
     print('exitgui reason::', novel.reason)
-    novel.priority = false
+    novel.forced = false
     novel.reason = 'none'
     novel.item = 'none'
     novel.reset_caution()
