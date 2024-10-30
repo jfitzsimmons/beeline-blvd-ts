@@ -346,8 +346,9 @@ export default class NpcState {
 
     this.currentroom = chosenRoom
     this.parent.set_station(chosenRoom, chosenStation, this.labelname)
-    if (RoomsInitState[chosenRoom].clearance > this.clearance)
-      this.fsm.setState('trespass')
+    // if (RoomsInitState[chosenRoom].clearance > this.clearance)
+    //this.fsm.setState('trespass')
+    //testjpf apply or delete above
     this.parent.prune_station_map(chosenRoom, chosenStation)
     this.matrix = RoomsInitState[chosenRoom].matrix
     this.currentstation = chosenStation

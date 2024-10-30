@@ -129,9 +129,10 @@ function doctor_checks(conditions: QuestConditions) {
     from_same_room(npcs.return_security(), player.currentroom) != null
   ) {
     novel.caution.label = 'questioning'
-    novel.reason = 'tutsclearance'
+    novel.caution.cause = 'tutsclearance'
     novel.forced = true
     novel.npc = from_same_room(npcs.return_security(), player.currentroom)!
+    print('tutsclearances', novel.reason, novel.npc.labelname)
 
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
   } else if (

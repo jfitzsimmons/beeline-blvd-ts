@@ -13,13 +13,19 @@ function prepare_novel_txts(
   room: boolean | true = true,
   extend: boolean | false = false
 ) {
+  print('PNT::: ', novel.reason, novel.npc.labelname)
   //TESTJPF could move some logic to novelcontroller
   const paths: string[] = []
 
   const quest_paths: string[] = prepareQuestTxts[player.checkpoint + 'scripts'](
     novel.npc.labelname
   )
-  print('NOVELVOVEL1:: questpaths', quest_paths[0], novel.npc.labelname)
+  print(
+    'NOVELVOVEL1:: questpaths',
+    quest_paths[0],
+    novel.npc.labelname,
+    novel.reason
+  )
 
   let checkpoint = player.checkpoint.slice(0, -1)
 
@@ -45,11 +51,13 @@ function prepare_novel_txts(
      * naming could be better
      */
   }
+  print('posttaskchk', novel.reason)
   if (
     !['questioning', 'arrest'].includes(novel.reason) &&
     ['questioning', 'arrest'].includes(novel.caution.label)
-  )
+  ) {
     novel.reason = novel.caution.cause
+  }
   print('NOVELVOVEL2 task3: novel.reason:', novel.reason)
 
   if (novel.npcsWithQuest.includes(novel.npc.labelname)) novel.reason = 'quest'

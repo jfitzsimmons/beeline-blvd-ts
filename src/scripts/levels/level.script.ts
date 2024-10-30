@@ -59,6 +59,7 @@ function confrontation_scene(c: Task) {
 
   // testjpf. not using this in noveltxts???
   //these are always player /address_cautions related.
+  print('Con SCENE::: t owner/causereason::', c.owner, c.cause)
   novel.reason = c.owner
   novel.caution = { ...c }
   novel.forced = true
