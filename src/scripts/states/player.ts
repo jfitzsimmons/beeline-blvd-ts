@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { InventoryTableItem, PlayerState, Skills } from '../../types/state'
 import { QuestMethods } from '../../types/tasks'
 import { PlayerInitState } from './inits/playerInitState'
@@ -40,23 +41,35 @@ export default class WorldPlayer {
       return_playerroom: this.return_playerroom.bind(this),
     }
     this.inventory_init()
-    this.fsm.addState('idle').addState('turn', {
-      //game??
-      //onInit?
-      // what more could i do beside adjust cool downs
-      // can i access any other systems?? testjpf
-      //how to use instead of cautions?
-      // adjust stats? add remove bonuses/
-      //on update could be like onInteraction.
-      // if you talk to or rob someone in that state x will happen?
-      //should i be using script.ts?!?!?!
-      // need to go through what could happen on an Aio_turn
-      // maybbe interation too? / the if elses
-      // keep .update in mind.  everything needs a .update
-      onEnter: this.onTurnEnter.bind(this),
-      onUpdate: this.onTurnUpdate.bind(this),
-      onExit: this.onTurnExit.bind(this),
-    })
+    this.fsm
+      .addState('idle')
+      .addState('turn', {
+        //game??
+        //onInit?
+        // what more could i do beside adjust cool downs
+        // can i access any other systems?? testjpf
+        //how to use instead of cautions?
+        // adjust stats? add remove bonuses/
+        //on update could be like onInteraction.
+        // if you talk to or rob someone in that state x will happen?
+        //should i be using script.ts?!?!?!
+        // need to go through what could happen on an Aio_turn
+        // maybbe interation too? / the if elses
+        // keep .update in mind.  everything needs a .update
+        onEnter: this.onTurnEnter.bind(this),
+        onUpdate: this.onTurnUpdate.bind(this),
+        onExit: this.onTurnExit.bind(this),
+      })
+      .addState('trespass', {
+        onEnter: this.onTrespassEnter.bind(this),
+        onUpdate: this.onTrespassUpdate.bind(this),
+        onExit: this.onTrespassExit.bind(this),
+      })
+      .addState('questioned', {
+        onEnter: this.onQuestionedEnter.bind(this),
+        onUpdate: this.onQuestionedUpdate.bind(this),
+        onExit: this.onQuestionedExit.bind(this),
+      })
 
     this.get_player_room = this.get_player_room.bind(this)
     this.set_room_info = this.set_room_info.bind(this)
@@ -73,6 +86,12 @@ export default class WorldPlayer {
   private onTurnExit(): void {
     // print(this.labelname, 'has entered MOVE STATE')
   }
+  private onTrespassEnter(): void {}
+  private onTrespassUpdate(): void {}
+  private onTrespassExit(): void {}
+  private onQuestionedEnter(): void {}
+  private onQuestionedUpdate(): void {}
+  private onQuestionedExit(): void {}
   set_room_info(r: string) {
     this.exitroom = RoomsInitLayout[this.matrix_y][this.matrix_x]!
     this.currentroom = r

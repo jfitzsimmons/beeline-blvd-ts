@@ -129,6 +129,21 @@ export default class NpcState {
         onUpdate: this.onMenderUpdate.bind(this),
         onExit: this.onMenderExit.bind(this),
       })
+      .addState('interrogate', {
+        onEnter: this.onInterrogateEnter.bind(this),
+        onUpdate: this.onInterrogateUpdate.bind(this),
+        onExit: this.onInterrogateExit.bind(this),
+      })
+      .addState('questioned', {
+        onEnter: this.onQuestionedEnter.bind(this),
+        onUpdate: this.onQuestionedUpdate.bind(this),
+        onExit: this.onQuestionedExit.bind(this),
+      })
+      .addState('trespass', {
+        onEnter: this.onTrespassEnter.bind(this),
+        onUpdate: this.onTrespassUpdate.bind(this),
+        onExit: this.onTrespassExit.bind(this),
+      })
       .addState('arrestee', {
         onEnter: this.onArresteeEnter.bind(this),
         onUpdate: this.onArresteeUpdate.bind(this),
@@ -145,6 +160,12 @@ export default class NpcState {
         onExit: this.onNewExit.bind(this),
       })
   }
+  private onQuestionedEnter(): void {}
+  private onQuestionedUpdate(): void {}
+  private onQuestionedExit(): void {}
+  private onInterrogateEnter(): void {}
+  private onInterrogateUpdate(): void {}
+  private onInterrogateExit(): void {}
   private onInfirmEnter(): void {
     this.hp = 5
     this.parent.clear_station(
@@ -210,6 +231,9 @@ export default class NpcState {
     }
   }
   private onERfullExit(): void {}
+  private onTrespassEnter(): void {}
+  private onTrespassUpdate(): void {}
+  private onTrespassExit(): void {}
   private onArresteeEnter(): void {}
   private onArresteeUpdate(): void {}
   private onArresteeExit(): void {}
@@ -322,6 +346,8 @@ export default class NpcState {
 
     this.currentroom = chosenRoom
     this.parent.set_station(chosenRoom, chosenStation, this.labelname)
+    if (RoomsInitState[chosenRoom].clearance > this.clearance)
+      this.fsm.setState('trespass')
     this.parent.prune_station_map(chosenRoom, chosenStation)
     this.matrix = RoomsInitState[chosenRoom].matrix
     this.currentstation = chosenStation

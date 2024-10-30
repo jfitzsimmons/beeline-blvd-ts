@@ -135,6 +135,7 @@ function npc_snitch_check(w: string, s: string) {
 
 //testjpf now this should probably be moved to player and npc??
 //how?
+/** 
 function handle_temp_clearance(scope: string, owner: string, turns: number) {
   //testjpf previously/ player or npc should have had state switched to promote
   //when turnss up set state to demote
@@ -149,7 +150,7 @@ function handle_temp_clearance(scope: string, owner: string, turns: number) {
       ? (player.clearance = player.clearance - scopeNum)
       : (npcs.all[owner].clearance = npcs.all[owner].clearance - scopeNum)
   }
-}
+}*/
 function merits_demerits(c: Task, w: string) {
   if (c.target === 'player') {
     const adj = c.label === 'merits' ? 1 : -1
@@ -306,12 +307,12 @@ function address_conversations(cs: Task[]) {
       }
     }
   }
-}
+} /** 
 function address_admin(cs: Task[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
     handle_temp_clearance(cs[i].scope, cs[i].owner, cs[i].turns)
   }
-}
+}*/
 function address_busy_acts(cs: Task[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
     focused_acts(cs[i])
@@ -354,7 +355,8 @@ export function address_cautions() {
     },
     { clearance: [], conversational2: [] }
   )
-  address_admin(clearance)
+  print('TESTJPF No clearance foor TASKS FSM Conversion', clearance)
+  //address_admin(clearance)
   address_conversations(conversational2)
   address_busy_acts(medical)
   const confront: Task | null = address_confrontations(confrontational)

@@ -26,30 +26,32 @@ function prepare_novel_txts(
   if (extend == true) {
     checkpoint = player.checkpoint
   }
-  const caution = tasks.npc_has_task(novel.npc.labelname, 'player')
-  if (caution != null) {
-    print('NOVELVOVEL2 Caution1:', caution?.label)
-    novel.caution = { ...caution }
+  const task = tasks.npc_has_task(novel.npc.labelname, 'player')
+  if (task != null) {
+    print('NOVELVOVEL2 task1:', task.label)
+    //could use this at level addresstasks testjpf
+    novel.caution = { ...task }
     //used for ai witnessing player and failing confrontation check
     //questioning without accusation
-    if (!['concern'].includes(novel.reason)) novel.reason = caution.cause
-    print('NOVELVOVEL2 Caution2: novel.reason:', novel.reason)
+    if (!['concern'].includes(novel.reason)) novel.reason = task.cause
+    print('NOVELVOVEL2 task2: novel.reason:', novel.reason)
     /**TESTJPF
-     * this is checking if npcs has arrest or caution.
+     * this is checking if npcs has arrest or task.
      * Player is checked on level
-     * I believe this will overwrite player if NPX also has one of these cautions
+     * I believe this will overwrite player if NPX also has one of these tasks
      * could test with test npc on grounds
      * FIX:::
      * this checks if already set
      * naming could be better
      */
-    if (
-      !['questioning', 'arrest'].includes(novel.reason) &&
-      ['questioning', 'arrest'].includes(novel.caution.label)
-    )
-      novel.reason = novel.caution.cause
-    print('NOVELVOVEL2 Caution3: novel.reason:', novel.reason)
   }
+  if (
+    !['questioning', 'arrest'].includes(novel.reason) &&
+    ['questioning', 'arrest'].includes(novel.caution.label)
+  )
+    novel.reason = novel.caution.cause
+  print('NOVELVOVEL2 task3: novel.reason:', novel.reason)
+
   if (novel.npcsWithQuest.includes(novel.npc.labelname)) novel.reason = 'quest'
   print('NOVELVOVEL3 quest??: novel.reason:', novel.reason)
 

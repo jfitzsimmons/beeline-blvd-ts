@@ -96,6 +96,7 @@ function doctor_checks(conditions: QuestConditions) {
 
     player.add_inventory('note')
     player.clearance = 3
+    //tesjpf change to label: 'hallpass'??
     tasks.append_task({
       label: 'clearance',
       turns: 8,

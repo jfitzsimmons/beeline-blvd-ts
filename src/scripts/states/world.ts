@@ -47,6 +47,7 @@ export default class World {
       get_player_room: this.player.get_player_room.bind(this),
       getVicinityTargets: this.getVicinityTargets.bind(this),
       getMendingQueue: this.tasks.getMendingQueue.bind(this),
+      taskBuilder: this.tasks.task_builder.bind(this),
     }
     this.npcs = new WorldNpcs(roommethods)
     this.novel = new WorldNovel(this.npcs.all.labor01)

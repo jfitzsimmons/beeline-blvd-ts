@@ -84,6 +84,12 @@ export interface RoomMethod {
   getVicinityTargets(): Direction
   send_to_infirmary(npc: string): string | null
   getMendingQueue(): string[]
+  taskBuilder(
+    owner: NpcState,
+    label: string,
+    target: string,
+    cause: string
+  ): void
 }
 export interface NpcMethod extends RoomMethod {
   add_infirmed(n: string): void

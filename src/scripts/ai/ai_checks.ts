@@ -162,22 +162,44 @@ export function seen_check(s: string, w: string) {
     ? { confront: false, type: 'seen' }
     : { confront: false, type: 'neutral' }
 }
-export function clearance_checks(room = player.currentroom) {
-  if (player.clearance >= rooms.all[room].clearance) return
-  const stations = rooms.all[room].stations
-  let sKey: keyof typeof stations
-  for (sKey in stations) {
-    const watcher = stations[sKey]
-    if (watcher !== '' && npcs.all[watcher].clan == 'security') {
-      //testjpf needs a diceroll and create / return confrontation
-      if (confrontation_check('player', watcher) == true) {
-        tasks.task_builder(
-          npcs.all[watcher],
-          'questioning',
-          'player',
-          'clearance'
-        )
+
+export function clearance_checks() {
+  if (player.clearance < rooms.all[player.currentroom].clearance) {
+    print('PLAYER::: NEWQUESTIONED!!!')
+    player.fsm.setState('trespass')
+  }
+
+  const cops = npcs.return_security()
+  for (const cop of cops) {
+    const stations = rooms.all[cop.currentroom].stations
+    let sKey: keyof typeof stations
+    let target = ''
+    for (sKey in stations) {
+      target = stations[sKey]
+      if (
+        target !== '' &&
+        npcs.all[target].fsm.getState() === 'trespass' &&
+        target !== cop.labelname &&
+        confrontation_check(target, cop.labelname) == true
+        //  target !== tasks.task_has_npc(target)
+      ) {
+        print('NEWQUESTIONED!!!')
+        npcs.all[target].fsm.setState('questioned')
+        cop.fsm.setState('interrogate')
+        tasks.task_builder(cop, 'questioning', target, 'clearance')
+        break
+        //testjpf needs a diceroll and create / return confrontation
       }
+      target = 'player'
+    }
+    if (
+      target == 'player' &&
+      player.fsm.getState() == 'trespass' &&
+      confrontation_check('player', cop.labelname) == true
+    ) {
+      player.fsm.setState('questioned')
+      cop.fsm.setState('interrogate')
+      tasks.task_builder(cop, 'questioning', 'player', 'clearance')
     }
   }
 }

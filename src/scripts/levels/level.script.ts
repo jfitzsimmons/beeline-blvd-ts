@@ -56,6 +56,9 @@ function confrontation_scene(c: Task) {
   //is not using script builder
   //novel.reason is not the same thing as task.cause
   //novel may need better naming conventions
+
+  // testjpf. not using this in noveltxts???
+  //these are always player /address_cautions related.
   novel.reason = c.owner
   novel.caution = { ...c }
   novel.forced = true
@@ -67,6 +70,7 @@ function game_turn() {
   novel.item = 'none'
   novel.reset_caution()
   print('game turn!!')
+  //TESTJPF time has come for pre post turn! enter exit?!
   world.fsm.update(dt)
   //if i can incorporate confrontations
   //i can move the rest of this to various Turn fsm states
