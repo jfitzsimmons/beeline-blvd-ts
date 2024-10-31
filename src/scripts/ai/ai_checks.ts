@@ -183,9 +183,9 @@ export function clearance_checks() {
         confrontation_check(target, cop.labelname) == true
         //  target !== tasks.task_has_npc(target)
       ) {
-        print('NEWQUESTIONED!!!')
-        npcs.all[target].fsm.setState('questioned')
-        cop.fsm.setState('interrogate')
+        print('NEWQUESTIONED!!!', cop.labelname, target)
+        //npcs.all[target].fsm.setState('questioned')
+        //cop.fsm.setState('interrogate')
         tasks.task_builder(cop, 'questioning', target, 'clearance')
         break
         //testjpf needs a diceroll and create / return confrontation
@@ -194,16 +194,18 @@ export function clearance_checks() {
     }
     if (
       target == 'player' &&
+      cop.currentroom == player.currentroom &&
       player.fsm.getState() == 'trespass' &&
       confrontation_check('player', cop.labelname) == true
     ) {
-      player.fsm.setState('questioned')
-      cop.fsm.setState('interrogate')
+      // player.fsm.setState('questioned')
+      // cop.fsm.setState('interrogate')
       tasks.task_builder(cop, 'questioning', 'player', 'clearance')
     }
   }
 }
 export function confrontation_check(pname: string, nname: string) {
+  if ([pname, nname].includes('')) return false
   const s = pname == 'player' ? player.state : npcs.all[pname]
   const w = npcs.all[nname]
 

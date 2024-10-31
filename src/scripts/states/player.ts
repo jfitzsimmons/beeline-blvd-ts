@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { InventoryTableItem, PlayerState, Skills } from '../../types/state'
-import { QuestMethods } from '../../types/tasks'
+import { QuestMethods, TasksMethods } from '../../types/tasks'
 import { PlayerInitState } from './inits/playerInitState'
 import { shuffle } from '../utils/utils'
 import { RoomsInitLayout, RoomsInitState } from './inits/roomsInitState'
@@ -29,8 +29,9 @@ export default class WorldPlayer {
   private _state: PlayerState
   fsm: StateMachine
   quests: QuestMethods
+  parent: TasksMethods
 
-  constructor() {
+  constructor(taskMethods: TasksMethods) {
     this.fsm = new StateMachine(this, 'player')
     this._state = { ...PlayerInitState }
     random_skills(this._state.skills, this._state.binaries)
@@ -40,6 +41,7 @@ export default class WorldPlayer {
       increase_alert_level: this.increase_alert_level.bind(this),
       return_playerroom: this.return_playerroom.bind(this),
     }
+    this.parent = taskMethods
     this.inventory_init()
     this.fsm
       .addState('idle')
@@ -86,10 +88,26 @@ export default class WorldPlayer {
   private onTurnExit(): void {
     // print(this.labelname, 'has entered MOVE STATE')
   }
-  private onTrespassEnter(): void {}
-  private onTrespassUpdate(): void {}
-  private onTrespassExit(): void {}
-  private onQuestionedEnter(): void {}
+  private onTrespassEnter(): void {
+    const hallpass = this.parent.has_hallpass('player')
+    if (
+      hallpass != null &&
+      tonumber(hallpass.scope.charAt(hallpass.scope.length - 1))! >=
+        RoomsInitState[this.currentroom].clearance
+    )
+      this.fsm.setState('turn')
+  }
+  private onTrespassUpdate(): void {
+    if (this.clearance >= RoomsInitState[this.currentroom].clearance)
+      this.fsm.setState('turn')
+  }
+  private onTrespassExit(): void {
+    this.parent.removeTaskByCause('player', 'clearance')
+  }
+  private onQuestionedEnter(): void {
+    // print('TESTJPF: PLAYER Entering question state does nothing.')
+    //  this.fsm.setState('turn')
+  }
   private onQuestionedUpdate(): void {}
   private onQuestionedExit(): void {}
   set_room_info(r: string) {

@@ -275,19 +275,32 @@ function address_confrontations(cs: Task[]): Task | null {
   //let confront: Confront | null = null
 
   for (let i = cs.length - 1; i >= 0; i--) {
+    print(
+      ' 00::PLSYRTCONFRONT??:: ',
+      cs[i].target == 'player',
+      cs[i].owner,
+      cs[i].target
+    )
+
     const c = cs[i]
-    const agent = npcs.all[c.owner]
+    const owner = npcs.all[c.owner]
     const target: NpcState | PlayerState =
       c.target === 'player' ? player.state : npcs.all[c.target]
-
+    print(
+      '11:: PLSYRTCONFRONT??:: ',
+      owner.currentroom == target.currentroom,
+      owner.currentroom,
+      target.currentroom
+    )
     if (
-      agent.currentroom == target.currentroom ||
-      (agent.currentroom == target.exitroom &&
-        agent.exitroom == target.currentroom)
+      owner.currentroom == target.currentroom ||
+      (owner.currentroom == target.exitroom &&
+        owner.exitroom == target.currentroom)
     ) {
       c.target !== 'player' && npc_confrontation(target.labelname, c)
       c.turns = 0
       // confront =
+      print('PLSYRTCONFRONT??:: ', c.target == 'player', c.owner, c.target)
       return c.target == 'player' ? c : null
     }
     // if (confront != null) break

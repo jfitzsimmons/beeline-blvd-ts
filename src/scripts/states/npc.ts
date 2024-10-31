@@ -231,8 +231,19 @@ export default class NpcState {
     }
   }
   private onERfullExit(): void {}
-  private onTrespassEnter(): void {}
-  private onTrespassUpdate(): void {}
+  private onTrespassEnter(): void {
+    const hallpass = this.parent.has_hallpass(this.labelname)
+    if (
+      hallpass != null &&
+      tonumber(hallpass.scope.charAt(hallpass.scope.length - 1))! >=
+        RoomsInitState[this.currentroom].clearance
+    )
+      this.fsm.setState('turn')
+  }
+  private onTrespassUpdate(): void {
+    if (this.clearance >= RoomsInitState[this.currentroom].clearance)
+      this.fsm.setState('turn')
+  }
   private onTrespassExit(): void {}
   private onArresteeEnter(): void {}
   private onArresteeUpdate(): void {}
