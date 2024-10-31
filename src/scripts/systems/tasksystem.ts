@@ -361,14 +361,13 @@ export function address_cautions() {
     },
     { medical: [], conversational: [] }
   )
-  const { clearance, conversational2 } = conversational.reduce(
+  const { conversational2 } = conversational.reduce(
     (r: { [key: string]: Task[] }, o: Task) => {
       r[o.label == 'clearance' ? 'clearance' : 'conversational2'].push(o)
       return r
     },
     { clearance: [], conversational2: [] }
   )
-  print('TESTJPF No clearance foor TASKS FSM Conversion', clearance)
   //address_admin(clearance)
   address_conversations(conversational2)
   address_busy_acts(medical)
@@ -379,7 +378,8 @@ export function address_cautions() {
       'sortedTasks[i].label & NPC & sus::',
       sortedTasks[i].label,
       sortedTasks[i].owner,
-      sortedTasks[i].target
+      sortedTasks[i].target,
+      sortedTasks[i].cause
     )
     sortedTasks[i].turns--
     if (sortedTasks[i].turns <= 0) {

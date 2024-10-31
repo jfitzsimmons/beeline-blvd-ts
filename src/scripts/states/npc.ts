@@ -241,7 +241,11 @@ export default class NpcState {
       this.fsm.setState('turn')
   }
   private onTrespassUpdate(): void {
-    if (this.clearance >= RoomsInitState[this.currentroom].clearance)
+    //tesjpfremove hardcode
+    if (
+      this.clearance + math.random(1, 5) >=
+      RoomsInitState[this.currentroom].clearance
+    )
       this.fsm.setState('turn')
   }
   private onTrespassExit(): void {}
@@ -357,9 +361,12 @@ export default class NpcState {
 
     this.currentroom = chosenRoom
     this.parent.set_station(chosenRoom, chosenStation, this.labelname)
-    // if (RoomsInitState[chosenRoom].clearance > this.clearance)
-    //this.fsm.setState('trespass')
-    //testjpf apply or delete above
+    if (
+      RoomsInitState[chosenRoom].clearance >
+      this.clearance + math.random(1, 5)
+    )
+      this.fsm.setState('trespass')
+    //testjpf replace debug hardcode
     this.parent.prune_station_map(chosenRoom, chosenStation)
     this.matrix = RoomsInitState[chosenRoom].matrix
     this.currentstation = chosenStation
