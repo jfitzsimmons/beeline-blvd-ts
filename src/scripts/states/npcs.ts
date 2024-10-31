@@ -318,6 +318,7 @@ export default class WorldNpcs {
   returnMendeeLocation() {
     return this.all[this.npcLists.getMendingQueue()[0]].currentroom
   }
+  //security() {}
   medical() {
     let count = this.infirmed.length
 

@@ -54,7 +54,7 @@ export default class TaskState {
       onExit: this.onClearExit.bind(this),
     })
 
-    this.fsm.setState(setInitFSMstate(t))
+    // this.fsm.setState(setInitFSMstate(t))
   }
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
@@ -75,10 +75,10 @@ export default class TaskState {
   private onTurnUpdate(): void {}
   private onTurnExit(): void {}
 }
-
+/** testjpf maybe:::
 function setInitFSMstate(t: Task): string {
   let state = 'idle'
-
+ 
   if (t.label == 'questioning' || t.label == 'arrest') {
     state = 'confrontational'
   } else if (t.label == 'mender') {
@@ -87,3 +87,4 @@ function setInitFSMstate(t: Task): string {
 
   return state
 }
+*/

@@ -7,7 +7,7 @@ import WorldNpcs from './npcs'
 import WorldTasks from './tasks'
 import WorldInfo from './info'
 import WorldNovel from './novel'
-import { AllQuestsMethods, RoomMethod } from '../../types/tasks'
+import { AllQuestsMethods, RoomMethod, TasksMethods } from '../../types/tasks'
 import { surrounding_room_matrix } from '../utils/utils'
 import { RoomsInitState } from './inits/roomsInitState'
 import { Direction } from '../../types/ai'
@@ -30,7 +30,11 @@ export default class World {
   constructor() {
     this.fsm = new StateMachine(this, 'world')
     this.tasks = new WorldTasks()
-    this.player = new WorldPlayer()
+    const tasksMethods: TasksMethods = {
+      has_hallpass: this.tasks.has_clearance.bind(this),
+      removeTaskByCause: this.tasks.removeTaskByLabel.bind(this),
+    }
+    this.player = new WorldPlayer(tasksMethods)
     const playerMethods = {
       set_room_info: this.player.set_room_info.bind(this),
       get_player_room: this.player.get_player_room.bind(this),
@@ -48,6 +52,7 @@ export default class World {
       getVicinityTargets: this.getVicinityTargets.bind(this),
       getMendingQueue: this.tasks.getMendingQueue.bind(this),
       taskBuilder: this.tasks.task_builder.bind(this),
+      ...tasksMethods,
     }
     this.npcs = new WorldNpcs(roommethods)
     this.novel = new WorldNovel(this.npcs.all.labor01)

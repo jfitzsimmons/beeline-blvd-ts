@@ -231,8 +231,23 @@ export default class NpcState {
     }
   }
   private onERfullExit(): void {}
-  private onTrespassEnter(): void {}
-  private onTrespassUpdate(): void {}
+  private onTrespassEnter(): void {
+    const hallpass = this.parent.has_hallpass(this.labelname)
+    if (
+      hallpass != null &&
+      tonumber(hallpass.scope.charAt(hallpass.scope.length - 1))! >=
+        RoomsInitState[this.currentroom].clearance
+    )
+      this.fsm.setState('turn')
+  }
+  private onTrespassUpdate(): void {
+    //tesjpfremove hardcode
+    if (
+      this.clearance + math.random(1, 5) >=
+      RoomsInitState[this.currentroom].clearance
+    )
+      this.fsm.setState('turn')
+  }
   private onTrespassExit(): void {}
   private onArresteeEnter(): void {}
   private onArresteeUpdate(): void {}
@@ -346,9 +361,12 @@ export default class NpcState {
 
     this.currentroom = chosenRoom
     this.parent.set_station(chosenRoom, chosenStation, this.labelname)
-    // if (RoomsInitState[chosenRoom].clearance > this.clearance)
-    //this.fsm.setState('trespass')
-    //testjpf apply or delete above
+    if (
+      RoomsInitState[chosenRoom].clearance >
+      this.clearance + math.random(1, 5)
+    )
+      this.fsm.setState('trespass')
+    //testjpf replace debug hardcode
     this.parent.prune_station_map(chosenRoom, chosenStation)
     this.matrix = RoomsInitState[chosenRoom].matrix
     this.currentstation = chosenStation

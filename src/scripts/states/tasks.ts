@@ -44,6 +44,8 @@ export default class WorldTasks {
       onUpdate: this.onNewUpdate.bind(this),
       onExit: this.onNewExit.bind(this),
     })
+    this.removeTaskByLabel = this.removeTaskByLabel.bind(this)
+    this.has_clearance = this.has_clearance.bind(this)
     this.getMendingQueue = this.getMendingQueue.bind(this)
     this.npc_has_task = this.npc_has_task.bind(this)
   }
@@ -111,6 +113,14 @@ export default class WorldTasks {
       }
     }
   }
+  removeTaskByCause(owner: string, cause: string) {
+    for (let i = this.all.length - 1; i >= 0; i--) {
+      const t = this.all[i]
+      if (t.owner == owner && [cause].includes(t.cause)) {
+        this.all.splice(i, 1)
+      }
+    }
+  }
   remove_quest_tasks(owner: string) {
     for (let i = this.all.length - 1; i >= 0; i--) {
       const c = this.all[i]
@@ -159,22 +169,22 @@ export default class WorldTasks {
     return false
   }
   npc_has_task(owner: string, target: string): TaskState | null {
-    print('npc_has_task', owner, target)
+    // print('npc_has_task', owner, target)
     for (const c of this.all) {
-      print('npc_has_task:: C:', c.owner, c.target, c.label)
+      //   print('npc_has_task:: C:', c.owner, c.target, c.label)
       if ((owner == 'any' || c.owner == owner) && c.target == target) {
         return c
       }
     }
     return null
   }
-  has_clearance(owner: string): boolean {
+  has_clearance(owner: string): TaskState | null {
     for (const c of this.all) {
       if (c.owner == owner && c.label == 'clearance') {
-        return true
+        return c
       }
     }
-    return false
+    return null
   }
   npc_is_wanted(sus: string): boolean {
     for (const c of this.all) {

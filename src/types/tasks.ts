@@ -1,6 +1,7 @@
 import NpcState from '../scripts/states/npc'
 import QuestState from '../scripts/states/quest'
 import QuestStep from '../scripts/states/questStep'
+import TaskState from '../scripts/states/task'
 import { Direction } from './ai'
 import { Npcs, Skills } from './state'
 
@@ -70,6 +71,10 @@ export interface Quest {
 export interface AllQuestsMethods {
   [key: string]: QuestMethods
 }
+export interface TasksMethods {
+  has_hallpass(owner: string): TaskState | null
+  removeTaskByCause(owner: string, cause: string): void
+}
 export interface PlayerMethod {
   set_room_info(r: string): void
   get_player_room(): string
@@ -90,6 +95,7 @@ export interface RoomMethod {
     target: string,
     cause: string
   ): void
+  has_hallpass(owner: string): TaskState | null
 }
 export interface NpcMethod extends RoomMethod {
   add_infirmed(n: string): void
