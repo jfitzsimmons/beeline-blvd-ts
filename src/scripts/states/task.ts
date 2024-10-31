@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Task } from '../../types/tasks'
+import { Task, TaskMethods } from '../../types/tasks'
 import StateMachine from './stateMachine'
 //import { AllQuestsMethods, WorldQuests, Task } from '../../types/tasks'
 //mport { tutorialQuests } from './inits/quests/tutorialstate'
@@ -12,8 +12,9 @@ export default class TaskState {
   scope: string
   authority: string //ex; labor
   cause: string
+  parent: TaskMethods
 
-  constructor(t: Task) {
+  constructor(t: Task, taskMethods: TaskMethods) {
     this.fsm = new StateMachine(this, 'tasks')
     this.label = t.label
     this.owner = t.owner
@@ -22,6 +23,7 @@ export default class TaskState {
     this.scope = t.scope
     this.authority = t.authority
     this.cause = t.cause
+    this.parent = taskMethods
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
       onEnter: this.onTurnEnter.bind(this),
@@ -37,6 +39,11 @@ export default class TaskState {
       onEnter: this.onConfrontEnter.bind(this),
       onUpdate: this.onConfrontUpdate.bind(this),
       onExit: this.onConfrontExit.bind(this),
+    })
+    this.fsm.addState('injury', {
+      onEnter: this.onInjuryEnter.bind(this),
+      onUpdate: this.onInjuryUpdate.bind(this),
+      onExit: this.onInjuryExit.bind(this),
     })
     this.fsm.addState('converse', {
       onEnter: this.onConverseEnter.bind(this),
@@ -54,11 +61,19 @@ export default class TaskState {
       onExit: this.onClearExit.bind(this),
     })
 
-    // this.fsm.setState(setInitFSMstate(t))
+    this.fsm.setState(setInitFSMstate(t))
   }
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
   private onNewExit(): void {}
+  private onInjuryEnter(): void {
+    //TESTJPF BLOCKER Task cannot see if doctor and patient are in the same room
+    //give roomstate a same room method?
+    this.parent.addAdjustMendingQueue(this.target)
+    this.turns = 0
+  }
+  private onInjuryUpdate(): void {}
+  private onInjuryExit(): void {}
   private onConfrontEnter(): void {}
   private onConfrontUpdate(): void {}
   private onConfrontExit(): void {}
@@ -75,16 +90,15 @@ export default class TaskState {
   private onTurnUpdate(): void {}
   private onTurnExit(): void {}
 }
-/** testjpf maybe:::
+// testjpf maybe:::
 function setInitFSMstate(t: Task): string {
   let state = 'idle'
- 
-  if (t.label == 'questioning' || t.label == 'arrest') {
-    state = 'confrontational'
-  } else if (t.label == 'mender') {
-    state = 'medical'
-  } else if (t.label == 'clearance') state = 'clearance'
+
+  if (t.label == 'injury') {
+    state = 'injury'
+  } //else if (t.label == 'mender') {
+  //  state = 'medical'
+  //} else if (t.label == 'clearance') state = 'clearance'
 
   return state
 }
-*/

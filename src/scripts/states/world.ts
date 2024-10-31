@@ -29,17 +29,21 @@ export default class World {
   loadType: string
   constructor() {
     this.fsm = new StateMachine(this, 'world')
+    //testjpf could proabbly give rooms to player instead of the opposite
+    //now give focusedRoom and inSameRoom to tasks and player
+    this.rooms = new WorldRooms()
     this.tasks = new WorldTasks()
     const tasksMethods: TasksMethods = {
       has_hallpass: this.tasks.has_clearance.bind(this),
       removeTaskByCause: this.tasks.removeTaskByLabel.bind(this),
     }
+
     this.player = new WorldPlayer(tasksMethods)
-    const playerMethods = {
-      set_room_info: this.player.set_room_info.bind(this),
-      get_player_room: this.player.get_player_room.bind(this),
-    }
-    this.rooms = new WorldRooms(playerMethods)
+    // const playerMethods = {
+    // set_room_info: this.player.set_room_info.bind(this),
+    //  get_player_room: this.player.get_player_room.bind(this),
+    //}
+
     this.loadType = 'new game'
     const roommethods: RoomMethod = {
       clear_station: this.rooms.clear_station.bind(this),

@@ -18,7 +18,7 @@ export default class WorldRooms {
   private _all: Rooms
   layout: Array<Array<string | null>>
   roles: Roles
-  roomsLists: PlayerMethod
+  //roomsLists: PlayerMethod
   fallbacks: Fallbacks
   stationsMap: { [key: string]: { [key: string]: string } }
   constructor(playerMethods: PlayerMethod) {
@@ -26,10 +26,10 @@ export default class WorldRooms {
     this.fallbacks = { ...RoomsInitFallbacks }
     this.layout = [...RoomsInitLayout]
     this.roles = { ...RoomsInitRoles }
-    this.roomsLists = {
-      set_room_info: playerMethods.set_room_info.bind(this),
-      get_player_room: playerMethods.get_player_room.bind(this),
-    }
+    //this.roomsLists = {
+    //  set_room_info: playerMethods.set_room_info.bind(this),
+    //  get_player_room: playerMethods.get_player_room.bind(this),
+    // }
     this._all = { ...seedRooms(this.roomsLists) }
     this.stationsMap = this.createStationsMap()
     this.fsm.addState('idle').addState('turn', {

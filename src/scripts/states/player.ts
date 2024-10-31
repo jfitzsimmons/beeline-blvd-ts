@@ -110,7 +110,9 @@ export default class WorldPlayer {
   }
   private onQuestionedUpdate(): void {}
   private onQuestionedExit(): void {}
-  set_room_info(r: string) {
+  set_room_info() {
+    //testjpf instead will have parent.get_focused_room()
+    //or something...
     this.exitroom = RoomsInitLayout[this.matrix_y][this.matrix_x]!
     this.currentroom = r
     print('setroominfo:: exit,curr:', this.exitroom, this.currentroom)

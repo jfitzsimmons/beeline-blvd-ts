@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
-import { QuestMethods, Task } from '../../types/tasks'
+import { QuestMethods, Task, TaskMethods } from '../../types/tasks'
 import NpcState from './npc'
 import TaskState from './task'
 import { arraymove } from '../utils/utils'
@@ -21,13 +21,16 @@ export default class WorldTasks {
   fsm: StateMachine
   quests: QuestMethods
   mendingQueue: string[]
-
+  methods: TaskMethods
   constructor() {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
     // this._quests = build_quests_state(this.questmethods)
     this._spawn = 'grounds'
     this.mendingQueue = []
+    this.methods = {
+      addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
+    }
 
     this.quests = {
       num_of_injuries: this.num_of_injuries.bind(this),
@@ -44,6 +47,7 @@ export default class WorldTasks {
       onUpdate: this.onNewUpdate.bind(this),
       onExit: this.onNewExit.bind(this),
     })
+
     this.removeTaskByLabel = this.removeTaskByLabel.bind(this)
     this.has_clearance = this.has_clearance.bind(this)
     this.getMendingQueue = this.getMendingQueue.bind(this)
@@ -279,7 +283,9 @@ export default class WorldTasks {
   }
   append_task(task: Task) {
     print('NEW::: Appended task::', task.label, task.owner)
-    this.all.push(new TaskState(task))
+    //if injury adjust q
+    //in adjust q, dont push new task? ttestjpf
+    this.all.push(new TaskState(task, this.methods))
   }
   // checks quest completion after interactions and turns
   //TESTJPF all FSM stuff for quest turn

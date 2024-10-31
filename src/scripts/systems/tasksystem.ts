@@ -316,7 +316,7 @@ function address_conversations(cs: Task[]) {
       const watcher = stations[station]
       //loop through stations in room of task agent
       if (watcher != '' && watcher != cs[i].owner && watcher != cs[i].target) {
-        passive_acts(cs[i], watcher)
+        //passive_acts(cs[i], watcher)
       }
     }
   }
@@ -369,7 +369,7 @@ export function address_cautions() {
     { clearance: [], conversational2: [] }
   )
   //address_admin(clearance)
-  address_conversations(conversational2)
+  //address_conversations(conversational2)
   address_busy_acts(medical)
   const confront: Task | null = address_confrontations(confrontational)
 

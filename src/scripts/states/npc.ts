@@ -242,11 +242,17 @@ export default class NpcState {
   }
   private onTrespassUpdate(): void {
     //tesjpfremove hardcode
+    // if randomly caught randomly sets to turn
+    // need to re-place npc
     if (
       this.clearance + math.random(1, 5) >=
       RoomsInitState[this.currentroom].clearance
     )
       this.fsm.setState('turn')
+    this.clearStation()
+    const target = RoomsInitState[this.parent.get_player_room()].matrix
+    const rooms = this.makePriorityRoomList(target)
+    this.findRoomPlaceStation(rooms)
   }
   private onTrespassExit(): void {}
   private onArresteeEnter(): void {}

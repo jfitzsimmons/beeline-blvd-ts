@@ -75,6 +75,9 @@ export interface TasksMethods {
   has_hallpass(owner: string): TaskState | null
   removeTaskByCause(owner: string, cause: string): void
 }
+export interface TaskMethods {
+  addAdjustMendingQueue(patient: string): void
+}
 export interface PlayerMethod {
   set_room_info(r: string): void
   get_player_room(): string
