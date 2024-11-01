@@ -71,16 +71,24 @@ export interface Quest {
 export interface AllQuestsMethods {
   [key: string]: QuestMethods
 }
-export interface TasksMethods {
+export interface WorldPlayerProps {
+  getFocusedRoom(): string
   has_hallpass(owner: string): TaskState | null
   removeTaskByCause(owner: string, cause: string): void
 }
-export interface TaskMethods {
+export interface WorldTasksProps {
+  didCrossPaths(owner: string, target: string): boolean
+}
+export interface TaskProps extends WorldTasksProps {
   addAdjustMendingQueue(patient: string): void
 }
 export interface PlayerMethod {
   set_room_info(r: string): void
   get_player_room(): string
+}
+
+export interface RoomMethod2 {
+  set_focused(r: string): void
 }
 export interface RoomMethod {
   get_player_room(): string

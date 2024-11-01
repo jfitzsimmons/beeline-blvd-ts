@@ -196,13 +196,6 @@ function passive_acts(c: Task, w: string) {
   if (c.label == 'reckless') {
     reckless_consequence(c, w)
   } else if (
-    c.authority == 'doctors' &&
-    c.label == 'injury' &&
-    (c.authority == npcs.all[w].clan || c.authority == npcs.all[w].labelname)
-  ) {
-    tasks.addAdjustMendingQueue(c.target)
-    c.turns = 0
-  } else if (
     c.authority == 'security' &&
     c.label == 'snitch' &&
     (c.authority == npcs.all[w].clan || c.authority == npcs.all[w].labelname)
@@ -316,7 +309,7 @@ function address_conversations(cs: Task[]) {
       const watcher = stations[station]
       //loop through stations in room of task agent
       if (watcher != '' && watcher != cs[i].owner && watcher != cs[i].target) {
-        //passive_acts(cs[i], watcher)
+        passive_acts(cs[i], watcher)
       }
     }
   }
@@ -369,7 +362,7 @@ export function address_cautions() {
     { clearance: [], conversational2: [] }
   )
   //address_admin(clearance)
-  //address_conversations(conversational2)
+  address_conversations(conversational2)
   address_busy_acts(medical)
   const confront: Task | null = address_confrontations(confrontational)
 

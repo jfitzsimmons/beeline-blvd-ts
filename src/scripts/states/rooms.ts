@@ -7,7 +7,7 @@ import {
 import { Rooms, Roles, Fallbacks } from '../../types/state'
 import RoomState from './room'
 import StateMachine from './stateMachine'
-import { PlayerMethod } from '../../types/tasks'
+import { RoomMethod2 } from '../../types/tasks'
 
 // todo TESTJPF needs room call like npcstate
 // the have a avtive, player, neighbor state? something that automatically makes direction for npcs to target. up down left right...
@@ -18,19 +18,21 @@ export default class WorldRooms {
   private _all: Rooms
   layout: Array<Array<string | null>>
   roles: Roles
-  //roomsLists: PlayerMethod
+  private _focused: string
+  roomsLists: RoomMethod2
   fallbacks: Fallbacks
   stationsMap: { [key: string]: { [key: string]: string } }
-  constructor(playerMethods: PlayerMethod) {
+  constructor() {
     this.fsm = new StateMachine(this, 'rooms')
     this.fallbacks = { ...RoomsInitFallbacks }
     this.layout = [...RoomsInitLayout]
     this.roles = { ...RoomsInitRoles }
-    //this.roomsLists = {
-    //  set_room_info: playerMethods.set_room_info.bind(this),
-    //  get_player_room: playerMethods.get_player_room.bind(this),
-    // }
+    this.roomsLists = {
+      set_focused: this.set_focused.bind(this),
+      // get_player_room: playerMethods.get_player_room.bind(this),
+    }
     this._all = { ...seedRooms(this.roomsLists) }
+    this._focused = 'grounds'
     this.stationsMap = this.createStationsMap()
     this.fsm.addState('idle').addState('turn', {
       onEnter: this.onTurnEnter.bind(this),
@@ -51,9 +53,23 @@ export default class WorldRooms {
     this.get_station_map = this.get_station_map.bind(this)
     this.reset_station_map = this.reset_station_map.bind(this)
     this.send_to_infirmary = this.send_to_infirmary.bind(this)
+    this.set_focused = this.set_focused.bind(this)
+    this.get_focused = this.get_focused.bind(this)
   }
   public get all(): Rooms {
     return this._all
+  }
+  public get focused(): string {
+    return this._focused
+  }
+  public set focused(f: string) {
+    this._focused = f
+  }
+  set_focused(r: string) {
+    this.focused = r
+  }
+  get_focused(): string {
+    return this.focused
   }
   send_to_infirmary(npc: string): string | null {
     const occs = this.all.infirmary.occupants!
@@ -149,7 +165,7 @@ export default class WorldRooms {
   }
 }
 
-function seedRooms(lists: PlayerMethod) {
+function seedRooms(lists: RoomMethod2) {
   const seeded: Rooms = {}
   //const inits = { ...NpcsInitState }
   let ki: keyof typeof RoomsInitState

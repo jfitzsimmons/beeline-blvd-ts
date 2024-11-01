@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Task, TaskMethods } from '../../types/tasks'
+import { Task, TaskProps } from '../../types/tasks'
 import StateMachine from './stateMachine'
 //import { AllQuestsMethods, WorldQuests, Task } from '../../types/tasks'
 //mport { tutorialQuests } from './inits/quests/tutorialstate'
@@ -12,10 +12,13 @@ export default class TaskState {
   scope: string
   authority: string //ex; labor
   cause: string
-  parent: TaskMethods
+  parent: TaskProps
 
-  constructor(t: Task, taskMethods: TaskMethods) {
-    this.fsm = new StateMachine(this, 'tasks')
+  constructor(t: Task, taskProps: TaskProps) {
+    this.fsm = new StateMachine(
+      this,
+      `task-${t.owner}-${t.label}-${tostring(os.time())}`
+    )
     this.label = t.label
     this.owner = t.owner
     this.target = t.target
@@ -23,7 +26,7 @@ export default class TaskState {
     this.scope = t.scope
     this.authority = t.authority
     this.cause = t.cause
-    this.parent = taskMethods
+    this.parent = taskProps
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
       onEnter: this.onTurnEnter.bind(this),
@@ -69,10 +72,18 @@ export default class TaskState {
   private onInjuryEnter(): void {
     //TESTJPF BLOCKER Task cannot see if doctor and patient are in the same room
     //give roomstate a same room method?
-    this.parent.addAdjustMendingQueue(this.target)
-    this.turns = 0
   }
-  private onInjuryUpdate(): void {}
+  private onInjuryUpdate(): void {
+    print('injurytaskupdate::')
+    for (const doc of ['doc01', 'doc02', 'doc03']) {
+      if (this.parent.didCrossPaths(this.owner, doc)) {
+        print(this.owner, 'met doc for injury task::', doc)
+        this.parent.addAdjustMendingQueue(this.target)
+        this.turns = 0
+        break
+      }
+    }
+  }
   private onInjuryExit(): void {}
   private onConfrontEnter(): void {}
   private onConfrontUpdate(): void {}
@@ -96,9 +107,9 @@ function setInitFSMstate(t: Task): string {
 
   if (t.label == 'injury') {
     state = 'injury'
-  } //else if (t.label == 'mender') {
-  //  state = 'medical'
-  //} else if (t.label == 'clearance') state = 'clearance'
+  } else if (t.label == 'mender') {
+    state = 'medical'
+  } else if (t.label == 'clearance') state = 'clearance'
 
   return state
 }

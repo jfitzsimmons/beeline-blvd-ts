@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
-import { QuestMethods, Task, TaskMethods } from '../../types/tasks'
+import {
+  QuestMethods,
+  Task,
+  TaskProps,
+  WorldTasksProps,
+} from '../../types/tasks'
 import NpcState from './npc'
 import TaskState from './task'
 import { arraymove } from '../utils/utils'
@@ -21,15 +26,18 @@ export default class WorldTasks {
   fsm: StateMachine
   quests: QuestMethods
   mendingQueue: string[]
-  methods: TaskMethods
-  constructor() {
+  methods: TaskProps
+  parent: WorldTasksProps
+  constructor(worldProps: WorldTasksProps) {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
     // this._quests = build_quests_state(this.questmethods)
     this._spawn = 'grounds'
     this.mendingQueue = []
+    this.parent = worldProps
     this.methods = {
       addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
+      didCrossPaths: this.parent.didCrossPaths.bind(this),
     }
 
     this.quests = {
@@ -48,6 +56,8 @@ export default class WorldTasks {
       onExit: this.onNewExit.bind(this),
     })
 
+    this.fsm.setState('new')
+
     this.removeTaskByLabel = this.removeTaskByLabel.bind(this)
     this.has_clearance = this.has_clearance.bind(this)
     this.getMendingQueue = this.getMendingQueue.bind(this)
@@ -60,7 +70,6 @@ export default class WorldTasks {
   private onTurnUpdate(): void {
     let i = this.all.length
     while (i-- !== 0) {
-      // print('npc', i)
       const task = this.all[i]
 
       task.fsm.update(dt)

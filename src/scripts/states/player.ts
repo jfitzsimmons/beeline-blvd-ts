@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { InventoryTableItem, PlayerState, Skills } from '../../types/state'
-import { QuestMethods, TasksMethods } from '../../types/tasks'
+import { QuestMethods, WorldPlayerProps } from '../../types/tasks'
 import { PlayerInitState } from './inits/playerInitState'
 import { shuffle } from '../utils/utils'
 import { RoomsInitLayout, RoomsInitState } from './inits/roomsInitState'
@@ -29,9 +29,9 @@ export default class WorldPlayer {
   private _state: PlayerState
   fsm: StateMachine
   quests: QuestMethods
-  parent: TasksMethods
+  parent: WorldPlayerProps
 
-  constructor(taskMethods: TasksMethods) {
+  constructor(playerProps: WorldPlayerProps) {
     this.fsm = new StateMachine(this, 'player')
     this._state = { ...PlayerInitState }
     random_skills(this._state.skills, this._state.binaries)
@@ -41,7 +41,7 @@ export default class WorldPlayer {
       increase_alert_level: this.increase_alert_level.bind(this),
       return_playerroom: this.return_playerroom.bind(this),
     }
-    this.parent = taskMethods
+    this.parent = playerProps
     this.inventory_init()
     this.fsm
       .addState('idle')
@@ -84,6 +84,7 @@ export default class WorldPlayer {
     print('PLAYER UPDATE FSM')
     this.ap = this.ap - 1
     this.turns = this.turns + 1
+    this.set_room_info()
   }
   private onTurnExit(): void {
     // print(this.labelname, 'has entered MOVE STATE')
@@ -113,10 +114,25 @@ export default class WorldPlayer {
   set_room_info() {
     //testjpf instead will have parent.get_focused_room()
     //or something...
+    print(
+      '00 focusroomchanges:: current, matrik:',
+      this.parent.getFocusedRoom(),
+      this.exitroom,
+      this.currentroom,
+      this.matrix_x,
+      this.matrix_y
+    )
     this.exitroom = RoomsInitLayout[this.matrix_y][this.matrix_x]!
-    this.currentroom = r
-    print('setroominfo:: exit,curr:', this.exitroom, this.currentroom)
-    this.matrix = RoomsInitState[r].matrix
+    this.currentroom = this.parent.getFocusedRoom()
+    this.matrix = RoomsInitState[this.currentroom].matrix
+    print(
+      'focusroomchanges:: current, matrik:',
+      this.parent.getFocusedRoom(),
+      this.exitroom,
+      this.currentroom,
+      this.matrix_x,
+      this.matrix_y
+    )
   }
   get_player_room(): string {
     return this.currentroom

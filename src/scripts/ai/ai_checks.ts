@@ -11,19 +11,22 @@ import { confrontation_consequence } from '../systems/tasksystem'
 //import { injured_npcs } from '../systems/emergencysystem'
 import { roll_special_dice } from '../utils/dice'
 import NpcState from '../states/npc'
+import { NpcsInitState } from '../states/inits/npcsInitState'
 
 function tend_to_patient(p: string, doc: string) {
   npcs.all[doc].fsm.setState('mender')
   npcs.all[p].fsm.setState('mendee')
   tasks.remove_heat(p)
   tasks.task_builder(npcs.all[doc], 'mender', p, 'injury')
-  tasks.mendingQueue.splice(tasks.mendingQueue.indexOf(p), 1)
+  // tasks.mendingQueue.splice(tasks.mendingQueue.indexOf(p), 1)
+  tasks.addAdjustMendingQueue(p)
 
   if (npcs.all[doc].currentroom == player.currentroom)
-    msg.post(`/${npcs.all[doc].currentstation}#npc_loader`, hash('move_npc'), {
-      station: npcs.all[p].currentstation,
-      npc: doc,
-    })
+    print('MOVENPC DOC:: TENTOPATIENT: ', doc, p)
+  msg.post(`/${npcs.all[doc].currentstation}#npc_loader`, hash('move_npc'), {
+    station: npcs.all[p].currentstation,
+    npc: doc,
+  })
 }
 
 export function aid_check() {
@@ -41,25 +44,37 @@ export function aid_check() {
     (n): n is string => !npcs.ignore.includes(n)
   )) {
     print('Needsadoc!:::', i)
-    const stations = rooms.all[npcs.all[i].currentroom].stations
-    let sKey: keyof typeof stations
-    for (sKey in stations) {
-      const helper = stations[sKey]
+    //testjpf make array of values sort docs first.!! NEXTTODO
+    const helpers = Object.values(rooms.all[npcs.all[i].currentroom].stations)
+      .filter((s) => s != '')
+      .sort(function (a, b) {
+        if (a.slice(0, 3) === 'doc' && b.slice(0, 3) !== 'doc') return -1
+        if (b.slice(0, 3) === 'doc' && a.slice(0, 3) !== 'doc') return 1
+        return 0
+      })
+    //const stations = rooms.all[npcs.all[i].currentroom].stations
+    //let sKey: keyof typeof stations
+    //TESTJPF loop breaks as soon as caution condition is met
+    //be nice to sort doctors first!
+    for (const helper of helpers) {
+      // const helper = stations[sKey]
       //check each station for a chance for them to help injured
-      if (helper != '' && helper != i) {
+      if (helper != i) {
         //doctors start mending after RNG weighted by patient priority
         const ticket = tasks.mendingQueue.indexOf(i)
+        const random = math.random(0, 5)
         if (
-          npcs.all[helper].clan == 'doctors' &&
-          ((ticket != -1 && ticket < math.random(0, 5)) ||
-            (ticket == -1 && math.random() > 0.2))
+          NpcsInitState[helper].clan == 'doctors' &&
+          ((ticket != -1 && ticket < random) || (ticket == -1 && random > 3))
         ) {
+          print('pretendtopatient???')
           tend_to_patient(i, helper)
           break
         } else if (
-          math.random() > 0.36 &&
-          tasks.npc_has_task(helper, i) == null &&
-          tasks.has_ignore_task(i) == false
+          math.random() > 0.1 &&
+          tasks.npc_has_task(helper, i) === null &&
+          NpcsInitState[helper].clan !== 'doctors' &&
+          tasks.has_ignore_task(i) === false
         ) {
           //if not a doctor, create injury caution if haven't already
           tasks.task_builder(npcs.all[helper], 'injury', i, 'injury')

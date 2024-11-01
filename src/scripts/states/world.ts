@@ -7,7 +7,12 @@ import WorldNpcs from './npcs'
 import WorldTasks from './tasks'
 import WorldInfo from './info'
 import WorldNovel from './novel'
-import { AllQuestsMethods, RoomMethod, TasksMethods } from '../../types/tasks'
+import {
+  AllQuestsMethods,
+  RoomMethod,
+  WorldPlayerProps,
+  WorldTasksProps,
+} from '../../types/tasks'
 import { surrounding_room_matrix } from '../utils/utils'
 import { RoomsInitState } from './inits/roomsInitState'
 import { Direction } from '../../types/ai'
@@ -29,22 +34,26 @@ export default class World {
   loadType: string
   constructor() {
     this.fsm = new StateMachine(this, 'world')
+    this.loadType = 'new game'
     //testjpf could proabbly give rooms to player instead of the opposite
     //now give focusedRoom and inSameRoom to tasks and player
     this.rooms = new WorldRooms()
-    this.tasks = new WorldTasks()
-    const tasksMethods: TasksMethods = {
+    const tasksProps: WorldTasksProps = {
+      didCrossPaths: this.didCrossPaths.bind(this),
+    }
+    this.tasks = new WorldTasks(tasksProps)
+    const playerProps: WorldPlayerProps = {
+      getFocusedRoom: this.rooms.get_focused.bind(this),
       has_hallpass: this.tasks.has_clearance.bind(this),
-      removeTaskByCause: this.tasks.removeTaskByLabel.bind(this),
+      removeTaskByCause: this.tasks.removeTaskByCause.bind(this),
     }
 
-    this.player = new WorldPlayer(tasksMethods)
+    this.player = new WorldPlayer(playerProps)
     // const playerMethods = {
     // set_room_info: this.player.set_room_info.bind(this),
     //  get_player_room: this.player.get_player_room.bind(this),
     //}
 
-    this.loadType = 'new game'
     const roommethods: RoomMethod = {
       clear_station: this.rooms.clear_station.bind(this),
       set_station: this.rooms.set_station.bind(this),
@@ -56,7 +65,7 @@ export default class World {
       getVicinityTargets: this.getVicinityTargets.bind(this),
       getMendingQueue: this.tasks.getMendingQueue.bind(this),
       taskBuilder: this.tasks.task_builder.bind(this),
-      ...tasksMethods,
+      ...playerProps,
     }
     this.npcs = new WorldNpcs(roommethods)
     this.novel = new WorldNovel(this.npcs.all.labor01)
@@ -108,11 +117,12 @@ export default class World {
 
   // so what next. start with world.init in lua file
   private onNewEnter(): void {
-    this.player.fsm.setState('turn')
     this.rooms.fsm.setState('turn')
-    this.rooms.all.grounds.fsm.setState('focus')
-    this.player.currentroom = 'grounds'
+    // this.rooms.all.grounds.fsm.setState('focus')
+    this.player.fsm.setState('turn')
+    this.player.exitroom = 'grounds'
     this.npcs.fsm.setState('new')
+    this.tasks.fsm.setState('turn')
 
     // this.npcs.fsm.update(dt)
     this.quests.fsm.setState('turn')
@@ -163,6 +173,7 @@ export default class World {
     this.npcs.fsm.update(dt)
     this.rooms.fsm.update(dt)
     this.quests.fsm.update(dt)
+    this.tasks.fsm.update(dt)
   }
   private onTurnExit(): void {}
   private onPlayerUpdate(): void {}
@@ -173,5 +184,22 @@ export default class World {
       this.player.matrix
     )
     //return this._vicinityTargets
+  }
+  private didCrossPaths(o: string, t: string): boolean {
+    const owner = this.npcs.all[o]
+    const target = this.npcs.all[t]
+    print(
+      'didcross:::',
+      owner.labelname,
+      target.labelname,
+      owner.currentroom == target.currentroom ||
+        (owner.currentroom == target.exitroom &&
+          owner.exitroom == target.currentroom)
+    )
+    return (
+      owner.currentroom == target.currentroom ||
+      (owner.currentroom == target.exitroom &&
+        owner.exitroom == target.currentroom)
+    )
   }
 }
