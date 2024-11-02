@@ -99,6 +99,9 @@ export default class WorldPlayer {
       this.fsm.setState('turn')
   }
   private onTrespassUpdate(): void {
+    this.ap = this.ap - 1
+    this.turns = this.turns + 1
+    this.set_room_info()
     if (this.clearance >= RoomsInitState[this.currentroom].clearance)
       this.fsm.setState('turn')
   }

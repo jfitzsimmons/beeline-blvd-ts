@@ -150,6 +150,7 @@ export default class World {
     this.clock = this.clock + 6
     this.player.ap = this.player.ap_max - 6
     this.player.hp = this.player.hp_max - 1
+    this.player.fsm.setState('turn')
   }
   private onFaintUpdate(): void {}
   private onFaintExit(): void {}

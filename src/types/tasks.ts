@@ -74,7 +74,7 @@ export interface AllQuestsMethods {
 export interface WorldPlayerProps {
   getFocusedRoom(): string
   has_hallpass(owner: string): TaskState | null
-  removeTaskByCause(owner: string, cause: string): void
+  removeTaskByCause(target: string, cause: string): void
 }
 export interface WorldTasksProps {
   didCrossPaths(owner: string, target: string): boolean

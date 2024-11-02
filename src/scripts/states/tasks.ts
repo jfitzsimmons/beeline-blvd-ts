@@ -57,6 +57,7 @@ export default class WorldTasks {
     })
 
     this.fsm.setState('new')
+    this.removeTaskByCause = this.removeTaskByCause.bind(this)
 
     this.removeTaskByLabel = this.removeTaskByLabel.bind(this)
     this.has_clearance = this.has_clearance.bind(this)
@@ -126,10 +127,10 @@ export default class WorldTasks {
       }
     }
   }
-  removeTaskByCause(owner: string, cause: string) {
+  removeTaskByCause(target: string, cause: string) {
     for (let i = this.all.length - 1; i >= 0; i--) {
       const t = this.all[i]
-      if (t.owner == owner && [cause].includes(t.cause)) {
+      if (t.target == target && [cause].includes(t.cause)) {
         this.all.splice(i, 1)
       }
     }

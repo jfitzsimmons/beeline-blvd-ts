@@ -12,6 +12,7 @@ import { confrontation_consequence } from '../systems/tasksystem'
 import { roll_special_dice } from '../utils/dice'
 import NpcState from '../states/npc'
 import { NpcsInitState } from '../states/inits/npcsInitState'
+import { RoomsInitState } from '../states/inits/roomsInitState'
 
 function tend_to_patient(p: string, doc: string) {
   npcs.all[doc].fsm.setState('mender')
@@ -179,8 +180,13 @@ export function seen_check(s: string, w: string) {
 }
 
 export function clearance_checks() {
-  if (player.clearance < rooms.all[player.currentroom].clearance) {
-    print('PLAYER::: NEWQUESTIONED!!!')
+  if (player.clearance < RoomsInitState[player.currentroom].clearance) {
+    print(
+      'PLAYER::: NEWQUESTIONED!!!',
+      player.clearance,
+      RoomsInitState[player.currentroom].clearance,
+      player.currentroom
+    )
     player.fsm.setState('trespass')
   }
 
