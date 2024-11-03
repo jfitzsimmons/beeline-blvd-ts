@@ -55,6 +55,7 @@ export default class World {
     //}
 
     const roommethods: RoomMethod = {
+      isStationedTogether: this.rooms.isStationedTogether.bind(this),
       clear_station: this.rooms.clear_station.bind(this),
       set_station: this.rooms.set_station.bind(this),
       prune_station_map: this.rooms.prune_station_map.bind(this),

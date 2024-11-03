@@ -26,6 +26,7 @@ export default class WorldTasks {
   fsm: StateMachine
   quests: QuestMethods
   mendingQueue: string[]
+  medicalSys: string[]
   methods: TaskProps
   parent: WorldTasksProps
   constructor(worldProps: WorldTasksProps) {
@@ -34,8 +35,10 @@ export default class WorldTasks {
     // this._quests = build_quests_state(this.questmethods)
     this._spawn = 'grounds'
     this.mendingQueue = []
+    this.medicalSys = []
     this.parent = worldProps
     this.methods = {
+      alreadyHunting: this.already_hunting.bind(this),
       addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
       didCrossPaths: this.parent.didCrossPaths.bind(this),
     }
@@ -58,7 +61,6 @@ export default class WorldTasks {
 
     this.fsm.setState('new')
     this.removeTaskByCause = this.removeTaskByCause.bind(this)
-
     this.removeTaskByLabel = this.removeTaskByLabel.bind(this)
     this.has_clearance = this.has_clearance.bind(this)
     this.getMendingQueue = this.getMendingQueue.bind(this)
@@ -69,11 +71,24 @@ export default class WorldTasks {
   private onNewExit(): void {}
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {
+    //testjpf one array of systemTasks/ crossTasks
+    //in loop do ['mender','questioning',
+    //'arrest','snitch','reckless',}includes(task.label)
+    //opposite better !['quest,'injury'].includes
+    //overengineered? not sure what i want?
+    //instead of this.all have statetasks and systemtasks!?
     let i = this.all.length
     while (i-- !== 0) {
       const task = this.all[i]
-
-      task.fsm.update(dt)
+      print(
+        'TURNUPDATE::: task::',
+        task.label,
+        task.owner,
+        task.target,
+        task.cause
+      )
+      task.turns <= 0 ? this.all.splice(i, 1) : task.fsm.update(dt)
+      task.turns = task.turns - 1
     }
   }
   private onTurnExit(): void {}
@@ -162,14 +177,15 @@ export default class WorldTasks {
       }
     }
   }
-  already_hunting(owner: string, sus: string) {
-    for (const c of this.all) {
+  already_hunting(owner: string, sus: string): Task | null {
+    for (const t of this.all) {
       if (
-        c.owner == owner &&
-        c.target == sus &&
-        (c.label == 'questioning' || c.label == 'arrest')
+        t.owner == owner &&
+        t.target == sus &&
+        (t.label == 'questioning' || t.label == 'arrest')
       ) {
-        return c
+        t.turns = t.turns + 6
+        return t
       }
     }
     return null

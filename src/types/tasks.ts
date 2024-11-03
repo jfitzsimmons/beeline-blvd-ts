@@ -81,6 +81,7 @@ export interface WorldTasksProps {
 }
 export interface TaskProps extends WorldTasksProps {
   addAdjustMendingQueue(patient: string): void
+  alreadyHunting(owner: string, sus: string): Task | null
 }
 export interface PlayerMethod {
   set_room_info(r: string): void
@@ -91,6 +92,7 @@ export interface RoomMethod2 {
   set_focused(r: string): void
 }
 export interface RoomMethod {
+  isStationedTogether(npcs: string[], room: string): boolean
   get_player_room(): string
   clear_station(room: string, station: string, npc: string): void
   set_station(room: string, station: string, npc: string): void

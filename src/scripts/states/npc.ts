@@ -180,8 +180,14 @@ export default class NpcState {
     this.currentroom = 'infirmary'
   }
   private onInfirmUpdate(): void {
-    this.hp = this.hp + 1
     this.turns_since_encounter = 99
+    this.parent.isStationedTogether(
+      ['doc03', 'doc02', 'doc01'],
+      'infirmary'
+    ) === true
+      ? (this.hp = this.hp + 2)
+      : (this.hp = this.hp + 1)
+
     if (this.hp > 9) this.fsm.setState('turn')
   }
   private onInfirmEnd(): void {
@@ -409,15 +415,14 @@ export default class NpcState {
     this[e.fx.type][e.fx.stat] = this[e.fx.type][e.fx.stat] - e.fx.adjustment
   }
   remove_effects(effects: Effect[]) {
-    if (effects.length > 0) {
-      //let eKey: keyof typeof
-      for (const effect of effects) {
-        if (effect.turns < 0) {
-          this.remove_effects_bonus(effect)
-          effects.splice(effects.indexOf(effect), 1)
-        } else {
-          effect.turns = effect.turns - 1
-        }
+    if (effects.length < 1) return
+    //let eKey: keyof typeof
+    for (const effect of effects) {
+      if (effect.turns < 0) {
+        this.remove_effects_bonus(effect)
+        effects.splice(effects.indexOf(effect), 1)
+      } else {
+        effect.turns = effect.turns - 1
       }
     }
   }

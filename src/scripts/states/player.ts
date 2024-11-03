@@ -38,7 +38,6 @@ export default class WorldPlayer {
     this.quests = {
       return_inventory: this.return_inventory.bind(this),
       return_skills: this.return_skills.bind(this),
-      increase_alert_level: this.increase_alert_level.bind(this),
       return_playerroom: this.return_playerroom.bind(this),
     }
     this.parent = playerProps
@@ -72,6 +71,7 @@ export default class WorldPlayer {
         onUpdate: this.onQuestionedUpdate.bind(this),
         onExit: this.onQuestionedExit.bind(this),
       })
+    this.addToAlertLevel = this.addToAlertLevel.bind(this)
 
     this.get_player_room = this.get_player_room.bind(this)
     this.set_room_info = this.set_room_info.bind(this)
@@ -268,8 +268,8 @@ export default class WorldPlayer {
   return_playerroom(): string {
     return this._state.currentroom
   }
-  increase_alert_level() {
-    this.alert_level += 1
+  addToAlertLevel(n: number) {
+    this.alert_level += n
   }
   private inventory_init() {
     for (const item of this.state.inventory) {

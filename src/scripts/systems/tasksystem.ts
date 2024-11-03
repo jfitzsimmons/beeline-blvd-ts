@@ -71,17 +71,7 @@ const reck_harass_checks = [classy_check, predator_check]
 //Focused actions
 //todo doctor npc state
 function focused_acts(c: Task) {
-  if (c.cause == 'office') {
-    if (c.turns == 1) {
-      npcs.all[c.target].hp = 5
-      rooms.all.infirmary.occupants![npcs.all[c.target].currentstation] = ''
-    } else {
-      const aid = rooms.all.infirmary.stations.aid
-      if (aid != '' && npcs.all[aid].clan == 'doctors') {
-        c.turns--
-      }
-    }
-  } else if (c.cause == 'injury' && c.label == 'mender') {
+  if (c.cause == 'injury' && c.label == 'mender') {
     const hurt = npcs.all[c.target].hp < 5
     if (npcs.all[c.owner].currentroom == player.currentroom && hurt == true) {
       msg.post(
@@ -133,24 +123,6 @@ function npc_snitch_check(w: string, s: string) {
   return caution_state
 }
 
-//testjpf now this should probably be moved to player and npc??
-//how?
-/** 
-function handle_temp_clearance(scope: string, owner: string, turns: number) {
-  //testjpf previously/ player or npc should have had state switched to promote
-  //when turnss up set state to demote
-  const scopeNum: number = tonumber(scope.charAt(scope.length - 1))!
-  print('turns clearance too low::??', turns)
-  if (turns > 1) {
-    owner == 'player'
-      ? (player.clearance = scopeNum)
-      : (npcs.all[owner].clearance = scopeNum)
-  } else {
-    owner == 'player'
-      ? (player.clearance = player.clearance - scopeNum)
-      : (npcs.all[owner].clearance = npcs.all[owner].clearance - scopeNum)
-  }
-}*/
 function merits_demerits(c: Task, w: string) {
   if (c.target === 'player') {
     const adj = c.label === 'merits' ? 1 : -1
@@ -164,6 +136,7 @@ function merits_demerits(c: Task, w: string) {
     effect.fx.stat = npcs.all[c.target].clan
   }
   print(c.owner, 'found:', w, 'because merits.', w, 'has effect:', fx_labels[1])
+  //check if they already have effect? testjpf
   npcs.all[w].effects.push(effect)
   add_effects_bonus(npcs.all[w], effect)
 }
@@ -331,10 +304,6 @@ function address_busy_acts(cs: Task[]) {
 // then task.update()
 //LEVEL Tasks
 export function address_cautions() {
-  //testjpf why sort by time??
-  //needs better naming conventions
-  //This should be handles be TASKS.fsm.update(dt)!!!
-  // need playerconfront prop on TASKS??
   const sortedTasks = tasks.all.sort((a: Task, b: Task) => a.turns - b.turns)
   const { confrontational, leftovercautions } = sortedTasks.reduce(
     (r: { [key: string]: Task[] }, o: Task) => {
@@ -354,6 +323,8 @@ export function address_cautions() {
     },
     { medical: [], conversational: [] }
   )
+
+  //testjpf change to filter
   const { conversational2 } = conversational.reduce(
     (r: { [key: string]: Task[] }, o: Task) => {
       r[o.label == 'clearance' ? 'clearance' : 'conversational2'].push(o)
@@ -366,18 +337,5 @@ export function address_cautions() {
   address_busy_acts(medical)
   const confront: Task | null = address_confrontations(confrontational)
 
-  for (let i = sortedTasks.length - 1; i >= 0; i--) {
-    print(
-      'sortedTasks[i].label & NPC & sus::',
-      sortedTasks[i].label,
-      sortedTasks[i].owner,
-      sortedTasks[i].target,
-      sortedTasks[i].cause
-    )
-    sortedTasks[i].turns--
-    if (sortedTasks[i].turns <= 0) {
-      sortedTasks.splice(i, 1)
-    }
-  }
   return confront
 }

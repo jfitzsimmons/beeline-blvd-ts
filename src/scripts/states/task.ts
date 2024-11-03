@@ -43,6 +43,11 @@ export default class TaskState {
       onUpdate: this.onConfrontUpdate.bind(this),
       onExit: this.onConfrontExit.bind(this),
     })
+    this.fsm.addState('snitch', {
+      onEnter: this.onSnitchEnter.bind(this),
+      onUpdate: this.onSnitchUpdate.bind(this),
+      onExit: this.onSnitchExit.bind(this),
+    })
     this.fsm.addState('injury', {
       onEnter: this.onInjuryEnter.bind(this),
       onUpdate: this.onInjuryUpdate.bind(this),
@@ -85,6 +90,35 @@ export default class TaskState {
     }
   }
   private onInjuryExit(): void {}
+  //testjpf. need snitch state.
+  // when update check if cross security path
+  // if true do already hunting dont create new task
+  //update number of turns for old task
+  //else create task for questioning or arrest
+  // based on player / npc checks
+  // player alert level is biffed
+  //need npcs adjustAttributes(npc, attribute, property, new value)
+
+  private onSnitchEnter(): void {}
+  private onSnitchUpdate(): void {
+    /** 
+    for (const cop of [
+      'security001',
+      'security002',
+      'security003',
+      'security004',
+      'security005',
+    ]) {
+      if (this.parent.didCrossPaths(this.owner, cop)) {
+        print(this.owner, 'met cop for snitch task::', cop)
+        const bulletin = this.parent.alreadyHunting(this.owner, this.target)
+      }
+    }
+
+    this.parent.didCrossPaths(this.owner, this.target)
+    */
+  }
+  private onSnitchExit(): void {}
   private onConfrontEnter(): void {}
   private onConfrontUpdate(): void {}
   private onConfrontExit(): void {}
@@ -110,6 +144,6 @@ function setInitFSMstate(t: Task): string {
   } else if (t.label == 'mender') {
     state = 'medical'
   } else if (t.label == 'clearance') state = 'clearance'
-
+  else if (t.label == 'snitch') state = 'snitch'
   return state
 }

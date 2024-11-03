@@ -48,7 +48,7 @@ export default class WorldRooms {
 
     this.clear_station = this.clear_station.bind(this)
     this.set_station = this.set_station.bind(this)
-
+    this.isStationedTogether = this.isStationedTogether.bind(this)
     this.prune_station_map = this.prune_station_map.bind(this)
     this.get_station_map = this.get_station_map.bind(this)
     this.reset_station_map = this.reset_station_map.bind(this)
@@ -81,6 +81,14 @@ export default class WorldRooms {
       }
     }
     return null
+  }
+  isStationedTogether(npcs: string[], room: string): boolean {
+    const stations = this.all[room].stations
+    let ks: keyof typeof stations
+    for (ks in stations) {
+      if (npcs.includes(stations[ks])) return true
+    }
+    return false
   }
   send_to_jail() {
     // testjpf todo this.all[this.roomsLists.get_player_room()].fsm.setState('idle')
