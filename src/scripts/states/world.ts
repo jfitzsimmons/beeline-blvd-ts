@@ -7,12 +7,15 @@ import WorldNpcs from './npcs'
 import WorldTasks from './tasks'
 import WorldInfo from './info'
 import WorldNovel from './novel'
-import { AllQuestsMethods, RoomMethod, TasksMethods } from '../../types/tasks'
-import { surrounding_room_matrix } from '../utils/utils'
-import { RoomsInitState } from './inits/roomsInitState'
-import { Direction } from '../../types/ai'
 import WorldQuests from './quests'
-//import { surrounding_room_matrix } from '../utils/utils'
+import {
+  AllQuestsMethods,
+  NpcsProps,
+  WorldPlayerProps,
+  WorldTasksProps,
+} from '../../types/tasks'
+import NpcState from './npc'
+import { PlayerState } from '../../types/state'
 
 const dt = math.randomseed(os.time())
 
@@ -26,37 +29,35 @@ export default class World {
   info: WorldInfo
   novel: WorldNovel
   clock: number
-  loadType: string
   constructor() {
     this.fsm = new StateMachine(this, 'world')
-    this.tasks = new WorldTasks()
-    const tasksMethods: TasksMethods = {
-      has_hallpass: this.tasks.has_clearance.bind(this),
-      removeTaskByCause: this.tasks.removeTaskByLabel.bind(this),
+    this.rooms = new WorldRooms()
+    const tasksProps: WorldTasksProps = {
+      didCrossPaths: this.didCrossPaths.bind(this),
+      returnNpc: this.returnNpc.bind(this),
+      returnPlayer: this.returnPlayer.bind(this),
     }
-    this.player = new WorldPlayer(tasksMethods)
-    const playerMethods = {
-      set_room_info: this.player.set_room_info.bind(this),
-      get_player_room: this.player.get_player_room.bind(this),
+    this.tasks = new WorldTasks(tasksProps)
+    const playerProps: WorldPlayerProps = {
+      getFocusedRoom: this.rooms.get_focused.bind(this),
+      hasHallpass: this.tasks.has_clearance.bind(this),
+      removeTaskByCause: this.tasks.removeTaskByCause.bind(this),
     }
-    this.rooms = new WorldRooms(playerMethods)
-    this.loadType = 'new game'
-    const roommethods: RoomMethod = {
-      clear_station: this.rooms.clear_station.bind(this),
-      set_station: this.rooms.set_station.bind(this),
-      prune_station_map: this.rooms.prune_station_map.bind(this),
-      get_station_map: this.rooms.get_station_map.bind(this),
-      reset_station_map: this.rooms.reset_station_map.bind(this),
-      send_to_infirmary: this.rooms.send_to_infirmary.bind(this),
-      get_player_room: this.player.get_player_room.bind(this),
-      getVicinityTargets: this.getVicinityTargets.bind(this),
+    this.player = new WorldPlayer(playerProps)
+    const npcsProps: NpcsProps = {
+      isStationedTogether: this.rooms.isStationedTogether.bind(this),
+      clearStation: this.rooms.clearStation.bind(this),
+      setStation: this.rooms.setStation.bind(this),
+      pruneStationMap: this.rooms.pruneStationMap.bind(this),
+      getStationMap: this.rooms.getStationMap.bind(this),
+      sendToInfirmary: this.rooms.sendToInfirmary.bind(this),
+      getPlayerRoom: this.player.getPlayerRoom.bind(this),
       getMendingQueue: this.tasks.getMendingQueue.bind(this),
-      taskBuilder: this.tasks.task_builder.bind(this),
-      ...tasksMethods,
+      taskBuilder: this.tasks.taskBuilder.bind(this),
+      ...playerProps,
     }
-    this.npcs = new WorldNpcs(roommethods)
+    this.npcs = new WorldNpcs(npcsProps)
     this.novel = new WorldNovel(this.npcs.all.labor01)
-
     const allquestmethods: AllQuestsMethods = {
       pq: this.player.quests,
       nq: this.npcs.quests,
@@ -65,13 +66,15 @@ export default class World {
     }
     this.quests = new WorldQuests(allquestmethods)
     this.info = new WorldInfo(this.quests.all)
-
     this.clock = 6
+
     /**
-     * so in world/worldcontroller room transition would be a state
-     * menu, save, load
-     * - sub states like arrested, enterdoor, faint
+     * testjpf you could importchecks
+     * have something like this.checks?
+     * maybe pass it npc stats??
+     * could even be a clasS?? new
      */
+
     this.fsm
       .addState('idle')
       .addState('new', {
@@ -80,10 +83,6 @@ export default class World {
         onEnter: this.onNewEnter.bind(this),
         onUpdate: this.onNewUpdate.bind(this),
         onExit: this.onNewExit.bind(this),
-      })
-      .addState('player', {
-        //onInit?
-        onUpdate: this.onPlayerUpdate.bind(this),
       })
       .addState('faint', {
         onEnter: this.onFaintEnter.bind(this),
@@ -102,23 +101,20 @@ export default class World {
       })
   }
 
-  // so what next. start with world.init in lua file
   private onNewEnter(): void {
-    this.player.fsm.setState('turn')
     this.rooms.fsm.setState('turn')
-    this.rooms.all.grounds.fsm.setState('focus')
-    this.player.currentroom = 'grounds'
+    this.player.fsm.setState('turn')
+    this.player.exitRoom = 'grounds'
     this.npcs.fsm.setState('new')
-
-    // this.npcs.fsm.update(dt)
+    this.tasks.fsm.setState('turn')
     this.quests.fsm.setState('turn')
     //debug defaults
     this.npcs.all[this.rooms.all.reception.stations.guest].hp = 0
     this.npcs.all[this.rooms.all.reception.stations.guest].fsm.setState(
       'injury'
     )
-    this.tasks.task_builder(
-      this.npcs.all['security004'],
+    this.tasks.taskBuilder(
+      'security004',
       'questioning',
       this.rooms.all.grounds.stations.assistant,
       'testing'
@@ -136,6 +132,7 @@ export default class World {
     this.clock = this.clock + 6
     this.player.ap = this.player.ap_max - 6
     this.player.hp = this.player.hp_max - 1
+    this.player.fsm.setState('turn')
   }
   private onFaintUpdate(): void {}
   private onFaintExit(): void {}
@@ -147,27 +144,39 @@ export default class World {
   private onArrestUpdate(): void {}
   private onArrestExit(): void {}
   private onTurnEnter(): void {
-    print('WORLD TURN ENTER')
     this.clock = this.clock + 1
-    if (this.clock > 23) {
-      this.clock = this.clock - 24
-    }
+    if (this.clock > 23) this.clock = this.clock - 24
   }
   private onTurnUpdate(): void {
-    print('WORLD TURNUPDATE')
     this.player.fsm.update(dt)
     this.npcs.fsm.update(dt)
     this.rooms.fsm.update(dt)
     this.quests.fsm.update(dt)
+    this.tasks.fsm.update(dt)
   }
   private onTurnExit(): void {}
-  private onPlayerUpdate(): void {}
-
-  private getVicinityTargets(): Direction {
-    return surrounding_room_matrix(
-      RoomsInitState[this.player.exitroom].matrix,
-      this.player.matrix
+  private didCrossPaths(o: string, t: string): boolean {
+    const owner = this.npcs.all[o]
+    const target = this.npcs.all[t]
+    print(
+      'didcross:::',
+      owner.name,
+      target.name,
+      owner.currRoom == target.currRoom,
+      owner.currRoom == target.exitRoom,
+      owner.exitRoom == target.currRoom
     )
-    //return this._vicinityTargets
+    return (
+      owner.currRoom == target.currRoom ||
+      (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
+    )
+  }
+  private returnNpc(n: string): NpcState {
+    // testjpf probably needs to be this.npcs.returnNpc(n)
+    return this.npcs.all[n]
+  }
+  private returnPlayer(): PlayerState {
+    // testjpf probably needs to be this.npcs.returnNpc(n)
+    return this.player.state
   }
 }

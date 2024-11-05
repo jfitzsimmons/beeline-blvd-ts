@@ -116,7 +116,7 @@ export default class WorldNovel {
     return this._npc
   }
   public set npc(npc: NpcState) {
-    this.active_quest = this.npcsWithQuest.includes(npc.labelname)
+    this.active_quest = this.npcsWithQuest.includes(npc.name)
     this._npc = npc
   }
   addScript(s: string) {

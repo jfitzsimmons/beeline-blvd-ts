@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
-import { QuestMethods, Task } from '../../types/tasks'
-import NpcState from './npc'
+import {
+  QuestMethods,
+  Task,
+  TaskProps,
+  WorldTasksProps,
+} from '../../types/tasks'
 import TaskState from './task'
 import { arraymove } from '../utils/utils'
 
@@ -21,13 +25,25 @@ export default class WorldTasks {
   fsm: StateMachine
   quests: QuestMethods
   mendingQueue: string[]
-
-  constructor() {
+  medicalSys: string[]
+  methods: TaskProps
+  parent: WorldTasksProps
+  constructor(worldProps: WorldTasksProps) {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
     // this._quests = build_quests_state(this.questmethods)
     this._spawn = 'grounds'
     this.mendingQueue = []
+    this.medicalSys = []
+    this.parent = worldProps
+    this.methods = {
+      npcHasTask: this.npcHasTask.bind(this),
+      addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
+      didCrossPaths: this.parent.didCrossPaths.bind(this),
+      returnNpc: this.parent.returnNpc.bind(this),
+      returnPlayer: this.parent.returnPlayer.bind(this),
+      taskBuilder: this.taskBuilder.bind(this),
+    }
 
     this.quests = {
       num_of_injuries: this.num_of_injuries.bind(this),
@@ -44,22 +60,38 @@ export default class WorldTasks {
       onUpdate: this.onNewUpdate.bind(this),
       onExit: this.onNewExit.bind(this),
     })
+
+    this.fsm.setState('new')
+    this.removeTaskByCause = this.removeTaskByCause.bind(this)
     this.removeTaskByLabel = this.removeTaskByLabel.bind(this)
     this.has_clearance = this.has_clearance.bind(this)
     this.getMendingQueue = this.getMendingQueue.bind(this)
-    this.npc_has_task = this.npc_has_task.bind(this)
+    this.npcHasTask = this.npcHasTask.bind(this)
+    this.taskBuilder = this.taskBuilder.bind(this)
   }
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
   private onNewExit(): void {}
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {
+    //testjpf one array of systemTasks/ crossTasks
+    //in loop do ['mender','questioning',
+    //'arrest','snitch','reckless',}includes(task.label)
+    //opposite better !['quest,'injury'].includes
+    //overengineered? not sure what i want?
+    //instead of this.all have statetasks and systemtasks!?
     let i = this.all.length
     while (i-- !== 0) {
-      // print('npc', i)
       const task = this.all[i]
-
-      task.fsm.update(dt)
+      print(
+        'TURNUPDATE::: task::',
+        task.label,
+        task.owner,
+        task.target,
+        task.cause
+      )
+      task.turns <= 0 ? this.all.splice(i, 1) : task.fsm.update(dt)
+      task.turns = task.turns - 1
     }
   }
   private onTurnExit(): void {}
@@ -113,10 +145,10 @@ export default class WorldTasks {
       }
     }
   }
-  removeTaskByCause(owner: string, cause: string) {
+  removeTaskByCause(target: string, cause: string) {
     for (let i = this.all.length - 1; i >= 0; i--) {
       const t = this.all[i]
-      if (t.owner == owner && [cause].includes(t.cause)) {
+      if (t.target == target && [cause].includes(t.cause)) {
         this.all.splice(i, 1)
       }
     }
@@ -137,7 +169,7 @@ export default class WorldTasks {
       }
     }
   }
-  remove_heat(sus: string) {
+  removeHeat(sus: string) {
     for (let i = this.all.length - 1; i >= 0; i--) {
       const c = this.all[i]
       if (
@@ -148,14 +180,15 @@ export default class WorldTasks {
       }
     }
   }
-  already_hunting(owner: string, sus: string) {
-    for (const c of this.all) {
+  already_hunting(owner: string, sus: string): Task | null {
+    for (const t of this.all) {
       if (
-        c.owner == owner &&
-        c.target == sus &&
-        (c.label == 'questioning' || c.label == 'arrest')
+        t.owner == owner &&
+        t.target == sus &&
+        (t.label == 'questioning' || t.label == 'arrest')
       ) {
-        return c
+        t.turns = t.turns + 6
+        return t
       }
     }
     return null
@@ -168,11 +201,19 @@ export default class WorldTasks {
     }
     return false
   }
-  npc_has_task(owner: string, target: string): TaskState | null {
-    // print('npc_has_task', owner, target)
+  npcHasTask(
+    owner: string,
+    target: string,
+    labels: string[] = []
+  ): TaskState | null {
+    // print('npcHasTask', owner, target)
     for (const c of this.all) {
-      //   print('npc_has_task:: C:', c.owner, c.target, c.label)
-      if ((owner == 'any' || c.owner == owner) && c.target == target) {
+      //   print('npcHasTask:: C:', c.owner, c.target, c.label)
+      if (
+        (owner == 'any' || c.owner == owner) &&
+        c.target == target &&
+        (labels.length < 1 || labels.includes(c.label))
+      ) {
         return c
       }
     }
@@ -209,17 +250,13 @@ export default class WorldTasks {
 
   //TEstjpf need add task remove task
   //add_task_assist
-  task_builder(
-    owner: NpcState,
-    label: string,
-    target: string,
-    cause = 'theft'
-  ) {
+  taskBuilder(o: string, label: string, target: string, cause = 'theft') {
+    const owner = this.parent.returnNpc(o)
     //explain why you need this testjpf
     //no nested ifs
     //cna this be done somewhere else?
     const append: Task = {
-      owner: owner.labelname,
+      owner: owner.name,
       turns: 15,
       label, // merits //testjpf state is a bad name
       scope: 'npc',
@@ -279,7 +316,9 @@ export default class WorldTasks {
   }
   append_task(task: Task) {
     print('NEW::: Appended task::', task.label, task.owner)
-    this.all.push(new TaskState(task))
+    //if injury adjust q
+    //in adjust q, dont push new task? ttestjpf
+    this.all.push(new TaskState(task, this.methods))
   }
   // checks quest completion after interactions and turns
   //TESTJPF all FSM stuff for quest turn
@@ -292,6 +331,7 @@ export default class WorldTasks {
 
     return docs
   }
+  /**
   has_ignore_task(n: string): boolean {
     //if mending and in field busy
     //if mending in office and office full
@@ -301,5 +341,5 @@ export default class WorldTasks {
       ignored.length > 0 ? true : false
     )
     return ignored.length > 0 ? true : false
-  }
+  }*/
 }

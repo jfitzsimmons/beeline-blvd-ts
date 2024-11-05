@@ -3,17 +3,17 @@
 const { rooms, npcs } = globalThis.game.world
 interface props {
   actions: { [key: string]: string[] }
-  roomname: string
+  roomName: string
   npc: string
 }
 export function init(this: props): void {
   this.actions = {}
-  this.roomname = ''
+  this.roomName = ''
   this.npc = ''
 }
 
 function prep_interaction(_this: props) {
-  const room = rooms.all[_this.roomname]
+  const room = rooms.all[_this.roomName]
   let actors = room.props
   if (actors == undefined) actors = []
   const actions: { [key: string]: string[] } = {}
@@ -37,7 +37,7 @@ export function on_message(
     enter: boolean
     exit: boolean
     storagename: string
-    roomname: string
+    roomName: string
   },
   _sender: url
 ): void {
@@ -52,7 +52,7 @@ export function on_message(
         //collision:"enter",
         npcname: this.npc,
         //parenturl:this.url,
-        //room:this.roomname
+        //room:this.roomName
       }
       msg.post('/shared/adam#interact', 'shownode', params)
     } else {
@@ -61,9 +61,9 @@ export function on_message(
 
       msg.post('/shared/adam#interact', 'hidenode', params)
     }
-  } else if (messageId == hash('load_station')) {
-    this.npc = message.npc //this.url = rooms.all[message.roomname].stationurl
-    this.roomname = message.roomname
+  } else if (messageId == hash('loadStation')) {
+    this.npc = message.npc //this.url = rooms.all[message.roomName].stationurl
+    this.roomName = message.roomName
     prep_interaction(this) // combine actor actions
     msg.post('/npc_loader#npc_loader', 'show_npc', { npc: this.npc })
   }

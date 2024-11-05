@@ -92,18 +92,18 @@ export function on_message(
 }
 export function on_input(
   this: props,
-  action_id: hash,
+  actionId: hash,
   action: {
     released: boolean
   }
 ) {
-  if (action_id == hash('front')) {
+  if (actionId == hash('front')) {
     this.dir.y = -1
-  } else if (action_id == hash('back')) {
+  } else if (actionId == hash('back')) {
     this.dir.y = 1
-  } else if (action_id == hash('left')) {
+  } else if (actionId == hash('left')) {
     this.dir.x = -1
-  } else if (action_id == hash('right')) {
+  } else if (actionId == hash('right')) {
     this.dir.x = 1
   }
   if (action.released) {

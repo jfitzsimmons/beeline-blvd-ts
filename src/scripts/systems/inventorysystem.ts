@@ -2,7 +2,7 @@ import { InventoryTableItem, Skills } from '../../types/state'
 import { Consequence } from '../../types/tasks'
 import { itemStateInit } from '../states/inits/inventoryInitState'
 //import NpcState from '../states/npc'
-import { roll_special_dice } from '../utils/dice'
+import { rollSpecialDice } from '../utils/dice'
 import { clamp, shuffle } from '../utils/utils'
 const { npcs, player } = globalThis.game.world
 
@@ -29,26 +29,26 @@ function buildLookup() {
   }
 }
 
-export function remove_random(to_inv: string[], from_inv: string[]) {
+export function removeRandom(to_inv: string[], from_inv: string[]) {
   const stolen_item = shuffle(from_inv).pop()
   if (stolen_item === undefined) return ''
   if (stolen_item !== '') to_inv.push(stolen_item)
   return stolen_item
 }
 
-export function remove_last(to_inv: string[], from_inv: string[]) {
+export function removeLast(to_inv: string[], from_inv: string[]) {
   const stolen_item = from_inv.pop()
   if (stolen_item === undefined) return ''
   if (stolen_item !== '') to_inv.push(stolen_item)
   return stolen_item
 }
-export function remove_advantageous(
+export function removeAdvantageous(
   to_inv: string[],
   from_inv: string[],
   skills: Skills
 ) {
   if (from_inv.length < 1) return ''
-  if (from_inv.length === 1) return remove_last(to_inv, from_inv)
+  if (from_inv.length === 1) return removeLast(to_inv, from_inv)
   const order = Object.entries(skills)
 
   order.sort((a: [string, number], b: [string, number]) => b[1] - a[1])
@@ -82,7 +82,7 @@ export function remove_advantageous(
   return stolen_item
 }
 
-export function remove_valuable(to_inv: string[], from_inv: string[]) {
+export function removeValuable(to_inv: string[], from_inv: string[]) {
   /** 
 	for _, iv in ipairs(from_inv) do
 		//print("iv:",iv)
@@ -90,7 +90,7 @@ export function remove_valuable(to_inv: string[], from_inv: string[]) {
 	}
 	**/
   if (from_inv.length < 1) return ''
-  if (from_inv.length === 1) return remove_last(to_inv, from_inv)
+  if (from_inv.length === 1) return removeLast(to_inv, from_inv)
   from_inv.sort(
     (a: string, b: string) => itemStateInit[a].value - itemStateInit[b].value
   )
@@ -129,8 +129,8 @@ export function bribe_check(suspect: string, watcher: string): Consequence {
     w.binaries.lawless_lawful * -5 + w.skills.strength - s.skills.strength
   )
   const advantage =
-    s.binaries.passive_aggressive < w.binaries.passive_aggressive - 0.3
-  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+    s.binaries.passiveAggressive < w.binaries.passiveAggressive - 0.3
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   //print('TESTJPF RESULT::: bribe', result)
   if (result > 5 && result <= 10) {

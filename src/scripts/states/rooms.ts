@@ -7,7 +7,7 @@ import {
 import { Rooms, Roles, Fallbacks } from '../../types/state'
 import RoomState from './room'
 import StateMachine from './stateMachine'
-import { PlayerMethod } from '../../types/tasks'
+import { NpcsProps2 } from '../../types/tasks'
 
 // todo TESTJPF needs room call like npcstate
 // the have a avtive, player, neighbor state? something that automatically makes direction for npcs to target. up down left right...
@@ -18,44 +18,66 @@ export default class WorldRooms {
   private _all: Rooms
   layout: Array<Array<string | null>>
   roles: Roles
-  roomsLists: PlayerMethod
+  private _focused: string
+  roomsLists: NpcsProps2
   fallbacks: Fallbacks
   stationsMap: { [key: string]: { [key: string]: string } }
-  constructor(playerMethods: PlayerMethod) {
+  constructor() {
     this.fsm = new StateMachine(this, 'rooms')
     this.fallbacks = { ...RoomsInitFallbacks }
     this.layout = [...RoomsInitLayout]
     this.roles = { ...RoomsInitRoles }
     this.roomsLists = {
-      set_room_info: playerMethods.set_room_info.bind(this),
-      get_player_room: playerMethods.get_player_room.bind(this),
+      set_focused: this.set_focused.bind(this),
+      // getPlayerRoom: playerMethods.getPlayerRoom.bind(this),
     }
     this._all = { ...seedRooms(this.roomsLists) }
+    this._focused = 'grounds'
     this.stationsMap = this.createStationsMap()
-    this.fsm.addState('idle').addState('turn', {
-      onEnter: this.onTurnEnter.bind(this),
-      onUpdate: this.onTurnUpdate.bind(this),
-      onExit: this.onTurnExit.bind(this),
-    })
+    this.fsm
+      .addState('idle')
+      .addState('turn', {
+        onEnter: this.onTurnEnter.bind(this),
+        onUpdate: this.onTurnUpdate.bind(this),
+        onExit: this.onTurnExit.bind(this),
+      })
+      .addState('new', {
+        onEnter: this.onNewEnter.bind(this),
+        onUpdate: this.onNewUpdate.bind(this),
+        onExit: this.onNewExit.bind(this),
+      })
+      .addState('transition', {
+        onEnter: this.onTransitionEnter.bind(this),
+        onUpdate: this.onTransitionUpdate.bind(this),
+        onExit: this.onTransitionExit.bind(this),
+      })
 
-    this.fsm.addState('transition', {
-      onEnter: this.onTransitionEnter.bind(this),
-      onUpdate: this.onTransitionUpdate.bind(this),
-      onExit: this.onTransitionExit.bind(this),
-    })
-
-    this.clear_station = this.clear_station.bind(this)
-    this.set_station = this.set_station.bind(this)
-
-    this.prune_station_map = this.prune_station_map.bind(this)
-    this.get_station_map = this.get_station_map.bind(this)
-    this.reset_station_map = this.reset_station_map.bind(this)
-    this.send_to_infirmary = this.send_to_infirmary.bind(this)
+    this.clearStation = this.clearStation.bind(this)
+    this.setStation = this.setStation.bind(this)
+    this.isStationedTogether = this.isStationedTogether.bind(this)
+    this.pruneStationMap = this.pruneStationMap.bind(this)
+    this.getStationMap = this.getStationMap.bind(this)
+    this.resetStationMap = this.resetStationMap.bind(this)
+    this.sendToInfirmary = this.sendToInfirmary.bind(this)
+    this.set_focused = this.set_focused.bind(this)
+    this.get_focused = this.get_focused.bind(this)
   }
   public get all(): Rooms {
     return this._all
   }
-  send_to_infirmary(npc: string): string | null {
+  public get focused(): string {
+    return this._focused
+  }
+  public set focused(f: string) {
+    this._focused = f
+  }
+  set_focused(r: string) {
+    this.focused = r
+  }
+  get_focused(): string {
+    return this.focused
+  }
+  sendToInfirmary(npc: string): string | null {
     const occs = this.all.infirmary.occupants!
     let ko: keyof typeof occs
     for (ko in occs) {
@@ -66,26 +88,34 @@ export default class WorldRooms {
     }
     return null
   }
-  send_to_jail() {
-    // testjpf todo this.all[this.roomsLists.get_player_room()].fsm.setState('idle')
+  isStationedTogether(npcs: string[], room: string): boolean {
+    const stations = this.all[room].stations
+    let ks: keyof typeof stations
+    for (ks in stations) {
+      if (npcs.includes(stations[ks])) return true
+    }
+    return false
   }
-  prune_station_map(room: string, station: string) {
+  send_to_jail() {
+    // testjpf todo this.all[this.roomsLists.getPlayerRoom()].fsm.setState('idle')
+  }
+  pruneStationMap(room: string, station: string) {
     this.stationsMap[room][station] !== null
       ? delete this.stationsMap[room][station]
       : delete this.stationsMap.fallbacks[station]
   }
-  get_station_map(): { [key: string]: { [key: string]: string } } {
+  getStationMap(): { [key: string]: { [key: string]: string } } {
     return this.stationsMap
   }
-  reset_station_map() {
+  resetStationMap() {
     this.stationsMap = { ...this.createStationsMap() }
   }
-  set_station(room: string, station: string, npc: string) {
+  setStation(room: string, station: string, npc: string) {
     this.all[room].stations[station] !== null
       ? (this.all[room].stations[station] = npc)
       : (this.fallbacks.stations[station] = npc)
   }
-  clear_station(room: string, station: string, npc: string) {
+  clearStation(room: string, station: string, npc: string) {
     if (npc == this.all[room].stations[station]) {
       this.all[room].stations[station] = ''
     } else if (npc == this.fallbacks.stations[station]) {
@@ -97,7 +127,7 @@ export default class WorldRooms {
       this.all[room].occupants![station] = ''
     }
   }
-  clear_stations() {
+  clearStations() {
     let kr: keyof typeof this._all
     for (kr in this._all) {
       const room = this._all[kr]
@@ -116,8 +146,10 @@ export default class WorldRooms {
     //todo
   }
   private onTurnUpdate(): void {
+    this.resetStationMap()
+
     //give each npc the ability to delete their own station!!
-    // this.clear_stations()
+    // this.clearStations()
     //this is what whould go througheach room and click update
     //makes sense for npcs, but rooms??? testjpf
     //with placing npcs you have to take into account each npcs priority
@@ -125,6 +157,16 @@ export default class WorldRooms {
     //FUTURE gnerate money, food, stealing?
   }
   private onTurnExit(): void {
+    //todo
+  }
+  private onNewEnter(): void {
+    this.resetStationMap()
+    //todo
+  }
+  private onNewUpdate(): void {
+    //not bad to handle interactions
+  }
+  private onNewExit(): void {
     //todo
   }
   private onTransitionEnter(): void {
@@ -149,7 +191,7 @@ export default class WorldRooms {
   }
 }
 
-function seedRooms(lists: PlayerMethod) {
+function seedRooms(lists: NpcsProps2) {
   const seeded: Rooms = {}
   //const inits = { ...NpcsInitState }
   let ki: keyof typeof RoomsInitState

@@ -1,11 +1,11 @@
 import { PlayerState } from '../../../types/state'
 
 export const PlayerInitState: PlayerState = {
-  currentroom: 'grounds',
-  exitroom: '',
+  currRoom: 'grounds',
+  exitRoom: '',
   matrix: { x: 0, y: 4 },
   //name:hash("/adam"),
-  labelname: 'player',
+  name: 'player',
   inventory: ['axe', 'apple01'],
   pos: { x: 704, y: 448 },
   //levels_cleared:0,
@@ -20,7 +20,7 @@ export const PlayerInitState: PlayerState = {
   checkpoint: 'tutorialA',
   binaries: {
     evil_good: 0,
-    passive_aggressive: 0,
+    passiveAggressive: 0,
     lawless_lawful: 0,
     anti_authority: 0,
     un_educated: 0,

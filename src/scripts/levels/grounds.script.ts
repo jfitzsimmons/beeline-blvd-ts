@@ -1,8 +1,8 @@
 const { rooms } = globalThis.game.world
 function load_npcs() {
-  const roomname = 'grounds' // testjpf remove hardcode string!
+  const roomName = 'grounds' // testjpf remove hardcode string!
 
-  const stations: { [key: string]: string } = rooms.all[roomname].stations
+  const stations: { [key: string]: string } = rooms.all[roomName].stations
   let station: keyof typeof stations
   for (station in stations) {
     const npc = stations[station]
@@ -10,7 +10,7 @@ function load_npcs() {
       npc,
     }
     msg.post(`/${station}#npc_loader`, 'load_npc', params)
-    //params.script = params.roomname + "/" + world.player.checkpoint:sub(1, -2) + "aid"
+    //params.script = params.roomName + "/" + world.player.checkpoint:sub(1, -2) + "aid"
   }
 
   //TESTJPF do you need any of these sopecific level files?
@@ -27,7 +27,7 @@ function load_npcs() {
 
 function load_storage() {
   const params = {
-    roomname: 'grounds',
+    roomName: 'grounds',
     storagename: 'player_luggage',
     ani: 'luggage01',
   }

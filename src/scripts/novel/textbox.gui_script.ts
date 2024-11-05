@@ -308,24 +308,24 @@ export function on_message(
 
 export function on_input(
   this: any,
-  action_id: hash,
+  actionId: hash,
   action: { pressed: boolean; released: boolean; repeated: boolean }
 ) {
-  if (action_id == hash('continue') && action.pressed) {
+  if (actionId == hash('continue') && action.pressed) {
     press_continue()
-  } else if (action_id == hash('touch') && action.released) {
+  } else if (actionId == hash('touch') && action.released) {
     press_continue()
-  } else if (action_id == hash('skip')) {
+  } else if (actionId == hash('skip')) {
     if (action.pressed) {
       start_skip()
     } else if (action.released) {
       end_skip()
     }
-  } else if (action_id == hash('toggle_skip') && action.pressed) {
+  } else if (actionId == hash('toggle_skip') && action.pressed) {
     toggle_skip()
-  } else if (action_id == hash('back') && action.repeated) {
+  } else if (actionId == hash('back') && action.repeated) {
     back()
-  } else if (action_id == hash('forward') && action.repeated) {
+  } else if (actionId == hash('forward') && action.repeated) {
     forward()
   }
 }

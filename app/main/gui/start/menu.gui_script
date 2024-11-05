@@ -383,19 +383,19 @@ function on_message(self, message_id, message, sender)
 	end
 end
 
-function on_input(self, action_id, action)
-	if action_id == hash("fullscreen") and action.pressed then
+function on_input(self, actionId, action)
+	if actionId == hash("fullscreen") and action.pressed then
 		toggle_fullscreen()
 		--pick_option(group, option)
 	end
 	
 	if active then
-		if action_id == HASH_MENU and action.pressed then
+		if actionId == HASH_MENU and action.pressed then
 			hide_menu()
 		end
 		
 		if active_menu == "settings" then
-			if action_id == HASH_TOUCH then
+			if actionId == HASH_TOUCH then
 				if action.pressed then
 					if gui.pick_node(gui.get_node("menu_back"), action.x, action.y) then
 						for i = 1, #sliders do
@@ -472,7 +472,7 @@ function on_input(self, action_id, action)
 				end
 			end
 		elseif active_menu == "save" or active_menu == "load" then 
-			if not action_id then
+			if not actionId then
 				if save_hovered then
 					local node = gui.get_node("save_"..save_hovered)
 					if not gui.pick_node(node, action.x, action.y) then
@@ -497,7 +497,7 @@ function on_input(self, action_id, action)
 						end
 					end
 				end
-			elseif action_id == HASH_TOUCH then
+			elseif actionId == HASH_TOUCH then
 				if action.pressed then
 					if gui.pick_node(gui.get_node("menu_back"), action.x, action.y) then
 						for i = 1, 4 do
@@ -557,11 +557,11 @@ function on_input(self, action_id, action)
 					pressed_slider_arrow = false
 					pressed_save = false
 				end
-			elseif action_id == HASH_BACK then
+			elseif actionId == HASH_BACK then
 				if action.repeated then
 					save_page_back()
 				end
-			elseif action_id == HASH_FORWARD then
+			elseif actionId == HASH_FORWARD then
 				if action.repeated then
 					save_page_forward()
 				end
@@ -571,7 +571,7 @@ function on_input(self, action_id, action)
 		
 		return true
 	else
-		if action_id == HASH_MENU and action.pressed then
+		if actionId == HASH_MENU and action.pressed then
 			show_settings()
 			show_save()
 		end

@@ -20,9 +20,7 @@ function injured_checks(conditions: QuestConditions) {
     quest.fsm.setState('active')
     //doc.fsm.setState('standby')
     injured.love = injured.love + 1
-    info.add_interaction(
-      `${injured.labelname} likes that you are helping them.`
-    )
+    info.add_interaction(`${injured.name} likes that you are helping them.`)
   }
 }
 function infirmary_checks(delivery: QuestStep) {
@@ -33,13 +31,13 @@ function infirmary_checks(delivery: QuestStep) {
     delivery.fsm.getState() == 'idle'
   ) {
     player.add_inventory('vial02')
-    info.add_interaction(`${novel.npc.labelname}'s gave you meds for a doctor`)
+    info.add_interaction(`${novel.npc.name}'s gave you meds for a doctor`)
   }
 }
 function doctor_checks(conditions: QuestConditions) {
   const injured = npcs.all[rooms.all.grounds.stations.worker1]
   // let's you interact with any doctor
-  const doctor = npcs.all[novel.npc.labelname]
+  const doctor = npcs.all[novel.npc.name]
   const { '0': injury, '2': apple, '3': meds, '5': delivery } = conditions
   if (
     novel.reason == 'hungrydoc' &&
@@ -47,17 +45,17 @@ function doctor_checks(conditions: QuestConditions) {
     apple.fsm.getState() == 'idle'
   ) {
     apple.fsm.setState('active')
-    tasks.task_builder(doctor, 'quest', injured.labelname, 'quest')
-    novel.append_npc_quest(doctor.labelname)
-    info.add_interaction(`${doctor.labelname} needs food.`)
+    tasks.taskBuilder(doctor.name, 'quest', injured.name, 'quest')
+    novel.append_npc_quest(doctor.name)
+    info.add_interaction(`${doctor.name} needs food.`)
   } else if (
     //testjpf TODO:::
     novel.reason == 'druggiedoc' &&
     apple.fsm.getState() == 'idle'
   ) {
-    novel.append_npc_quest(doctor.labelname)
-    tasks.task_builder(doctor, 'quest', injured.labelname, 'quest')
-    info.add_interaction(`${doctor.labelname} needs drugs.`)
+    novel.append_npc_quest(doctor.name)
+    tasks.taskBuilder(doctor.name, 'quest', injured.name, 'quest')
+    info.add_interaction(`${doctor.name} needs drugs.`)
   } else if (
     novel.item == 'apple01' &&
     apple.passed == true &&
@@ -71,22 +69,22 @@ function doctor_checks(conditions: QuestConditions) {
      *
      */
     //apple.passed = true
-    tasks.remove_quest_tasks(doctor.labelname)
-    tasks.task_builder(doctor, 'mender', injured.labelname, 'injury')
+    tasks.remove_quest_tasks(doctor.name)
+    tasks.taskBuilder(doctor.name, 'mender', injured.name, 'injury')
 
-    novel.remove_npc_quest(doctor.labelname)
+    novel.remove_npc_quest(doctor.name)
     novel.reason = 'getadoctor'
     novel.npc = doctor
     //testjpf needed for non optional dialog.
     // optional quest options need TODO
     novel.forced = true
 
-    info.add_interaction(`${doctor.labelname} likes that you fed them.`)
+    info.add_interaction(`${doctor.name} likes that you fed them.`)
     doctor.love = doctor.love + 1
     // testjpf this is overwriting my scriptsdialog functions???
-    npcs.all[doctor.labelname].fsm.setState('mender')
+    npcs.all[doctor.name].fsm.setState('mender')
 
-    info.add_interaction(`${injured.labelname} likes that you got a doctor.`)
+    info.add_interaction(`${injured.name} likes that you got a doctor.`)
     injured.love = injured.love + 1
 
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
@@ -106,33 +104,33 @@ function doctor_checks(conditions: QuestConditions) {
       target: 'infirmary',
       authority: 'security',
     })
-    tasks.task_builder(doctor, 'quest', injured.labelname, 'waitingformeds')
-    novel.append_npc_quest(doctor.labelname)
-    info.add_interaction(`${doctor.labelname}'s gave you clearance for 8 turns`)
+    tasks.taskBuilder(doctor.name, 'quest', injured.name, 'waitingformeds')
+    novel.append_npc_quest(doctor.name)
+    info.add_interaction(`${doctor.name}'s gave you clearance for 8 turns`)
 
-    msg.post(`/${doctor.currentstation}#npc_loader`, hash('move_npc'), {
+    msg.post(`/${doctor.currStation}#npc_loader`, hash('move_npc'), {
       station: 'worker1',
-      owner: doctor.labelname,
+      owner: doctor.name,
     })
   } else if (novel.reason == 'rejectmeds') {
     apple.fsm.setState('complete')
-    info.add_interaction(`${doctor.labelname} doesn't like you wont help.`)
+    info.add_interaction(`${doctor.name} doesn't like you wont help.`)
     injured.love = injured.love - 1
 
-    msg.post(`/${doctor.currentstation}#npc_loader`, hash('move_npc'), {
+    msg.post(`/${doctor.currStation}#npc_loader`, hash('move_npc'), {
       station: 'worker1',
-      owner: doctor.labelname,
+      owner: doctor.name,
     })
   } else if (
     meds.fsm.getState() == 'active' &&
-    player.clearance - 2 < rooms.all[player.currentroom].clearance &&
-    from_same_room(npcs.return_security(), player.currentroom) != null
+    player.clearance - 2 < rooms.all[player.currRoom].clearance &&
+    from_same_room(npcs.return_security(), player.currRoom) != null
   ) {
     novel.caution.label = 'questioning'
     novel.caution.cause = 'tutsclearance'
     novel.forced = true
-    novel.npc = from_same_room(npcs.return_security(), player.currentroom)!
-    print('tutsclearances', novel.reason, novel.npc.labelname)
+    novel.npc = from_same_room(npcs.return_security(), player.currRoom)!
+    print('tutsclearances', novel.reason, novel.npc.name)
 
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
   } else if (
@@ -145,7 +143,7 @@ function doctor_checks(conditions: QuestConditions) {
     delivery.fsm.setState('active')
     const waiting = tasks.task_has_npc('waitingformeds')
     //testjpf doesnt work if you talk to someone else!!! BUG
-    if (novel.npc.labelname == waiting) {
+    if (novel.npc.name == waiting) {
       print('WAITING DOES ANYHTING???!!!')
       //meds.passed = true
       meds.fsm.setState('complete')
@@ -153,10 +151,10 @@ function doctor_checks(conditions: QuestConditions) {
       doctor.love = doctor.love + 1
       novel.npc = npcs.all[waiting]
       novel.reason = 'docquestcomplete'
-      novel.remove_npc_quest(doctor.labelname)
-      tasks.removeTaskByLabel(doctor.labelname, 'mender')
-      npcs.all[injured.labelname].fsm.setState('infirm')
-      npcs.all[doctor.labelname].fsm.setState('turn')
+      novel.remove_npc_quest(doctor.name)
+      tasks.removeTaskByLabel(doctor.name, 'mender')
+      npcs.all[injured.name].fsm.setState('infirm')
+      npcs.all[doctor.name].fsm.setState('turn')
     } else {
       //testjpf start here
       //set up address)cautions for favors and quests TODO
@@ -180,8 +178,8 @@ function doctor_checks(conditions: QuestConditions) {
         turns: 15,
         scope: 'quest',
         cause: 'favordoctorquest',
-        owner: doctor.labelname,
-        target: npcs.all[waiting!].labelname,
+        owner: doctor.name,
+        target: npcs.all[waiting!].name,
         authority: 'player',
       })
       novel.reason = 'askdocafavor'
@@ -201,30 +199,30 @@ function doctor_checks(conditions: QuestConditions) {
     novel.reason == 'docquestcomplete' &&
     meds.fsm.getState() == 'complete'
   ) {
-    tasks.remove_quest_tasks(doctor.labelname)
+    tasks.remove_quest_tasks(doctor.name)
   }
 }
 function medic_assist_checks() {
   const quest = quests.all.tutorial.medic_assist
   /**  if (quest.passed == false) {
     //overly cautious? TESTJPF make sure injured doesnt get into other trouble???
-    tasks.remove_heat(injured.labelname)
+    tasks.removeHeat(injured.name)
   }**/
   //need doctor checks and "non-doctor" cjecks?
   //testjpf if novel.npc isn't a doctor::: RETURN!!!????
   // const injured = npcs.all[rooms.all.grounds.stations.worker1]
   // BUG::: testjpf I think this will
   // let you interact with any doctor
-  //const doctor = npcs.all[novel.npc.labelname].
+  //const doctor = npcs.all[novel.npc.name].
 
   const { conditions: cons } = quest
   //const {"0":injury,"1":doc, "2":apple} = cons
   //const { "0": injury, "1": doc, "2": apple, "3": meds } = cons
   if (cons['0'].passed == true) injured_checks(cons)
-  if (npcs.all[novel.npc.labelname].clan == 'doctors') {
+  if (npcs.all[novel.npc.name].clan == 'doctors') {
     doctor_checks(cons)
     //TESTJPF
-  } else if (npcs.all[novel.npc.labelname].currentroom == 'infirmary') {
+  } else if (npcs.all[novel.npc.name].currRoom == 'infirmary') {
     print('novel reason pre infirm check', novel.reason)
     infirmary_checks(cons['5'])
   }
@@ -276,17 +274,17 @@ export function tutorialA(interval = 'turn') {
       if (
         replace != '' &&
         npcs.all[replace].clan != 'doctors' &&
-        npcs.all[replace].currentroom != 'grounds'
+        npcs.all[replace].currRoom != 'grounds'
       ) {
         //const docs = shuffle(npcs.return_doctors())
         const doc: NpcState = shuffle(npcs.return_doctors())[0]
-        let { currentroom, currentstation } = doc
+        let { currRoom, currStation } = doc
         //BAD should be handled by set doc npc state
         //TODO TESTjpf
-        rooms.all[currentroom].stations[currentstation] = ''
-        rooms.all.grounds.stations.aid = doc.labelname
-        currentroom = 'grounds'
-        currentstation = 'aid'*/
+        rooms.all[currRoom].stations[currStation] = ''
+        rooms.all.grounds.stations.aid = doc.name
+        currRoom = 'grounds'
+        currStation = 'aid'*/
     /**todo testjpf ≈
         npc_action_move(
           replace,
@@ -317,7 +315,7 @@ export function tutorialA(interval = 'turn') {
         path: 'grounds/tutorialmeds',
         owner: rooms.all['grounds'].stations.aid,
        cause: 'apple',
-        roomname: 'grounds',
+        roomName: 'grounds',
       }
       msg.post('proxies:/controller#novelcontroller', 'show_scene', params)
     } else if (
@@ -380,10 +378,7 @@ function infirmaryScripts() {
   const { conditions: cons } = quest
   //const {"0":injury,"1":doc,"2": apple, "3": meds} = cons
   const { '3': meds } = cons
-  if (
-    meds.fsm.getState() == 'active' &&
-    novel.npc.currentstation == 'assistant'
-  ) {
+  if (meds.fsm.getState() == 'active' && novel.npc.currStation == 'assistant') {
     novel.forced = true
     novel.reason = 'quest'
     return 'tutorial/giveMeMeds'
@@ -431,10 +426,10 @@ export function tutorialAscripts(actor: string): string[] {
   if (tutorialAlookup[actor] != null) scripts.push(tutorialAlookup[actor]())
   if (tutorialAlookup[npcs.all[actor].clan] != null)
     scripts.push(tutorialAlookup[npcs.all[actor].clan]())
-  if (tutorialAlookup[npcs.all[actor].currentstation] != null)
-    scripts.push(tutorialAlookup[npcs.all[actor].currentstation]())
-  if (tutorialAlookup[npcs.all[actor].currentroom] != null)
-    scripts.push(tutorialAlookup[npcs.all[actor].currentroom]())
+  if (tutorialAlookup[npcs.all[actor].currStation] != null)
+    scripts.push(tutorialAlookup[npcs.all[actor].currStation]())
+  if (tutorialAlookup[npcs.all[actor].currRoom] != null)
+    scripts.push(tutorialAlookup[npcs.all[actor].currRoom]())
 
   return scripts.filter((s: string | null): s is string => s != null)
 }
