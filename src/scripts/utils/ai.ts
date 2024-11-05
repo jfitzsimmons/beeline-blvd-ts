@@ -4,7 +4,7 @@ import { shuffle } from './utils'
 
 const count: { [key: string]: number } = {}
 const unplacedcount: { [key: string]: number } = {}
-export function attempt_to_fill_station(
+export function attempt_to_fillStation(
   room_list: string[],
   npc: string,
   matrix: { x: number; y: number },
@@ -27,10 +27,10 @@ export function attempt_to_fill_station(
   while (placed == false) {
     //    room_list.forEach((room: string) => {
     for (const room of room_list) {
-      const shuffled_stations: [string, string][] = shuffle(
+      const shuffledStations: [string, string][] = shuffle(
         Object.entries(stationMap[room])
       )
-      for (const ks of shuffled_stations) {
+      for (const ks of shuffledStations) {
         if (RoomsInitRoles[ks[0]].includes(clan)) {
           //loop thru room stations see if empty or has correct role
           chosenRoom = room
@@ -50,7 +50,7 @@ export function attempt_to_fill_station(
             )
    */
           //fill station testjpf abstract maybe for NPCS turn state?
-          //npcs.all[npc].exitroom = RoomsInitLayout[current.y][current.x]!
+          //npcs.all[npc].exitRoom = RoomsInitLayout[current.y][current.x]!
           placed = true
           break
         }

@@ -2,7 +2,7 @@ npc.clan = _G.game.world.novel.npc.clan
 npc.love = _G.game.world.novel.npc.love
 
 npc.b.wealth = _G.game.world.novel.npc.binaries.poor_wealthy
-npc.b.aggressive = _G.game.world.novel.npc.binaries.passive_aggressive
+npc.b.aggressive = _G.game.world.novel.npc.binaries.passiveAggressive
 npc.b.authority = _G.game.world.novel.npc.binaries.anti_authority
 npc.b.educated = _G.game.world.novel.npc.binaries.un_educated
 npc.b.good = _G.game.world.novel.npc.binaries.evil_good

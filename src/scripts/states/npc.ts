@@ -10,7 +10,7 @@ import {
 } from './inits/roomsInitState'
 import { itemStateInit } from './inits/inventoryInitState'
 import {
-  attempt_to_fill_station,
+  attempt_to_fillStation,
   set_room_priority,
   set_npc_target,
 } from '../utils/ai'
@@ -20,7 +20,7 @@ import { surrounding_room_matrix } from '../utils/utils'
 export default class NpcState {
   fsm: StateMachine
   home: { x: number; y: number }
-  labelname: string
+  name: string
   inventory: string[]
   clearance: number
   clan: string
@@ -29,7 +29,7 @@ export default class NpcState {
   actions: string[]
   ai_path: string
   matrix: { x: number; y: number }
-  attitudes: Skills | never
+  opinion: Skills | never
   skills: Skills | never
   binaries: Skills | never
   turns_since_encounter: number
@@ -38,9 +38,9 @@ export default class NpcState {
   hp: number
   cooldown: number
   effects: Effect[]
-  currentroom: string
-  exitroom: string
-  currentstation: string
+  currRoom: string
+  exitRoom: string
+  currStation: string
   race: string
   parent: NpcMethod
   //quests: QuestMethods
@@ -48,7 +48,7 @@ export default class NpcState {
     //testjpf npcs need their own statemachine.
     //this._all = { ...NpcsInitState }
     this.home = NpcsInitState[n].home
-    this.labelname = NpcsInitState[n].labelname
+    this.name = NpcsInitState[n].name
     this.inventory = NpcsInitState[n].inventory
     this.clearance = NpcsInitState[n].clearance
     this.clan = NpcsInitState[n].clan
@@ -58,7 +58,7 @@ export default class NpcState {
     this.actions = ['talk', 'give', 'trade', 'pockets']
     this.ai_path = ''
     this.matrix = { x: 0, y: 0 }
-    this.attitudes = {}
+    this.opinion = {}
     this.skills = {}
     this.binaries = {}
     this.turns_since_encounter = 0
@@ -67,9 +67,9 @@ export default class NpcState {
     this.hp = 5
     this.cooldown = 0
     this.effects = []
-    this.currentroom = ''
-    this.exitroom = ''
-    this.currentstation = ''
+    this.currRoom = ''
+    this.exitRoom = ''
+    this.currStation = ''
     this.race = ''
     this.parent = lists
 
@@ -168,16 +168,12 @@ export default class NpcState {
   private onInterrogateExit(): void {}
   private onInfirmEnter(): void {
     this.hp = 5
-    this.parent.clear_station(
-      this.currentroom,
-      this.currentstation,
-      this.labelname
-    )
+    this.parent.clearStation(this.currRoom, this.currStation, this.name)
     this.turns_since_encounter = 99
-    this.parent.add_infirmed(this.labelname)
+    this.parent.add_infirmed(this.name)
     this.matrix = RoomsInitState.infirmary.matrix
     this.cooldown = 8
-    this.currentroom = 'infirmary'
+    this.currRoom = 'infirmary'
   }
   private onInfirmUpdate(): void {
     this.turns_since_encounter = 99
@@ -191,21 +187,21 @@ export default class NpcState {
     if (this.hp > 9) this.fsm.setState('turn')
   }
   private onInfirmEnd(): void {
-    this.parent.remove_infirmed(this.labelname)
-    this.parent.remove_injured(this.labelname)
-    this.parent.remove_ignore(this.labelname)
+    this.parent.remove_infirmed(this.name)
+    this.parent.remove_injured(this.name)
+    this.parent.remove_ignore(this.name)
   }
   private onInjuryStart(): void {
     this.turns_since_encounter = 99
-    this.parent.add_injured(this.labelname)
+    this.parent.add_injured(this.name)
     this.hp = 0
   }
   private onInjuryUpdate(): void {
     this.turns_since_encounter = 99
-    this.parent.prune_station_map(this.currentroom, this.currentstation)
+    this.parent.pruneStationMap(this.currRoom, this.currStation)
   }
   private onInjuryEnd(): void {
-    // this.parent.remove_injured(this.labelname)
+    // this.parent.remove_injured(this.name)
   }
   private onParamedicEnter(): void {}
   private onParamedicUpdate(): void {
@@ -226,8 +222,8 @@ export default class NpcState {
 
     if (math.random() + patients.length * 0.2 > 1) {
       this.clearStation()
-      this.parent.set_station('infirmary', 'aid', this.labelname)
-      this.parent.prune_station_map('infirmary', 'aid')
+      this.parent.setStation('infirmary', 'aid', this.name)
+      this.parent.pruneStationMap('infirmary', 'aid')
     } else if (patients.length > 3) {
       const target = RoomsInitState.infirmary.matrix
       const rooms = this.makePriorityRoomList(target)
@@ -238,11 +234,11 @@ export default class NpcState {
   }
   private onERfullExit(): void {}
   private onTrespassEnter(): void {
-    const hallpass = this.parent.has_hallpass(this.labelname)
+    const hallpass = this.parent.hasHallpass(this.name)
     if (
       hallpass != null &&
       tonumber(hallpass.scope.charAt(hallpass.scope.length - 1))! >=
-        RoomsInitState[this.currentroom].clearance
+        RoomsInitState[this.currRoom].clearance
     )
       this.fsm.setState('turn')
   }
@@ -252,11 +248,11 @@ export default class NpcState {
     // need to re-place npc
     if (
       this.clearance + math.random(1, 5) >=
-      RoomsInitState[this.currentroom].clearance
+      RoomsInitState[this.currRoom].clearance
     )
       this.fsm.setState('turn')
     this.clearStation()
-    const target = RoomsInitState[this.parent.get_player_room()].matrix
+    const target = RoomsInitState[this.parent.getPlayerRoom()].matrix
     const rooms = this.makePriorityRoomList(target)
     this.findRoomPlaceStation(rooms)
   }
@@ -266,7 +262,7 @@ export default class NpcState {
   private onArresteeExit(): void {}
   private onMendeeEnter(): void {
     this.turns_since_encounter = 98
-    this.parent.add_ignore(this.labelname)
+    this.parent.add_ignore(this.name)
     //testjpf need to remove injury tasks
   }
   private onMendeeUpdate(): void {
@@ -274,21 +270,17 @@ export default class NpcState {
     //print('MENDEEUP::: hp', this.hp)
     this.hp = this.hp + 1
     if (this.hp > 4) {
-      const vacancy = this.parent.send_to_infirmary(this.labelname)
+      const vacancy = this.parent.sendToInfirmary(this.name)
       if (vacancy != null) {
-        this.currentstation = vacancy
+        this.currStation = vacancy
         this.fsm.setState('infirm')
       }
     } else {
-      this.parent.prune_station_map(this.currentroom, this.currentstation)
+      this.parent.pruneStationMap(this.currRoom, this.currStation)
     }
   }
   private onMendeeExit(): void {
-    this.parent.clear_station(
-      this.currentroom,
-      this.currentstation,
-      this.labelname
-    )
+    this.parent.clearStation(this.currRoom, this.currStation, this.name)
   }
   private onMenderEnter(): void {
     this.turns_since_encounter = 98
@@ -297,10 +289,10 @@ export default class NpcState {
     this.turns_since_encounter = 98
     //call func with current room as parameter
     //if same as palyer room!!
-    this.parent.prune_station_map(this.currentroom, this.currentstation)
+    this.parent.pruneStationMap(this.currRoom, this.currStation)
   }
   private onMenderExit(): void {
-    // this.parent.remove_ignore(this.labelname)
+    // this.parent.remove_ignore(this.name)
   }
   private onNewEnter(): void {
     if (this.hp > 0) {
@@ -314,10 +306,10 @@ export default class NpcState {
   }
   private onNewExit(): void {}
   private onTurnEnter(): void {
-    // print(this.labelname, 'has entered MOVE STATE')
+    // print(this.name, 'has entered MOVE STATE')
   }
   private onTurnUpdate(): void {
-    this.exitroom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
+    this.exitRoom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
     this.remove_effects(this.effects)
     if (this.cooldown > 0) this.cooldown = this.cooldown - 1
     if (this.hp < 1) {
@@ -325,20 +317,16 @@ export default class NpcState {
       return
     }
     this.clearStation()
-    const target = RoomsInitState[this.parent.get_player_room()].matrix
+    const target = RoomsInitState[this.parent.getPlayerRoom()].matrix
     const rooms = this.makePriorityRoomList(target)
     this.findRoomPlaceStation(rooms)
   }
   private onTurnExit(): void {
-    print(this.labelname, 'has exited move state')
+    print(this.name, 'has exited move state')
   }
 
   clearStation() {
-    this.parent.clear_station(
-      this.currentroom,
-      this.currentstation,
-      this.labelname
-    )
+    this.parent.clearStation(this.currRoom, this.currStation, this.name)
   }
   makePriorityRoomList(target: { x: number; y: number }): string[] {
     const npcPriorityProps = {
@@ -363,32 +351,33 @@ export default class NpcState {
 
   findRoomPlaceStation(rooms: string[]): void {
     //for (const test of rooms) print('TESTTOOMS ROOM:: ', test)
-    const { chosenRoom, chosenStation } = attempt_to_fill_station(
+    const { chosenRoom, chosenStation } = attempt_to_fillStation(
       rooms,
-      this.labelname,
+      this.name,
       this.matrix,
       this.clan,
-      this.parent.get_station_map()
+      this.parent.getStationMap()
     )
 
-    this.currentroom = chosenRoom
-    this.parent.set_station(chosenRoom, chosenStation, this.labelname)
+    this.currRoom = chosenRoom
+    this.parent.setStation(chosenRoom, chosenStation, this.name)
+    this.parent.pruneStationMap(chosenRoom, chosenStation)
+
     if (
       RoomsInitState[chosenRoom].clearance >
       this.clearance + math.random(1, 5)
     )
       this.fsm.setState('trespass')
     //testjpf replace debug hardcode
-    this.parent.prune_station_map(chosenRoom, chosenStation)
     this.matrix = RoomsInitState[chosenRoom].matrix
-    this.currentstation = chosenStation
-    if (chosenRoom != this.parent.get_player_room()) {
+    this.currStation = chosenStation
+    if (chosenRoom != this.parent.getPlayerRoom()) {
       this.turns_since_encounter = this.turns_since_encounter + 1
     } else {
       this.turns_since_encounter = 0
     }
   }
-  remove_inventory_bonus(i: string) {
+  removeInvBonus(i: string) {
     const item: InventoryTableItem = itemStateInit[i]
     let sKey: keyof typeof item.skills
     for (sKey in itemStateInit[i].skills)
@@ -400,7 +389,7 @@ export default class NpcState {
         this.binaries[bKey] - itemStateInit[i].binaries[bKey]
   }
 
-  add_inventory_bonus(i: string) {
+  addInvBonus(i: string) {
     const item: InventoryTableItem = itemStateInit[i]
     let sKey: keyof typeof item.skills
     for (sKey in itemStateInit[i].skills)

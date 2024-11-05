@@ -6,7 +6,6 @@ import {
   TaskProps,
   WorldTasksProps,
 } from '../../types/tasks'
-import NpcState from './npc'
 import TaskState from './task'
 import { arraymove } from '../utils/utils'
 
@@ -38,9 +37,12 @@ export default class WorldTasks {
     this.medicalSys = []
     this.parent = worldProps
     this.methods = {
-      alreadyHunting: this.already_hunting.bind(this),
+      npcHasTask: this.npcHasTask.bind(this),
       addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
       didCrossPaths: this.parent.didCrossPaths.bind(this),
+      returnNpc: this.parent.returnNpc.bind(this),
+      returnPlayer: this.parent.returnPlayer.bind(this),
+      taskBuilder: this.taskBuilder.bind(this),
     }
 
     this.quests = {
@@ -64,7 +66,8 @@ export default class WorldTasks {
     this.removeTaskByLabel = this.removeTaskByLabel.bind(this)
     this.has_clearance = this.has_clearance.bind(this)
     this.getMendingQueue = this.getMendingQueue.bind(this)
-    this.npc_has_task = this.npc_has_task.bind(this)
+    this.npcHasTask = this.npcHasTask.bind(this)
+    this.taskBuilder = this.taskBuilder.bind(this)
   }
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
@@ -166,7 +169,7 @@ export default class WorldTasks {
       }
     }
   }
-  remove_heat(sus: string) {
+  removeHeat(sus: string) {
     for (let i = this.all.length - 1; i >= 0; i--) {
       const c = this.all[i]
       if (
@@ -198,11 +201,19 @@ export default class WorldTasks {
     }
     return false
   }
-  npc_has_task(owner: string, target: string): TaskState | null {
-    // print('npc_has_task', owner, target)
+  npcHasTask(
+    owner: string,
+    target: string,
+    labels: string[] = []
+  ): TaskState | null {
+    // print('npcHasTask', owner, target)
     for (const c of this.all) {
-      //   print('npc_has_task:: C:', c.owner, c.target, c.label)
-      if ((owner == 'any' || c.owner == owner) && c.target == target) {
+      //   print('npcHasTask:: C:', c.owner, c.target, c.label)
+      if (
+        (owner == 'any' || c.owner == owner) &&
+        c.target == target &&
+        (labels.length < 1 || labels.includes(c.label))
+      ) {
         return c
       }
     }
@@ -239,17 +250,13 @@ export default class WorldTasks {
 
   //TEstjpf need add task remove task
   //add_task_assist
-  task_builder(
-    owner: NpcState,
-    label: string,
-    target: string,
-    cause = 'theft'
-  ) {
+  taskBuilder(o: string, label: string, target: string, cause = 'theft') {
+    const owner = this.parent.returnNpc(o)
     //explain why you need this testjpf
     //no nested ifs
     //cna this be done somewhere else?
     const append: Task = {
-      owner: owner.labelname,
+      owner: owner.name,
       turns: 15,
       label, // merits //testjpf state is a bad name
       scope: 'npc',
@@ -324,6 +331,7 @@ export default class WorldTasks {
 
     return docs
   }
+  /**
   has_ignore_task(n: string): boolean {
     //if mending and in field busy
     //if mending in office and office full
@@ -333,5 +341,5 @@ export default class WorldTasks {
       ignored.length > 0 ? true : false
     )
     return ignored.length > 0 ? true : false
-  }
+  }*/
 }

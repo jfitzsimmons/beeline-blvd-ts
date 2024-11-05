@@ -7,7 +7,7 @@ import { RoomsInitLayout, RoomsInitState } from './inits/roomsInitState'
 import StateMachine from './stateMachine'
 import { itemStateInit } from './inits/inventoryInitState'
 
-function random_skills(skills: Skills, bins: Skills) {
+function randomSkills(skills: Skills, bins: Skills) {
   let tempvals: number[] = shuffle([1, 1, 3, 4, 5, 6, 6, 7])
   let count = 0
   let ks: keyof typeof skills // Type is "one" | "two" | "three"
@@ -34,7 +34,7 @@ export default class WorldPlayer {
   constructor(playerProps: WorldPlayerProps) {
     this.fsm = new StateMachine(this, 'player')
     this._state = { ...PlayerInitState }
-    random_skills(this._state.skills, this._state.binaries)
+    randomSkills(this._state.skills, this._state.binaries)
     this.quests = {
       return_inventory: this.return_inventory.bind(this),
       return_skills: this.return_skills.bind(this),
@@ -45,18 +45,6 @@ export default class WorldPlayer {
     this.fsm
       .addState('idle')
       .addState('turn', {
-        //game??
-        //onInit?
-        // what more could i do beside adjust cool downs
-        // can i access any other systems?? testjpf
-        //how to use instead of cautions?
-        // adjust stats? add remove bonuses/
-        //on update could be like onInteraction.
-        // if you talk to or rob someone in that state x will happen?
-        //should i be using script.ts?!?!?!
-        // need to go through what could happen on an Aio_turn
-        // maybbe interation too? / the if elses
-        // keep .update in mind.  everything needs a .update
         onEnter: this.onTurnEnter.bind(this),
         onUpdate: this.onTurnUpdate.bind(this),
         onExit: this.onTurnExit.bind(this),
@@ -72,9 +60,8 @@ export default class WorldPlayer {
         onExit: this.onQuestionedExit.bind(this),
       })
     this.addToAlertLevel = this.addToAlertLevel.bind(this)
-
-    this.get_player_room = this.get_player_room.bind(this)
-    this.set_room_info = this.set_room_info.bind(this)
+    this.getPlayerRoom = this.getPlayerRoom.bind(this)
+    this.setRoomInfo = this.setRoomInfo.bind(this)
   }
   private onTurnEnter(): void {
     print('PLAYER entered Turn STATE')
@@ -84,25 +71,25 @@ export default class WorldPlayer {
     print('PLAYER UPDATE FSM')
     this.ap = this.ap - 1
     this.turns = this.turns + 1
-    this.set_room_info()
+    this.setRoomInfo()
   }
   private onTurnExit(): void {
-    // print(this.labelname, 'has entered MOVE STATE')
+    // print(this.name, 'has entered MOVE STATE')
   }
   private onTrespassEnter(): void {
-    const hallpass = this.parent.has_hallpass('player')
+    const hallpass = this.parent.hasHallpass('player')
     if (
       hallpass != null &&
       tonumber(hallpass.scope.charAt(hallpass.scope.length - 1))! >=
-        RoomsInitState[this.currentroom].clearance
+        RoomsInitState[this.currRoom].clearance
     )
       this.fsm.setState('turn')
   }
   private onTrespassUpdate(): void {
     this.ap = this.ap - 1
     this.turns = this.turns + 1
-    this.set_room_info()
-    if (this.clearance >= RoomsInitState[this.currentroom].clearance)
+    this.setRoomInfo()
+    if (this.clearance >= RoomsInitState[this.currRoom].clearance)
       this.fsm.setState('turn')
   }
   private onTrespassExit(): void {
@@ -114,33 +101,33 @@ export default class WorldPlayer {
   }
   private onQuestionedUpdate(): void {}
   private onQuestionedExit(): void {}
-  set_room_info() {
+  setRoomInfo() {
     //testjpf instead will have parent.get_focused_room()
     //or something...
     print(
       '00 focusroomchanges:: current, matrik:',
       this.parent.getFocusedRoom(),
-      this.exitroom,
-      this.currentroom,
+      this.exitRoom,
+      this.currRoom,
       this.matrix_x,
       this.matrix_y
     )
-    this.exitroom = RoomsInitLayout[this.matrix_y][this.matrix_x]!
-    this.currentroom = this.parent.getFocusedRoom()
-    this.matrix = RoomsInitState[this.currentroom].matrix
+    this.exitRoom = RoomsInitLayout[this.matrix_y][this.matrix_x]!
+    this.currRoom = this.parent.getFocusedRoom()
+    this.matrix = RoomsInitState[this.currRoom].matrix
     print(
       'focusroomchanges:: current, matrik:',
       this.parent.getFocusedRoom(),
-      this.exitroom,
-      this.currentroom,
+      this.exitRoom,
+      this.currRoom,
       this.matrix_x,
       this.matrix_y
     )
   }
-  get_player_room(): string {
-    return this.currentroom
+  getPlayerRoom(): string {
+    return this.currRoom
   }
-  remove_inventory_bonus(i: string) {
+  removeInvBonus(i: string) {
     const item: InventoryTableItem = itemStateInit[i]
     let sKey: keyof typeof item.skills
     for (sKey in itemStateInit[i].skills)
@@ -153,7 +140,7 @@ export default class WorldPlayer {
         this.state.binaries[bKey] - itemStateInit[i].binaries[bKey]
   }
 
-  add_inventory_bonus(i: string) {
+  addInvBonus(i: string) {
     const item: InventoryTableItem = itemStateInit[i]
     let sKey: keyof typeof item.skills
     for (sKey in itemStateInit[i].skills)
@@ -216,11 +203,11 @@ export default class WorldPlayer {
   public get ap_max() {
     return this._state.ap_max
   }
-  public set currentroom(r: string) {
-    this._state.currentroom = r
+  public set currRoom(r: string) {
+    this._state.currRoom = r
   }
-  public get currentroom() {
-    return this._state.currentroom
+  public get currRoom(): string {
+    return this._state.currRoom
   }
 
   public set turns(n: number) {
@@ -229,11 +216,11 @@ export default class WorldPlayer {
   public get turns() {
     return this._state.turns
   }
-  public set exitroom(r: string) {
-    this._state.exitroom = r
+  public set exitRoom(r: string) {
+    this._state.exitRoom = r
   }
-  public get exitroom() {
-    return this._state.exitroom
+  public get exitRoom() {
+    return this._state.exitRoom
   }
   public get alert_level() {
     return this._state.alert_level
@@ -266,14 +253,14 @@ export default class WorldPlayer {
     return this._state.skills
   }
   return_playerroom(): string {
-    return this._state.currentroom
+    return this._state.currRoom
   }
   addToAlertLevel(n: number) {
     this.alert_level += n
   }
   private inventory_init() {
     for (const item of this.state.inventory) {
-      this.add_inventory_bonus(item)
+      this.addInvBonus(item)
     }
   }
 }

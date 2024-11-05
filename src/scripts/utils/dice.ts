@@ -39,7 +39,7 @@ export function roll_dice(num_dice = 1, num_sides = 6, modifier = 0) {
   return result
 }
 
-export function roll_special_dice(
+export function rollSpecialDice(
   num_sides = 6,
   advantage = false,
   num_dice = 2,

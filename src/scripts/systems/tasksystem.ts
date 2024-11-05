@@ -16,7 +16,7 @@ import {
 import {
   build_consequence,
   npc_confrontation,
-  //send_to_infirmary,
+  //sendToInfirmary,
   snitch_check,
 } from './emergencysystem'
 import {
@@ -73,12 +73,12 @@ const reck_harass_checks = [classy_check, predator_check]
 function focused_acts(c: Task) {
   if (c.cause == 'injury' && c.label == 'mender') {
     const hurt = npcs.all[c.target].hp < 5
-    if (npcs.all[c.owner].currentroom == player.currentroom && hurt == true) {
+    if (npcs.all[c.owner].currRoom == player.currRoom && hurt == true) {
       msg.post(
-        `/${npcs.all[c.owner].currentstation}#npc_loader`,
+        `/${npcs.all[c.owner].currStation}#npc_loader`,
         hash('move_npc'),
         {
-          station: npcs.all[c.target].currentstation,
+          station: npcs.all[c.target].currStation,
           npc: c.owner,
         }
       )
@@ -87,7 +87,7 @@ function focused_acts(c: Task) {
         'STATION MOVE VIA TASK mending',
         c.target,
         'in',
-        npcs.all[c.owner].currentroom
+        npcs.all[c.owner].currRoom
       )
     }
     if (hurt == false) {
@@ -98,7 +98,12 @@ function focused_acts(c: Task) {
 }
 
 //Passive reactions to cautions
-function player_snitch_check(b: boolean, w: string, reason: string): string {
+/** 
+export function player_snitch_check(
+  b: boolean,
+  w: string,
+  reason: string
+): string {
   ///testjpf still nrrd to figure out alert_level!!!
   //do alert_level search
   let caution_state = 'questioning'
@@ -106,23 +111,23 @@ function player_snitch_check(b: boolean, w: string, reason: string): string {
   player.alert_level =
     b == false ? player.alert_level + 1 : player.alert_level + 2
   if (player.alert_level > 5 && tasks.plan_on_snitching(w, 'player') == false) {
-    tasks.task_builder(npcs.all[w], 'snitch', 'player', reason)
+    tasks.taskBuilder(w, 'snitch', 'player', reason)
   }
   print('plauer snith chk :: alertlvl::', player.alert_level)
   return caution_state
 }
-function npc_snitch_check(w: string, s: string) {
+export function npc_snitch_check(w: string, s: string) {
   let caution_state = 'questioning'
 
   if (tasks.already_hunting(w, s)) {
-    npcs.all[w].attitudes[npcs.all[s].clan] =
-      npcs.all[w].attitudes[npcs.all[s].clan] - 1
+    npcs.all[w].opinion[npcs.all[s].clan] =
+      npcs.all[w].opinion[npcs.all[s].clan] - 1
 
     if (math.random() < 0.33) caution_state = 'arrest'
   }
   return caution_state
 }
-
+*/
 function merits_demerits(c: Task, w: string) {
   if (c.target === 'player') {
     const adj = c.label === 'merits' ? 1 : -1
@@ -132,7 +137,7 @@ function merits_demerits(c: Task, w: string) {
     c.label === 'merits' ? fxLookup.merits : fxLookup.demerits
   const fx_labels = shuffle(fxArray)
   const effect: Effect = fx[fx_labels[0]]!
-  if (effect.fx.type == 'attitudes') {
+  if (effect.fx.type == 'opinion') {
     effect.fx.stat = npcs.all[c.target].clan
   }
   print(c.owner, 'found:', w, 'because merits.', w, 'has effect:', fx_labels[1])
@@ -149,7 +154,10 @@ function reckless_consequence(c: Task, _w: string) {
 
   build_consequence(c, checks)
 }
+/** 
 function snitch_to_security(c: Task, watcher: string) {
+  //testjpf need to update aler level
+  // update any npc stat
   print(c.owner, 'SNITCHED on:', c.target, 'TO:', watcher)
   const bulletin = tasks.already_hunting(watcher, c.target)
   const caution_state =
@@ -158,33 +166,33 @@ function snitch_to_security(c: Task, watcher: string) {
       : npc_snitch_check(watcher, c.target)
 
   if (bulletin == null) {
-    tasks.task_builder(npcs.all[watcher], caution_state, c.target, c.cause)
+    tasks.taskBuilder(watcher, caution_state, c.target, c.cause)
   } else {
     bulletin.turns = bulletin.turns + 6
   }
 
   c.turns = 0
-}
+}*/
 function passive_acts(c: Task, w: string) {
   if (c.label == 'reckless') {
     reckless_consequence(c, w)
   } else if (
     c.authority == 'security' &&
     c.label == 'snitch' &&
-    (c.authority == npcs.all[w].clan || c.authority == npcs.all[w].labelname)
+    (c.authority == npcs.all[w].clan || c.authority == npcs.all[w].name)
   ) {
-    snitch_to_security(c, w)
+    // snitch_to_security(c, w)
   } else if (
     (c.label == 'merits' || c.label == 'demerits') &&
     (npcs.all[w].clan == c.authority ||
-      npcs.all[c.owner].attitudes[npcs.all[w].clan] > 0)
+      npcs.all[c.owner].opinion[npcs.all[w].clan] > 0)
   ) {
     merits_demerits(c, w)
   }
 }
 
 //player interaction and npc actions
-export function confrontation_consequence(
+export function confrontationConsequence(
   s: string,
   w: string,
   precheck = false
@@ -254,16 +262,15 @@ function address_confrontations(cs: Task[]): Task | null {
       c.target === 'player' ? player.state : npcs.all[c.target]
     print(
       '11:: PLSYRTCONFRONT??:: ',
-      owner.currentroom == target.currentroom,
-      owner.currentroom,
-      target.currentroom
+      owner.currRoom == target.currRoom,
+      owner.currRoom,
+      target.currRoom
     )
     if (
-      owner.currentroom == target.currentroom ||
-      (owner.currentroom == target.exitroom &&
-        owner.exitroom == target.currentroom)
+      owner.currRoom == target.currRoom ||
+      (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
     ) {
-      c.target !== 'player' && npc_confrontation(target.labelname, c)
+      c.target !== 'player' && npc_confrontation(c.target, c)
       c.turns = 0
       // confront =
       print('PLSYRTCONFRONT??:: ', c.target == 'player', c.owner, c.target)
@@ -276,7 +283,7 @@ function address_confrontations(cs: Task[]): Task | null {
 function address_conversations(cs: Task[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
     const agent = npcs.all[cs[i].owner]
-    const stations = rooms.all[agent.currentroom].stations
+    const stations = rooms.all[agent.currRoom].stations
     let station: keyof typeof stations
     for (station in stations) {
       const watcher = stations[station]

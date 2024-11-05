@@ -13,17 +13,17 @@ function prepare_novel_txts(
   room: boolean | true = true,
   extend: boolean | false = false
 ) {
-  print('PNT::: ', novel.reason, novel.npc.labelname)
+  print('PNT::: ', novel.reason, novel.npc.name)
   //TESTJPF could move some logic to novelcontroller
   const paths: string[] = []
 
   const quest_paths: string[] = prepareQuestTxts[player.checkpoint + 'scripts'](
-    novel.npc.labelname
+    novel.npc.name
   )
   print(
     'NOVELVOVEL1:: questpaths',
     quest_paths[0],
-    novel.npc.labelname,
+    novel.npc.name,
     novel.reason
   )
 
@@ -32,7 +32,7 @@ function prepare_novel_txts(
   if (extend == true) {
     checkpoint = player.checkpoint
   }
-  const task = tasks.npc_has_task(novel.npc.labelname, 'player')
+  const task = tasks.npcHasTask(novel.npc.name, 'player')
   if (task != null) {
     print('NOVELVOVEL2 task1:', task.label)
     //could use this at level addresstasks testjpf
@@ -60,13 +60,13 @@ function prepare_novel_txts(
   }
   print('NOVELVOVEL2 task3: novel.reason:', novel.reason)
 
-  if (novel.npcsWithQuest.includes(novel.npc.labelname)) novel.reason = 'quest'
+  if (novel.npcsWithQuest.includes(novel.npc.name)) novel.reason = 'quest'
   print('NOVELVOVEL3 quest??: novel.reason:', novel.reason)
 
-  if (room) paths.unshift(player.currentroom + '/default')
-  if (novel.npc.currentstation != null) {
-    paths.unshift('stations/' + novel.npc.currentstation)
-    paths.unshift(player.currentroom + '/' + novel.npc.currentstation)
+  if (room) paths.unshift(player.currRoom + '/default')
+  if (novel.npc.currStation != null) {
+    paths.unshift('stations/' + novel.npc.currStation)
+    paths.unshift(player.currRoom + '/' + novel.npc.currStation)
   }
   print('NOVELVOVEL4 LAST reaso:', novel.reason)
 
@@ -87,9 +87,9 @@ function prepare_novel_txts(
 function consolation_outcomes(love: number) {
   //print(novel.npc.love, '| novel.npc.love = love |', love)
   if (love > novel.npc.love) {
-    const consequence = impressed_checks('player', novel.npc.labelname)
+    const consequence = impressed_checks('player', novel.npc.name)
     if (consequence != 'neutral')
-      tasks.task_builder(novel.npc, consequence, 'player', 'impressed')
+      tasks.taskBuilder(novel.npc.name, consequence, 'player', 'impressed')
 
     novel.npc.love = love
     // they try to rob you?
@@ -103,29 +103,29 @@ function consolation_outcomes(love: number) {
   } else if (love < novel.npc.love) {
     //could be ELSE
 
-    const consequence = unimpressed_checks('player', novel.npc.labelname)
+    const consequence = unimpressed_checks('player', novel.npc.name)
 
     if (consequence != 'neutral')
-      tasks.task_builder(novel.npc, consequence, 'player', 'unimpressed')
+      tasks.taskBuilder(novel.npc.name, consequence, 'player', 'unimpressed')
   }
 }
 
 function novel_outcomes(reason: string) {
   if (reason == 'faint' || player.hp <= 0) {
     msg.post('proxies:/controller#worldcontroller', 'pick_room', {
-      enter_room: tasks.spawn,
-      load_type: 'faint',
+      enterRoom: tasks.spawn,
+      loadType: 'faint',
     })
   } else if (reason == 'arrested') {
-    tasks.remove_heat('player')
+    tasks.removeHeat('player')
     msg.post('proxies:/controller#worldcontroller', 'pick_room', {
-      enter_room: 'security',
-      load_type: 'arrest',
+      enterRoom: 'security',
+      loadType: 'arrest',
     })
   } else if (reason.substring(0, 6) == 'quest:') {
     novel.reason = reason.substring(7)
     print('novel outcome reason::', novel.reason)
-    novel.append_npc_quest(novel.npc.labelname)
+    novel.append_npc_quest(novel.npc.name)
   }
   //if love positive. consolation checks. else negatice
   //only merits is positive
@@ -168,14 +168,10 @@ export function on_message(
     novel_outcomes(message.reason)
     if (player.alert_level != message.alert) {
       player.alert_level = message.alert
-      if (tasks.plan_on_snitching(novel.npc.labelname, 'player') == false) {
-        tasks.task_builder(novel.npc, 'snitch', 'player', 'harassing')
+      if (tasks.plan_on_snitching(novel.npc.name, 'player') == false) {
+        tasks.taskBuilder(novel.npc.name, 'snitch', 'player', 'harassing')
       }
-      msg.post(
-        player.currentroom + ':/shared/scripts#level',
-        'update_alert',
-        {}
-      )
+      msg.post(player.currRoom + ':/shared/scripts#level', 'update_alert', {})
     } else {
       if (message.love != novel.npc.love) {
         novel.npc.love = message.love
@@ -187,9 +183,9 @@ export function on_message(
       }
     }
 
-    npcs.all[novel.npc.labelname] = novel.npc
+    npcs.all[novel.npc.name] = novel.npc
 
     msg.post('proxies:/controller#novelcontroller', 'unload_novel')
-    msg.post(player.currentroom + ':/shared/scripts#level', 'exit_gui')
+    msg.post(player.currRoom + ':/shared/scripts#level', 'exit_gui')
   }
 }

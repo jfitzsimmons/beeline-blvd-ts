@@ -1,5 +1,5 @@
 interface props {
-  current_proxy: url | null
+  currentProxy: url | null
 }
 interface url {
   fragment: hash
@@ -14,7 +14,7 @@ function show(curr_proxy: url | null, proxy: string) {
 }
 
 export function init(this: props) {
-  this.current_proxy = null
+  this.currentProxy = null
 }
 
 export function on_message(
@@ -24,20 +24,20 @@ export function on_message(
   _sender: url
 ): void {
   if (messageId == hash('toggle_info')) {
-    show(this.current_proxy, '#info_gui')
+    show(this.currentProxy, '#info_gui')
   } else if (messageId == hash('unload_info')) {
-    if (this.current_proxy != null) {
-      msg.post(this.current_proxy, 'disable')
-      msg.post(this.current_proxy, 'final')
-      msg.post(this.current_proxy, 'unload')
-      this.current_proxy = null
+    if (this.currentProxy != null) {
+      msg.post(this.currentProxy, 'disable')
+      msg.post(this.currentProxy, 'final')
+      msg.post(this.currentProxy, 'unload')
+      this.currentProxy = null
     }
   } else if (messageId == hash('proxy_loaded')) {
-    this.current_proxy = _sender
+    this.currentProxy = _sender
 
     if (_sender.fragment == hash('info_gui')) {
       msg.post('info_gui:/info_main#info_main', 'wake_up')
     }
-    msg.post(this.current_proxy, 'enable')
+    msg.post(this.currentProxy, 'enable')
   }
 }

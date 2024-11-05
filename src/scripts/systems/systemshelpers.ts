@@ -9,7 +9,7 @@ export function add_pledge(s: string) {
 
 export function go_to_jail(s: string) {
   // remove all arrests for suspect(clear record)
-  tasks.remove_heat(s)
+  tasks.removeHeat(s)
   const occupants: Occupants = rooms.all.security.occupants!
   let station: keyof typeof occupants
   for (station in occupants) {

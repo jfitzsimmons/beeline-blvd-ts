@@ -10,13 +10,13 @@ const room_lookup = {
 }
 function transition() {
   let params = {
-    load_type: 'room transition',
-    enter_room: room_lookup[hash_to_hex(go.get_id())],
+    loadType: 'room transition',
+    enterRoom: room_lookup[hash_to_hex(go.get_id())],
   }
   if (player.ap <= 0) {
     params = {
-      enter_room: tasks.spawn,
-      load_type: 'faint',
+      enterRoom: tasks.spawn,
+      loadType: 'faint',
     }
   }
   player.pos = go.get_position()

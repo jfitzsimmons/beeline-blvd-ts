@@ -12,7 +12,7 @@ function steal_stash_checks() {
   //print("rooms.all.reception.stations.guest",rooms.all.reception.stations.guest)
   if (rooms.all.reception.stations.guest != '') {
     victim = npcs.all[rooms.all.reception.stations.guest]
-    //print("victim.labelname",victim.labelname)
+    //print("victim.name",victim.name)
 
     loot = victim.inventory
     actor = rooms.all.reception.actors.drawer

@@ -28,10 +28,10 @@ function absolute_binaries(): [string, number][] {
       bins.evil_good < 0 ? bins.evil_good * -10 : bins.evil_good * 10,
     ],
     [
-      bins.passive_aggressive < 0 ? 'passive' : 'aggressive',
-      bins.passive_aggressive < 0
-        ? bins.passive_aggressive * -10
-        : bins.passive_aggressive * 10,
+      bins.passiveAggressive < 0 ? 'passive' : 'aggressive',
+      bins.passiveAggressive < 0
+        ? bins.passiveAggressive * -10
+        : bins.passiveAggressive * 10,
     ],
     [
       bins.lawless_lawful < 0 ? 'lawless' : 'lawful',

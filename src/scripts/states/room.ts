@@ -1,23 +1,23 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Actors, Occupants } from '../../types/state'
-import { RoomMethod2 } from '../../types/tasks'
+import { NpcsProps2 } from '../../types/tasks'
 import { RoomsInitState } from './inits/roomsInitState'
 import StateMachine from './stateMachine'
 
 export default class RoomState {
   fsm: StateMachine
   matrix: { x: number; y: number }
-  roomname: string
+  roomName: string
   clearance: number
   stations: { [key: string]: string }
   actors: Actors
   props?: string[]
   occupants?: Occupants
-  parent: RoomMethod2
-  constructor(r: string, lists: RoomMethod2) {
+  parent: NpcsProps2
+  constructor(r: string, lists: NpcsProps2) {
     this.fsm = new StateMachine(this, 'room' + r)
     this.matrix = RoomsInitState[r].matrix
-    this.roomname = RoomsInitState[r].roomname
+    this.roomName = RoomsInitState[r].roomName
     this.clearance = RoomsInitState[r].clearance
     this.stations = RoomsInitState[r].stations
     this.actors = RoomsInitState[r].actors
@@ -40,8 +40,8 @@ export default class RoomState {
   private onFocusStart(): void {
     //highlight room neighbors and directions
     //do something with stations, clear them
-    //testjpf get_player_room method
-    this.parent.set_focused(this.roomname)
+    //testjpf getPlayerRoom method
+    this.parent.set_focused(this.roomName)
   }
   private onFocusUpdate(): void {
     //not bad to handle interactions

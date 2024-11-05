@@ -2,64 +2,44 @@ import { Actor, Npc } from '../../types/state'
 import { clamp } from '../utils/utils'
 const { tasks, npcs, rooms, player } = globalThis.game.world
 import {
-  remove_advantageous,
-  remove_valuable,
-  remove_last,
-  remove_random,
+  removeAdvantageous,
+  removeValuable,
+  removeLast,
+  removeRandom,
 } from '../systems/inventorysystem'
-import { confrontation_consequence } from '../systems/tasksystem'
+import { confrontationConsequence } from '../systems/tasksystem'
 //import { injured_npcs } from '../systems/emergencysystem'
-import { roll_special_dice } from '../utils/dice'
+import { rollSpecialDice } from '../utils/dice'
 import NpcState from '../states/npc'
 import { NpcsInitState } from '../states/inits/npcsInitState'
 import { RoomsInitState } from '../states/inits/roomsInitState'
 
-function tend_to_patient(p: string, doc: string) {
+function tendToPatient(p: string, doc: string) {
   npcs.all[doc].fsm.setState('mender')
   npcs.all[p].fsm.setState('mendee')
-  tasks.remove_heat(p)
-  tasks.task_builder(npcs.all[doc], 'mender', p, 'injury')
-  // tasks.mendingQueue.splice(tasks.mendingQueue.indexOf(p), 1)
+  tasks.removeHeat(p)
+  tasks.taskBuilder(doc, 'mender', p, 'injury')
   tasks.addAdjustMendingQueue(p)
 
-  if (npcs.all[doc].currentroom == player.currentroom)
-    print('MOVENPC DOC:: TENTOPATIENT: ', doc, p)
-  msg.post(`/${npcs.all[doc].currentstation}#npc_loader`, hash('move_npc'), {
-    station: npcs.all[p].currentstation,
-    npc: doc,
-  })
+  if (npcs.all[doc].currRoom == player.currRoom)
+    msg.post(`/${npcs.all[doc].currStation}#npc_loader`, hash('move_npc'), {
+      station: npcs.all[p].currStation,
+      npc: doc,
+    })
 }
 
-export function aid_check() {
-  /**
-   * loop thru injured, see whos in the room.
-   * if not a doctor add an injury task??
-   * if doctor set state to mending move station to patient via message.
-   */
-
-  //testjpf
-  // we combined those 2 confusing arrays
-  //const allInjured = [...tasks.mendingQueue, ...npcs.injured]
-
+export function aidCheck() {
   for (const i of npcs.injured.filter(
     (n): n is string => !npcs.ignore.includes(n)
   )) {
-    print('Needsadoc!:::', i)
-    //testjpf make array of values sort docs first.!! NEXTTODO
-    const helpers = Object.values(rooms.all[npcs.all[i].currentroom].stations)
+    const helpers = Object.values(rooms.all[npcs.all[i].currRoom].stations)
       .filter((s) => s != '')
       .sort(function (a, b) {
         if (a.slice(0, 3) === 'doc' && b.slice(0, 3) !== 'doc') return -1
         if (b.slice(0, 3) === 'doc' && a.slice(0, 3) !== 'doc') return 1
         return 0
       })
-    //const stations = rooms.all[npcs.all[i].currentroom].stations
-    //let sKey: keyof typeof stations
-    //TESTJPF loop breaks as soon as caution condition is met
-    //be nice to sort doctors first!
     for (const helper of helpers) {
-      // const helper = stations[sKey]
-      //check each station for a chance for them to help injured
       if (helper != i) {
         //doctors start mending after RNG weighted by patient priority
         const ticket = tasks.mendingQueue.indexOf(i)
@@ -68,17 +48,15 @@ export function aid_check() {
           NpcsInitState[helper].clan == 'doctors' &&
           ((ticket != -1 && ticket < random) || (ticket == -1 && random > 3))
         ) {
-          print('pretendtopatient???')
-          tend_to_patient(i, helper)
+          tendToPatient(i, helper)
           break
         } else if (
-          math.random() > 0.1 &&
-          tasks.npc_has_task(helper, i) === null &&
-          NpcsInitState[helper].clan !== 'doctors' &&
-          tasks.has_ignore_task(i) === false
+          math.random() > 0.6 &&
+          tasks.npcHasTask(helper, i) === null &&
+          NpcsInitState[helper].clan !== 'doctors'
         ) {
           //if not a doctor, create injury caution if haven't already
-          tasks.task_builder(npcs.all[helper], 'injury', i, 'injury')
+          tasks.taskBuilder(helper, 'injury', i, 'injury')
           break
         }
       }
@@ -89,54 +67,54 @@ export function take_check(taker: NpcState, actor: Npc | Actor) {
   let modifier = Math.round(
     taker.skills.stealth -
       taker.skills.charisma +
-      taker.binaries.passive_aggressive * -5
+      taker.binaries.passiveAggressive * -5
   )
-  if (tasks.npc_has_task('any', taker.labelname) != null) {
+  if (tasks.npcHasTask('any', taker.name) != null) {
     modifier = modifier - 1
   }
   const advantage =
     taker.binaries.poor_wealthy + taker.binaries.anti_authority * -1 > 0
-  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
   if (result < 5) return false
 
   let chest_item = null
   if (math.random() < 0.5) {
-    chest_item = remove_valuable(taker.inventory, actor.inventory)
+    chest_item = removeValuable(taker.inventory, actor.inventory)
   } else if (math.random() < 0.51) {
-    chest_item = remove_advantageous(
+    chest_item = removeAdvantageous(
       taker.inventory,
       actor.inventory,
       taker.skills
     )
   } else {
-    chest_item = remove_random(taker.inventory, actor.inventory)
+    chest_item = removeRandom(taker.inventory, actor.inventory)
   }
-  taker.add_inventory_bonus(chest_item)
+  taker.addInvBonus(chest_item)
 }
 export function stash_check(stasher: NpcState, actor: NpcState | Actor) {
   let modifier = stasher.inventory.length - actor.inventory.length
 
-  if (tasks.npc_has_task('any', stasher.labelname) != null) {
+  if (tasks.npcHasTask('any', stasher.name) != null) {
     modifier = modifier + 1
   }
 
   const advantage = actor.inventory.length < 2 || stasher.inventory.length > 5
-  const result = roll_special_dice(5, advantage, 3, 2) + modifier
+  const result = rollSpecialDice(5, advantage, 3, 2) + modifier
   if (result < 5) return false
 
   let chest_item: string | null = null
   if (math.random() < 0.5) {
-    chest_item = remove_valuable(actor.inventory, stasher.inventory)
+    chest_item = removeValuable(actor.inventory, stasher.inventory)
   } else if (math.random() < 0.51) {
-    chest_item = remove_advantageous(
+    chest_item = removeAdvantageous(
       actor.inventory,
       stasher.inventory,
       stasher.skills
     )
   } else {
-    chest_item = remove_last(actor.inventory, stasher.inventory)
+    chest_item = removeLast(actor.inventory, stasher.inventory)
   }
-  stasher.remove_inventory_bonus(chest_item)
+  stasher.removeInvBonus(chest_item)
   // if victim == true ){ add_chest_bonus(n, chest_item) }
 }
 export function take_or_stash(attendant: NpcState, actor: NpcState | Actor) {
@@ -166,13 +144,13 @@ export function seen_check(s: string, w: string) {
     sus.skills.speed - wchr.binaries.lawless_lawful * 5 >
     wchr.skills.speed +
       wchr.skills.constitution +
-      wchr.binaries.passive_aggressive * 5
+      wchr.binaries.passiveAggressive * 5
 
-  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   if (result > 10) return { confront: false, type: 'seenspecial' }
   if (result < 0) return { confront: true, type: 'critcal' }
-  const bossResult = roll_special_dice(7, true, 3, 2)
+  const bossResult = rollSpecialDice(7, true, 3, 2)
   const seen = result <= bossResult
   return seen === true
     ? { confront: false, type: 'seen' }
@@ -180,19 +158,19 @@ export function seen_check(s: string, w: string) {
 }
 
 export function clearance_checks() {
-  if (player.clearance < RoomsInitState[player.currentroom].clearance) {
+  if (player.clearance < RoomsInitState[player.currRoom].clearance) {
     print(
       'PLAYER::: NEWQUESTIONED!!!',
       player.clearance,
-      RoomsInitState[player.currentroom].clearance,
-      player.currentroom
+      RoomsInitState[player.currRoom].clearance,
+      player.currRoom
     )
     player.fsm.setState('trespass')
   }
 
   const cops = npcs.return_security()
   for (const cop of cops) {
-    const stations = rooms.all[cop.currentroom].stations
+    const stations = rooms.all[cop.currRoom].stations
     let sKey: keyof typeof stations
     let target = ''
     for (sKey in stations) {
@@ -200,14 +178,14 @@ export function clearance_checks() {
       if (
         target !== '' &&
         npcs.all[target].fsm.getState() === 'trespass' &&
-        target !== cop.labelname &&
-        confrontation_check(target, cop.labelname) == true
+        target !== cop.name &&
+        confrontation_check(target, cop.name) == true
         //  target !== tasks.task_has_npc(target)
       ) {
-        print('NEWQUESTIONED!!!', cop.labelname, target)
+        print('NEWQUESTIONED!!!', cop.name, target)
         //npcs.all[target].fsm.setState('questioned')
         //cop.fsm.setState('interrogate')
-        tasks.task_builder(cop, 'questioning', target, 'clearance')
+        tasks.taskBuilder(cop.name, 'questioning', target, 'clearance')
         break
         //testjpf needs a diceroll and create / return confrontation
       }
@@ -215,13 +193,13 @@ export function clearance_checks() {
     }
     if (
       target == 'player' &&
-      cop.currentroom == player.currentroom &&
+      cop.currRoom == player.currRoom &&
       player.fsm.getState() == 'trespass' &&
-      confrontation_check('player', cop.labelname) == true
+      confrontation_check('player', cop.name) == true
     ) {
       // player.fsm.setState('questioned')
       // cop.fsm.setState('interrogate')
-      tasks.task_builder(cop, 'questioning', 'player', 'clearance')
+      tasks.taskBuilder(cop.name, 'questioning', 'player', 'clearance')
     }
   }
 }
@@ -239,8 +217,8 @@ export function confrontation_check(pname: string, nname: string) {
   const advantage =
     w.skills.speed + w.skills.constitution >
     s.skills.speed + w.binaries.lawless_lawful * 5
-  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
-  const bossResult = roll_special_dice(5, true, 4, 2)
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  const bossResult = rollSpecialDice(5, true, 4, 2)
 
   return bossResult >= result
 }
@@ -252,16 +230,16 @@ function thief_consequences(
   if (npcs.all[w] != null && c.type == 'seen') {
     c.confront =
       s == 'player' && (c.confront == true || confrontation_check(s, w))
-    c.type = confrontation_consequence(s, w, c.confront)
+    c.type = confrontationConsequence(s, w, c.confront)
   }
 
   if (c.confront == false && c.type != 'neutral') {
-    tasks.task_builder(npcs.all[w], c.type, s, 'theft')
+    tasks.taskBuilder(w, c.type, s, 'theft')
   }
   return c
 }
 // only being used between npcs (just tutorial luggage)
-export function steal_check(s: NpcState, w: Npc, loot: string[]) {
+export function steal_check(s: NpcState, w: NpcState, loot: string[]) {
   // accept strings not Npcs
   // const attempt = roll_Specia_dice
   if (s.cooldown > 0) return
@@ -270,14 +248,14 @@ export function steal_check(s: NpcState, w: Npc, loot: string[]) {
     s.skills.speed +
       s.skills.stealth -
       s.cooldown +
-      w.attitudes[s.clan] -
-      s.attitudes[w.clan] * 3
+      w.opinion[s.clan] -
+      s.opinion[w.clan] * 3
   )
   const advantage =
     s.binaries.lawless_lawful + s.binaries.evil_good - s.binaries.poor_wealthy <
     w.binaries.evil_good + w.binaries.lawless_lawful
   const result =
-    roll_special_dice(5, advantage, 3, 2) + (modifier > -3 ? modifier : -3)
+    rollSpecialDice(5, advantage, 3, 2) + (modifier > -3 ? modifier : -3)
 
   if (result < 5) return false
 
@@ -286,8 +264,8 @@ export function steal_check(s: NpcState, w: Npc, loot: string[]) {
     type: 'neutral',
   }
   if (w != null) {
-    consequence = seen_check(s.labelname, w.labelname)
-    consequence = thief_consequences(s.labelname, w.labelname, consequence)
+    consequence = seen_check(s.name, w.name)
+    consequence = thief_consequences(s.name, w.name, consequence)
   }
   //consequence = confront.type
 
@@ -297,14 +275,14 @@ export function steal_check(s: NpcState, w: Npc, loot: string[]) {
     //if w != null ){ utils.has_value(w.inventory, a[1]) }
 
     if (math.random() < 0.4) {
-      chest_item = remove_random(s.inventory, loot)
+      chest_item = removeRandom(s.inventory, loot)
     } else if (math.random() < 0.5) {
-      chest_item = remove_valuable(s.inventory, loot)
+      chest_item = removeValuable(s.inventory, loot)
     } else {
-      chest_item = remove_advantageous(s.inventory, loot, s.skills)
+      chest_item = removeAdvantageous(s.inventory, loot, s.skills)
     }
 
-    s.add_inventory_bonus(chest_item)
+    s.addInvBonus(chest_item)
     //if (victim == true ){ remove_chest_bonus(w, chest_item) }
     s.cooldown = math.random(5, 15)
   }

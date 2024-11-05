@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Task, TaskProps } from '../../types/tasks'
+//import { npcSnitchCheck } from '../systems/tasksystem'
 import StateMachine from './stateMachine'
 //import { AllQuestsMethods, WorldQuests, Task } from '../../types/tasks'
 //mport { tutorialQuests } from './inits/quests/tutorialstate'
@@ -101,7 +102,6 @@ export default class TaskState {
 
   private onSnitchEnter(): void {}
   private onSnitchUpdate(): void {
-    /** 
     for (const cop of [
       'security001',
       'security002',
@@ -109,14 +109,25 @@ export default class TaskState {
       'security004',
       'security005',
     ]) {
-      if (this.parent.didCrossPaths(this.owner, cop)) {
-        print(this.owner, 'met cop for snitch task::', cop)
-        const bulletin = this.parent.alreadyHunting(this.owner, this.target)
+      if (!this.parent.didCrossPaths(this.owner, cop)) return
+      print(this.owner, 'met cop for snitch task::', cop)
+      //      const priors = this.parent.alreadyHunting(this.owner, this.target)
+      const priors = this.parent.npcHasTask(this.owner, this.target, [
+        'questioning',
+        'arrest',
+      ])
+      const caution_state =
+        this.target == 'player'
+          ? this.playerSnitchCheck(priors !== null, cop)
+          : this.npcSnitchCheck(cop)
+
+      if (priors == null) {
+        this.parent.taskBuilder(cop, caution_state, this.target, this.cause)
+      } else {
+        priors.turns = priors.turns + 6
       }
     }
-
-    this.parent.didCrossPaths(this.owner, this.target)
-    */
+    this.turns = 0
   }
   private onSnitchExit(): void {}
   private onConfrontEnter(): void {}
@@ -134,6 +145,36 @@ export default class TaskState {
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {}
   private onTurnExit(): void {}
+
+  playerSnitchCheck(priors: boolean, cop: string): string {
+    ///testjpf still nrrd to figure out alert_level!!!
+    //do alert_level search
+
+    let caution_state = 'questioning'
+    const player = this.parent.returnPlayer()
+    if (player.alert_level > 3) caution_state = 'arrest'
+    player.alert_level =
+      priors == null ? player.alert_level + 1 : player.alert_level + 2
+    if (
+      player.alert_level > 5 &&
+      this.parent.npcHasTask(cop, 'player') == null
+    ) {
+      this.parent.taskBuilder(cop, 'snitch', 'player', this.cause)
+    }
+    print('plauer snith chk :: alertlvl::', player.alert_level)
+    return caution_state
+  }
+  npcSnitchCheck(c: string) {
+    let caution_state = 'questioning'
+    const cop = this.parent.returnNpc(c)
+    const target = this.parent.returnNpc(this.target)
+    if (this.parent.npcHasTask(c, this.target, ['questioning', 'arrest'])) {
+      cop.opinion[target.clan] = cop.opinion[target.clan] - 1
+      print('NPCSNITCHCHK')
+      if (math.random() < 0.33) caution_state = 'arrest'
+    }
+    return caution_state
+  }
 }
 // testjpf maybe:::
 function setInitFSMstate(t: Task): string {
