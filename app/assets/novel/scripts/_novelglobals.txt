@@ -33,7 +33,7 @@ convos =  _G.game.world.novel.npc.turns_since_convo
 activeq = _G.game.world.novel.active_quest
 priority = _G.game.world.novel.forced
 
-n.name = _G.game.world.novel.npc.labelname
+n.name = _G.game.world.novel.npc.name
 n.scale = 3
 n.y = 0.5
 
