@@ -17,14 +17,14 @@ export function any_has_value(t: [() => NpcState[], string]) {
 export function is_same_room(t: [() => NpcState[], string]) {
   const npcs = t[0]()
   for (const npc of npcs) {
-    if (npc.currentroom == t[1]) return true
+    if (npc.currRoom == t[1]) return true
   }
   return false
 }
 
 export function from_same_room(npcs: NpcState[], room: string) {
   for (const npc of npcs) {
-    if (npc.currentroom == room) return npc
+    if (npc.currRoom == room) return npc
   }
   return null
 }

@@ -175,7 +175,7 @@ export function on_message(
 
 export function on_input(
   this: any,
-  action_id: hash,
+  actionId: hash,
   action: {
     pressed: boolean
     released: boolean
@@ -188,7 +188,7 @@ export function on_input(
     return
   }
 
-  if (action_id == null) {
+  if (actionId == null) {
     if (typeof hovered_choice == 'number') {
       const node = nodes[hovered_choice]['box']
       if (!gui.pick_node(node, action.x, action.y)) {
@@ -202,7 +202,7 @@ export function on_input(
         }
       }
     }
-  } else if (action_id == hash('touch')) {
+  } else if (actionId == hash('touch')) {
     if (action.pressed) {
       for (const [nKey] of Object.entries(nodes)) {
         if (gui.pick_node(nodes[parseInt(nKey)]['box'], action.x, action.y)) {

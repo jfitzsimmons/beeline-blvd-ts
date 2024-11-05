@@ -94,7 +94,7 @@ export const itemStateInit: InventoryTable = {
     value: 3,
     level: 1,
     binaries: {
-      passive_aggressive: -0.2,
+      passiveAggressive: -0.2,
     },
     skills: {},
   },
@@ -146,7 +146,7 @@ export const itemStateInit: InventoryTable = {
     value: 3,
     level: 1,
     binaries: {
-      passive_aggressive: 0.1,
+      passiveAggressive: 0.1,
     },
     skills: {},
   },
@@ -390,7 +390,7 @@ export const itemStateInit: InventoryTable = {
     value: 4,
     level: 2,
     binaries: {
-      passive_aggressive: -0.2,
+      passiveAggressive: -0.2,
     },
     skills: {
       wisdom: 2,
@@ -490,7 +490,7 @@ export const itemStateInit: InventoryTable = {
       stealth: -2,
     },
     binaries: {
-      passive_aggressive: 0.2,
+      passiveAggressive: 0.2,
     },
   },
   note: {

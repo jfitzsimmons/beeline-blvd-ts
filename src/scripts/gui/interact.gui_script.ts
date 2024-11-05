@@ -47,7 +47,7 @@ function open_novel(_this: props) {
   msg.post('#', 'release_input_focus')
 }
 function open_inventory(_this: props, actor: string, action: string) {
-  const room = rooms.all[player.currentroom]
+  const room = rooms.all[player.currRoom]
   if (action == 'open') {
     // station where the watcher will be located
     const station: string | undefined = room.actors[actor].watcher
@@ -60,7 +60,7 @@ function open_inventory(_this: props, actor: string, action: string) {
   if (_this.watcher != '' && _this.watcher != null) {
     novel.npc = npcs.all[_this.npcname]
 
-    const prev_caution = tasks.npc_has_task(_this.watcher, 'player')
+    const prev_caution = tasks.npcHasTask(_this.watcher, 'player')
 
     if (prev_caution != null) {
       _this.consequence = { confront: true, type: 'offender' }
@@ -211,10 +211,10 @@ export function on_message(
 
 export function on_input(
   this: props,
-  action_id: hash,
+  actionId: hash,
   action: { released: true; x: number; y: number }
 ) {
-  if (action_id == hash('touch') && action.released) {
+  if (actionId == hash('touch') && action.released) {
     check_nodes(this, action)
   }
 }

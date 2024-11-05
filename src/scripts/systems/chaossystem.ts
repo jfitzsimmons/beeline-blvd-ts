@@ -1,9 +1,9 @@
 import { Consequence } from '../../types/tasks'
-import { roll_special_dice } from '../utils/dice'
+import { rollSpecialDice } from '../utils/dice'
 import { clamp, shuffle } from '../utils/utils'
 import { add_prejudice } from './effectsystem'
 //import { go_to_jail, add_pledge } from './emergencysystem'
-import { get_extorted, remove_advantageous } from './inventorysystem'
+import { get_extorted, removeAdvantageous } from './inventorysystem'
 import { go_to_jail, add_pledge } from './systemshelpers'
 
 const { npcs, player, tasks } = globalThis.game.world
@@ -22,7 +22,7 @@ function generate_gift() {
 }
 function given_gift(n: string): Consequence {
   //testjpf check if inventory full?!
-  const gift = remove_advantageous(
+  const gift = removeAdvantageous(
     player.state.inventory,
     npcs.all[n].inventory,
     player.state.skills
@@ -43,8 +43,8 @@ function love_boost(n: string): Consequence {
       npc.binaries.anti_authority * 10 >
     npc.skills.intelligence + npc.skills.perception + player.state.skills.speed
   const result = math.min(
-    roll_special_dice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2),
-    roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+    rollSpecialDice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2),
+    rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   )
 
   //print('TESTJPF RESULT::: loveboost', result)
@@ -59,13 +59,13 @@ function ap_boost(n: string): Consequence {
   const modifier = Math.round(
     player.state.skills.constitution +
       npc.love +
-      (npc.binaries.passive_aggressive * 10) / 3
+      (npc.binaries.passiveAggressive * 10) / 3
   )
   const advantage =
-    player.state.binaries.passive_aggressive + npc.binaries.passive_aggressive >
+    player.state.binaries.passiveAggressive + npc.binaries.passiveAggressive >
       0.1 && npc.skills.constitution > player.state.skills.speed
   const result =
-    roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
+    rollSpecialDice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
   //print('TESTJPF RESULT::: apboost', result)
   if (result > 5 && result <= 10) return { pass: true, type: 'apboost' }
@@ -82,7 +82,7 @@ function charmed_merits(n: string): Consequence {
     player.state.skills.charisma > npc.skills.charisma &&
     npc.binaries.un_educated < -0.1
   const result =
-    roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
+    rollSpecialDice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
   //print('TESTJPF RESULT:::charmedmerits', result)
   if (result > 5 && result <= 10) return { pass: true, type: 'merits' }
@@ -106,8 +106,8 @@ function love_drop(n: string): Consequence {
     player.state.skills.speed + player.state.binaries.lawless_lawful * 10 >
     npc.binaries.evil_good * 10 + npc.skills.constitution
   const result = math.min(
-    roll_special_dice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1),
-    roll_special_dice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2)
+    rollSpecialDice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1),
+    rollSpecialDice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2)
   )
 
   if (result > 1 && result < 5) return { pass: true, type: 'lovedrop' }
@@ -128,10 +128,10 @@ export function suspicious_check(
     w.skills.charisma -
       s.skills.charisma +
       w.skills.perception +
-      (s.binaries.passive_aggressive + w.binaries.poor_wealthy) * 4
+      (s.binaries.passiveAggressive + w.binaries.poor_wealthy) * 4
   )
   const advantage = w.binaries.lawless_lawful > s.binaries.lawless_lawful - 0.2
-  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   //startherer!!!!!!!!!!!!!!!!
   //print('TESTJPF RESULT suspicious:::', result)
   if (result > 5 && result <= 10) {
@@ -155,8 +155,8 @@ export function suspicious_check(
 function call_security(watcher: string, suspect: string) {
   npcs.all[watcher].clan == 'security'
     ? go_to_jail(suspect)
-    : tasks.task_builder(
-        npcs.all[watcher],
+    : tasks.taskBuilder(
+        watcher,
         math.random() > 0.33 ? 'questioning' : 'arrest',
         suspect,
         'unlucky'
@@ -166,7 +166,7 @@ function call_security(watcher: string, suspect: string) {
 export function unlucky_check(watcher: string, suspect: string): Consequence {
   const modifier = math.random(-1, 1)
   const advantage = math.random() > 0.5
-  const result = roll_special_dice(5, advantage, 3, 2) + modifier
+  const result = rollSpecialDice(5, advantage, 3, 2) + modifier
 
   //print('TESTJPF RESULT UNLUCKY:::', result)
   if (result > 5 && result <= 10) {
@@ -213,8 +213,8 @@ export function watcher_punched_check(
       w.skills.strength -
       w.skills.wisdom
   )
-  const advantage = s.binaries.passive_aggressive * 7 > w.skills.speed
-  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  const advantage = s.binaries.passiveAggressive * 7 > w.skills.speed
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   //print('TESTJPF RESULT::: s punch w', result)
   if (result > 5 && result <= 10) {
@@ -245,11 +245,11 @@ export function reckless_check(suspect: string, watcher: string): Consequence {
     w.binaries.evil_good * -5 -
       w.skills.wisdom -
       s.skills.stealth +
-      Math.abs(s.binaries.passive_aggressive) * 5
+      Math.abs(s.binaries.passiveAggressive) * 5
   )
   const advantage =
     w.skills.intelligence < 5 || w.binaries.lawless_lawful < -0.1
-  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   //print('TESTJPF RESULT::: reckless', result)
   if (result > 5 && result <= 10) {
@@ -280,8 +280,8 @@ export function suspect_punched_check(
     w.skills.constitution - s.skills.speed + w.binaries.evil_good * -0.5
   )
   const advantage =
-    s.binaries.passive_aggressive < w.binaries.passive_aggressive - 0.3
-  const result = roll_special_dice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+    s.binaries.passiveAggressive < w.binaries.passiveAggressive - 0.3
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   //print('TESTJPF RESULT::: w punch s', result)
   if (result > 5 && result <= 10) {

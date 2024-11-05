@@ -1,17 +1,17 @@
 const { rooms } = globalThis.game.world
 function load_npcs() {
-  const roomname = 'infirmary' // testjpf remove hardcode string!
+  const roomName = 'infirmary' // testjpf remove hardcode string!
 
-  const stations: { [key: string]: string } = rooms.all[roomname].stations
+  const stations: { [key: string]: string } = rooms.all[roomName].stations
   let station: keyof typeof stations
   for (station in stations) {
     const npc = stations[station]
     //  if (npc != '') {
     station == 'assistant'
-      ? msg.post('desk#station', 'load_station', { npc, roomname })
+      ? msg.post('desk#station', 'loadStation', { npc, roomName })
       : msg.post(`/${station}#npc_loader`, 'load_npc', { npc })
     //   }
-    //params.script = params.roomname + "/" + world.player.checkpoint:sub(1, -2) + "aid"
+    //params.script = params.roomName + "/" + world.player.checkpoint:sub(1, -2) + "aid"
   }
   msg.post('patient1#npc_loader', 'load_npc', {
     npc: rooms.all['infirmary'].occupants!.patient1,

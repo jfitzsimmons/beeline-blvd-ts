@@ -3,13 +3,13 @@ const { rooms } = world
 
 interface props {
   actions: { [key: string]: string[] }
-  roomname: string
+  roomName: string
   storagename: string
 }
 
 export function init(this: props): void {
   this.actions = {}
-  this.roomname = 'tesjpf'
+  this.roomName = 'tesjpf'
   this.storagename = ''
 }
 
@@ -20,7 +20,7 @@ export function on_message(
     enter: boolean
     exit: boolean
     storagename: string
-    roomname: string
+    roomName: string
   },
   _sender: url
 ): void {
@@ -28,7 +28,7 @@ export function on_message(
     const params = {
       pos: go.get_position('/shared/adam'),
       actions: this.actions,
-      room: this.roomname,
+      room: this.roomName,
     }
     msg.post('/shared/adam#interact', 'shownode', params)
   } else if (messageId == hash('trigger_response') && message.exit) {
@@ -38,9 +38,9 @@ export function on_message(
     msg.post('/shared/adam#interact', 'hidenode', params)
   } else if (messageId == hash('load_storage_inventory')) {
     this.storagename = message.storagename
-    this.roomname = message.roomname
+    this.roomName = message.roomName
 
     this.actions[this.storagename] =
-      rooms.all[this.roomname].actors[this.storagename].actions
+      rooms.all[this.roomName].actors[this.storagename].actions
   }
 }

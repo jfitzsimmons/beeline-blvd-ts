@@ -46,7 +46,12 @@ export default class WorldQuests {
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
   private onNewExit(): void {}
-  private onTurnEnter(): void {}
+  private onTurnEnter(): void {
+    let kq: keyof typeof this.all.tutorial
+    for (kq in this.all.tutorial) {
+      this.all.tutorial[kq].fsm.setState('new')
+    }
+  }
   private onTurnUpdate(): void {
     this.update_quests_progress('turn')
     //testjpf should loop thru each quest and update
@@ -94,7 +99,7 @@ export default class WorldQuests {
           // print('condition:', condition)
           const goal = quest.conditions[condition]
           //print('PREgoal label:', goal.label, goal.passed, goal.status)
-          if (goal.passed == false && goal.status != 'failed') {
+          if (goal.passed == false && goal.fsm.getState() != 'failed') {
             // arg:func is array in case need for more than 1 check
             for (let i: number = goal.func.length; i-- !== 0; ) {
               if (

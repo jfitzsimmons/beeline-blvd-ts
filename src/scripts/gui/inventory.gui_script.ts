@@ -22,19 +22,19 @@ export function init(this: props) {
 
 function add_item_player(item: string) {
   player.inventory.push(item)
-  player.add_inventory_bonus(item)
+  player.addInvBonus(item)
 }
 
 function remove_item_player(item: string) {
   const itemIndex = player.inventory.indexOf(item)
   const removed = player.inventory.splice(itemIndex, 1)
-  player.add_inventory_bonus(removed[0])
+  player.addInvBonus(removed[0])
 }
 
 function add_item_actor(actor: string, room: string, inv_item: string) {
   if (npcs.all[actor] != null) {
     npcs.all[actor].inventory[npcs.all[actor].inventory.length] = inv_item
-    npcs.all[actor].add_inventory_bonus(inv_item)
+    npcs.all[actor].addInvBonus(inv_item)
   } else {
     rooms.all[room].actors[actor].inventory[
       rooms.all[room].actors[actor].inventory.length
@@ -46,7 +46,7 @@ function remove_item_actor(actor: string, room: string, item: string) {
   if (npcs.all[actor] != null) {
     const itemIndex = npcs.all[actor].inventory.indexOf(item)
     const removed = npcs.all[actor].inventory.splice(itemIndex, 1)
-    npcs.all[actor].remove_inventory_bonus(removed[0])
+    npcs.all[actor].removeInvBonus(removed[0])
   } else {
     const itemIndex = rooms.all[room].actors[actor].inventory.indexOf(item)
     itemIndex > -1
@@ -128,7 +128,7 @@ function choose_inventory(actorname: string) {
 
     return npcs.all[actorname].inventory
   } else {
-    return rooms.all[player.currentroom].actors[actorname].inventory
+    return rooms.all[player.currRoom].actors[actorname].inventory
   }
 }
 
@@ -159,14 +159,15 @@ function check_inventory_nodes(
     ) {
       const item = inventoryLookup[hash_to_hex(textureHash)]
       novel.item = item
+      if (npcs.all[actorname] != null) novel.npc = npcs.all[actorname]
       hide_inventory_animation(node)
 
       if (i < 21) {
-        add_item_actor(actorname, player.currentroom, item)
+        add_item_actor(actorname, player.currRoom, item)
         remove_item_player(item)
       } else {
         add_item_player(item)
-        remove_item_actor(actorname, player.currentroom, item)
+        remove_item_actor(actorname, player.currRoom, item)
       }
 
       const inventory: string[] = choose_inventory(actorname)
@@ -206,7 +207,7 @@ function exit_inventory(actorname: string, actorinventory: string[]) {
   if (npcs.all[actorname] != null) {
     npcs.all[actorname].inventory = actorinventory
   } else {
-    rooms.all[player.currentroom].actors[actorname].inventory = actorinventory
+    rooms.all[player.currRoom].actors[actorname].inventory = actorinventory
   }
 
   reset_nodes()
@@ -246,10 +247,10 @@ export function on_message(
 
 export function on_input(
   this: props,
-  action_id: hash,
+  actionId: hash,
   action: { released: true; x: number; y: number }
 ) {
-  if (action_id == hash('touch') && action.released) {
+  if (actionId == hash('touch') && action.released) {
     if (gui.pick_node(gui.get_node('exit'), action.x, action.y)) {
       exit_inventory(this.actorname, this.actorinventory)
     } else {

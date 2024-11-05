@@ -17,7 +17,7 @@ export default class WorldNovel {
   private _caution: Task
   private _item: string
   private _active_quest: boolean
-  private _priority: boolean
+  private _forced: boolean
   private _npcsWithQuest: string[]
   private _scripts: string[]
   //private _alertChange: number
@@ -29,7 +29,7 @@ export default class WorldNovel {
     // this.background = ''
     //  this.sprites = {}
     this._active_quest = false
-    this._priority = false
+    this._forced = false
     this._reason = 'none'
     this._caution = nullTask
     this._item = 'none'
@@ -47,6 +47,7 @@ export default class WorldNovel {
     }*/
     this.quests = {
       get_reason: this.get_reason,
+      get_novel_item: this.get_novel_item.bind(this),
     }
     //Have something here like this.sprites.smile .laugh .sad etc....
     // set the sprites in the same function you set npc! TESTJPF
@@ -86,17 +87,18 @@ export default class WorldNovel {
   public set caution(c: Task) {
     this._caution = { ...c }
   }
+  get_novel_item = () => this._item
   public get item() {
     return this._item
   }
   public set item(i: string) {
     this._item = i
   }
-  public get priority() {
-    return this._priority
+  public get forced() {
+    return this._forced
   }
-  public set priority(p: boolean) {
-    this._priority = p
+  public set forced(p: boolean) {
+    this._forced = p
   }
   public get active_quest() {
     return this._active_quest
@@ -114,7 +116,7 @@ export default class WorldNovel {
     return this._npc
   }
   public set npc(npc: NpcState) {
-    this.active_quest = this.npcsWithQuest.includes(npc.labelname)
+    this.active_quest = this.npcsWithQuest.includes(npc.name)
     this._npc = npc
   }
   addScript(s: string) {

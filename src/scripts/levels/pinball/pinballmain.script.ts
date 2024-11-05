@@ -71,14 +71,14 @@ export function update(this: props, _dt: number) {
 
 export function on_input(
   this: props,
-  action_id: hash,
+  actionId: hash,
   action: {
     value: number
   }
 ) {
-  if (action_id == hash('leftflip')) {
+  if (actionId == hash('leftflip')) {
     this.left = action.value != 0
-  } else if (action_id == hash('rightflip')) {
+  } else if (actionId == hash('rightflip')) {
     this.right = action.value != 0
   }
 }

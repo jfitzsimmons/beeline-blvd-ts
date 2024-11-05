@@ -1,5 +1,5 @@
 interface props {
-  current_proxy: url | null
+  currentProxy: url | null
 }
 interface url {
   fragment: hash
@@ -14,7 +14,7 @@ function show(curr_proxy: url | null, proxy: string) {
 }
 
 export function init(this: props) {
-  this.current_proxy = null
+  this.currentProxy = null
 }
 
 export function on_message(
@@ -24,22 +24,22 @@ export function on_message(
   _sender: url
 ): void {
   if (messageId == hash('show_pinball')) {
-    show(this.current_proxy, '#pinball00')
+    show(this.currentProxy, '#pinball00')
   } else if (messageId == hash('unload_pinball')) {
-    if (this.current_proxy != null) {
-      msg.post(this.current_proxy, 'disable')
-      msg.post(this.current_proxy, 'final')
-      msg.post(this.current_proxy, 'unload')
-      this.current_proxy = null
+    if (this.currentProxy != null) {
+      msg.post(this.currentProxy, 'disable')
+      msg.post(this.currentProxy, 'final')
+      msg.post(this.currentProxy, 'unload')
+      this.currentProxy = null
     }
   } else if (messageId == hash('proxy_loaded')) {
-    this.current_proxy = _sender
+    this.currentProxy = _sender
     /** 
     if (_sender.fragment == hash('pinball')) {
       msg.post('pinball:/main#main', 'wake_up')
     }
     **/
-    msg.post(this.current_proxy, 'enable')
+    msg.post(this.currentProxy, 'enable')
 
     //msg.post('.', 'release_input_focus')
     //msg.post('.', 'acquire_input_focus')

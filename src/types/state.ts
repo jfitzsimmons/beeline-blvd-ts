@@ -14,9 +14,9 @@ export interface Npcs {
 }
 export interface Npc extends NpcDefaults {
   home: { x: number; y: number }
-  labelname: string
+  name: string
   inventory: string[]
-  clearence: number
+  clearance: number
   clan: string
   body: string
 }
@@ -26,7 +26,7 @@ export interface NpcDefaults {
   actions: string[]
   ai_path: string
   matrix: { x: number; y: number }
-  attitudes: Skills | never
+  opinion: Skills | never
   skills: Skills | never
   binaries: Skills | never
   turns_since_encounter: number
@@ -35,19 +35,19 @@ export interface NpcDefaults {
   hp: number
   cooldown: number
   effects: Effect[]
-  currentroom: string
-  exitroom: string
-  currentstation: string
+  currRoom: string
+  exitRoom: string
+  currStation: string
   race: string
 }
 export interface Skills {
   [key: string]: number
 }
 export interface PlayerState {
-  currentroom: string
-  exitroom: string
+  currRoom: string
+  exitRoom: string
   matrix: { x: number; y: number }
-  labelname: string
+  name: string
   inventory: string[]
   pos: { x: number; y: number }
   heat: number
@@ -80,7 +80,7 @@ export interface Rooms {
 }
 export interface Room {
   matrix: { x: number; y: number }
-  roomname: string
+  roomName: string
   clearance: number
   stations: { [key: string]: string }
   actors: Actors

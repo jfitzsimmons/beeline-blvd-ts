@@ -4,7 +4,7 @@ import StateMachine from './stateMachine'
 
 import { Npcs } from '../../types/state'
 import { shuffle } from '../utils/utils'
-import { NpcMethod, QuestMethods, RoomMethod } from '../../types/tasks'
+import { NpcMethod, QuestMethods, NpcsProps } from '../../types/tasks'
 import NpcState from './npc'
 
 interface BinaryLookupTable {
@@ -25,7 +25,7 @@ const skills = {
 }
 const binaries = {
   evil_good: 0,
-  passive_aggressive: 0,
+  passiveAggressive: 0,
   lawless_lawful: 0,
   anti_authority: 0,
   un_educated: 0,
@@ -36,7 +36,7 @@ const binaries = {
 const binarylookup: BinaryLookupTable = {
   ais: {
     evil_good: 0.3,
-    passive_aggressive: -0.3,
+    passiveAggressive: -0.3,
     lawless_lawful: 0.2,
     anti_authority: -0.2,
     un_educated: 0,
@@ -46,7 +46,7 @@ const binarylookup: BinaryLookupTable = {
   },
   church: {
     evil_good: 0,
-    passive_aggressive: -0.1,
+    passiveAggressive: -0.1,
     lawless_lawful: 0.1,
     anti_authority: 0.2,
     un_educated: -0.3,
@@ -56,7 +56,7 @@ const binarylookup: BinaryLookupTable = {
   },
   contractors: {
     evil_good: 0.1,
-    passive_aggressive: -0.1,
+    passiveAggressive: -0.1,
     lawless_lawful: 0.1,
     anti_authority: 0.1,
     un_educated: 0.3,
@@ -66,7 +66,7 @@ const binarylookup: BinaryLookupTable = {
   },
   corps: {
     evil_good: -0.3,
-    passive_aggressive: 0.1,
+    passiveAggressive: 0.1,
     lawless_lawful: 0,
     anti_authority: -0.1,
     un_educated: 0.2,
@@ -76,7 +76,7 @@ const binarylookup: BinaryLookupTable = {
   },
   gang1: {
     evil_good: -0.2,
-    passive_aggressive: 0.3,
+    passiveAggressive: 0.3,
     lawless_lawful: -0.2,
     anti_authority: 0.1,
     un_educated: -0.2,
@@ -86,7 +86,7 @@ const binarylookup: BinaryLookupTable = {
   },
   gang2: {
     evil_good: -0.2,
-    passive_aggressive: 0,
+    passiveAggressive: 0,
     lawless_lawful: -0.1,
     anti_authority: -0.1,
     un_educated: -0.2,
@@ -96,7 +96,7 @@ const binarylookup: BinaryLookupTable = {
   },
   gang3: {
     evil_good: -0.1,
-    passive_aggressive: 0.2,
+    passiveAggressive: 0.2,
     lawless_lawful: -0.3,
     anti_authority: 0.2,
     un_educated: -0.1,
@@ -106,7 +106,7 @@ const binarylookup: BinaryLookupTable = {
   },
   gang4: {
     evil_good: 0.1,
-    passive_aggressive: 0.1,
+    passiveAggressive: 0.1,
     lawless_lawful: -0.1,
     anti_authority: -0.2,
     un_educated: 0.2,
@@ -116,7 +116,7 @@ const binarylookup: BinaryLookupTable = {
   },
   labor: {
     evil_good: 0.2,
-    passive_aggressive: -0.2,
+    passiveAggressive: -0.2,
     lawless_lawful: 0.2,
     anti_authority: -0.3,
     un_educated: -0.1,
@@ -126,7 +126,7 @@ const binarylookup: BinaryLookupTable = {
   },
   security: {
     evil_good: -0.1,
-    passive_aggressive: 0.2,
+    passiveAggressive: 0.2,
     lawless_lawful: -0.2,
     anti_authority: 0.3,
     un_educated: -0.1,
@@ -136,7 +136,7 @@ const binarylookup: BinaryLookupTable = {
   },
   staff: {
     evil_good: 0.2,
-    passive_aggressive: 0,
+    passiveAggressive: 0,
     lawless_lawful: -0.2,
     anti_authority: 0,
     un_educated: 0.1,
@@ -146,7 +146,7 @@ const binarylookup: BinaryLookupTable = {
   },
   visitors: {
     evil_good: 0,
-    passive_aggressive: 0,
+    passiveAggressive: 0,
     lawless_lawful: 0,
     anti_authority: 0,
     un_educated: 0,
@@ -156,7 +156,7 @@ const binarylookup: BinaryLookupTable = {
   },
   sexworkers: {
     evil_good: 0,
-    passive_aggressive: 0,
+    passiveAggressive: 0,
     lawless_lawful: 0,
     anti_authority: -0.1,
     un_educated: -0.1,
@@ -166,7 +166,7 @@ const binarylookup: BinaryLookupTable = {
   },
   doctors: {
     evil_good: 0,
-    passive_aggressive: 0,
+    passiveAggressive: 0,
     lawless_lawful: 0.1,
     anti_authority: 0,
     un_educated: 0.1,
@@ -176,7 +176,7 @@ const binarylookup: BinaryLookupTable = {
   },
   maintenance: {
     evil_good: 0,
-    passive_aggressive: -0.1,
+    passiveAggressive: -0.1,
     lawless_lawful: 0.1,
     anti_authority: 0.1,
     un_educated: -0.1,
@@ -186,7 +186,7 @@ const binarylookup: BinaryLookupTable = {
   },
   custodians: {
     evil_good: 0.1,
-    passive_aggressive: 0.1,
+    passiveAggressive: 0.1,
     lawless_lawful: -0.1,
     anti_authority: -0.1,
     un_educated: -0.2,
@@ -196,7 +196,7 @@ const binarylookup: BinaryLookupTable = {
   },
   mailroom: {
     evil_good: -0.1,
-    passive_aggressive: 0.2,
+    passiveAggressive: 0.2,
     lawless_lawful: -0.2,
     anti_authority: 0.1,
     un_educated: 0,
@@ -216,13 +216,15 @@ export default class WorldNpcs {
   npcLists: NpcMethod
   infirmed: string[]
   injured: string[]
+  ignore: string[]
 
-  constructor(roommethods: RoomMethod) {
+  constructor(roommethods: NpcsProps) {
     //testjpf npcs need their own statemachine.
     //this._all = { ...NpcsInitState }
 
     this.infirmed = []
     this.injured = []
+    this.ignore = []
     this.order = []
     this.quests = {
       return_doctors: this.return_doctors.bind(this),
@@ -231,17 +233,21 @@ export default class WorldNpcs {
       return_order_all: this.return_order_all.bind(this),
     }
     this.npcLists = {
-      get_player_room: roommethods.get_player_room.bind(this),
+      //getPlayerRoom: roommethods.getPlayerRoom.bind(this),
       add_infirmed: this.add_infirmed.bind(this),
+      get_infirmed: this.get_infirmed.bind(this),
+      get_injured: this.get_injured.bind(this),
       remove_infirmed: this.remove_infirmed.bind(this),
       add_injured: this.add_injured.bind(this),
       remove_injured: this.remove_injured.bind(this),
-      getVicinityTargets: roommethods.getVicinityTargets.bind(this),
-      clear_station: roommethods.clear_station.bind(this),
-      set_station: roommethods.set_station.bind(this),
-      prune_station_map: roommethods.prune_station_map.bind(this),
-      get_station_map: roommethods.get_station_map.bind(this),
-      reset_station_map: roommethods.reset_station_map.bind(this),
+      add_ignore: this.add_ignore.bind(this),
+      remove_ignore: this.remove_ignore.bind(this),
+      ...roommethods,
+      returnMendeeLocation: this.returnMendeeLocation.bind(this),
+      return_doctors: this.return_doctors.bind(this),
+      return_security: this.return_doctors.bind(this),
+      return_all: this.return_all.bind(this),
+      return_order_all: this.return_order_all.bind(this),
     }
     this._all = seedNpcs(this.npcLists)
     random_attributes(this.all, this.order)
@@ -265,18 +271,18 @@ export default class WorldNpcs {
     this.return_security = this.return_security.bind(this)
   }
 
-  private onNewEnter(): void {}
-  private onNewUpdate(): void {
+  private onNewEnter(): void {
     print('npcsNewupdate')
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
       npc.fsm.setState('new')
-      npc.fsm.update(dt)
+      // npc.fsm.update(dt)
     }
-    this.npcLists.reset_station_map()
+    //this.npcLists.resetStationMap()
     this.fsm.setState('turn')
   }
+  private onNewUpdate(): void {}
   private onNewExit(): void {}
   private onTurnEnter(): void {
     print('npcsturnenter')
@@ -290,16 +296,54 @@ export default class WorldNpcs {
 
       npc.fsm.update(dt)
     }
-    this.npcLists.reset_station_map()
+    //this.npcLists.resetStationMap()
+    this.medical()
+    //this.security()
+
+    //this.aiChecks()
   }
   private onTurnExit(): void {}
 
   public get all(): Npcs {
     return this._all
   }
+  returnMendeeLocation() {
+    return this.all[this.npcLists.getMendingQueue()[0]].currRoom
+  }
+  //security() {}
+  medical() {
+    let count = this.infirmed.length
 
+    //const count = this.npcLists.getMendingQueue().length
+    for (const doc of this.return_doctors()) {
+      const mobile = !['mender', 'mendee', 'injury', 'infirm'].includes(
+        doc.fsm.getState()
+      )
+      //testjpf todo unhardcode
+      //have a const that lists immobile states.!!!
+      if (mobile && count > 0) {
+        doc.fsm.setState('erfull')
+        count = count - 1
+      } else if (
+        mobile &&
+        count < 1 &&
+        this.npcLists.getMendingQueue().length > 0
+      ) {
+        doc.fsm.setState('paramedic')
+      }
+    }
+  }
+  add_ignore(n: string): void {
+    this.ignore.push(n)
+  }
+  remove_ignore(n: string): void {
+    this.ignore.splice(this.ignore.indexOf(n), 1)
+  }
   add_infirmed(n: string): void {
     this.infirmed.push(n)
+  }
+  get_infirmed(): string[] {
+    return this.infirmed
   }
   remove_infirmed(n: string): void {
     this.infirmed.splice(this.infirmed.indexOf(n), 1)
@@ -307,8 +351,11 @@ export default class WorldNpcs {
   add_injured(n: string): void {
     this.injured.push(n)
   }
+  get_injured(): string[] {
+    return this.injured
+  }
   remove_injured(n: string): void {
-    this.injured.splice(this.infirmed.indexOf(n), 1)
+    this.injured.splice(this.injured.indexOf(n), 1)
   }
   return_doctors(): NpcState[] {
     return [this.all.doc01, this.all.doc02, this.all.doc03]
@@ -338,10 +385,18 @@ export default class WorldNpcs {
     let nKey: keyof typeof this.all
     for (nKey in this.all) {
       for (const item of this.all[nKey].inventory) {
-        this.all[nKey].add_inventory_bonus(item)
+        this.all[nKey].addInvBonus(item)
       }
     }
   }
+  /** 
+  aidChecks() {
+    for (const i of this.injured.filter(
+      (n): n is string => !this.ignore.includes(n)
+    )) {
+      //externalaidcheck(i)
+    }
+  }*/
 }
 
 function adjust_binaries(value: number, clan: string, binary: string) {
@@ -380,10 +435,10 @@ function random_attributes(npcs: Npcs, order: string[]) {
     npcs[kn].turns_since_encounter = math.random(5, 15)
     npcs[kn].love = math.random(-1, 1)
     // random attitude
-    npcs[kn].attitudes = {}
+    npcs[kn].opinion = {}
     let kbl: keyof typeof binarylookup
     for (kbl in binarylookup) {
-      npcs[kn].attitudes[kbl] = math.random(-9, 9)
+      npcs[kn].opinion[kbl] = math.random(-9, 9)
     }
     if (path > 3) {
       count++
