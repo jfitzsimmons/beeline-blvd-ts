@@ -128,7 +128,7 @@ export function npc_snitch_check(w: string, s: string) {
   return caution_state
 }
 */
-function merits_demerits(c: Task, w: string) {
+function meritsDemerits(c: Task, w: string) {
   if (c.target === 'player') {
     const adj = c.label === 'merits' ? 1 : -1
     npcs.all[w].love = npcs.all[w].love + adj
@@ -187,7 +187,7 @@ function passive_acts(c: Task, w: string) {
     (npcs.all[w].clan == c.authority ||
       npcs.all[c.owner].opinion[npcs.all[w].clan] > 0)
   ) {
-    merits_demerits(c, w)
+    meritsDemerits(c, w)
   }
 }
 

@@ -135,13 +135,13 @@ export function seen_check(s: string, w: string) {
 
   const modifier = Math.round(
     sus.skills.stealth +
-      sus.binaries.lawless_lawful * -4 -
+      sus.binaries.lawlessLawful * -4 -
       wchr.skills.stealth -
       wchr.skills.perception -
       heat
   )
   const advantage =
-    sus.skills.speed - wchr.binaries.lawless_lawful * 5 >
+    sus.skills.speed - wchr.binaries.lawlessLawful * 5 >
     wchr.skills.speed +
       wchr.skills.constitution +
       wchr.binaries.passiveAggressive * 5
@@ -209,14 +209,14 @@ export function confrontation_check(pname: string, nname: string) {
   const w = npcs.all[nname]
 
   const modifier = Math.round(
-    w.binaries.lawless_lawful * 5 -
+    w.binaries.lawlessLawful * 5 -
       s.skills.speed +
       w.skills.speed -
       w.skills.constitution
   )
   const advantage =
     w.skills.speed + w.skills.constitution >
-    s.skills.speed + w.binaries.lawless_lawful * 5
+    s.skills.speed + w.binaries.lawlessLawful * 5
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   const bossResult = rollSpecialDice(5, true, 4, 2)
 
@@ -252,8 +252,8 @@ export function steal_check(s: NpcState, w: NpcState, loot: string[]) {
       s.opinion[w.clan] * 3
   )
   const advantage =
-    s.binaries.lawless_lawful + s.binaries.evil_good - s.binaries.poor_wealthy <
-    w.binaries.evil_good + w.binaries.lawless_lawful
+    s.binaries.lawlessLawful + s.binaries.evil_good - s.binaries.poor_wealthy <
+    w.binaries.evil_good + w.binaries.lawlessLawful
   const result =
     rollSpecialDice(5, advantage, 3, 2) + (modifier > -3 ? modifier : -3)
 

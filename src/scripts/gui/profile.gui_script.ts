@@ -34,10 +34,10 @@ function absolute_binaries(): [string, number][] {
         : bins.passiveAggressive * 10,
     ],
     [
-      bins.lawless_lawful < 0 ? 'lawless' : 'lawful',
-      bins.lawless_lawful < 0
-        ? bins.lawless_lawful * -10
-        : bins.lawless_lawful * 10,
+      bins.lawlessLawful < 0 ? 'lawless' : 'lawful',
+      bins.lawlessLawful < 0
+        ? bins.lawlessLawful * -10
+        : bins.lawlessLawful * 10,
     ],
     [
       bins.anti_authority < 0 ? 'defiance' : 'authority',

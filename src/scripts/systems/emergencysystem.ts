@@ -8,7 +8,7 @@ import {
 import { admirer_check, prejudice_check } from './effectsystem'
 import { bribe_check } from './inventorysystem'
 import {
-  reckless_check,
+  recklessCheck,
   suspect_punched_check,
   unlucky_check,
 } from './chaossystem'
@@ -29,21 +29,21 @@ const questioning_checks: Array<
 ]
 const thief_consolations = [
   snitch_check,
-  merits_demerits,
-  reckless_check,
+  meritsDemerits,
+  recklessCheck,
   //society_check,
 ]
 //Crime Consolations
 
 //export const injured_npcs: string[] = []
 
-function merits_demerits(suspect: string, watcher: string): Consequence {
+function meritsDemerits(suspect: string, watcher: string): Consequence {
   //print('merits_demertis:: suspect::', suspect)
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
-    (w.binaries.evil_good + w.binaries.lawless_lawful) * -2.5
+    (w.binaries.evil_good + w.binaries.lawlessLawful) * -2.5
   )
   const advantage =
     w.skills.constitution +

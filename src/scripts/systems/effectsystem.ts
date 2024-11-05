@@ -61,7 +61,7 @@ export function dumb_crook_check(
 ): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  const modifier = Math.round(w.binaries.lawless_lawful * -5)
+  const modifier = Math.round(w.binaries.lawlessLawful * -5)
   const advantage = s.binaries.un_educated * -5 > w.skills.intelligence / 2
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
@@ -331,7 +331,7 @@ export const fx: { [key: string]: Effect } = {
     turns: 10,
     fx: {
       type: 'binaries',
-      stat: 'lawless_lawful',
+      stat: 'lawlessLawful',
       adjustment: 0.2,
     },
   },
@@ -403,7 +403,7 @@ export const fx: { [key: string]: Effect } = {
     turns: 10,
     fx: {
       type: 'binaries',
-      stat: 'lawless_lawful',
+      stat: 'lawlessLawful',
       adjustment: -0.2,
     },
   },

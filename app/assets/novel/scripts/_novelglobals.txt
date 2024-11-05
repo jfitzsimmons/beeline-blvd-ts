@@ -6,7 +6,7 @@ npc.b.aggressive = _G.game.world.novel.npc.binaries.passiveAggressive
 npc.b.authority = _G.game.world.novel.npc.binaries.anti_authority
 npc.b.educated = _G.game.world.novel.npc.binaries.un_educated
 npc.b.good = _G.game.world.novel.npc.binaries.evil_good
-npc.b.lawful = _G.game.world.novel.npc.binaries.lawless_lawful
+npc.b.lawful = _G.game.world.novel.npc.binaries.lawlessLawful
 
 npc.s.charisma = _G.game.world.novel.npc.skills.charisma
 npc.s.intelligence = _G.game.world.novel.npc.skills.intelligence
@@ -22,7 +22,7 @@ p.s.charisma = _G.game.world.player.state.skills.charisma
 p.s.intelligence = _G.game.world.player.state.skills.intelligence
 
 p.b.authority = _G.game.world.player.state.binaries.anti_authority
-p.b.aggressive = _G.game.world.player.state.binaries.passive_aggressive
+p.b.aggressive = _G.game.world.player.state.binaries.passiveAggressive
 
 p.clearance = _G.game.world.player.state.clearance
 alert = _G.game.world.player.alert_level
