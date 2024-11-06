@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Effect, Task, TaskProps } from '../../types/tasks'
-import { add_effects_bonus } from '../utils/ai'
+//import { add_effects_bonus } from '../utils/ai'
 import { fxLookup, fx } from '../utils/consts'
 import { shuffle } from '../utils/utils'
 import { NpcsInitState } from './inits/npcsInitState'
@@ -172,7 +172,8 @@ export default class TaskState {
       )
       //check if they already have effect? testjpf
       listener.effects.push(effect)
-      add_effects_bonus(listener, effect)
+      //TESTJPF TODO NOW:: this.addEffectsBonus(effect)!!!
+      listener.add_effects_bonus(effect)
       break
     }
   }
@@ -204,7 +205,7 @@ export default class TaskState {
     const cop = this.parent.returnNpc(c)
     const target = this.parent.returnNpc(this.target)
     if (this.parent.npcHasTask(c, this.target, ['questioning', 'arrest'])) {
-      cop.opinion[target.clan] = cop.opinion[target.clan] - 1
+      cop.traits.opinion[target.clan] = cop.traits.opinion[target.clan] - 1
       print('NPCSNITCHCHK')
       if (math.random() < 0.33) caution_state = 'arrest'
     }

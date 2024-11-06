@@ -25,7 +25,7 @@ function given_gift(n: string): Consequence {
   const gift = removeAdvantageous(
     player.state.inventory,
     npcs.all[n].inventory,
-    player.state.skills
+    player.state.traits.skills
   )
 
   if (gift == null) generate_gift()
@@ -35,13 +35,16 @@ function love_boost(n: string): Consequence {
   const npc = npcs.all[n]
 
   const modifier = Math.round(
-    Math.abs(player.state.binaries.evil_good) * 10 - npc.skills.speed
+    Math.abs(player.state.traits.binaries.evil_good) * 10 -
+      npc.traits.skills.speed
   )
   const advantage =
-    player.state.skills.charisma +
-      player.state.skills.intelligence +
-      npc.binaries.anti_authority * 10 >
-    npc.skills.intelligence + npc.skills.perception + player.state.skills.speed
+    player.state.traits.skills.charisma +
+      player.state.traits.skills.intelligence +
+      npc.traits.binaries.anti_authority * 10 >
+    npc.traits.skills.intelligence +
+      npc.traits.skills.perception +
+      player.state.traits.skills.speed
   const result = math.min(
     rollSpecialDice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2),
     rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
@@ -57,13 +60,14 @@ function ap_boost(n: string): Consequence {
   const npc = npcs.all[n]
 
   const modifier = Math.round(
-    player.state.skills.constitution +
+    player.state.traits.skills.constitution +
       npc.love +
-      (npc.binaries.passiveAggressive * 10) / 3
+      (npc.traits.binaries.passiveAggressive * 10) / 3
   )
   const advantage =
-    player.state.binaries.passiveAggressive + npc.binaries.passiveAggressive >
-      0.1 && npc.skills.constitution > player.state.skills.speed
+    player.state.traits.binaries.passiveAggressive +
+      npc.traits.binaries.passiveAggressive >
+      0.1 && npc.traits.skills.constitution > player.state.traits.skills.speed
   const result =
     rollSpecialDice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
@@ -76,11 +80,12 @@ function ap_boost(n: string): Consequence {
 function charmed_merits(n: string): Consequence {
   const npc = npcs.all[n]
   const modifier = Math.round(
-    (player.state.skills.charisma + npc.love) / 2 - npc.skills.constitution
+    (player.state.traits.skills.charisma + npc.love) / 2 -
+      npc.traits.skills.constitution
   )
   const advantage =
-    player.state.skills.charisma > npc.skills.charisma &&
-    npc.binaries.un_educated < -0.1
+    player.state.traits.skills.charisma > npc.traits.skills.charisma &&
+    npc.traits.binaries.un_educated < -0.1
   const result =
     rollSpecialDice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
@@ -97,14 +102,15 @@ function love_drop(n: string): Consequence {
   const npc = npcs.all[n]
 
   const modifier = Math.round(
-    player.state.skills.wisdom +
-      player.state.binaries.un_educated * 10 -
-      npc.skills.charisma +
-      Math.abs(npc.binaries.evil_good * 10)
+    player.state.traits.skills.wisdom +
+      player.state.traits.binaries.un_educated * 10 -
+      npc.traits.skills.charisma +
+      Math.abs(npc.traits.binaries.evil_good * 10)
   )
   const advantage =
-    player.state.skills.speed + player.state.binaries.lawlessLawful * 10 >
-    npc.binaries.evil_good * 10 + npc.skills.constitution
+    player.state.traits.skills.speed +
+      player.state.traits.binaries.lawlessLawful * 10 >
+    npc.traits.binaries.evil_good * 10 + npc.traits.skills.constitution
   const result = math.min(
     rollSpecialDice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1),
     rollSpecialDice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2)
@@ -125,12 +131,13 @@ export function suspicious_check(
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
-    w.skills.charisma -
-      s.skills.charisma +
-      w.skills.perception +
-      (s.binaries.passiveAggressive + w.binaries.poor_wealthy) * 4
+    w.traits.skills.charisma -
+      s.traits.skills.charisma +
+      w.traits.skills.perception +
+      (s.traits.binaries.passiveAggressive + w.traits.binaries.poor_wealthy) * 4
   )
-  const advantage = w.binaries.lawlessLawful > s.binaries.lawlessLawful - 0.2
+  const advantage =
+    w.traits.binaries.lawlessLawful > s.traits.binaries.lawlessLawful - 0.2
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   //startherer!!!!!!!!!!!!!!!!
   //print('TESTJPF RESULT suspicious:::', result)
@@ -208,12 +215,13 @@ export function watcher_punched_check(
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
   const modifier = Math.round(
-    s.binaries.lawlessLawful * -5 +
-      s.skills.strength -
-      w.skills.strength -
-      w.skills.wisdom
+    s.traits.binaries.lawlessLawful * -5 +
+      s.traits.skills.strength -
+      w.traits.skills.strength -
+      w.traits.skills.wisdom
   )
-  const advantage = s.binaries.passiveAggressive * 7 > w.skills.speed
+  const advantage =
+    s.traits.binaries.passiveAggressive * 7 > w.traits.skills.speed
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   //print('TESTJPF RESULT::: s punch w', result)
@@ -242,12 +250,13 @@ export function recklessCheck(suspect: string, watcher: string): Consequence {
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
-    w.binaries.evil_good * -5 -
-      w.skills.wisdom -
-      s.skills.stealth +
-      Math.abs(s.binaries.passiveAggressive) * 5
+    w.traits.binaries.evil_good * -5 -
+      w.traits.skills.wisdom -
+      s.traits.skills.stealth +
+      Math.abs(s.traits.binaries.passiveAggressive) * 5
   )
-  const advantage = w.skills.intelligence < 5 || w.binaries.lawlessLawful < -0.1
+  const advantage =
+    w.traits.skills.intelligence < 5 || w.traits.binaries.lawlessLawful < -0.1
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   //print('TESTJPF RESULT::: reckless', result)
@@ -276,10 +285,13 @@ export function suspect_punched_check(
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
-    w.skills.constitution - s.skills.speed + w.binaries.evil_good * -0.5
+    w.traits.skills.constitution -
+      s.traits.skills.speed +
+      w.traits.binaries.evil_good * -0.5
   )
   const advantage =
-    s.binaries.passiveAggressive < w.binaries.passiveAggressive - 0.3
+    s.traits.binaries.passiveAggressive <
+    w.traits.binaries.passiveAggressive - 0.3
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   //print('TESTJPF RESULT::: w punch s', result)

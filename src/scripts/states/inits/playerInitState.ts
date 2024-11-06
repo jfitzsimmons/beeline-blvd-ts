@@ -18,15 +18,27 @@ export const PlayerInitState: PlayerState = {
   turns: 0,
   clearance: 0,
   checkpoint: 'tutorialA',
-  binaries: {
-    evil_good: 0,
-    passiveAggressive: 0,
-    lawlessLawful: 0,
-    anti_authority: 0,
-    un_educated: 0,
-    poor_wealthy: 0,
-    mystical_logical: 0,
-    noir_color: 0,
+  traits: {
+    binaries: {
+      evil_good: 0,
+      passiveAggressive: 0,
+      lawlessLawful: 0,
+      anti_authority: 0,
+      un_educated: 0,
+      poor_wealthy: 0,
+      mystical_logical: 0,
+      noir_color: 0,
+    },
+    skills: {
+      constitution: 5,
+      charisma: 5, // deception?
+      wisdom: 5,
+      intelligence: 5,
+      speed: 5,
+      perception: 5, // insight
+      strength: 5, //carrying capacity, intimidation
+      stealth: 5, // !!
+    },
   },
   factions: {
     church: 0,
@@ -47,16 +59,6 @@ export const PlayerInitState: PlayerState = {
     gang2: 0,
     gang3: 0,
     gang4: 0,
-  },
-  skills: {
-    constitution: 5,
-    charisma: 5, // deception?
-    wisdom: 5,
-    intelligence: 5,
-    speed: 5,
-    perception: 5, // insight
-    strength: 5, //carrying capacity, intimidation
-    stealth: 5, // !!
   },
   effects: [],
 }

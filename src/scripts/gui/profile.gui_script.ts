@@ -21,7 +21,7 @@ interface props {
 }
 
 function absolute_binaries(): [string, number][] {
-  const bins = player.state.binaries
+  const bins = player.state.traits.binaries
   const newbins: Array<[string, number]> = [
     [
       bins.evil_good < 0 ? 'evil' : 'good',
@@ -53,7 +53,7 @@ function absolute_binaries(): [string, number][] {
       bins.poor_wealthy < 0 ? 'modesty' : 'swanky',
       bins.poor_wealthy < 0 ? bins.poor_wealthy * -10 : bins.poor_wealthy * 10,
     ],
-    ...Object.entries(player.state.skills),
+    ...Object.entries(player.state.traits.skills),
   ]
 
   newbins.sort((n1, n2) => {
