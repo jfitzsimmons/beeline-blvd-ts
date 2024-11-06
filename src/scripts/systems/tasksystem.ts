@@ -1,9 +1,7 @@
 import { PlayerState } from '../../types/state'
-import { Task, Effect, Consequence } from '../../types/tasks'
+import { Task, Consequence } from '../../types/tasks'
 import { shuffle } from '../utils/utils'
 import {
-  fx,
-  add_effects_bonus,
   prejudice_check,
   vanity_check,
   angel_check,
@@ -30,27 +28,6 @@ import {
 import NpcState from '../states/npc'
 
 const { tasks, rooms, npcs, player } = globalThis.game.world
-
-const fxLookup = {
-  merits: [
-    'admirer',
-    'inspired',
-    'eagleeye',
-    'vanity',
-    'readup',
-    'yogi',
-    'angel',
-  ],
-  demerits: [
-    'prejudice',
-    'boring',
-    'distracted',
-    'ignorant',
-    'lazy',
-    'dunce',
-    'devil',
-  ],
-}
 
 const confrontation_checks: Array<
   (s: string, w: string) => { pass: boolean; type: string }
@@ -127,7 +104,7 @@ export function npc_snitch_check(w: string, s: string) {
   }
   return caution_state
 }
-*/
+
 function meritsDemerits(c: Task, w: string) {
   if (c.target === 'player') {
     const adj = c.label === 'merits' ? 1 : -1
@@ -144,7 +121,7 @@ function meritsDemerits(c: Task, w: string) {
   //check if they already have effect? testjpf
   npcs.all[w].effects.push(effect)
   add_effects_bonus(npcs.all[w], effect)
-}
+}*/
 function reckless_consequence(c: Task, _w: string) {
   print('RC::: ', c.owner, ' is gossiping with', _w)
   const checks: Array<(n: string, _w: string) => Consequence> =
@@ -182,13 +159,13 @@ function passive_acts(c: Task, w: string) {
     (c.authority == npcs.all[w].clan || c.authority == npcs.all[w].name)
   ) {
     // snitch_to_security(c, w)
-  } else if (
-    (c.label == 'merits' || c.label == 'demerits') &&
-    (npcs.all[w].clan == c.authority ||
-      npcs.all[c.owner].opinion[npcs.all[w].clan] > 0)
-  ) {
-    meritsDemerits(c, w)
-  }
+  } //else if (
+  // (c.label == 'merits' || c.label == 'demerits') &&
+  //(npcs.all[w].clan == c.authority ||
+  // npcs.all[c.owner].opinion[npcs.all[w].clan] > 0)
+  //) {
+  // meritsDemerits(c, w)
+  // }
 }
 
 //player interaction and npc actions

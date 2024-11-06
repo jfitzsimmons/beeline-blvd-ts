@@ -38,7 +38,6 @@ const thief_consolations = [
 //export const injured_npcs: string[] = []
 
 function meritsDemerits(suspect: string, watcher: string): Consequence {
-  //print('merits_demertis:: suspect::', suspect)
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
@@ -49,8 +48,7 @@ function meritsDemerits(suspect: string, watcher: string): Consequence {
     w.skills.constitution +
       (w.binaries.passiveAggressive - s.binaries.evil_good) * 5 >
     7.5
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -1, 1)
-
+  const result = rollSpecialDice(6, advantage, 3, 2) + clamp(modifier, -1, 1)
   //print('TESTJPF RESULT::: evilmerits', result)
   if (result < 4) {
     return { pass: true, type: 'demerits' }
@@ -154,11 +152,15 @@ export function snitch_check(suspect: string, watcher: string): Consequence {
 function thief_consolation_checks(s: string, w: string) {
   const tempcons: Array<(s: string, w: string) => Consequence> =
     shuffle(thief_consolations)
-  tempcons.forEach((c) => {
-    const consolation = c(s, w)
-    if (consolation.pass == true) return consolation.type
-  })
-  //print('did nothing after witnessing a theft attempt')
+
+  for (const check of tempcons) {
+    const consolation = check(s, w)
+    if (consolation.pass == true) {
+      print('EMsys::: thief_consolation_checks::', consolation.type)
+      return consolation.type
+    }
+  }
+  print('did nothing after witnessing a theft attempt')
   return 'neutral'
 }
 export function build_consequence(

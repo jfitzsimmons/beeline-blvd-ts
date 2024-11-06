@@ -43,6 +43,7 @@ export default class WorldTasks {
       returnNpc: this.parent.returnNpc.bind(this),
       returnPlayer: this.parent.returnPlayer.bind(this),
       taskBuilder: this.taskBuilder.bind(this),
+      getOccupants: this.parent.getOccupants.bind(this),
     }
 
     this.quests = {
@@ -90,7 +91,7 @@ export default class WorldTasks {
         task.target,
         task.cause
       )
-      task.turns <= 0 ? this.all.splice(i, 1) : task.fsm.update(dt)
+      task.turns < 1 ? this.all.splice(i, 1) : task.fsm.update(dt)
       task.turns = task.turns - 1
     }
   }
