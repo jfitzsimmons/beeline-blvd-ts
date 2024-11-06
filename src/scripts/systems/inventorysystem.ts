@@ -126,7 +126,7 @@ export function bribe_check(suspect: string, watcher: string): Consequence {
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
-    w.binaries.lawless_lawful * -5 + w.skills.strength - s.skills.strength
+    w.binaries.lawlessLawful * -5 + w.skills.strength - s.skills.strength
   )
   const advantage =
     s.binaries.passiveAggressive < w.binaries.passiveAggressive - 0.3

@@ -80,6 +80,7 @@ export interface WorldTasksProps {
   didCrossPaths(owner: string, target: string): boolean
   returnNpc(n: string): NpcState
   returnPlayer(): PlayerState
+  getOccupants(r: string): string[]
 }
 export interface TaskProps extends WorldTasksProps {
   addAdjustMendingQueue(patient: string): void

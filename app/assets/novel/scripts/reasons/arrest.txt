@@ -5,7 +5,7 @@ npc.love = npc.love -1
   if npc.love > -2 and npc.b.aggressive < 0.8 and math.random() < .5
     n: need a function that player has to behave for some turns
     jump quickclose
-  if npc.b.lawless_lawful < -0.6
+  if npc.b.lawlessLawful < -0.6
     n: PUNCH
     hp = hp - 1
     jump quickclose

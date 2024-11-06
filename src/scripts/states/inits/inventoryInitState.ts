@@ -76,7 +76,7 @@ export const itemStateInit: InventoryTable = {
     value: 2,
     level: 1,
     binaries: {
-      lawless_lawful: -0.2,
+      lawlessLawful: -0.2,
     },
     skills: {},
   },
@@ -84,7 +84,7 @@ export const itemStateInit: InventoryTable = {
     value: 3,
     level: 1,
     binaries: {
-      lawless_lawful: -0.3,
+      lawlessLawful: -0.3,
     },
     skills: {
       perception: 1,

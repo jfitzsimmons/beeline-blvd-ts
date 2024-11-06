@@ -36,6 +36,7 @@ export default class World {
       didCrossPaths: this.didCrossPaths.bind(this),
       returnNpc: this.returnNpc.bind(this),
       returnPlayer: this.returnPlayer.bind(this),
+      getOccupants: this.rooms.getOccupants.bind(this),
     }
     this.tasks = new WorldTasks(tasksProps)
     const playerProps: WorldPlayerProps = {

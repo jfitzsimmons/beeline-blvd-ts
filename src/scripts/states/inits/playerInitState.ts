@@ -21,7 +21,7 @@ export const PlayerInitState: PlayerState = {
   binaries: {
     evil_good: 0,
     passiveAggressive: 0,
-    lawless_lawful: 0,
+    lawlessLawful: 0,
     anti_authority: 0,
     un_educated: 0,
     poor_wealthy: 0,

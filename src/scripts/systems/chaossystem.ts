@@ -14,7 +14,7 @@ export const pos_consolations = [
   given_gift,
   love_boost,
 ]
-export const neg_consolations = [reckless_check, love_drop, suspicious_check]
+export const neg_consolations = [recklessCheck, love_drop, suspicious_check]
 
 //positive consolations
 function generate_gift() {
@@ -103,7 +103,7 @@ function love_drop(n: string): Consequence {
       Math.abs(npc.binaries.evil_good * 10)
   )
   const advantage =
-    player.state.skills.speed + player.state.binaries.lawless_lawful * 10 >
+    player.state.skills.speed + player.state.binaries.lawlessLawful * 10 >
     npc.binaries.evil_good * 10 + npc.skills.constitution
   const result = math.min(
     rollSpecialDice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1),
@@ -130,7 +130,7 @@ export function suspicious_check(
       w.skills.perception +
       (s.binaries.passiveAggressive + w.binaries.poor_wealthy) * 4
   )
-  const advantage = w.binaries.lawless_lawful > s.binaries.lawless_lawful - 0.2
+  const advantage = w.binaries.lawlessLawful > s.binaries.lawlessLawful - 0.2
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   //startherer!!!!!!!!!!!!!!!!
   //print('TESTJPF RESULT suspicious:::', result)
@@ -208,7 +208,7 @@ export function watcher_punched_check(
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
   const modifier = Math.round(
-    s.binaries.lawless_lawful * -5 +
+    s.binaries.lawlessLawful * -5 +
       s.skills.strength -
       w.skills.strength -
       w.skills.wisdom
@@ -236,7 +236,7 @@ export function watcher_punched_check(
 
   return { pass: false, type: 'neutral' }
 }
-export function reckless_check(suspect: string, watcher: string): Consequence {
+export function recklessCheck(suspect: string, watcher: string): Consequence {
   //print(suspect, 'reckless suspect!!!!')
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
@@ -247,8 +247,7 @@ export function reckless_check(suspect: string, watcher: string): Consequence {
       s.skills.stealth +
       Math.abs(s.binaries.passiveAggressive) * 5
   )
-  const advantage =
-    w.skills.intelligence < 5 || w.binaries.lawless_lawful < -0.1
+  const advantage = w.skills.intelligence < 5 || w.binaries.lawlessLawful < -0.1
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   //print('TESTJPF RESULT::: reckless', result)

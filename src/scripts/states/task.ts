@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Task, TaskProps } from '../../types/tasks'
-//import { npcSnitchCheck } from '../systems/tasksystem'
+import { Effect, Task, TaskProps } from '../../types/tasks'
+import { add_effects_bonus } from '../utils/ai'
+import { fxLookup, fx } from '../utils/consts'
+import { shuffle } from '../utils/utils'
+import { NpcsInitState } from './inits/npcsInitState'
 import StateMachine from './stateMachine'
-//import { AllQuestsMethods, WorldQuests, Task } from '../../types/tasks'
-//mport { tutorialQuests } from './inits/quests/tutorialstate'
+
 export default class TaskState {
   fsm: StateMachine
   label: string // merits
@@ -64,10 +66,10 @@ export default class TaskState {
       onUpdate: this.onMedicalUpdate.bind(this),
       onExit: this.onMedicalExit.bind(this),
     })
-    this.fsm.addState('clearance', {
-      onEnter: this.onClearEnter.bind(this),
-      onUpdate: this.onClearUpdate.bind(this),
-      onExit: this.onClearExit.bind(this),
+    this.fsm.addState('merit', {
+      onEnter: this.onMeritEnter.bind(this),
+      onUpdate: this.onMeritUpdate.bind(this),
+      onExit: this.onMeritExit.bind(this),
     })
 
     this.fsm.setState(setInitFSMstate(t))
@@ -139,9 +141,42 @@ export default class TaskState {
   private onMedicalEnter(): void {}
   private onMedicalUpdate(): void {}
   private onMedicalExit(): void {}
-  private onClearEnter(): void {}
-  private onClearUpdate(): void {}
-  private onClearExit(): void {}
+  private onMeritEnter(): void {}
+  private onMeritUpdate(): void {
+    const owner = this.parent.returnNpc(this.owner)
+    print('MERTIS:: TASK:', owner.name, owner.currRoom)
+    const others = this.parent.getOccupants(owner.currRoom)
+    for (const npc of others) {
+      const listener = this.parent.returnNpc(npc)
+      if (this.target === 'player') {
+        const adj = this.label === 'merits' ? 1 : -1
+        listener.love = listener.love + adj
+      }
+      const fxArray: string[] =
+        this.label === 'merits' ? fxLookup.merits : fxLookup.demerits
+      const fx_labels = shuffle(fxArray)
+      const effect: Effect = fx[fx_labels[0]]!
+      if (effect.fx.type == 'opinion') {
+        effect.fx.stat = NpcsInitState[this.target].clan
+      }
+      print(
+        this.owner,
+        'found:',
+        npc,
+        'because',
+        this.label,
+        '.',
+        npc,
+        'has effect:',
+        fx_labels[1]
+      )
+      //check if they already have effect? testjpf
+      listener.effects.push(effect)
+      add_effects_bonus(listener, effect)
+      break
+    }
+  }
+  private onMeritExit(): void {}
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {}
   private onTurnExit(): void {}
@@ -184,7 +219,7 @@ function setInitFSMstate(t: Task): string {
     state = 'injury'
   } else if (t.label == 'mender') {
     state = 'medical'
-  } else if (t.label == 'clearance') state = 'clearance'
-  else if (t.label == 'snitch') state = 'snitch'
+  } else if (t.label == 'snitch') state = 'snitch'
+  else if (['merits', 'demerits'].includes(t.label)) state = 'merit'
   return state
 }
