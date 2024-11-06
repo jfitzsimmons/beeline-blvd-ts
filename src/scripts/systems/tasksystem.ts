@@ -225,15 +225,15 @@ export function address_cautions() {
   )
 
   //testjpf change to filter
-  const { conversational2 } = conversational.reduce(
+  const { reckless } = conversational.reduce(
     (r: { [key: string]: Task[] }, o: Task) => {
-      r[o.label == 'clearance' ? 'clearance' : 'conversational2'].push(o)
+      r[o.label == 'reckless' ? 'reckless' : 'conversational2'].push(o)
       return r
     },
-    { clearance: [], conversational2: [] }
+    { reckless: [], conversational2: [] }
   )
   //address_admin(clearance)
-  address_conversations(conversational2)
+  address_conversations(reckless)
   address_busy_acts(medical)
   const confront: Task | null = address_confrontations(confrontational)
 

@@ -89,10 +89,11 @@ export default class WorldTasks {
         task.label,
         task.owner,
         task.target,
-        task.cause
+        task.cause,
+        task.turns
       )
-      task.turns < 1 ? this.all.splice(i, 1) : task.fsm.update(dt)
-      task.turns = task.turns - 1
+      task.fsm.update(dt)
+      task.turns < 1 ? this.all.splice(i, 1) : (task.turns = task.turns - 1)
     }
   }
   private onTurnExit(): void {}

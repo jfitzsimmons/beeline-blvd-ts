@@ -78,12 +78,22 @@ export default class WorldPlayer {
   }
   private onTrespassEnter(): void {
     const hallpass = this.parent.hasHallpass('player')
+    print('HALLPASS::', hallpass, this.currRoom, this.clearance)
     if (
       hallpass != null &&
       tonumber(hallpass.scope.charAt(hallpass.scope.length - 1))! >=
         RoomsInitState[this.currRoom].clearance
-    )
+    ) {
+      print(
+        'HALLPASS2::',
+        hallpass.scope,
+        tonumber(hallpass.scope.charAt(hallpass.scope.length - 1))!,
+        this.currRoom,
+        this.clearance
+      )
+
       this.fsm.setState('turn')
+    }
   }
   private onTrespassUpdate(): void {
     this.ap = this.ap - 1
