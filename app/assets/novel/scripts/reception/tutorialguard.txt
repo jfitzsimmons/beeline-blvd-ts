@@ -8,7 +8,7 @@ npclogskills = "spd: {npc.skills.speed} | str: {npc.skills.strength} |con: {npc.
 
 
 n.sprite = npc.smilesprite
-npclogbinaries = "good: {npc.binaries.evil_good} | aggression: {npc.binaries.passive_aggressive} |law: {npc.binaries.lawless_lawful} | auth: {npc.binaries.anti_authority} |edu: {npc.binaries.un_educated} | wealth: {npc.binaries.poor_wealthy}"
+npclogbinaries = "good: {npc.binaries.evil_good} | aggression: {npc.binaries.passiveAggressive} |law: {npc.binaries.lawlessLawful} | auth: {npc.binaries.anti_authority} |edu: {npc.binaries.un_educated} | wealth: {npc.binaries.poor_wealthy}"
 playerskillslog = "spd: {player.skills.speed} | str: {player.skills.strength} |con: {player.skills.constitution} | chr: {player.skills.charisma} |wis: {player.skills.wisdom} | per: {player.skills.perception} |int: {player.skills.intelligence} | stl: {player.skills.stealth}"
 n.scale = 3
 n.y = 0.5
@@ -44,7 +44,7 @@ if turns > 0
     jump youagain
   Oh, Hi!
   jump needhelp
-n: My name is {N.name}.  I'm {npc.binaries.passive_aggressive <= -.5 and "attempting to run" or "attending to"} the reception desk for now.
+n: My name is {N.name}.  I'm {npc.binaries.passiveAggressive <= -.5 and "attempting to run" or "attending to"} the reception desk for now.
 jump needhelp
 
 label youagain
@@ -201,7 +201,7 @@ n: Just like every other schmuck who walks through that door and has no idea whe
   jump quickclose
 > Bring it on
   merits = merits -5
-  if npc.binaries.passive_aggressive > 0.5 and npc.skills.constitution > 7
+  if npc.binaries.passiveAggressive > 0.5 and npc.skills.constitution > 7
     n.sprite = npc.laughsprite
     show n
     merits = merits + 10
@@ -228,7 +228,7 @@ if player.skills.charisma > 7
   merits = merits + 5
   n: You crack me up.  Go to the north dammit.
   jump quickclose
-if player.binaries.passive_aggressive > .7 and npc.binaries.passive_aggressive < .4
+if player.binaries.passiveAggressive > .7 and npc.binaries.passiveAggressive < .4
   n.sprite = npc.frownsprite
   show n
   merits = merits - 2

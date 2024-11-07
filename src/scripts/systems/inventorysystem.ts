@@ -126,10 +126,13 @@ export function bribe_check(suspect: string, watcher: string): Consequence {
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
-    w.binaries.lawless_lawful * -5 + w.skills.strength - s.skills.strength
+    w.traits.binaries.lawlessLawful * -5 +
+      w.traits.skills.strength -
+      s.traits.skills.strength
   )
   const advantage =
-    s.binaries.passiveAggressive < w.binaries.passiveAggressive - 0.3
+    s.traits.binaries.passiveAggressive <
+    w.traits.binaries.passiveAggressive - 0.3
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   //print('TESTJPF RESULT::: bribe', result)

@@ -8,7 +8,7 @@ import {
 import { admirer_check, prejudice_check } from './effectsystem'
 import { bribe_check } from './inventorysystem'
 import {
-  reckless_check,
+  recklessCheck,
   suspect_punched_check,
   unlucky_check,
 } from './chaossystem'
@@ -29,28 +29,26 @@ const questioning_checks: Array<
 ]
 const thief_consolations = [
   snitch_check,
-  merits_demerits,
-  reckless_check,
+  meritsDemerits,
+  recklessCheck,
   //society_check,
 ]
 //Crime Consolations
 
 //export const injured_npcs: string[] = []
 
-function merits_demerits(suspect: string, watcher: string): Consequence {
-  //print('merits_demertis:: suspect::', suspect)
+function meritsDemerits(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
-    (w.binaries.evil_good + w.binaries.lawless_lawful) * -2.5
+    (w.traits.binaries.evil_good + w.traits.binaries.lawlessLawful) * -2.5
   )
   const advantage =
-    w.skills.constitution +
-      (w.binaries.passiveAggressive - s.binaries.evil_good) * 5 >
+    w.traits.skills.constitution +
+      (w.traits.binaries.passiveAggressive - s.traits.binaries.evil_good) * 5 >
     7.5
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -1, 1)
-
+  const result = rollSpecialDice(6, advantage, 3, 2) + clamp(modifier, -1, 1)
   //print('TESTJPF RESULT::: evilmerits', result)
   if (result < 4) {
     return { pass: true, type: 'demerits' }
@@ -69,9 +67,10 @@ function pledge_check(suspect: string, watcher: string): Consequence {
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
-    w.binaries.passiveAggressive * -5 + s.binaries.passiveAggressive * 5
+    w.traits.binaries.passiveAggressive * -5 +
+      s.traits.binaries.passiveAggressive * 5
   )
-  const advantage = w.skills.wisdom > s.skills.constitution + 1
+  const advantage = w.traits.skills.wisdom > s.traits.skills.constitution + 1
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   //print('TESTJPF RESULT::: pledge', result)
@@ -97,9 +96,11 @@ export function jailtime_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
   const modifier = Math.round(
-    w.skills.perception - s.skills.perception + w.binaries.anti_authority * 4
+    w.traits.skills.perception -
+      s.traits.skills.perception +
+      w.traits.binaries.anti_authority * 4
   )
-  const advantage = s.binaries.passiveAggressive < 0.2
+  const advantage = s.traits.binaries.passiveAggressive < 0.2
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   //print('TESTJPF RESULT::: jailed', result)
@@ -125,12 +126,13 @@ export function snitch_check(suspect: string, watcher: string): Consequence {
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
   const modifier = Math.round(
-    w.binaries.anti_authority * 5 +
-      (w.skills.constitution - s.skills.charisma) / 2
+    w.traits.binaries.anti_authority * 5 +
+      (w.traits.skills.constitution - s.traits.skills.charisma) / 2
   )
   const advantage =
-    w.skills.perception + Math.abs(w.binaries.passiveAggressive * 5) >
-    s.skills.stealth + +Math.abs(s.binaries.passiveAggressive * 5)
+    w.traits.skills.perception +
+      Math.abs(w.traits.binaries.passiveAggressive * 5) >
+    s.traits.skills.stealth + +Math.abs(s.traits.binaries.passiveAggressive * 5)
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
   //print('TESTJPF RESULT::: snitch', result)
@@ -154,11 +156,15 @@ export function snitch_check(suspect: string, watcher: string): Consequence {
 function thief_consolation_checks(s: string, w: string) {
   const tempcons: Array<(s: string, w: string) => Consequence> =
     shuffle(thief_consolations)
-  tempcons.forEach((c) => {
-    const consolation = c(s, w)
-    if (consolation.pass == true) return consolation.type
-  })
-  //print('did nothing after witnessing a theft attempt')
+
+  for (const check of tempcons) {
+    const consolation = check(s, w)
+    if (consolation.pass == true) {
+      print('EMsys::: thief_consolation_checks::', consolation.type)
+      return consolation.type
+    }
+  }
+  print('did nothing after witnessing a theft attempt')
   return 'neutral'
 }
 export function build_consequence(

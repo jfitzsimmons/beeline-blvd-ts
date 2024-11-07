@@ -33,8 +33,8 @@ function calculate_heat(room: string) {
     (player.hp +
       player.clearance +
       tasks.all.length +
-      player.state.skills.stealth +
-      player.state.skills.charisma) *
+      player.state.traits.skills.stealth +
+      player.state.traits.skills.charisma) *
     2
 
   cold += player.ap

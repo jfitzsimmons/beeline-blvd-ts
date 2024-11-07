@@ -1,4 +1,6 @@
 import { Direction } from '../../types/ai'
+//import { Traits } from '../../types/state'
+//import { Effect } from '../../types/tasks'
 import { RoomsInitRoles, RoomsInitLayout } from '../states/inits/roomsInitState'
 import { shuffle } from './utils'
 
@@ -236,3 +238,8 @@ export function set_npc_target(
 
   return target
 }
+/**
+export function add_effects_bonus(a: Traits, e: Effect) {
+  a[e.fx.type][e.fx.stat] = a[e.fx.type][e.fx.stat] + e.fx.adjustment
+}
+  */

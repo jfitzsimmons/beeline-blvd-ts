@@ -64,16 +64,14 @@ export function aidCheck() {
   }
 }
 export function take_check(taker: NpcState, actor: Npc | Actor) {
+  const { skills, binaries } = taker.traits
   let modifier = Math.round(
-    taker.skills.stealth -
-      taker.skills.charisma +
-      taker.binaries.passiveAggressive * -5
+    skills.stealth - skills.charisma + binaries.passiveAggressive * -5
   )
   if (tasks.npcHasTask('any', taker.name) != null) {
     modifier = modifier - 1
   }
-  const advantage =
-    taker.binaries.poor_wealthy + taker.binaries.anti_authority * -1 > 0
+  const advantage = binaries.poor_wealthy + binaries.anti_authority * -1 > 0
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
   if (result < 5) return false
 
@@ -81,11 +79,7 @@ export function take_check(taker: NpcState, actor: Npc | Actor) {
   if (math.random() < 0.5) {
     chest_item = removeValuable(taker.inventory, actor.inventory)
   } else if (math.random() < 0.51) {
-    chest_item = removeAdvantageous(
-      taker.inventory,
-      actor.inventory,
-      taker.skills
-    )
+    chest_item = removeAdvantageous(taker.inventory, actor.inventory, skills)
   } else {
     chest_item = removeRandom(taker.inventory, actor.inventory)
   }
@@ -109,7 +103,7 @@ export function stash_check(stasher: NpcState, actor: NpcState | Actor) {
     chest_item = removeAdvantageous(
       actor.inventory,
       stasher.inventory,
-      stasher.skills
+      stasher.traits.skills
     )
   } else {
     chest_item = removeLast(actor.inventory, stasher.inventory)
@@ -131,20 +125,20 @@ export function seen_check(s: string, w: string) {
   const sus = s == 'player' ? player.state : npcs.all[s]
   const wchr = npcs.all[w]
   const heat =
-    s == 'player' ? player.heat * 10 : wchr.binaries.poor_wealthy * -4
+    s == 'player' ? player.heat * 10 : wchr.traits.binaries.poor_wealthy * -4
 
   const modifier = Math.round(
-    sus.skills.stealth +
-      sus.binaries.lawless_lawful * -4 -
-      wchr.skills.stealth -
-      wchr.skills.perception -
+    sus.traits.skills.stealth +
+      sus.traits.binaries.lawlessLawful * -4 -
+      wchr.traits.skills.stealth -
+      wchr.traits.skills.perception -
       heat
   )
   const advantage =
-    sus.skills.speed - wchr.binaries.lawless_lawful * 5 >
-    wchr.skills.speed +
-      wchr.skills.constitution +
-      wchr.binaries.passiveAggressive * 5
+    sus.traits.skills.speed - wchr.traits.binaries.lawlessLawful * 5 >
+    wchr.traits.skills.speed +
+      wchr.traits.skills.constitution +
+      wchr.traits.binaries.passiveAggressive * 5
 
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
@@ -209,14 +203,14 @@ export function confrontation_check(pname: string, nname: string) {
   const w = npcs.all[nname]
 
   const modifier = Math.round(
-    w.binaries.lawless_lawful * 5 -
-      s.skills.speed +
-      w.skills.speed -
-      w.skills.constitution
+    w.traits.binaries.lawlessLawful * 5 -
+      s.traits.skills.speed +
+      w.traits.skills.speed -
+      w.traits.skills.constitution
   )
   const advantage =
-    w.skills.speed + w.skills.constitution >
-    s.skills.speed + w.binaries.lawless_lawful * 5
+    w.traits.skills.speed + w.traits.skills.constitution >
+    s.traits.skills.speed + w.traits.binaries.lawlessLawful * 5
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   const bossResult = rollSpecialDice(5, true, 4, 2)
 
@@ -245,15 +239,17 @@ export function steal_check(s: NpcState, w: NpcState, loot: string[]) {
   if (s.cooldown > 0) return
 
   const modifier = Math.round(
-    s.skills.speed +
-      s.skills.stealth -
+    s.traits.skills.speed +
+      s.traits.skills.stealth -
       s.cooldown +
-      w.opinion[s.clan] -
-      s.opinion[w.clan] * 3
+      w.traits.opinion[s.clan] -
+      s.traits.opinion[w.clan] * 3
   )
   const advantage =
-    s.binaries.lawless_lawful + s.binaries.evil_good - s.binaries.poor_wealthy <
-    w.binaries.evil_good + w.binaries.lawless_lawful
+    s.traits.binaries.lawlessLawful +
+      s.traits.binaries.evil_good -
+      s.traits.binaries.poor_wealthy <
+    w.traits.binaries.evil_good + w.traits.binaries.lawlessLawful
   const result =
     rollSpecialDice(5, advantage, 3, 2) + (modifier > -3 ? modifier : -3)
 
@@ -279,7 +275,7 @@ export function steal_check(s: NpcState, w: NpcState, loot: string[]) {
     } else if (math.random() < 0.5) {
       chest_item = removeValuable(s.inventory, loot)
     } else {
-      chest_item = removeAdvantageous(s.inventory, loot, s.skills)
+      chest_item = removeAdvantageous(s.inventory, loot, s.traits.skills)
     }
 
     s.addInvBonus(chest_item)

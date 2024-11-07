@@ -26,7 +26,7 @@ const skills = {
 const binaries = {
   evil_good: 0,
   passiveAggressive: 0,
-  lawless_lawful: 0,
+  lawlessLawful: 0,
   anti_authority: 0,
   un_educated: 0,
   poor_wealthy: 0,
@@ -37,7 +37,7 @@ const binarylookup: BinaryLookupTable = {
   ais: {
     evil_good: 0.3,
     passiveAggressive: -0.3,
-    lawless_lawful: 0.2,
+    lawlessLawful: 0.2,
     anti_authority: -0.2,
     un_educated: 0,
     poor_wealthy: -0.1,
@@ -47,7 +47,7 @@ const binarylookup: BinaryLookupTable = {
   church: {
     evil_good: 0,
     passiveAggressive: -0.1,
-    lawless_lawful: 0.1,
+    lawlessLawful: 0.1,
     anti_authority: 0.2,
     un_educated: -0.3,
     poor_wealthy: 0.1,
@@ -57,7 +57,7 @@ const binarylookup: BinaryLookupTable = {
   contractors: {
     evil_good: 0.1,
     passiveAggressive: -0.1,
-    lawless_lawful: 0.1,
+    lawlessLawful: 0.1,
     anti_authority: 0.1,
     un_educated: 0.3,
     poor_wealthy: 0.2,
@@ -67,7 +67,7 @@ const binarylookup: BinaryLookupTable = {
   corps: {
     evil_good: -0.3,
     passiveAggressive: 0.1,
-    lawless_lawful: 0,
+    lawlessLawful: 0,
     anti_authority: -0.1,
     un_educated: 0.2,
     poor_wealthy: 0.3,
@@ -77,7 +77,7 @@ const binarylookup: BinaryLookupTable = {
   gang1: {
     evil_good: -0.2,
     passiveAggressive: 0.3,
-    lawless_lawful: -0.2,
+    lawlessLawful: -0.2,
     anti_authority: 0.1,
     un_educated: -0.2,
     poor_wealthy: -0.1,
@@ -87,7 +87,7 @@ const binarylookup: BinaryLookupTable = {
   gang2: {
     evil_good: -0.2,
     passiveAggressive: 0,
-    lawless_lawful: -0.1,
+    lawlessLawful: -0.1,
     anti_authority: -0.1,
     un_educated: -0.2,
     poor_wealthy: 0.2,
@@ -97,7 +97,7 @@ const binarylookup: BinaryLookupTable = {
   gang3: {
     evil_good: -0.1,
     passiveAggressive: 0.2,
-    lawless_lawful: -0.3,
+    lawlessLawful: -0.3,
     anti_authority: 0.2,
     un_educated: -0.1,
     poor_wealthy: 0,
@@ -107,7 +107,7 @@ const binarylookup: BinaryLookupTable = {
   gang4: {
     evil_good: 0.1,
     passiveAggressive: 0.1,
-    lawless_lawful: -0.1,
+    lawlessLawful: -0.1,
     anti_authority: -0.2,
     un_educated: 0.2,
     poor_wealthy: -0.2,
@@ -117,7 +117,7 @@ const binarylookup: BinaryLookupTable = {
   labor: {
     evil_good: 0.2,
     passiveAggressive: -0.2,
-    lawless_lawful: 0.2,
+    lawlessLawful: 0.2,
     anti_authority: -0.3,
     un_educated: -0.1,
     poor_wealthy: -0.3,
@@ -127,7 +127,7 @@ const binarylookup: BinaryLookupTable = {
   security: {
     evil_good: -0.1,
     passiveAggressive: 0.2,
-    lawless_lawful: -0.2,
+    lawlessLawful: -0.2,
     anti_authority: 0.3,
     un_educated: -0.1,
     poor_wealthy: 0.1,
@@ -137,7 +137,7 @@ const binarylookup: BinaryLookupTable = {
   staff: {
     evil_good: 0.2,
     passiveAggressive: 0,
-    lawless_lawful: -0.2,
+    lawlessLawful: -0.2,
     anti_authority: 0,
     un_educated: 0.1,
     poor_wealthy: -0.2,
@@ -147,7 +147,7 @@ const binarylookup: BinaryLookupTable = {
   visitors: {
     evil_good: 0,
     passiveAggressive: 0,
-    lawless_lawful: 0,
+    lawlessLawful: 0,
     anti_authority: 0,
     un_educated: 0,
     poor_wealthy: 0,
@@ -157,7 +157,7 @@ const binarylookup: BinaryLookupTable = {
   sexworkers: {
     evil_good: 0,
     passiveAggressive: 0,
-    lawless_lawful: 0,
+    lawlessLawful: 0,
     anti_authority: -0.1,
     un_educated: -0.1,
     poor_wealthy: -0.1,
@@ -167,7 +167,7 @@ const binarylookup: BinaryLookupTable = {
   doctors: {
     evil_good: 0,
     passiveAggressive: 0,
-    lawless_lawful: 0.1,
+    lawlessLawful: 0.1,
     anti_authority: 0,
     un_educated: 0.1,
     poor_wealthy: 0.1,
@@ -177,7 +177,7 @@ const binarylookup: BinaryLookupTable = {
   maintenance: {
     evil_good: 0,
     passiveAggressive: -0.1,
-    lawless_lawful: 0.1,
+    lawlessLawful: 0.1,
     anti_authority: 0.1,
     un_educated: -0.1,
     poor_wealthy: -0.1,
@@ -187,7 +187,7 @@ const binarylookup: BinaryLookupTable = {
   custodians: {
     evil_good: 0.1,
     passiveAggressive: 0.1,
-    lawless_lawful: -0.1,
+    lawlessLawful: -0.1,
     anti_authority: -0.1,
     un_educated: -0.2,
     poor_wealthy: -0.2,
@@ -197,7 +197,7 @@ const binarylookup: BinaryLookupTable = {
   mailroom: {
     evil_good: -0.1,
     passiveAggressive: 0.2,
-    lawless_lawful: -0.2,
+    lawlessLawful: -0.2,
     anti_authority: 0.1,
     un_educated: 0,
     poor_wealthy: -0.1,
@@ -435,10 +435,10 @@ function random_attributes(npcs: Npcs, order: string[]) {
     npcs[kn].turns_since_encounter = math.random(5, 15)
     npcs[kn].love = math.random(-1, 1)
     // random attitude
-    npcs[kn].opinion = {}
+    npcs[kn].traits.opinion = {}
     let kbl: keyof typeof binarylookup
     for (kbl in binarylookup) {
-      npcs[kn].opinion[kbl] = math.random(-9, 9)
+      npcs[kn].traits.opinion[kbl] = math.random(-9, 9)
     }
     if (path > 3) {
       count++
@@ -453,10 +453,10 @@ function random_attributes(npcs: Npcs, order: string[]) {
     const tempskills = shuffle(startskills)
     let s_count = 0
 
-    npcs[kn].skills = {}
+    npcs[kn].traits.skills = {}
     let ks: keyof typeof skills
     for (ks in skills) {
-      npcs[kn].skills[ks] = tempskills[s_count] + math.random(-1, 1)
+      npcs[kn].traits.skills[ks] = tempskills[s_count] + math.random(-1, 1)
       s_count = s_count + 1
     }
 
@@ -464,11 +464,11 @@ function random_attributes(npcs: Npcs, order: string[]) {
     const tempbins = shuffle(startbins)
     let b_count = 0
 
-    npcs[kn].binaries = {}
+    npcs[kn].traits.binaries = {}
     let kb: keyof typeof binaries
     for (kb in binaries) {
       const adjustment = adjust_binaries(tempbins[b_count], npcs[kn].clan, kb)
-      npcs[kn].binaries[kb] = adjustment
+      npcs[kn].traits.binaries[kb] = adjustment
       b_count = b_count + 1
     }
   }

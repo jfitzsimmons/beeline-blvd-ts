@@ -1,9 +1,7 @@
 import { PlayerState } from '../../types/state'
-import { Task, Effect, Consequence } from '../../types/tasks'
+import { Task, Consequence } from '../../types/tasks'
 import { shuffle } from '../utils/utils'
 import {
-  fx,
-  add_effects_bonus,
   prejudice_check,
   vanity_check,
   angel_check,
@@ -16,7 +14,6 @@ import {
 import {
   build_consequence,
   npc_confrontation,
-  //sendToInfirmary,
   snitch_check,
 } from './emergencysystem'
 import {
@@ -31,27 +28,6 @@ import NpcState from '../states/npc'
 
 const { tasks, rooms, npcs, player } = globalThis.game.world
 
-const fxLookup = {
-  merits: [
-    'admirer',
-    'inspired',
-    'eagleeye',
-    'vanity',
-    'readup',
-    'yogi',
-    'angel',
-  ],
-  demerits: [
-    'prejudice',
-    'boring',
-    'distracted',
-    'ignorant',
-    'lazy',
-    'dunce',
-    'devil',
-  ],
-}
-
 const confrontation_checks: Array<
   (s: string, w: string) => { pass: boolean; type: string }
 > = [
@@ -65,8 +41,12 @@ const confrontation_checks: Array<
   suspicious_check,
 ]
 
-const reck_theft_checks = [ignorant_check, dumb_crook_check, chaotic_good_check]
-const reck_harass_checks = [classy_check, predator_check]
+export const reck_theft_checks = [
+  ignorant_check,
+  dumb_crook_check,
+  chaotic_good_check,
+]
+export const reck_harass_checks = [classy_check, predator_check]
 
 //Focused actions
 //todo doctor npc state
@@ -97,54 +77,6 @@ function focused_acts(c: Task) {
   }
 }
 
-//Passive reactions to cautions
-/** 
-export function player_snitch_check(
-  b: boolean,
-  w: string,
-  reason: string
-): string {
-  ///testjpf still nrrd to figure out alert_level!!!
-  //do alert_level search
-  let caution_state = 'questioning'
-  if (player.alert_level > 3) caution_state = 'arrest'
-  player.alert_level =
-    b == false ? player.alert_level + 1 : player.alert_level + 2
-  if (player.alert_level > 5 && tasks.plan_on_snitching(w, 'player') == false) {
-    tasks.taskBuilder(w, 'snitch', 'player', reason)
-  }
-  print('plauer snith chk :: alertlvl::', player.alert_level)
-  return caution_state
-}
-export function npc_snitch_check(w: string, s: string) {
-  let caution_state = 'questioning'
-
-  if (tasks.already_hunting(w, s)) {
-    npcs.all[w].opinion[npcs.all[s].clan] =
-      npcs.all[w].opinion[npcs.all[s].clan] - 1
-
-    if (math.random() < 0.33) caution_state = 'arrest'
-  }
-  return caution_state
-}
-*/
-function merits_demerits(c: Task, w: string) {
-  if (c.target === 'player') {
-    const adj = c.label === 'merits' ? 1 : -1
-    npcs.all[w].love = npcs.all[w].love + adj
-  }
-  const fxArray: string[] =
-    c.label === 'merits' ? fxLookup.merits : fxLookup.demerits
-  const fx_labels = shuffle(fxArray)
-  const effect: Effect = fx[fx_labels[0]]!
-  if (effect.fx.type == 'opinion') {
-    effect.fx.stat = npcs.all[c.target].clan
-  }
-  print(c.owner, 'found:', w, 'because merits.', w, 'has effect:', fx_labels[1])
-  //check if they already have effect? testjpf
-  npcs.all[w].effects.push(effect)
-  add_effects_bonus(npcs.all[w], effect)
-}
 function reckless_consequence(c: Task, _w: string) {
   print('RC::: ', c.owner, ' is gossiping with', _w)
   const checks: Array<(n: string, _w: string) => Consequence> =
@@ -153,42 +85,6 @@ function reckless_consequence(c: Task, _w: string) {
       : shuffle(reck_harass_checks)
 
   build_consequence(c, checks)
-}
-/** 
-function snitch_to_security(c: Task, watcher: string) {
-  //testjpf need to update aler level
-  // update any npc stat
-  print(c.owner, 'SNITCHED on:', c.target, 'TO:', watcher)
-  const bulletin = tasks.already_hunting(watcher, c.target)
-  const caution_state =
-    c.target == 'player'
-      ? player_snitch_check(bulletin == null, watcher, c.cause)
-      : npc_snitch_check(watcher, c.target)
-
-  if (bulletin == null) {
-    tasks.taskBuilder(watcher, caution_state, c.target, c.cause)
-  } else {
-    bulletin.turns = bulletin.turns + 6
-  }
-
-  c.turns = 0
-}*/
-function passive_acts(c: Task, w: string) {
-  if (c.label == 'reckless') {
-    reckless_consequence(c, w)
-  } else if (
-    c.authority == 'security' &&
-    c.label == 'snitch' &&
-    (c.authority == npcs.all[w].clan || c.authority == npcs.all[w].name)
-  ) {
-    // snitch_to_security(c, w)
-  } else if (
-    (c.label == 'merits' || c.label == 'demerits') &&
-    (npcs.all[w].clan == c.authority ||
-      npcs.all[c.owner].opinion[npcs.all[w].clan] > 0)
-  ) {
-    merits_demerits(c, w)
-  }
 }
 
 //player interaction and npc actions
@@ -280,7 +176,7 @@ function address_confrontations(cs: Task[]): Task | null {
   }
   return null
 }
-function address_conversations(cs: Task[]) {
+function justrecklessTESTJPF(cs: Task[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
     const agent = npcs.all[cs[i].owner]
     const stations = rooms.all[agent.currRoom].stations
@@ -289,16 +185,11 @@ function address_conversations(cs: Task[]) {
       const watcher = stations[station]
       //loop through stations in room of task agent
       if (watcher != '' && watcher != cs[i].owner && watcher != cs[i].target) {
-        passive_acts(cs[i], watcher)
+        reckless_consequence(cs[i], watcher)
       }
     }
   }
-} /** 
-function address_admin(cs: Task[]) {
-  for (let i = cs.length - 1; i >= 0; i--) {
-    handle_temp_clearance(cs[i].scope, cs[i].owner, cs[i].turns)
-  }
-}*/
+}
 function address_busy_acts(cs: Task[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
     focused_acts(cs[i])
@@ -332,15 +223,15 @@ export function address_cautions() {
   )
 
   //testjpf change to filter
-  const { conversational2 } = conversational.reduce(
+  const { reckless } = conversational.reduce(
     (r: { [key: string]: Task[] }, o: Task) => {
-      r[o.label == 'clearance' ? 'clearance' : 'conversational2'].push(o)
+      r[o.label == 'reckless' ? 'reckless' : 'conversational2'].push(o)
       return r
     },
-    { clearance: [], conversational2: [] }
+    { reckless: [], conversational2: [] }
   )
   //address_admin(clearance)
-  address_conversations(conversational2)
+  justrecklessTESTJPF(reckless)
   address_busy_acts(medical)
   const confront: Task | null = address_confrontations(confrontational)
 

@@ -61,6 +61,7 @@ export default class WorldRooms {
     this.sendToInfirmary = this.sendToInfirmary.bind(this)
     this.set_focused = this.set_focused.bind(this)
     this.get_focused = this.get_focused.bind(this)
+    this.getOccupants = this.getOccupants.bind(this)
   }
   public get all(): Rooms {
     return this._all
@@ -70,6 +71,9 @@ export default class WorldRooms {
   }
   public set focused(f: string) {
     this._focused = f
+  }
+  getOccupants(r: string): string[] {
+    return Object.values(this.all[r].stations).filter((s) => s != '')
   }
   set_focused(r: string) {
     this.focused = r

@@ -1,9 +1,21 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Task, TaskProps } from '../../types/tasks'
-//import { npcSnitchCheck } from '../systems/tasksystem'
+
+import {
+  // Consequence,
+  Effect,
+  Task,
+  TaskProps,
+  TasksChecks,
+} from '../../types/tasks'
+//import { build_consequence } from '../systems/emergencysystem'
+//import { reck_theft_checks, reck_harass_checks } from '../systems/tasksystem'
+//import { add_effects_bonus } from '../utils/ai'
+import { fxLookup, fx } from '../utils/consts'
+import { shuffle } from '../utils/utils'
+import { NpcsInitState } from './inits/npcsInitState'
+import { PlayerInitState } from './inits/playerInitState'
 import StateMachine from './stateMachine'
-//import { AllQuestsMethods, WorldQuests, Task } from '../../types/tasks'
-//mport { tutorialQuests } from './inits/quests/tutorialstate'
+
 export default class TaskState {
   fsm: StateMachine
   label: string // merits
@@ -14,12 +26,9 @@ export default class TaskState {
   authority: string //ex; labor
   cause: string
   parent: TaskProps
+  checks: Partial<TasksChecks> | TasksChecks
 
-  constructor(t: Task, taskProps: TaskProps) {
-    this.fsm = new StateMachine(
-      this,
-      `task-${t.owner}-${t.label}-${tostring(os.time())}`
-    )
+  constructor(t: Task, taskProps: TaskProps, allChecks: TasksChecks) {
     this.label = t.label
     this.owner = t.owner
     this.target = t.target
@@ -28,6 +37,11 @@ export default class TaskState {
     this.authority = t.authority
     this.cause = t.cause
     this.parent = taskProps
+    this.checks = this.setTaskChecks(this.label, allChecks)
+    this.fsm = new StateMachine(
+      this,
+      `task-${t.owner}-${t.label}-${tostring(os.time())}`
+    )
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
       onEnter: this.onTurnEnter.bind(this),
@@ -64,10 +78,20 @@ export default class TaskState {
       onUpdate: this.onMedicalUpdate.bind(this),
       onExit: this.onMedicalExit.bind(this),
     })
-    this.fsm.addState('clearance', {
-      onEnter: this.onClearEnter.bind(this),
-      onUpdate: this.onClearUpdate.bind(this),
-      onExit: this.onClearExit.bind(this),
+    this.fsm.addState('merit', {
+      onEnter: this.onMeritEnter.bind(this),
+      onUpdate: this.onMeritUpdate.bind(this),
+      onExit: this.onMeritExit.bind(this),
+    })
+    this.fsm.addState('hallpass', {
+      onEnter: this.onHallpassEnter.bind(this),
+      onUpdate: this.onHallpassUpdate.bind(this),
+      onExit: this.onHallpassExit.bind(this),
+    })
+    this.fsm.addState('reckless', {
+      onEnter: this.onRecklessEnter.bind(this),
+      onUpdate: this.onRecklessUpdate.bind(this),
+      onExit: this.onRecklessExit.bind(this),
     })
 
     this.fsm.setState(setInitFSMstate(t))
@@ -118,18 +142,42 @@ export default class TaskState {
       ])
       const caution_state =
         this.target == 'player'
-          ? this.playerSnitchCheck(priors !== null, cop)
-          : this.npcSnitchCheck(cop)
+          ? this.checks.playerSnitchCheck!(priors !== null, cop, this.cause)
+          : this.checks.npcSnitchCheck!(cop, this.target)
 
       if (priors == null) {
         this.parent.taskBuilder(cop, caution_state, this.target, this.cause)
       } else {
         priors.turns = priors.turns + 6
       }
+      this.turns = 0
     }
-    this.turns = 0
   }
   private onSnitchExit(): void {}
+  private onHallpassEnter(): void {
+    //TESTJPF REDO need some sort of world.adjustClearance()
+    const holder =
+      this.owner == 'player'
+        ? this.parent.returnPlayer()
+        : this.parent.returnNpc(this.owner)
+
+    holder.clearance = tonumber(this.scope.charAt(this.scope.length - 1))!
+  }
+  private onHallpassUpdate(): void {
+    //print('hpassupdate:: turn', this.turns)
+    if (this.turns < 1) {
+      const holder =
+        this.owner == 'player'
+          ? this.parent.returnPlayer()
+          : this.parent.returnNpc(this.owner)
+      //print('onHallpassupr', PlayerInitState.clearance, holder.clearance)
+      holder.clearance =
+        this.owner === 'player'
+          ? PlayerInitState.clearance
+          : NpcsInitState[this.owner].clearance
+    }
+  }
+  private onHallpassExit(): void {}
   private onConfrontEnter(): void {}
   private onConfrontUpdate(): void {}
   private onConfrontExit(): void {}
@@ -139,13 +187,88 @@ export default class TaskState {
   private onMedicalEnter(): void {}
   private onMedicalUpdate(): void {}
   private onMedicalExit(): void {}
-  private onClearEnter(): void {}
-  private onClearUpdate(): void {}
-  private onClearExit(): void {}
+  private onMeritEnter(): void {}
+  private onMeritUpdate(): void {
+    const owner = this.parent.returnNpc(this.owner)
+    print('MERTIS:: TASK:', owner.name, owner.currRoom)
+    const others = this.parent
+      .getOccupants(owner.currRoom)
+      .filter((o) => o !== this.owner)
+    for (const npc of others) {
+      const listener = this.parent.returnNpc(npc)
+      if (this.target === 'player') {
+        const adj = this.label === 'merits' ? 1 : -1
+        listener.love = listener.love + adj
+      }
+      const fxArray: string[] =
+        this.label === 'merits' ? fxLookup.merits : fxLookup.demerits
+      const fx_labels = shuffle(fxArray)
+      const effect: Effect = fx[fx_labels[0]]!
+      if (effect.fx.type == 'opinion') {
+        effect.fx.stat = NpcsInitState[this.target].clan
+      }
+      print(
+        this.owner,
+        'found:',
+        npc,
+        'because',
+        this.label,
+        '.',
+        npc,
+        'has effect:',
+        fx_labels[1]
+      )
+      //check if they already have effect? testjpf
+      listener.effects.push(effect)
+      //TESTJPF TODO NOW:: this.addEffectsBonus(effect)!!!
+      listener.add_effects_bonus(effect)
+      break
+    }
+  }
+  private onMeritExit(): void {}
+  private onRecklessEnter(): void {}
+  private onRecklessUpdate(): void {
+    /** 
+    const owner = this.parent.returnNpc(this.owner)
+    // const target = this.parent.returnNpc(this.target)
+    //print('MERTIS:: TASK:', owner.name, owner.currRoom)
+    const others = this.parent
+      .getOccupants(owner.currRoom)
+      .filter((o) => o !== this.owner)
+    for (const npc of others) {
+      //  const listener = this.parent.returnNpc(npc)
+      const checks: Array<(target: Traits, listener: Traits) => Consequence> =
+        this.cause == 'theft'
+          ? shuffle([this.checks.recktheft1, this.checks.recktheft2])
+          : shuffle([this.checks.reckharass1, this.checks.reckharass2])
+      //          ? shuffle(reck_theft_checks)
+      //        : shuffle(reck_harass_checks)
+
+      build_consequence(this, checks)
+    }
+      */
+  }
+
+  private onRecklessExit(): void {}
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {}
   private onTurnExit(): void {}
 
+  setTaskChecks(label: string, checks: TasksChecks): Partial<TasksChecks> {
+    if (label == 'snitch') {
+      return {
+        playerSnitchCheck: checks.playerSnitchCheck.bind(this),
+        npcSnitchCheck: checks.npcSnitchCheck.bind(this),
+      }
+    }
+
+    return {}
+  }
+  /** 
+  //testjpf move 2 checks to parent
+  //use new init
+  // will need individual method Types 'per task'
+  // some tasks wont have any
   playerSnitchCheck(priors: boolean, cop: string): string {
     ///testjpf still nrrd to figure out alert_level!!!
     //do alert_level search
@@ -169,22 +292,24 @@ export default class TaskState {
     const cop = this.parent.returnNpc(c)
     const target = this.parent.returnNpc(this.target)
     if (this.parent.npcHasTask(c, this.target, ['questioning', 'arrest'])) {
-      cop.opinion[target.clan] = cop.opinion[target.clan] - 1
+      cop.traits.opinion[target.clan] = cop.traits.opinion[target.clan] - 1
       print('NPCSNITCHCHK')
       if (math.random() < 0.33) caution_state = 'arrest'
     }
     return caution_state
-  }
+  }*/
 }
-// testjpf maybe:::
+// testjpf maybe combine following into 1 step.
+// like npc attributes:::
 function setInitFSMstate(t: Task): string {
   let state = 'idle'
-
-  if (t.label == 'injury') {
+  if (t.label == 'hallpass') state = 'hallpass'
+  else if (t.label == 'injury') {
     state = 'injury'
   } else if (t.label == 'mender') {
     state = 'medical'
-  } else if (t.label == 'clearance') state = 'clearance'
-  else if (t.label == 'snitch') state = 'snitch'
+  } else if (t.label == 'snitch') state = 'snitch'
+  else if (t.label == 'reckless') state = 'reckless'
+  else if (['merits', 'demerits'].includes(t.label)) state = 'merit'
   return state
 }
