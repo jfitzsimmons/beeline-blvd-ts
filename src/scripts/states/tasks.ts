@@ -4,10 +4,12 @@ import {
   QuestMethods,
   Task,
   TaskProps,
+  TasksChecks,
   WorldTasksProps,
 } from '../../types/tasks'
 import TaskState from './task'
 import { arraymove } from '../utils/utils'
+import { playerSnitchCheck, npcSnitchCheck } from './inits/checksFuncs'
 
 const dt = math.randomseed(os.time())
 /** 
@@ -28,6 +30,7 @@ export default class WorldTasks {
   medicalSys: string[]
   methods: TaskProps
   parent: WorldTasksProps
+  checks: TasksChecks
   constructor(worldProps: WorldTasksProps) {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
@@ -49,7 +52,11 @@ export default class WorldTasks {
     this.quests = {
       num_of_injuries: this.num_of_injuries.bind(this),
     }
-
+    this.checks = {
+      playerSnitchCheck: playerSnitchCheck.bind(this),
+      npcSnitchCheck: npcSnitchCheck.bind(this),
+      //all checks here!!! testjpf
+    }
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
       onEnter: this.onTurnEnter.bind(this),
@@ -75,12 +82,6 @@ export default class WorldTasks {
   private onNewExit(): void {}
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {
-    //testjpf one array of systemTasks/ crossTasks
-    //in loop do ['mender','questioning',
-    //'arrest','snitch','reckless',}includes(task.label)
-    //opposite better !['quest,'injury'].includes
-    //overengineered? not sure what i want?
-    //instead of this.all have statetasks and systemtasks!?
     let i = this.all.length
     while (i-- !== 0) {
       const task = this.all[i]
@@ -320,7 +321,7 @@ export default class WorldTasks {
     print('NEW::: Appended task::', task.label, task.owner)
     //if injury adjust q
     //in adjust q, dont push new task? ttestjpf
-    this.all.push(new TaskState(task, this.methods))
+    this.all.push(new TaskState(task, this.methods, this.checks))
   }
   // checks quest completion after interactions and turns
   //TESTJPF all FSM stuff for quest turn
@@ -333,15 +334,4 @@ export default class WorldTasks {
 
     return docs
   }
-  /**
-  has_ignore_task(n: string): boolean {
-    //if mending and in field busy
-    //if mending in office and office full
-    const ignored = this.all.filter((c) => c.label == 'ignore' && c.owner == n)
-    print(
-      'ignored.length > 0 ? true : false',
-      ignored.length > 0 ? true : false
-    )
-    return ignored.length > 0 ? true : false
-  }*/
 }
