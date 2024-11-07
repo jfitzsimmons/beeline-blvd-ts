@@ -34,7 +34,7 @@ export default class WorldPlayer {
   constructor(playerProps: WorldPlayerProps) {
     this.fsm = new StateMachine(this, 'player')
     this._state = { ...PlayerInitState }
-    randomSkills(this._state.skills, this._state.binaries)
+    randomSkills(this._state.traits.skills, this._state.traits.binaries)
     this.quests = {
       return_inventory: this.return_inventory.bind(this),
       return_skills: this.return_skills.bind(this),
@@ -78,12 +78,22 @@ export default class WorldPlayer {
   }
   private onTrespassEnter(): void {
     const hallpass = this.parent.hasHallpass('player')
+    print('HALLPASS::', hallpass, this.currRoom, this.clearance)
     if (
       hallpass != null &&
       tonumber(hallpass.scope.charAt(hallpass.scope.length - 1))! >=
         RoomsInitState[this.currRoom].clearance
-    )
+    ) {
+      print(
+        'HALLPASS2::',
+        hallpass.scope,
+        tonumber(hallpass.scope.charAt(hallpass.scope.length - 1))!,
+        this.currRoom,
+        this.clearance
+      )
+
       this.fsm.setState('turn')
+    }
   }
   private onTrespassUpdate(): void {
     this.ap = this.ap - 1
@@ -131,26 +141,26 @@ export default class WorldPlayer {
     const item: InventoryTableItem = itemStateInit[i]
     let sKey: keyof typeof item.skills
     for (sKey in itemStateInit[i].skills)
-      this.state.skills[sKey] =
-        this.state.skills[sKey] - itemStateInit[i].skills[sKey]
+      this.state.traits.skills[sKey] =
+        this.state.traits.skills[sKey] - itemStateInit[i].skills[sKey]
 
     let bKey: keyof typeof item.binaries
     for (bKey in itemStateInit[i].binaries)
-      this.state.binaries[bKey] =
-        this.state.binaries[bKey] - itemStateInit[i].binaries[bKey]
+      this.state.traits.binaries[bKey] =
+        this.state.traits.binaries[bKey] - itemStateInit[i].binaries[bKey]
   }
 
   addInvBonus(i: string) {
     const item: InventoryTableItem = itemStateInit[i]
     let sKey: keyof typeof item.skills
     for (sKey in itemStateInit[i].skills)
-      this.state.skills[sKey] =
-        this.state.skills[sKey] + itemStateInit[i].skills[sKey]
+      this.state.traits.skills[sKey] =
+        this.state.traits.skills[sKey] + itemStateInit[i].skills[sKey]
 
     let bKey: keyof typeof item.binaries
     for (bKey in itemStateInit[i].binaries)
-      this.state.binaries[bKey] =
-        this.state.binaries[bKey] + itemStateInit[i].binaries[bKey]
+      this.state.traits.binaries[bKey] =
+        this.state.traits.binaries[bKey] + itemStateInit[i].binaries[bKey]
   }
   public set pos(p: { x: number; y: number }) {
     this._state.pos = p
@@ -250,7 +260,7 @@ export default class WorldPlayer {
     return this._state.inventory
   }
   return_skills(): Skills {
-    return this._state.skills
+    return this._state.traits.skills
   }
   return_playerroom(): string {
     return this._state.currRoom

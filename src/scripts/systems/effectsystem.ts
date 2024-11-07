@@ -1,5 +1,4 @@
 import { Effect, Consequence } from '../../types/tasks'
-import { add_effects_bonus } from '../utils/ai'
 import { fx } from '../utils/consts'
 import { rollSpecialDice } from '../utils/dice'
 import { clamp, shuffle } from '../utils/utils'
@@ -12,7 +11,7 @@ function add_chaotic_good(suspect: string, watcher: string) {
     const effects_list = ['crimewave', 'inspired', 'eagleeye', 'modesty']
     const effect: Effect = fx[shuffle(effects_list)[0]]
     if (effect.fx.type == 'opinion') effect.fx.stat = npcs.all[suspect].clan
-    add_effects_bonus(npcs.all[watcher], effect)
+    npcs.all[watcher].add_effects_bonus(effect)
     npcs.all[watcher].effects.push(effect)
   } else {
     npcs.all[watcher].love = npcs.all[watcher].love - 2
@@ -24,8 +23,11 @@ export function chaotic_good_check(
 ): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  const modifier = Math.round(w.skills.wisdom / 2 + w.binaries.evil_good * 5)
-  const advantage = s.binaries.anti_authority > w.binaries.anti_authority
+  const modifier = Math.round(
+    w.traits.skills.wisdom / 2 + w.traits.binaries.evil_good * 5
+  )
+  const advantage =
+    s.traits.binaries.anti_authority > w.traits.binaries.anti_authority
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
   // print('TESTJPF RESULT::: chaoticgood::', result)
@@ -50,7 +52,7 @@ function add_dumb_crook(suspect: string, watcher: string) {
     const effects_list = ['admirer', 'opportunist', 'inspired', 'amped']
     const effect: Effect = fx[shuffle(effects_list)[0]]
     if (effect.fx.type == 'opinion') effect.fx.stat = npcs.all[suspect].clan
-    add_effects_bonus(npcs.all[watcher], effect)
+    npcs.all[watcher].add_effects_bonus(effect)
     npcs.all[watcher].effects.push(effect)
   } else {
     npcs.all[watcher].love = npcs.all[watcher].love + 2
@@ -62,8 +64,9 @@ export function dumb_crook_check(
 ): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  const modifier = Math.round(w.binaries.lawlessLawful * -5)
-  const advantage = s.binaries.un_educated * -5 > w.skills.intelligence / 2
+  const modifier = Math.round(w.traits.binaries.lawlessLawful * -5)
+  const advantage =
+    s.traits.binaries.un_educated * -5 > w.traits.skills.intelligence / 2
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
   // print('TESTJPF RESULT::: dumbcrook::', result)
@@ -88,7 +91,7 @@ function add_ignorant(suspect: string, watcher: string) {
     const effects_list = ['prejudice', 'incharge', 'boring', 'loudmouth']
     const effect: Effect = fx[shuffle(effects_list)[0]]
     if (effect.fx.type == 'opinion') effect.fx.stat = npcs.all[suspect].clan
-    add_effects_bonus(npcs.all[watcher], effect)
+    npcs.all[watcher].add_effects_bonus(effect)
     npcs.all[watcher].effects.push(effect)
   } else {
     npcs.all[watcher].love = npcs.all[watcher].love + 2
@@ -97,8 +100,8 @@ function add_ignorant(suspect: string, watcher: string) {
 export function ignorant_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  const modifier = Math.round(w.binaries.un_educated * -5)
-  const advantage = s.skills.intelligence > w.skills.perception
+  const modifier = Math.round(w.traits.binaries.un_educated * -5)
+  const advantage = s.traits.skills.intelligence > w.traits.skills.perception
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
   // print('TESTJPF RESULT::: ignorant::', result)
@@ -124,7 +127,7 @@ function add_predator(suspect: string, watcher: string) {
     const effects_list = ['inspired', 'opportunist', 'vanity', 'inhiding']
     const effect: Effect = fx[shuffle(effects_list)[0]]
     if (effect.fx.type == 'opinion') effect.fx.stat = npcs.all[suspect].clan
-    add_effects_bonus(npcs.all[watcher], effect)
+    npcs.all[watcher].add_effects_bonus(effect)
     npcs.all[watcher].effects.push(effect)
   } else {
     npcs.all[watcher].love = npcs.all[watcher].love + 2
@@ -133,8 +136,9 @@ function add_predator(suspect: string, watcher: string) {
 export function predator_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  const modifier = Math.round(w.binaries.evil_good * -5)
-  const advantage = s.binaries.anti_authority > w.binaries.passiveAggressive
+  const modifier = Math.round(w.traits.binaries.evil_good * -5)
+  const advantage =
+    s.traits.binaries.anti_authority > w.traits.binaries.passiveAggressive
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
   // print('TESTJPF RESULT::: predator::', result)
@@ -161,7 +165,7 @@ function add_classy(suspect: string, watcher: string) {
     if (effect.fx.type == 'opinion') effect.fx.stat = npcs.all[suspect].clan
     //tesjpf need to add to npc and player
     // already have remove
-    add_effects_bonus(npcs.all[watcher], effect)
+    npcs.all[watcher].add_effects_bonus(effect)
     npcs.all[watcher].effects.push(effect)
   } else {
     npcs.all[watcher].love = npcs.all[watcher].love - 2
@@ -170,10 +174,10 @@ function add_classy(suspect: string, watcher: string) {
 export function classy_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  //     watcher.binaries.un_educated > 0.4 &&
-  // watcher.skills.perception > 4
-  const modifier = Math.round(w.binaries.un_educated * 5)
-  const advantage = w.skills.perception > s.skills.strength
+  //     watcher.traits.binaries.un_educated > 0.4 &&
+  // watcher.traits.skills.perception > 4
+  const modifier = Math.round(w.traits.binaries.un_educated * 5)
+  const advantage = w.traits.skills.perception > s.traits.skills.strength
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
   // print('TESTJPF RESULT::: classy::', result)
@@ -197,15 +201,16 @@ function add_angel(n: string) {
   // print('CC:: angel')
   const effect: Effect = { ...fx.angel }
   npcs.all[n].effects.push(effect) // lawfulness increase?
-  add_effects_bonus(npcs.all[n], effect)
+  npcs.all[n].add_effects_bonus(effect)
 }
 export function angel_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
-  const modifier = Math.round(s.skills.wisdom - w.skills.wisdom)
+  const modifier = Math.round(s.traits.skills.wisdom - w.traits.skills.wisdom)
   const advantage =
-    Math.abs(s.binaries.evil_good) > Math.abs(w.binaries.evil_good)
+    Math.abs(s.traits.binaries.evil_good) >
+    Math.abs(w.traits.binaries.evil_good)
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   // print('TESTJPF RESULT::: angel:', result)
@@ -229,17 +234,19 @@ function add_vanity(n: string) {
   // print('CC:: vanity')
   const effect: Effect = { ...fx.vanity }
   npcs.all[n].effects.push(effect) // lawfulness increase?
-  add_effects_bonus(npcs.all[n], effect)
+  npcs.all[n].add_effects_bonus(effect)
 }
 export function vanity_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
   const modifier = Math.round(
-    s.skills.charisma - w.skills.intelligence + w.binaries.evil_good * -5
+    s.traits.skills.charisma -
+      w.traits.skills.intelligence +
+      w.traits.binaries.evil_good * -5
   )
   const advantage =
-    s.skills.strength + s.binaries.un_educated * 5 >
-    w.skills.strength + w.binaries.un_educated * 5
+    s.traits.skills.strength + s.traits.binaries.un_educated * 5 >
+    w.traits.skills.strength + w.traits.binaries.un_educated * 5
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 2)
 
   // print('TESTJPF RESULT::: vanity', result)
@@ -263,16 +270,19 @@ function add_admirer(s: string, w: string) {
   const effect: Effect = { ...fx.admirer }
   effect.fx.stat = npcs.all[s].clan
   npcs.all[w].effects.push(effect)
-  add_effects_bonus(npcs.all[w], effect)
+  npcs.all[w].add_effects_bonus(effect)
 }
 export function admirer_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
   const modifier = Math.round(
-    s.skills.charisma - w.skills.charisma + w.binaries.anti_authority * -5
+    s.traits.skills.charisma -
+      w.traits.skills.charisma +
+      w.traits.binaries.anti_authority * -5
   )
   const advantage =
-    s.skills.intelligence > w.skills.perception && w.skills.strength < 5
+    s.traits.skills.intelligence > w.traits.skills.perception &&
+    w.traits.skills.strength < 5
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   // print('TESTJPF RESULT::: admirer', result)
@@ -297,15 +307,17 @@ export function add_prejudice(s: string, w: string) {
   const effect: Effect = { ...fx.prejudice }
   effect.fx.stat = npcs.all[s].clan
   npcs.all[w].effects.push(effect)
-  add_effects_bonus(npcs.all[w], effect)
+  npcs.all[w].add_effects_bonus(effect)
 }
 export function prejudice_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
   const modifier = Math.round(
-    w.binaries.poor_wealthy * -5 + s.binaries.poor_wealthy * -5
+    w.traits.binaries.poor_wealthy * -5 + s.traits.binaries.poor_wealthy * -5
   )
-  const advantage = w.skills.wisdom + w.skills.charisma < w.skills.stealth / 2
+  const advantage =
+    w.traits.skills.wisdom + w.traits.skills.charisma <
+    w.traits.skills.stealth / 2
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   // print('TESTJPF RESULT::: prejudice', result)

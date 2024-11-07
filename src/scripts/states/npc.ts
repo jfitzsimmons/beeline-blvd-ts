@@ -29,9 +29,11 @@ export default class NpcState {
   actions: string[]
   ai_path: string
   matrix: { x: number; y: number }
-  opinion: Skills | never
-  skills: Skills | never
-  binaries: Skills | never
+  traits: {
+    opinion: Skills | never
+    skills: Skills | never
+    binaries: Skills | never
+  }
   turns_since_encounter: number
   turns_since_convo: number
   love: number
@@ -58,9 +60,12 @@ export default class NpcState {
     this.actions = ['talk', 'give', 'trade', 'pockets']
     this.ai_path = ''
     this.matrix = { x: 0, y: 0 }
-    this.opinion = {}
-    this.skills = {}
-    this.binaries = {}
+    this.traits = {
+      opinion: {},
+      skills: {},
+      binaries: {},
+    }
+
     this.turns_since_encounter = 0
     this.turns_since_convo = 99
     this.love = 0
@@ -381,27 +386,34 @@ export default class NpcState {
     const item: InventoryTableItem = itemStateInit[i]
     let sKey: keyof typeof item.skills
     for (sKey in itemStateInit[i].skills)
-      this.skills[sKey] = this.skills[sKey] - itemStateInit[i].skills[sKey]
+      this.traits.skills[sKey] =
+        this.traits.skills[sKey] - itemStateInit[i].skills[sKey]
 
     let bKey: keyof typeof item.binaries
     for (bKey in itemStateInit[i].binaries)
-      this.binaries[bKey] =
-        this.binaries[bKey] - itemStateInit[i].binaries[bKey]
+      this.traits.binaries[bKey] =
+        this.traits.binaries[bKey] - itemStateInit[i].binaries[bKey]
   }
 
   addInvBonus(i: string) {
     const item: InventoryTableItem = itemStateInit[i]
     let sKey: keyof typeof item.skills
     for (sKey in itemStateInit[i].skills)
-      this.skills[sKey] = this.skills[sKey] + itemStateInit[i].skills[sKey]
+      this.traits.skills[sKey] =
+        this.traits.skills[sKey] + itemStateInit[i].skills[sKey]
 
     let bKey: keyof typeof item.binaries
     for (bKey in itemStateInit[i].binaries)
-      this.binaries[bKey] =
-        this.binaries[bKey] + itemStateInit[i].binaries[bKey]
+      this.traits.binaries[bKey] =
+        this.traits.binaries[bKey] + itemStateInit[i].binaries[bKey]
+  }
+  add_effects_bonus(e: Effect) {
+    this.traits[e.fx.type][e.fx.stat] =
+      this.traits[e.fx.type][e.fx.stat] + e.fx.adjustment
   }
   remove_effects_bonus(e: Effect) {
-    this[e.fx.type][e.fx.stat] = this[e.fx.type][e.fx.stat] - e.fx.adjustment
+    this.traits[e.fx.type][e.fx.stat] =
+      this.traits[e.fx.type][e.fx.stat] - e.fx.adjustment
   }
   remove_effects(effects: Effect[]) {
     if (effects.length < 1) return

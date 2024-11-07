@@ -20,15 +20,18 @@ export interface Npc extends NpcDefaults {
   clan: string
   body: string
 }
+export interface Traits {
+  opinion?: Skills | never
+  skills: Skills | never
+  binaries: Skills | never
+}
 
 export interface NpcDefaults {
   convos: number
   actions: string[]
   ai_path: string
   matrix: { x: number; y: number }
-  opinion: Skills | never
-  skills: Skills | never
-  binaries: Skills | never
+  traits: Traits
   turns_since_encounter: number
   turns_since_convo: number
   love: number
@@ -59,8 +62,7 @@ export interface PlayerState {
   ap: number
   turns: number
   checkpoint: string
-  binaries: Skills
-  skills: Skills
+  traits: Traits
   effects: string[]
   factions: { [key: string]: number }
   gangs: { [key: string]: number }

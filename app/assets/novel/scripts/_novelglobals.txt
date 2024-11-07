@@ -1,28 +1,28 @@
 npc.clan = _G.game.world.novel.npc.clan
 npc.love = _G.game.world.novel.npc.love
 
-npc.b.wealth = _G.game.world.novel.npc.binaries.poor_wealthy
-npc.b.aggressive = _G.game.world.novel.npc.binaries.passiveAggressive
-npc.b.authority = _G.game.world.novel.npc.binaries.anti_authority
-npc.b.educated = _G.game.world.novel.npc.binaries.un_educated
-npc.b.good = _G.game.world.novel.npc.binaries.evil_good
-npc.b.lawful = _G.game.world.novel.npc.binaries.lawlessLawful
+npc.b.wealth = _G.game.world.novel.npc.traits.binaries.poor_wealthy
+npc.b.aggressive = _G.game.world.novel.npc.traits.binaries.passiveAggressive
+npc.b.authority = _G.game.world.novel.npc.traits.binaries.anti_authority
+npc.b.educated = _G.game.world.novel.npc.traits.binaries.un_educated
+npc.b.good = _G.game.world.novel.npc.traits.binaries.evil_good
+npc.b.lawful = _G.game.world.novel.npc.traits.binaries.lawlessLawful
 
-npc.s.charisma = _G.game.world.novel.npc.skills.charisma
-npc.s.intelligence = _G.game.world.novel.npc.skills.intelligence
-npc.s.perception = _G.game.world.novel.npc.skills.perception
-npc.s.stealth = _G.game.world.novel.npc.skills.stealth
-npc.s.speed = _G.game.world.novel.npc.skills.speed
-npc.s.wisdom = _G.game.world.novel.npc.skills.wisdom
-npc.s.constitution = _G.game.world.novel.npc.skills.constitution
-npc.s.strength = _G.game.world.novel.npc.skills.strength
+npc.s.charisma = _G.game.world.novel.npc.traits.skills.charisma
+npc.s.intelligence = _G.game.world.novel.npc.traits.skills.intelligence
+npc.s.perception = _G.game.world.novel.npc.traits.skills.perception
+npc.s.stealth = _G.game.world.novel.npc.traits.skills.stealth
+npc.s.speed = _G.game.world.novel.npc.traits.skills.speed
+npc.s.wisdom = _G.game.world.novel.npc.traits.skills.wisdom
+npc.s.constitution = _G.game.world.novel.npc.traits.skills.constitution
+npc.s.strength = _G.game.world.novel.npc.traits.skills.strength
 
-p.s.speed = _G.game.world.player.state.skills.speed
-p.s.charisma = _G.game.world.player.state.skills.charisma
-p.s.intelligence = _G.game.world.player.state.skills.intelligence
+p.s.speed = _G.game.world.player.state.traits.skills.speed
+p.s.charisma = _G.game.world.player.state.traits.skills.charisma
+p.s.intelligence = _G.game.world.player.state.traits.skills.intelligence
 
-p.b.authority = _G.game.world.player.state.binaries.anti_authority
-p.b.aggressive = _G.game.world.player.state.binaries.passiveAggressive
+p.b.authority = _G.game.world.player.state.traits.binaries.anti_authority
+p.b.aggressive = _G.game.world.player.state.traits.binaries.passiveAggressive
 
 p.clearance = _G.game.world.player.state.clearance
 alert = _G.game.world.player.alert_level
@@ -41,16 +41,12 @@ p.name = "Player"
 
 label start
 n: priority is {priority}
-n: reason is {reason}  
-n: caution is {caution}
-n: activeq is {activeq}
 if priority == "true"
   jump prioritystart
 n: default start
 jump defaultstart
 
 label prioritystart
-n: prioritstart WORKS!!!
 if caution == "questioning"
   jump questioningstart
 if caution == "arrest"
