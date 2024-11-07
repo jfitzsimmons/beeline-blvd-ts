@@ -14,7 +14,6 @@ import {
 import {
   build_consequence,
   npc_confrontation,
-  //sendToInfirmary,
   snitch_check,
 } from './emergencysystem'
 import {
@@ -42,8 +41,12 @@ const confrontation_checks: Array<
   suspicious_check,
 ]
 
-const reck_theft_checks = [ignorant_check, dumb_crook_check, chaotic_good_check]
-const reck_harass_checks = [classy_check, predator_check]
+export const reck_theft_checks = [
+  ignorant_check,
+  dumb_crook_check,
+  chaotic_good_check,
+]
+export const reck_harass_checks = [classy_check, predator_check]
 
 //Focused actions
 //todo doctor npc state
@@ -173,7 +176,7 @@ function address_confrontations(cs: Task[]): Task | null {
   }
   return null
 }
-function address_conversations(cs: Task[]) {
+function justrecklessTESTJPF(cs: Task[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
     const agent = npcs.all[cs[i].owner]
     const stations = rooms.all[agent.currRoom].stations
@@ -186,12 +189,7 @@ function address_conversations(cs: Task[]) {
       }
     }
   }
-} /** 
-function address_admin(cs: Task[]) {
-  for (let i = cs.length - 1; i >= 0; i--) {
-    handle_temp_clearance(cs[i].scope, cs[i].owner, cs[i].turns)
-  }
-}*/
+}
 function address_busy_acts(cs: Task[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
     focused_acts(cs[i])
@@ -233,7 +231,7 @@ export function address_cautions() {
     { reckless: [], conversational2: [] }
   )
   //address_admin(clearance)
-  address_conversations(reckless)
+  justrecklessTESTJPF(reckless)
   address_busy_acts(medical)
   const confront: Task | null = address_confrontations(confrontational)
 

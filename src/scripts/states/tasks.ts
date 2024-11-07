@@ -4,6 +4,7 @@ import {
   QuestMethods,
   Task,
   TaskProps,
+  TasksChecks,
   WorldTasksProps,
 } from '../../types/tasks'
 import TaskState from './task'
@@ -28,6 +29,7 @@ export default class WorldTasks {
   medicalSys: string[]
   methods: TaskProps
   parent: WorldTasksProps
+  checks: TasksChecks
   constructor(worldProps: WorldTasksProps) {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
@@ -49,7 +51,11 @@ export default class WorldTasks {
     this.quests = {
       num_of_injuries: this.num_of_injuries.bind(this),
     }
-
+    this.checks = {
+      playerSnitchCheck: this.playerSnitchCheck.bind(this),
+      npcSnitchCheck: this.npcSnitchCheck.bind(this),
+      //all checks here!!! testjpf
+    }
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
       onEnter: this.onTurnEnter.bind(this),
@@ -320,7 +326,7 @@ export default class WorldTasks {
     print('NEW::: Appended task::', task.label, task.owner)
     //if injury adjust q
     //in adjust q, dont push new task? ttestjpf
-    this.all.push(new TaskState(task, this.methods))
+    this.all.push(new TaskState(task, this.methods, this.checks))
   }
   // checks quest completion after interactions and turns
   //TESTJPF all FSM stuff for quest turn
@@ -333,15 +339,36 @@ export default class WorldTasks {
 
     return docs
   }
-  /**
-  has_ignore_task(n: string): boolean {
-    //if mending and in field busy
-    //if mending in office and office full
-    const ignored = this.all.filter((c) => c.label == 'ignore' && c.owner == n)
-    print(
-      'ignored.length > 0 ? true : false',
-      ignored.length > 0 ? true : false
-    )
-    return ignored.length > 0 ? true : false
-  }*/
+  //testjpf move 2 checks to parent
+  //use new init
+  // will need individual method Types 'per task'
+  // some tasks wont have any
+  //need to send cause TESTJPF
+  playerSnitchCheck(priors: boolean, cop: string, cause: string): string {
+    ///testjpf still nrrd to figure out alert_level!!!
+    //do alert_level search
+
+    let caution_state = 'questioning'
+    const player = this.parent.returnPlayer()
+    if (player.alert_level > 3) caution_state = 'arrest'
+    player.alert_level =
+      priors == null ? player.alert_level + 1 : player.alert_level + 2
+    if (player.alert_level > 5 && this.npcHasTask(cop, 'player') == null) {
+      this.taskBuilder(cop, 'snitch', 'player', cause)
+    }
+    print('plauer snitch chk :: alertlvl::', player.alert_level)
+    return caution_state
+  }
+  //need to send target TESTJPF
+  npcSnitchCheck(c: string, t: string): string {
+    let caution_state = 'questioning'
+    const cop = this.parent.returnNpc(c)
+    const target = this.parent.returnNpc(t)
+    if (this.npcHasTask(c, t, ['questioning', 'arrest'])) {
+      cop.traits.opinion[target.clan] = cop.traits.opinion[target.clan] - 1
+      print('NPCSNITCHCHK')
+      if (math.random() < 0.33) caution_state = 'arrest'
+    }
+    return caution_state
+  }
 }

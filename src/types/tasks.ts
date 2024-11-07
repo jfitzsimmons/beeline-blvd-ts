@@ -140,7 +140,10 @@ export interface QuestMethods {
     | string
     | null
 }
-
+export interface TasksChecks {
+  playerSnitchCheck(priors: boolean, cop: string, cause: string): string
+  npcSnitchCheck(c: string, t: string): string
+}
 export interface Task {
   owner: string
   turns: number
