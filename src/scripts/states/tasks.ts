@@ -9,6 +9,7 @@ import {
 } from '../../types/tasks'
 import TaskState from './task'
 import { arraymove } from '../utils/utils'
+import { playerSnitchCheck, npcSnitchCheck } from './inits/checksFuncs'
 
 const dt = math.randomseed(os.time())
 /** 
@@ -52,8 +53,8 @@ export default class WorldTasks {
       num_of_injuries: this.num_of_injuries.bind(this),
     }
     this.checks = {
-      playerSnitchCheck: this.playerSnitchCheck.bind(this),
-      npcSnitchCheck: this.npcSnitchCheck.bind(this),
+      playerSnitchCheck: playerSnitchCheck.bind(this),
+      npcSnitchCheck: npcSnitchCheck.bind(this),
       //all checks here!!! testjpf
     }
     this.fsm.addState('idle')
@@ -81,12 +82,6 @@ export default class WorldTasks {
   private onNewExit(): void {}
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {
-    //testjpf one array of systemTasks/ crossTasks
-    //in loop do ['mender','questioning',
-    //'arrest','snitch','reckless',}includes(task.label)
-    //opposite better !['quest,'injury'].includes
-    //overengineered? not sure what i want?
-    //instead of this.all have statetasks and systemtasks!?
     let i = this.all.length
     while (i-- !== 0) {
       const task = this.all[i]
@@ -338,37 +333,5 @@ export default class WorldTasks {
     const docs = this.all.filter((c) => c.cause == 'field').map((c) => c.owner)
 
     return docs
-  }
-  //testjpf move 2 checks to parent
-  //use new init
-  // will need individual method Types 'per task'
-  // some tasks wont have any
-  //need to send cause TESTJPF
-  playerSnitchCheck(priors: boolean, cop: string, cause: string): string {
-    ///testjpf still nrrd to figure out alert_level!!!
-    //do alert_level search
-
-    let caution_state = 'questioning'
-    const player = this.parent.returnPlayer()
-    if (player.alert_level > 3) caution_state = 'arrest'
-    player.alert_level =
-      priors == null ? player.alert_level + 1 : player.alert_level + 2
-    if (player.alert_level > 5 && this.npcHasTask(cop, 'player') == null) {
-      this.taskBuilder(cop, 'snitch', 'player', cause)
-    }
-    print('plauer snitch chk :: alertlvl::', player.alert_level)
-    return caution_state
-  }
-  //need to send target TESTJPF
-  npcSnitchCheck(c: string, t: string): string {
-    let caution_state = 'questioning'
-    const cop = this.parent.returnNpc(c)
-    const target = this.parent.returnNpc(t)
-    if (this.npcHasTask(c, t, ['questioning', 'arrest'])) {
-      cop.traits.opinion[target.clan] = cop.traits.opinion[target.clan] - 1
-      print('NPCSNITCHCHK')
-      if (math.random() < 0.33) caution_state = 'arrest'
-    }
-    return caution_state
   }
 }
