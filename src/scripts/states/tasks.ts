@@ -17,6 +17,8 @@ import {
   ignorant_check,
   build_consequence,
   recklessCheck,
+  classy_check,
+  predator_check,
 } from './inits/checksFuncs'
 
 const dt = math.randomseed(os.time())
@@ -68,6 +70,8 @@ export default class WorldTasks {
       chaotic_good_check: chaotic_good_check.bind(this),
       build_consequence: build_consequence.bind(this),
       recklessCheck: recklessCheck.bind(this),
+      classy_check: classy_check.bind(this),
+      predator_check: predator_check.bind(this),
       // snitch_check: this.snitch_check.bind(this),
       // meritsDemerits: this.snitch_check.bind(this),
       //  recklessCheck: this.snitch_check.bind(this),

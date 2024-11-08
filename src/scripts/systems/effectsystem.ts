@@ -1,84 +1,9 @@
 import { Effect, Consequence } from '../../types/tasks'
 import { fx } from '../utils/consts'
 import { rollSpecialDice } from '../utils/dice'
-import { clamp, shuffle } from '../utils/utils'
+import { clamp } from '../utils/utils'
 const { npcs, player } = globalThis.game.world
 
-function add_predator(suspect: string, watcher: string) {
-  if (suspect != 'player') {
-    const effects_list = ['inspired', 'opportunist', 'vanity', 'inhiding']
-    const effect: Effect = fx[shuffle(effects_list)[0]]
-    if (effect.fx.type == 'opinion') effect.fx.stat = npcs.all[suspect].clan
-    npcs.all[watcher].add_effects_bonus(effect)
-    npcs.all[watcher].effects.push(effect)
-  } else {
-    npcs.all[watcher].love = npcs.all[watcher].love + 2
-  }
-}
-export function predator_check(suspect: string, watcher: string): Consequence {
-  const w = npcs.all[watcher]
-  const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  const modifier = Math.round(w.traits.binaries.evil_good * -5)
-  const advantage =
-    s.traits.binaries.anti_authority > w.traits.binaries.passiveAggressive
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
-
-  // print('TESTJPF RESULT::: predator::', result)
-  if (result > 5 && result <= 10) {
-    add_predator
-    return { pass: true, type: 'predator' }
-  }
-
-  if (result > 10) {
-    // print('SPECIAL predator')
-    return { pass: true, type: 'special' }
-  }
-  if (result <= 1) {
-    // print('NEVER predator')
-    return { pass: true, type: 'critical' }
-  }
-
-  return { pass: false, type: 'neutral' }
-}
-function add_classy(suspect: string, watcher: string) {
-  if (suspect != 'player') {
-    const effects_list = ['crimewave', 'inshape', 'readup', 'modesty']
-    const effect: Effect = fx[shuffle(effects_list)[0]]
-    if (effect.fx.type == 'opinion') effect.fx.stat = npcs.all[suspect].clan
-    //tesjpf need to add to npc and player
-    // already have remove
-    npcs.all[watcher].add_effects_bonus(effect)
-    npcs.all[watcher].effects.push(effect)
-  } else {
-    npcs.all[watcher].love = npcs.all[watcher].love - 2
-  }
-}
-export function classy_check(suspect: string, watcher: string): Consequence {
-  const w = npcs.all[watcher]
-  const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  //     watcher.traits.binaries.un_educated > 0.4 &&
-  // watcher.traits.skills.perception > 4
-  const modifier = Math.round(w.traits.binaries.un_educated * 5)
-  const advantage = w.traits.skills.perception > s.traits.skills.strength
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
-
-  // print('TESTJPF RESULT::: classy::', result)
-  if (result > 5 && result <= 10) {
-    add_classy(suspect, watcher)
-    return { pass: true, type: 'classy' }
-  }
-
-  if (result > 10) {
-    // print('SPECIAL classy')
-    return { pass: true, type: 'special' }
-  }
-  if (result <= 1) {
-    // print('NEVER classy')
-    return { pass: true, type: 'critical' }
-  }
-
-  return { pass: false, type: 'neutral' }
-}
 function add_angel(n: string) {
   // print('CC:: angel')
   const effect: Effect = { ...fx.angel }

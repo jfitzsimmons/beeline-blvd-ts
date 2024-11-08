@@ -153,6 +153,8 @@ export interface TasksChecks {
     precheck: boolean
   ): string
   recklessCheck(t: string, l: string): Consequence
+  classy_check(t: string, l: string): Consequence
+  predator_check(t: string, l: string): Consequence
 }
 export interface Task {
   owner: string

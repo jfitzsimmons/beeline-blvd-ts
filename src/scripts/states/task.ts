@@ -245,9 +245,8 @@ export default class TaskState {
             this.checks.chaotic_good_check!.bind(this),
           ])
         : shuffle([
-            this.checks.ignorant_check!.bind(this),
-            this.checks.dumb_crook_check!.bind(this),
-            this.checks.chaotic_good_check!.bind(this),
+            this.checks.classy_check!.bind(this),
+            this.checks.predator_check!.bind(this),
           ])
     //          ? shuffle(reck_theft_checks)
     //        : shuffle(reck_harass_checks)
@@ -273,6 +272,8 @@ export default class TaskState {
         ignorant_check: checks.ignorant_check.bind(this),
         dumb_crook_check: checks.dumb_crook_check.bind(this),
         chaotic_good_check: checks.chaotic_good_check.bind(this),
+        classy_check: checks.classy_check.bind(this),
+        predator_check: checks.predator_check.bind(this),
       }
     }
 

@@ -6,10 +6,10 @@ import {
   vanity_check,
   angel_check,
   //chaotic_good_check,
-  classy_check,
+  //classy_check,
   //dumb_crook_check,
   //ignorant_check,
-  predator_check,
+  //predator_check,
 } from '../systems/effectsystem'
 import {
   //build_consequence,
@@ -46,7 +46,8 @@ export const reck_theft_checks = [
   dumb_crook_check,
   chaotic_good_check,
 ]*/
-export const reck_harass_checks = [classy_check, predator_check]
+// testjpf move these next!! reusing above in fsm for testing
+//export const reck_harass_checks = [classy_check, predator_check]
 
 //Focused actions
 //todo doctor npc state

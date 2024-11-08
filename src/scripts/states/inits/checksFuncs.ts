@@ -338,3 +338,97 @@ export function recklessCheck(
 
   return { pass: false, type: 'neutral' }
 }
+
+function add_predator(this: WorldTasks, t: string, l: string) {
+  const listener = this.parent.returnNpc(l)
+
+  if (t != 'player') {
+    const target = this.parent.returnNpc(t)
+
+    const effects_list = ['inspired', 'opportunist', 'vanity', 'inhiding']
+    const effect: Effect = fx[shuffle(effects_list)[0]]
+    if (effect.fx.type == 'opinion') effect.fx.stat = target.clan
+    listener.add_effects_bonus(effect)
+    listener.effects.push(effect)
+  } else {
+    listener.love = listener.love + 2
+  }
+}
+export function predator_check(
+  this: WorldTasks,
+  t: string,
+  l: string
+): Consequence {
+  const { binaries: lb } = this.parent.returnNpc(l).traits
+  const { binaries: tb } =
+    t === 'player'
+      ? this.parent.returnPlayer().traits
+      : this.parent.returnNpc(t).traits
+  const modifier = Math.round(lb.evil_good * -5)
+  const advantage = tb.anti_authority > lb.passiveAggressive
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
+
+  // print('TESTJPF RESULT::: predator::', result)
+  if (result > 5 && result <= 10) {
+    add_predator
+    return { pass: true, type: 'predator' }
+  }
+
+  if (result > 10) {
+    // print('SPECIAL predator')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    // print('NEVER predator')
+    return { pass: true, type: 'critical' }
+  }
+
+  return { pass: false, type: 'neutral' }
+}
+function add_classy(_this: WorldTasks, t: string, l: string): void {
+  const listener = _this.parent.returnNpc(l)
+
+  if (t != 'player') {
+    const target = _this.parent.returnNpc(t)
+    const effects_list = ['crimewave', 'inshape', 'readup', 'modesty']
+    const effect: Effect = fx[shuffle(effects_list)[0]]
+    if (effect.fx.type == 'opinion') effect.fx.stat = target.clan
+    //tesjpf need to add to npc and player
+    // already have remove
+    listener.add_effects_bonus(effect)
+    listener.effects.push(effect)
+  } else {
+    listener.love = listener.love - 2
+  }
+}
+export function classy_check(
+  this: WorldTasks,
+  t: string,
+  l: string
+): Consequence {
+  const { binaries: lb, skills: ls } = this.parent.returnNpc(l).traits
+  const { skills: ts } =
+    t === 'player'
+      ? this.parent.returnPlayer().traits
+      : this.parent.returnNpc(t).traits
+  const modifier = Math.round(lb.un_educated * 5)
+  const advantage = ls.perception > ts.strength
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
+
+  // print('TESTJPF RESULT::: classy::', result)
+  if (result > 5 && result <= 10) {
+    add_classy(this, t, l)
+    return { pass: true, type: 'classy' }
+  }
+
+  if (result > 10) {
+    // print('SPECIAL classy')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    // print('NEVER classy')
+    return { pass: true, type: 'critical' }
+  }
+
+  return { pass: false, type: 'neutral' }
+}
