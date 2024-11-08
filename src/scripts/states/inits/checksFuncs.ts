@@ -206,7 +206,7 @@ export function build_consequence(
   listener: string,
   checks: Array<(n: string, w: string) => Consequence>,
   precheck = false
-) {
+): string {
   let consolation = { pass: precheck, type: 'neutral' }
 
   for (let i = checks.length; i-- !== 0; ) {

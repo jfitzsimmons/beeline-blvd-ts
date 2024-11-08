@@ -2,7 +2,7 @@ import NpcState from '../scripts/states/npc'
 import QuestState from '../scripts/states/quest'
 import QuestStep from '../scripts/states/questStep'
 import TaskState from '../scripts/states/task'
-import WorldTasks from '../scripts/states/tasks'
+//import WorldTasks from '../scripts/states/tasks'
 import { Npcs, PlayerState, Skills } from './state'
 
 type NoOptionals<T> = {
@@ -151,7 +151,7 @@ export interface TasksChecks {
     listener: string,
     checks: Array<(target: string, listener: string) => Consequence>,
     precheck: boolean
-  ): void
+  ): string
   recklessCheck(t: string, l: string): Consequence
 }
 export interface Task {

@@ -87,20 +87,20 @@ function reckless_consequence(c: Task) {
   build_consequence(c, checks)
 }
 */
+
 //player interaction and npc actions
 export function confrontationConsequence(
   s: string,
   w: string,
   precheck = false
 ) {
-  //let tempcons: Array<(s: string, w: string) => Consequence> = []
+  let tempcons: Array<(s: string, w: string) => Consequence> = []
   //let precheck = true
   //const consolation = { pass: true, type: 'concern' }
   if (s != 'player') {
-    print(w, confrontation_checks)
-    //tempcons = shuffle(confrontation_checks)
+    tempcons = shuffle(confrontation_checks)
     //precheck = false
-  } /**
+  }
   const caution: Task = {
     owner: w,
     turns: 1,
@@ -110,16 +110,15 @@ export function confrontationConsequence(
     target: s,
     cause: 'theft',
   }
-  const consequence = build_consequence(
+  const consequence = tasks.checks.build_consequence(
     caution,
+    w,
     tempcons,
     precheck == true && s == 'player'
   )
- */
-  //return precheck == true && s == 'player' ? 'concern' : consequence
-  return precheck == true && s == 'player' ? 'concern' : 'reckless'
-}
 
+  return precheck == true && s == 'player' ? 'concern' : consequence
+}
 //NOVEL
 export function unimpressed_checks(s: string, w: string) {
   const tempcons: Array<(s: string, w: string) => Consequence> =
