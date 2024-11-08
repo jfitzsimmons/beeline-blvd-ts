@@ -64,6 +64,7 @@ function confrontation_scene(c: Task) {
   novel.forced = true
   msg.post('proxies:/controller#novelcontroller', 'show_scene')
 }
+
 function game_turn() {
   novel.forced = false
   novel.reason = 'none'

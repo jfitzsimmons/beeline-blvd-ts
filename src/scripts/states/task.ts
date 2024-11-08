@@ -69,10 +69,10 @@ export default class TaskState {
       onUpdate: this.onInjuryUpdate.bind(this),
       onExit: this.onInjuryExit.bind(this),
     })
-    this.fsm.addState('converse', {
-      onEnter: this.onConverseEnter.bind(this),
-      onUpdate: this.onConverseUpdate.bind(this),
-      onExit: this.onConverseExit.bind(this),
+    this.fsm.addState('confront', {
+      onEnter: this.onConfontEnter.bind(this),
+      onUpdate: this.onConfontUpdate.bind(this),
+      onExit: this.onConfontExit.bind(this),
     })
     this.fsm.addState('medical', {
       onEnter: this.onMedicalEnter.bind(this),
@@ -182,9 +182,9 @@ export default class TaskState {
   private onConfrontEnter(): void {}
   private onConfrontUpdate(): void {}
   private onConfrontExit(): void {}
-  private onConverseEnter(): void {}
-  private onConverseUpdate(): void {}
-  private onConverseExit(): void {}
+  private onConfontEnter(): void {}
+  private onConfontUpdate(): void {}
+  private onConfontExit(): void {}
   private onMedicalEnter(): void {}
   private onMedicalUpdate(): void {}
   private onMedicalExit(): void {}
@@ -319,11 +319,10 @@ export default class TaskState {
 function setInitFSMstate(t: Task): string {
   let state = 'idle'
   if (t.label == 'hallpass') state = 'hallpass'
-  else if (t.label == 'injury') {
-    state = 'injury'
-  } else if (t.label == 'mender') {
-    state = 'medical'
-  } else if (t.label == 'snitch') state = 'snitch'
+  else if (['questioning', 'arrest'].includes(t.label)) state = 'confront'
+  else if (t.label == 'injury') state = 'injury'
+  else if (t.label == 'mender') state = 'medical'
+  else if (t.label == 'snitch') state = 'snitch'
   else if (t.label == 'reckless') state = 'reckless'
   else if (['merits', 'demerits'].includes(t.label)) state = 'merit'
   return state

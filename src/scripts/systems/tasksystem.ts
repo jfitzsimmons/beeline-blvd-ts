@@ -143,27 +143,18 @@ export function impressed_checks(s: string, w: string) {
 }
 
 //Task Categories
+//TESTJPF NOW!!! Need to figure out how to
+// make fsm? trigger level confrontations?
+//player.setState('confront)??
+// needs to set novel stuff and adjust npc convos also
 function address_confrontations(cs: Task[]): Task | null {
   //let confront: Confront | null = null
-
   for (let i = cs.length - 1; i >= 0; i--) {
-    print(
-      ' 00::PLSYRTCONFRONT??:: ',
-      cs[i].target == 'player',
-      cs[i].owner,
-      cs[i].target
-    )
-
     const c = cs[i]
     const owner = npcs.all[c.owner]
     const target: NpcState | PlayerState =
       c.target === 'player' ? player.state : npcs.all[c.target]
-    print(
-      '11:: PLSYRTCONFRONT??:: ',
-      owner.currRoom == target.currRoom,
-      owner.currRoom,
-      target.currRoom
-    )
+
     if (
       owner.currRoom == target.currRoom ||
       (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
@@ -172,37 +163,20 @@ function address_confrontations(cs: Task[]): Task | null {
       c.turns = 0
       // confront =
       print('PLSYRTCONFRONT??:: ', c.target == 'player', c.owner, c.target)
+      //shouldnt return a task, but make novel changes, etc..
       return c.target == 'player' ? c : null
     }
     // if (confront != null) break
   }
   return null
-} /**
-function justrecklessTESTJPF(cs: Task[]) {
-  for (let i = cs.length - 1; i >= 0; i--) {
-    const agent = npcs.all[cs[i].owner]
-    const stations = rooms.all[agent.currRoom].stations
-    let station: keyof typeof stations
-    for (station in stations) {
-      const watcher = stations[station]
-      //loop through stations in room of task agent
-      if (watcher != '' && watcher != cs[i].owner && watcher != cs[i].target) {
-        reckless_consequence(cs[i], watcher)
-      }
-    }
-  }
-}*/
+}
+
 function address_busy_acts(cs: Task[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
     focused_acts(cs[i])
   }
 }
 
-//so this will be Tasks state turn which will loop thru
-// each Task. I think each task's state should be set to it's
-//label "clearance", "reckless" on creation
-// then task.update()
-//LEVEL Tasks
 export function address_cautions() {
   const sortedTasks = tasks.all.sort((a: Task, b: Task) => a.turns - b.turns)
   const { confrontational, leftovercautions } = sortedTasks.reduce(
@@ -223,18 +197,13 @@ export function address_cautions() {
     },
     { medical: [], conversational: [] }
   )
-  /**
-  //testjpf change to filter
-  const { reckless } = conversational.reduce(
-    (r: { [key: string]: Task[] }, o: Task) => {
-      r[o.label == 'reckless' ? 'reckless' : 'conversational2'].push(o)
-      return r
-    },
-    { reckless: [], conversational2: [] }
-  )*/
-  //address_admin(clearance)
-  //justrecklessTESTJPF(reckless)
+
   address_busy_acts(medical)
+
+  //TESTJPF NOW!!! Need to figure out how to
+  // make fsm? trigger level confrontations?
+  //player.setState('confront)??
+  // needs to set novel stuff and adjust npc convos also
   const confront: Task | null = address_confrontations(confrontational)
 
   return confront

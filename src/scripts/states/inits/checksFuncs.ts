@@ -344,7 +344,6 @@ function add_predator(this: WorldTasks, t: string, l: string) {
 
   if (t != 'player') {
     const target = this.parent.returnNpc(t)
-
     const effects_list = ['inspired', 'opportunist', 'vanity', 'inhiding']
     const effect: Effect = fx[shuffle(effects_list)[0]]
     if (effect.fx.type == 'opinion') effect.fx.stat = target.clan
