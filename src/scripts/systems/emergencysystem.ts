@@ -3,19 +3,19 @@ import { rollSpecialDice } from '../utils/dice'
 import {
   //arraymove,
   clamp,
-  shuffle,
+  // shuffle,
 } from '../utils/utils'
 import { admirer_check, prejudice_check } from './effectsystem'
 import { bribe_check } from './inventorysystem'
 import {
-  recklessCheck,
+  //recklessCheck,
   suspect_punched_check,
   unlucky_check,
 } from './chaossystem'
 import { add_pledge, go_to_jail } from './systemshelpers'
 import { Task, Consequence } from '../../types/tasks'
 
-const { tasks, npcs, player } = globalThis.game.world
+const { npcs, player } = globalThis.game.world
 const questioning_checks: Array<
   (s: string, w: string) => { pass: boolean; type: string }
 > = [
@@ -27,16 +27,16 @@ const questioning_checks: Array<
   prejudice_check,
   unlucky_check,
 ]
-const thief_consolations = [
-  snitch_check,
-  meritsDemerits,
-  recklessCheck,
-  //society_check,
-]
+//const thief_consolations = [
+//snitch_check,
+//meritsDemerits,
+////recklessCheck,
+//society_check,
+//]
 //Crime Consolations
 
 //export const injured_npcs: string[] = []
-
+/**
 function meritsDemerits(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
@@ -59,7 +59,7 @@ function meritsDemerits(suspect: string, watcher: string): Consequence {
   }
 
   return { pass: false, type: 'neutral' }
-}
+}*/
 //Checks and Helpers
 //security
 function pledge_check(suspect: string, watcher: string): Consequence {
@@ -120,53 +120,8 @@ export function jailtime_check(suspect: string, watcher: string): Consequence {
 
   return { pass: false, type: 'neutral' }
 }
-export function snitch_check(suspect: string, watcher: string): Consequence {
-  //print('snitch check suspect::', suspect)
-  const w = npcs.all[watcher]
-  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
-  const modifier = Math.round(
-    w.traits.binaries.anti_authority * 5 +
-      (w.traits.skills.constitution - s.traits.skills.charisma) / 2
-  )
-  const advantage =
-    w.traits.skills.perception +
-      Math.abs(w.traits.binaries.passiveAggressive * 5) >
-    s.traits.skills.stealth + +Math.abs(s.traits.binaries.passiveAggressive * 5)
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
-
-  //print('TESTJPF RESULT::: snitch', result)
-  if (result > 5 && result <= 10) {
-    return { pass: true, type: 'snitch' }
-  }
-
-  if (result > 10) {
-    //print('SPECIAL snitch')
-    return { pass: true, type: 'special' }
-  }
-  if (result <= 1) {
-    //print('NEVER snitch')
-    return { pass: true, type: 'critical' }
-  }
-
-  return { pass: false, type: 'neutral' }
-}
-
-//Confrontation /security
-function thief_consolation_checks(s: string, w: string) {
-  const tempcons: Array<(s: string, w: string) => Consequence> =
-    shuffle(thief_consolations)
-
-  for (const check of tempcons) {
-    const consolation = check(s, w)
-    if (consolation.pass == true) {
-      print('EMsys::: thief_consolation_checks::', consolation.type)
-      return consolation.type
-    }
-  }
-  print('did nothing after witnessing a theft attempt')
-  return 'neutral'
-}
+/** 
 export function build_consequence(
   c: Task,
   checks: Array<(n: string, w: string) => Consequence>,
@@ -195,16 +150,16 @@ export function build_consequence(
   }
   //print('BUILD CONEQUENCE return type::', consolation.type)
   return consolation.type
-}
+}*/
 function question_consequence(c: Task) {
   //npconly
   //print('QC::: ', c.owner, 'is NOW questioning:', c.target)
 
-  const tempcons: Array<
-    (s: string, w: string) => { pass: boolean; type: string }
-  > = shuffle(questioning_checks)
-
-  build_consequence(c, tempcons)
+  //const tempcons: Array<
+  //  (s: string, w: string) => { pass: boolean; type: string }
+  //> = shuffle(questioning_checks)
+  print(questioning_checks)
+  //build_consequence(c, tempcons)
   c.turns = 0
 }
 export function npc_confrontation(s: string, c: Task) {

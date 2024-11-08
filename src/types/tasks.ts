@@ -2,7 +2,7 @@ import NpcState from '../scripts/states/npc'
 import QuestState from '../scripts/states/quest'
 import QuestStep from '../scripts/states/questStep'
 import TaskState from '../scripts/states/task'
-//import { Direction } from './ai'
+//import WorldTasks from '../scripts/states/tasks'
 import { Npcs, PlayerState, Skills } from './state'
 
 type NoOptionals<T> = {
@@ -143,6 +143,18 @@ export interface QuestMethods {
 export interface TasksChecks {
   playerSnitchCheck(priors: boolean, cop: string, cause: string): string
   npcSnitchCheck(c: string, t: string): string
+  ignorant_check(target: string, listener: string): Consequence
+  dumb_crook_check(target: string, listener: string): Consequence
+  chaotic_good_check(target: string, listener: string): Consequence
+  build_consequence(
+    t: Task,
+    listener: string,
+    checks: Array<(target: string, listener: string) => Consequence>,
+    precheck: boolean
+  ): string
+  recklessCheck(t: string, l: string): Consequence
+  classy_check(t: string, l: string): Consequence
+  predator_check(t: string, l: string): Consequence
 }
 export interface Task {
   owner: string
