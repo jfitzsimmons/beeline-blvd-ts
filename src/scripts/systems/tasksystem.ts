@@ -5,16 +5,16 @@ import {
   prejudice_check,
   vanity_check,
   angel_check,
-  chaotic_good_check,
+  //chaotic_good_check,
   classy_check,
-  dumb_crook_check,
-  ignorant_check,
+  //dumb_crook_check,
+  //ignorant_check,
   predator_check,
 } from '../systems/effectsystem'
 import {
-  build_consequence,
+  //build_consequence,
   npc_confrontation,
-  snitch_check,
+  // snitch_check,
 } from './emergencysystem'
 import {
   neg_consolations,
@@ -26,7 +26,7 @@ import {
 } from './chaossystem'
 import NpcState from '../states/npc'
 
-const { tasks, rooms, npcs, player } = globalThis.game.world
+const { tasks, npcs, player } = globalThis.game.world
 
 const confrontation_checks: Array<
   (s: string, w: string) => { pass: boolean; type: string }
@@ -35,17 +35,17 @@ const confrontation_checks: Array<
   angel_check,
   suspect_punched_check,
   watcher_punched_check,
-  snitch_check,
+  //snitch_check,
   prejudice_check,
   unlucky_check,
   suspicious_check,
 ]
-
+/**
 export const reck_theft_checks = [
   ignorant_check,
   dumb_crook_check,
   chaotic_good_check,
-]
+]*/
 export const reck_harass_checks = [classy_check, predator_check]
 
 //Focused actions
@@ -76,9 +76,9 @@ function focused_acts(c: Task) {
     }
   }
 }
-
-function reckless_consequence(c: Task, _w: string) {
-  print('RC::: ', c.owner, ' is gossiping with', _w)
+/**
+function reckless_consequence(c: Task) {
+  //print('RC::: ', c.owner, ' is gossiping with', _w)
   const checks: Array<(n: string, _w: string) => Consequence> =
     c.cause == 'theft'
       ? shuffle(reck_theft_checks)
@@ -86,20 +86,21 @@ function reckless_consequence(c: Task, _w: string) {
 
   build_consequence(c, checks)
 }
-
+*/
 //player interaction and npc actions
 export function confrontationConsequence(
   s: string,
   w: string,
   precheck = false
 ) {
-  let tempcons: Array<(s: string, w: string) => Consequence> = []
+  //let tempcons: Array<(s: string, w: string) => Consequence> = []
   //let precheck = true
   //const consolation = { pass: true, type: 'concern' }
   if (s != 'player') {
-    tempcons = shuffle(confrontation_checks)
+    print(w, confrontation_checks)
+    //tempcons = shuffle(confrontation_checks)
     //precheck = false
-  }
+  } /**
   const caution: Task = {
     owner: w,
     turns: 1,
@@ -114,8 +115,9 @@ export function confrontationConsequence(
     tempcons,
     precheck == true && s == 'player'
   )
-
-  return precheck == true && s == 'player' ? 'concern' : consequence
+ */
+  //return precheck == true && s == 'player' ? 'concern' : consequence
+  return precheck == true && s == 'player' ? 'concern' : 'reckless'
 }
 
 //NOVEL
@@ -175,7 +177,7 @@ function address_confrontations(cs: Task[]): Task | null {
     // if (confront != null) break
   }
   return null
-}
+} /**
 function justrecklessTESTJPF(cs: Task[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
     const agent = npcs.all[cs[i].owner]
@@ -189,7 +191,7 @@ function justrecklessTESTJPF(cs: Task[]) {
       }
     }
   }
-}
+}*/
 function address_busy_acts(cs: Task[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
     focused_acts(cs[i])
@@ -214,14 +216,14 @@ export function address_cautions() {
     },
     { confrontational: [], leftovercautions: [] }
   )
-  const { medical, conversational } = leftovercautions.reduce(
+  const { medical } = leftovercautions.reduce(
     (r: { [key: string]: Task[] }, o: Task) => {
       r[o.label == 'mender' ? 'medical' : 'conversational'].push(o)
       return r
     },
     { medical: [], conversational: [] }
   )
-
+  /**
   //testjpf change to filter
   const { reckless } = conversational.reduce(
     (r: { [key: string]: Task[] }, o: Task) => {
@@ -229,9 +231,9 @@ export function address_cautions() {
       return r
     },
     { reckless: [], conversational2: [] }
-  )
+  )*/
   //address_admin(clearance)
-  justrecklessTESTJPF(reckless)
+  //justrecklessTESTJPF(reckless)
   address_busy_acts(medical)
   const confront: Task | null = address_confrontations(confrontational)
 

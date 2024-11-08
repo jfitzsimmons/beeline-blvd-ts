@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 
 import {
+  Consequence,
   // Consequence,
   Effect,
   Task,
@@ -228,25 +229,31 @@ export default class TaskState {
   private onMeritExit(): void {}
   private onRecklessEnter(): void {}
   private onRecklessUpdate(): void {
-    /** 
     const owner = this.parent.returnNpc(this.owner)
     // const target = this.parent.returnNpc(this.target)
     //print('MERTIS:: TASK:', owner.name, owner.currRoom)
     const others = this.parent
       .getOccupants(owner.currRoom)
       .filter((o) => o !== this.owner)
-    for (const npc of others) {
-      //  const listener = this.parent.returnNpc(npc)
-      const checks: Array<(target: Traits, listener: Traits) => Consequence> =
-        this.cause == 'theft'
-          ? shuffle([this.checks.recktheft1, this.checks.recktheft2])
-          : shuffle([this.checks.reckharass1, this.checks.reckharass2])
-      //          ? shuffle(reck_theft_checks)
-      //        : shuffle(reck_harass_checks)
+    // for (const listener of others) {
+    //  const listener = this.parent.returnNpc(npc)
+    const checks: Array<(target: string, listener: string) => Consequence> =
+      this.cause == 'theft'
+        ? shuffle([
+            this.checks.ignorant_check!.bind(this),
+            this.checks.dumb_crook_check!.bind(this),
+            this.checks.chaotic_good_check!.bind(this),
+          ])
+        : shuffle([
+            this.checks.ignorant_check!.bind(this),
+            this.checks.dumb_crook_check!.bind(this),
+            this.checks.chaotic_good_check!.bind(this),
+          ])
+    //          ? shuffle(reck_theft_checks)
+    //        : shuffle(reck_harass_checks)
 
-      build_consequence(this, checks)
-    }
-      */
+    this.checks.build_consequence!(this, others[0], checks, false)
+    // }
   }
 
   private onRecklessExit(): void {}
@@ -259,6 +266,13 @@ export default class TaskState {
       return {
         playerSnitchCheck: checks.playerSnitchCheck.bind(this),
         npcSnitchCheck: checks.npcSnitchCheck.bind(this),
+      }
+    } else if (label == 'reckless') {
+      return {
+        build_consequence: checks.build_consequence.bind(this),
+        ignorant_check: checks.ignorant_check.bind(this),
+        dumb_crook_check: checks.dumb_crook_check.bind(this),
+        chaotic_good_check: checks.chaotic_good_check.bind(this),
       }
     }
 
