@@ -1,4 +1,3 @@
-import { PlayerState } from '../../types/state'
 import { Task, Consequence } from '../../types/tasks'
 import { shuffle } from '../utils/utils'
 import {
@@ -11,11 +10,7 @@ import {
   //ignorant_check,
   //predator_check,
 } from '../systems/effectsystem'
-import {
-  //build_consequence,
-  npc_confrontation,
-  // snitch_check,
-} from './emergencysystem'
+
 import {
   neg_consolations,
   pos_consolations,
@@ -24,7 +19,6 @@ import {
   unlucky_check,
   watcher_punched_check,
 } from './chaossystem'
-import NpcState from '../states/npc'
 
 const { tasks, npcs, player } = globalThis.game.world
 
@@ -147,29 +141,35 @@ export function impressed_checks(s: string, w: string) {
 // make fsm? trigger level confrontations?
 //player.setState('confront)??
 // needs to set novel stuff and adjust npc convos also
-function address_confrontations(cs: Task[]): Task | null {
+/** 
+function address_confrontations(cs: Task[]): void {
   //let confront: Confront | null = null
-  for (let i = cs.length - 1; i >= 0; i--) {
-    const c = cs[i]
-    const owner = npcs.all[c.owner]
-    const target: NpcState | PlayerState =
-      c.target === 'player' ? player.state : npcs.all[c.target]
+  // for (let i = cs.length - 1; i >= 0; i--) {
+  //   const c = cs[i]
+  const owner = npcs.all[this.owner]
+  const target: NpcState | PlayerState =
+    this.target === 'player' ? player.state : npcs.all[this.target]
 
-    if (
-      owner.currRoom == target.currRoom ||
-      (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
-    ) {
-      c.target !== 'player' && npc_confrontation(c.target, c)
-      c.turns = 0
-      // confront =
-      print('PLSYRTCONFRONT??:: ', c.target == 'player', c.owner, c.target)
-      //shouldnt return a task, but make novel changes, etc..
-      return c.target == 'player' ? c : null
-    }
-    // if (confront != null) break
+  if (
+    owner.currRoom == target.currRoom ||
+    (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
+  ) {
+    this.target !== 'player' && npc_confrontation(this.target, c)
+    this.turns = 0
+    // confront =
+    print(
+      'PLSYRTCONFRONT??:: ',
+      this.target == 'player',
+      this.owner,
+      this.target
+    )
+    //shouldnt return a task, but make novel changes, etthis..
+    // return this.target == 'player' ? c : null
   }
-  return null
-}
+  // if (confront != null) break
+  // }
+  //return null
+}*/
 
 function address_busy_acts(cs: Task[]) {
   for (let i = cs.length - 1; i >= 0; i--) {
@@ -178,8 +178,9 @@ function address_busy_acts(cs: Task[]) {
 }
 
 export function address_cautions() {
-  const sortedTasks = tasks.all.sort((a: Task, b: Task) => a.turns - b.turns)
-  const { confrontational, leftovercautions } = sortedTasks.reduce(
+  // const sortedTasks = tasks.all.sort((a: Task, b: Task) => a.turns - b.turns)
+  /** 
+  const { leftovercautions } = sortedTasks.reduce(
     (r: { [key: string]: Task[] }, o: Task) => {
       r[
         o.label == 'questioning' || o.label == 'arrest'
@@ -189,22 +190,15 @@ export function address_cautions() {
       return r
     },
     { confrontational: [], leftovercautions: [] }
-  )
-  const { medical } = leftovercautions.reduce(
-    (r: { [key: string]: Task[] }, o: Task) => {
-      r[o.label == 'mender' ? 'medical' : 'conversational'].push(o)
-      return r
-    },
-    { medical: [], conversational: [] }
-  )
+  )*/
 
-  address_busy_acts(medical)
+  address_busy_acts(tasks.all.filter((t) => t.label == 'mender'))
 
   //TESTJPF NOW!!! Need to figure out how to
   // make fsm? trigger level confrontations?
   //player.setState('confront)??
   // needs to set novel stuff and adjust npc convos also
-  const confront: Task | null = address_confrontations(confrontational)
+  //const confront: Task | null = address_confrontations(confrontational)
 
-  return confront
+  //return confront
 }

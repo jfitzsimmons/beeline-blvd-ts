@@ -4,7 +4,7 @@ import { clamp, shuffle } from '../utils/utils'
 import { add_prejudice } from './effectsystem'
 //import { go_to_jail, add_pledge } from './emergencysystem'
 import { get_extorted, removeAdvantageous } from './inventorysystem'
-import { go_to_jail, add_pledge } from './systemshelpers'
+import { add_pledge } from './systemshelpers'
 
 const { npcs, player, tasks } = globalThis.game.world
 
@@ -165,7 +165,7 @@ export function suspicious_check(
 }
 function call_security(watcher: string, suspect: string) {
   npcs.all[watcher].clan == 'security'
-    ? go_to_jail(suspect)
+    ? tasks.methods.returnNpc(suspect).fsm.setState('arrestee')
     : tasks.taskBuilder(
         watcher,
         math.random() > 0.33 ? 'questioning' : 'arrest',

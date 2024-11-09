@@ -1,4 +1,6 @@
-import { Task, QuestMethods } from '../../types/tasks'
+import { NovelNpc } from '../../types/state'
+import { Task, QuestMethods, WorldNovelProps } from '../../types/tasks'
+import { NpcsInitState } from './inits/npcsInitState'
 import NpcState from './npc'
 
 const nullTask: Task = {
@@ -14,29 +16,31 @@ export default class WorldNovel {
   //private background: string
   //private sprites: { [key: string]: string }
   private _reason: string
-  private _caution: Task
+  private _task: Task
   private _item: string
   private _active_quest: boolean
   private _forced: boolean
   private _npcsWithQuest: string[]
   private _scripts: string[]
   //private _alertChange: number
-  private _npc: NpcState
+  private _npc: NovelNpc
+  parent: WorldNovelProps
   //private _quest: QuestCondition
   quests: QuestMethods
 
-  constructor(initnpc: NpcState) {
+  constructor(novelMethods: WorldNovelProps) {
     // this.background = ''
     //  this.sprites = {}
     this._active_quest = false
     this._forced = false
     this._reason = 'none'
-    this._caution = nullTask
+    this._task = nullTask
     this._item = 'none'
     this._npcsWithQuest = []
     this._scripts = []
     // this._alertChange = 0
-    this._npc = initnpc
+    this._npc = { ...NpcsInitState.labor01 }
+    this.parent = novelMethods
     /** 
     this._quest = {
       label: '',
@@ -53,6 +57,8 @@ export default class WorldNovel {
     // set the sprites in the same function you set npc! TESTJPF
     this.append_npc_quest = this.append_npc_quest.bind(this)
     this.get_reason = this.get_reason.bind(this)
+    this.getNovelUpdates = this.getNovelUpdates.bind(this)
+    this.setConfrontation = this.setConfrontation.bind(this)
   }
 
   /*
@@ -78,14 +84,14 @@ export default class WorldNovel {
   public set reason(r: string) {
     this._reason = r
   }
-  reset_caution() {
-    this._caution = { ...nullTask }
+  reset_task() {
+    this._task = { ...nullTask }
   }
-  public get caution(): Task {
-    return this._caution
+  public get task(): Task {
+    return this._task
   }
-  public set caution(c: Task) {
-    this._caution = { ...c }
+  public set task(c: Task) {
+    this._task = { ...c }
   }
   get_novel_item = () => this._item
   public get item() {
@@ -112,12 +118,29 @@ export default class WorldNovel {
   public set scripts(s: string[]) {
     this._scripts = s
   }
-  public get npc(): NpcState {
+  public get npc(): NovelNpc {
     return this._npc
   }
-  public set npc(npc: NpcState) {
-    this.active_quest = this.npcsWithQuest.includes(npc.name)
-    this._npc = npc
+  public set npc(n: NpcState) {
+    this.active_quest = this.npcsWithQuest.includes(n.name)
+    this._npc = {
+      currStation: n.currStation,
+      name: n.name,
+      clan: n.clan,
+      convos: n.convos,
+      traits: n.traits,
+      turns_since_convo: n.turns_since_convo,
+      love: n.love,
+    }
+  }
+  getNovelUpdates(): NovelNpc {
+    return this.npc
+  }
+  setConfrontation(t: Task) {
+    this.npc = this.parent.returnNpc(t.owner)
+    this.reason = t.owner
+    this._task = { ...t }
+    this.forced = true
   }
   addScript(s: string) {
     this._scripts.push(s)

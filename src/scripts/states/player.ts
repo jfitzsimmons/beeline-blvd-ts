@@ -54,10 +54,10 @@ export default class WorldPlayer {
         onUpdate: this.onTrespassUpdate.bind(this),
         onExit: this.onTrespassExit.bind(this),
       })
-      .addState('questioned', {
-        onEnter: this.onQuestionedEnter.bind(this),
-        onUpdate: this.onQuestionedUpdate.bind(this),
-        onExit: this.onQuestionedExit.bind(this),
+      .addState('confronted', {
+        onEnter: this.onConfrontedEnter.bind(this),
+        onUpdate: this.onConfrontedUpdate.bind(this),
+        onExit: this.onConfrontedExit.bind(this),
       })
     this.addToAlertLevel = this.addToAlertLevel.bind(this)
     this.getPlayerRoom = this.getPlayerRoom.bind(this)
@@ -105,12 +105,12 @@ export default class WorldPlayer {
   private onTrespassExit(): void {
     this.parent.removeTaskByCause('player', 'clearance')
   }
-  private onQuestionedEnter(): void {
+  private onConfrontedEnter(): void {
     // print('TESTJPF: PLAYER Entering question state does nothing.')
     //  this.fsm.setState('turn')
   }
-  private onQuestionedUpdate(): void {}
-  private onQuestionedExit(): void {}
+  private onConfrontedUpdate(): void {}
+  private onConfrontedExit(): void {}
   setRoomInfo() {
     //testjpf instead will have parent.get_focused_room()
     //or something...

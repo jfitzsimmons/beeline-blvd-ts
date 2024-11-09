@@ -1,4 +1,3 @@
-import { Task } from '../../types/tasks'
 import { address_cautions } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
 import { aiActions } from '../ai/ai_main'
@@ -27,7 +26,7 @@ function calculate_heat(room: string) {
     2
 
   cold +=
-    Object.values(rooms.all.security.occupants!).filter((s) => s != '').length *
+    Object.values(rooms.all.security.vacancies!).filter((s) => s != '').length *
     3
   cold +=
     (player.hp +
@@ -47,8 +46,8 @@ function update_hud() {
   //sprite.play_flipbook("/hud#security_alert", 'alert_' .. tostring(world.player.alert_level))
   //msg.post("hud#map", "acquire_input_focus")
 }
-
-function confrontation_scene(c: Task) {
+/** 
+function confrontation_scene() {
   npcs.all[c.owner].convos = npcs.all[c.owner].convos + 1
   novel.npc = npcs.all[c.owner]
 
@@ -60,16 +59,16 @@ function confrontation_scene(c: Task) {
   //these are always player /address_cautions related.
   print('Con SCENE::: t owner/causereason::', c.owner, c.cause)
   novel.reason = c.owner
-  novel.caution = { ...c }
+  novel.task = { ...c }
   novel.forced = true
   msg.post('proxies:/controller#novelcontroller', 'show_scene')
 }
-
+*/
 function game_turn() {
   novel.forced = false
   novel.reason = 'none'
   novel.item = 'none'
-  novel.reset_caution()
+  novel.reset_task()
   print('game turn!!')
   //TESTJPF time has come for pre post turn! enter exit?!
   world.fsm.update(dt)
@@ -105,11 +104,15 @@ export function on_message(
     //is already imported.
     //if i moved it to Tasks.fsm i bet it would be ok
     //and it would find new clearance caution form aiActions()
-    const confrontation: Task | null = address_cautions()
+    address_cautions()
     msg.post(this.roomName + ':/level#' + this.roomName, 'room_load')
     //position player on screen
     msg.post('/shared/adam#adam', 'wake_up')
-    if (confrontation != null) confrontation_scene(confrontation)
+    if (player.fsm.getState() === 'confronted') {
+      msg.post('proxies:/controller#novelcontroller', 'show_scene')
+      npcs.all[novel.npc.name].fsm.setState('turn')
+      player.fsm.setState('turn')
+    }
   } else if (messageId == hash('exit_gui')) {
     quests.update_quests_progress('interact')
     quest_checker('interact')
@@ -118,7 +121,7 @@ export function on_message(
     novel.forced = false
     novel.reason = 'none'
     novel.item = 'none'
-    novel.reset_caution()
+    novel.reset_task()
     //calculate_heat(this.roomName)
 
     // if (message.novel == true) {

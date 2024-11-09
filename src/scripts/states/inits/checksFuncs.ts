@@ -42,7 +42,6 @@ export function npcSnitchCheck(this: WorldTasks, c: string, t: string): string {
   }
   return caution_state
 }
-
 //Checks and Helpers
 //effects
 function add_chaotic_good(this: WorldTasks, t: string, l: string) {
@@ -66,7 +65,7 @@ export function chaotic_good_check(
   const { skills: ls, binaries: lb } = this.parent.returnNpc(l).traits
   const { binaries: tb } =
     t === 'player'
-      ? this.parent.returnPlayer().traits
+      ? this.parent.returnPlayer().state.traits
       : this.parent.returnNpc(t).traits
   const modifier = Math.round(ls.wisdom / 2 + lb.evil_good * 5)
   const advantage = tb.anti_authority > lb.anti_authority
@@ -113,7 +112,7 @@ export function dumb_crook_check(
   const { skills: ls, binaries: lb } = this.parent.returnNpc(l).traits
   const { binaries: tb } =
     t === 'player'
-      ? this.parent.returnPlayer().traits
+      ? this.parent.returnPlayer().state.traits
       : this.parent.returnNpc(t).traits
   const modifier = Math.round(lb.lawlessLawful * -5)
   const advantage = tb.un_educated * -5 > ls.intelligence / 2
@@ -157,7 +156,7 @@ export function ignorant_check(
   const { skills: ls, binaries: lb } = this.parent.returnNpc(l).traits
   const { skills: ts } =
     t === 'player'
-      ? this.parent.returnPlayer().traits
+      ? this.parent.returnPlayer().state.traits
       : this.parent.returnNpc(t).traits
   const modifier = Math.round(lb.un_educated * -5)
   const advantage = ts.intelligence > ls.perception
@@ -180,7 +179,6 @@ export function ignorant_check(
 
   return { pass: false, type: 'neutral' }
 }
-
 //Confrontation /security
 function thief_consolation_checks(_this: WorldTasks, t: string, l: string) {
   const tempcons: Array<
@@ -243,7 +241,6 @@ export function build_consequence(
   //print('BUILD CONEQUENCE return type::', consolation.type)
   return consolation.type
 }
-
 export function snitch_check(
   t: string,
   l: string,
@@ -252,7 +249,7 @@ export function snitch_check(
   const { skills: ls, binaries: lb } = _this!.parent.returnNpc(l).traits
   const { binaries: tb, skills: ts } =
     t === 'player'
-      ? _this!.parent.returnPlayer().traits
+      ? _this!.parent.returnPlayer().state.traits
       : _this!.parent.returnNpc(t).traits
 
   const modifier = Math.round(
@@ -279,12 +276,11 @@ export function snitch_check(
 
   return { pass: false, type: 'neutral' }
 }
-
 function meritsDemerits(t: string, l: string, _this?: WorldTasks): Consequence {
   const { skills: ls, binaries: lb } = _this!.parent.returnNpc(l).traits
   const { binaries: tb } =
     t === 'player'
-      ? _this!.parent.returnPlayer().traits
+      ? _this!.parent.returnPlayer().state.traits
       : _this!.parent.returnNpc(t).traits
   const modifier = Math.round((lb.evil_good + lb.lawlessLawful) * -2.5)
   const advantage =
@@ -301,17 +297,16 @@ function meritsDemerits(t: string, l: string, _this?: WorldTasks): Consequence {
 
   return { pass: false, type: 'neutral' }
 }
-
 export function recklessCheck(
-  this: WorldTasks,
   t: string,
-  l: string
+  l: string,
+  _this?: WorldTasks
 ): Consequence {
-  const { skills: ls, binaries: lb } = this.parent.returnNpc(l).traits
+  const { skills: ls, binaries: lb } = _this!.parent.returnNpc(l).traits
   const { binaries: tb, skills: ts } =
     t === 'player'
-      ? this.parent.returnPlayer().traits
-      : this.parent.returnNpc(t).traits
+      ? _this!.parent.returnPlayer().state.traits
+      : _this!.parent.returnNpc(t).traits
 
   const modifier = Math.round(
     lb.evil_good * -5 -
@@ -338,7 +333,6 @@ export function recklessCheck(
 
   return { pass: false, type: 'neutral' }
 }
-
 function add_predator(this: WorldTasks, t: string, l: string) {
   const listener = this.parent.returnNpc(l)
 
@@ -361,7 +355,7 @@ export function predator_check(
   const { binaries: lb } = this.parent.returnNpc(l).traits
   const { binaries: tb } =
     t === 'player'
-      ? this.parent.returnPlayer().traits
+      ? this.parent.returnPlayer().state.traits
       : this.parent.returnNpc(t).traits
   const modifier = Math.round(lb.evil_good * -5)
   const advantage = tb.anti_authority > lb.passiveAggressive
@@ -408,7 +402,7 @@ export function classy_check(
   const { binaries: lb, skills: ls } = this.parent.returnNpc(l).traits
   const { skills: ts } =
     t === 'player'
-      ? this.parent.returnPlayer().traits
+      ? this.parent.returnPlayer().state.traits
       : this.parent.returnNpc(t).traits
   const modifier = Math.round(lb.un_educated * 5)
   const advantage = ls.perception > ts.strength
@@ -426,6 +420,96 @@ export function classy_check(
   }
   if (result <= 1) {
     // print('NEVER classy')
+    return { pass: true, type: 'critical' }
+  }
+
+  return { pass: false, type: 'neutral' }
+} /** 
+export function npc_confront_consequence(this: WorldTasks, t: Task) {
+  //npconly
+  //print('QC::: ', c.owner, 'is NOW questioning:', c.target)
+  if (t.label == 'arrest') {
+    //print('CAUTION:: arrest.', c.owner, 'threw', s, 'in jail')
+    // go_to_jail(s)
+  }
+  const tempcons: Array<
+    (s: string, w: string) => { pass: boolean; type: string }
+  > = shuffle([
+    // pledge_check,
+    // bribe_check,
+    // suspect_punched_check,
+    jailtime_check,
+    //admirer_check,
+    // prejudice_check,
+    // unlucky_check,
+  ])
+  build_consequence.bind(this)
+
+  build_consequence(t, tempcons, false)
+  t.turns = 0
+}
+ 
+export function npc_confrontation(c: Task) {
+  if (c.label == 'questioning') {
+    question_consequence(c)
+  } else if (c.label == 'arrest') {
+    //print('CAUTION:: arrest.', c.owner, 'threw', s, 'in jail')
+    // go_to_jail(s)
+  }
+}
+
+export function go_to_jail(s: string) {
+  //would have to pass this to Task and fire when turns == 0  or 1???
+  //testjpf set npc to fsm 'arrestee' apply security room info
+  //have to figure out arrestee update!!! steal from infirmed update!!!
+  tasks.removeHeat(s)
+  const occupants: Vacancies = rooms.all.security.vacancies!
+  let station: keyof typeof occupants
+  for (station in occupants) {
+    const prisoner = occupants[station]
+    if (prisoner == '') {
+      rooms.all.security.vacancies![station] = s
+      npcs.all[s].matrix = rooms.all.security.matrix
+      npcs.all[s].cooldown = 8
+
+      // print(s, 'jailed for:', npcs.all[s].cooldown)
+      break
+      //testjpf if jail full, kick outside of hub
+    }
+  }
+}
+*/
+export function jailtime_check(
+  this: WorldTasks,
+  t: string,
+  l: string
+): Consequence {
+  const target = this.parent.returnNpc(t)
+  const { binaries: lb, skills: ls } = this.parent.returnNpc(l).traits
+  const { skills: ts, binaries: tb } = target.traits
+  t === 'player'
+    ? this.parent.returnPlayer().state.traits
+    : this.parent.returnNpc(t).traits
+  const modifier = Math.round(
+    ls.perception - ts.perception + lb.anti_authority * 4
+  )
+  const advantage = tb.passiveAggressive < 0.2
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  //print('TESTJPF RESULT::: jailed', result)
+  if (result > 5 && result <= 10) {
+    target.fsm.setState('arrestee')
+    return { pass: true, type: 'jailed' }
+  }
+
+  if (result > 10) {
+    target.fsm.setState('arrestee')
+    target.hp = target.hp - 1
+    //print('SPECIAL jailed')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    //print('NEVER jailed')
     return { pass: true, type: 'critical' }
   }
 

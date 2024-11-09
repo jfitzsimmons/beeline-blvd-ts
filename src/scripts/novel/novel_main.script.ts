@@ -1,5 +1,5 @@
 import { novel_init, novel_start } from './matchanovel'
-const { npcs, tasks, player, novel } = globalThis.game.world
+const { tasks, player, novel } = globalThis.game.world
 
 import { prepareQuestTxts } from '../quests/quests_main'
 import { impressed_checks, unimpressed_checks } from '../systems/tasksystem'
@@ -36,7 +36,7 @@ function prepare_novel_txts(
   if (task != null) {
     print('NOVELVOVEL2 task1:', task.label)
     //could use this at level addresstasks testjpf
-    novel.caution = { ...task }
+    novel.task = { ...task }
     //used for ai witnessing player and failing confrontation check
     //questioning without accusation
     if (!['concern'].includes(novel.reason)) novel.reason = task.cause
@@ -54,9 +54,9 @@ function prepare_novel_txts(
   print('posttaskchk', novel.reason)
   if (
     !['questioning', 'arrest'].includes(novel.reason) &&
-    ['questioning', 'arrest'].includes(novel.caution.label)
+    ['questioning', 'arrest'].includes(novel.task.label)
   ) {
-    novel.reason = novel.caution.cause
+    novel.reason = novel.task.cause
   }
   print('NOVELVOVEL2 task3: novel.reason:', novel.reason)
 
@@ -183,8 +183,7 @@ export function on_message(
       }
     }
 
-    npcs.all[novel.npc.name] = novel.npc
-
+    //
     msg.post('proxies:/controller#novelcontroller', 'unload_novel')
     msg.post(player.currRoom + ':/shared/scripts#level', 'exit_gui')
   }

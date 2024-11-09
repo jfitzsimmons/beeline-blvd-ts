@@ -19,6 +19,7 @@ import {
   recklessCheck,
   classy_check,
   predator_check,
+  jailtime_check,
 } from './inits/checksFuncs'
 
 const dt = math.randomseed(os.time())
@@ -57,6 +58,7 @@ export default class WorldTasks {
       returnPlayer: this.parent.returnPlayer.bind(this),
       taskBuilder: this.taskBuilder.bind(this),
       getOccupants: this.parent.getOccupants.bind(this),
+      setConfrontation: this.parent.setConfrontation.bind(this),
     }
 
     this.quests = {
@@ -72,6 +74,7 @@ export default class WorldTasks {
       recklessCheck: recklessCheck.bind(this),
       classy_check: classy_check.bind(this),
       predator_check: predator_check.bind(this),
+      jailtime_check: jailtime_check.bind(this),
       // snitch_check: this.snitch_check.bind(this),
       // meritsDemerits: this.snitch_check.bind(this),
       //  recklessCheck: this.snitch_check.bind(this),
@@ -234,7 +237,7 @@ export default class WorldTasks {
       //   print('npcHasTask:: C:', c.owner, c.target, c.label)
       if (
         (owner == 'any' || c.owner == owner) &&
-        c.target == target &&
+        (target == 'any' || c.target == target) &&
         (labels.length < 1 || labels.includes(c.label))
       ) {
         return c

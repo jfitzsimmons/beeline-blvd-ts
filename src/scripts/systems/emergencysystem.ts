@@ -1,21 +1,23 @@
-//import { Occupants } from '../../types/state'
+//import { Vacancies } from '../../types/state'
+/** 
 import { rollSpecialDice } from '../utils/dice'
 import {
   //arraymove,
   clamp,
   // shuffle,
 } from '../utils/utils'
-import { admirer_check, prejudice_check } from './effectsystem'
-import { bribe_check } from './inventorysystem'
-import {
-  //recklessCheck,
-  suspect_punched_check,
-  unlucky_check,
-} from './chaossystem'
-import { add_pledge, go_to_jail } from './systemshelpers'
+//import { admirer_check, prejudice_check } from './effectsystem'
+//import { bribe_check } from './inventorysystem'
+//import {
+//recklessCheck,
+//  suspect_punched_check,
+//unlucky_check,
+//} from './chaossystem'
+import { add_pledge } from './systemshelpers'
 import { Task, Consequence } from '../../types/tasks'
 
 const { npcs, player } = globalThis.game.world
+
 const questioning_checks: Array<
   (s: string, w: string) => { pass: boolean; type: string }
 > = [
@@ -27,6 +29,8 @@ const questioning_checks: Array<
   prejudice_check,
   unlucky_check,
 ]
+  */
+
 //const thief_consolations = [
 //snitch_check,
 //meritsDemerits,
@@ -62,6 +66,7 @@ function meritsDemerits(suspect: string, watcher: string): Consequence {
 }*/
 //Checks and Helpers
 //security
+/** 
 function pledge_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
@@ -91,37 +96,7 @@ function pledge_check(suspect: string, watcher: string): Consequence {
   }
 
   return { pass: false, type: 'neutral' }
-}
-export function jailtime_check(suspect: string, watcher: string): Consequence {
-  const w = npcs.all[watcher]
-  const s = suspect === 'player' ? player.state : npcs.all[suspect]
-  const modifier = Math.round(
-    w.traits.skills.perception -
-      s.traits.skills.perception +
-      w.traits.binaries.anti_authority * 4
-  )
-  const advantage = s.traits.binaries.passiveAggressive < 0.2
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
-
-  //print('TESTJPF RESULT::: jailed', result)
-  if (result > 5 && result <= 10) {
-    go_to_jail(suspect)
-    return { pass: true, type: 'jailed' }
-  }
-
-  if (result > 10) {
-    //print('SPECIAL jailed')
-    return { pass: true, type: 'special' }
-  }
-  if (result <= 1) {
-    //print('NEVER jailed')
-    return { pass: true, type: 'critical' }
-  }
-
-  return { pass: false, type: 'neutral' }
-}
-
-/** 
+} 
 export function build_consequence(
   c: Task,
   checks: Array<(n: string, w: string) => Consequence>,
@@ -150,16 +125,16 @@ export function build_consequence(
   }
   //print('BUILD CONEQUENCE return type::', consolation.type)
   return consolation.type
-}*/
+}
 function question_consequence(c: Task) {
   //npconly
   //print('QC::: ', c.owner, 'is NOW questioning:', c.target)
 
-  //const tempcons: Array<
-  //  (s: string, w: string) => { pass: boolean; type: string }
-  //> = shuffle(questioning_checks)
-  print(questioning_checks)
-  //build_consequence(c, tempcons)
+  const tempcons: Array<
+    (s: string, w: string) => { pass: boolean; type: string }
+  > = shuffle(questioning_checks)
+
+  build_consequence(c, tempcons)
   c.turns = 0
 }
 export function npc_confrontation(s: string, c: Task) {
@@ -172,16 +147,16 @@ export function npc_confrontation(s: string, c: Task) {
 }
 
 //medics:
-/** 
-export function sendToInfirmary(v: string, doc: string) {
+
+export function sendToVacancy(v: string, doc: string) {
   tasks.removeHeat(v)
   tasks.remove_mend(v)
-  const occupants: Occupants = rooms.all.infirmary.occupants!
+  const occupants: Vacancies = rooms.all.infirmary.vacancies!
   let station: keyof typeof occupants
   for (station in occupants) {
     const patient = occupants[station]
     if (patient == '') {
-      // rooms.all.infirmary.occupants![station] = v
+      // rooms.all.infirmary.vacancies![station] = v
       // npcs.all[v].matrix = rooms.all.infirmary.matrix
       // npcs.all[v].cooldown = 8
       //  npcs.all[v].currRoom = 'infirmary'
@@ -222,7 +197,7 @@ export function doctor_ai_turn(
   npc: NpcState
   //targets: Direction
 ): [Direction, boolean] {
-  const patients = Object.values(rooms.all.infirmary.occupants!).filter(
+  const patients = Object.values(rooms.all.infirmary.vacancies!).filter(
     (p) => p != ''
   )
   //let docInOffice = false

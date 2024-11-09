@@ -1,9 +1,10 @@
 import NpcState from '../scripts/states/npc'
+import WorldPlayer from '../scripts/states/player'
 import QuestState from '../scripts/states/quest'
 import QuestStep from '../scripts/states/questStep'
 import TaskState from '../scripts/states/task'
 //import WorldTasks from '../scripts/states/tasks'
-import { Npcs, PlayerState, Skills } from './state'
+import { NovelNpc, Npcs, Skills } from './state'
 
 type NoOptionals<T> = {
   [K in keyof T]-?: T[K]
@@ -71,16 +72,19 @@ export interface Quest {
 export interface AllQuestsMethods {
   [key: string]: QuestMethods
 }
+export interface WorldNovelProps {
+  returnNpc(n: string): NpcState
+}
 export interface WorldPlayerProps {
   getFocusedRoom(): string
   hasHallpass(owner: string): TaskState | null
   removeTaskByCause(target: string, cause: string): void
 }
-export interface WorldTasksProps {
+export interface WorldTasksProps extends WorldNovelProps {
   didCrossPaths(owner: string, target: string): boolean
-  returnNpc(n: string): NpcState
-  returnPlayer(): PlayerState
+  returnPlayer(): WorldPlayer
   getOccupants(r: string): string[]
+  setConfrontation(t: Task): void
 }
 export interface TaskProps extends WorldTasksProps {
   addAdjustMendingQueue(patient: string): void
@@ -104,10 +108,11 @@ export interface NpcsProps {
   getStationMap(): { [key: string]: { [key: string]: string } }
   //resetStationMap(): void
   //getVicinityTargets(): Direction
-  sendToInfirmary(npc: string): string | null
+  sendToVacancy(room: string, npc: string): string | null
   getMendingQueue(): string[]
   taskBuilder(owner: string, label: string, target: string, cause: string): void
   hasHallpass(owner: string): TaskState | null
+  getNovelUpdates(): NovelNpc
 }
 export interface NpcMethod extends NpcsProps {
   add_infirmed(n: string): void
@@ -155,6 +160,7 @@ export interface TasksChecks {
   recklessCheck(t: string, l: string): Consequence
   classy_check(t: string, l: string): Consequence
   predator_check(t: string, l: string): Consequence
+  jailtime_check(t: string, l: string): Consequence
 }
 export interface Task {
   owner: string
