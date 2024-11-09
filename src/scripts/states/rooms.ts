@@ -58,7 +58,7 @@ export default class WorldRooms {
     this.pruneStationMap = this.pruneStationMap.bind(this)
     this.getStationMap = this.getStationMap.bind(this)
     this.resetStationMap = this.resetStationMap.bind(this)
-    this.sendToInfirmary = this.sendToInfirmary.bind(this)
+    this.sendToVacancy = this.sendToVacancy.bind(this)
     this.set_focused = this.set_focused.bind(this)
     this.get_focused = this.get_focused.bind(this)
     this.getOccupants = this.getOccupants.bind(this)
@@ -81,8 +81,8 @@ export default class WorldRooms {
   get_focused(): string {
     return this.focused
   }
-  sendToInfirmary(npc: string): string | null {
-    const occs = this.all.infirmary.occupants!
+  sendToVacancy(room: string, npc: string): string | null {
+    const occs = this.all[room].vacancies!
     let ko: keyof typeof occs
     for (ko in occs) {
       if (occs[ko] == '') {
@@ -125,10 +125,10 @@ export default class WorldRooms {
     } else if (npc == this.fallbacks.stations[station]) {
       this.fallbacks.stations[station] = ''
     } else if (
-      this.all[room].occupants !== undefined &&
-      npc == this.all[room].occupants![station]
+      this.all[room].vacancies !== undefined &&
+      npc == this.all[room].vacancies![station]
     ) {
-      this.all[room].occupants![station] = ''
+      this.all[room].vacancies![station] = ''
     }
   }
   clearStations() {

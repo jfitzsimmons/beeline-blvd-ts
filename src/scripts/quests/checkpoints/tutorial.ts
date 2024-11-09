@@ -126,8 +126,8 @@ function doctor_checks(conditions: QuestConditions) {
     player.clearance - 2 < rooms.all[player.currRoom].clearance &&
     from_same_room(npcs.return_security(), player.currRoom) != null
   ) {
-    novel.caution.label = 'questioning'
-    novel.caution.cause = 'tutsclearance'
+    novel.task.label = 'questioning'
+    novel.task.cause = 'tutsclearance'
     novel.forced = true
     novel.npc = from_same_room(npcs.return_security(), player.currRoom)!
     print('tutsclearances', novel.reason, novel.npc.name)

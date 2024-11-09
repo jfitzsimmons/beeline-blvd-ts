@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Actors, Occupants } from '../../types/state'
+import { Actors, Vacancies } from '../../types/state'
 import { NpcsProps2 } from '../../types/tasks'
 import { RoomsInitState } from './inits/roomsInitState'
 import StateMachine from './stateMachine'
@@ -12,7 +12,7 @@ export default class RoomState {
   stations: { [key: string]: string }
   actors: Actors
   props?: string[]
-  occupants?: Occupants
+  vacancies?: Vacancies
   parent: NpcsProps2
   constructor(r: string, lists: NpcsProps2) {
     this.fsm = new StateMachine(this, 'room' + r)
@@ -22,7 +22,7 @@ export default class RoomState {
     this.stations = RoomsInitState[r].stations
     this.actors = RoomsInitState[r].actors
     this.props = RoomsInitState[r].props || []
-    this.occupants = RoomsInitState[r].occupants || {}
+    this.vacancies = RoomsInitState[r].vacancies || {}
     this.parent = lists
     this.fsm
       .addState('idle')

@@ -18,16 +18,16 @@ function load_npcs() {
   msg.post('/passer#npc_loader', 'load_npc', { npc })
 
   msg.post('prisoner1#npc_loader', 'load_npc', {
-    npc: rooms.all['security'].occupants!.prisoner1,
+    npc: rooms.all['security'].vacancies!.prisoner1,
   })
   msg.post('prisoner2#npc_loader', 'load_npc', {
-    npc: rooms.all['security'].occupants!.prisoner2,
+    npc: rooms.all['security'].vacancies!.prisoner2,
   })
   msg.post('prisoner3#npc_loader', 'load_npc', {
-    npc: rooms.all['security'].occupants!.prisoner3,
+    npc: rooms.all['security'].vacancies!.prisoner3,
   })
   msg.post('prisoner4#npc_loader', 'load_npc', {
-    npc: rooms.all['security'].occupants!.prisoner4,
+    npc: rooms.all['security'].vacancies!.prisoner4,
   })
 
   msg.post('/outside1#npc_loader', 'load_npc', {

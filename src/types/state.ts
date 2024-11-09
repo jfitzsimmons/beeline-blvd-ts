@@ -43,6 +43,15 @@ export interface NpcDefaults {
   currStation: string
   race: string
 }
+export interface NovelNpc {
+  name: string
+  clan: string
+  convos: number
+  traits: Traits
+  turns_since_convo: number
+  love: number
+  currStation: string
+}
 export interface Skills {
   [key: string]: number
 }
@@ -87,11 +96,11 @@ export interface Room {
   stations: { [key: string]: string }
   actors: Actors
   props?: string[]
-  occupants?: Occupants
+  vacancies?: Vacancies
 }
 /** 
 export interface Occupancy extends Room {
-  occupants: Occupants
+  occupants: Vacancies
 }
   */
 export interface Actors {
@@ -102,7 +111,7 @@ export interface Actor {
   watcher?: string
   actions: string[]
 }
-export interface Occupants {
+export interface Vacancies {
   [key: string]: string
 }
 export interface Roles {

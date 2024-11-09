@@ -8,13 +8,12 @@ import {
   TaskProps,
   TasksChecks,
 } from '../../types/tasks'
-//import { build_consequence } from '../systems/emergencysystem'
-//import { reck_theft_checks, reck_harass_checks } from '../systems/tasksystem'
-//import { add_effects_bonus } from '../utils/ai'
 import { fxLookup, fx } from '../utils/consts'
 import { shuffle } from '../utils/utils'
 import { NpcsInitState } from './inits/npcsInitState'
 import { PlayerInitState } from './inits/playerInitState'
+import NpcState from './npc'
+import WorldPlayer from './player'
 import StateMachine from './stateMachine'
 
 export default class TaskState {
@@ -69,11 +68,6 @@ export default class TaskState {
       onUpdate: this.onInjuryUpdate.bind(this),
       onExit: this.onInjuryExit.bind(this),
     })
-    this.fsm.addState('converse', {
-      onEnter: this.onConverseEnter.bind(this),
-      onUpdate: this.onConverseUpdate.bind(this),
-      onExit: this.onConverseExit.bind(this),
-    })
     this.fsm.addState('medical', {
       onEnter: this.onMedicalEnter.bind(this),
       onUpdate: this.onMedicalUpdate.bind(this),
@@ -105,9 +99,19 @@ export default class TaskState {
     //give roomstate a same room method?
   }
   private onInjuryUpdate(): void {
+    //checkmobile!!!TESTJPF
     print('injurytaskupdate::')
+
     for (const doc of ['doc01', 'doc02', 'doc03']) {
-      if (this.parent.didCrossPaths(this.owner, doc)) {
+      const mobile = () =>
+        this.parent.npcHasTask(doc, 'any', [
+          'mender',
+          'mendee',
+          'injury',
+          'infirm',
+        ]) === null
+
+      if (this.parent.didCrossPaths(this.owner, doc) && mobile() === true) {
         print(this.owner, 'met doc for injury task::', doc)
         this.parent.addAdjustMendingQueue(this.target)
         this.turns = 0
@@ -179,12 +183,73 @@ export default class TaskState {
     }
   }
   private onHallpassExit(): void {}
-  private onConfrontEnter(): void {}
-  private onConfrontUpdate(): void {}
+  private onConfrontEnter(): void {
+    const owner = this.parent.returnNpc(this.owner)
+    const target: NpcState | WorldPlayer =
+      this.target === 'player'
+        ? this.parent.returnPlayer()
+        : this.parent.returnNpc(this.target)
+
+    if (
+      owner.currRoom == target.currRoom ||
+      (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
+    ) {
+      this.target === 'player'
+        ? this.playerConfrontConsequence(target.fsm, owner.fsm)
+        : this.npc_confront_consequence()
+      this.turns = 0
+      // confront =
+      print(
+        'PLSYRTCONFRONT??:: ',
+        this.target == 'player',
+        this.owner,
+        this.target
+      )
+      //shouldnt return a task, but make novel changes, etthis..
+      // return this.target == 'player' ? c : null
+    }
+    // if (confront != null) break
+    // }
+    //return null
+    /**
+     * TESTJPf maybe make a playerconfrontconsequence()
+     * set novel stuff, npc.convos
+     */
+  }
+  private onConfrontUpdate(): void {
+    const owner = this.parent.returnNpc(this.owner)
+    const target: NpcState | WorldPlayer =
+      this.target === 'player'
+        ? this.parent.returnPlayer()
+        : this.parent.returnNpc(this.target)
+
+    if (
+      owner.currRoom == target.currRoom ||
+      (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
+    ) {
+      this.target === 'player'
+        ? this.playerConfrontConsequence(target.fsm, owner.fsm)
+        : this.npc_confront_consequence()
+      this.turns = 0
+      // confront =
+      print(
+        'PLSYRTCONFRONT??:: ',
+        this.target == 'player',
+        this.owner,
+        this.target
+      )
+      //shouldnt return a task, but make novel changes, etthis..
+      // return this.target == 'player' ? c : null
+    }
+    // if (confront != null) break
+    // }
+    //return null
+    /**
+     * TESTJPf maybe make a playerconfrontconsequence()
+     * set novel stuff, npc.convos
+     */
+  }
   private onConfrontExit(): void {}
-  private onConverseEnter(): void {}
-  private onConverseUpdate(): void {}
-  private onConverseExit(): void {}
   private onMedicalEnter(): void {}
   private onMedicalUpdate(): void {}
   private onMedicalExit(): void {}
@@ -275,9 +340,42 @@ export default class TaskState {
         classy_check: checks.classy_check.bind(this),
         predator_check: checks.predator_check.bind(this),
       }
+    } else if (['questioning', 'arrest'].includes(label)) {
+      return {
+        jailtime_check: checks.jailtime_check.bind(this),
+        build_consequence: checks.build_consequence.bind(this),
+      }
     }
 
     return {}
+  }
+  playerConfrontConsequence(playerfsm: StateMachine, npcfsm: StateMachine) {
+    playerfsm.setState('confronted')
+    npcfsm.setState('confront')
+    this.parent.setConfrontation(this)
+  }
+  npc_confront_consequence() {
+    //npconly
+    //print('QC::: ', c.owner, 'is NOW questioning:', c.target)
+    if (this.label == 'arrest') {
+      this.parent.returnNpc(this.target).fsm.setState('arrestee')
+      //print('CAUTION:: arrest.', c.owner, 'threw', s, 'in jail')
+      // go_to_jail(s)
+    }
+    const tempcons: Array<
+      (s: string, w: string) => { pass: boolean; type: string }
+    > = shuffle([
+      // pledge_check,
+      // bribe_check,
+      // suspect_punched_check,
+      this.checks.jailtime_check!.bind(this),
+      //admirer_check,
+      // prejudice_check,
+      // unlucky_check,
+    ])
+    //build_consequence.bind(this)
+
+    this.checks.build_consequence!(this, this.target, tempcons, false)
   }
   /** 
   //testjpf move 2 checks to parent
@@ -319,11 +417,10 @@ export default class TaskState {
 function setInitFSMstate(t: Task): string {
   let state = 'idle'
   if (t.label == 'hallpass') state = 'hallpass'
-  else if (t.label == 'injury') {
-    state = 'injury'
-  } else if (t.label == 'mender') {
-    state = 'medical'
-  } else if (t.label == 'snitch') state = 'snitch'
+  else if (['questioning', 'arrest'].includes(t.label)) state = 'confront'
+  else if (t.label == 'injury') state = 'injury'
+  else if (t.label == 'mender') state = 'medical'
+  else if (t.label == 'snitch') state = 'snitch'
   else if (t.label == 'reckless') state = 'reckless'
   else if (['merits', 'demerits'].includes(t.label)) state = 'merit'
   return state

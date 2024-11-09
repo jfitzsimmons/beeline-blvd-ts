@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { NpcsInitState } from './inits/npcsInitState'
 import StateMachine from './stateMachine'
-import { InventoryTableItem, Skills } from '../../types/state'
+import { InventoryTableItem, NovelNpc, Skills } from '../../types/state'
 import { Effect, NpcMethod } from '../../types/tasks'
 import {
   RoomsInitLayout,
@@ -139,10 +139,10 @@ export default class NpcState {
         onUpdate: this.onInterrogateUpdate.bind(this),
         onExit: this.onInterrogateExit.bind(this),
       })
-      .addState('questioned', {
-        onEnter: this.onQuestionedEnter.bind(this),
-        onUpdate: this.onQuestionedUpdate.bind(this),
-        onExit: this.onQuestionedExit.bind(this),
+      .addState('confront', {
+        onEnter: this.onConfrontEnter.bind(this),
+        onUpdate: this.onConfrontUpdate.bind(this),
+        onExit: this.onConfrontExit.bind(this),
       })
       .addState('trespass', {
         onEnter: this.onTrespassEnter.bind(this),
@@ -165,9 +165,22 @@ export default class NpcState {
         onExit: this.onNewExit.bind(this),
       })
   }
-  private onQuestionedEnter(): void {}
-  private onQuestionedUpdate(): void {}
-  private onQuestionedExit(): void {}
+  //TESTJJPF Rename to confrontPlayer???
+  private onConfrontEnter(): void {
+    this.convos++
+  }
+  private onConfrontUpdate(): void {}
+  private onConfrontExit(): void {
+    const novelUpdates: NovelNpc = this.parent.getNovelUpdates()
+    this.convos = novelUpdates.convos
+    this.traits = {
+      skills: { ...novelUpdates.traits.skills },
+      binaries: { ...novelUpdates.traits.binaries },
+      opinion: { ...novelUpdates.traits.opinion },
+    }
+    this.turns_since_convo = novelUpdates.turns_since_convo
+    this.love = novelUpdates.love
+  }
   private onInterrogateEnter(): void {}
   private onInterrogateUpdate(): void {}
   private onInterrogateExit(): void {}
@@ -262,8 +275,25 @@ export default class NpcState {
     this.findRoomPlaceStation(rooms)
   }
   private onTrespassExit(): void {}
-  private onArresteeEnter(): void {}
-  private onArresteeUpdate(): void {}
+  private onArresteeEnter(): void {
+    const vacancy = this.parent.sendToVacancy('security', this.name)
+    if (vacancy != null) {
+      this.parent.clearStation(this.currRoom, this.currStation, this.name)
+      this.currStation = vacancy
+      this.fsm.setState('infirm')
+    }
+    this.turns_since_encounter = 99
+    this.parent.add_infirmed(this.name)
+    this.matrix = RoomsInitState.security.matrix
+    this.cooldown = 8
+    this.currRoom = 'security'
+  }
+  private onArresteeUpdate(): void {
+    // TESTJPF need to get stagingprefsm from aichecks
+    this.cooldown--
+
+    if (this.cooldown < 1) this.fsm.setState('turn')
+  }
   private onArresteeExit(): void {}
   private onMendeeEnter(): void {
     this.turns_since_encounter = 98
@@ -275,7 +305,7 @@ export default class NpcState {
     //print('MENDEEUP::: hp', this.hp)
     this.hp = this.hp + 1
     if (this.hp > 4) {
-      const vacancy = this.parent.sendToInfirmary(this.name)
+      const vacancy = this.parent.sendToVacancy('infirmary', this.name)
       if (vacancy != null) {
         this.currStation = vacancy
         this.fsm.setState('infirm')
@@ -294,6 +324,7 @@ export default class NpcState {
     this.turns_since_encounter = 98
     //call func with current room as parameter
     //if same as palyer room!!
+    print('MEDERUPDATE::', this.name)
     this.parent.pruneStationMap(this.currRoom, this.currStation)
   }
   private onMenderExit(): void {
