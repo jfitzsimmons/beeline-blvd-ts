@@ -1,4 +1,4 @@
-import { address_cautions } from '../systems/tasksystem'
+import { address_busy_tasks } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
 import { aiActions } from '../ai/ai_main'
 
@@ -70,13 +70,7 @@ function game_turn() {
   novel.item = 'none'
   novel.reset_task()
   print('game turn!!')
-  //TESTJPF time has come for pre post turn! enter exit?!
   world.fsm.update(dt)
-  //if i can incorporate confrontations
-  //i can move the rest of this to various Turn fsm states
-  //prob something like tasks.setState(progress)
-  //quests.update_quests_progress('turn')
-  //tasks.setState()
   aiActions()
   quest_checker('turn')
 }
@@ -100,11 +94,7 @@ export function on_message(
     //TESTJPF can this whole conditional be moved to fsms???
     if (message.loadType == 'room transition') game_turn()
     calculate_heat(this.roomName)
-    //testjpf im guessing the issue is that address_Cautions
-    //is already imported.
-    //if i moved it to Tasks.fsm i bet it would be ok
-    //and it would find new clearance caution form aiActions()
-    address_cautions()
+    address_busy_tasks()
     msg.post(this.roomName + ':/level#' + this.roomName, 'room_load')
     //position player on screen
     msg.post('/shared/adam#adam', 'wake_up')
@@ -123,13 +113,7 @@ export function on_message(
     novel.item = 'none'
     novel.reset_task()
     //calculate_heat(this.roomName)
-
-    // if (message.novel == true) {
-    //msg.post(this.roomName + ':/adam#interact', 'reload_script')
-    // }
     msg.post(this.roomName + ':/shared/adam#adam', 'acquire_input_focus')
-    // } else if (messageId == hash('show_scene')) {
-    //msg.post('hud#map', 'release_input_focus')
   } else if (messageId == hash('update_alert')) {
     sprite.play_flipbook(
       'hud#security_alert',

@@ -45,32 +45,7 @@ export const reck_theft_checks = [
 
 //Focused actions
 //todo doctor npc state
-function focused_acts(c: Task) {
-  if (c.cause == 'injury' && c.label == 'mender') {
-    const hurt = npcs.all[c.target].hp < 5
-    if (npcs.all[c.owner].currRoom == player.currRoom && hurt == true) {
-      msg.post(
-        `/${npcs.all[c.owner].currStation}#npc_loader`,
-        hash('move_npc'),
-        {
-          station: npcs.all[c.target].currStation,
-          npc: c.owner,
-        }
-      )
-      print(
-        c.owner,
-        'STATION MOVE VIA TASK mending',
-        c.target,
-        'in',
-        npcs.all[c.owner].currRoom
-      )
-    }
-    if (hurt == false) {
-      c.turns = 0
-      npcs.all[c.owner].fsm.setState('turn')
-    }
-  }
-}
+//function focused_acts(c: Task) {}
 /**
 function reckless_consequence(c: Task) {
   //print('RC::: ', c.owner, ' is gossiping with', _w)
@@ -171,15 +146,39 @@ function address_confrontations(cs: Task[]): void {
   //return null
 }*/
 
-function address_busy_acts(cs: Task[]) {
-  for (let i = cs.length - 1; i >= 0; i--) {
-    focused_acts(cs[i])
+export function address_busy_tasks() {
+  const ts = tasks.all.filter((t) => t.label == 'mender')
+  for (let i = ts.length - 1; i >= 0; i--) {
+    if (ts[i].cause == 'injury' && ts[i].label == 'mender') {
+      const hurt = npcs.all[ts[i].target].hp < 5
+      if (npcs.all[ts[i].owner].currRoom == player.currRoom && hurt == true) {
+        msg.post(
+          `/${npcs.all[ts[i].owner].currStation}#npc_loader`,
+          hash('move_npc'),
+          {
+            station: npcs.all[ts[i].target].currStation,
+            npc: ts[i].owner,
+          }
+        )
+        print(
+          ts[i].owner,
+          'STATION MOVE VIA TASK mending',
+          ts[i].target,
+          'in',
+          npcs.all[ts[i].owner].currRoom
+        )
+      }
+      if (hurt == false) {
+        ts[i].turns = 0
+        npcs.all[ts[i].owner].fsm.setState('turn')
+      }
+    }
   }
 }
 
-export function address_cautions() {
-  // const sortedTasks = tasks.all.sort((a: Task, b: Task) => a.turns - b.turns)
-  /** 
+//export function address_cautions() {
+// const sortedTasks = tasks.all.sort((a: Task, b: Task) => a.turns - b.turns)
+/** 
   const { leftovercautions } = sortedTasks.reduce(
     (r: { [key: string]: Task[] }, o: Task) => {
       r[
@@ -192,13 +191,13 @@ export function address_cautions() {
     { confrontational: [], leftovercautions: [] }
   )*/
 
-  address_busy_acts(tasks.all.filter((t) => t.label == 'mender'))
+//address_busy_acts()
 
-  //TESTJPF NOW!!! Need to figure out how to
-  // make fsm? trigger level confrontations?
-  //player.setState('confront)??
-  // needs to set novel stuff and adjust npc convos also
-  //const confront: Task | null = address_confrontations(confrontational)
+//TESTJPF NOW!!! Need to figure out how to
+// make fsm? trigger level confrontations?
+//player.setState('confront)??
+// needs to set novel stuff and adjust npc convos also
+//const confront: Task | null = address_confrontations(confrontational)
 
-  //return confront
-}
+//return confront
+//}
