@@ -155,6 +155,7 @@ export default class World {
     if (this.clock > 23) this.clock = this.clock - 24
   }
   private onTurnUpdate(): void {
+    print('<<< ::: WORLDUpdate() ::: >>>')
     this.player.fsm.update(dt)
     this.npcs.fsm.update(dt)
     this.rooms.fsm.update(dt)

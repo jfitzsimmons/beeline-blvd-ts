@@ -31,10 +31,10 @@ export default class RoomState {
         onUpdate: this.onFocusUpdate.bind(this),
         onExit: this.onFocusEnd.bind(this),
       })
-      .addState('arrest', {
-        onEnter: this.onArrestEnter.bind(this),
-        onUpdate: this.onArrestUpdate.bind(this),
-        onExit: this.onArrestExit.bind(this),
+      .addState('blur', {
+        onEnter: this.onBlurEnter.bind(this),
+        onUpdate: this.onBlurUpdate.bind(this),
+        onExit: this.onBlurExit.bind(this),
       })
   }
   private onFocusStart(): void {
@@ -47,7 +47,9 @@ export default class RoomState {
     //not bad to handle interactions
   }
   private onFocusEnd(): void {}
-  private onArrestEnter(): void {}
-  private onArrestUpdate(): void {}
-  private onArrestExit(): void {}
+  private onBlurEnter(): void {}
+  private onBlurUpdate(): void {
+    this.fsm.setState('idle')
+  }
+  private onBlurExit(): void {}
 }

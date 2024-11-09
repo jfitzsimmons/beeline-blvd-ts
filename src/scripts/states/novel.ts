@@ -84,7 +84,10 @@ export default class WorldNovel {
   public set reason(r: string) {
     this._reason = r
   }
-  reset_task() {
+  reset_novel() {
+    this.forced = false
+    this.reason = 'none'
+    this.item = 'none'
     this._task = { ...nullTask }
   }
   public get task(): Task {

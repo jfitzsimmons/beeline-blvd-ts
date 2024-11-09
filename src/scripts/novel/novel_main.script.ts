@@ -112,13 +112,13 @@ function consolation_outcomes(love: number) {
 
 function novel_outcomes(reason: string) {
   if (reason == 'faint' || player.hp <= 0) {
-    msg.post('proxies:/controller#worldcontroller', 'pick_room', {
+    msg.post('proxies:/controller#gamecontroller', 'pick_room', {
       enterRoom: tasks.spawn,
       loadType: 'faint',
     })
   } else if (reason == 'arrested') {
     tasks.removeHeat('player')
-    msg.post('proxies:/controller#worldcontroller', 'pick_room', {
+    msg.post('proxies:/controller#gamecontroller', 'pick_room', {
       enterRoom: 'security',
       loadType: 'arrest',
     })

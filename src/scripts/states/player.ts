@@ -63,15 +63,22 @@ export default class WorldPlayer {
     this.getPlayerRoom = this.getPlayerRoom.bind(this)
     this.setRoomInfo = this.setRoomInfo.bind(this)
   }
-  private onTurnEnter(): void {
-    print('PLAYER entered Turn STATE')
-  }
+  private onTurnEnter(): void {}
   private onTurnUpdate(): void {
     //todo
-    print('PLAYER UPDATE FSM')
+    print('<< :: PLAYER-UPDATE-FSM :: >>')
     this.ap = this.ap - 1
     this.turns = this.turns + 1
     this.setRoomInfo()
+    if (this.clearance < RoomsInitState[this.currRoom].clearance) {
+      print(
+        'PLAYER::: NEWQUESTIONED!!!',
+        this.clearance,
+        RoomsInitState[this.currRoom].clearance,
+        this.currRoom
+      )
+      this.fsm.setState('trespass')
+    }
   }
   private onTurnExit(): void {
     // print(this.name, 'has entered MOVE STATE')
