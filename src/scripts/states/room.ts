@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Actors, Vacancies } from '../../types/state'
-import { RoomProps } from '../../types/world'
 import { RoomsInitState } from './inits/roomsInitState'
 import StateMachine from './stateMachine'
+import { Actors, Vacancies } from '../../types/state'
+import { RoomProps } from '../../types/world'
 
 export default class RoomState {
   fsm: StateMachine
@@ -43,9 +43,7 @@ export default class RoomState {
     //testjpf getPlayerRoom method
     this.parent.setFocused(this.roomName)
   }
-  private onFocusUpdate(): void {
-    //not bad to handle interactions
-  }
+  private onFocusUpdate(): void {}
   private onFocusEnd(): void {}
   private onBlurEnter(): void {}
   private onBlurUpdate(): void {

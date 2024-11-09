@@ -37,6 +37,7 @@ export interface Npc extends NpcDefaults {
   clan: string
   body: string
 }
+
 export interface PlayerState {
   currRoom: string
   exitRoom: string

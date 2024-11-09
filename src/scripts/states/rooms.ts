@@ -1,20 +1,17 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import {
   RoomsInitState,
   RoomsInitLayout,
   RoomsInitRoles,
   RoomsInitFallbacks,
 } from './inits/roomsInitState'
-import { Rooms, Roles, Fallbacks } from '../../types/state'
 import RoomState from './room'
 import StateMachine from './stateMachine'
+import { Rooms, Roles, Fallbacks } from '../../types/state'
 import { RoomProps } from '../../types/world'
 
-// todo TESTJPF needs room call like npcstate
-// the have a avtive, player, neighbor state? something that automatically makes direction for npcs to target. up down left right...
-// need rooms interface?
 export default class WorldRooms {
   fsm: StateMachine
-
   private _all: Rooms
   layout: Array<Array<string | null>>
   roles: Roles
@@ -29,7 +26,6 @@ export default class WorldRooms {
     this.roles = { ...RoomsInitRoles }
     this.parent = {
       setFocused: this.setFocused.bind(this),
-      // getPlayerRoom: playerMethods.getPlayerRoom.bind(this),
     }
     this._all = { ...seedRooms(this.parent) }
     this._focused = 'grounds'
@@ -100,9 +96,6 @@ export default class WorldRooms {
     }
     return false
   }
-  send_to_jail() {
-    // testjpf todo this.all[this.parent.getPlayerRoom()].fsm.setState('idle')
-  }
   pruneStationMap(room: string, station: string) {
     this.stationsMap[room][station] !== null
       ? delete this.stationsMap[room][station]
@@ -131,34 +124,9 @@ export default class WorldRooms {
       this.all[room].vacancies![station] = ''
     }
   }
-  clearStations() {
-    let kr: keyof typeof this._all
-    for (kr in this._all) {
-      const room = this._all[kr]
-      let sr: keyof typeof room.stations
-      for (sr in room.stations) {
-        room.stations[sr] = ''
-      }
-    }
-    let kfs: keyof typeof this.fallbacks.stations
-    for (kfs in this.fallbacks.stations) {
-      this.fallbacks.stations[kfs] = ''
-    }
-  }
-
-  private onTurnEnter(): void {
-    //todo
-  }
+  private onTurnEnter(): void {}
   private onTurnUpdate(): void {
     this.resetStationMap()
-
-    //give each npc the ability to delete their own station!!
-    // this.clearStations()
-    //this is what whould go througheach room and click update
-    //makes sense for npcs, but rooms??? testjpf
-    //with placing npcs you have to take into account each npcs priority
-    //not sure what else i could automate/optimize here:::
-    //FUTURE gnerate money, food, stealing?
   }
   private onTurnExit(): void {
     //todo
@@ -167,18 +135,14 @@ export default class WorldRooms {
     this.resetStationMap()
     //todo
   }
-  private onNewUpdate(): void {
-    //not bad to handle interactions
-  }
+  private onNewUpdate(): void {}
   private onNewExit(): void {
     //todo
   }
   private onTransitionEnter(): void {
     //todo
   }
-  private onTransitionUpdate(): void {
-    //not bad to handle interactions
-  }
+  private onTransitionUpdate(): void {}
   private onTransitionExit(): void {
     //todo
   }

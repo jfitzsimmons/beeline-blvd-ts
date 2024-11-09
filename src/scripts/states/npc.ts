@@ -1,24 +1,23 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { NpcsInitState } from './inits/npcsInitState'
-import StateMachine from './stateMachine'
-import { InventoryTableItem, Trait } from '../../types/state'
-import { Effect } from '../../types/tasks'
 import {
   RoomsInitLayout,
   RoomsInitPriority,
   RoomsInitState,
 } from './inits/roomsInitState'
 import { itemStateInit } from './inits/inventoryInitState'
+import StateMachine from './stateMachine'
+import { InventoryTableItem, Trait } from '../../types/state'
+import { Effect } from '../../types/tasks'
+import { NpcProps } from '../../types/world'
+import { NovelNpc } from '../../types/novel'
 import {
   attempt_to_fillStation,
   set_room_priority,
   set_npc_target,
 } from '../utils/ai'
 import { surrounding_room_matrix } from '../utils/utils'
-import { NpcProps } from '../../types/world'
-import { NovelNpc } from '../../types/novel'
 
-// need npcs interface?
 export default class NpcState {
   fsm: StateMachine
   home: { x: number; y: number }
@@ -47,10 +46,7 @@ export default class NpcState {
   currStation: string
   race: string
   parent: NpcProps
-  //quests: QuestMethods
   constructor(n: string, lists: NpcProps) {
-    //testjpf npcs need their own statemachine.
-    //this._all = { ...NpcsInitState }
     this.home = NpcsInitState[n].home
     this.name = NpcsInitState[n].name
     this.inventory = NpcsInitState[n].inventory
@@ -67,7 +63,6 @@ export default class NpcState {
       skills: {},
       binaries: {},
     }
-
     this.turns_since_encounter = 0
     this.turns_since_convo = 99
     this.love = 0
@@ -79,39 +74,14 @@ export default class NpcState {
     this.currStation = ''
     this.race = ''
     this.parent = lists
-
     this.fsm
       .addState('idle')
       .addState('infirm', {
-        //game??
-        //onInit?
-        // what more could i do beside adjust cool downs
-        // can i access any other systems?? testjpf
-        //how to use instead of cautions?
-        // adjust stats? add remove bonuses/
-        //on update could be like onInteraction.
-        // if you talk to or rob someone in that state x will happen?
-        //should i be using script.ts?!?!?!
-        // need to go through what could happen on an Aio_turn
-        // maybbe interation too? / the if elses
-        // keep .update in mind.  everything needs a .update
         onEnter: this.onInfirmEnter.bind(this),
         onUpdate: this.onInfirmUpdate.bind(this),
         onExit: this.onInfirmEnd.bind(this),
       })
       .addState('injury', {
-        //game??
-        //onInit?
-        // what more could i do beside adjust cool downs
-        // can i access any other systems?? testjpf
-        //how to use instead of cautions?
-        // adjust stats? add remove bonuses/
-        //on update could be like onInteraction.
-        // if you talk to or rob someone in that state x will happen?
-        //should i be using script.ts?!?!?!
-        // need to go through what could happen on an Aio_turn
-        // maybbe interation too? / the if elses
-        // keep .update in mind.  everything needs a .update
         onEnter: this.onInjuryStart.bind(this),
         onUpdate: this.onInjuryUpdate.bind(this),
         onExit: this.onInjuryEnd.bind(this),
@@ -220,9 +190,7 @@ export default class NpcState {
     this.turns_since_encounter = 99
     this.parent.pruneStationMap(this.currRoom, this.currStation)
   }
-  private onInjuryEnd(): void {
-    // this.parent.removeInjured(this.name)
-  }
+  private onInjuryEnd(): void {}
   private onParamedicEnter(): void {}
   private onParamedicUpdate(): void {
     if (this.parent.getMendingQueue().length < 1) {
@@ -234,7 +202,6 @@ export default class NpcState {
     this.findRoomPlaceStation(rooms)
   }
   private onParamedicExit(): void {}
-
   private onERfullEnter(): void {}
   private onERfullUpdate(): void {
     this.turns_since_encounter = 97
@@ -263,9 +230,6 @@ export default class NpcState {
       this.fsm.setState('turn')
   }
   private onTrespassUpdate(): void {
-    //tesjpfremove hardcode
-    // if randomly caught randomly sets to turn
-    // need to re-place npc
     if (
       this.clearance + math.random(1, 5) >=
       RoomsInitState[this.currRoom].clearance
@@ -291,20 +255,16 @@ export default class NpcState {
     this.currRoom = 'security'
   }
   private onArresteeUpdate(): void {
-    // TESTJPF need to get stagingprefsm from aichecks
     this.cooldown--
-
     if (this.cooldown < 1) this.fsm.setState('turn')
   }
   private onArresteeExit(): void {}
   private onMendeeEnter(): void {
     this.turns_since_encounter = 98
     this.parent.addIgnore(this.name)
-    //testjpf need to remove injury tasks
   }
   private onMendeeUpdate(): void {
     this.turns_since_encounter = 98
-    //print('MENDEEUP::: hp', this.hp)
     this.hp = this.hp + 1
     if (this.hp > 4) {
       const vacancy = this.parent.sendToVacancy('infirmary', this.name)
@@ -324,14 +284,9 @@ export default class NpcState {
   }
   private onMenderUpdate(): void {
     this.turns_since_encounter = 98
-    //call func with current room as parameter
-    //if same as palyer room!!
-    print('MEDERUPDATE::', this.name)
     this.parent.pruneStationMap(this.currRoom, this.currStation)
   }
-  private onMenderExit(): void {
-    // this.parent.removeIgnore(this.name)
-  }
+  private onMenderExit(): void {}
   private onNewEnter(): void {
     if (this.hp > 0) {
       this.findRoomPlaceStation(RoomsInitPriority)
@@ -343,9 +298,7 @@ export default class NpcState {
     this.fsm.setState('turn')
   }
   private onNewExit(): void {}
-  private onTurnEnter(): void {
-    // print(this.name, 'has entered MOVE STATE')
-  }
+  private onTurnEnter(): void {}
   private onTurnUpdate(): void {
     this.exitRoom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
     this.remove_effects(this.effects)
@@ -359,10 +312,7 @@ export default class NpcState {
     const rooms = this.makePriorityRoomList(target)
     this.findRoomPlaceStation(rooms)
   }
-  private onTurnExit(): void {
-    print(this.name, 'has exited move state')
-  }
-
+  private onTurnExit(): void {}
   clearStation() {
     this.parent.clearStation(this.currRoom, this.currStation, this.name)
   }
@@ -386,9 +336,7 @@ export default class NpcState {
       npcPriorityProps
     )
   }
-
   findRoomPlaceStation(rooms: string[]): void {
-    //for (const test of rooms) print('TESTTOOMS ROOM:: ', test)
     const { chosenRoom, chosenStation } = attempt_to_fillStation(
       rooms,
       this.name,
@@ -406,7 +354,6 @@ export default class NpcState {
       this.clearance + math.random(1, 5)
     )
       this.fsm.setState('trespass')
-    //testjpf replace debug hardcode
     this.matrix = RoomsInitState[chosenRoom].matrix
     this.currStation = chosenStation
     if (chosenRoom != this.parent.getPlayerRoom()) {
@@ -427,7 +374,6 @@ export default class NpcState {
       this.traits.binaries[bKey] =
         this.traits.binaries[bKey] - itemStateInit[i].binaries[bKey]
   }
-
   addInvBonus(i: string) {
     const item: InventoryTableItem = itemStateInit[i]
     let sKey: keyof typeof item.skills
