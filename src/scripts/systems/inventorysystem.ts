@@ -1,10 +1,10 @@
-import { InventoryTableItem, Skills } from '../../types/state'
-import { Consequence } from '../../types/tasks'
+import { InventoryTableItem, Trait } from '../../types/state'
+//import { Consequence } from '../../types/tasks'
 import { itemStateInit } from '../states/inits/inventoryInitState'
 //import NpcState from '../states/npc'
-import { rollSpecialDice } from '../utils/dice'
-import { clamp, shuffle } from '../utils/utils'
-const { npcs, player } = globalThis.game.world
+//import { rollSpecialDice } from '../utils/dice'
+import { shuffle } from '../utils/utils'
+const { npcs } = globalThis.game.world
 
 //TESTJPf move to types
 
@@ -45,7 +45,7 @@ export function removeLast(to_inv: string[], from_inv: string[]) {
 export function removeAdvantageous(
   to_inv: string[],
   from_inv: string[],
-  skills: Skills
+  skills: Trait
 ) {
   if (from_inv.length < 1) return ''
   if (from_inv.length === 1) return removeLast(to_inv, from_inv)
@@ -121,6 +121,7 @@ export function get_extorted(s: string, w: string) {
     }
   }
 }
+/**TESTJPF TOD!!! 
 export function bribe_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]
@@ -152,5 +153,6 @@ export function bribe_check(suspect: string, watcher: string): Consequence {
 
   return { pass: false, type: 'neutral' }
 }
+  */
 
 buildLookup()

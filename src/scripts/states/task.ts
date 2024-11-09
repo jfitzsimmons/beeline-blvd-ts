@@ -5,9 +5,9 @@ import {
   // Consequence,
   Effect,
   Task,
-  TaskProps,
   TasksChecks,
 } from '../../types/tasks'
+import { TaskProps } from '../../types/world'
 import { fxLookup, fx } from '../utils/consts'
 import { shuffle } from '../utils/utils'
 import { NpcsInitState } from './inits/npcsInitState'

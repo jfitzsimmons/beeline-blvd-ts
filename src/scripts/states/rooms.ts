@@ -7,7 +7,7 @@ import {
 import { Rooms, Roles, Fallbacks } from '../../types/state'
 import RoomState from './room'
 import StateMachine from './stateMachine'
-import { NpcsProps2 } from '../../types/tasks'
+import { RoomProps } from '../../types/world'
 
 // todo TESTJPF needs room call like npcstate
 // the have a avtive, player, neighbor state? something that automatically makes direction for npcs to target. up down left right...
@@ -19,7 +19,7 @@ export default class WorldRooms {
   layout: Array<Array<string | null>>
   roles: Roles
   private _focused: string
-  roomsLists: NpcsProps2
+  parent: RoomProps
   fallbacks: Fallbacks
   stationsMap: { [key: string]: { [key: string]: string } }
   constructor() {
@@ -27,11 +27,11 @@ export default class WorldRooms {
     this.fallbacks = { ...RoomsInitFallbacks }
     this.layout = [...RoomsInitLayout]
     this.roles = { ...RoomsInitRoles }
-    this.roomsLists = {
-      set_focused: this.set_focused.bind(this),
+    this.parent = {
+      setFocused: this.setFocused.bind(this),
       // getPlayerRoom: playerMethods.getPlayerRoom.bind(this),
     }
-    this._all = { ...seedRooms(this.roomsLists) }
+    this._all = { ...seedRooms(this.parent) }
     this._focused = 'grounds'
     this.stationsMap = this.createStationsMap()
     this.fsm
@@ -59,7 +59,7 @@ export default class WorldRooms {
     this.getStationMap = this.getStationMap.bind(this)
     this.resetStationMap = this.resetStationMap.bind(this)
     this.sendToVacancy = this.sendToVacancy.bind(this)
-    this.set_focused = this.set_focused.bind(this)
+    this.setFocused = this.setFocused.bind(this)
     this.get_focused = this.get_focused.bind(this)
     this.getOccupants = this.getOccupants.bind(this)
   }
@@ -75,7 +75,7 @@ export default class WorldRooms {
   getOccupants(r: string): string[] {
     return Object.values(this.all[r].stations).filter((s) => s != '')
   }
-  set_focused(r: string) {
+  setFocused(r: string) {
     this.focused = r
   }
   get_focused(): string {
@@ -101,7 +101,7 @@ export default class WorldRooms {
     return false
   }
   send_to_jail() {
-    // testjpf todo this.all[this.roomsLists.getPlayerRoom()].fsm.setState('idle')
+    // testjpf todo this.all[this.parent.getPlayerRoom()].fsm.setState('idle')
   }
   pruneStationMap(room: string, station: string) {
     this.stationsMap[room][station] !== null
@@ -195,7 +195,7 @@ export default class WorldRooms {
   }
 }
 
-function seedRooms(lists: NpcsProps2) {
+function seedRooms(lists: RoomProps) {
   const seeded: Rooms = {}
   //const inits = { ...NpcsInitState }
   let ki: keyof typeof RoomsInitState

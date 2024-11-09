@@ -153,7 +153,7 @@ export function seen_check(s: string, w: string) {
 // medical() on NPCS youve ben going for
 //player already moved!!
 export function clearance_checks() {
-  const cops = npcs.return_security()
+  const cops = npcs.returnSecurity()
   for (const cop of cops) {
     const stations = rooms.all[cop.currRoom].stations
     let sKey: keyof typeof stations

@@ -1,3 +1,5 @@
+import { Traits } from './state'
+
 export interface Typewriter {
   state: string
   textspeed: number
@@ -21,4 +23,14 @@ export interface Typewriter {
   next: () => void
   set_scale: (arg: number) => void
   redraw: () => void
+}
+
+export interface NovelNpc {
+  name: string
+  clan: string
+  convos: number
+  traits: Traits
+  turns_since_convo: number
+  love: number
+  currStation: string
 }

@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { InventoryTableItem, PlayerState, Skills } from '../../types/state'
-import { QuestMethods, WorldPlayerProps } from '../../types/tasks'
+import { InventoryTableItem, PlayerState, Trait } from '../../types/state'
+import { QuestMethods } from '../../types/tasks'
 import { PlayerInitState } from './inits/playerInitState'
 import { shuffle } from '../utils/utils'
 import { RoomsInitLayout, RoomsInitState } from './inits/roomsInitState'
 import StateMachine from './stateMachine'
 import { itemStateInit } from './inits/inventoryInitState'
+import { WorldPlayerArgs } from '../../types/world'
 
-function randomSkills(skills: Skills, bins: Skills) {
+function randomTrait(skills: Trait, bins: Trait) {
   let tempvals: number[] = shuffle([1, 1, 3, 4, 5, 6, 6, 7])
   let count = 0
   let ks: keyof typeof skills // Type is "one" | "two" | "three"
@@ -29,12 +30,12 @@ export default class WorldPlayer {
   private _state: PlayerState
   fsm: StateMachine
   quests: QuestMethods
-  parent: WorldPlayerProps
+  parent: WorldPlayerArgs
 
-  constructor(playerProps: WorldPlayerProps) {
+  constructor(playerProps: WorldPlayerArgs) {
     this.fsm = new StateMachine(this, 'player')
     this._state = { ...PlayerInitState }
-    randomSkills(this._state.traits.skills, this._state.traits.binaries)
+    randomTrait(this._state.traits.skills, this._state.traits.binaries)
     this.quests = {
       return_inventory: this.return_inventory.bind(this),
       return_skills: this.return_skills.bind(this),
@@ -266,7 +267,7 @@ export default class WorldPlayer {
   return_inventory(): string[] {
     return this._state.inventory
   }
-  return_skills(): Skills {
+  return_skills(): Trait {
     return this._state.traits.skills
   }
   return_playerroom(): string {

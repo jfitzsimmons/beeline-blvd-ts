@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
-import {
-  QuestMethods,
-  Task,
-  TaskProps,
-  TasksChecks,
-  WorldTasksProps,
-} from '../../types/tasks'
+import { QuestMethods, Task, TasksChecks } from '../../types/tasks'
 import TaskState from './task'
 import { arraymove } from '../utils/utils'
 import {
@@ -21,10 +15,11 @@ import {
   predator_check,
   jailtime_check,
 } from './inits/checksFuncs'
+import { TaskProps, WorldTasksArgs } from '../../types/world'
 
 const dt = math.randomseed(os.time())
 /** 
-function build_quests_state(questmethods: AllQuestsMethods): WorldQuests {
+function build_quests_state(questmethods: WorldQuestsMethods): WorldQuests {
   return {
     tutorial: tutorialQuests(questmethods),
   }
@@ -40,9 +35,9 @@ export default class WorldTasks {
   mendingQueue: string[]
   medicalSys: string[]
   methods: TaskProps
-  parent: WorldTasksProps
+  parent: WorldTasksArgs
   checks: TasksChecks
-  constructor(worldProps: WorldTasksProps) {
+  constructor(worldProps: WorldTasksArgs) {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
     // this._quests = build_quests_state(this.questmethods)

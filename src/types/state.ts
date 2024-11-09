@@ -12,20 +12,6 @@ export interface NpcsState {
 export interface Npcs {
   [key: string]: NpcState
 }
-export interface Npc extends NpcDefaults {
-  home: { x: number; y: number }
-  name: string
-  inventory: string[]
-  clearance: number
-  clan: string
-  body: string
-}
-export interface Traits {
-  opinion?: Skills | never
-  skills: Skills | never
-  binaries: Skills | never
-}
-
 export interface NpcDefaults {
   convos: number
   actions: string[]
@@ -43,17 +29,13 @@ export interface NpcDefaults {
   currStation: string
   race: string
 }
-export interface NovelNpc {
+export interface Npc extends NpcDefaults {
+  home: { x: number; y: number }
   name: string
+  inventory: string[]
+  clearance: number
   clan: string
-  convos: number
-  traits: Traits
-  turns_since_convo: number
-  love: number
-  currStation: string
-}
-export interface Skills {
-  [key: string]: number
+  body: string
 }
 export interface PlayerState {
   currRoom: string
@@ -76,15 +58,20 @@ export interface PlayerState {
   factions: { [key: string]: number }
   gangs: { [key: string]: number }
 }
+export interface Traits {
+  opinion?: Trait | never
+  skills: Trait | never
+  binaries: Trait | never
+}
+export interface Trait {
+  [key: string]: number
+}
 
 export interface RoomsState {
   all: Rooms
   layout: Array<Array<string | null>>
   roles: Roles
   fallbacks: Fallbacks
-}
-export interface Fallbacks {
-  stations: { [key: string]: string }
 }
 export interface Rooms {
   [key: string]: RoomState //| Occupancy
@@ -98,11 +85,12 @@ export interface Room {
   props?: string[]
   vacancies?: Vacancies
 }
-/** 
-export interface Occupancy extends Room {
-  occupants: Vacancies
+export interface Vacancies {
+  [key: string]: string
 }
-  */
+export interface Fallbacks {
+  stations: { [key: string]: string }
+}
 export interface Actors {
   [key: string]: Actor
 }
@@ -111,13 +99,10 @@ export interface Actor {
   watcher?: string
   actions: string[]
 }
-export interface Vacancies {
-  [key: string]: string
-}
+
 export interface Roles {
   [key: string]: string[]
 }
-
 export interface InventoryTable {
   [key: string]: InventoryTableItem
 }

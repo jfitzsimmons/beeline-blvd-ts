@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Actors, Vacancies } from '../../types/state'
-import { NpcsProps2 } from '../../types/tasks'
+import { RoomProps } from '../../types/world'
 import { RoomsInitState } from './inits/roomsInitState'
 import StateMachine from './stateMachine'
 
@@ -13,8 +13,8 @@ export default class RoomState {
   actors: Actors
   props?: string[]
   vacancies?: Vacancies
-  parent: NpcsProps2
-  constructor(r: string, lists: NpcsProps2) {
+  parent: RoomProps
+  constructor(r: string, roomProps: RoomProps) {
     this.fsm = new StateMachine(this, 'room' + r)
     this.matrix = RoomsInitState[r].matrix
     this.roomName = RoomsInitState[r].roomName
@@ -23,7 +23,7 @@ export default class RoomState {
     this.actors = RoomsInitState[r].actors
     this.props = RoomsInitState[r].props || []
     this.vacancies = RoomsInitState[r].vacancies || {}
-    this.parent = lists
+    this.parent = roomProps
     this.fsm
       .addState('idle')
       .addState('focus', {
@@ -41,7 +41,7 @@ export default class RoomState {
     //highlight room neighbors and directions
     //do something with stations, clear them
     //testjpf getPlayerRoom method
-    this.parent.set_focused(this.roomName)
+    this.parent.setFocused(this.roomName)
   }
   private onFocusUpdate(): void {
     //not bad to handle interactions

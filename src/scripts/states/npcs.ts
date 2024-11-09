@@ -4,8 +4,9 @@ import StateMachine from './stateMachine'
 
 import { Npcs } from '../../types/state'
 import { shuffle } from '../utils/utils'
-import { NpcMethod, QuestMethods, NpcsProps } from '../../types/tasks'
+import { QuestMethods } from '../../types/tasks'
 import NpcState from './npc'
+import { NpcProps, WorldNpcsArgs } from '../../types/world'
 
 interface BinaryLookupTable {
   [key: string]: BinaryLookupRow
@@ -213,12 +214,12 @@ export default class WorldNpcs {
   private _all: Npcs
   order: string[]
   quests: QuestMethods
-  npcLists: NpcMethod
+  parent: NpcProps
   infirmed: string[]
   injured: string[]
   ignore: string[]
 
-  constructor(roommethods: NpcsProps) {
+  constructor(roommethods: WorldNpcsArgs) {
     //testjpf npcs need their own statemachine.
     //this._all = { ...NpcsInitState }
 
@@ -227,29 +228,29 @@ export default class WorldNpcs {
     this.ignore = []
     this.order = []
     this.quests = {
-      return_doctors: this.return_doctors.bind(this),
-      return_security: this.return_doctors.bind(this),
-      return_all: this.return_all.bind(this),
-      return_order_all: this.return_order_all.bind(this),
+      returnDoctors: this.returnDoctors.bind(this),
+      returnSecurity: this.returnDoctors.bind(this),
+      returnAll: this.returnAll.bind(this),
+      returnOrderAll: this.returnOrderAll.bind(this),
     }
-    this.npcLists = {
+    this.parent = {
       //getPlayerRoom: roommethods.getPlayerRoom.bind(this),
-      add_infirmed: this.add_infirmed.bind(this),
-      get_infirmed: this.get_infirmed.bind(this),
-      get_injured: this.get_injured.bind(this),
-      remove_infirmed: this.remove_infirmed.bind(this),
-      add_injured: this.add_injured.bind(this),
-      remove_injured: this.remove_injured.bind(this),
-      add_ignore: this.add_ignore.bind(this),
-      remove_ignore: this.remove_ignore.bind(this),
+      addInfirmed: this.addInfirmed.bind(this),
+      getInfirmed: this.getInfirmed.bind(this),
+      getInjured: this.getInjured.bind(this),
+      removeInfirmed: this.removeInfirmed.bind(this),
+      addInjured: this.addInjured.bind(this),
+      removeInjured: this.removeInjured.bind(this),
+      addIgnore: this.addIgnore.bind(this),
+      removeIgnore: this.removeIgnore.bind(this),
       ...roommethods,
       returnMendeeLocation: this.returnMendeeLocation.bind(this),
-      return_doctors: this.return_doctors.bind(this),
-      return_security: this.return_doctors.bind(this),
-      return_all: this.return_all.bind(this),
-      return_order_all: this.return_order_all.bind(this),
+      returnDoctors: this.returnDoctors.bind(this),
+      returnSecurity: this.returnDoctors.bind(this),
+      returnAll: this.returnAll.bind(this),
+      returnOrderAll: this.returnOrderAll.bind(this),
     }
-    this._all = seedNpcs(this.npcLists)
+    this._all = seedNpcs(this.parent)
     random_attributes(this.all, this.order)
     this.inventory_init()
 
@@ -267,8 +268,8 @@ export default class WorldNpcs {
       onExit: this.onNewExit.bind(this),
     })
 
-    this.return_doctors = this.return_doctors.bind(this)
-    this.return_security = this.return_security.bind(this)
+    this.returnDoctors = this.returnDoctors.bind(this)
+    this.returnSecurity = this.returnSecurity.bind(this)
   }
 
   private onNewEnter(): void {
@@ -279,7 +280,7 @@ export default class WorldNpcs {
       npc.fsm.setState('new')
       // npc.fsm.update(dt)
     }
-    //this.npcLists.resetStationMap()
+    //this.parent.resetStationMap()
     this.fsm.setState('turn')
   }
   private onNewUpdate(): void {}
@@ -296,7 +297,7 @@ export default class WorldNpcs {
 
       npc.fsm.update(dt)
     }
-    //this.npcLists.resetStationMap()
+    //this.parent.resetStationMap()
     this.medical()
     //this.security()
 
@@ -308,14 +309,14 @@ export default class WorldNpcs {
     return this._all
   }
   returnMendeeLocation() {
-    return this.all[this.npcLists.getMendingQueue()[0]].currRoom
+    return this.all[this.parent.getMendingQueue()[0]].currRoom
   }
   //security() {}
   medical() {
     let count = this.infirmed.length
 
-    //const count = this.npcLists.getMendingQueue().length
-    for (const doc of this.return_doctors()) {
+    //const count = this.parent.getMendingQueue().length
+    for (const doc of this.returnDoctors()) {
       const mobile = !['mender', 'mendee', 'injury', 'infirm'].includes(
         doc.fsm.getState()
       )
@@ -328,7 +329,7 @@ export default class WorldNpcs {
       } else if (
         mobile === true &&
         count < 1 &&
-        this.npcLists.getMendingQueue().length > 0
+        this.parent.getMendingQueue().length > 0
       ) {
         doc.fsm.setState('paramedic')
       } else if (mobile === true) {
@@ -336,34 +337,34 @@ export default class WorldNpcs {
       }
     }
   }
-  add_ignore(n: string): void {
+  addIgnore(n: string): void {
     this.ignore.push(n)
   }
-  remove_ignore(n: string): void {
+  removeIgnore(n: string): void {
     this.ignore.splice(this.ignore.indexOf(n), 1)
   }
-  add_infirmed(n: string): void {
+  addInfirmed(n: string): void {
     this.infirmed.push(n)
   }
-  get_infirmed(): string[] {
+  getInfirmed(): string[] {
     return this.infirmed
   }
-  remove_infirmed(n: string): void {
+  removeInfirmed(n: string): void {
     this.infirmed.splice(this.infirmed.indexOf(n), 1)
   }
-  add_injured(n: string): void {
+  addInjured(n: string): void {
     this.injured.push(n)
   }
-  get_injured(): string[] {
+  getInjured(): string[] {
     return this.injured
   }
-  remove_injured(n: string): void {
+  removeInjured(n: string): void {
     this.injured.splice(this.injured.indexOf(n), 1)
   }
-  return_doctors(): NpcState[] {
+  returnDoctors(): NpcState[] {
     return [this.all.doc01, this.all.doc02, this.all.doc03]
   }
-  return_security(): NpcState[] {
+  returnSecurity(): NpcState[] {
     return [
       this.all.security001,
       this.all.security002,
@@ -372,7 +373,7 @@ export default class WorldNpcs {
       this.all.security005,
     ]
   }
-  return_all(): Npcs {
+  returnAll(): Npcs {
     return this.all
   }
   sort_npcs_by_encounter() {
@@ -381,7 +382,7 @@ export default class WorldNpcs {
         this.all[a].turns_since_encounter - this.all[b].turns_since_encounter
     )
   }
-  return_order_all(): [string[], Npcs] {
+  returnOrderAll(): [string[], Npcs] {
     return [shuffle(this.order), this.all]
   }
   inventory_init() {
@@ -413,7 +414,7 @@ function adjust_binaries(value: number, clan: string, binary: string) {
   return adj
 }
 
-function seedNpcs(lists: NpcMethod) {
+function seedNpcs(lists: NpcProps) {
   const seeded: Npcs = {}
   //const inits = { ...NpcsInitState }
   let ki: keyof typeof NpcsInitState

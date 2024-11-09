@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { NpcsInitState } from './inits/npcsInitState'
 import StateMachine from './stateMachine'
-import { InventoryTableItem, NovelNpc, Skills } from '../../types/state'
-import { Effect, NpcMethod } from '../../types/tasks'
+import { InventoryTableItem, Trait } from '../../types/state'
+import { Effect } from '../../types/tasks'
 import {
   RoomsInitLayout,
   RoomsInitPriority,
@@ -15,6 +15,8 @@ import {
   set_npc_target,
 } from '../utils/ai'
 import { surrounding_room_matrix } from '../utils/utils'
+import { NpcProps } from '../../types/world'
+import { NovelNpc } from '../../types/novel'
 
 // need npcs interface?
 export default class NpcState {
@@ -30,9 +32,9 @@ export default class NpcState {
   ai_path: string
   matrix: { x: number; y: number }
   traits: {
-    opinion: Skills | never
-    skills: Skills | never
-    binaries: Skills | never
+    opinion: Trait | never
+    skills: Trait | never
+    binaries: Trait | never
   }
   turns_since_encounter: number
   turns_since_convo: number
@@ -44,9 +46,9 @@ export default class NpcState {
   exitRoom: string
   currStation: string
   race: string
-  parent: NpcMethod
+  parent: NpcProps
   //quests: QuestMethods
-  constructor(n: string, lists: NpcMethod) {
+  constructor(n: string, lists: NpcProps) {
     //testjpf npcs need their own statemachine.
     //this._all = { ...NpcsInitState }
     this.home = NpcsInitState[n].home
@@ -188,7 +190,7 @@ export default class NpcState {
     this.hp = 5
     this.parent.clearStation(this.currRoom, this.currStation, this.name)
     this.turns_since_encounter = 99
-    this.parent.add_infirmed(this.name)
+    this.parent.addInfirmed(this.name)
     this.matrix = RoomsInitState.infirmary.matrix
     this.cooldown = 8
     this.currRoom = 'infirmary'
@@ -205,13 +207,13 @@ export default class NpcState {
     if (this.hp > 9) this.fsm.setState('turn')
   }
   private onInfirmEnd(): void {
-    this.parent.remove_infirmed(this.name)
-    this.parent.remove_injured(this.name)
-    this.parent.remove_ignore(this.name)
+    this.parent.removeInfirmed(this.name)
+    this.parent.removeInjured(this.name)
+    this.parent.removeIgnore(this.name)
   }
   private onInjuryStart(): void {
     this.turns_since_encounter = 99
-    this.parent.add_injured(this.name)
+    this.parent.addInjured(this.name)
     this.hp = 0
   }
   private onInjuryUpdate(): void {
@@ -219,7 +221,7 @@ export default class NpcState {
     this.parent.pruneStationMap(this.currRoom, this.currStation)
   }
   private onInjuryEnd(): void {
-    // this.parent.remove_injured(this.name)
+    // this.parent.removeInjured(this.name)
   }
   private onParamedicEnter(): void {}
   private onParamedicUpdate(): void {
@@ -236,7 +238,7 @@ export default class NpcState {
   private onERfullEnter(): void {}
   private onERfullUpdate(): void {
     this.turns_since_encounter = 97
-    const patients = this.parent.get_infirmed()
+    const patients = this.parent.getInfirmed()
 
     if (math.random() + patients.length * 0.2 > 1) {
       this.clearStation()
@@ -246,7 +248,7 @@ export default class NpcState {
       const target = RoomsInitState.infirmary.matrix
       const rooms = this.makePriorityRoomList(target)
       this.findRoomPlaceStation(rooms)
-      if (this.parent.get_infirmed().length < 2) this.fsm.setState('turn')
+      if (this.parent.getInfirmed().length < 2) this.fsm.setState('turn')
       //Force Doc to infirmary if overwhelmed
     }
   }
@@ -283,7 +285,7 @@ export default class NpcState {
       this.fsm.setState('infirm')
     }
     this.turns_since_encounter = 99
-    this.parent.add_infirmed(this.name)
+    this.parent.addInfirmed(this.name)
     this.matrix = RoomsInitState.security.matrix
     this.cooldown = 8
     this.currRoom = 'security'
@@ -297,7 +299,7 @@ export default class NpcState {
   private onArresteeExit(): void {}
   private onMendeeEnter(): void {
     this.turns_since_encounter = 98
-    this.parent.add_ignore(this.name)
+    this.parent.addIgnore(this.name)
     //testjpf need to remove injury tasks
   }
   private onMendeeUpdate(): void {
@@ -328,7 +330,7 @@ export default class NpcState {
     this.parent.pruneStationMap(this.currRoom, this.currStation)
   }
   private onMenderExit(): void {
-    // this.parent.remove_ignore(this.name)
+    // this.parent.removeIgnore(this.name)
   }
   private onNewEnter(): void {
     if (this.hp > 0) {
