@@ -14,16 +14,16 @@ function load_npcs() {
     //params.script = params.roomName + "/" + world.player.checkpoint:sub(1, -2) + "aid"
   }
   msg.post('patient1#npc_loader', 'load_npc', {
-    npc: rooms.all['infirmary'].occupants!.patient1,
+    npc: rooms.all['infirmary'].vacancies!.patient1,
   })
   msg.post('patient2#npc_loader', 'load_npc', {
-    npc: rooms.all['infirmary'].occupants!.patient2,
+    npc: rooms.all['infirmary'].vacancies!.patient2,
   })
   msg.post('patient3#npc_loader', 'load_npc', {
-    npc: rooms.all['infirmary'].occupants!.patient3,
+    npc: rooms.all['infirmary'].vacancies!.patient3,
   })
   msg.post('patient4#npc_loader', 'load_npc', {
-    npc: rooms.all['infirmary'].occupants!.patient4,
+    npc: rooms.all['infirmary'].vacancies!.patient4,
   })
 
   //let npc = rooms.fallbacks.stations.infirmary_outside1

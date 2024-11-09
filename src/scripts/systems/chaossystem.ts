@@ -4,7 +4,7 @@ import { clamp, shuffle } from '../utils/utils'
 import { add_prejudice } from './effectsystem'
 //import { go_to_jail, add_pledge } from './emergencysystem'
 import { get_extorted, removeAdvantageous } from './inventorysystem'
-import { go_to_jail, add_pledge } from './systemshelpers'
+import { add_pledge } from './systemshelpers'
 
 const { npcs, player, tasks } = globalThis.game.world
 
@@ -14,7 +14,11 @@ export const pos_consolations = [
   given_gift,
   love_boost,
 ]
-export const neg_consolations = [recklessCheck, love_drop, suspicious_check]
+export const neg_consolations = [
+  tasks.checks.recklessCheck.bind(this),
+  love_drop,
+  suspicious_check,
+]
 
 //positive consolations
 function generate_gift() {
@@ -161,7 +165,7 @@ export function suspicious_check(
 }
 function call_security(watcher: string, suspect: string) {
   npcs.all[watcher].clan == 'security'
-    ? go_to_jail(suspect)
+    ? tasks.methods.returnNpc(suspect).fsm.setState('arrestee')
     : tasks.taskBuilder(
         watcher,
         math.random() > 0.33 ? 'questioning' : 'arrest',
@@ -244,6 +248,7 @@ export function watcher_punched_check(
 
   return { pass: false, type: 'neutral' }
 }
+/** 
 export function recklessCheck(suspect: string, watcher: string): Consequence {
   //print(suspect, 'reckless suspect!!!!')
   const w = npcs.all[watcher]
@@ -274,7 +279,7 @@ export function recklessCheck(suspect: string, watcher: string): Consequence {
   }
 
   return { pass: false, type: 'neutral' }
-}
+}*/
 //Checks and Helpers
 //misc.
 export function suspect_punched_check(

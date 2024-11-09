@@ -9,7 +9,18 @@ import {
 } from '../../types/tasks'
 import TaskState from './task'
 import { arraymove } from '../utils/utils'
-import { playerSnitchCheck, npcSnitchCheck } from './inits/checksFuncs'
+import {
+  playerSnitchCheck,
+  npcSnitchCheck,
+  chaotic_good_check,
+  dumb_crook_check,
+  ignorant_check,
+  build_consequence,
+  recklessCheck,
+  classy_check,
+  predator_check,
+  jailtime_check,
+} from './inits/checksFuncs'
 
 const dt = math.randomseed(os.time())
 /** 
@@ -47,6 +58,7 @@ export default class WorldTasks {
       returnPlayer: this.parent.returnPlayer.bind(this),
       taskBuilder: this.taskBuilder.bind(this),
       getOccupants: this.parent.getOccupants.bind(this),
+      setConfrontation: this.parent.setConfrontation.bind(this),
     }
 
     this.quests = {
@@ -55,6 +67,17 @@ export default class WorldTasks {
     this.checks = {
       playerSnitchCheck: playerSnitchCheck.bind(this),
       npcSnitchCheck: npcSnitchCheck.bind(this),
+      ignorant_check: ignorant_check.bind(this),
+      dumb_crook_check: dumb_crook_check.bind(this),
+      chaotic_good_check: chaotic_good_check.bind(this),
+      build_consequence: build_consequence.bind(this),
+      recklessCheck: recklessCheck.bind(this),
+      classy_check: classy_check.bind(this),
+      predator_check: predator_check.bind(this),
+      jailtime_check: jailtime_check.bind(this),
+      // snitch_check: this.snitch_check.bind(this),
+      // meritsDemerits: this.snitch_check.bind(this),
+      //  recklessCheck: this.snitch_check.bind(this),
       //all checks here!!! testjpf
     }
     this.fsm.addState('idle')
@@ -214,7 +237,7 @@ export default class WorldTasks {
       //   print('npcHasTask:: C:', c.owner, c.target, c.label)
       if (
         (owner == 'any' || c.owner == owner) &&
-        c.target == target &&
+        (target == 'any' || c.target == target) &&
         (labels.length < 1 || labels.includes(c.label))
       ) {
         return c

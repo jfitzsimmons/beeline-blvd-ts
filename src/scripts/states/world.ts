@@ -11,11 +11,11 @@ import WorldQuests from './quests'
 import {
   AllQuestsMethods,
   NpcsProps,
+  WorldNovelProps,
   WorldPlayerProps,
   WorldTasksProps,
 } from '../../types/tasks'
 import NpcState from './npc'
-import { PlayerState } from '../../types/state'
 
 const dt = math.randomseed(os.time())
 
@@ -32,11 +32,16 @@ export default class World {
   constructor() {
     this.fsm = new StateMachine(this, 'world')
     this.rooms = new WorldRooms()
+    const novelProps: WorldNovelProps = {
+      returnNpc: this.returnNpc.bind(this),
+    }
+    this.novel = new WorldNovel(novelProps)
     const tasksProps: WorldTasksProps = {
       didCrossPaths: this.didCrossPaths.bind(this),
-      returnNpc: this.returnNpc.bind(this),
       returnPlayer: this.returnPlayer.bind(this),
       getOccupants: this.rooms.getOccupants.bind(this),
+      setConfrontation: this.novel.setConfrontation.bind(this),
+      ...novelProps,
     }
     this.tasks = new WorldTasks(tasksProps)
     const playerProps: WorldPlayerProps = {
@@ -51,14 +56,15 @@ export default class World {
       setStation: this.rooms.setStation.bind(this),
       pruneStationMap: this.rooms.pruneStationMap.bind(this),
       getStationMap: this.rooms.getStationMap.bind(this),
-      sendToInfirmary: this.rooms.sendToInfirmary.bind(this),
+      sendToVacancy: this.rooms.sendToVacancy.bind(this),
       getPlayerRoom: this.player.getPlayerRoom.bind(this),
       getMendingQueue: this.tasks.getMendingQueue.bind(this),
       taskBuilder: this.tasks.taskBuilder.bind(this),
+      getNovelUpdates: this.novel.getNovelUpdates.bind(this),
       ...playerProps,
     }
     this.npcs = new WorldNpcs(npcsProps)
-    this.novel = new WorldNovel(this.npcs.all.labor01)
+
     const allquestmethods: AllQuestsMethods = {
       pq: this.player.quests,
       nq: this.npcs.quests,
@@ -176,8 +182,8 @@ export default class World {
     // testjpf probably needs to be this.npcs.returnNpc(n)
     return this.npcs.all[n]
   }
-  private returnPlayer(): PlayerState {
+  private returnPlayer(): WorldPlayer {
     // testjpf probably needs to be this.npcs.returnNpc(n)
-    return this.player.state
+    return this.player
   }
 }

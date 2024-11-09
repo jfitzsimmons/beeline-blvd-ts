@@ -319,17 +319,20 @@ export default class WorldNpcs {
       const mobile = !['mender', 'mendee', 'injury', 'infirm'].includes(
         doc.fsm.getState()
       )
+      print('mobilemobilemobile', mobile)
       //testjpf todo unhardcode
       //have a const that lists immobile states.!!!
-      if (mobile && count > 0) {
+      if (mobile === true && count > 0) {
         doc.fsm.setState('erfull')
-        count = count - 1
+        count = 0
       } else if (
-        mobile &&
+        mobile === true &&
         count < 1 &&
         this.npcLists.getMendingQueue().length > 0
       ) {
         doc.fsm.setState('paramedic')
+      } else if (mobile === true) {
+        doc.fsm.setState('turn')
       }
     }
   }
