@@ -1,4 +1,4 @@
-import { Npcs, Skills } from '../../types/state'
+import { Npcs, Trait } from '../../types/state'
 import NpcState from '../states/npc'
 //import { shuffle } from './utils'
 
@@ -55,7 +55,7 @@ export function convos_check(args: [() => Npcs, number]): boolean {
   return false
 }
 
-export function max_skills(args: [() => Skills, number]) {
+export function max_skills(args: [() => Trait, number]) {
   const skills = args[0]()
   const order = Object.entries(skills)
 

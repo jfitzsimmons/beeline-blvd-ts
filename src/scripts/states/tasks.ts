@@ -1,15 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
 import {
-  QuestMethods,
-  Task,
-  TaskProps,
-  TasksChecks,
-  WorldTasksProps,
-} from '../../types/tasks'
-import TaskState from './task'
-import { arraymove } from '../utils/utils'
-import {
   playerSnitchCheck,
   npcSnitchCheck,
   chaotic_good_check,
@@ -20,32 +11,40 @@ import {
   classy_check,
   predator_check,
   jailtime_check,
+  pledgeCheck,
+  bribeCheck,
+  addPledge,
+  lConfrontPunchT,
+  getExtorted,
+  tConfrontPunchL,
+  targetPunchedCheck,
 } from './inits/checksFuncs'
+import {
+  ChecksOutcomes,
+  QuestMethods,
+  Task,
+  TasksChecks,
+} from '../../types/tasks'
+import TaskState from './task'
+import { arraymove } from '../utils/utils'
+import { TaskProps, WorldTasksArgs } from '../../types/world'
 
 const dt = math.randomseed(os.time())
-/** 
-function build_quests_state(questmethods: AllQuestsMethods): WorldQuests {
-  return {
-    tutorial: tutorialQuests(questmethods),
-  }
-}*/
+
 export default class WorldTasks {
   private _all: TaskState[]
-  //private consolations: Array<(b: Skills, s: Skills) => Consolation>
-  //private _quests: WorldQuests
-  //spawn will be updated when checkpoints are passed.
   private _spawn: string
   fsm: StateMachine
   quests: QuestMethods
   mendingQueue: string[]
   medicalSys: string[]
   methods: TaskProps
-  parent: WorldTasksProps
+  parent: WorldTasksArgs
   checks: TasksChecks
-  constructor(worldProps: WorldTasksProps) {
+  outcomes: ChecksOutcomes
+  constructor(worldProps: WorldTasksArgs) {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
-    // this._quests = build_quests_state(this.questmethods)
     this._spawn = 'grounds'
     this.mendingQueue = []
     this.medicalSys = []
@@ -60,7 +59,6 @@ export default class WorldTasks {
       getOccupants: this.parent.getOccupants.bind(this),
       setConfrontation: this.parent.setConfrontation.bind(this),
     }
-
     this.quests = {
       num_of_injuries: this.num_of_injuries.bind(this),
     }
@@ -75,10 +73,15 @@ export default class WorldTasks {
       classy_check: classy_check.bind(this),
       predator_check: predator_check.bind(this),
       jailtime_check: jailtime_check.bind(this),
-      // snitch_check: this.snitch_check.bind(this),
-      // meritsDemerits: this.snitch_check.bind(this),
-      //  recklessCheck: this.snitch_check.bind(this),
-      //all checks here!!! testjpf
+      pledgeCheck: pledgeCheck.bind(this),
+      bribeCheck: bribeCheck.bind(this),
+      targetPunchedCheck: targetPunchedCheck.bind(this),
+    }
+    this.outcomes = {
+      addPledge: addPledge.bind(this),
+      lConfrontPunchT: lConfrontPunchT.bind(this),
+      getExtorted: getExtorted.bind(this),
+      tConfrontPunchL: tConfrontPunchL.bind(this),
     }
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
@@ -91,8 +94,8 @@ export default class WorldTasks {
       onUpdate: this.onNewUpdate.bind(this),
       onExit: this.onNewExit.bind(this),
     })
-
     this.fsm.setState('new')
+
     this.removeTaskByCause = this.removeTaskByCause.bind(this)
     this.removeTaskByLabel = this.removeTaskByLabel.bind(this)
     this.has_clearance = this.has_clearance.bind(this)
@@ -127,13 +130,6 @@ export default class WorldTasks {
   public get spawn() {
     return this._spawn
   }
-  /** 
-  public set quests(s: WorldQuests) {
-    this._quests = s
-  }
-  public get quests() {
-    return this._quests
-  }*/
   public get all() {
     return this._all
   }
@@ -160,7 +156,6 @@ export default class WorldTasks {
   }
   num_of_injuries(): number {
     const injuries = this.all.filter((c) => c.label == 'injury').length
-    //print('busy_doc:: docs[0]:', docs[0])
     return injuries
   }
   removeTaskByLabel(owner: string, label: string) {
@@ -232,9 +227,7 @@ export default class WorldTasks {
     target: string,
     labels: string[] = []
   ): TaskState | null {
-    // print('npcHasTask', owner, target)
     for (const c of this.all) {
-      //   print('npcHasTask:: C:', c.owner, c.target, c.label)
       if (
         (owner == 'any' || c.owner == owner) &&
         (target == 'any' || c.target == target) &&
@@ -274,8 +267,6 @@ export default class WorldTasks {
     return count
   }
 
-  //TEstjpf need add task remove task
-  //add_task_assist
   taskBuilder(o: string, label: string, target: string, cause = 'theft') {
     const owner = this.parent.returnNpc(o)
     //explain why you need this testjpf
@@ -341,20 +332,10 @@ export default class WorldTasks {
     this.append_task(append)
   }
   append_task(task: Task) {
-    print('NEW::: Appended task::', task.label, task.owner)
-    //if injury adjust q
-    //in adjust q, dont push new task? ttestjpf
     this.all.push(new TaskState(task, this.methods, this.checks))
   }
-  // checks quest completion after interactions and turns
-  //TESTJPF all FSM stuff for quest turn
-  //update_quests_progress = (interval: string, checkpoint: string) {}
-
   get_field_docs(): string[] {
-    //if mending and in field busy
-    //if mending in office and office full
     const docs = this.all.filter((c) => c.cause == 'field').map((c) => c.owner)
-
     return docs
   }
 }

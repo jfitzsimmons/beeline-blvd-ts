@@ -1,4 +1,4 @@
-import { AllQuestsMethods } from '../../../../types/tasks'
+import { WorldQuestsMethods } from '../../../../types/world'
 import {
   any_has_value,
   // max_love,
@@ -10,7 +10,7 @@ import QuestState from '../../quest'
 import QuestStep from '../../questStep'
 
 export const tutorialQuests = (
-  questmethods: AllQuestsMethods
+  questmethods: WorldQuestsMethods
 ): { [key: string]: QuestState } => {
   //const { nq, tq, nvq } = questmethods
   const { nq, nvq } = questmethods
@@ -57,7 +57,7 @@ export const tutorialQuests = (
           passed: false,
           interval: ['interact'],
           func: [any_has_value],
-          args: [[nq.return_doctors, 'vial02']],
+          args: [[nq.returnDoctors, 'vial02']],
         }), //gets keycard, goes to infirmary, gets meds
         ['4']: new QuestStep({
           id: 'qmafmq',
@@ -132,7 +132,7 @@ export const tutorialQuests = (
           status: 'inactive',
           interval: ['interact'],
           func: [max_love],
-          args: [[nq.return_order_all, 5]],
+          args: [[nq.returnOrderAll, 5]],
         }, //1st // labor003
       },
     },

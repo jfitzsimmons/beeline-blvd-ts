@@ -1,25 +1,22 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import {
   RoomsInitState,
   RoomsInitLayout,
   RoomsInitRoles,
   RoomsInitFallbacks,
 } from './inits/roomsInitState'
-import { Rooms, Roles, Fallbacks } from '../../types/state'
 import RoomState from './room'
 import StateMachine from './stateMachine'
-import { NpcsProps2 } from '../../types/tasks'
+import { Rooms, Roles, Fallbacks } from '../../types/state'
+import { RoomProps } from '../../types/world'
 
-// todo TESTJPF needs room call like npcstate
-// the have a avtive, player, neighbor state? something that automatically makes direction for npcs to target. up down left right...
-// need rooms interface?
 export default class WorldRooms {
   fsm: StateMachine
-
   private _all: Rooms
   layout: Array<Array<string | null>>
   roles: Roles
   private _focused: string
-  roomsLists: NpcsProps2
+  parent: RoomProps
   fallbacks: Fallbacks
   stationsMap: { [key: string]: { [key: string]: string } }
   constructor() {
@@ -27,11 +24,10 @@ export default class WorldRooms {
     this.fallbacks = { ...RoomsInitFallbacks }
     this.layout = [...RoomsInitLayout]
     this.roles = { ...RoomsInitRoles }
-    this.roomsLists = {
-      set_focused: this.set_focused.bind(this),
-      // getPlayerRoom: playerMethods.getPlayerRoom.bind(this),
+    this.parent = {
+      setFocused: this.setFocused.bind(this),
     }
-    this._all = { ...seedRooms(this.roomsLists) }
+    this._all = { ...seedRooms(this.parent) }
     this._focused = 'grounds'
     this.stationsMap = this.createStationsMap()
     this.fsm
@@ -59,7 +55,7 @@ export default class WorldRooms {
     this.getStationMap = this.getStationMap.bind(this)
     this.resetStationMap = this.resetStationMap.bind(this)
     this.sendToVacancy = this.sendToVacancy.bind(this)
-    this.set_focused = this.set_focused.bind(this)
+    this.setFocused = this.setFocused.bind(this)
     this.get_focused = this.get_focused.bind(this)
     this.getOccupants = this.getOccupants.bind(this)
   }
@@ -75,7 +71,7 @@ export default class WorldRooms {
   getOccupants(r: string): string[] {
     return Object.values(this.all[r].stations).filter((s) => s != '')
   }
-  set_focused(r: string) {
+  setFocused(r: string) {
     this.focused = r
   }
   get_focused(): string {
@@ -99,9 +95,6 @@ export default class WorldRooms {
       if (npcs.includes(stations[ks])) return true
     }
     return false
-  }
-  send_to_jail() {
-    // testjpf todo this.all[this.roomsLists.getPlayerRoom()].fsm.setState('idle')
   }
   pruneStationMap(room: string, station: string) {
     this.stationsMap[room][station] !== null
@@ -131,34 +124,9 @@ export default class WorldRooms {
       this.all[room].vacancies![station] = ''
     }
   }
-  clearStations() {
-    let kr: keyof typeof this._all
-    for (kr in this._all) {
-      const room = this._all[kr]
-      let sr: keyof typeof room.stations
-      for (sr in room.stations) {
-        room.stations[sr] = ''
-      }
-    }
-    let kfs: keyof typeof this.fallbacks.stations
-    for (kfs in this.fallbacks.stations) {
-      this.fallbacks.stations[kfs] = ''
-    }
-  }
-
-  private onTurnEnter(): void {
-    //todo
-  }
+  private onTurnEnter(): void {}
   private onTurnUpdate(): void {
     this.resetStationMap()
-
-    //give each npc the ability to delete their own station!!
-    // this.clearStations()
-    //this is what whould go througheach room and click update
-    //makes sense for npcs, but rooms??? testjpf
-    //with placing npcs you have to take into account each npcs priority
-    //not sure what else i could automate/optimize here:::
-    //FUTURE gnerate money, food, stealing?
   }
   private onTurnExit(): void {
     //todo
@@ -167,18 +135,14 @@ export default class WorldRooms {
     this.resetStationMap()
     //todo
   }
-  private onNewUpdate(): void {
-    //not bad to handle interactions
-  }
+  private onNewUpdate(): void {}
   private onNewExit(): void {
     //todo
   }
   private onTransitionEnter(): void {
     //todo
   }
-  private onTransitionUpdate(): void {
-    //not bad to handle interactions
-  }
+  private onTransitionUpdate(): void {}
   private onTransitionExit(): void {
     //todo
   }
@@ -195,7 +159,7 @@ export default class WorldRooms {
   }
 }
 
-function seedRooms(lists: NpcsProps2) {
+function seedRooms(lists: RoomProps) {
   const seeded: Rooms = {}
   //const inits = { ...NpcsInitState }
   let ki: keyof typeof RoomsInitState

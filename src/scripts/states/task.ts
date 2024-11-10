@@ -1,20 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-
-import {
-  Consequence,
-  // Consequence,
-  Effect,
-  Task,
-  TaskProps,
-  TasksChecks,
-} from '../../types/tasks'
-import { fxLookup, fx } from '../utils/consts'
-import { shuffle } from '../utils/utils'
 import { NpcsInitState } from './inits/npcsInitState'
 import { PlayerInitState } from './inits/playerInitState'
 import NpcState from './npc'
 import WorldPlayer from './player'
 import StateMachine from './stateMachine'
+import { Consequence, Effect, Task, TasksChecks } from '../../types/tasks'
+import { TaskProps } from '../../types/world'
+import { fxLookup, fx } from '../utils/consts'
+import { shuffle } from '../utils/utils'
 
 export default class TaskState {
   fsm: StateMachine
@@ -88,20 +81,15 @@ export default class TaskState {
       onUpdate: this.onRecklessUpdate.bind(this),
       onExit: this.onRecklessExit.bind(this),
     })
-
     this.fsm.setState(setInitFSMstate(t))
+
+    this.handleConfrontation = this.handleConfrontation.bind(this)
   }
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
   private onNewExit(): void {}
-  private onInjuryEnter(): void {
-    //TESTJPF BLOCKER Task cannot see if doctor and patient are in the same room
-    //give roomstate a same room method?
-  }
+  private onInjuryEnter(): void {}
   private onInjuryUpdate(): void {
-    //checkmobile!!!TESTJPF
-    print('injurytaskupdate::')
-
     for (const doc of ['doc01', 'doc02', 'doc03']) {
       const mobile = () =>
         this.parent.npcHasTask(doc, 'any', [
@@ -120,15 +108,6 @@ export default class TaskState {
     }
   }
   private onInjuryExit(): void {}
-  //testjpf. need snitch state.
-  // when update check if cross security path
-  // if true do already hunting dont create new task
-  //update number of turns for old task
-  //else create task for questioning or arrest
-  // based on player / npc checks
-  // player alert level is biffed
-  //need npcs adjustAttributes(npc, attribute, property, new value)
-
   private onSnitchEnter(): void {}
   private onSnitchUpdate(): void {
     for (const cop of [
@@ -140,7 +119,6 @@ export default class TaskState {
     ]) {
       if (!this.parent.didCrossPaths(this.owner, cop)) return
       print(this.owner, 'met cop for snitch task::', cop)
-      //      const priors = this.parent.alreadyHunting(this.owner, this.target)
       const priors = this.parent.npcHasTask(this.owner, this.target, [
         'questioning',
         'arrest',
@@ -160,7 +138,6 @@ export default class TaskState {
   }
   private onSnitchExit(): void {}
   private onHallpassEnter(): void {
-    //TESTJPF REDO need some sort of world.adjustClearance()
     const holder =
       this.owner == 'player'
         ? this.parent.returnPlayer()
@@ -169,13 +146,11 @@ export default class TaskState {
     holder.clearance = tonumber(this.scope.charAt(this.scope.length - 1))!
   }
   private onHallpassUpdate(): void {
-    //print('hpassupdate:: turn', this.turns)
     if (this.turns < 1) {
       const holder =
         this.owner == 'player'
           ? this.parent.returnPlayer()
           : this.parent.returnNpc(this.owner)
-      //print('onHallpassupr', PlayerInitState.clearance, holder.clearance)
       holder.clearance =
         this.owner === 'player'
           ? PlayerInitState.clearance
@@ -184,70 +159,10 @@ export default class TaskState {
   }
   private onHallpassExit(): void {}
   private onConfrontEnter(): void {
-    const owner = this.parent.returnNpc(this.owner)
-    const target: NpcState | WorldPlayer =
-      this.target === 'player'
-        ? this.parent.returnPlayer()
-        : this.parent.returnNpc(this.target)
-
-    if (
-      owner.currRoom == target.currRoom ||
-      (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
-    ) {
-      this.target === 'player'
-        ? this.playerConfrontConsequence(target.fsm, owner.fsm)
-        : this.npc_confront_consequence()
-      this.turns = 0
-      // confront =
-      print(
-        'PLSYRTCONFRONT??:: ',
-        this.target == 'player',
-        this.owner,
-        this.target
-      )
-      //shouldnt return a task, but make novel changes, etthis..
-      // return this.target == 'player' ? c : null
-    }
-    // if (confront != null) break
-    // }
-    //return null
-    /**
-     * TESTJPf maybe make a playerconfrontconsequence()
-     * set novel stuff, npc.convos
-     */
+    this.handleConfrontation()
   }
   private onConfrontUpdate(): void {
-    const owner = this.parent.returnNpc(this.owner)
-    const target: NpcState | WorldPlayer =
-      this.target === 'player'
-        ? this.parent.returnPlayer()
-        : this.parent.returnNpc(this.target)
-
-    if (
-      owner.currRoom == target.currRoom ||
-      (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
-    ) {
-      this.target === 'player'
-        ? this.playerConfrontConsequence(target.fsm, owner.fsm)
-        : this.npc_confront_consequence()
-      this.turns = 0
-      // confront =
-      print(
-        'PLSYRTCONFRONT??:: ',
-        this.target == 'player',
-        this.owner,
-        this.target
-      )
-      //shouldnt return a task, but make novel changes, etthis..
-      // return this.target == 'player' ? c : null
-    }
-    // if (confront != null) break
-    // }
-    //return null
-    /**
-     * TESTJPf maybe make a playerconfrontconsequence()
-     * set novel stuff, npc.convos
-     */
+    this.handleConfrontation()
   }
   private onConfrontExit(): void {}
   private onMedicalEnter(): void {}
@@ -256,7 +171,6 @@ export default class TaskState {
   private onMeritEnter(): void {}
   private onMeritUpdate(): void {
     const owner = this.parent.returnNpc(this.owner)
-    print('MERTIS:: TASK:', owner.name, owner.currRoom)
     const others = this.parent
       .getOccupants(owner.currRoom)
       .filter((o) => o !== this.owner)
@@ -286,7 +200,6 @@ export default class TaskState {
       )
       //check if they already have effect? testjpf
       listener.effects.push(effect)
-      //TESTJPF TODO NOW:: this.addEffectsBonus(effect)!!!
       listener.add_effects_bonus(effect)
       break
     }
@@ -295,13 +208,9 @@ export default class TaskState {
   private onRecklessEnter(): void {}
   private onRecklessUpdate(): void {
     const owner = this.parent.returnNpc(this.owner)
-    // const target = this.parent.returnNpc(this.target)
-    //print('MERTIS:: TASK:', owner.name, owner.currRoom)
     const others = this.parent
       .getOccupants(owner.currRoom)
       .filter((o) => o !== this.owner)
-    // for (const listener of others) {
-    //  const listener = this.parent.returnNpc(npc)
     const checks: Array<(target: string, listener: string) => Consequence> =
       this.cause == 'theft'
         ? shuffle([
@@ -313,18 +222,13 @@ export default class TaskState {
             this.checks.classy_check!.bind(this),
             this.checks.predator_check!.bind(this),
           ])
-    //          ? shuffle(reck_theft_checks)
-    //        : shuffle(reck_harass_checks)
 
     this.checks.build_consequence!(this, others[0], checks, false)
-    // }
   }
-
   private onRecklessExit(): void {}
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {}
   private onTurnExit(): void {}
-
   setTaskChecks(label: string, checks: TasksChecks): Partial<TasksChecks> {
     if (label == 'snitch') {
       return {
@@ -344,10 +248,36 @@ export default class TaskState {
       return {
         jailtime_check: checks.jailtime_check.bind(this),
         build_consequence: checks.build_consequence.bind(this),
+        pledgeCheck: checks.pledgeCheck.bind(this),
+        bribeCheck: checks.bribeCheck.bind(this),
+        targetPunchedCheck: checks.targetPunchedCheck.bind(this),
       }
     }
 
     return {}
+  }
+  handleConfrontation() {
+    const owner = this.parent.returnNpc(this.owner)
+    const target: NpcState | WorldPlayer =
+      this.target === 'player'
+        ? this.parent.returnPlayer()
+        : this.parent.returnNpc(this.target)
+
+    if (
+      owner.currRoom == target.currRoom ||
+      (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
+    ) {
+      this.target === 'player'
+        ? this.playerConfrontConsequence(target.fsm, owner.fsm)
+        : this.npc_confront_consequence()
+      this.turns = 0
+      print(
+        'PLSYRTCONFRONT??:: ',
+        this.target == 'player',
+        this.owner,
+        this.target
+      )
+    }
   }
   playerConfrontConsequence(playerfsm: StateMachine, npcfsm: StateMachine) {
     playerfsm.setState('confronted')
@@ -355,65 +285,24 @@ export default class TaskState {
     this.parent.setConfrontation(this)
   }
   npc_confront_consequence() {
-    //npconly
-    //print('QC::: ', c.owner, 'is NOW questioning:', c.target)
-    if (this.label == 'arrest') {
+    if (this.label == 'arrest')
       this.parent.returnNpc(this.target).fsm.setState('arrestee')
-      //print('CAUTION:: arrest.', c.owner, 'threw', s, 'in jail')
-      // go_to_jail(s)
-    }
+    //testjpf convert rest!!!:::
     const tempcons: Array<
       (s: string, w: string) => { pass: boolean; type: string }
     > = shuffle([
-      // pledge_check,
-      // bribe_check,
-      // suspect_punched_check,
+      this.checks.pledgeCheck!.bind(this),
+      this.checks.bribeCheck!.bind(this),
+      this.checks.targetPunchedCheck!.bind(this),
       this.checks.jailtime_check!.bind(this),
       //admirer_check,
       // prejudice_check,
       // unlucky_check,
     ])
-    //build_consequence.bind(this)
-
-    this.checks.build_consequence!(this, this.target, tempcons, false)
+    this.checks.build_consequence!(this, this.owner, tempcons, false)
   }
-  /** 
-  //testjpf move 2 checks to parent
-  //use new init
-  // will need individual method Types 'per task'
-  // some tasks wont have any
-  playerSnitchCheck(priors: boolean, cop: string): string {
-    ///testjpf still nrrd to figure out alert_level!!!
-    //do alert_level search
-
-    let caution_state = 'questioning'
-    const player = this.parent.returnPlayer()
-    if (player.alert_level > 3) caution_state = 'arrest'
-    player.alert_level =
-      priors == null ? player.alert_level + 1 : player.alert_level + 2
-    if (
-      player.alert_level > 5 &&
-      this.parent.npcHasTask(cop, 'player') == null
-    ) {
-      this.parent.taskBuilder(cop, 'snitch', 'player', this.cause)
-    }
-    print('plauer snith chk :: alertlvl::', player.alert_level)
-    return caution_state
-  }
-  npcSnitchCheck(c: string) {
-    let caution_state = 'questioning'
-    const cop = this.parent.returnNpc(c)
-    const target = this.parent.returnNpc(this.target)
-    if (this.parent.npcHasTask(c, this.target, ['questioning', 'arrest'])) {
-      cop.traits.opinion[target.clan] = cop.traits.opinion[target.clan] - 1
-      print('NPCSNITCHCHK')
-      if (math.random() < 0.33) caution_state = 'arrest'
-    }
-    return caution_state
-  }*/
 }
-// testjpf maybe combine following into 1 step.
-// like npc attributes:::
+
 function setInitFSMstate(t: Task): string {
   let state = 'idle'
   if (t.label == 'hallpass') state = 'hallpass'

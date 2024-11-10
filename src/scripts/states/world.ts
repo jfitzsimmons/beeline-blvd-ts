@@ -8,14 +8,14 @@ import WorldTasks from './tasks'
 import WorldInfo from './info'
 import WorldNovel from './novel'
 import WorldQuests from './quests'
-import {
-  AllQuestsMethods,
-  NpcsProps,
-  WorldNovelProps,
-  WorldPlayerProps,
-  WorldTasksProps,
-} from '../../types/tasks'
 import NpcState from './npc'
+import {
+  WorldNpcsArgs,
+  WorldNovelArgs,
+  WorldPlayerArgs,
+  WorldTasksArgs,
+  WorldQuestsMethods,
+} from '../../types/world'
 
 const dt = math.randomseed(os.time())
 
@@ -32,11 +32,11 @@ export default class World {
   constructor() {
     this.fsm = new StateMachine(this, 'world')
     this.rooms = new WorldRooms()
-    const novelProps: WorldNovelProps = {
+    const novelProps: WorldNovelArgs = {
       returnNpc: this.returnNpc.bind(this),
     }
     this.novel = new WorldNovel(novelProps)
-    const tasksProps: WorldTasksProps = {
+    const tasksProps: WorldTasksArgs = {
       didCrossPaths: this.didCrossPaths.bind(this),
       returnPlayer: this.returnPlayer.bind(this),
       getOccupants: this.rooms.getOccupants.bind(this),
@@ -44,13 +44,13 @@ export default class World {
       ...novelProps,
     }
     this.tasks = new WorldTasks(tasksProps)
-    const playerProps: WorldPlayerProps = {
+    const playerProps: WorldPlayerArgs = {
       getFocusedRoom: this.rooms.get_focused.bind(this),
       hasHallpass: this.tasks.has_clearance.bind(this),
       removeTaskByCause: this.tasks.removeTaskByCause.bind(this),
     }
     this.player = new WorldPlayer(playerProps)
-    const npcsProps: NpcsProps = {
+    const npcsProps: WorldNpcsArgs = {
       isStationedTogether: this.rooms.isStationedTogether.bind(this),
       clearStation: this.rooms.clearStation.bind(this),
       setStation: this.rooms.setStation.bind(this),
@@ -64,8 +64,7 @@ export default class World {
       ...playerProps,
     }
     this.npcs = new WorldNpcs(npcsProps)
-
-    const allquestmethods: AllQuestsMethods = {
+    const allquestmethods: WorldQuestsMethods = {
       pq: this.player.quests,
       nq: this.npcs.quests,
       nvq: this.novel.quests,
@@ -74,14 +73,6 @@ export default class World {
     this.quests = new WorldQuests(allquestmethods)
     this.info = new WorldInfo(this.quests.all)
     this.clock = 6
-
-    /**
-     * testjpf you could importchecks
-     * have something like this.checks?
-     * maybe pass it npc stats??
-     * could even be a clasS?? new
-     */
-
     this.fsm
       .addState('idle')
       .addState('new', {
@@ -131,7 +122,7 @@ export default class World {
     this.npcs.all[this.rooms.all.grounds.stations.worker1].fsm.setState(
       'injury'
     )
-    this.npcs.add_ignore(this.rooms.all.grounds.stations.worker1)
+    this.npcs.addIgnore(this.rooms.all.grounds.stations.worker1)
   }
   private onNewUpdate(): void {}
   private onNewExit(): void {}
@@ -155,6 +146,7 @@ export default class World {
     if (this.clock > 23) this.clock = this.clock - 24
   }
   private onTurnUpdate(): void {
+    print('<<< ::: WORLDTurnUpdate() ::: >>>')
     this.player.fsm.update(dt)
     this.npcs.fsm.update(dt)
     this.rooms.fsm.update(dt)
@@ -179,11 +171,9 @@ export default class World {
     )
   }
   private returnNpc(n: string): NpcState {
-    // testjpf probably needs to be this.npcs.returnNpc(n)
     return this.npcs.all[n]
   }
   private returnPlayer(): WorldPlayer {
-    // testjpf probably needs to be this.npcs.returnNpc(n)
     return this.player
   }
 }

@@ -65,11 +65,7 @@ function confrontation_scene() {
 }
 */
 function game_turn() {
-  novel.forced = false
-  novel.reason = 'none'
-  novel.item = 'none'
-  novel.reset_task()
-  print('game turn!!')
+  novel.reset_novel()
   world.fsm.update(dt)
   aiActions()
   quest_checker('turn')
@@ -84,15 +80,14 @@ export function on_message(
   message: {
     roomName: string
     loadType: string
-    novel: boolean
-    npc_name: string
   },
   _sender: url
 ): void {
   if (messageId == hash('room_load')) {
     this.roomName = message.roomName
-    //TESTJPF can this whole conditional be moved to fsms???
     if (message.loadType == 'room transition') game_turn()
+    //testjpf it wopuld be cool to talk to npcs about their problem.
+    //snitch, security issues etc.., effects
     calculate_heat(this.roomName)
     address_busy_tasks()
     msg.post(this.roomName + ':/level#' + this.roomName, 'room_load')
@@ -108,10 +103,7 @@ export function on_message(
     quest_checker('interact')
 
     print('exitgui reason::', novel.reason)
-    novel.forced = false
-    novel.reason = 'none'
-    novel.item = 'none'
-    novel.reset_task()
+    novel.reset_novel()
     //calculate_heat(this.roomName)
     msg.post(this.roomName + ':/shared/adam#adam', 'acquire_input_focus')
   } else if (messageId == hash('update_alert')) {
@@ -120,6 +112,5 @@ export function on_message(
       'alert_' + tostring(player.alert_level)
     )
   }
-
   update_hud()
 }

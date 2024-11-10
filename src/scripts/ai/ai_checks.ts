@@ -12,7 +12,6 @@ import { confrontationConsequence } from '../systems/tasksystem'
 import { rollSpecialDice } from '../utils/dice'
 import NpcState from '../states/npc'
 import { NpcsInitState } from '../states/inits/npcsInitState'
-import { RoomsInitState } from '../states/inits/roomsInitState'
 
 function tendToPatient(p: string, doc: string) {
   npcs.all[doc].fsm.setState('mender')
@@ -150,19 +149,11 @@ export function seen_check(s: string, w: string) {
     ? { confront: false, type: 'seen' }
     : { confront: false, type: 'neutral' }
 }
-
+//TESTJPF this could probably be like
+// medical() on NPCS youve ben going for
+//player already moved!!
 export function clearance_checks() {
-  if (player.clearance < RoomsInitState[player.currRoom].clearance) {
-    print(
-      'PLAYER::: NEWQUESTIONED!!!',
-      player.clearance,
-      RoomsInitState[player.currRoom].clearance,
-      player.currRoom
-    )
-    player.fsm.setState('trespass')
-  }
-
-  const cops = npcs.return_security()
+  const cops = npcs.returnSecurity()
   for (const cop of cops) {
     const stations = rooms.all[cop.currRoom].stations
     let sKey: keyof typeof stations

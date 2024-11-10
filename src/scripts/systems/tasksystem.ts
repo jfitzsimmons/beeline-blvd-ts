@@ -12,9 +12,9 @@ import {
 } from '../systems/effectsystem'
 
 import {
-  neg_consolations,
-  pos_consolations,
-  suspect_punched_check,
+  //neg_consolations,
+  // pos_consolations,
+  // targetPunchedCheck,
   suspicious_check,
   unlucky_check,
   watcher_punched_check,
@@ -27,7 +27,7 @@ const confrontation_checks: Array<
 > = [
   vanity_check,
   angel_check,
-  suspect_punched_check,
+  //targetPunchedCheck,
   watcher_punched_check,
   //snitch_check,
   prejudice_check,
@@ -90,26 +90,6 @@ export function confrontationConsequence(
   return precheck == true && s == 'player' ? 'concern' : consequence
 }
 //NOVEL
-export function unimpressed_checks(s: string, w: string) {
-  const tempcons: Array<(s: string, w: string) => Consequence> =
-    shuffle(neg_consolations)
-  tempcons.forEach((c) => {
-    const consolation = c(s, w)
-    if (consolation.pass == true) return consolation.type
-  })
-
-  return 'neutral'
-}
-export function impressed_checks(s: string, w: string) {
-  const tempcons: Array<(s: string, w: string) => Consequence> =
-    shuffle(pos_consolations)
-  tempcons.forEach((c) => {
-    const consolation = c(s, w)
-    if (consolation.pass == true) return consolation.type
-  })
-
-  return 'neutral'
-}
 
 //Task Categories
 //TESTJPF NOW!!! Need to figure out how to

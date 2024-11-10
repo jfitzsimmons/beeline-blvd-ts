@@ -1,260 +1,60 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { NpcsInitState } from './inits/npcsInitState'
-import StateMachine from './stateMachine'
-
-import { Npcs } from '../../types/state'
-import { shuffle } from '../utils/utils'
-import { NpcMethod, QuestMethods, NpcsProps } from '../../types/tasks'
+import {
+  NpcsInitState,
+  seedBinaries,
+  seedSkills,
+  binaryLookup,
+} from './inits/npcsInitState'
 import NpcState from './npc'
+import StateMachine from './stateMachine'
+import { Npcs } from '../../types/state'
+import { QuestMethods } from '../../types/tasks'
+import { NpcProps, WorldNpcsArgs } from '../../types/world'
+import { shuffle } from '../utils/utils'
 
-interface BinaryLookupTable {
-  [key: string]: BinaryLookupRow
-}
-interface BinaryLookupRow {
-  [key: string]: number
-}
-const skills = {
-  constitution: 5,
-  charisma: 5, // deception?
-  wisdom: 5,
-  intelligence: 5,
-  speed: 5,
-  perception: 5, // insight
-  strength: 5, //carrying capacity, intimidation
-  stealth: 5, // !!
-}
-const binaries = {
-  evil_good: 0,
-  passiveAggressive: 0,
-  lawlessLawful: 0,
-  anti_authority: 0,
-  un_educated: 0,
-  poor_wealthy: 0,
-  mystical_logical: 0,
-  noir_color: 0,
-}
-const binarylookup: BinaryLookupTable = {
-  ais: {
-    evil_good: 0.3,
-    passiveAggressive: -0.3,
-    lawlessLawful: 0.2,
-    anti_authority: -0.2,
-    un_educated: 0,
-    poor_wealthy: -0.1,
-    mystical_logical: 0,
-    noir_color: 0,
-  },
-  church: {
-    evil_good: 0,
-    passiveAggressive: -0.1,
-    lawlessLawful: 0.1,
-    anti_authority: 0.2,
-    un_educated: -0.3,
-    poor_wealthy: 0.1,
-    mystical_logical: -0.2,
-    noir_color: 0,
-  },
-  contractors: {
-    evil_good: 0.1,
-    passiveAggressive: -0.1,
-    lawlessLawful: 0.1,
-    anti_authority: 0.1,
-    un_educated: 0.3,
-    poor_wealthy: 0.2,
-    mystical_logical: 0.1,
-    noir_color: 0,
-  },
-  corps: {
-    evil_good: -0.3,
-    passiveAggressive: 0.1,
-    lawlessLawful: 0,
-    anti_authority: -0.1,
-    un_educated: 0.2,
-    poor_wealthy: 0.3,
-    mystical_logical: 0,
-    noir_color: 0,
-  },
-  gang1: {
-    evil_good: -0.2,
-    passiveAggressive: 0.3,
-    lawlessLawful: -0.2,
-    anti_authority: 0.1,
-    un_educated: -0.2,
-    poor_wealthy: -0.1,
-    mystical_logical: -0.1,
-    noir_color: 0,
-  },
-  gang2: {
-    evil_good: -0.2,
-    passiveAggressive: 0,
-    lawlessLawful: -0.1,
-    anti_authority: -0.1,
-    un_educated: -0.2,
-    poor_wealthy: 0.2,
-    mystical_logical: 0,
-    noir_color: 0.1,
-  },
-  gang3: {
-    evil_good: -0.1,
-    passiveAggressive: 0.2,
-    lawlessLawful: -0.3,
-    anti_authority: 0.2,
-    un_educated: -0.1,
-    poor_wealthy: 0,
-    mystical_logical: 0,
-    noir_color: 0,
-  },
-  gang4: {
-    evil_good: 0.1,
-    passiveAggressive: 0.1,
-    lawlessLawful: -0.1,
-    anti_authority: -0.2,
-    un_educated: 0.2,
-    poor_wealthy: -0.2,
-    mystical_logical: 0,
-    noir_color: 0,
-  },
-  labor: {
-    evil_good: 0.2,
-    passiveAggressive: -0.2,
-    lawlessLawful: 0.2,
-    anti_authority: -0.3,
-    un_educated: -0.1,
-    poor_wealthy: -0.3,
-    mystical_logical: 0,
-    noir_color: 0,
-  },
-  security: {
-    evil_good: -0.1,
-    passiveAggressive: 0.2,
-    lawlessLawful: -0.2,
-    anti_authority: 0.3,
-    un_educated: -0.1,
-    poor_wealthy: 0.1,
-    mystical_logical: 0,
-    noir_color: 0,
-  },
-  staff: {
-    evil_good: 0.2,
-    passiveAggressive: 0,
-    lawlessLawful: -0.2,
-    anti_authority: 0,
-    un_educated: 0.1,
-    poor_wealthy: -0.2,
-    mystical_logical: 0,
-    noir_color: 0,
-  },
-  visitors: {
-    evil_good: 0,
-    passiveAggressive: 0,
-    lawlessLawful: 0,
-    anti_authority: 0,
-    un_educated: 0,
-    poor_wealthy: 0,
-    mystical_logical: 0,
-    noir_color: 0,
-  },
-  sexworkers: {
-    evil_good: 0,
-    passiveAggressive: 0,
-    lawlessLawful: 0,
-    anti_authority: -0.1,
-    un_educated: -0.1,
-    poor_wealthy: -0.1,
-    mystical_logical: 0,
-    noir_color: -0.1,
-  },
-  doctors: {
-    evil_good: 0,
-    passiveAggressive: 0,
-    lawlessLawful: 0.1,
-    anti_authority: 0,
-    un_educated: 0.1,
-    poor_wealthy: 0.1,
-    mystical_logical: 0.2,
-    noir_color: 0,
-  },
-  maintenance: {
-    evil_good: 0,
-    passiveAggressive: -0.1,
-    lawlessLawful: 0.1,
-    anti_authority: 0.1,
-    un_educated: -0.1,
-    poor_wealthy: -0.1,
-    mystical_logical: 0.1,
-    noir_color: 0,
-  },
-  custodians: {
-    evil_good: 0.1,
-    passiveAggressive: 0.1,
-    lawlessLawful: -0.1,
-    anti_authority: -0.1,
-    un_educated: -0.2,
-    poor_wealthy: -0.2,
-    mystical_logical: -0.1,
-    noir_color: 0,
-  },
-  mailroom: {
-    evil_good: -0.1,
-    passiveAggressive: 0.2,
-    lawlessLawful: -0.2,
-    anti_authority: 0.1,
-    un_educated: 0,
-    poor_wealthy: -0.1,
-    mystical_logical: 0,
-    noir_color: 0,
-  },
-}
 const dt = math.randomseed(os.time())
 
-// need npcs interface?
 export default class WorldNpcs {
   fsm: StateMachine
   private _all: Npcs
   order: string[]
   quests: QuestMethods
-  npcLists: NpcMethod
+  parent: NpcProps
   infirmed: string[]
   injured: string[]
   ignore: string[]
 
-  constructor(roommethods: NpcsProps) {
-    //testjpf npcs need their own statemachine.
-    //this._all = { ...NpcsInitState }
-
+  constructor(roommethods: WorldNpcsArgs) {
     this.infirmed = []
     this.injured = []
     this.ignore = []
     this.order = []
     this.quests = {
-      return_doctors: this.return_doctors.bind(this),
-      return_security: this.return_doctors.bind(this),
-      return_all: this.return_all.bind(this),
-      return_order_all: this.return_order_all.bind(this),
+      returnDoctors: this.returnDoctors.bind(this),
+      returnSecurity: this.returnDoctors.bind(this),
+      returnAll: this.returnAll.bind(this),
+      returnOrderAll: this.returnOrderAll.bind(this),
     }
-    this.npcLists = {
-      //getPlayerRoom: roommethods.getPlayerRoom.bind(this),
-      add_infirmed: this.add_infirmed.bind(this),
-      get_infirmed: this.get_infirmed.bind(this),
-      get_injured: this.get_injured.bind(this),
-      remove_infirmed: this.remove_infirmed.bind(this),
-      add_injured: this.add_injured.bind(this),
-      remove_injured: this.remove_injured.bind(this),
-      add_ignore: this.add_ignore.bind(this),
-      remove_ignore: this.remove_ignore.bind(this),
-      ...roommethods,
+    this.parent = {
+      addInfirmed: this.addInfirmed.bind(this),
+      getInfirmed: this.getInfirmed.bind(this),
+      getInjured: this.getInjured.bind(this),
+      removeInfirmed: this.removeInfirmed.bind(this),
+      addInjured: this.addInjured.bind(this),
+      removeInjured: this.removeInjured.bind(this),
+      addIgnore: this.addIgnore.bind(this),
+      removeIgnore: this.removeIgnore.bind(this),
       returnMendeeLocation: this.returnMendeeLocation.bind(this),
-      return_doctors: this.return_doctors.bind(this),
-      return_security: this.return_doctors.bind(this),
-      return_all: this.return_all.bind(this),
-      return_order_all: this.return_order_all.bind(this),
+      returnDoctors: this.returnDoctors.bind(this),
+      returnSecurity: this.returnDoctors.bind(this),
+      returnAll: this.returnAll.bind(this),
+      returnOrderAll: this.returnOrderAll.bind(this),
+      ...roommethods,
     }
-    this._all = seedNpcs(this.npcLists)
+    this._all = seedNpcs(this.parent)
     random_attributes(this.all, this.order)
     this.inventory_init()
-
     this.fsm = new StateMachine(this, 'npcs')
-
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
       onEnter: this.onTurnEnter.bind(this),
@@ -267,19 +67,16 @@ export default class WorldNpcs {
       onExit: this.onNewExit.bind(this),
     })
 
-    this.return_doctors = this.return_doctors.bind(this)
-    this.return_security = this.return_security.bind(this)
+    this.returnDoctors = this.returnDoctors.bind(this)
+    this.returnSecurity = this.returnSecurity.bind(this)
   }
-
   private onNewEnter(): void {
     print('npcsNewupdate')
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
       npc.fsm.setState('new')
-      // npc.fsm.update(dt)
     }
-    //this.npcLists.resetStationMap()
     this.fsm.setState('turn')
   }
   private onNewUpdate(): void {}
@@ -288,38 +85,29 @@ export default class WorldNpcs {
     print('npcsturnenter')
   }
   private onTurnUpdate(): void {
-    // print('npcsturnupdate')
+    print('<< :: NPCSturnUpdate() :: >>')
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
-      // print('npc', i)
       const npc = this.all[this.order[i]]
-
       npc.fsm.update(dt)
     }
-    //this.npcLists.resetStationMap()
     this.medical()
     //this.security()
-
-    //this.aiChecks()
   }
   private onTurnExit(): void {}
-
   public get all(): Npcs {
     return this._all
   }
   returnMendeeLocation() {
-    return this.all[this.npcLists.getMendingQueue()[0]].currRoom
+    return this.all[this.parent.getMendingQueue()[0]].currRoom
   }
   //security() {}
   medical() {
     let count = this.infirmed.length
-
-    //const count = this.npcLists.getMendingQueue().length
-    for (const doc of this.return_doctors()) {
+    for (const doc of this.returnDoctors()) {
       const mobile = !['mender', 'mendee', 'injury', 'infirm'].includes(
         doc.fsm.getState()
       )
-      print('mobilemobilemobile', mobile)
       //testjpf todo unhardcode
       //have a const that lists immobile states.!!!
       if (mobile === true && count > 0) {
@@ -328,7 +116,7 @@ export default class WorldNpcs {
       } else if (
         mobile === true &&
         count < 1 &&
-        this.npcLists.getMendingQueue().length > 0
+        this.parent.getMendingQueue().length > 0
       ) {
         doc.fsm.setState('paramedic')
       } else if (mobile === true) {
@@ -336,34 +124,34 @@ export default class WorldNpcs {
       }
     }
   }
-  add_ignore(n: string): void {
+  addIgnore(n: string): void {
     this.ignore.push(n)
   }
-  remove_ignore(n: string): void {
+  removeIgnore(n: string): void {
     this.ignore.splice(this.ignore.indexOf(n), 1)
   }
-  add_infirmed(n: string): void {
+  addInfirmed(n: string): void {
     this.infirmed.push(n)
   }
-  get_infirmed(): string[] {
+  getInfirmed(): string[] {
     return this.infirmed
   }
-  remove_infirmed(n: string): void {
+  removeInfirmed(n: string): void {
     this.infirmed.splice(this.infirmed.indexOf(n), 1)
   }
-  add_injured(n: string): void {
+  addInjured(n: string): void {
     this.injured.push(n)
   }
-  get_injured(): string[] {
+  getInjured(): string[] {
     return this.injured
   }
-  remove_injured(n: string): void {
+  removeInjured(n: string): void {
     this.injured.splice(this.injured.indexOf(n), 1)
   }
-  return_doctors(): NpcState[] {
+  returnDoctors(): NpcState[] {
     return [this.all.doc01, this.all.doc02, this.all.doc03]
   }
-  return_security(): NpcState[] {
+  returnSecurity(): NpcState[] {
     return [
       this.all.security001,
       this.all.security002,
@@ -372,7 +160,7 @@ export default class WorldNpcs {
       this.all.security005,
     ]
   }
-  return_all(): Npcs {
+  returnAll(): Npcs {
     return this.all
   }
   sort_npcs_by_encounter() {
@@ -381,7 +169,7 @@ export default class WorldNpcs {
         this.all[a].turns_since_encounter - this.all[b].turns_since_encounter
     )
   }
-  return_order_all(): [string[], Npcs] {
+  returnOrderAll(): [string[], Npcs] {
     return [shuffle(this.order), this.all]
   }
   inventory_init() {
@@ -392,18 +180,10 @@ export default class WorldNpcs {
       }
     }
   }
-  /** 
-  aidChecks() {
-    for (const i of this.injured.filter(
-      (n): n is string => !this.ignore.includes(n)
-    )) {
-      //externalaidcheck(i)
-    }
-  }*/
 }
 
 function adjust_binaries(value: number, clan: string, binary: string) {
-  let adj = binarylookup[clan][binary] + value + math.random(-0.4, 0.4)
+  let adj = binaryLookup[clan][binary] + value + math.random(-0.4, 0.4)
   if (adj > 1) {
     adj = 1
   } else if (adj < -1) {
@@ -413,15 +193,10 @@ function adjust_binaries(value: number, clan: string, binary: string) {
   return adj
 }
 
-function seedNpcs(lists: NpcMethod) {
+function seedNpcs(lists: NpcProps) {
   const seeded: Npcs = {}
-  //const inits = { ...NpcsInitState }
   let ki: keyof typeof NpcsInitState
-  for (ki in NpcsInitState) {
-    // creat npc class constructor todo now testjpf
-    // seeded.push({ [ki]: new NpcState(ki) })
-    seeded[ki] = new NpcState(ki, lists)
-  }
+  for (ki in NpcsInitState) seeded[ki] = new NpcState(ki, lists)
   return seeded
 }
 
@@ -439,8 +214,8 @@ function random_attributes(npcs: Npcs, order: string[]) {
     npcs[kn].love = math.random(-1, 1)
     // random attitude
     npcs[kn].traits.opinion = {}
-    let kbl: keyof typeof binarylookup
-    for (kbl in binarylookup) {
+    let kbl: keyof typeof binaryLookup
+    for (kbl in binaryLookup) {
       npcs[kn].traits.opinion[kbl] = math.random(-9, 9)
     }
     if (path > 3) {
@@ -457,8 +232,8 @@ function random_attributes(npcs: Npcs, order: string[]) {
     let s_count = 0
 
     npcs[kn].traits.skills = {}
-    let ks: keyof typeof skills
-    for (ks in skills) {
+    let ks: keyof typeof seedSkills
+    for (ks in seedSkills) {
       npcs[kn].traits.skills[ks] = tempskills[s_count] + math.random(-1, 1)
       s_count = s_count + 1
     }
@@ -468,8 +243,8 @@ function random_attributes(npcs: Npcs, order: string[]) {
     let b_count = 0
 
     npcs[kn].traits.binaries = {}
-    let kb: keyof typeof binaries
-    for (kb in binaries) {
+    let kb: keyof typeof seedBinaries
+    for (kb in seedBinaries) {
       const adjustment = adjust_binaries(tempbins[b_count], npcs[kn].clan, kb)
       npcs[kn].traits.binaries[kb] = adjustment
       b_count = b_count + 1

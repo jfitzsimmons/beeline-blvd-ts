@@ -4,7 +4,7 @@ import { QuestCondition } from '../../types/tasks'
 //const dt = math.randomseed(os.time())
 
 export default class QuestStep {
-  //private _questmethods: AllQuestsMethods
+  //private _questmethods: WorldQuestsMethods
   label: string
   solution?: string
   passed: boolean

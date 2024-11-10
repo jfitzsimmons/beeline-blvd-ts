@@ -9,7 +9,7 @@ function check_room_nodes(action: { x: number; y: number }) {
       const params = {
         enterRoom: kr,
       }
-      msg.post('proxies:/controller#worldcontroller', 'pick_room', params)
+      msg.post('proxies:/controller#gamecontroller', 'pick_room', params)
     }
   }
 }

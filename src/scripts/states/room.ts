@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Actors, Vacancies } from '../../types/state'
-import { NpcsProps2 } from '../../types/tasks'
 import { RoomsInitState } from './inits/roomsInitState'
 import StateMachine from './stateMachine'
+import { Actors, Vacancies } from '../../types/state'
+import { RoomProps } from '../../types/world'
 
 export default class RoomState {
   fsm: StateMachine
@@ -13,8 +13,8 @@ export default class RoomState {
   actors: Actors
   props?: string[]
   vacancies?: Vacancies
-  parent: NpcsProps2
-  constructor(r: string, lists: NpcsProps2) {
+  parent: RoomProps
+  constructor(r: string, roomProps: RoomProps) {
     this.fsm = new StateMachine(this, 'room' + r)
     this.matrix = RoomsInitState[r].matrix
     this.roomName = RoomsInitState[r].roomName
@@ -23,7 +23,7 @@ export default class RoomState {
     this.actors = RoomsInitState[r].actors
     this.props = RoomsInitState[r].props || []
     this.vacancies = RoomsInitState[r].vacancies || {}
-    this.parent = lists
+    this.parent = roomProps
     this.fsm
       .addState('idle')
       .addState('focus', {
@@ -31,23 +31,23 @@ export default class RoomState {
         onUpdate: this.onFocusUpdate.bind(this),
         onExit: this.onFocusEnd.bind(this),
       })
-      .addState('arrest', {
-        onEnter: this.onArrestEnter.bind(this),
-        onUpdate: this.onArrestUpdate.bind(this),
-        onExit: this.onArrestExit.bind(this),
+      .addState('blur', {
+        onEnter: this.onBlurEnter.bind(this),
+        onUpdate: this.onBlurUpdate.bind(this),
+        onExit: this.onBlurExit.bind(this),
       })
   }
   private onFocusStart(): void {
     //highlight room neighbors and directions
     //do something with stations, clear them
     //testjpf getPlayerRoom method
-    this.parent.set_focused(this.roomName)
+    this.parent.setFocused(this.roomName)
   }
-  private onFocusUpdate(): void {
-    //not bad to handle interactions
-  }
+  private onFocusUpdate(): void {}
   private onFocusEnd(): void {}
-  private onArrestEnter(): void {}
-  private onArrestUpdate(): void {}
-  private onArrestExit(): void {}
+  private onBlurEnter(): void {}
+  private onBlurUpdate(): void {
+    this.fsm.setState('idle')
+  }
+  private onBlurExit(): void {}
 }
