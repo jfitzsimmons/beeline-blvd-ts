@@ -9,6 +9,50 @@ import { rollSpecialDice } from '../../utils/dice'
 import { shuffle, clamp } from '../../utils/utils'
 import WorldTasks from '../tasks'
 
+export function addPledge(_this: WorldTasks, t: string) {
+  const target = _this.parent.returnNpc(t)
+  print('PLEDGECHECK::: ', target.name, target.cooldown)
+  target.cooldown = target.cooldown + 8
+  print('2222PLEDGECHECK::: ', target.name, target.cooldown)
+}
+
+export function pledgeCheck(
+  this: WorldTasks,
+  t: string,
+  l: string
+): Consequence {
+  const { skills: ls, binaries: lb } = this.parent.returnNpc(l).traits
+  const { skills: ts, binaries: tb } =
+    t === 'player'
+      ? this.parent.returnPlayer().state.traits
+      : this.parent.returnNpc(t).traits
+
+  const modifier = Math.round(
+    lb.passiveAggressive * -5 + tb.passiveAggressive * 5
+  )
+  const advantage = ls.wisdom > ts.constitution + 2
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -4, 3)
+
+  print('TESTJPF RESULT::: pledge', result)
+  if (result > 5 && result <= 10) {
+    addPledge(this, t)
+    return { pass: true, type: 'pledge' }
+  }
+
+  if (result > 10) {
+    //print('SPECIAL pledge')
+    addPledge(this, t)
+    addPledge(this, t)
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    //print('NEVER pledge')
+    return { pass: true, type: 'critical' }
+  }
+
+  return { pass: false, type: 'neutral' }
+}
+
 //need to send cause TESTJPF
 export function playerSnitchCheck(
   this: WorldTasks,

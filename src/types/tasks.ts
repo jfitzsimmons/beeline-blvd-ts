@@ -30,6 +30,7 @@ export interface TasksChecks {
   classy_check(t: string, l: string): Consequence
   predator_check(t: string, l: string): Consequence
   jailtime_check(t: string, l: string): Consequence
+  pledgeCheck(t: string, l: string): Consequence
 }
 export interface QuestConditions {
   [key: string | number]: QuestStep

@@ -248,6 +248,7 @@ export default class TaskState {
       return {
         jailtime_check: checks.jailtime_check.bind(this),
         build_consequence: checks.build_consequence.bind(this),
+        pledgeCheck: checks.pledgeCheck.bind(this),
       }
     }
 
@@ -288,7 +289,7 @@ export default class TaskState {
     const tempcons: Array<
       (s: string, w: string) => { pass: boolean; type: string }
     > = shuffle([
-      // pledge_check,
+      this.checks.pledgeCheck!.bind(this),
       // bribe_check,
       // suspect_punched_check,
       this.checks.jailtime_check!.bind(this),

@@ -11,6 +11,7 @@ import {
   classy_check,
   predator_check,
   jailtime_check,
+  pledgeCheck,
 } from './inits/checksFuncs'
 import { QuestMethods, Task, TasksChecks } from '../../types/tasks'
 import TaskState from './task'
@@ -60,6 +61,7 @@ export default class WorldTasks {
       classy_check: classy_check.bind(this),
       predator_check: predator_check.bind(this),
       jailtime_check: jailtime_check.bind(this),
+      pledgeCheck: pledgeCheck.bind(this),
     }
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
