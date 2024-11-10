@@ -4,7 +4,7 @@ import { itemStateInit } from '../states/inits/inventoryInitState'
 //import NpcState from '../states/npc'
 //import { rollSpecialDice } from '../utils/dice'
 import { shuffle } from '../utils/utils'
-const { npcs } = globalThis.game.world
+//const { npcs } = globalThis.game.world
 
 //TESTJPf move to types
 
@@ -29,43 +29,43 @@ function buildLookup() {
   }
 }
 
-export function removeRandom(to_inv: string[], from_inv: string[]) {
-  const stolen_item = shuffle(from_inv).pop()
-  if (stolen_item === undefined) return ''
-  if (stolen_item !== '') to_inv.push(stolen_item)
-  return stolen_item
+export function removeRandom(toInv: string[], fromInv: string[]) {
+  const stolenItem = shuffle(fromInv).pop()
+  if (stolenItem === undefined) return ''
+  if (stolenItem !== '') toInv.push(stolenItem)
+  return stolenItem
 }
 
-export function removeLast(to_inv: string[], from_inv: string[]) {
-  const stolen_item = from_inv.pop()
-  if (stolen_item === undefined) return ''
-  if (stolen_item !== '') to_inv.push(stolen_item)
-  return stolen_item
+export function removeLast(toInv: string[], fromInv: string[]) {
+  const stolenItem = fromInv.pop()
+  if (stolenItem === undefined) return ''
+  if (stolenItem !== '') toInv.push(stolenItem)
+  return stolenItem
 }
 export function removeAdvantageous(
-  to_inv: string[],
-  from_inv: string[],
+  toInv: string[],
+  fromInv: string[],
   skills: Trait
 ) {
-  if (from_inv.length < 1) return ''
-  if (from_inv.length === 1) return removeLast(to_inv, from_inv)
+  if (fromInv.length < 1) return ''
+  if (fromInv.length === 1) return removeLast(toInv, fromInv)
   const order = Object.entries(skills)
 
   order.sort((a: [string, number], b: [string, number]) => b[1] - a[1])
 
   let found = false
-  let stolen_item = ''
+  let stolenItem = ''
 
   for (const desire of order) {
     let count = 0
-    for (const item of from_inv) {
+    for (const item of fromInv) {
       const stats: InventoryTableItem =
         itemStateInit[item as keyof InventoryTableItem]
       let sKey: keyof typeof stats.skills
       for (sKey in stats.skills) {
         const value = stats.skills[sKey]
         if (value > 0 && sKey == desire[0]) {
-          stolen_item = from_inv.splice(count, 1)[0]
+          stolenItem = fromInv.splice(count, 1)[0]
           found = true
           break
         }
@@ -76,33 +76,51 @@ export function removeAdvantageous(
     if (found == true) break
   }
   if (found == false) {
-    stolen_item = from_inv.splice(0, 1)[0]
-    to_inv.push(stolen_item)
+    stolenItem = fromInv.splice(0, 1)[0]
+    toInv.push(stolenItem)
   }
-  return stolen_item
+  return stolenItem
 }
 
-export function removeValuable(to_inv: string[], from_inv: string[]) {
+//!!TESTJPF NONE of these seem to update inventory bonuses!!! SPIKE
+
+export function removeOfValue(toInv: string[], fromInv: string[]): string {
+  let stolenItem = ''
+  if (fromInv.length < 1) return stolenItem
+
+  for (let i = fromInv.length - 1; i >= 0; i--) {
+    if (itemStateInit[fromInv[i]].value > 1) {
+      const loot = fromInv.splice(i, 1)
+      stolenItem = loot[0]
+      toInv.push(...loot)
+      break
+    }
+  }
+  print('OUTCOMES:: GETEXTORTEDFOR::', stolenItem)
+  return stolenItem
+}
+
+export function removeValuable(toInv: string[], fromInv: string[]) {
   /** 
-	for _, iv in ipairs(from_inv) do
+	for _, iv in ipairs(fromInv) do
 		//print("iv:",iv)
 		//print("M.itemStateInit[iv].value:",M.itemStateInit[iv].value)
 	}
 	**/
-  if (from_inv.length < 1) return ''
-  if (from_inv.length === 1) return removeLast(to_inv, from_inv)
-  from_inv.sort(
+  if (fromInv.length < 1) return ''
+  if (fromInv.length === 1) return removeLast(toInv, fromInv)
+  fromInv.sort(
     (a: string, b: string) => itemStateInit[a].value - itemStateInit[b].value
   )
-  let stolen_item = from_inv.pop()
+  let stolenItem = fromInv.pop()
 
-  if (stolen_item === undefined) stolen_item = ''
-  //table.sort(from_inv, function(x, y) return M.itemStateInit[x].value > M.itemStateInit[y].value })
+  if (stolenItem === undefined) stolenItem = ''
+  //table.sort(fromInv, function(x, y) return M.itemStateInit[x].value > M.itemStateInit[y].value })
 
-  if (stolen_item !== '') to_inv.push(stolen_item)
-  return stolen_item
+  if (stolenItem !== '') toInv.push(stolenItem)
+  return stolenItem
 }
-
+/**TESTJPF TOD!!! 
 export function get_extorted(s: string, w: string) {
   const s_inv = npcs.all[s].inventory
   const w_inv = npcs.all[w].inventory
@@ -121,7 +139,7 @@ export function get_extorted(s: string, w: string) {
     }
   }
 }
-/**TESTJPF TOD!!! 
+
 export function bribe_check(suspect: string, watcher: string): Consequence {
   const w = npcs.all[watcher]
   const s = suspect === 'player' ? player.state : npcs.all[suspect]

@@ -113,34 +113,13 @@ export default class WorldPlayer {
   private onTrespassExit(): void {
     this.parent.removeTaskByCause('player', 'clearance')
   }
-  private onConfrontedEnter(): void {
-    // print('TESTJPF: PLAYER Entering question state does nothing.')
-    //  this.fsm.setState('turn')
-  }
+  private onConfrontedEnter(): void {}
   private onConfrontedUpdate(): void {}
   private onConfrontedExit(): void {}
   setRoomInfo() {
-    //testjpf instead will have parent.get_focused_room()
-    //or something...
-    print(
-      '00 focusroomchanges:: current, matrik:',
-      this.parent.getFocusedRoom(),
-      this.exitRoom,
-      this.currRoom,
-      this.matrix_x,
-      this.matrix_y
-    )
     this.exitRoom = RoomsInitLayout[this.matrix_y][this.matrix_x]!
     this.currRoom = this.parent.getFocusedRoom()
     this.matrix = RoomsInitState[this.currRoom].matrix
-    print(
-      'focusroomchanges:: current, matrik:',
-      this.parent.getFocusedRoom(),
-      this.exitRoom,
-      this.currRoom,
-      this.matrix_x,
-      this.matrix_y
-    )
   }
   getPlayerRoom(): string {
     return this.currRoom

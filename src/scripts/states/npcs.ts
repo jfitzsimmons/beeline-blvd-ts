@@ -108,7 +108,6 @@ export default class WorldNpcs {
       const mobile = !['mender', 'mendee', 'injury', 'infirm'].includes(
         doc.fsm.getState()
       )
-      print('mobilemobilemobile', mobile)
       //testjpf todo unhardcode
       //have a const that lists immobile states.!!!
       if (mobile === true && count > 0) {

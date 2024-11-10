@@ -1,19 +1,19 @@
-//testjpf move 2 checks to parent
-//use new init
-// will need individual method Types 'per task'
-// some tasks wont have any
-
 import { Effect, Consequence, Task } from '../../../types/tasks'
+import { removeOfValue } from '../../systems/inventorysystem'
 import { fx } from '../../utils/consts'
 import { rollSpecialDice } from '../../utils/dice'
 import { shuffle, clamp } from '../../utils/utils'
 import WorldTasks from '../tasks'
 
-export function addPledge(_this: WorldTasks, t: string) {
-  const target = _this.parent.returnNpc(t)
-  print('PLEDGECHECK::: ', target.name, target.cooldown)
+export function addPledge(this: WorldTasks, t: string) {
+  const target = this.parent.returnNpc(t)
   target.cooldown = target.cooldown + 8
-  print('2222PLEDGECHECK::: ', target.name, target.cooldown)
+  print(
+    'OUTCOMES:: PLEDGED::',
+    target.name,
+    'pledged to be cool for::',
+    target.cooldown
+  )
 }
 
 export function pledgeCheck(
@@ -33,16 +33,23 @@ export function pledgeCheck(
   const advantage = ls.wisdom > ts.constitution + 2
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -4, 3)
 
-  print('TESTJPF RESULT::: pledge', result)
+  print(
+    'CHECKS:: PLEDGECHECK::',
+    t,
+    'pledged to do good by',
+    l,
+    'ROLL:',
+    result
+  )
   if (result > 5 && result <= 10) {
-    addPledge(this, t)
+    this.outcomes.addPledge(t)
     return { pass: true, type: 'pledge' }
   }
 
   if (result > 10) {
     //print('SPECIAL pledge')
-    addPledge(this, t)
-    addPledge(this, t)
+    this.outcomes.addPledge(t)
+    this.outcomes.addPledge(t)
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
@@ -481,7 +488,7 @@ export function npc_confront_consequence(this: WorldTasks, t: Task) {
   > = shuffle([
     // pledge_check,
     // bribe_check,
-    // suspect_punched_check,
+    // targetPunchedCheck,
     jailtime_check,
     //admirer_check,
     // prejudice_check,
@@ -528,17 +535,20 @@ export function jailtime_check(
   t: string,
   l: string
 ): Consequence {
-  const target = this.parent.returnNpc(t)
+  const target =
+    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
   const { binaries: lb, skills: ls } = this.parent.returnNpc(l).traits
-  const { skills: ts, binaries: tb } = target.traits
-  t === 'player'
-    ? this.parent.returnPlayer().state.traits
-    : this.parent.returnNpc(t).traits
+  const { skills: ts, binaries: tb } =
+    t === 'player'
+      ? this.parent.returnPlayer().state.traits
+      : this.parent.returnNpc(t).traits
+
   const modifier = Math.round(
     ls.perception - ts.perception + lb.anti_authority * 4
   )
   const advantage = tb.passiveAggressive < 0.2
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -4, 2)
+  print('CHECKS:: JAILTIMECHECK::', t, 'jailed by', l, 'ROLL:', result)
 
   //print('TESTJPF RESULT::: jailed', result)
   if (result > 5 && result <= 10) {
@@ -554,6 +564,115 @@ export function jailtime_check(
   }
   if (result <= 1) {
     //print('NEVER jailed')
+    return { pass: true, type: 'critical' }
+  }
+
+  return { pass: false, type: 'neutral' }
+}
+export function lConfrontPunchT(
+  this: WorldTasks,
+  t: string,
+  //l: string,
+  hit = 1
+) {
+  const target = this.parent.returnNpc(t)
+  target.hp = target.hp - hit
+  print('OUTCOMES:: LcT::', target.name, 'HITFOR::', hit)
+}
+
+export function getExtorted(this: WorldTasks, t: string, l: string): string {
+  const tInv =
+    t === 'player'
+      ? this.parent.returnPlayer().state.inventory
+      : this.parent.returnNpc(t).inventory
+  const lInv = this.parent.returnNpc(l).inventory
+  print('OUTCOMES:: ', t, 'GETSEXTORTED')
+  return removeOfValue(tInv, lInv)
+}
+
+export function bribeCheck(
+  this: WorldTasks,
+  t: string,
+  l: string
+): Consequence {
+  //const target = this.parent.returnNpc(t)
+  const { binaries: lb, skills: ls } = this.parent.returnNpc(l).traits
+  const { binaries: tb, skills: ts } =
+    t === 'player'
+      ? this.parent.returnPlayer().state.traits
+      : this.parent.returnNpc(t).traits
+
+  const modifier = Math.round(
+    lb.lawlessLawful * -3 + (ls.strength - ts.strength / 2)
+  )
+  const advantage = tb.evil_good < lb.evil_good - 0.3
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  print('CHECKS:: BRIBECHECK::', t, 'asked for bribe by', l, 'ROLL:', result)
+  //print('TESTJPF RESULT::: bribe', result)
+  if (result > 5 && result <= 10) {
+    if (this.outcomes.getExtorted(t, l) == '') this.outcomes.lConfrontPunchT(t)
+    return { pass: true, type: 'bribe' }
+  }
+
+  if (result > 10) {
+    //print('SPECIAL bribe')
+    this.outcomes.getExtorted(t, l)
+    this.outcomes.lConfrontPunchT(t)
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    //print('NEVER bribe')
+    //give em a dollar? testjpf
+    return { pass: true, type: 'critical' }
+  }
+
+  return { pass: false, type: 'neutral' }
+}
+
+export function tConfrontPunchL(this: WorldTasks, l: string, hit = 1) {
+  const listener = this.parent.returnNpc(l)
+  listener.hp = listener.hp - hit
+  print('OUTCOMES:: TcL::', listener.name, 'HITFOR::', hit)
+}
+export function targetPunchedCheck(
+  this: WorldTasks,
+  t: string,
+  l: string
+): Consequence {
+  const { binaries: lb, skills: ls } = this.parent.returnNpc(l).traits
+  const { binaries: tb, skills: ts } =
+    t === 'player'
+      ? this.parent.returnPlayer().state.traits
+      : this.parent.returnNpc(t).traits
+
+  const modifier = Math.round(
+    (ls.constitution - ts.speed) / 2 + lb.evil_good * -2
+  )
+  const advantage = tb.passiveAggressive < lb.passiveAggressive - 0.3
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  print(
+    'CHECKS:: TPUCNHLCHK::',
+    t,
+    '(unless crit)punched by',
+    l,
+    'ROLL:',
+    result
+  )
+
+  //print('TESTJPF RESULT::: w punch s', result)
+  if (result > 5 && result <= 10) {
+    this.outcomes.lConfrontPunchT(t, 1)
+    return { pass: true, type: 'wPunchS' }
+  }
+
+  if (result > 10) {
+    //print('SPECIAL wPunchS')
+    this.outcomes.lConfrontPunchT(t, 3)
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    //print('NEVER wPunchS')
+    this.outcomes.tConfrontPunchL(l, 2)
     return { pass: true, type: 'critical' }
   }
 

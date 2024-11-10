@@ -31,6 +31,14 @@ export interface TasksChecks {
   predator_check(t: string, l: string): Consequence
   jailtime_check(t: string, l: string): Consequence
   pledgeCheck(t: string, l: string): Consequence
+  bribeCheck(t: string, l: string): Consequence
+  targetPunchedCheck(t: string, l: string): Consequence
+}
+export interface ChecksOutcomes {
+  addPledge(t: string): void
+  lConfrontPunchT(t: string, hit?: number): void
+  tConfrontPunchL(l: string, hit?: number): void
+  getExtorted(t: string, l: string): string
 }
 export interface QuestConditions {
   [key: string | number]: QuestStep

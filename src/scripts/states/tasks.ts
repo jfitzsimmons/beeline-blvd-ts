@@ -12,8 +12,19 @@ import {
   predator_check,
   jailtime_check,
   pledgeCheck,
+  bribeCheck,
+  addPledge,
+  lConfrontPunchT,
+  getExtorted,
+  tConfrontPunchL,
+  targetPunchedCheck,
 } from './inits/checksFuncs'
-import { QuestMethods, Task, TasksChecks } from '../../types/tasks'
+import {
+  ChecksOutcomes,
+  QuestMethods,
+  Task,
+  TasksChecks,
+} from '../../types/tasks'
 import TaskState from './task'
 import { arraymove } from '../utils/utils'
 import { TaskProps, WorldTasksArgs } from '../../types/world'
@@ -30,6 +41,7 @@ export default class WorldTasks {
   methods: TaskProps
   parent: WorldTasksArgs
   checks: TasksChecks
+  outcomes: ChecksOutcomes
   constructor(worldProps: WorldTasksArgs) {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
@@ -62,6 +74,14 @@ export default class WorldTasks {
       predator_check: predator_check.bind(this),
       jailtime_check: jailtime_check.bind(this),
       pledgeCheck: pledgeCheck.bind(this),
+      bribeCheck: bribeCheck.bind(this),
+      targetPunchedCheck: targetPunchedCheck.bind(this),
+    }
+    this.outcomes = {
+      addPledge: addPledge.bind(this),
+      lConfrontPunchT: lConfrontPunchT.bind(this),
+      getExtorted: getExtorted.bind(this),
+      tConfrontPunchL: tConfrontPunchL.bind(this),
     }
     this.fsm.addState('idle')
     this.fsm.addState('turn', {

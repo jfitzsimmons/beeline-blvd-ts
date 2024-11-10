@@ -249,6 +249,8 @@ export default class TaskState {
         jailtime_check: checks.jailtime_check.bind(this),
         build_consequence: checks.build_consequence.bind(this),
         pledgeCheck: checks.pledgeCheck.bind(this),
+        bribeCheck: checks.bribeCheck.bind(this),
+        targetPunchedCheck: checks.targetPunchedCheck.bind(this),
       }
     }
 
@@ -290,14 +292,14 @@ export default class TaskState {
       (s: string, w: string) => { pass: boolean; type: string }
     > = shuffle([
       this.checks.pledgeCheck!.bind(this),
-      // bribe_check,
-      // suspect_punched_check,
+      this.checks.bribeCheck!.bind(this),
+      this.checks.targetPunchedCheck!.bind(this),
       this.checks.jailtime_check!.bind(this),
       //admirer_check,
       // prejudice_check,
       // unlucky_check,
     ])
-    this.checks.build_consequence!(this, this.target, tempcons, false)
+    this.checks.build_consequence!(this, this.owner, tempcons, false)
   }
 }
 

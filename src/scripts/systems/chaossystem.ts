@@ -3,8 +3,8 @@ import { rollSpecialDice } from '../utils/dice'
 import { clamp, shuffle } from '../utils/utils'
 import { add_prejudice } from './effectsystem'
 //import { go_to_jail, add_pledge } from './emergencysystem'
-import { get_extorted, removeAdvantageous } from './inventorysystem'
-import { add_pledge } from './systemshelpers'
+import { removeAdvantageous } from './inventorysystem'
+//import { add_pledge } from './systemshelpers'
 
 const { npcs, player, tasks } = globalThis.game.world
 
@@ -19,6 +19,27 @@ export const neg_consolations = [
   love_drop,
   suspicious_check,
 ]
+
+export function unimpressed_checks(s: string, w: string) {
+  const tempcons: Array<(s: string, w: string) => Consequence> =
+    shuffle(neg_consolations)
+  tempcons.forEach((c) => {
+    const consolation = c(s, w)
+    if (consolation.pass == true) return consolation.type
+  })
+
+  return 'neutral'
+}
+export function impressed_checks(s: string, w: string) {
+  const tempcons: Array<(s: string, w: string) => Consequence> =
+    shuffle(pos_consolations)
+  tempcons.forEach((c) => {
+    const consolation = c(s, w)
+    if (consolation.pass == true) return consolation.type
+  })
+
+  return 'neutral'
+}
 
 //positive consolations
 function generate_gift() {
@@ -163,6 +184,7 @@ export function suspicious_check(
 
   return { pass: false, type: 'neutral' }
 }
+
 function call_security(watcher: string, suspect: string) {
   npcs.all[watcher].clan == 'security'
     ? tasks.methods.returnNpc(suspect).fsm.setState('arrestee')
@@ -174,20 +196,20 @@ function call_security(watcher: string, suspect: string) {
       )
 }
 //Misc. Checks
+
 export function unlucky_check(watcher: string, suspect: string): Consequence {
   const modifier = math.random(-1, 1)
   const advantage = math.random() > 0.5
   const result = rollSpecialDice(5, advantage, 3, 2) + modifier
-
   //print('TESTJPF RESULT UNLUCKY:::', result)
   if (result > 5 && result <= 10) {
-    shuffle([
-      call_security,
-      get_extorted,
-      wPunchS,
-      add_pledge,
-      add_prejudice,
-    ])[0](suspect, watcher)
+    const random = math.random(0, 4)
+    if (random == 0) tasks.outcomes.getExtorted(suspect, watcher)
+    else if (random == 1) tasks.outcomes.lConfrontPunchT(suspect)
+    else if (random == 2) tasks.outcomes.addPledge(suspect)
+    else if (random == 3) call_security(watcher, suspect)
+    else if (random == 4) add_prejudice(suspect, watcher)
+
     return { pass: true, type: 'unlucky' }
   }
 
@@ -204,14 +226,13 @@ export function unlucky_check(watcher: string, suspect: string): Consequence {
 
   return { pass: false, type: 'neutral' }
 }
+
 //Checks and Helpers
 //state changes
-function sPunchW(_s: string, w: string, hit = 1) {
-  npcs.all[w].hp = npcs.all[w].hp - hit
-}
-export function wPunchS(s: string, _w: string, hit = 1) {
-  npcs.all[s].hp = npcs.all[s].hp - hit
-}
+
+//export function tasks.outcomes.lConfrontPunchT(s: string, _w: string, hit = 1) {
+//  npcs.all[s].hp = npcs.all[s].hp - hit
+//}
 export function watcher_punched_check(
   suspect: string,
   watcher: string
@@ -230,19 +251,19 @@ export function watcher_punched_check(
 
   //print('TESTJPF RESULT::: s punch w', result)
   if (result > 5 && result <= 10) {
-    sPunchW(suspect, watcher, 1)
+    tasks.outcomes.tConfrontPunchL(watcher, 1)
     return { pass: true, type: 'sPunchW' }
   }
 
   if (result > 10) {
     //print('SPECIAL sPunchW')
-    sPunchW(suspect, watcher, 3)
+    tasks.outcomes.tConfrontPunchL(watcher, 3)
 
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
     //print('NEVER sPunchW')
-    wPunchS(suspect, watcher, 2)
+    tasks.outcomes.lConfrontPunchT(suspect, 2)
     return { pass: true, type: 'critical' }
   }
 
@@ -282,39 +303,3 @@ export function recklessCheck(suspect: string, watcher: string): Consequence {
 }*/
 //Checks and Helpers
 //misc.
-export function suspect_punched_check(
-  suspect: string,
-  watcher: string
-): Consequence {
-  const w = npcs.all[watcher]
-  const s = suspect === 'player' ? player.state : npcs.all[suspect]
-
-  const modifier = Math.round(
-    w.traits.skills.constitution -
-      s.traits.skills.speed +
-      w.traits.binaries.evil_good * -0.5
-  )
-  const advantage =
-    s.traits.binaries.passiveAggressive <
-    w.traits.binaries.passiveAggressive - 0.3
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
-
-  //print('TESTJPF RESULT::: w punch s', result)
-  if (result > 5 && result <= 10) {
-    wPunchS(suspect, watcher, 1)
-    return { pass: true, type: 'wPunchS' }
-  }
-
-  if (result > 10) {
-    //print('SPECIAL wPunchS')
-    wPunchS(suspect, watcher, 3)
-    return { pass: true, type: 'special' }
-  }
-  if (result <= 1) {
-    //print('NEVER wPunchS')
-    sPunchW(suspect, watcher, 2)
-    return { pass: true, type: 'critical' }
-  }
-
-  return { pass: false, type: 'neutral' }
-}
