@@ -120,6 +120,7 @@ export default class WorldPlayer {
     this.exitRoom = RoomsInitLayout[this.matrix_y][this.matrix_x]!
     this.currRoom = this.parent.getFocusedRoom()
     this.matrix = RoomsInitState[this.currRoom].matrix
+    print('::: SETROOMINFO:::exit,enter::', this.exitRoom, this.currRoom)
   }
   getPlayerRoom(): string {
     return this.currRoom

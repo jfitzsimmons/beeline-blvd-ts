@@ -11,6 +11,8 @@ import { Npcs } from '../../types/state'
 import { QuestMethods } from '../../types/tasks'
 import { NpcProps, WorldNpcsArgs } from '../../types/world'
 import { shuffle } from '../utils/utils'
+import { RoomsInitState } from './inits/roomsInitState'
+import { confrontation_check } from './inits/checksFuncs'
 
 const dt = math.randomseed(os.time())
 
@@ -92,7 +94,7 @@ export default class WorldNpcs {
       npc.fsm.update(dt)
     }
     this.medical()
-    //this.security()
+    this.security()
   }
   private onTurnExit(): void {}
   public get all(): Npcs {
@@ -101,7 +103,36 @@ export default class WorldNpcs {
   returnMendeeLocation() {
     return this.all[this.parent.getMendingQueue()[0]].currRoom
   }
-  //security() {}
+  security() {
+    const cops = this.returnSecurity()
+    for (const cop of cops) {
+      const stations = RoomsInitState[cop.currRoom].stations
+      let sKey: keyof typeof stations
+      let target = ''
+      for (sKey in stations) {
+        target = stations[sKey]
+        if (
+          target !== '' &&
+          this.all[target].fsm.getState() === 'trespass' &&
+          target !== cop.name &&
+          confrontation_check(cop.traits, this._all[target].traits) == true
+        ) {
+          print('NEWQUESTIONEDNPC!!!', cop.name, target)
+          this.parent.taskBuilder(cop.name, 'questioning', target, 'clearance')
+          break
+        }
+        target = 'player'
+      }
+      if (
+        target == 'player' &&
+        cop.currRoom == this.parent.getPlayerRoom() &&
+        this.parent.playerFSM.getState() == 'trespass' &&
+        confrontation_check(cop.traits, this.parent.playerTraits) == true
+      ) {
+        this.parent.taskBuilder(cop.name, 'questioning', 'player', 'clearance')
+      }
+    }
+  }
   medical() {
     let count = this.infirmed.length
     for (const doc of this.returnDoctors()) {

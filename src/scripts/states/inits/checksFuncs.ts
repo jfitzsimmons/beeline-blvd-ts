@@ -1,9 +1,24 @@
+import { Traits } from '../../../types/state'
 import { Effect, Consequence, Task } from '../../../types/tasks'
 import { removeOfValue } from '../../systems/inventorysystem'
 import { fx } from '../../utils/consts'
 import { rollSpecialDice } from '../../utils/dice'
 import { shuffle, clamp } from '../../utils/utils'
 import WorldTasks from '../tasks'
+
+export function confrontation_check(watcher: Traits, target: Traits): boolean {
+  const { skills: ls, binaries: lb } = watcher
+  const { skills: ts } = target
+
+  const modifier = Math.round(
+    lb.lawlessLawful * 5 - ts.speed + ls.speed - ls.constitution
+  )
+  const advantage = ls.speed + ls.constitution > ts.speed + lb.lawlessLawful * 5
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  const bossResult = rollSpecialDice(5, true, 4, 2)
+
+  return bossResult >= result
+}
 
 export function addPledge(this: WorldTasks, t: string) {
   const target = this.parent.returnNpc(t)

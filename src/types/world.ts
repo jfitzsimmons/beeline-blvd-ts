@@ -1,8 +1,9 @@
 import NpcState from '../scripts/states/npc'
 import WorldPlayer from '../scripts/states/player'
+import StateMachine from '../scripts/states/stateMachine'
 import TaskState from '../scripts/states/task'
 import { NovelNpc } from './novel'
-import { Npcs } from './state'
+import { Npcs, Traits } from './state'
 import { QuestMethods, Task } from './tasks'
 
 export interface WorldNovelArgs {
@@ -36,6 +37,8 @@ export interface WorldNpcsArgs {
   taskBuilder(owner: string, label: string, target: string, cause: string): void
   hasHallpass(owner: string): TaskState | null
   getNovelUpdates(): NovelNpc
+  playerFSM: StateMachine
+  playerTraits: Traits
 }
 export interface NpcProps extends WorldNpcsArgs {
   addInfirmed(n: string): void

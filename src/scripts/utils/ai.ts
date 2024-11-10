@@ -107,7 +107,7 @@ export function attempt_to_fillStation(
       placed = true
     }
   }
-  //print('FILLSTATIONEND:::', chosenRoom, chosenStation, npc)
+  print('FILLSTATIONEND:::', chosenRoom, chosenStation, npc)
   return { chosenRoom, chosenStation }
 }
 /**

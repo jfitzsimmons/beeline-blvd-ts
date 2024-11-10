@@ -21,13 +21,13 @@ const dt = math.randomseed(os.time())
 
 export default class World {
   fsm: StateMachine
+  rooms: WorldRooms
+  novel: WorldNovel
+  tasks: WorldTasks
   player: WorldPlayer
   npcs: WorldNpcs
-  rooms: WorldRooms
-  tasks: WorldTasks
   quests: WorldQuests
   info: WorldInfo
-  novel: WorldNovel
   clock: number
   constructor() {
     this.fsm = new StateMachine(this, 'world')
@@ -61,6 +61,8 @@ export default class World {
       getMendingQueue: this.tasks.getMendingQueue.bind(this),
       taskBuilder: this.tasks.taskBuilder.bind(this),
       getNovelUpdates: this.novel.getNovelUpdates.bind(this),
+      playerFSM: this.player.fsm,
+      playerTraits: this.player.state.traits,
       ...playerProps,
     }
     this.npcs = new WorldNpcs(npcsProps)
@@ -98,7 +100,6 @@ export default class World {
         onExit: this.onTurnExit.bind(this),
       })
   }
-
   private onNewEnter(): void {
     this.rooms.fsm.setState('turn')
     this.player.fsm.setState('turn')
@@ -130,9 +131,15 @@ export default class World {
     this.clock = this.clock + 6
     this.player.ap = this.player.ap_max - 6
     this.player.hp = this.player.hp_max - 1
-    this.player.fsm.setState('turn')
   }
-  private onFaintUpdate(): void {}
+  private onFaintUpdate(): void {
+    this.player.fsm.update(dt)
+    this.rooms.fsm.update(dt)
+    this.npcs.fsm.update(dt)
+    this.quests.fsm.update(dt)
+    this.tasks.fsm.update(dt)
+    this.fsm.setState('turn')
+  }
   private onFaintExit(): void {}
   private onArrestEnter(): void {
     this.clock = this.clock + 6
@@ -148,8 +155,8 @@ export default class World {
   private onTurnUpdate(): void {
     print('<<< ::: WORLDTurnUpdate() ::: >>>')
     this.player.fsm.update(dt)
-    this.npcs.fsm.update(dt)
     this.rooms.fsm.update(dt)
+    this.npcs.fsm.update(dt)
     this.quests.fsm.update(dt)
     this.tasks.fsm.update(dt)
   }

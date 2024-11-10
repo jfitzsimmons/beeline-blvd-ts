@@ -12,6 +12,7 @@ import { confrontationConsequence } from '../systems/tasksystem'
 import { rollSpecialDice } from '../utils/dice'
 import NpcState from '../states/npc'
 import { NpcsInitState } from '../states/inits/npcsInitState'
+import { confrontation_check } from '../states/inits/checksFuncs'
 
 function tendToPatient(p: string, doc: string) {
   npcs.all[doc].fsm.setState('mender')
@@ -152,6 +153,7 @@ export function seen_check(s: string, w: string) {
 //TESTJPF this could probably be like
 // medical() on NPCS youve ben going for
 //player already moved!!
+/** 
 export function clearance_checks() {
   const cops = npcs.returnSecurity()
   for (const cop of cops) {
@@ -188,6 +190,8 @@ export function clearance_checks() {
     }
   }
 }
+
+
 export function confrontation_check(pname: string, nname: string) {
   if ([pname, nname].includes('')) return false
   const s = pname == 'player' ? player.state : npcs.all[pname]
@@ -207,14 +211,18 @@ export function confrontation_check(pname: string, nname: string) {
 
   return bossResult >= result
 }
+    */
+
 function thief_consequences(
   s: string,
   w: string,
   c: { confront: boolean; type: string }
 ) {
   if (npcs.all[w] != null && c.type == 'seen') {
+    const target = s == 'player' ? player.state.traits : npcs.all[s].traits
     c.confront =
-      s == 'player' && (c.confront == true || confrontation_check(s, w))
+      s == 'player' &&
+      (c.confront == true || confrontation_check(target, npcs.all[w].traits))
     c.type = confrontationConsequence(s, w, c.confront)
   }
 

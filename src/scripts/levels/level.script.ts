@@ -85,7 +85,7 @@ export function on_message(
 ): void {
   if (messageId == hash('room_load')) {
     this.roomName = message.roomName
-    if (message.loadType == 'room transition') game_turn()
+    if (message.loadType !== 'new game') game_turn()
     //testjpf it wopuld be cool to talk to npcs about their problem.
     //snitch, security issues etc.., effects
     calculate_heat(this.roomName)
