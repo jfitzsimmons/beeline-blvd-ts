@@ -92,12 +92,8 @@ export default class TaskState {
   private onInjuryUpdate(): void {
     for (const doc of ['doc01', 'doc02', 'doc03']) {
       const mobile = () =>
-        this.parent.npcHasTask(doc, 'any', [
-          'mender',
-          'mendee',
-          'injury',
-          'infirm',
-        ]) === null
+        this.parent.npcHasTask(doc, 'any', ['mender', 'injury', 'infirm']) ===
+        null
 
       if (this.parent.didCrossPaths(this.owner, doc) && mobile() === true) {
         print(this.owner, 'met doc for injury task::', doc)
@@ -210,7 +206,12 @@ export default class TaskState {
     const owner = this.parent.returnNpc(this.owner)
     const others = this.parent
       .getOccupants(owner.currRoom)
-      .filter((o) => o !== this.owner)
+      .filter(
+        (o) =>
+          o !== this.owner &&
+          this.parent.npcHasTask(o, 'any', ['mender', 'injury', 'infirm']) ===
+            null
+      )
     const checks: Array<(target: string, listener: string) => Consequence> =
       this.cause == 'theft'
         ? shuffle([
@@ -229,6 +230,7 @@ export default class TaskState {
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {}
   private onTurnExit(): void {}
+
   setTaskChecks(label: string, checks: TasksChecks): Partial<TasksChecks> {
     if (label == 'snitch') {
       return {
@@ -257,12 +259,20 @@ export default class TaskState {
     return {}
   }
   handleConfrontation() {
-    const owner = this.parent.returnNpc(this.owner)
     const target: NpcState | WorldPlayer =
       this.target === 'player'
         ? this.parent.returnPlayer()
         : this.parent.returnNpc(this.target)
+    if (
+      this.parent.npcHasTask(this.target, 'any', [
+        'mender',
+        'injury',
+        'infirm',
+      ]) !== null
+    )
+      return
 
+    const owner = this.parent.returnNpc(this.owner)
     if (
       owner.currRoom == target.currRoom ||
       (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)

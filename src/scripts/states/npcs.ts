@@ -83,9 +83,7 @@ export default class WorldNpcs {
   }
   private onNewUpdate(): void {}
   private onNewExit(): void {}
-  private onTurnEnter(): void {
-    print('npcsturnenter')
-  }
+  private onTurnEnter(): void {}
   private onTurnUpdate(): void {
     print('<< :: NPCSturnUpdate() :: >>')
     this.sort_npcs_by_encounter()
@@ -100,8 +98,9 @@ export default class WorldNpcs {
   public get all(): Npcs {
     return this._all
   }
-  returnMendeeLocation() {
-    return this.all[this.parent.getMendingQueue()[0]].currRoom
+  returnMendeeLocation(): string | null {
+    const injured = this.parent.getMendingQueue()[0]
+    return injured === null ? null : this.all[injured].currRoom
   }
   security() {
     const cops = this.returnSecurity()
@@ -141,7 +140,7 @@ export default class WorldNpcs {
       )
       //testjpf todo unhardcode
       //have a const that lists immobile states.!!!
-      if (mobile === true && count > 0) {
+      if (mobile === true && count > 1) {
         doc.fsm.setState('erfull')
         count = 0
       } else if (

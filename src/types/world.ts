@@ -53,7 +53,7 @@ export interface NpcProps extends WorldNpcsArgs {
   returnSecurity(): NpcState[]
   returnAll(): Npcs
   returnOrderAll(): [string[], Npcs]
-  returnMendeeLocation(): string
+  returnMendeeLocation(): string | null
 }
 export interface RoomProps {
   setFocused(r: string): void
