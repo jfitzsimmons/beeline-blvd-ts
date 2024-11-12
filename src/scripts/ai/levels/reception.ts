@@ -11,22 +11,20 @@ import { cicadaModulus } from '../../utils/utils'
 //const { rooms, npcs } = globalThis.game.world
 //import { take_check, npcStealCheck, take_or_stash } from '../ai_checks'
 
-function steal_stash_checks(_this: RoomState) {
+function steal_stash_checks(this: RoomState) {
   let victim = null
   let thief = null
   let actor: Actor
   let loot: string[] = []
   let attendant =
-    _this.stations.desk === ''
-      ? ''
-      : _this.parent.returnNpc(_this.stations.desk)
-  print('_this.stations.guest', _this.stations.guest)
-  if (cicadaModulus() && _this.stations.guest != '') {
-    victim = _this.parent.returnNpc(_this.stations.guest)
+    this.stations.desk === '' ? '' : this.parent.returnNpc(this.stations.desk)
+  print('this.stations.guest', this.stations.guest)
+  if (cicadaModulus() && this.stations.guest != '') {
+    victim = this.parent.returnNpc(this.stations.guest)
     print('victim.name', victim.name)
 
     loot = victim.inventory
-    actor = _this.actors.drawer
+    actor = this.actors.drawer
     if ((actor.inventory.length > 0, typeof attendant !== 'string')) {
       npcStealCheck(victim, attendant, actor.inventory)
     } else if (actor.inventory.length > 0) {
@@ -34,8 +32,8 @@ function steal_stash_checks(_this: RoomState) {
     }
   }
 
-  if (_this.stations.loiter4 != '') {
-    thief = _this.parent.returnNpc(_this.stations.loiter4)
+  if (this.stations.loiter4 != '') {
+    thief = this.parent.returnNpc(this.stations.loiter4)
   }
   if (
     cicadaModulus() &&
@@ -47,21 +45,21 @@ function steal_stash_checks(_this: RoomState) {
     npcStealCheck(thief, victim, loot)
   }
   if (cicadaModulus() && typeof attendant !== 'string') {
-    actor = _this.actors.drawer
+    actor = this.actors.drawer
     take_or_stash(attendant, actor)
   }
-  if (cicadaModulus() && _this.stations.patrol != '') {
-    attendant = _this.parent.returnNpc(_this.stations.patrol)
-    actor = _this.actors.vase2
+  if (cicadaModulus() && this.stations.patrol != '') {
+    attendant = this.parent.returnNpc(this.stations.patrol)
+    actor = this.actors.vase2
     take_or_stash(attendant, actor)
   }
-  if (cicadaModulus() && _this.stations.loiter2 != '') {
-    attendant = _this.parent.returnNpc(_this.stations.loiter2)
-    actor = _this.actors.vase
+  if (cicadaModulus() && this.stations.loiter2 != '') {
+    attendant = this.parent.returnNpc(this.stations.loiter2)
+    actor = this.actors.vase
     take_or_stash(attendant, actor)
   }
 }
 
 export function reception_checks(this: RoomState) {
-  steal_stash_checks(this)
+  steal_stash_checks.bind(this)()
 }

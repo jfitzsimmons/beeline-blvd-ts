@@ -1,16 +1,20 @@
 import { npcStealCheck, take_or_stash } from '../../states/inits/checksFuncs'
+import RoomState from '../../states/room'
 import { shuffle } from '../../utils/utils'
 
-const { rooms, npcs } = globalThis.game.world
+//const { rooms, npcs } = globalThis.game.world
 
-function steal_stash_checks() {
+function steal_stash_checks(_this: RoomState) {
   const loot =
-    math.random() > 0.5
-      ? rooms.all.baggage.actors.luggage_1
-      : rooms.all.baggage.actors.luggage_2
+    math.random() > 0.5 ? _this.actors.luggage_1 : _this.actors.luggage_2
+
   const [suspect, victim] = shuffle([
-    npcs.all[rooms.all.baggage.stations.assistant],
-    npcs.all[rooms.all.baggage.stations.browse],
+    _this.stations.assistan == ''
+      ? null
+      : _this.parent.returnNpc(_this.stations.assistant),
+    _this.stations.browse == ''
+      ? null
+      : _this.parent.returnNpc(_this.stations.browse),
   ])
   if (
     suspect != null &&
@@ -24,6 +28,6 @@ function steal_stash_checks() {
   }
 }
 
-export function baggage_checks() {
-  steal_stash_checks
+export function baggage_checks(this: RoomState) {
+  steal_stash_checks(this)
 }

@@ -38,6 +38,12 @@ export interface TasksChecks {
   prejudice_check(t: string, l: string): Consequence
   angel_check(t: string, l: string): Consequence
   admirer_check(t: string, l: string): Consequence
+  unlucky_check(t: string, l: string): Consequence
+  becomeASnitchCheck(t: string, l: string): Consequence
+  watcher_punched_check(t: string, l: string): Consequence
+  charmed_merits(t: string, l: string): Consequence
+  ap_boost(t: string, l: string): Consequence
+  love_boost(t: string, l: string): Consequence
 }
 export interface TasksOutcomes {
   addPledge(t: string): void
@@ -45,6 +51,7 @@ export interface TasksOutcomes {
   tConfrontPunchL(l: string, hit?: number): void
   getExtorted(t: string, l: string): string
   add_prejudice(tClan: string, listener: NpcState): void
+  given_gift(t: string, l: string): Consequence
 }
 export interface QuestConditions {
   [key: string | number]: QuestStep

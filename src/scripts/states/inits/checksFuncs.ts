@@ -957,6 +957,7 @@ export function npcStealCheck(
     //const victim = false
     //if w != null ){ utils.has_value(w.inventory, a[1]) }
 
+    print('CHESTCHKSFUNCS:::', loot[0])
     if (math.random() < 0.4) {
       chest_item = removeRandom(target.inventory, loot)
     } else if (math.random() < 0.5) {
@@ -1220,4 +1221,241 @@ export function prejudice_check(
   }
 
   return { pass: false, type: 'neutral' }
+}
+
+export function watcher_punched_check(
+  this: WorldTasks,
+  t: string,
+  l: string
+): Consequence {
+  //const target = t instanceof WorldPlayer ? t.state : t
+  const target =
+    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+  const listener = this.parent.returnNpc(l)
+  const { skills: ls } = listener.traits
+  const { skills: ts, binaries: tb } = target.traits
+
+  const modifier = Math.round(
+    tb.lawlessLawful * -5 + ts.strength - ls.strength - ls.wisdom
+  )
+  const advantage = tb.passiveAggressive * 7 > ls.speed
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  //print('TESTJPF RESULT::: s punch w', result)
+  if (result > 5 && result <= 10) {
+    this.outcomes.tConfrontPunchL(listener.name, 1)
+    return { pass: true, type: 'sPunchW' }
+  }
+
+  if (result > 10) {
+    //print('SPECIAL sPunchW')
+    this.outcomes.tConfrontPunchL(listener.name, 3)
+
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    //print('NEVER sPunchW')
+    this.outcomes.lConfrontPunchT(target.name, 2)
+    return { pass: true, type: 'critical' }
+  }
+
+  return { pass: false, type: 'neutral' }
+}
+
+function call_security(_this: WorldTasks, w: string, suspect: string) {
+  const watcher = _this.parent.returnNpc(w)
+  watcher.clan == 'security'
+    ? _this.methods.returnNpc(suspect).fsm.setState('arrestee')
+    : _this.taskBuilder(
+        watcher.name,
+        math.random() > 0.33 ? 'questioning' : 'arrest',
+        suspect,
+        'unlucky'
+      )
+}
+
+export function unlucky_check(
+  this: WorldTasks,
+  watcher: string,
+  suspect: string
+): Consequence {
+  const modifier = math.random(-1, 1)
+  const advantage = math.random() > 0.5
+  const result = rollSpecialDice(5, advantage, 3, 2) + modifier
+  //print('TESTJPF RESULT UNLUCKY:::', result)
+  if (result > 5 && result <= 10) {
+    const random = math.random(0, 4)
+    if (random == 0) this.outcomes.getExtorted(suspect, watcher)
+    else if (random == 1) this.outcomes.lConfrontPunchT(suspect)
+    else if (random == 2) this.outcomes.addPledge(suspect)
+    else if (random == 3) call_security(this, watcher, suspect)
+    else if (random == 4)
+      this.outcomes.add_prejudice(suspect, this.parent.returnNpc(watcher))
+
+    return { pass: true, type: 'unlucky' }
+  }
+
+  if (result > 10) {
+    //print('SPECIAL unlucky')
+    call_security(this, suspect, watcher)
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    //print('NEVER unlucky')
+    /**
+    const tempcons: Array<
+    (t: string, l: string, _this?: WorldTasks) => Consequence
+  > = shuffle([decideToSnitchCheck, meritsDemerits, recklessCheck])
+   */
+
+    shuffle([
+      this.checks.charmed_merits.bind(this),
+      this.checks.ap_boost.bind(this),
+      this.outcomes.given_gift.bind(this),
+      this.checks.love_boost.bind(thief_consolation_checks),
+    ])[0](suspect, watcher)
+    return { pass: true, type: 'critical' }
+  }
+
+  return { pass: false, type: 'neutral' }
+}
+
+export function becomeASnitchCheck(
+  this: WorldTasks,
+  t: string,
+  l: string
+): Consequence {
+  //const target = t instanceof WorldPlayer ? t.state : t
+  const target =
+    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+  const listener = this.parent.returnNpc(l)
+  const { skills: ls, binaries: lb } = listener.traits
+  const { skills: ts, binaries: tb } = target.traits
+
+  const modifier = Math.round(
+    lb.anti_authority * 5 + (ls.constitution - ts.charisma) / 2
+  )
+  const advantage =
+    ls.perception + Math.abs(lb.passiveAggressive * 5) >
+    ts.stealth + +Math.abs(tb.passiveAggressive * 5)
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
+
+  //print('TESTJPF RESULT::: snitch', result)
+  if (result > 5 && result <= 10) {
+    return { pass: true, type: 'snitch' }
+  }
+
+  if (result > 10) {
+    //print('SPECIAL snitch')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    //print('NEVER snitch')
+    return { pass: true, type: 'critical' }
+  }
+
+  return { pass: false, type: 'neutral' }
+}
+
+export function love_boost(
+  this: WorldTasks,
+  t: string,
+  l: string
+): Consequence {
+  const target =
+    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+  const listener = this.parent.returnNpc(l)
+  const { skills: ls, binaries: lb } = listener.traits
+  const { skills: ts, binaries: tb } = target.traits
+
+  const modifier = Math.round(Math.abs(tb.evil_good) * 10 - ls.speed)
+  const advantage =
+    ts.charisma + ts.intelligence + lb.anti_authority * 10 >
+    ls.intelligence + ls.perception + ts.speed
+  const result = math.min(
+    rollSpecialDice(5, advantage, 3, 2) + (modifier > -2 ? modifier : -2),
+    rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  )
+
+  //print('TESTJPF RESULT::: loveboost', result)
+  if (result > 5 && result <= 10) return { pass: true, type: 'loveboost' }
+
+  if (result > 10) return { pass: true, type: 'special' }
+  return { pass: false, type: 'neutral' }
+}
+export function ap_boost(this: WorldTasks, t: string, l: string): Consequence {
+  const target =
+    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+  const listener = this.parent.returnNpc(l)
+  const { skills: ls, binaries: lb } = listener.traits
+  const { skills: ts, binaries: tb } = target.traits
+
+  const modifier = Math.round(
+    ts.constitution + listener.love + (lb.passiveAggressive * 10) / 3
+  )
+  const advantage =
+    tb.passiveAggressive + lb.passiveAggressive > 0.1 &&
+    ls.constitution > ts.speed
+  const result =
+    rollSpecialDice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
+
+  //print('TESTJPF RESULT::: apboost', result)
+  if (result > 5 && result <= 10) return { pass: true, type: 'apboost' }
+
+  if (result > 10) return { pass: true, type: 'special' }
+  return { pass: false, type: 'neutral' }
+}
+export function charmed_merits(
+  this: WorldTasks,
+  t: string,
+  l: string
+): Consequence {
+  const target =
+    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+  const listener = this.parent.returnNpc(l)
+  const { skills: ls, binaries: lb } = listener.traits
+  const { skills: ts } = target.traits
+
+  const modifier = Math.round(
+    (ts.charisma + listener.love) / 2 - ls.constitution
+  )
+  const advantage = ts.charisma > ls.charisma && lb.un_educated < -0.1
+  const result =
+    rollSpecialDice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
+
+  //print('TESTJPF RESULT:::charmedmerits', result)
+  if (result > 5 && result <= 10) return { pass: true, type: 'merits' }
+
+  if (result > 10) return { pass: true, type: 'special' }
+
+  return { pass: false, type: 'neutral' }
+}
+
+//positive consolations
+//export function generate_gift() {
+// player.state.inventory.push('berry02')
+//}
+export function given_gift(
+  this: WorldTasks,
+  t: string,
+  l: string
+): Consequence {
+  const target =
+    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
+
+  const listener = this.parent.returnNpc(l)
+  //testjpf check if inventory full?!
+  let gift = removeAdvantageous(
+    target.inventory,
+    listener.inventory,
+    target instanceof WorldPlayer
+      ? target.state.traits.skills
+      : target.traits.skills
+  )
+
+  if (gift == null) gift = 'berry02'
+  target.inventory.push(gift)
+  target.addInvBonus(gift)
+
+  return { pass: true, type: 'gift' }
 }

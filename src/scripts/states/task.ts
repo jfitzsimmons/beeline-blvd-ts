@@ -265,16 +265,19 @@ export default class TaskState {
         targetPunchedCheck: checks.targetPunchedCheck.bind(this),
         prejudice_check: checks.prejudice_check.bind(this),
         admirer_check: checks.admirer_check.bind(this),
+        unlucky_check: checks.unlucky_check.bind(this),
       }
     } else if (label == 'confront') {
       return {
         build_consequence: checks.build_consequence.bind(this),
         suspicious_check: checks.suspicious_check.bind(this),
-        //npcCommitSnitchCheck: checks.npcCommitSnitchCheck.bind(this),
+        becomeASnitchCheck: checks.becomeASnitchCheck.bind(this),
         targetPunchedCheck: checks.targetPunchedCheck.bind(this),
         vanity_check: checks.vanity_check.bind(this),
         prejudice_check: checks.prejudice_check.bind(this),
         angel_check: checks.angel_check.bind(this),
+        unlucky_check: checks.unlucky_check.bind(this),
+        watcher_punched_check: checks.watcher_punched_check.bind(this),
       }
     }
 
@@ -331,7 +334,7 @@ export default class TaskState {
         this.checks.jailtime_check!.bind(this),
         this.checks.admirer_check!.bind(this),
         this.checks.prejudice_check!.bind(this),
-        // unlucky_check,
+        this.checks.unlucky_check!.bind(this),
       ])
       this.checks.build_consequence!(this, this.owner, tempcons, false)
     } else if (this.label === 'confront') {
@@ -339,28 +342,15 @@ export default class TaskState {
         (s: string, w: string) => { pass: boolean; type: string }
       > = shuffle([
         this.checks.suspicious_check!.bind(this), //testjpf NO OUTCOME!!!TODO
-        //  need decideToSnitchCheck :: testjpf
+        this.checks.becomeASnitchCheck!.bind(this),
         this.checks.targetPunchedCheck!.bind(this),
         this.checks.angel_check!.bind(this),
         this.checks.prejudice_check!.bind(this),
         this.checks.vanity_check!.bind(this),
-        // prejudice_check,
-        // unlucky_check,
+        this.checks.unlucky_check!.bind(this),
+        this.checks.watcher_punched_check!.bind(this),
       ])
-      /**
-const confrontation_checks: Array<
-  (s: string, w: string) => { pass: boolean; type: string }
-> = [
-  vanity_check,
-  angel_check,
-  //targetPunchedCheck,
-  watcher_punched_check,
-  //decideToSnitchCheck,
-  prejudice_check,
-  unlucky_check,
-  suspicious_check,
-]
-  */
+
       const consolation = this.checks.build_consequence!(
         this,
         this.owner,

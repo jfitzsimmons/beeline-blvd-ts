@@ -49,13 +49,12 @@ export function removeAdvantageous(
 ) {
   if (fromInv.length < 1) return ''
   if (fromInv.length === 1) return removeLast(toInv, fromInv)
-  const order = Object.entries(skills)
-
-  order.sort((a: [string, number], b: [string, number]) => b[1] - a[1])
+  const order = Object.entries(skills).sort(
+    (a: [string, number], b: [string, number]) => b[1] - a[1]
+  )
 
   let found = false
   let stolenItem = ''
-
   for (const desire of order) {
     let count = 0
     for (const item of fromInv) {

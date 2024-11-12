@@ -24,6 +24,13 @@ import {
   prejudice_check,
   add_prejudice,
   admirer_check,
+  unlucky_check,
+  becomeASnitchCheck,
+  watcher_punched_check,
+  charmed_merits,
+  ap_boost,
+  given_gift,
+  love_boost,
 } from './inits/checksFuncs'
 import {
   TasksOutcomes,
@@ -87,6 +94,12 @@ export default class WorldTasks {
       angel_check: angel_check.bind(this),
       prejudice_check: prejudice_check.bind(this),
       admirer_check: admirer_check.bind(this),
+      unlucky_check: unlucky_check.bind(this),
+      becomeASnitchCheck: becomeASnitchCheck.bind(this),
+      watcher_punched_check: watcher_punched_check.bind(this),
+      charmed_merits: charmed_merits.bind(this),
+      ap_boost: ap_boost.bind(this),
+      love_boost: love_boost.bind(this),
     }
     this.outcomes = {
       addPledge: addPledge.bind(this),
@@ -94,6 +107,7 @@ export default class WorldTasks {
       getExtorted: getExtorted.bind(this),
       tConfrontPunchL: tConfrontPunchL.bind(this),
       add_prejudice: add_prejudice.bind(this),
+      given_gift: given_gift.bind(this),
     }
     this.fsm.addState('idle')
     this.fsm.addState('turn', {

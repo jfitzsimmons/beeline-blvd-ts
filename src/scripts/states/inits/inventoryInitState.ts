@@ -414,12 +414,28 @@ export const itemStateInit: InventoryTable = {
       wisdom: 1,
     },
   },
+  silver: {
+    value: 6,
+    level: 1,
+    binaries: { evil_good: -0.2 },
+    skills: {
+      charisma: 1,
+    },
+  },
   book: {
     value: 5,
     level: 1,
     binaries: {},
     skills: {
       intelligence: 1,
+    },
+  },
+  deskbook01: {
+    value: 6,
+    level: 2,
+    binaries: { lawlessLawful: -0.2 },
+    skills: {
+      intelligence: 2,
     },
   },
   rose: {
@@ -491,6 +507,16 @@ export const itemStateInit: InventoryTable = {
     },
     binaries: {
       passiveAggressive: 0.2,
+    },
+  },
+  globegold: {
+    value: 3,
+    level: 2,
+    skills: {
+      wisdom: 1,
+    },
+    binaries: {
+      un_educated: 0.2,
     },
   },
   note: {
