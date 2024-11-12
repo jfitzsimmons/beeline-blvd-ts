@@ -15,6 +15,7 @@ import {
   WorldPlayerArgs,
   WorldTasksArgs,
   WorldQuestsMethods,
+  WorldRoomsArgs,
 } from '../../types/world'
 
 const dt = math.randomseed(os.time())
@@ -31,7 +32,11 @@ export default class World {
   clock: number
   constructor() {
     this.fsm = new StateMachine(this, 'world')
-    this.rooms = new WorldRooms()
+    const roomsProps: WorldRoomsArgs = {
+      returnNpc: this.returnNpc.bind(this),
+      returnPlayer: this.returnPlayer.bind(this),
+    }
+    this.rooms = new WorldRooms(roomsProps)
     const novelProps: WorldNovelArgs = {
       returnNpc: this.returnNpc.bind(this),
     }
@@ -60,6 +65,7 @@ export default class World {
       getPlayerRoom: this.player.getPlayerRoom.bind(this),
       getMendingQueue: this.tasks.getMendingQueue.bind(this),
       taskBuilder: this.tasks.taskBuilder.bind(this),
+      npcHasTask: this.tasks.npcHasTask.bind(this),
       getNovelUpdates: this.novel.getNovelUpdates.bind(this),
       playerFSM: this.player.fsm,
       playerTraits: this.player.state.traits,
@@ -101,7 +107,7 @@ export default class World {
       })
   }
   private onNewEnter(): void {
-    this.rooms.fsm.setState('turn')
+    this.rooms.fsm.setState('new')
     this.player.fsm.setState('turn')
     this.player.exitRoom = 'grounds'
     this.npcs.fsm.setState('new')

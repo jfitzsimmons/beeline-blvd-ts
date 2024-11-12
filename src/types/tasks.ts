@@ -15,8 +15,8 @@ export interface Task {
   cause: string
 }
 export interface TasksChecks {
-  playerSnitchCheck(priors: boolean, cop: string, cause: string): string
-  npcSnitchCheck(c: string, t: string): string
+  playerSnitchCheck(priors: boolean, cop: string, cause: string): Consequence
+  npcCommitSnitchCheck(c: string, t: string): Consequence
   ignorant_check(target: string, listener: string): Consequence
   dumb_crook_check(target: string, listener: string): Consequence
   chaotic_good_check(target: string, listener: string): Consequence
@@ -33,8 +33,9 @@ export interface TasksChecks {
   pledgeCheck(t: string, l: string): Consequence
   bribeCheck(t: string, l: string): Consequence
   targetPunchedCheck(t: string, l: string): Consequence
+  suspicious_check(t: string, l: string): Consequence
 }
-export interface ChecksOutcomes {
+export interface TasksOutcomes {
   addPledge(t: string): void
   lConfrontPunchT(t: string, hit?: number): void
   tConfrontPunchL(l: string, hit?: number): void

@@ -2,7 +2,7 @@
 import StateMachine from './stateMachine'
 import {
   playerSnitchCheck,
-  npcSnitchCheck,
+  npcCommitSnitchCheck,
   chaotic_good_check,
   dumb_crook_check,
   ignorant_check,
@@ -18,9 +18,10 @@ import {
   getExtorted,
   tConfrontPunchL,
   targetPunchedCheck,
+  suspicious_check,
 } from './inits/checksFuncs'
 import {
-  ChecksOutcomes,
+  TasksOutcomes,
   QuestMethods,
   Task,
   TasksChecks,
@@ -41,7 +42,7 @@ export default class WorldTasks {
   methods: TaskProps
   parent: WorldTasksArgs
   checks: TasksChecks
-  outcomes: ChecksOutcomes
+  outcomes: TasksOutcomes
   constructor(worldProps: WorldTasksArgs) {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
@@ -64,7 +65,7 @@ export default class WorldTasks {
     }
     this.checks = {
       playerSnitchCheck: playerSnitchCheck.bind(this),
-      npcSnitchCheck: npcSnitchCheck.bind(this),
+      npcCommitSnitchCheck: npcCommitSnitchCheck.bind(this),
       ignorant_check: ignorant_check.bind(this),
       dumb_crook_check: dumb_crook_check.bind(this),
       chaotic_good_check: chaotic_good_check.bind(this),
@@ -76,6 +77,7 @@ export default class WorldTasks {
       pledgeCheck: pledgeCheck.bind(this),
       bribeCheck: bribeCheck.bind(this),
       targetPunchedCheck: targetPunchedCheck.bind(this),
+      suspicious_check: suspicious_check.bind(this),
     }
     this.outcomes = {
       addPledge: addPledge.bind(this),
@@ -315,6 +317,8 @@ export default class WorldTasks {
       append.authority = 'player'
     } else if (label == 'mender') {
       append.turns = 99
+    } else if (label == 'confront') {
+      append.turns = 1
     }
 
     print(

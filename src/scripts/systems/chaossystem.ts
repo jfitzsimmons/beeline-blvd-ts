@@ -17,10 +17,10 @@ export const pos_consolations = [
 export const neg_consolations = [
   tasks.checks.recklessCheck.bind(this),
   love_drop,
-  suspicious_check,
+  tasks.checks.suspicious_check.bind(this),
 ]
 
-export function unimpressed_checks(s: string, w: string) {
+export function unimpressed_checks(s: string, w: string): string {
   const tempcons: Array<(s: string, w: string) => Consequence> =
     shuffle(neg_consolations)
   tempcons.forEach((c) => {
@@ -144,44 +144,6 @@ function love_drop(n: string): Consequence {
   if (result > 1 && result < 5) return { pass: true, type: 'lovedrop' }
 
   if (result <= 1) return { pass: true, type: 'critical' }
-  return { pass: false, type: 'neutral' }
-}
-
-// Misc. Checks
-export function suspicious_check(
-  suspect: string,
-  watcher: string
-): Consequence {
-  const w = npcs.all[watcher]
-  const s = suspect === 'player' ? player.state : npcs.all[suspect]
-
-  const modifier = Math.round(
-    w.traits.skills.charisma -
-      s.traits.skills.charisma +
-      w.traits.skills.perception +
-      (s.traits.binaries.passiveAggressive + w.traits.binaries.poor_wealthy) * 4
-  )
-  const advantage =
-    w.traits.binaries.lawlessLawful > s.traits.binaries.lawlessLawful - 0.2
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
-  //startherer!!!!!!!!!!!!!!!!
-  //print('TESTJPF RESULT suspicious:::', result)
-  if (result > 5 && result <= 10) {
-    // create_suspicious(suspect, watcher)
-    return { pass: true, type: 'suspicious' }
-  }
-
-  if (result > 10) {
-    //print('SPECIAL suspicious')
-    //  go_to_jail(suspect)
-    return { pass: true, type: 'special' }
-  }
-  if (result <= 1) {
-    //print('NEVER suspicious')
-    //shuffle(pos_consolations)[0](suspect)
-    return { pass: true, type: 'critical' }
-  }
-
   return { pass: false, type: 'neutral' }
 }
 

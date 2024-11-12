@@ -8,7 +8,9 @@ import {
 import RoomState from './room'
 import StateMachine from './stateMachine'
 import { Rooms, Roles, Fallbacks } from '../../types/state'
-import { RoomProps } from '../../types/world'
+import { RoomProps, WorldRoomsArgs } from '../../types/world'
+
+const dt = math.randomseed(os.time())
 
 export default class WorldRooms {
   fsm: StateMachine
@@ -19,14 +21,16 @@ export default class WorldRooms {
   parent: RoomProps
   fallbacks: Fallbacks
   stationsMap: { [key: string]: { [key: string]: string } }
-  constructor() {
+  constructor(roomsProps: WorldRoomsArgs) {
     this.fsm = new StateMachine(this, 'rooms')
     this.fallbacks = { ...RoomsInitFallbacks }
     this.layout = [...RoomsInitLayout]
     this.roles = { ...RoomsInitRoles }
     this.parent = {
       setFocused: this.setFocused.bind(this),
+      ...roomsProps,
     }
+
     this._all = { ...seedRooms(this.parent) }
     this._focused = 'grounds'
     this.stationsMap = this.createStationsMap()
@@ -127,13 +131,25 @@ export default class WorldRooms {
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {
     this.resetStationMap()
+    let kr: keyof typeof this.all
+    for (kr in this.all) {
+      // creat npc class constructor todo now testjpf
+      // seeded.push({ [ki]: new NpcState(ki) })
+      this.all[kr].fsm.update(dt)
+    }
   }
   private onTurnExit(): void {
     //todo
   }
   private onNewEnter(): void {
     this.resetStationMap()
-    //todo
+    let kr: keyof typeof this.all
+    for (kr in this.all) {
+      // creat npc class constructor todo now testjpf
+      // seeded.push({ [ki]: new NpcState(ki) })
+      this.all[kr].fsm.setState('turn')
+    }
+    this.fsm.setState('turn')
   }
   private onNewUpdate(): void {}
   private onNewExit(): void {

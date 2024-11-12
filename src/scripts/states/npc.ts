@@ -23,6 +23,7 @@ export default class NpcState {
   home: { x: number; y: number }
   name: string
   inventory: string[]
+  loot: string[]
   clearance: number
   clan: string
   body: string
@@ -50,6 +51,7 @@ export default class NpcState {
     this.home = NpcsInitState[n].home
     this.name = NpcsInitState[n].name
     this.inventory = NpcsInitState[n].inventory
+    this.loot = []
     this.clearance = NpcsInitState[n].clearance
     this.clan = NpcsInitState[n].clan
     this.body = NpcsInitState[n].body

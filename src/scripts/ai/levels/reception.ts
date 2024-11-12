@@ -1,30 +1,40 @@
 import { Actor } from '../../../types/state'
+import {
+  take_check,
+  npcStealCheck,
+  take_or_stash,
+} from '../../states/inits/checksFuncs'
+//import npcs from '../../states/npcs'
+import RoomState from '../../states/room'
 
-const { rooms, npcs } = globalThis.game.world
-import { take_check, steal_check, take_or_stash } from '../ai_checks'
+//const { rooms, npcs } = globalThis.game.world
+//import { take_check, npcStealCheck, take_or_stash } from '../ai_checks'
 
-function steal_stash_checks() {
+function steal_stash_checks(_this: RoomState) {
   let victim = null
   let thief = null
   let actor: Actor
   let loot: string[] = []
-  let attendant = npcs.all[rooms.all.reception.stations.desk]
-  //print("rooms.all.reception.stations.guest",rooms.all.reception.stations.guest)
-  if (rooms.all.reception.stations.guest != '') {
-    victim = npcs.all[rooms.all.reception.stations.guest]
-    //print("victim.name",victim.name)
+  let attendant =
+    _this.stations.desk === ''
+      ? ''
+      : _this.parent.returnNpc(_this.stations.desk)
+  print('_this.stations.guest', _this.stations.guest)
+  if (_this.stations.guest != '') {
+    victim = _this.parent.returnNpc(_this.stations.guest)
+    print('victim.name', victim.name)
 
     loot = victim.inventory
-    actor = rooms.all.reception.actors.drawer
-    if (actor.inventory.length > 0 && rooms.all.reception.stations.desk == '') {
-      take_check(victim, actor)
+    actor = _this.actors.drawer
+    if ((actor.inventory.length > 0, typeof attendant !== 'string')) {
+      npcStealCheck(victim, attendant, actor.inventory)
     } else if (actor.inventory.length > 0) {
-      steal_check(victim, attendant, actor.inventory)
+      take_check(victim, actor)
     }
   }
 
-  if (rooms.all.reception.stations.loiter4 != '') {
-    thief = npcs.all[rooms.all.reception.stations.loiter4]
+  if (_this.stations.loiter4 != '') {
+    thief = _this.parent.returnNpc(_this.stations.loiter4)
   }
   if (
     victim != null &&
@@ -32,24 +42,24 @@ function steal_stash_checks() {
     loot.length > 0 &&
     thief.cooldown <= 0
   ) {
-    steal_check(thief, victim, loot)
+    npcStealCheck(thief, victim, loot)
   }
-  if (rooms.all.reception.stations.desk != '') {
-    actor = rooms.all.reception.actors.drawer
+  if (typeof attendant !== 'string') {
+    actor = _this.actors.drawer
     take_or_stash(attendant, actor)
   }
-  if (rooms.all.reception.stations.patrol != '') {
-    attendant = npcs.all[rooms.all.reception.stations.patrol]
-    actor = rooms.all.reception.actors.vase2
+  if (_this.stations.patrol != '') {
+    attendant = _this.parent.returnNpc(_this.stations.patrol)
+    actor = _this.actors.vase2
     take_or_stash(attendant, actor)
   }
-  if (rooms.all.reception.stations.loiter2 != '') {
-    attendant = npcs.all[rooms.all.reception.stations.loiter2]
-    actor = rooms.all.reception.actors.vase
+  if (_this.stations.loiter2 != '') {
+    attendant = _this.parent.returnNpc(_this.stations.loiter2)
+    actor = _this.actors.vase
     take_or_stash(attendant, actor)
   }
 }
 
-export function reception_checks() {
-  steal_stash_checks
+export function reception_checks(this: RoomState) {
+  steal_stash_checks(this)
 }

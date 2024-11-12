@@ -1,7 +1,7 @@
+import { npcStealCheck, take_or_stash } from '../../states/inits/checksFuncs'
 import { shuffle } from '../../utils/utils'
 
 const { rooms, npcs } = globalThis.game.world
-import { steal_check, take_or_stash } from '../ai_checks'
 
 function steal_stash_checks() {
   const loot =
@@ -18,7 +18,7 @@ function steal_stash_checks() {
     loot.inventory.length > 0 &&
     suspect.cooldown <= 0
   ) {
-    steal_check(suspect, victim, loot.inventory)
+    npcStealCheck(suspect, victim, loot.inventory)
   } else if (suspect != null) {
     take_or_stash(suspect, loot)
   }

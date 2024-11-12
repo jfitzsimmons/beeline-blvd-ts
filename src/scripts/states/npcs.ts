@@ -26,7 +26,7 @@ export default class WorldNpcs {
   injured: string[]
   ignore: string[]
 
-  constructor(roommethods: WorldNpcsArgs) {
+  constructor(npcsProps: WorldNpcsArgs) {
     this.infirmed = []
     this.injured = []
     this.ignore = []
@@ -51,7 +51,7 @@ export default class WorldNpcs {
       returnSecurity: this.returnDoctors.bind(this),
       returnAll: this.returnAll.bind(this),
       returnOrderAll: this.returnOrderAll.bind(this),
-      ...roommethods,
+      ...npcsProps,
     }
     this._all = seedNpcs(this.parent)
     random_attributes(this.all, this.order)

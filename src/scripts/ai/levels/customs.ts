@@ -1,8 +1,8 @@
 import { Actor } from '../../../types/state'
+import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
 import { shuffle } from '../../utils/utils'
 
 const { rooms, npcs } = globalThis.game.world
-import { steal_check, take_or_stash } from '../ai_checks'
 
 function steal_stash_checks() {
   let suspect = null
@@ -19,7 +19,7 @@ function steal_stash_checks() {
     if (actor.inventory.length > 0 && rooms.all.customs.stations.desk == '') {
       take_or_stash(suspect, actor)
     } else if (actor.inventory.length > 0) {
-      steal_check(suspect, attendant, actor.inventory)
+      npcStealCheck(suspect, attendant, actor.inventory)
     }
   }
 
@@ -33,7 +33,7 @@ function steal_stash_checks() {
       npcs.all[rooms.all.customs.stations.guard],
     ])
     if (victim.inventory.length > 0 && suspect.cooldown <= 0)
-      steal_check(suspect, victim, victim.inventory)
+      npcStealCheck(suspect, victim, victim.inventory)
   }
 
   if (attendant != null) {

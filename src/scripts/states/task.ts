@@ -8,6 +8,11 @@ import { Consequence, Effect, Task, TasksChecks } from '../../types/tasks'
 import { TaskProps } from '../../types/world'
 import { fxLookup, fx } from '../utils/consts'
 import { shuffle } from '../utils/utils'
+import {
+  removeRandom,
+  removeValuable,
+  removeAdvantageous,
+} from '../systems/inventorysystem'
 
 export default class TaskState {
   fsm: StateMachine
@@ -119,13 +124,18 @@ export default class TaskState {
         'questioning',
         'arrest',
       ])
-      const caution_state =
+      const caution_state: Consequence =
         this.target == 'player'
           ? this.checks.playerSnitchCheck!(priors !== null, cop, this.cause)
-          : this.checks.npcSnitchCheck!(cop, this.target)
+          : this.checks.npcCommitSnitchCheck!(cop, this.target)
 
       if (priors == null) {
-        this.parent.taskBuilder(cop, caution_state, this.target, this.cause)
+        this.parent.taskBuilder(
+          cop,
+          caution_state.type,
+          this.target,
+          this.cause
+        )
       } else {
         priors.turns = priors.turns + 6
       }
@@ -235,7 +245,7 @@ export default class TaskState {
     if (label == 'snitch') {
       return {
         playerSnitchCheck: checks.playerSnitchCheck.bind(this),
-        npcSnitchCheck: checks.npcSnitchCheck.bind(this),
+        npcCommitSnitchCheck: checks.npcCommitSnitchCheck.bind(this),
       }
     } else if (label == 'reckless') {
       return {
@@ -252,6 +262,13 @@ export default class TaskState {
         build_consequence: checks.build_consequence.bind(this),
         pledgeCheck: checks.pledgeCheck.bind(this),
         bribeCheck: checks.bribeCheck.bind(this),
+        targetPunchedCheck: checks.targetPunchedCheck.bind(this),
+      }
+    } else if (label == 'confront') {
+      return {
+        build_consequence: checks.build_consequence.bind(this),
+        suspicious_check: checks.suspicious_check.bind(this),
+        //npcCommitSnitchCheck: checks.npcCommitSnitchCheck.bind(this),
         targetPunchedCheck: checks.targetPunchedCheck.bind(this),
       }
     }
@@ -295,28 +312,87 @@ export default class TaskState {
     this.parent.setConfrontation(this)
   }
   npc_confront_consequence() {
-    if (this.label == 'arrest')
+    if (this.label == 'arrest') {
       this.parent.returnNpc(this.target).fsm.setState('arrestee')
-    //testjpf convert rest!!!:::
-    const tempcons: Array<
-      (s: string, w: string) => { pass: boolean; type: string }
-    > = shuffle([
-      this.checks.pledgeCheck!.bind(this),
-      this.checks.bribeCheck!.bind(this),
-      this.checks.targetPunchedCheck!.bind(this),
-      this.checks.jailtime_check!.bind(this),
-      //admirer_check,
-      // prejudice_check,
-      // unlucky_check,
-    ])
-    this.checks.build_consequence!(this, this.owner, tempcons, false)
+      return
+    } else if (this.label == 'questioning') {
+      //testjpf convert rest!!!:::
+      const tempcons: Array<
+        (s: string, w: string) => { pass: boolean; type: string }
+      > = shuffle([
+        this.checks.pledgeCheck!.bind(this),
+        this.checks.bribeCheck!.bind(this),
+        this.checks.targetPunchedCheck!.bind(this),
+        this.checks.jailtime_check!.bind(this),
+        //admirer_check,
+        // prejudice_check,
+        // unlucky_check,
+      ])
+      this.checks.build_consequence!(this, this.owner, tempcons, false)
+    } else if (this.label === 'confront') {
+      const tempcons: Array<
+        (s: string, w: string) => { pass: boolean; type: string }
+      > = shuffle([
+        this.checks.suspicious_check!.bind(this),
+        //  need decideToSnitchCheck :: testjpf
+        this.checks.targetPunchedCheck!.bind(this),
+        //admirer_check,
+        // prejudice_check,
+        // unlucky_check,
+      ])
+      /**
+const confrontation_checks: Array<
+  (s: string, w: string) => { pass: boolean; type: string }
+> = [
+  vanity_check,
+  angel_check,
+  //targetPunchedCheck,
+  watcher_punched_check,
+  //decideToSnitchCheck,
+  prejudice_check,
+  unlucky_check,
+  suspicious_check,
+]
+  */
+      const consolation = this.checks.build_consequence!(
+        this,
+        this.owner,
+        tempcons,
+        false
+      )
+      const target = this.parent.returnNpc(this.target)
+
+      if (consolation == 'neutral') {
+        let chest_item = null
+        //if w != null ){ utils.has_value(w.inventory, a[1]) }
+
+        if (math.random() < 0.4) {
+          chest_item = removeRandom(target.inventory, target.loot)
+        } else if (math.random() < 0.5) {
+          chest_item = removeValuable(target.inventory, target.loot)
+        } else {
+          chest_item = removeAdvantageous(
+            target.inventory,
+            target.loot,
+            target.traits.skills
+          )
+        }
+
+        target.addInvBonus(chest_item)
+        //if (victim == true ){ remove_chest_bonus(w, chest_item) }
+        target.cooldown = math.random(5, 15)
+      }
+
+      target.cooldown = target.cooldown + 5
+    }
   }
 }
 
 function setInitFSMstate(t: Task): string {
   let state = 'idle'
   if (t.label == 'hallpass') state = 'hallpass'
-  else if (['questioning', 'arrest'].includes(t.label)) state = 'confront'
+  else if (['questioning', 'arrest', 'confront'].includes(t.label))
+    state = 'confront'
   else if (t.label == 'injury') state = 'injury'
   else if (t.label == 'mender') state = 'medical'
   else if (t.label == 'snitch') state = 'snitch'

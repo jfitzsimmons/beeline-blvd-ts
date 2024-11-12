@@ -1,27 +1,9 @@
 import { Task, Consequence } from '../../types/tasks'
 import { shuffle } from '../utils/utils'
-import {
-  prejudice_check,
-  vanity_check,
-  angel_check,
-  //chaotic_good_check,
-  //classy_check,
-  //dumb_crook_check,
-  //ignorant_check,
-  //predator_check,
-} from '../systems/effectsystem'
-
-import {
-  //neg_consolations,
-  // pos_consolations,
-  // targetPunchedCheck,
-  suspicious_check,
-  unlucky_check,
-  watcher_punched_check,
-} from './chaossystem'
+import { confrontation_check, seen_check } from '../states/inits/checksFuncs'
 
 const { tasks, npcs, player } = globalThis.game.world
-
+/**
 const confrontation_checks: Array<
   (s: string, w: string) => { pass: boolean; type: string }
 > = [
@@ -29,11 +11,99 @@ const confrontation_checks: Array<
   angel_check,
   //targetPunchedCheck,
   watcher_punched_check,
-  //snitch_check,
+  //decideToSnitchCheck,
   prejudice_check,
   unlucky_check,
   suspicious_check,
 ]
+  */
+function testjpfplayerconfrontationConsequence(
+  //_this: WorldTasks,
+  s: string,
+  w: string,
+  confrontDecided = false
+): string {
+  let tempcons: Array<(s: string, w: string) => Consequence> = []
+  //let confrontDecided = true
+  //const consolation = { pass: true, type: 'concern' }
+  if (s != 'player') {
+    //testjpf re-add confrontation_checks
+    //but from this
+    tempcons = shuffle([])
+    //confrontDecided = false
+  }
+  const caution: Task = {
+    owner: w,
+    turns: 1,
+    label: 'confront',
+    scope: 'clan',
+    authority: 'security',
+    target: s,
+    cause: 'theft',
+  }
+
+  //testjpf the rest of this would go to
+  //npc_confront_consequence or
+  //playerConfrontConsequence on Task state!!!
+  const consequence = tasks.checks.build_consequence(
+    caution,
+    w,
+    tempcons,
+    confrontDecided == true && s == 'player'
+  )
+
+  return confrontDecided == true && s == 'player' ? 'concern' : consequence
+}
+function testjpfplayerthief_consequences(
+  //_this: WorldTasks,
+  t: string,
+  w: string,
+  c: { confront: boolean; type: string }
+) {
+  if (w != '' && c.type == 'seen') {
+    const tTraits =
+      w === 'player'
+        ? tasks.parent.returnPlayer().state.traits
+        : tasks.parent.returnNpc(t).traits
+
+    const wTraits = tasks.parent.returnNpc(w).traits
+
+    //so never confront true for NPcs?testjpf
+    c.confront = c.confront == true || confrontation_check(tTraits, wTraits)
+
+    //testjpf maybe here change stae of player or npc to
+    //confronted.  handle the rest of the logic in taskFSM
+    //use or base of handleConfrontation()
+    //This is where I's build new confront task?!
+
+    c.type = testjpfplayerconfrontationConsequence(t, w, c.confront)
+  }
+
+  if (c.confront == false && c.type != 'neutral') {
+    tasks.taskBuilder(w, c.type, t, 'theft')
+  }
+  return c
+}
+//this.npcs.checks.witnessplayer??? testjpf
+export function witness_player(w: string): { confront: boolean; type: string } {
+  let consequence = {
+    confront: false,
+    type: 'neutral',
+  }
+
+  consequence = testjpfplayerthief_consequences(
+    'player',
+    w,
+    seen_check(player.state, npcs.all[w])
+  )
+  //TESTJPF THIS IS USED FOR NOVEL REASON!!!
+  //and if confront is true!!
+  //so what i dneed to do here or on level
+  //set playerfsm to 'confronted' if true
+  //DONE!!
+  return consequence
+}
+
 /**
 export const reck_theft_checks = [
   ignorant_check,
@@ -59,36 +129,7 @@ function reckless_consequence(c: Task) {
 */
 
 //player interaction and npc actions
-export function confrontationConsequence(
-  s: string,
-  w: string,
-  precheck = false
-) {
-  let tempcons: Array<(s: string, w: string) => Consequence> = []
-  //let precheck = true
-  //const consolation = { pass: true, type: 'concern' }
-  if (s != 'player') {
-    tempcons = shuffle(confrontation_checks)
-    //precheck = false
-  }
-  const caution: Task = {
-    owner: w,
-    turns: 1,
-    label: 'confront',
-    scope: 'clan',
-    authority: npcs.all[w].clan,
-    target: s,
-    cause: 'theft',
-  }
-  const consequence = tasks.checks.build_consequence(
-    caution,
-    w,
-    tempcons,
-    precheck == true && s == 'player'
-  )
 
-  return precheck == true && s == 'player' ? 'concern' : consequence
-}
 //NOVEL
 
 //Task Categories

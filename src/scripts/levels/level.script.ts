@@ -1,6 +1,6 @@
 import { address_busy_tasks } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
-import { aiActions } from '../ai/ai_main'
+//import { aiActions } from '../ai/ai_main'
 
 const dt = math.randomseed(os.time())
 const { world } = globalThis.game
@@ -64,10 +64,14 @@ function confrontation_scene() {
   msg.post('proxies:/controller#novelcontroller', 'show_scene')
 }
 */
+
 function game_turn() {
   novel.reset_novel()
   world.fsm.update(dt)
-  aiActions()
+
+  //room as keyof typeof aiActions
+  //if (room in aiActions) aiActions[room as keyof typeof aiActions]
+
   quest_checker('turn')
 }
 interface props {

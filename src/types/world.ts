@@ -6,6 +6,14 @@ import { NovelNpc } from './novel'
 import { Npcs, Traits } from './state'
 import { QuestMethods, Task } from './tasks'
 
+export interface WorldRoomsArgs {
+  returnNpc(n: string): NpcState
+  returnPlayer(): WorldPlayer
+}
+
+export interface RoomProps extends WorldRoomsArgs {
+  setFocused(r: string): void
+}
 export interface WorldNovelArgs {
   returnNpc(n: string): NpcState
 }
@@ -35,6 +43,7 @@ export interface WorldNpcsArgs {
   sendToVacancy(room: string, npc: string): string | null
   getMendingQueue(): string[]
   taskBuilder(owner: string, label: string, target: string, cause: string): void
+  npcHasTask(owner: string, target: string, labels: string[]): TaskState | null
   hasHallpass(owner: string): TaskState | null
   getNovelUpdates(): NovelNpc
   playerFSM: StateMachine
@@ -55,10 +64,6 @@ export interface NpcProps extends WorldNpcsArgs {
   returnOrderAll(): [string[], Npcs]
   returnMendeeLocation(): string | null
 }
-export interface RoomProps {
-  setFocused(r: string): void
-}
-
 export interface WorldQuestsMethods {
   [key: string]: QuestMethods
 }
