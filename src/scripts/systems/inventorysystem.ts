@@ -1,26 +1,7 @@
-import { InventoryTableItem, Skills } from '../../types/state'
-import { Consequence } from '../../types/tasks'
+import { InventoryTableItem, Trait } from '../../types/state'
 import { itemStateInit } from '../states/inits/inventoryInitState'
-//import NpcState from '../states/npc'
-import { rollSpecialDice } from '../utils/dice'
-import { clamp, shuffle } from '../utils/utils'
-const { npcs, player } = globalThis.game.world
+import { shuffle } from '../utils/utils'
 
-//TESTJPf move to types
-
-/** 
-export function inventory_init() {
-  let nKey: keyof typeof npcs.all
-  for (nKey in npcs.all) {
-    for (const item of npcs.all[nKey].inventory) {
-      add_chest_bonus(npcs.all[nKey], item)
-    }
-  }
-  for (const item of player.inventory) {
-    add_chest_bonus(player.state, item)
-  }
-}
-*/
 export const inventoryLookup: { [key: string]: string } = {}
 function buildLookup() {
   let itemKey: keyof typeof itemStateInit
@@ -28,44 +9,41 @@ function buildLookup() {
     inventoryLookup[hash_to_hex(hash(itemKey))] = itemKey
   }
 }
-
-export function removeRandom(to_inv: string[], from_inv: string[]) {
-  const stolen_item = shuffle(from_inv).pop()
-  if (stolen_item === undefined) return ''
-  if (stolen_item !== '') to_inv.push(stolen_item)
-  return stolen_item
+export function removeRandom(toInv: string[], fromInv: string[]) {
+  const stolenItem = shuffle(fromInv).pop()
+  if (stolenItem === undefined) return ''
+  if (stolenItem !== '') toInv.push(stolenItem)
+  return stolenItem
 }
-
-export function removeLast(to_inv: string[], from_inv: string[]) {
-  const stolen_item = from_inv.pop()
-  if (stolen_item === undefined) return ''
-  if (stolen_item !== '') to_inv.push(stolen_item)
-  return stolen_item
+export function removeLast(toInv: string[], fromInv: string[]) {
+  const stolenItem = fromInv.pop()
+  if (stolenItem === undefined) return ''
+  if (stolenItem !== '') toInv.push(stolenItem)
+  return stolenItem
 }
 export function removeAdvantageous(
-  to_inv: string[],
-  from_inv: string[],
-  skills: Skills
+  toInv: string[],
+  fromInv: string[],
+  skills: Trait
 ) {
-  if (from_inv.length < 1) return ''
-  if (from_inv.length === 1) return removeLast(to_inv, from_inv)
-  const order = Object.entries(skills)
-
-  order.sort((a: [string, number], b: [string, number]) => b[1] - a[1])
+  if (fromInv.length < 1) return ''
+  if (fromInv.length === 1) return removeLast(toInv, fromInv)
+  const order = Object.entries(skills).sort(
+    (a: [string, number], b: [string, number]) => b[1] - a[1]
+  )
 
   let found = false
-  let stolen_item = ''
-
+  let stolenItem = ''
   for (const desire of order) {
     let count = 0
-    for (const item of from_inv) {
+    for (const item of fromInv) {
       const stats: InventoryTableItem =
         itemStateInit[item as keyof InventoryTableItem]
       let sKey: keyof typeof stats.skills
       for (sKey in stats.skills) {
         const value = stats.skills[sKey]
         if (value > 0 && sKey == desire[0]) {
-          stolen_item = from_inv.splice(count, 1)[0]
+          stolenItem = fromInv.splice(count, 1)[0]
           found = true
           break
         }
@@ -76,81 +54,40 @@ export function removeAdvantageous(
     if (found == true) break
   }
   if (found == false) {
-    stolen_item = from_inv.splice(0, 1)[0]
-    to_inv.push(stolen_item)
+    stolenItem = fromInv.splice(0, 1)[0]
+    toInv.push(stolenItem)
   }
-  return stolen_item
+  return stolenItem
 }
 
-export function removeValuable(to_inv: string[], from_inv: string[]) {
-  /** 
-	for _, iv in ipairs(from_inv) do
-		//print("iv:",iv)
-		//print("M.itemStateInit[iv].value:",M.itemStateInit[iv].value)
-	}
-	**/
-  if (from_inv.length < 1) return ''
-  if (from_inv.length === 1) return removeLast(to_inv, from_inv)
-  from_inv.sort(
-    (a: string, b: string) => itemStateInit[a].value - itemStateInit[b].value
-  )
-  let stolen_item = from_inv.pop()
+//!!TESTJPF NONE of these seem to update inventory bonuses!!! SPIKE
+export function removeOfValue(toInv: string[], fromInv: string[]): string {
+  let stolenItem = ''
+  if (fromInv.length < 1) return stolenItem
 
-  if (stolen_item === undefined) stolen_item = ''
-  //table.sort(from_inv, function(x, y) return M.itemStateInit[x].value > M.itemStateInit[y].value })
-
-  if (stolen_item !== '') to_inv.push(stolen_item)
-  return stolen_item
-}
-
-export function get_extorted(s: string, w: string) {
-  const s_inv = npcs.all[s].inventory
-  const w_inv = npcs.all[w].inventory
-
-  if (s_inv.length > 0) {
-    for (let i = s_inv.length - 1; i >= 0; i--) {
-      if (itemStateInit[s_inv[i]].value > 1) {
-        const loot = s_inv.splice(i, 1)
-
-        w_inv.push(...loot)
-        break
-      } else {
-        //print('bribe failed so punch???')
-        // bribe failed so punch???
-      }
+  for (let i = fromInv.length - 1; i >= 0; i--) {
+    if (itemStateInit[fromInv[i]].value > 1) {
+      const loot = fromInv.splice(i, 1)
+      stolenItem = loot[0]
+      toInv.push(...loot)
+      break
     }
   }
+  return stolenItem
 }
-export function bribe_check(suspect: string, watcher: string): Consequence {
-  const w = npcs.all[watcher]
-  const s = suspect === 'player' ? player.state : npcs.all[suspect]
 
-  const modifier = Math.round(
-    w.traits.binaries.lawlessLawful * -5 +
-      w.traits.skills.strength -
-      s.traits.skills.strength
+export function removeValuable(toInv: string[], fromInv: string[]) {
+  if (fromInv.length < 1) return ''
+  if (fromInv.length === 1) return removeLast(toInv, fromInv)
+  fromInv.sort(
+    (a: string, b: string) => itemStateInit[a].value - itemStateInit[b].value
   )
-  const advantage =
-    s.traits.binaries.passiveAggressive <
-    w.traits.binaries.passiveAggressive - 0.3
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  let stolenItem = fromInv.pop()
 
-  //print('TESTJPF RESULT::: bribe', result)
-  if (result > 5 && result <= 10) {
-    get_extorted(suspect, watcher)
-    return { pass: true, type: 'bribe' }
-  }
+  if (stolenItem === undefined) stolenItem = ''
 
-  if (result > 10) {
-    //print('SPECIAL bribe')
-    return { pass: true, type: 'special' }
-  }
-  if (result <= 1) {
-    //print('NEVER bribe')
-    return { pass: true, type: 'critical' }
-  }
-
-  return { pass: false, type: 'neutral' }
+  if (stolenItem !== '') toInv.push(stolenItem)
+  return stolenItem
 }
 
 buildLookup()

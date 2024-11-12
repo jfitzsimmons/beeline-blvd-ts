@@ -10,7 +10,7 @@ function create_new_game(self, action)
 			enterRoom = "grounds",
 			loadType = "new game"
 		}
-		msg.post("proxies:/controller#worldcontroller", "pick_room", params)
+		msg.post("proxies:/controller#gamecontroller", "pick_room", params)
 end
 
 function on_input(self, actionId, action)

@@ -1,14 +1,99 @@
 import NpcState from '../scripts/states/npc'
-import WorldPlayer from '../scripts/states/player'
 import QuestState from '../scripts/states/quest'
 import QuestStep from '../scripts/states/questStep'
-import TaskState from '../scripts/states/task'
 //import WorldTasks from '../scripts/states/tasks'
-import { NovelNpc, Npcs, Skills } from './state'
+import { Npcs, Trait } from './state'
+import { NoOptionals } from './utils'
 
-type NoOptionals<T> = {
-  [K in keyof T]-?: T[K]
+export interface Task {
+  owner: string
+  turns: number
+  label: string // merits
+  scope: string
+  authority: string //ex; labor
+  target: string
+  cause: string
 }
+export interface TasksChecks {
+  playerSnitchCheck(priors: boolean, cop: string, cause: string): Consequence
+  npcCommitSnitchCheck(c: string, t: string): Consequence
+  ignorant_check(target: string, listener: string): Consequence
+  dumb_crook_check(target: string, listener: string): Consequence
+  chaotic_good_check(target: string, listener: string): Consequence
+  build_consequence(
+    t: Task,
+    listener: string,
+    checks: Array<(target: string, listener: string) => Consequence>,
+    precheck: boolean
+  ): string
+  recklessCheck(t: string, l: string): Consequence
+  classy_check(t: string, l: string): Consequence
+  predator_check(t: string, l: string): Consequence
+  jailtime_check(t: string, l: string): Consequence
+  pledgeCheck(t: string, l: string): Consequence
+  bribeCheck(t: string, l: string): Consequence
+  targetPunchedCheck(t: string, l: string): Consequence
+  suspicious_check(t: string, l: string): Consequence
+  vanity_check(t: string, l: string): Consequence
+  prejudice_check(t: string, l: string): Consequence
+  angel_check(t: string, l: string): Consequence
+  admirer_check(t: string, l: string): Consequence
+  unlucky_check(t: string, l: string): Consequence
+  becomeASnitchCheck(t: string, l: string): Consequence
+  watcher_punched_check(t: string, l: string): Consequence
+  charmed_merits(t: string, l: string): Consequence
+  ap_boost(t: string, l: string): Consequence
+  love_boost(t: string, l: string): Consequence
+}
+export interface TasksOutcomes {
+  addPledge(t: string): void
+  lConfrontPunchT(t: string, hit?: number): void
+  tConfrontPunchL(l: string, hit?: number): void
+  getExtorted(t: string, l: string): string
+  add_prejudice(tClan: string, listener: NpcState): void
+  given_gift(t: string, l: string): Consequence
+}
+export interface QuestConditions {
+  [key: string | number]: QuestStep
+}
+export interface QuestCondition {
+  id: string
+  label: string
+  solution?: string
+  passed: boolean
+  //status: 'inactive' | 'active' | 'complete' | 'standby' | 'failed'
+  interval: string[]
+  func: { (args: [() => any, any]): boolean }[]
+  args: [() => any, any][]
+}
+export interface QuestsState {
+  [key: string]: { [key: string]: QuestState }
+}
+export interface Quests {
+  [key: string]: QuestState
+}
+export interface Quest {
+  id: string
+  passed: boolean
+  conditions: QuestConditions
+  side_quests?: QuestConditions
+}
+export interface QuestMethods {
+  [key: string]: (
+    args: [() => Npcs, number] | string | void
+  ) =>
+    | NpcState[]
+    | boolean
+    | Npcs
+    | [string[], Npcs]
+    | string[]
+    | Trait
+    | number
+    | void
+    | string
+    | null
+}
+
 export type ObjectivesGroup = NoOptionals<ObjectivesGroupOpt>
 export interface ObjectivesGroupOpt {
   [key: string]: {
@@ -25,160 +110,6 @@ export interface Objective {
   label: string
   side_Objectives?: Objective
 }
-/** 
-export interface Objective {
-  status: string
-  data: ObjectiveConditions
-  side_Objectives?: ObjectiveConditions
-}
-
-export interface ObjectiveConditions {
-  [key: string | number]: ObjectiveCondition
-}
-export interface ObjectiveCondition {
-  label: string
-  status: string
-}
-*/
-
-export interface QuestConditions {
-  [key: string | number]: QuestStep
-}
-export interface QuestCondition {
-  id: string
-  label: string
-  solution?: string
-  passed: boolean
-  //status: 'inactive' | 'active' | 'complete' | 'standby' | 'failed'
-  interval: string[]
-  func: { (args: [() => any, any]): boolean }[]
-  args: [() => any, any][]
-}
-
-export interface QuestsState {
-  [key: string]: { [key: string]: QuestState }
-}
-export interface Quests {
-  [key: string]: QuestState
-}
-
-export interface Quest {
-  id: string
-  passed: boolean
-  // status: 'active' | 'inactive' | 'complete'
-  conditions: QuestConditions
-  side_quests?: QuestConditions
-}
-export interface AllQuestsMethods {
-  [key: string]: QuestMethods
-}
-export interface WorldNovelProps {
-  returnNpc(n: string): NpcState
-}
-export interface WorldPlayerProps {
-  getFocusedRoom(): string
-  hasHallpass(owner: string): TaskState | null
-  removeTaskByCause(target: string, cause: string): void
-}
-export interface WorldTasksProps extends WorldNovelProps {
-  didCrossPaths(owner: string, target: string): boolean
-  returnPlayer(): WorldPlayer
-  getOccupants(r: string): string[]
-  setConfrontation(t: Task): void
-}
-export interface TaskProps extends WorldTasksProps {
-  addAdjustMendingQueue(patient: string): void
-  npcHasTask(owner: string, target: string, labels?: string[]): TaskState | null
-  taskBuilder(owner: string, label: string, target: string, cause: string): void
-}
-export interface PlayerMethod {
-  setRoomInfo(r: string): void
-  getPlayerRoom(): string
-}
-
-export interface NpcsProps2 {
-  set_focused(r: string): void
-}
-export interface NpcsProps {
-  isStationedTogether(npcs: string[], room: string): boolean
-  getPlayerRoom(): string
-  clearStation(room: string, station: string, npc: string): void
-  setStation(room: string, station: string, npc: string): void
-  pruneStationMap(room: string, station: string): void
-  getStationMap(): { [key: string]: { [key: string]: string } }
-  //resetStationMap(): void
-  //getVicinityTargets(): Direction
-  sendToVacancy(room: string, npc: string): string | null
-  getMendingQueue(): string[]
-  taskBuilder(owner: string, label: string, target: string, cause: string): void
-  hasHallpass(owner: string): TaskState | null
-  getNovelUpdates(): NovelNpc
-}
-export interface NpcMethod extends NpcsProps {
-  add_infirmed(n: string): void
-  get_infirmed(): string[]
-  remove_infirmed(n: string): void
-  add_injured(n: string): void
-  get_injured(): string[]
-  remove_injured(n: string): void
-  add_ignore(n: string): void
-  remove_ignore(n: string): void
-  //getVicinityTargets(): Direction
-  return_doctors(): NpcState[]
-  return_security(): NpcState[]
-  return_all(): Npcs
-  return_order_all(): [string[], Npcs]
-  returnMendeeLocation(): string
-}
-export interface QuestMethods {
-  [key: string]: (
-    args: [() => Npcs, number] | string | void
-  ) =>
-    | NpcState[]
-    | boolean
-    | Npcs
-    | [string[], Npcs]
-    | string[]
-    | Skills
-    | number
-    | void
-    | string
-    | null
-}
-export interface TasksChecks {
-  playerSnitchCheck(priors: boolean, cop: string, cause: string): string
-  npcSnitchCheck(c: string, t: string): string
-  ignorant_check(target: string, listener: string): Consequence
-  dumb_crook_check(target: string, listener: string): Consequence
-  chaotic_good_check(target: string, listener: string): Consequence
-  build_consequence(
-    t: Task,
-    listener: string,
-    checks: Array<(target: string, listener: string) => Consequence>,
-    precheck: boolean
-  ): string
-  recklessCheck(t: string, l: string): Consequence
-  classy_check(t: string, l: string): Consequence
-  predator_check(t: string, l: string): Consequence
-  jailtime_check(t: string, l: string): Consequence
-}
-export interface Task {
-  owner: string
-  turns: number
-  label: string // merits
-  scope: string
-  authority: string //ex; labor
-  target: string
-  cause: string
-}
-
-export interface Confront {
-  npc: string
-  station: string
-  state: string
-  reason: string
-}
-
 export interface Effect {
   label: string
   turns: number
@@ -188,12 +119,6 @@ export interface Effect {
     adjustment: number
   }
 }
-
-export interface Consolation {
-  fail: boolean
-  caution: string
-}
-
 export interface Consequence {
   pass: boolean
   type: string

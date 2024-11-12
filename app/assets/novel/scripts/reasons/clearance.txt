@@ -22,15 +22,16 @@ n: What are you doing in here?
   n: do something like slander??? worse?
   jump quickclose
 > Confess
-  if math.random() < .5
-    if npc.love > -3 and npc.b.aggressive < .8
-      need a function that player has to behave for some turns
+  if math.random() < .6
+    if npc.love > -1 and npc.b.aggressive < .6
+      n: need a function that player has to 
+      n: behave for some turns
       jump quickclose
-    if npc.b.lawful < -.8
+    if npc.b.lawful < -.7
       n: PUNCH
       hp = hp - 1
       jump quickclose
-    if npc.b.authority < -.8
+    if npc.b.authority < -.7
       n: rob function???
       jump quickclose
     n: you'll always be a punk.

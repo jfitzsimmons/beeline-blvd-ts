@@ -5,7 +5,7 @@ import QuestStep from './questStep'
 //const dt = math.randomseed(os.time())
 
 export default class QuestState {
-  //private _questmethods: AllQuestsMethods
+  //private _questmethods: WorldQuestsMethods
   id: string
   passed: boolean
   fsm: StateMachine

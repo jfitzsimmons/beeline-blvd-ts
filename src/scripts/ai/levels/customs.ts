@@ -1,52 +1,52 @@
 import { Actor } from '../../../types/state'
+import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
+import NpcState from '../../states/npc'
+import RoomState from '../../states/room'
 import { shuffle } from '../../utils/utils'
 
-const { rooms, npcs } = globalThis.game.world
-import { steal_check, take_or_stash } from '../ai_checks'
+//const { rooms, npcs } = globalThis.game.world
 
-function steal_stash_checks() {
+function steal_stash_checks(this: RoomState) {
   let suspect = null
   // let thief = null
   let victim = null
   let actor: Actor
-  let attendant = npcs.all[rooms.all.customs.stations.desk]
-  //print("rooms.all.customs.stations.guest",rooms.all.customs.stations.guest)
-  if (rooms.all.customs.stations.guest != '') {
-    suspect = npcs.all[rooms.all.customs.stations.guest]
+  let attendant =
+    this.stations.desk === '' ? '' : this.parent.returnNpc(this.stations.desk)
+  //print("this.stations.guest",this.stations.guest)
+  if (this.stations.guest !== '') {
+    suspect = this.parent.returnNpc(this.stations.guest)
     //print("victim.name",victim.name)
-    actor = rooms.all.customs.actors.desks
+    actor = this.actors.desks
     //loot = actor.inventory
-    if (actor.inventory.length > 0 && rooms.all.customs.stations.desk == '') {
-      take_or_stash(suspect, actor)
+    if (actor.inventory.length > 0 && attendant instanceof NpcState) {
+      npcStealCheck(suspect, attendant, actor.inventory)
     } else if (actor.inventory.length > 0) {
-      steal_check(suspect, attendant, actor.inventory)
+      take_or_stash(suspect, actor)
     }
   }
 
-  if (
-    rooms.all.customs.stations.loiter4 != '' &&
-    rooms.all.customs.stations.guard != ''
-  ) {
+  if (this.stations.loiter4 != '' && this.stations.guard != '') {
     // eslint-disable-next-line @typescript-eslint/no-extra-semi
     ;[suspect, victim] = shuffle([
-      npcs.all[rooms.all.customs.stations.loiter4],
-      npcs.all[rooms.all.customs.stations.guard],
+      this.parent.returnNpc(this.stations.loiter4),
+      this.parent.returnNpc(this.stations.guard),
     ])
     if (victim.inventory.length > 0 && suspect.cooldown <= 0)
-      steal_check(suspect, victim, victim.inventory)
+      npcStealCheck(suspect, victim, victim.inventory)
   }
 
-  if (attendant != null) {
-    actor = rooms.all.customs.actors.locker
+  if (attendant instanceof NpcState) {
+    actor = this.actors.locker
     take_or_stash(attendant, actor)
   }
-  if (rooms.all.customs.stations.loiter3 != '') {
-    attendant = npcs.all[rooms.all.customs.stations.loiter3]
-    actor = rooms.all.customs.actors.vase3
+  if (this.stations.loiter3 != '') {
+    attendant = this.parent.returnNpc(this.stations.loiter3)
+    actor = this.actors.vase3
     take_or_stash(attendant, actor)
   }
 }
 
-export function customs_checks() {
-  steal_stash_checks
+export function customs_checks(this: RoomState) {
+  steal_stash_checks.bind(this)()
 }

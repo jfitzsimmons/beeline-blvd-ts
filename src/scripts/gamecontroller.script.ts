@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Game } from '../states/gamesystem2'
-import { gamesave, gamesettings } from '../../types/legacylua'
-import { url } from '../../types/utils'
+//testjpf
+import { Game } from './states/game'
+import { gamesave, gamesettings } from '../types/legacylua'
+import { url } from '../types/utils'
 
 globalThis.game = new Game()
 const game = globalThis.game
@@ -17,7 +18,7 @@ interface props {
   loadType: string
 }
 
-function handleTurnStates(loadType: string) {
+function handleGameFSMs(room: string, loadType: string) {
   //testjpf what about adding faint and arrest
   if (loadType === 'room transition') {
     world.fsm.setState('turn')
@@ -28,6 +29,10 @@ function handleTurnStates(loadType: string) {
   } else if (loadType === 'new game') {
     game.fsm.setState('new')
   }
+  //testjpf using exitroom - player hasn't been updated
+  //seems like it should be currRoom!!! BUG
+  rooms.all[player.currRoom].fsm.setState('blur')
+  rooms.all[room].fsm.setState('focus')
 }
 
 function show(currentProxy: url | null, p: string) {
@@ -61,14 +66,12 @@ export function on_message(
 ): void {
   //PICK_ROOM
   if (messageId == hash('pick_room')) {
+    print('GCpick_room::', message.enterRoom)
     this.roomName = message.enterRoom
     this.inGame = true
     this.loadType = message.loadType
-    print('--- === ::: NEW ROOM LOADED ::: === ---')
-    handleTurnStates(this.loadType)
-    rooms.all[player.exitRoom].fsm.setState('idle')
-    rooms.all[this.roomName].fsm.setState('focus')
 
+    handleGameFSMs(this.roomName, this.loadType)
     show(this.currentProxy, '#' + this.roomName)
   }
   //PROXY_LOADED
@@ -79,9 +82,9 @@ export function on_message(
         roomName: this.roomName,
         loadType: this.loadType,
       }
+      print('--- === ::: NEW ROOM LOADED ::: === ---')
       msg.post(this.roomName + ':/shared/scripts#level', 'room_load', params)
     }
-
     msg.post(_sender, 'enable')
   }
   //SHOW_MENU

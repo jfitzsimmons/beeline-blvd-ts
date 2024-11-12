@@ -1,6 +1,7 @@
 import { address_busy_tasks } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
-import { aiActions } from '../ai/ai_main'
+import { aidCheck } from '../ai/ai_checks'
+//import { aiActions } from '../ai/ai_main'
 
 const dt = math.randomseed(os.time())
 const { world } = globalThis.game
@@ -64,14 +65,15 @@ function confrontation_scene() {
   msg.post('proxies:/controller#novelcontroller', 'show_scene')
 }
 */
+
 function game_turn() {
-  novel.forced = false
-  novel.reason = 'none'
-  novel.item = 'none'
-  novel.reset_task()
-  print('game turn!!')
+  novel.reset_novel()
   world.fsm.update(dt)
-  aiActions()
+  //Temp testjpf prob move to doc npx
+  aidCheck()
+  //room as keyof typeof aiActions
+  //if (room in aiActions) aiActions[room as keyof typeof aiActions]
+
   quest_checker('turn')
 }
 interface props {
@@ -84,15 +86,14 @@ export function on_message(
   message: {
     roomName: string
     loadType: string
-    novel: boolean
-    npc_name: string
   },
   _sender: url
 ): void {
   if (messageId == hash('room_load')) {
     this.roomName = message.roomName
-    //TESTJPF can this whole conditional be moved to fsms???
-    if (message.loadType == 'room transition') game_turn()
+    if (message.loadType !== 'new game') game_turn()
+    //testjpf it wopuld be cool to talk to npcs about their problem.
+    //snitch, security issues etc.., effects
     calculate_heat(this.roomName)
     address_busy_tasks()
     msg.post(this.roomName + ':/level#' + this.roomName, 'room_load')
@@ -108,10 +109,7 @@ export function on_message(
     quest_checker('interact')
 
     print('exitgui reason::', novel.reason)
-    novel.forced = false
-    novel.reason = 'none'
-    novel.item = 'none'
-    novel.reset_task()
+    novel.reset_novel()
     //calculate_heat(this.roomName)
     msg.post(this.roomName + ':/shared/adam#adam', 'acquire_input_focus')
   } else if (messageId == hash('update_alert')) {
@@ -120,6 +118,5 @@ export function on_message(
       'alert_' + tostring(player.alert_level)
     )
   }
-
   update_hud()
 }

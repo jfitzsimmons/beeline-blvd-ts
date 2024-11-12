@@ -1,5 +1,5 @@
 import { QuestConditions } from '../../../types/tasks'
-import { steal_check, take_or_stash } from '../../ai/ai_checks'
+import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
 import QuestStep from '../../states/questStep'
 //import { npc_action_move } from '../../ai/ai_main'
 //import NpcState from '../../states/npc'
@@ -124,12 +124,12 @@ function doctor_checks(conditions: QuestConditions) {
   } else if (
     meds.fsm.getState() == 'active' &&
     player.clearance - 2 < rooms.all[player.currRoom].clearance &&
-    from_same_room(npcs.return_security(), player.currRoom) != null
+    from_same_room(npcs.returnSecurity(), player.currRoom) != null
   ) {
     novel.task.label = 'questioning'
     novel.task.cause = 'tutsclearance'
     novel.forced = true
-    novel.npc = from_same_room(npcs.return_security(), player.currRoom)!
+    novel.npc = from_same_room(npcs.returnSecurity(), player.currRoom)!
     print('tutsclearances', novel.reason, novel.npc.name)
 
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
@@ -257,11 +257,11 @@ export function tutorialA(interval = 'turn') {
     if (worker2 != null && worker2.cooldown <= 0) {
       guest2 == null
         ? take_or_stash(worker2, rooms.all.grounds.actors.player_luggage)
-        : steal_check(worker2, guest2, luggage.inventory)
+        : npcStealCheck(worker2, guest2, luggage.inventory)
     } else if (guest2 != null && guest2.cooldown <= 0) {
       worker2 == null
         ? take_or_stash(guest2, rooms.all.grounds.actors.player_luggage)
-        : steal_check(guest2, worker2, luggage.inventory)
+        : npcStealCheck(guest2, worker2, luggage.inventory)
     }
   }
   if (apple.passed == false) {
@@ -276,8 +276,8 @@ export function tutorialA(interval = 'turn') {
         npcs.all[replace].clan != 'doctors' &&
         npcs.all[replace].currRoom != 'grounds'
       ) {
-        //const docs = shuffle(npcs.return_doctors())
-        const doc: NpcState = shuffle(npcs.return_doctors())[0]
+        //const docs = shuffle(npcs.returnDoctors())
+        const doc: NpcState = shuffle(npcs.returnDoctors())[0]
         let { currRoom, currStation } = doc
         //BAD should be handled by set doc npc state
         //TODO TESTjpf
@@ -300,7 +300,7 @@ export function tutorialA(interval = 'turn') {
      * lint still thinks it's type is the original vague one
      */
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    // const _return_docs = npcs.return_doctors
+    // const _return_docs = npcs.returnDoctors
     /*
     if (
       injury.passed == true &&

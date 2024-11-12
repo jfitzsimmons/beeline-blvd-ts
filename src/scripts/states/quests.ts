@@ -1,22 +1,23 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
-import { AllQuestsMethods, QuestsState } from '../../types/tasks'
+import { QuestsState } from '../../types/tasks'
 import { tutorialQuests } from './inits/quests/tutorialstate'
+import { WorldQuestsMethods } from '../../types/world'
 
 //const dt = math.randomseed(os.time())
 
-function build_quests_state(questmethods: AllQuestsMethods): QuestsState {
+function build_quests_state(questmethods: WorldQuestsMethods): QuestsState {
   return {
     tutorial: tutorialQuests(questmethods),
   }
 }
 export default class WorldQuests {
-  private _questmethods: AllQuestsMethods
+  private _questmethods: WorldQuestsMethods
   private _all: QuestsState
   checkpoint: string
   fsm: StateMachine
 
-  constructor(questmethods: AllQuestsMethods) {
+  constructor(questmethods: WorldQuestsMethods) {
     this.fsm = new StateMachine(this, 'quests')
     this.checkpoint = 'tutorialA' //testjpf un-hardcode
     this._questmethods = questmethods

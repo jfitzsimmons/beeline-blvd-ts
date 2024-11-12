@@ -1,6 +1,3 @@
-//const world = require "main.states.worldstate"
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
-//const utils = require('../utils.utils')
 const { rooms } = globalThis.game.world
 function load_npcs() {
   const roomName = 'reception' // testjpf remove hardcode string!
@@ -9,18 +6,13 @@ function load_npcs() {
   let station: keyof typeof stations
   for (station in stations) {
     const npc = stations[station]
-    print('reception load level:::: ', npc, station)
-    //  if (npc != '') {
     station == 'desk'
       ? msg.post('desk#station', 'loadStation', { npc, roomName })
       : msg.post(`/${station}#npc_loader`, 'load_npc', { npc })
-    //   }
-    //params.script = params.roomName + "/" + world.player.checkpoint:sub(1, -2) + "aid"
   }
 
   //TESTJPF do you need any of these sopecific level files?
   //see how much you can move to main level.ts
-
   const npc = rooms.fallbacks.stations.reception_unplaced
   msg.post('/unplaced#npc_loader', 'load_npc', { npc })
 }
