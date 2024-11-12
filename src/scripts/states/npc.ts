@@ -138,6 +138,7 @@ export default class NpcState {
         onUpdate: this.onNewUpdate.bind(this),
         onExit: this.onNewExit.bind(this),
       })
+    this.addInvBonus = this.addInvBonus.bind(this)
   }
   //TESTJJPF Rename to confrontPlayer???
   private onConfrontEnter(): void {
@@ -249,7 +250,6 @@ export default class NpcState {
     if (vacancy != null) {
       this.parent.clearStation(this.currRoom, this.currStation, this.name)
       this.currStation = vacancy
-      this.fsm.setState('infirm')
     }
     this.turns_since_encounter = 99
     this.parent.addInfirmed(this.name)

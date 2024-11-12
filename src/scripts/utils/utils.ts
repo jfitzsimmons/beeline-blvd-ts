@@ -2,6 +2,11 @@
 export const clamp = (num: number, min: number, max: number) =>
   Math.min(Math.max(num, min), max)
 
+export function cicadaModulus(): boolean {
+  const random = math.random(1, 100)
+  print('RNDRNDRNGRNG', random)
+  return random % 3 === 0 || random % 5 == 0 || random % 11 == 0
+}
 export function arraymove(arr: string[], fromIndex: number, toIndex: number) {
   const element = arr[fromIndex]
   arr.splice(fromIndex, 1)

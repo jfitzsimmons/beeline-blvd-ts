@@ -121,8 +121,13 @@ export default class WorldTasks {
         task.cause,
         task.turns
       )
-      task.fsm.update(dt)
-      task.turns < 1 ? this.all.splice(i, 1) : (task.turns = task.turns - 1)
+      if (task.turns < 1) {
+        this.all.splice(i, 1)
+        return
+      } else {
+        task.turns = task.turns - 1
+        task.fsm.update(dt)
+      }
     }
   }
   private onTurnExit(): void {}

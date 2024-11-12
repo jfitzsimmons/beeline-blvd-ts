@@ -930,7 +930,7 @@ export function npcStealCheck(
   //TESTJPF Need to some ho
   //if (watcher != null) {
   // consequence = thief_consequences(target.name, watcher.name)
-
+  print('SEENCHECK::', consequence.type)
   if (consequence.type == 'seen') {
     //testjpf maybe here change stae of player or npc to
     //confronted.  handle the rest of the logic in taskFSM
@@ -964,6 +964,7 @@ export function npcStealCheck(
     } else {
       chest_item = removeAdvantageous(target.inventory, loot, ts)
     }
+    print('SEENCHECK CHEST::', consequence.type, chest_item)
 
     target.addInvBonus(chest_item)
     //if (victim == true ){ remove_chest_bonus(w, chest_item) }
@@ -971,6 +972,7 @@ export function npcStealCheck(
   }
 
   target.cooldown = target.cooldown + 5
+  print('SEENCHECK END::', consequence.type, target.cooldown)
 }
 // player interact.gui related
 //WHOLE THING SHOULD BE PART OF FSM FOR>>>

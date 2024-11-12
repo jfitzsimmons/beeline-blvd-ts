@@ -333,7 +333,7 @@ export default class TaskState {
       const tempcons: Array<
         (s: string, w: string) => { pass: boolean; type: string }
       > = shuffle([
-        this.checks.suspicious_check!.bind(this),
+        this.checks.suspicious_check!.bind(this), //testjpf NO OUTCOME!!!TODO
         //  need decideToSnitchCheck :: testjpf
         this.checks.targetPunchedCheck!.bind(this),
         //admirer_check,
