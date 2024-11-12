@@ -1,7 +1,7 @@
 import { Consequence } from '../../types/tasks'
 import { rollSpecialDice } from '../utils/dice'
 import { clamp, shuffle } from '../utils/utils'
-import { add_prejudice } from './effectsystem'
+//import { add_prejudice } from './effectsystem'
 //import { go_to_jail, add_pledge } from './emergencysystem'
 import { removeAdvantageous } from './inventorysystem'
 //import { add_pledge } from './systemshelpers'
@@ -170,7 +170,8 @@ export function unlucky_check(watcher: string, suspect: string): Consequence {
     else if (random == 1) tasks.outcomes.lConfrontPunchT(suspect)
     else if (random == 2) tasks.outcomes.addPledge(suspect)
     else if (random == 3) call_security(watcher, suspect)
-    else if (random == 4) add_prejudice(suspect, watcher)
+    else if (random == 4)
+      tasks.outcomes.add_prejudice(suspect, tasks.parent.returnNpc(watcher))
 
     return { pass: true, type: 'unlucky' }
   }

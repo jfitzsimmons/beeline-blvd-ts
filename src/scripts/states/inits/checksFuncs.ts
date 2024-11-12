@@ -1054,3 +1054,170 @@ function testjpfplayerconfrontationConsequence(
   return confrontDecided == true && s == 'player' ? 'concern' : consequence
 }
 */
+
+function add_angel(listener: NpcState) {
+  // print('CC:: angel')
+  const effect: Effect = { ...fx.angel }
+  listener.effects.push(effect) // lawfulness increase?
+  listener.add_effects_bonus(effect)
+}
+export function angel_check(
+  this: WorldTasks,
+  t: string,
+  l: string
+): Consequence {
+  //const target = t instanceof WorldPlayer ? t.state : t
+  const target =
+    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+  const listener = this.parent.returnNpc(l)
+  const { skills: ls, binaries: lb } = listener.traits
+  const { skills: ts, binaries: tb } = target.traits
+
+  const modifier = Math.round(ts.wisdom - ls.wisdom)
+  const advantage = Math.abs(tb.evil_good) > Math.abs(lb.evil_good)
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  // print('TESTJPF RESULT::: angel:', result)
+  if (result > 5 && result <= 10) {
+    add_angel(listener)
+    return { pass: true, type: 'angel' }
+  }
+
+  if (result > 10) {
+    // print('SPECIAL angel')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    // print('NEVER angel')
+    return { pass: true, type: 'critical' }
+  }
+
+  return { pass: false, type: 'neutral' }
+}
+function add_vanity(listener: NpcState) {
+  // print('CC:: vanity')
+  const effect: Effect = { ...fx.vanity }
+  listener.effects.push(effect) // lawfulness increase?
+  listener.add_effects_bonus(effect)
+}
+export function vanity_check(
+  this: WorldTasks,
+  t: string,
+  l: string
+): Consequence {
+  //const target = t instanceof WorldPlayer ? t.state : t
+  const target =
+    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+  const listener = this.parent.returnNpc(l)
+  const { skills: ls, binaries: lb } = listener.traits
+  const { skills: ts, binaries: tb } = target.traits
+
+  const modifier = Math.round(ts.charisma - ls.intelligence + lb.evil_good * -5)
+  const advantage =
+    ts.strength + tb.un_educated * 5 > ls.strength + lb.un_educated * 5
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 2)
+
+  // print('TESTJPF RESULT::: vanity', result)
+  if (result > 5 && result <= 10) {
+    add_vanity(listener)
+    return { pass: true, type: 'vanity' }
+  }
+
+  if (result > 10) {
+    // print('SPECIAL VANITY')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    // print('NEVER VANITY')
+    return { pass: true, type: 'critical' }
+  }
+
+  return { pass: false, type: 'neutral' }
+}
+function add_admirer(tClan: string, listener: NpcState) {
+  if (tClan === 'player') {
+    listener.love++
+    return
+  }
+  const effect: Effect = { ...fx.admirer }
+  effect.fx.stat = tClan
+  listener.effects.push(effect)
+  listener.add_effects_bonus(effect)
+}
+export function admirer_check(
+  this: WorldTasks,
+  t: string,
+  l: string
+): Consequence {
+  //const target = t instanceof WorldPlayer ? t.state : t
+  const target =
+    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+  const listener = this.parent.returnNpc(l)
+  const { skills: ls, binaries: lb } = listener.traits
+  const { skills: ts } = target.traits
+  const modifier = Math.round(
+    ts.charisma - ls.charisma + lb.anti_authority * -5
+  )
+  const advantage = ts.intelligence > ls.perception && ls.strength < 5
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  // print('TESTJPF RESULT::: admirer', result)
+  if (result > 5 && result <= 10) {
+    add_admirer(target instanceof NpcState ? target.clan : 'player', listener)
+    return { pass: true, type: 'admirer' }
+  }
+
+  if (result > 10) {
+    // print('SPECIAL ADMIRERER')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    // print('NEVER ADMIRERER')
+    return { pass: true, type: 'critical' }
+  }
+
+  return { pass: false, type: 'neutral' }
+}
+export function add_prejudice(tClan: string, listener: NpcState) {
+  if (tClan === 'player') {
+    listener.love--
+    return
+  }
+  const effect: Effect = { ...fx.prejudice }
+  effect.fx.stat = tClan
+  listener.effects.push(effect)
+  listener.add_effects_bonus(effect)
+}
+export function prejudice_check(
+  this: WorldTasks,
+  t: string,
+  l: string
+): Consequence {
+  //const target = t instanceof WorldPlayer ? t.state : t
+  const target =
+    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+  const listener = this.parent.returnNpc(l)
+  const { skills: ls, binaries: lb } = listener.traits
+  const { binaries: tb } = target.traits
+
+  const modifier = Math.round(lb.poor_wealthy * -5 + tb.poor_wealthy * -5)
+  const advantage = ls.wisdom + ls.charisma < ls.stealth / 2
+  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+
+  // print('TESTJPF RESULT::: prejudice', result)
+  if (result > 5 && result <= 10) {
+    add_prejudice(target instanceof NpcState ? target.clan : 'player', listener)
+    return { pass: true, type: 'prejudice' }
+  }
+
+  if (result > 10) {
+    // print('SPECIAL prejudice')
+    return { pass: true, type: 'special' }
+  }
+  if (result <= 1) {
+    // print('NEVER prejudice')
+    return { pass: true, type: 'critical' }
+  }
+
+  return { pass: false, type: 'neutral' }
+}

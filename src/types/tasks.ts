@@ -34,12 +34,17 @@ export interface TasksChecks {
   bribeCheck(t: string, l: string): Consequence
   targetPunchedCheck(t: string, l: string): Consequence
   suspicious_check(t: string, l: string): Consequence
+  vanity_check(t: string, l: string): Consequence
+  prejudice_check(t: string, l: string): Consequence
+  angel_check(t: string, l: string): Consequence
+  admirer_check(t: string, l: string): Consequence
 }
 export interface TasksOutcomes {
   addPledge(t: string): void
   lConfrontPunchT(t: string, hit?: number): void
   tConfrontPunchL(l: string, hit?: number): void
   getExtorted(t: string, l: string): string
+  add_prejudice(tClan: string, listener: NpcState): void
 }
 export interface QuestConditions {
   [key: string | number]: QuestStep

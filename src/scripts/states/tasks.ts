@@ -19,6 +19,11 @@ import {
   tConfrontPunchL,
   targetPunchedCheck,
   suspicious_check,
+  vanity_check,
+  angel_check,
+  prejudice_check,
+  add_prejudice,
+  admirer_check,
 } from './inits/checksFuncs'
 import {
   TasksOutcomes,
@@ -78,12 +83,17 @@ export default class WorldTasks {
       bribeCheck: bribeCheck.bind(this),
       targetPunchedCheck: targetPunchedCheck.bind(this),
       suspicious_check: suspicious_check.bind(this),
+      vanity_check: vanity_check.bind(this),
+      angel_check: angel_check.bind(this),
+      prejudice_check: prejudice_check.bind(this),
+      admirer_check: admirer_check.bind(this),
     }
     this.outcomes = {
       addPledge: addPledge.bind(this),
       lConfrontPunchT: lConfrontPunchT.bind(this),
       getExtorted: getExtorted.bind(this),
       tConfrontPunchL: tConfrontPunchL.bind(this),
+      add_prejudice: add_prejudice.bind(this),
     }
     this.fsm.addState('idle')
     this.fsm.addState('turn', {

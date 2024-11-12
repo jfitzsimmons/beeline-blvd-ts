@@ -263,6 +263,8 @@ export default class TaskState {
         pledgeCheck: checks.pledgeCheck.bind(this),
         bribeCheck: checks.bribeCheck.bind(this),
         targetPunchedCheck: checks.targetPunchedCheck.bind(this),
+        prejudice_check: checks.prejudice_check.bind(this),
+        admirer_check: checks.admirer_check.bind(this),
       }
     } else if (label == 'confront') {
       return {
@@ -270,6 +272,9 @@ export default class TaskState {
         suspicious_check: checks.suspicious_check.bind(this),
         //npcCommitSnitchCheck: checks.npcCommitSnitchCheck.bind(this),
         targetPunchedCheck: checks.targetPunchedCheck.bind(this),
+        vanity_check: checks.vanity_check.bind(this),
+        prejudice_check: checks.prejudice_check.bind(this),
+        angel_check: checks.angel_check.bind(this),
       }
     }
 
@@ -324,8 +329,8 @@ export default class TaskState {
         this.checks.bribeCheck!.bind(this),
         this.checks.targetPunchedCheck!.bind(this),
         this.checks.jailtime_check!.bind(this),
-        //admirer_check,
-        // prejudice_check,
+        this.checks.admirer_check!.bind(this),
+        this.checks.prejudice_check!.bind(this),
         // unlucky_check,
       ])
       this.checks.build_consequence!(this, this.owner, tempcons, false)
@@ -336,7 +341,9 @@ export default class TaskState {
         this.checks.suspicious_check!.bind(this), //testjpf NO OUTCOME!!!TODO
         //  need decideToSnitchCheck :: testjpf
         this.checks.targetPunchedCheck!.bind(this),
-        //admirer_check,
+        this.checks.angel_check!.bind(this),
+        this.checks.prejudice_check!.bind(this),
+        this.checks.vanity_check!.bind(this),
         // prejudice_check,
         // unlucky_check,
       ])

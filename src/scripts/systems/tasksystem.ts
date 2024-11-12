@@ -62,7 +62,7 @@ function testjpfplayerthief_consequences(
 ) {
   if (w != '' && c.type == 'seen') {
     const tTraits =
-      w === 'player'
+      t === 'player'
         ? tasks.parent.returnPlayer().state.traits
         : tasks.parent.returnNpc(t).traits
 

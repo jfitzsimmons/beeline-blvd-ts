@@ -183,10 +183,10 @@ export default class World {
       (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
     )
   }
-  private returnNpc(n: string): NpcState {
+  returnNpc(n: string): NpcState {
     return this.npcs.all[n]
   }
-  private returnPlayer(): WorldPlayer {
+  returnPlayer(): WorldPlayer {
     return this.player
   }
 }
