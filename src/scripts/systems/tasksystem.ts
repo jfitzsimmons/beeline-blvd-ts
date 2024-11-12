@@ -3,20 +3,7 @@ import { shuffle } from '../utils/utils'
 import { confrontation_check, seen_check } from '../states/inits/checksFuncs'
 
 const { tasks, npcs, player } = globalThis.game.world
-/**
-const confrontation_checks: Array<
-  (s: string, w: string) => { pass: boolean; type: string }
-> = [
-  vanity_check,
-  angel_check,
-  //targetPunchedCheck,
-  watcher_punched_check,
-  //decideToSnitchCheck,
-  prejudice_check,
-  unlucky_check,
-  suspicious_check,
-]
-  */
+
 function testjpfplayerconfrontationConsequence(
   //_this: WorldTasks,
   s: string,
@@ -103,70 +90,6 @@ export function witness_player(w: string): { confront: boolean; type: string } {
   //DONE!!
   return consequence
 }
-
-/**
-export const reck_theft_checks = [
-  ignorant_check,
-  dumb_crook_check,
-  chaotic_good_check,
-]*/
-// testjpf move these next!! reusing above in fsm for testing
-//export const reck_harass_checks = [classy_check, predator_check]
-
-//Focused actions
-//todo doctor npc state
-//function focused_acts(c: Task) {}
-/**
-function reckless_consequence(c: Task) {
-  //print('RC::: ', c.owner, ' is gossiping with', _w)
-  const checks: Array<(n: string, _w: string) => Consequence> =
-    c.cause == 'theft'
-      ? shuffle(reck_theft_checks)
-      : shuffle(reck_harass_checks)
-
-  build_consequence(c, checks)
-}
-*/
-
-//player interaction and npc actions
-
-//NOVEL
-
-//Task Categories
-//TESTJPF NOW!!! Need to figure out how to
-// make fsm? trigger level confrontations?
-//player.setState('confront)??
-// needs to set novel stuff and adjust npc convos also
-/** 
-function address_confrontations(cs: Task[]): void {
-  //let confront: Confront | null = null
-  // for (let i = cs.length - 1; i >= 0; i--) {
-  //   const c = cs[i]
-  const owner = npcs.all[this.owner]
-  const target: NpcState | PlayerState =
-    this.target === 'player' ? player.state : npcs.all[this.target]
-
-  if (
-    owner.currRoom == target.currRoom ||
-    (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
-  ) {
-    this.target !== 'player' && npc_confrontation(this.target, c)
-    this.turns = 0
-    // confront =
-    print(
-      'PLSYRTCONFRONT??:: ',
-      this.target == 'player',
-      this.owner,
-      this.target
-    )
-    //shouldnt return a task, but make novel changes, etthis..
-    // return this.target == 'player' ? c : null
-  }
-  // if (confront != null) break
-  // }
-  //return null
-}*/
-
 export function address_busy_tasks() {
   const ts = tasks.all.filter((t) => t.label == 'mender')
   for (let i = ts.length - 1; i >= 0; i--) {
@@ -196,29 +119,3 @@ export function address_busy_tasks() {
     }
   }
 }
-
-//export function address_cautions() {
-// const sortedTasks = tasks.all.sort((a: Task, b: Task) => a.turns - b.turns)
-/** 
-  const { leftovercautions } = sortedTasks.reduce(
-    (r: { [key: string]: Task[] }, o: Task) => {
-      r[
-        o.label == 'questioning' || o.label == 'arrest'
-          ? 'confrontational'
-          : 'leftovercautions'
-      ].push(o)
-      return r
-    },
-    { confrontational: [], leftovercautions: [] }
-  )*/
-
-//address_busy_acts()
-
-//TESTJPF NOW!!! Need to figure out how to
-// make fsm? trigger level confrontations?
-//player.setState('confront)??
-// needs to set novel stuff and adjust npc convos also
-//const confront: Task | null = address_confrontations(confrontational)
-
-//return confront
-//}
