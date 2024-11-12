@@ -15,8 +15,8 @@ export interface Task {
   cause: string
 }
 export interface TasksChecks {
-  playerSnitchCheck(priors: boolean, cop: string, cause: string): string
-  npcSnitchCheck(c: string, t: string): string
+  playerSnitchCheck(priors: boolean, cop: string, cause: string): Consequence
+  npcCommitSnitchCheck(c: string, t: string): Consequence
   ignorant_check(target: string, listener: string): Consequence
   dumb_crook_check(target: string, listener: string): Consequence
   chaotic_good_check(target: string, listener: string): Consequence
@@ -33,12 +33,25 @@ export interface TasksChecks {
   pledgeCheck(t: string, l: string): Consequence
   bribeCheck(t: string, l: string): Consequence
   targetPunchedCheck(t: string, l: string): Consequence
+  suspicious_check(t: string, l: string): Consequence
+  vanity_check(t: string, l: string): Consequence
+  prejudice_check(t: string, l: string): Consequence
+  angel_check(t: string, l: string): Consequence
+  admirer_check(t: string, l: string): Consequence
+  unlucky_check(t: string, l: string): Consequence
+  becomeASnitchCheck(t: string, l: string): Consequence
+  watcher_punched_check(t: string, l: string): Consequence
+  charmed_merits(t: string, l: string): Consequence
+  ap_boost(t: string, l: string): Consequence
+  love_boost(t: string, l: string): Consequence
 }
-export interface ChecksOutcomes {
+export interface TasksOutcomes {
   addPledge(t: string): void
   lConfrontPunchT(t: string, hit?: number): void
   tConfrontPunchL(l: string, hit?: number): void
   getExtorted(t: string, l: string): string
+  add_prejudice(tClan: string, listener: NpcState): void
+  given_gift(t: string, l: string): Consequence
 }
 export interface QuestConditions {
   [key: string | number]: QuestStep

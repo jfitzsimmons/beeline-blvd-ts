@@ -1,18 +1,9 @@
-import { Actor, Npc } from '../../types/state'
-import { clamp } from '../utils/utils'
 const { tasks, npcs, rooms, player } = globalThis.game.world
-import {
-  removeAdvantageous,
-  removeValuable,
-  removeLast,
-  removeRandom,
-} from '../systems/inventorysystem'
-import { confrontationConsequence } from '../systems/tasksystem'
-//import { injured_npcs } from '../systems/emergencysystem'
-import { rollSpecialDice } from '../utils/dice'
-import NpcState from '../states/npc'
+
 import { NpcsInitState } from '../states/inits/npcsInitState'
 
+//TESTJPF TODO THE FOLLOWING 2
+// can be moved to injured task
 function tendToPatient(p: string, doc: string) {
   npcs.all[doc].fsm.setState('mender')
   npcs.all[p].fsm.setState('mendee')
@@ -26,7 +17,6 @@ function tendToPatient(p: string, doc: string) {
       npc: doc,
     })
 }
-
 export function aidCheck() {
   for (const i of npcs.injured.filter(
     (n): n is string => !npcs.ignore.includes(n)
@@ -62,6 +52,7 @@ export function aidCheck() {
     }
   }
 }
+/** 
 export function take_check(taker: NpcState, actor: Npc | Actor) {
   const { skills, binaries } = taker.traits
   let modifier = Math.round(
@@ -120,38 +111,11 @@ export function take_or_stash(attendant: NpcState, actor: NpcState | Actor) {
     stash_check(attendant, actor)
   }
 }
-export function seen_check(s: string, w: string) {
-  const sus = s == 'player' ? player.state : npcs.all[s]
-  const wchr = npcs.all[w]
-  const heat =
-    s == 'player' ? player.heat * 10 : wchr.traits.binaries.poor_wealthy * -4
 
-  const modifier = Math.round(
-    sus.traits.skills.stealth +
-      sus.traits.binaries.lawlessLawful * -4 -
-      wchr.traits.skills.stealth -
-      wchr.traits.skills.perception -
-      heat
-  )
-  const advantage =
-    sus.traits.skills.speed - wchr.traits.binaries.lawlessLawful * 5 >
-    wchr.traits.skills.speed +
-      wchr.traits.skills.constitution +
-      wchr.traits.binaries.passiveAggressive * 5
-
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
-
-  if (result > 10) return { confront: false, type: 'seenspecial' }
-  if (result < 0) return { confront: true, type: 'critcal' }
-  const bossResult = rollSpecialDice(7, true, 3, 2)
-  const seen = result <= bossResult
-  return seen === true
-    ? { confront: false, type: 'seen' }
-    : { confront: false, type: 'neutral' }
-}
 //TESTJPF this could probably be like
 // medical() on NPCS youve ben going for
 //player already moved!!
+
 export function clearance_checks() {
   const cops = npcs.returnSecurity()
   for (const cop of cops) {
@@ -188,6 +152,8 @@ export function clearance_checks() {
     }
   }
 }
+
+
 export function confrontation_check(pname: string, nname: string) {
   if ([pname, nname].includes('')) return false
   const s = pname == 'player' ? player.state : npcs.all[pname]
@@ -207,85 +173,4 @@ export function confrontation_check(pname: string, nname: string) {
 
   return bossResult >= result
 }
-function thief_consequences(
-  s: string,
-  w: string,
-  c: { confront: boolean; type: string }
-) {
-  if (npcs.all[w] != null && c.type == 'seen') {
-    c.confront =
-      s == 'player' && (c.confront == true || confrontation_check(s, w))
-    c.type = confrontationConsequence(s, w, c.confront)
-  }
-
-  if (c.confront == false && c.type != 'neutral') {
-    tasks.taskBuilder(w, c.type, s, 'theft')
-  }
-  return c
-}
-// only being used between npcs (just tutorial luggage)
-export function steal_check(s: NpcState, w: NpcState, loot: string[]) {
-  // accept strings not Npcs
-  // const attempt = roll_Specia_dice
-  if (s.cooldown > 0) return
-
-  const modifier = Math.round(
-    s.traits.skills.speed +
-      s.traits.skills.stealth -
-      s.cooldown +
-      w.traits.opinion[s.clan] -
-      s.traits.opinion[w.clan] * 3
-  )
-  const advantage =
-    s.traits.binaries.lawlessLawful +
-      s.traits.binaries.evil_good -
-      s.traits.binaries.poor_wealthy <
-    w.traits.binaries.evil_good + w.traits.binaries.lawlessLawful
-  const result =
-    rollSpecialDice(5, advantage, 3, 2) + (modifier > -3 ? modifier : -3)
-
-  if (result < 5) return false
-
-  let consequence = {
-    confront: false,
-    type: 'neutral',
-  }
-  if (w != null) {
-    consequence = seen_check(s.name, w.name)
-    consequence = thief_consequences(s.name, w.name, consequence)
-  }
-  //consequence = confront.type
-
-  if (consequence.type == 'neutral') {
-    let chest_item = null
-    //const victim = false
-    //if w != null ){ utils.has_value(w.inventory, a[1]) }
-
-    if (math.random() < 0.4) {
-      chest_item = removeRandom(s.inventory, loot)
-    } else if (math.random() < 0.5) {
-      chest_item = removeValuable(s.inventory, loot)
-    } else {
-      chest_item = removeAdvantageous(s.inventory, loot, s.traits.skills)
-    }
-
-    s.addInvBonus(chest_item)
-    //if (victim == true ){ remove_chest_bonus(w, chest_item) }
-    s.cooldown = math.random(5, 15)
-  }
-
-  s.cooldown = s.cooldown + 5
-}
-// player interact.gui related
-export function witness_player(w: string) {
-  let consequence = {
-    confront: false,
-    type: 'neutral',
-  }
-
-  consequence = seen_check('player', w)
-
-  consequence = thief_consequences('player', w, consequence)
-
-  return consequence
-}
+    */

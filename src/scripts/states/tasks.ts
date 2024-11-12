@@ -2,7 +2,7 @@
 import StateMachine from './stateMachine'
 import {
   playerSnitchCheck,
-  npcSnitchCheck,
+  npcCommitSnitchCheck,
   chaotic_good_check,
   dumb_crook_check,
   ignorant_check,
@@ -18,9 +18,22 @@ import {
   getExtorted,
   tConfrontPunchL,
   targetPunchedCheck,
+  suspicious_check,
+  vanity_check,
+  angel_check,
+  prejudice_check,
+  add_prejudice,
+  admirer_check,
+  unlucky_check,
+  becomeASnitchCheck,
+  watcher_punched_check,
+  charmed_merits,
+  ap_boost,
+  given_gift,
+  love_boost,
 } from './inits/checksFuncs'
 import {
-  ChecksOutcomes,
+  TasksOutcomes,
   QuestMethods,
   Task,
   TasksChecks,
@@ -41,7 +54,7 @@ export default class WorldTasks {
   methods: TaskProps
   parent: WorldTasksArgs
   checks: TasksChecks
-  outcomes: ChecksOutcomes
+  outcomes: TasksOutcomes
   constructor(worldProps: WorldTasksArgs) {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
@@ -64,7 +77,7 @@ export default class WorldTasks {
     }
     this.checks = {
       playerSnitchCheck: playerSnitchCheck.bind(this),
-      npcSnitchCheck: npcSnitchCheck.bind(this),
+      npcCommitSnitchCheck: npcCommitSnitchCheck.bind(this),
       ignorant_check: ignorant_check.bind(this),
       dumb_crook_check: dumb_crook_check.bind(this),
       chaotic_good_check: chaotic_good_check.bind(this),
@@ -76,12 +89,25 @@ export default class WorldTasks {
       pledgeCheck: pledgeCheck.bind(this),
       bribeCheck: bribeCheck.bind(this),
       targetPunchedCheck: targetPunchedCheck.bind(this),
+      suspicious_check: suspicious_check.bind(this),
+      vanity_check: vanity_check.bind(this),
+      angel_check: angel_check.bind(this),
+      prejudice_check: prejudice_check.bind(this),
+      admirer_check: admirer_check.bind(this),
+      unlucky_check: unlucky_check.bind(this),
+      becomeASnitchCheck: becomeASnitchCheck.bind(this),
+      watcher_punched_check: watcher_punched_check.bind(this),
+      charmed_merits: charmed_merits.bind(this),
+      ap_boost: ap_boost.bind(this),
+      love_boost: love_boost.bind(this),
     }
     this.outcomes = {
       addPledge: addPledge.bind(this),
       lConfrontPunchT: lConfrontPunchT.bind(this),
       getExtorted: getExtorted.bind(this),
       tConfrontPunchL: tConfrontPunchL.bind(this),
+      add_prejudice: add_prejudice.bind(this),
+      given_gift: given_gift.bind(this),
     }
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
@@ -119,8 +145,13 @@ export default class WorldTasks {
         task.cause,
         task.turns
       )
-      task.fsm.update(dt)
-      task.turns < 1 ? this.all.splice(i, 1) : (task.turns = task.turns - 1)
+      if (task.turns < 1) {
+        this.all.splice(i, 1)
+        return
+      } else {
+        task.turns = task.turns - 1
+        task.fsm.update(dt)
+      }
     }
   }
   private onTurnExit(): void {}
@@ -315,6 +346,8 @@ export default class WorldTasks {
       append.authority = 'player'
     } else if (label == 'mender') {
       append.turns = 99
+    } else if (label == 'confront') {
+      append.turns = 1
     }
 
     print(

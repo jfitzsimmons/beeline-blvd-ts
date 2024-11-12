@@ -2,7 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
-import { witness_player } from '../ai/ai_checks'
+import { witness_player } from '../systems/tasksystem'
+
 const { npcs, rooms, tasks, player, novel } = globalThis.game.world
 
 interface cloneparent {
@@ -73,9 +74,8 @@ function open_inventory(_this: props, actor: string, action: string) {
     }
   }
   if (_this.consequence.confront == true) {
-    if (_this.isNpc == false) {
-      _this.npcname = _this.watcher
-    }
+    if (_this.isNpc == false) _this.npcname = _this.watcher
+    player.fsm.setState('confronted')
 
     open_novel(_this)
   } else {

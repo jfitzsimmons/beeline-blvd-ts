@@ -1,10 +1,19 @@
 import NpcState from '../scripts/states/npc'
 import WorldPlayer from '../scripts/states/player'
+import StateMachine from '../scripts/states/stateMachine'
 import TaskState from '../scripts/states/task'
 import { NovelNpc } from './novel'
-import { Npcs } from './state'
+import { Npcs, Traits } from './state'
 import { QuestMethods, Task } from './tasks'
 
+export interface WorldRoomsArgs {
+  returnNpc(n: string): NpcState
+  returnPlayer(): WorldPlayer
+}
+
+export interface RoomProps extends WorldRoomsArgs {
+  setFocused(r: string): void
+}
 export interface WorldNovelArgs {
   returnNpc(n: string): NpcState
 }
@@ -34,8 +43,11 @@ export interface WorldNpcsArgs {
   sendToVacancy(room: string, npc: string): string | null
   getMendingQueue(): string[]
   taskBuilder(owner: string, label: string, target: string, cause: string): void
+  npcHasTask(owner: string, target: string, labels: string[]): TaskState | null
   hasHallpass(owner: string): TaskState | null
   getNovelUpdates(): NovelNpc
+  playerFSM: StateMachine
+  playerTraits: Traits
 }
 export interface NpcProps extends WorldNpcsArgs {
   addInfirmed(n: string): void
@@ -50,12 +62,8 @@ export interface NpcProps extends WorldNpcsArgs {
   returnSecurity(): NpcState[]
   returnAll(): Npcs
   returnOrderAll(): [string[], Npcs]
-  returnMendeeLocation(): string
+  returnMendeeLocation(): string | null
 }
-export interface RoomProps {
-  setFocused(r: string): void
-}
-
 export interface WorldQuestsMethods {
   [key: string]: QuestMethods
 }

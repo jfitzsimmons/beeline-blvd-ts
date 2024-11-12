@@ -1,5 +1,5 @@
 import { QuestConditions } from '../../../types/tasks'
-import { steal_check, take_or_stash } from '../../ai/ai_checks'
+import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
 import QuestStep from '../../states/questStep'
 //import { npc_action_move } from '../../ai/ai_main'
 //import NpcState from '../../states/npc'
@@ -257,11 +257,11 @@ export function tutorialA(interval = 'turn') {
     if (worker2 != null && worker2.cooldown <= 0) {
       guest2 == null
         ? take_or_stash(worker2, rooms.all.grounds.actors.player_luggage)
-        : steal_check(worker2, guest2, luggage.inventory)
+        : npcStealCheck(worker2, guest2, luggage.inventory)
     } else if (guest2 != null && guest2.cooldown <= 0) {
       worker2 == null
         ? take_or_stash(guest2, rooms.all.grounds.actors.player_luggage)
-        : steal_check(guest2, worker2, luggage.inventory)
+        : npcStealCheck(guest2, worker2, luggage.inventory)
     }
   }
   if (apple.passed == false) {

@@ -3,6 +3,7 @@ import { RoomsInitState } from './inits/roomsInitState'
 import StateMachine from './stateMachine'
 import { Actors, Vacancies } from '../../types/state'
 import { RoomProps } from '../../types/world'
+import { aiActions } from '../ai/ai_main'
 
 export default class RoomState {
   fsm: StateMachine
@@ -14,6 +15,8 @@ export default class RoomState {
   props?: string[]
   vacancies?: Vacancies
   parent: RoomProps
+  //checks: RoomChecks
+  //outcomes: RoomOutcomes
   constructor(r: string, roomProps: RoomProps) {
     this.fsm = new StateMachine(this, 'room' + r)
     this.matrix = RoomsInitState[r].matrix
@@ -24,8 +27,16 @@ export default class RoomState {
     this.props = RoomsInitState[r].props || []
     this.vacancies = RoomsInitState[r].vacancies || {}
     this.parent = roomProps
+    //this.checks = {}
+    //this.outcomes = {}
+
     this.fsm
       .addState('idle')
+      .addState('turn', {
+        onEnter: this.onTurnEnter.bind(this),
+        onUpdate: this.onTurnUpdate.bind(this),
+        onExit: this.onTurnExit.bind(this),
+      })
       .addState('focus', {
         onEnter: this.onFocusStart.bind(this),
         onUpdate: this.onFocusUpdate.bind(this),
@@ -43,11 +54,25 @@ export default class RoomState {
     //testjpf getPlayerRoom method
     this.parent.setFocused(this.roomName)
   }
-  private onFocusUpdate(): void {}
+  private onFocusUpdate(): void {
+    this.roomName as keyof typeof aiActions
+    if (this.roomName in aiActions)
+      aiActions[this.roomName as keyof typeof aiActions].bind(this)()
+  }
   private onFocusEnd(): void {}
   private onBlurEnter(): void {}
   private onBlurUpdate(): void {
-    this.fsm.setState('idle')
+    this.roomName as keyof typeof aiActions
+    if (this.roomName in aiActions)
+      aiActions[this.roomName as keyof typeof aiActions].bind(this)()
+    this.fsm.setState('turn')
   }
   private onBlurExit(): void {}
+  private onTurnEnter(): void {}
+  private onTurnUpdate(): void {
+    this.roomName as keyof typeof aiActions
+    if (this.roomName in aiActions)
+      aiActions[this.roomName as keyof typeof aiActions].bind(this)()
+  }
+  private onTurnExit(): void {}
 }

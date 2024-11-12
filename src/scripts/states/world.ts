@@ -15,23 +15,28 @@ import {
   WorldPlayerArgs,
   WorldTasksArgs,
   WorldQuestsMethods,
+  WorldRoomsArgs,
 } from '../../types/world'
 
 const dt = math.randomseed(os.time())
 
 export default class World {
   fsm: StateMachine
+  rooms: WorldRooms
+  novel: WorldNovel
+  tasks: WorldTasks
   player: WorldPlayer
   npcs: WorldNpcs
-  rooms: WorldRooms
-  tasks: WorldTasks
   quests: WorldQuests
   info: WorldInfo
-  novel: WorldNovel
   clock: number
   constructor() {
     this.fsm = new StateMachine(this, 'world')
-    this.rooms = new WorldRooms()
+    const roomsProps: WorldRoomsArgs = {
+      returnNpc: this.returnNpc.bind(this),
+      returnPlayer: this.returnPlayer.bind(this),
+    }
+    this.rooms = new WorldRooms(roomsProps)
     const novelProps: WorldNovelArgs = {
       returnNpc: this.returnNpc.bind(this),
     }
@@ -60,7 +65,10 @@ export default class World {
       getPlayerRoom: this.player.getPlayerRoom.bind(this),
       getMendingQueue: this.tasks.getMendingQueue.bind(this),
       taskBuilder: this.tasks.taskBuilder.bind(this),
+      npcHasTask: this.tasks.npcHasTask.bind(this),
       getNovelUpdates: this.novel.getNovelUpdates.bind(this),
+      playerFSM: this.player.fsm,
+      playerTraits: this.player.state.traits,
       ...playerProps,
     }
     this.npcs = new WorldNpcs(npcsProps)
@@ -98,9 +106,8 @@ export default class World {
         onExit: this.onTurnExit.bind(this),
       })
   }
-
   private onNewEnter(): void {
-    this.rooms.fsm.setState('turn')
+    this.rooms.fsm.setState('new')
     this.player.fsm.setState('turn')
     this.player.exitRoom = 'grounds'
     this.npcs.fsm.setState('new')
@@ -130,9 +137,15 @@ export default class World {
     this.clock = this.clock + 6
     this.player.ap = this.player.ap_max - 6
     this.player.hp = this.player.hp_max - 1
-    this.player.fsm.setState('turn')
   }
-  private onFaintUpdate(): void {}
+  private onFaintUpdate(): void {
+    this.player.fsm.update(dt)
+    this.rooms.fsm.update(dt)
+    this.npcs.fsm.update(dt)
+    this.quests.fsm.update(dt)
+    this.tasks.fsm.update(dt)
+    this.fsm.setState('turn')
+  }
   private onFaintExit(): void {}
   private onArrestEnter(): void {
     this.clock = this.clock + 6
@@ -148,8 +161,8 @@ export default class World {
   private onTurnUpdate(): void {
     print('<<< ::: WORLDTurnUpdate() ::: >>>')
     this.player.fsm.update(dt)
-    this.npcs.fsm.update(dt)
     this.rooms.fsm.update(dt)
+    this.npcs.fsm.update(dt)
     this.quests.fsm.update(dt)
     this.tasks.fsm.update(dt)
   }
@@ -170,10 +183,10 @@ export default class World {
       (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
     )
   }
-  private returnNpc(n: string): NpcState {
+  returnNpc(n: string): NpcState {
     return this.npcs.all[n]
   }
-  private returnPlayer(): WorldPlayer {
+  returnPlayer(): WorldPlayer {
     return this.player
   }
 }

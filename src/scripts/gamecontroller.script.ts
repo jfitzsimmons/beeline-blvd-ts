@@ -29,7 +29,9 @@ function handleGameFSMs(room: string, loadType: string) {
   } else if (loadType === 'new game') {
     game.fsm.setState('new')
   }
-  rooms.all[player.exitRoom].fsm.setState('blur')
+  //testjpf using exitroom - player hasn't been updated
+  //seems like it should be currRoom!!! BUG
+  rooms.all[player.currRoom].fsm.setState('blur')
   rooms.all[room].fsm.setState('focus')
 }
 
@@ -64,6 +66,7 @@ export function on_message(
 ): void {
   //PICK_ROOM
   if (messageId == hash('pick_room')) {
+    print('GCpick_room::', message.enterRoom)
     this.roomName = message.enterRoom
     this.inGame = true
     this.loadType = message.loadType

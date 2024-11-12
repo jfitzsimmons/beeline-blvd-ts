@@ -11,6 +11,8 @@ import { Npcs } from '../../types/state'
 import { QuestMethods } from '../../types/tasks'
 import { NpcProps, WorldNpcsArgs } from '../../types/world'
 import { shuffle } from '../utils/utils'
+import { RoomsInitState } from './inits/roomsInitState'
+import { confrontation_check } from './inits/checksFuncs'
 
 const dt = math.randomseed(os.time())
 
@@ -24,7 +26,7 @@ export default class WorldNpcs {
   injured: string[]
   ignore: string[]
 
-  constructor(roommethods: WorldNpcsArgs) {
+  constructor(npcsProps: WorldNpcsArgs) {
     this.infirmed = []
     this.injured = []
     this.ignore = []
@@ -49,7 +51,7 @@ export default class WorldNpcs {
       returnSecurity: this.returnDoctors.bind(this),
       returnAll: this.returnAll.bind(this),
       returnOrderAll: this.returnOrderAll.bind(this),
-      ...roommethods,
+      ...npcsProps,
     }
     this._all = seedNpcs(this.parent)
     random_attributes(this.all, this.order)
@@ -81,9 +83,7 @@ export default class WorldNpcs {
   }
   private onNewUpdate(): void {}
   private onNewExit(): void {}
-  private onTurnEnter(): void {
-    print('npcsturnenter')
-  }
+  private onTurnEnter(): void {}
   private onTurnUpdate(): void {
     print('<< :: NPCSturnUpdate() :: >>')
     this.sort_npcs_by_encounter()
@@ -92,16 +92,46 @@ export default class WorldNpcs {
       npc.fsm.update(dt)
     }
     this.medical()
-    //this.security()
+    this.security()
   }
   private onTurnExit(): void {}
   public get all(): Npcs {
     return this._all
   }
-  returnMendeeLocation() {
-    return this.all[this.parent.getMendingQueue()[0]].currRoom
+  returnMendeeLocation(): string | null {
+    const injured = this.parent.getMendingQueue()[0]
+    return injured === null ? null : this.all[injured].currRoom
   }
-  //security() {}
+  security() {
+    const cops = this.returnSecurity()
+    for (const cop of cops) {
+      const stations = RoomsInitState[cop.currRoom].stations
+      let sKey: keyof typeof stations
+      let target = ''
+      for (sKey in stations) {
+        target = stations[sKey]
+        if (
+          target !== '' &&
+          this.all[target].fsm.getState() === 'trespass' &&
+          target !== cop.name &&
+          confrontation_check(cop.traits, this._all[target].traits) == true
+        ) {
+          print('NEWQUESTIONEDNPC!!!', cop.name, target)
+          this.parent.taskBuilder(cop.name, 'questioning', target, 'clearance')
+          break
+        }
+        target = 'player'
+      }
+      if (
+        target == 'player' &&
+        cop.currRoom == this.parent.getPlayerRoom() &&
+        this.parent.playerFSM.getState() == 'trespass' &&
+        confrontation_check(cop.traits, this.parent.playerTraits) == true
+      ) {
+        this.parent.taskBuilder(cop.name, 'questioning', 'player', 'clearance')
+      }
+    }
+  }
   medical() {
     let count = this.infirmed.length
     for (const doc of this.returnDoctors()) {
@@ -110,7 +140,7 @@ export default class WorldNpcs {
       )
       //testjpf todo unhardcode
       //have a const that lists immobile states.!!!
-      if (mobile === true && count > 0) {
+      if (mobile === true && count > 1) {
         doc.fsm.setState('erfull')
         count = 0
       } else if (

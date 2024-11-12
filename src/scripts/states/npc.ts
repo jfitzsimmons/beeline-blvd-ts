@@ -23,6 +23,7 @@ export default class NpcState {
   home: { x: number; y: number }
   name: string
   inventory: string[]
+  loot: string[]
   clearance: number
   clan: string
   body: string
@@ -50,6 +51,7 @@ export default class NpcState {
     this.home = NpcsInitState[n].home
     this.name = NpcsInitState[n].name
     this.inventory = NpcsInitState[n].inventory
+    this.loot = []
     this.clearance = NpcsInitState[n].clearance
     this.clan = NpcsInitState[n].clan
     this.body = NpcsInitState[n].body
@@ -136,6 +138,7 @@ export default class NpcState {
         onUpdate: this.onNewUpdate.bind(this),
         onExit: this.onNewExit.bind(this),
       })
+    this.addInvBonus = this.addInvBonus.bind(this)
   }
   //TESTJJPF Rename to confrontPlayer???
   private onConfrontEnter(): void {
@@ -193,13 +196,13 @@ export default class NpcState {
   private onInjuryEnd(): void {}
   private onParamedicEnter(): void {}
   private onParamedicUpdate(): void {
-    if (this.parent.getMendingQueue().length < 1) {
-      this.fsm.setState('turn')
-      return
-    }
-    const target = RoomsInitState[this.parent.returnMendeeLocation()].matrix
+    const target = RoomsInitState[this.parent.returnMendeeLocation()!].matrix
     const rooms = this.makePriorityRoomList(target)
     this.findRoomPlaceStation(rooms)
+    // if (this.parent.getMendingQueue().length < 1) {
+    //   this.fsm.setState('turn')
+    //   return
+    // }
   }
   private onParamedicExit(): void {}
   private onERfullEnter(): void {}
@@ -207,16 +210,17 @@ export default class NpcState {
     this.turns_since_encounter = 97
     const patients = this.parent.getInfirmed()
 
-    if (math.random() + patients.length * 0.2 > 1) {
+    if (
+      math.random() + patients.length * 0.2 > 1 &&
+      this.parent.getStationMap().infirmary.aid !== undefined
+    ) {
       this.clearStation()
       this.parent.setStation('infirmary', 'aid', this.name)
       this.parent.pruneStationMap('infirmary', 'aid')
-    } else if (patients.length > 3) {
+    } else if (patients.length > 2) {
       const target = RoomsInitState.infirmary.matrix
       const rooms = this.makePriorityRoomList(target)
       this.findRoomPlaceStation(rooms)
-      if (this.parent.getInfirmed().length < 2) this.fsm.setState('turn')
-      //Force Doc to infirmary if overwhelmed
     }
   }
   private onERfullExit(): void {}
@@ -246,7 +250,6 @@ export default class NpcState {
     if (vacancy != null) {
       this.parent.clearStation(this.currRoom, this.currStation, this.name)
       this.currStation = vacancy
-      this.fsm.setState('infirm')
     }
     this.turns_since_encounter = 99
     this.parent.addInfirmed(this.name)
