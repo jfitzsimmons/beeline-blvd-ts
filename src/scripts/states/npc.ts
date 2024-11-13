@@ -139,6 +139,7 @@ export default class NpcState {
         onExit: this.onNewExit.bind(this),
       })
     this.addInvBonus = this.addInvBonus.bind(this)
+    this.tendToPatient = this.tendToPatient.bind(this)
   }
   //TESTJJPF Rename to confrontPlayer???
   private onConfrontEnter(): void {
@@ -192,7 +193,36 @@ export default class NpcState {
   private onInjuryUpdate(): void {
     this.turns_since_encounter = 99
     this.parent.pruneStationMap(this.currRoom, this.currStation)
+    if (this.parent.getIgnore().includes(this.name)) return
+    const helpers = Object.values(this.parent.getOccupants(this.currRoom))
+      .filter((s) => s != '')
+      .sort(function (a, b) {
+        if (a.slice(0, 3) === 'doc' && b.slice(0, 3) !== 'doc') return -1
+        if (b.slice(0, 3) === 'doc' && a.slice(0, 3) !== 'doc') return 1
+        return 0
+      })
+    for (const helper of helpers) {
+      //doctors start mending after RNG weighted by patient priority
+      const ticket = this.parent.getMendingQueue().indexOf(this.name)
+      const random = math.random(0, 4)
+      if (
+        NpcsInitState[helper].clan == 'doctors' &&
+        ((ticket != -1 && ticket < random) || (ticket == -1 && random > 3))
+      ) {
+        this.tendToPatient(this.name, helper)
+        break
+      } else if (
+        math.random() > 0.7 &&
+        this.parent.npcHasTask(helper, this.name, []) === null &&
+        NpcsInitState[helper].clan !== 'doctors'
+      ) {
+        //if not a doctor, create injury caution if haven't already
+        this.parent.taskBuilder(helper, 'injury', this.name, 'injury')
+        break
+      }
+    }
   }
+
   private onInjuryEnd(): void {}
   private onParamedicEnter(): void {}
   private onParamedicUpdate(): void {
@@ -265,6 +295,7 @@ export default class NpcState {
   private onMendeeEnter(): void {
     this.turns_since_encounter = 98
     this.parent.addIgnore(this.name)
+    this.parent.addAdjustMendingQueue(this.name)
   }
   private onMendeeUpdate(): void {
     this.turns_since_encounter = 98
@@ -366,28 +397,27 @@ export default class NpcState {
     }
   }
   removeInvBonus(i: string) {
-    const item: InventoryTableItem = itemStateInit[i]
+    const item: InventoryTableItem = { ...itemStateInit[i] }
     let sKey: keyof typeof item.skills
-    for (sKey in itemStateInit[i].skills)
-      this.traits.skills[sKey] =
-        this.traits.skills[sKey] - itemStateInit[i].skills[sKey]
+    for (sKey in item.skills)
+      this.traits.skills[sKey] = this.traits.skills[sKey] - item.skills[sKey]
 
     let bKey: keyof typeof item.binaries
-    for (bKey in itemStateInit[i].binaries)
+    for (bKey in item.binaries)
       this.traits.binaries[bKey] =
-        this.traits.binaries[bKey] - itemStateInit[i].binaries[bKey]
+        this.traits.binaries[bKey] - item.binaries[bKey]
   }
   addInvBonus(i: string) {
-    const item: InventoryTableItem = itemStateInit[i]
+    print('ADDINVBONUS::: NPC::', i)
+    const item: InventoryTableItem = { ...itemStateInit[i] }
     let sKey: keyof typeof item.skills
-    for (sKey in itemStateInit[i].skills)
-      this.traits.skills[sKey] =
-        this.traits.skills[sKey] + itemStateInit[i].skills[sKey]
+    for (sKey in item.skills)
+      this.traits.skills[sKey] = this.traits.skills[sKey] + item.skills[sKey]
 
     let bKey: keyof typeof item.binaries
-    for (bKey in itemStateInit[i].binaries)
+    for (bKey in item.binaries)
       this.traits.binaries[bKey] =
-        this.traits.binaries[bKey] + itemStateInit[i].binaries[bKey]
+        this.traits.binaries[bKey] + item.binaries[bKey]
   }
   add_effects_bonus(e: Effect) {
     this.traits[e.fx.type][e.fx.stat] =
@@ -408,5 +438,11 @@ export default class NpcState {
         effect.turns = effect.turns - 1
       }
     }
+  }
+  tendToPatient(p: string, doc: string) {
+    this.parent.returnNpc(doc).fsm.setState('mender')
+    this.parent.returnNpc(p).fsm.setState('mendee')
+    //tasks.removeHeat(p)
+    this.parent.taskBuilder(doc, 'mender', p, 'injury')
   }
 }

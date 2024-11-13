@@ -1,6 +1,6 @@
 import { address_busy_tasks } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
-import { aidCheck } from '../ai/ai_checks'
+//import { aidCheck } from '../ai/ai_checks'
 //import { aiActions } from '../ai/ai_main'
 
 const dt = math.randomseed(os.time())
@@ -70,7 +70,7 @@ function game_turn() {
   novel.reset_novel()
   world.fsm.update(dt)
   //Temp testjpf prob move to doc npx
-  aidCheck()
+  //aidCheck()
   //room as keyof typeof aiActions
   //if (room in aiActions) aiActions[room as keyof typeof aiActions]
 

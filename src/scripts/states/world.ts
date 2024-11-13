@@ -11,11 +11,10 @@ import WorldQuests from './quests'
 import NpcState from './npc'
 import {
   WorldNpcsArgs,
-  WorldNovelArgs,
   WorldPlayerArgs,
   WorldTasksArgs,
   WorldQuestsMethods,
-  WorldRoomsArgs,
+  WorldArgs,
 } from '../../types/world'
 
 const dt = math.randomseed(os.time())
@@ -32,18 +31,17 @@ export default class World {
   clock: number
   constructor() {
     this.fsm = new StateMachine(this, 'world')
-    const roomsProps: WorldRoomsArgs = {
+    const roomsProps: WorldArgs = {
       returnNpc: this.returnNpc.bind(this),
       returnPlayer: this.returnPlayer.bind(this),
     }
     this.rooms = new WorldRooms(roomsProps)
-    const novelProps: WorldNovelArgs = {
-      returnNpc: this.returnNpc.bind(this),
+    const novelProps: WorldArgs = {
+      ...roomsProps,
     }
     this.novel = new WorldNovel(novelProps)
     const tasksProps: WorldTasksArgs = {
       didCrossPaths: this.didCrossPaths.bind(this),
-      returnPlayer: this.returnPlayer.bind(this),
       getOccupants: this.rooms.getOccupants.bind(this),
       setConfrontation: this.novel.setConfrontation.bind(this),
       ...novelProps,
@@ -66,10 +64,12 @@ export default class World {
       getMendingQueue: this.tasks.getMendingQueue.bind(this),
       taskBuilder: this.tasks.taskBuilder.bind(this),
       npcHasTask: this.tasks.npcHasTask.bind(this),
+      addAdjustMendingQueue: this.tasks.addAdjustMendingQueue.bind(this),
       getNovelUpdates: this.novel.getNovelUpdates.bind(this),
       playerFSM: this.player.fsm,
       playerTraits: this.player.state.traits,
       ...playerProps,
+      ...tasksProps,
     }
     this.npcs = new WorldNpcs(npcsProps)
     const allquestmethods: WorldQuestsMethods = {

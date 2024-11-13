@@ -41,6 +41,7 @@ export default class WorldNpcs {
       addInfirmed: this.addInfirmed.bind(this),
       getInfirmed: this.getInfirmed.bind(this),
       getInjured: this.getInjured.bind(this),
+      getIgnore: this.getIgnore.bind(this),
       removeInfirmed: this.removeInfirmed.bind(this),
       addInjured: this.addInjured.bind(this),
       removeInjured: this.removeInjured.bind(this),
@@ -156,6 +157,9 @@ export default class WorldNpcs {
   }
   addIgnore(n: string): void {
     this.ignore.push(n)
+  }
+  getIgnore(): string[] {
+    return this.ignore
   }
   removeIgnore(n: string): void {
     this.ignore.splice(this.ignore.indexOf(n), 1)

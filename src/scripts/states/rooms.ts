@@ -8,7 +8,7 @@ import {
 import RoomState from './room'
 import StateMachine from './stateMachine'
 import { Rooms, Roles, Fallbacks } from '../../types/state'
-import { RoomProps, WorldRoomsArgs } from '../../types/world'
+import { RoomProps, WorldArgs } from '../../types/world'
 
 const dt = math.randomseed(os.time())
 
@@ -21,7 +21,7 @@ export default class WorldRooms {
   parent: RoomProps
   fallbacks: Fallbacks
   stationsMap: { [key: string]: { [key: string]: string } }
-  constructor(roomsProps: WorldRoomsArgs) {
+  constructor(roomsProps: WorldArgs) {
     this.fsm = new StateMachine(this, 'rooms')
     this.fallbacks = { ...RoomsInitFallbacks }
     this.layout = [...RoomsInitLayout]

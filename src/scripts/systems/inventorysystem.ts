@@ -37,8 +37,9 @@ export function removeAdvantageous(
   for (const desire of order) {
     let count = 0
     for (const item of fromInv) {
-      const stats: InventoryTableItem =
-        itemStateInit[item as keyof InventoryTableItem]
+      const stats: InventoryTableItem = {
+        ...itemStateInit[item as keyof InventoryTableItem],
+      }
       let sKey: keyof typeof stats.skills
       for (sKey in stats.skills) {
         const value = stats.skills[sKey]
