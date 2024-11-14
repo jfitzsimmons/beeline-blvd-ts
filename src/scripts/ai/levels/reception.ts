@@ -25,7 +25,7 @@ function steal_stash_checks(this: RoomState) {
 
     loot = victim.inventory
     actor = this.actors.drawer
-    if ((actor.inventory.length > 0, typeof attendant !== 'string')) {
+    if (actor.inventory.length > 0 && typeof attendant !== 'string') {
       npcStealCheck(victim, attendant, actor.inventory)
     } else if (actor.inventory.length > 0) {
       take_check(victim, actor)

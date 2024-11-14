@@ -6,18 +6,14 @@ import { NovelNpc } from './novel'
 import { Npcs, Traits } from './state'
 import { QuestMethods, Task } from './tasks'
 
-export interface WorldRoomsArgs {
+export interface WorldArgs {
   returnNpc(n: string): NpcState
   returnPlayer(): WorldPlayer
 }
-
-export interface RoomProps extends WorldRoomsArgs {
+export interface RoomProps extends WorldArgs {
   setFocused(r: string): void
 }
-export interface WorldNovelArgs {
-  returnNpc(n: string): NpcState
-}
-export interface WorldTasksArgs extends WorldNovelArgs {
+export interface WorldTasksArgs extends WorldArgs {
   didCrossPaths(owner: string, target: string): boolean
   returnPlayer(): WorldPlayer
   getOccupants(r: string): string[]
@@ -33,7 +29,8 @@ export interface WorldPlayerArgs {
   hasHallpass(owner: string): TaskState | null
   removeTaskByCause(target: string, cause: string): void
 }
-export interface WorldNpcsArgs {
+export interface WorldNpcsArgs extends WorldTasksArgs {
+  addAdjustMendingQueue(patient: string): void
   isStationedTogether(npcs: string[], room: string): boolean
   getPlayerRoom(): string
   clearStation(room: string, station: string, npc: string): void
@@ -45,6 +42,8 @@ export interface WorldNpcsArgs {
   taskBuilder(owner: string, label: string, target: string, cause: string): void
   npcHasTask(owner: string, target: string, labels: string[]): TaskState | null
   hasHallpass(owner: string): TaskState | null
+  getFocusedRoom(): string
+  removeTaskByCause(target: string, cause: string): void
   getNovelUpdates(): NovelNpc
   playerFSM: StateMachine
   playerTraits: Traits
@@ -63,6 +62,7 @@ export interface NpcProps extends WorldNpcsArgs {
   returnAll(): Npcs
   returnOrderAll(): [string[], Npcs]
   returnMendeeLocation(): string | null
+  getIgnore(): string[]
 }
 export interface WorldQuestsMethods {
   [key: string]: QuestMethods

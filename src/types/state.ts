@@ -82,12 +82,16 @@ export interface Room {
   roomName: string
   clearance: number
   stations: { [key: string]: string }
+  swaps: Swaps
   actors: Actors
   props?: string[]
   vacancies?: Vacancies
 }
 export interface Vacancies {
   [key: string]: string
+}
+export interface Swaps {
+  [key: string]: [string, string]
 }
 export interface Fallbacks {
   stations: { [key: string]: string }

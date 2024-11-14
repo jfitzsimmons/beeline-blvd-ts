@@ -203,8 +203,8 @@ instances {
   id: "loiter4"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 604.0
-    y: 413.0
+    x: 612.0
+    y: 402.0
     z: 0.1
   }
   rotation {
@@ -244,7 +244,67 @@ instances {
   prototype: "/main/characters/npc_loader.go"
   position {
     x: 1218.0
-    y: 572.0
+    y: 575.0
+    z: 0.1
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "lounge"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 518.0
+    y: 419.0
+    z: 0.1
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "loiter3"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 802.0
+    y: 772.0
+    z: 0.1
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "boss"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 863.0
+    y: 172.0
     z: 0.1
   }
   rotation {
@@ -693,11 +753,14 @@ embedded_instances {
 }
 embedded_instances {
   id: "potential_npcs"
+  children: "boss"
   children: "guard"
   children: "guest"
   children: "guest2"
   children: "loiter2"
+  children: "loiter3"
   children: "loiter4"
+  children: "lounge"
   children: "patrol"
   children: "unplaced"
   data: ""

@@ -5,6 +5,10 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 2, y: 5 },
     roomName: 'security',
     clearance: 3,
+    swaps: {
+      assistant: ['aid', ''],
+      guest: ['guest2', ''],
+    },
     stations: {
       guard: '',
       authority: '',
@@ -19,6 +23,10 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 0, y: 4 },
     roomName: 'baggage',
     clearance: 2,
+    swaps: {
+      worker1: ['worker2', ''],
+      guard: ['patrol', ''],
+    },
     stations: {
       guard: '',
       worker1: '',
@@ -43,6 +51,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 1, y: 5 },
     roomName: 'viplobby',
     clearance: 2,
+    swaps: {},
     stations: {
       guard: '',
       vipguest: '',
@@ -58,6 +67,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 0, y: 5 },
     roomName: 'entrance',
     clearance: 0,
+    swaps: {},
     stations: {
       loiter2: '',
       worker1: '',
@@ -72,6 +82,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 3, y: 3 },
     roomName: 'recroom',
     clearance: 1,
+    swaps: {},
     stations: {
       lounge: '',
       loiter1: '',
@@ -87,6 +98,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 3, y: 2 },
     roomName: 'chapel',
     clearance: 1,
+    swaps: {},
     stations: {
       loiter1: '',
       loiter2: '',
@@ -101,6 +113,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 4, y: 2 },
     roomName: 'inn1',
     clearance: 1,
+    swaps: {},
     stations: {
       loiter3: '',
       host: '',
@@ -115,6 +128,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 4, y: 3 },
     roomName: 'pubgrill',
     clearance: 1,
+    swaps: {},
     stations: {
       host: '',
       bar: '',
@@ -129,6 +143,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 4, y: 1 },
     roomName: 'maintenance',
     clearance: 2,
+    swaps: {},
     stations: { bench: '', patrol: '', browse: '', worker1: '' },
     actors: {},
   },
@@ -136,6 +151,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 2, y: 3 },
     roomName: 'lobby',
     clearance: 1,
+    swaps: {},
     stations: {
       loiter1: '',
       loiter2: '',
@@ -151,6 +167,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 3, y: 1 },
     roomName: 'storage',
     clearance: 1,
+    swaps: {},
     stations: {
       patrol: '',
       guard: '',
@@ -164,6 +181,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 2, y: 2 },
     roomName: 'commonsint',
     clearance: 1,
+    swaps: {},
     stations: {
       loiter1: '',
       loiter2: '',
@@ -179,6 +197,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 2, y: 1 },
     roomName: 'commonsext',
     clearance: 1,
+    swaps: {},
     stations: {
       loiter1: '',
       loiter2: '',
@@ -194,6 +213,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 1, y: 1 },
     roomName: 'warehouse',
     clearance: 2,
+    swaps: {},
     stations: { worker1: '', worker2: '', boss: '' },
     actors: {},
   },
@@ -201,6 +221,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 1, y: 2 },
     roomName: 'lockers',
     clearance: 1,
+    swaps: {},
     stations: {
       loiter1: '',
       patrol: '',
@@ -216,6 +237,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 0, y: 1 },
     roomName: 'unloading',
     clearance: 2,
+    swaps: {},
     stations: {
       worker1: '',
       worker2: '',
@@ -230,6 +252,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 2, y: 0 },
     roomName: 'alley3',
     clearance: 1,
+    swaps: {},
     stations: {
       worker1: '',
       servants1: '',
@@ -245,6 +268,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 1, y: 0 },
     roomName: 'alley2',
     clearance: 2,
+    swaps: {},
     stations: {
       worker1: '',
       servants1: '',
@@ -258,6 +282,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 0, y: 0 },
     roomName: 'alley1',
     clearance: 2,
+    swaps: {},
     stations: {
       worker1: '',
       worker2: '',
@@ -271,6 +296,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 0, y: 2 },
     roomName: 'loading',
     clearance: 2,
+    swaps: {},
     stations: { worker1: '', worker2: '', boss: '', patrol: '', gang: '' },
     actors: {},
   },
@@ -279,6 +305,10 @@ export const RoomsInitState: { [key: string]: Room } = {
     roomName: 'admin1',
     clearance: 2,
     props: ['desks', 'locker'],
+    swaps: {
+      boss: ['servants2', ''],
+      patrol: ['guest', ''],
+    },
     stations: {
       monitor: '',
       patrol: '',
@@ -303,6 +333,10 @@ export const RoomsInitState: { [key: string]: Room } = {
     roomName: 'customs',
     clearance: 0,
     props: ['desks', 'locker'],
+    swaps: {
+      loiter1: ['loiter2', ''],
+      patrol: ['gang', ''],
+    },
     stations: {
       desk: '',
       loiter1: '',
@@ -333,6 +367,11 @@ export const RoomsInitState: { [key: string]: Room } = {
     roomName: 'reception',
     clearance: 0,
     props: ['drawer', 'computer'],
+    swaps: {
+      loiter4: ['loiter3', ''],
+      guest2: ['lounge', ''],
+      guard: ['boss', ''],
+    },
     stations: {
       desk: '',
       patrol: '',
@@ -369,6 +408,11 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 0, y: 4 },
     roomName: 'grounds',
     clearance: 0,
+    swaps: {
+      assistant: ['guard', ''],
+      loiter1: ['loiter2', ''],
+      guest: ['bench', ''],
+    },
     stations: {
       assistant: '',
       worker1: '',
@@ -395,6 +439,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 4, y: 5 },
     roomName: 'dorms',
     clearance: 1,
+    swaps: {},
     stations: {
       bench: '',
       servants1: '',
@@ -410,6 +455,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 3, y: 4 },
     roomName: 'gym',
     clearance: 1,
+    swaps: {},
     stations: {
       guest: '',
       browse: '',
@@ -424,6 +470,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 4, y: 4 },
     roomName: 'store',
     clearance: 1,
+    swaps: {},
     stations: {
       guest: '',
       servants1: '',
@@ -440,6 +487,10 @@ export const RoomsInitState: { [key: string]: Room } = {
     roomName: 'infirmary',
     clearance: 3,
     props: ['drawer', 'computer'],
+    swaps: {
+      servants2: ['servants1', ''],
+      loiter2: ['worker1', ''],
+    },
     stations: {
       aid: '',
       loiter1: '',
@@ -608,6 +659,7 @@ export const RoomsInitRoles: { [key: string]: string[] } = {
   gang: ['gang1', 'gang2', 'gang3', 'gang4'],
 }
 export const RoomsInitFallbacks = {
+  swaps: {},
   stations: {
     admin1_passer: '',
     security_passer: '',

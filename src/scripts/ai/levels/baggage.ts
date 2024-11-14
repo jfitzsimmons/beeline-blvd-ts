@@ -9,7 +9,7 @@ function steal_stash_checks(_this: RoomState) {
     math.random() > 0.5 ? _this.actors.luggage_1 : _this.actors.luggage_2
 
   const [suspect, victim] = shuffle([
-    _this.stations.assistan == ''
+    _this.stations.assistant == ''
       ? null
       : _this.parent.returnNpc(_this.stations.assistant),
     _this.stations.browse == ''

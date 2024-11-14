@@ -1,6 +1,6 @@
 import { NovelNpc } from '../../types/novel'
 import { Task, QuestMethods } from '../../types/tasks'
-import { WorldNovelArgs } from '../../types/world'
+import { WorldArgs } from '../../types/world'
 import { NpcsInitState } from './inits/npcsInitState'
 import NpcState from './npc'
 
@@ -25,11 +25,11 @@ export default class WorldNovel {
   private _scripts: string[]
   //private _alertChange: number
   private _npc: NovelNpc
-  parent: WorldNovelArgs
+  parent: WorldArgs
   //private _quest: QuestCondition
   quests: QuestMethods
 
-  constructor(novelMethods: WorldNovelArgs) {
+  constructor(novelMethods: WorldArgs) {
     // this.background = ''
     //  this.sprites = {}
     this._active_quest = false

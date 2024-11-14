@@ -10,6 +10,16 @@ function load_npcs() {
       ? msg.post('desk#station', 'loadStation', { npc, roomName })
       : msg.post(`/${station}#npc_loader`, 'load_npc', { npc })
   }
+
+  const swaps = rooms.all[roomName].swaps
+  let swap: keyof typeof swaps
+  for (swap in swaps) {
+    const npc = swaps[swap][1]
+    const params = {
+      npc,
+    }
+    msg.post(`/${swaps[swap][0]}#npc_loader`, 'load_npc', params)
+  }
 }
 
 function load_storage() {

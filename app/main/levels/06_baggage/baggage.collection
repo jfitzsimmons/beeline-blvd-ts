@@ -239,6 +239,46 @@ instances {
     z: 1.0
   }
 }
+instances {
+  id: "patrol"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 466.0
+    y: 471.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "worker2"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 126.0
+    y: 393.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
 collection_instances {
   id: "shared"
   collection: "/main/levels/shared.collection"
@@ -356,8 +396,10 @@ embedded_instances {
   children: "assistant"
   children: "browse"
   children: "guard"
+  children: "patrol"
   children: "vipguest"
   children: "worker1"
+  children: "worker2"
   data: ""
   position {
     x: 0.0

@@ -899,6 +899,14 @@ export function npcStealCheck(
   watcher: NpcState,
   loot: string[]
 ) {
+  print(
+    'npcSTEALchkLOOT:::',
+    target.name,
+    target.currRoom,
+    watcher.name,
+    watcher.currRoom,
+    loot[0]
+  )
   //const target = this.parent.returnNpc(t)
   //const watcher = this.parent.returnNpc(w)
   const { binaries: wb, opinion: wo } = watcher.traits
@@ -1057,7 +1065,7 @@ function testjpfplayerconfrontationConsequence(
 */
 
 function add_angel(listener: NpcState) {
-  // print('CC:: angel')
+  print('CCOUTCOME:: angel', listener)
   const effect: Effect = { ...fx.angel }
   listener.effects.push(effect) // lawfulness increase?
   listener.add_effects_bonus(effect)
@@ -1078,6 +1086,14 @@ export function angel_check(
   const advantage = Math.abs(tb.evil_good) > Math.abs(lb.evil_good)
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
+  print(
+    'CHECKS:: ANCGELCHK::',
+    t,
+    'is thought of as an angel by?',
+    l,
+    'ROLL:',
+    result
+  )
   // print('TESTJPF RESULT::: angel:', result)
   if (result > 5 && result <= 10) {
     add_angel(listener)
@@ -1096,7 +1112,7 @@ export function angel_check(
   return { pass: false, type: 'neutral' }
 }
 function add_vanity(listener: NpcState) {
-  // print('CC:: vanity')
+  print('CCOUTCOME:: vanity has overtaken', listener)
   const effect: Effect = { ...fx.vanity }
   listener.effects.push(effect) // lawfulness increase?
   listener.add_effects_bonus(effect)
@@ -1118,6 +1134,8 @@ export function vanity_check(
     ts.strength + tb.un_educated * 5 > ls.strength + lb.un_educated * 5
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 2)
 
+  print('CHECKS:: ANCGELCHK::', t, 'has made vane::', l, 'ROLL:', result)
+
   // print('TESTJPF RESULT::: vanity', result)
   if (result > 5 && result <= 10) {
     add_vanity(listener)
@@ -1136,6 +1154,7 @@ export function vanity_check(
   return { pass: false, type: 'neutral' }
 }
 function add_admirer(tClan: string, listener: NpcState) {
+  print('has admiration', listener)
   if (tClan === 'player') {
     listener.love++
     return
@@ -1162,6 +1181,8 @@ export function admirer_check(
   const advantage = ts.intelligence > ls.perception && ls.strength < 5
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
+  print('CHECKS:: ADMIRERCHK::', t, 'is admired by::', l, 'ROLL:', result)
+
   // print('TESTJPF RESULT::: admirer', result)
   if (result > 5 && result <= 10) {
     add_admirer(target instanceof NpcState ? target.clan : 'player', listener)
@@ -1180,6 +1201,7 @@ export function admirer_check(
   return { pass: false, type: 'neutral' }
 }
 export function add_prejudice(tClan: string, listener: NpcState) {
+  print('OUTCOME:: is prejudiced', listener)
   if (tClan === 'player') {
     listener.love--
     return
@@ -1204,6 +1226,7 @@ export function prejudice_check(
   const modifier = Math.round(lb.poor_wealthy * -5 + tb.poor_wealthy * -5)
   const advantage = ls.wisdom + ls.charisma < ls.stealth / 2
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  print('CHECKS:: PREJUDICECHK::', t, 'is hated by::', l, 'ROLL:', result)
 
   // print('TESTJPF RESULT::: prejudice', result)
   if (result > 5 && result <= 10) {
@@ -1240,6 +1263,7 @@ export function watcher_punched_check(
   )
   const advantage = tb.passiveAggressive * 7 > ls.speed
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  print('CHECKS:: Listenerpunched::', t, 'hits::', l, 'ROLL:', result)
 
   //print('TESTJPF RESULT::: s punch w', result)
   if (result > 5 && result <= 10) {
@@ -1276,32 +1300,51 @@ function call_security(_this: WorldTasks, w: string, suspect: string) {
 
 export function unlucky_check(
   this: WorldTasks,
-  watcher: string,
-  suspect: string
+  l: string,
+  t: string
 ): Consequence {
   const modifier = math.random(-1, 1)
   const advantage = math.random() > 0.5
   const result = rollSpecialDice(5, advantage, 3, 2) + modifier
+
+  print('CHECKS:: UNLUCKEY::', t, 'is unlucky with::', l, 'ROLL:', result)
+
   //print('TESTJPF RESULT UNLUCKY:::', result)
   if (result > 5 && result <= 10) {
     const random = math.random(0, 4)
-    if (random == 0) this.outcomes.getExtorted(suspect, watcher)
-    else if (random == 1) this.outcomes.lConfrontPunchT(suspect)
-    else if (random == 2) this.outcomes.addPledge(suspect)
-    else if (random == 3) call_security(this, watcher, suspect)
-    else if (random == 4)
-      this.outcomes.add_prejudice(suspect, this.parent.returnNpc(watcher))
+    if (random == 0) {
+      print('unlucky 0 getextorted')
 
+      this.outcomes.getExtorted(t, l)
+    } else if (random == 1) {
+      print('unlucky 1 lConfrontPunchT')
+
+      this.outcomes.lConfrontPunchT(t)
+    } else if (random == 2) {
+      print('unlucky 2 addPledge')
+
+      this.outcomes.addPledge(t)
+    } else if (random == 3) {
+      print('unluck 3 callsecurity')
+      call_security(this, l, t)
+    } else if (random == 4) {
+      print('unluck 4 addprejudice')
+
+      this.outcomes.add_prejudice(
+        t === 'player' ? t : this.parent.returnNpc(t).clan,
+        this.parent.returnNpc(l)
+      )
+    }
     return { pass: true, type: 'unlucky' }
   }
 
   if (result > 10) {
-    //print('SPECIAL unlucky')
-    call_security(this, suspect, watcher)
+    print('SPECIAL unlucky')
+    call_security(this, t, l)
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    //print('NEVER unlucky')
+    print('NEVER unlucky')
     /**
     const tempcons: Array<
     (t: string, l: string, _this?: WorldTasks) => Consequence
@@ -1312,8 +1355,8 @@ export function unlucky_check(
       this.checks.charmed_merits.bind(this),
       this.checks.ap_boost.bind(this),
       this.outcomes.given_gift.bind(this),
-      this.checks.love_boost.bind(thief_consolation_checks),
-    ])[0](suspect, watcher)
+      this.checks.love_boost.bind(this),
+    ])[0](t, l)
     return { pass: true, type: 'critical' }
   }
 

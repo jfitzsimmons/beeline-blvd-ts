@@ -128,6 +128,7 @@ export default class WorldTasks {
     this.getMendingQueue = this.getMendingQueue.bind(this)
     this.npcHasTask = this.npcHasTask.bind(this)
     this.taskBuilder = this.taskBuilder.bind(this)
+    this.addAdjustMendingQueue = this.addAdjustMendingQueue.bind(this)
   }
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
