@@ -1,7 +1,11 @@
 import { Direction } from '../../types/ai'
 //import { Traits } from '../../types/state'
 //import { Effect } from '../../types/tasks'
-import { RoomsInitRoles, RoomsInitLayout } from '../states/inits/roomsInitState'
+import {
+  RoomsInitRoles,
+  RoomsInitLayout,
+  RoomsInitState,
+} from '../states/inits/roomsInitState'
 import { shuffle } from './utils'
 
 const count: { [key: string]: number } = {}
@@ -33,10 +37,19 @@ export function attempt_to_fillStation(
         Object.entries(stationMap[room])
       )
       for (const ks of shuffledStations) {
-        if (RoomsInitRoles[ks[0]].includes(clan)) {
+        chosenStation =
+          ks[0] in RoomsInitState[room].swaps && math.random() > 0.6
+            ? RoomsInitState[room].swaps[ks[0]][0]
+            : ks[0]
+
+        const role = RoomsInitRoles[chosenStation]
+        //TESTJPF could do logic here const role =
+        //if station has swap 60/30
+        // cahnge chosenStation to ??.swap[station][0]
+        if (role.includes(clan)) {
           //loop thru room stations see if empty or has correct role
           chosenRoom = room
-          chosenStation = ks[0]
+
           /**
             print(
               npc,
@@ -51,8 +64,6 @@ export function attempt_to_fillStation(
               npcs.all[npc].turns_since_encounter
             )
    */
-          //fill station testjpf abstract maybe for NPCS turn state?
-          //npcs.all[npc].exitRoom = RoomsInitLayout[current.y][current.x]!
           placed = true
           break
         }

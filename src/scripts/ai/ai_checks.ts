@@ -1,9 +1,10 @@
-const { tasks, npcs, rooms, player } = globalThis.game.world
+//const { tasks, npcs, rooms, player } = globalThis.game.world
 
-import { NpcsInitState } from '../states/inits/npcsInitState'
+//import { NpcsInitState } from '../states/inits/npcsInitState'
 
 //TESTJPF TODO THE FOLLOWING 2
 // can be moved to injured task
+/** 
 function tendToPatient(p: string, doc: string) {
   npcs.all[doc].fsm.setState('mender')
   npcs.all[p].fsm.setState('mendee')
@@ -52,7 +53,7 @@ export function aidCheck() {
     }
   }
 }
-/** 
+
 export function take_check(taker: NpcState, actor: Npc | Actor) {
   const { skills, binaries } = taker.traits
   let modifier = Math.round(

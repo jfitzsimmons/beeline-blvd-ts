@@ -319,6 +319,66 @@ instances {
     z: 1.0
   }
 }
+instances {
+  id: "bench"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 399.0
+    y: 349.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "loiter2"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 494.0
+    y: 347.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "guard"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 64.0
+    y: 661.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
 collection_instances {
   id: "shared"
   collection: "/main/levels/shared.collection"
@@ -435,9 +495,12 @@ embedded_instances {
   id: "potential_npcs"
   children: "aid"
   children: "assistant"
+  children: "bench"
+  children: "guard"
   children: "guest"
   children: "guest2"
   children: "loiter1"
+  children: "loiter2"
   children: "unplaced"
   children: "worker1"
   children: "worker2"
