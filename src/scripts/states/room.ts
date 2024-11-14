@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { RoomsInitState } from './inits/roomsInitState'
 import StateMachine from './stateMachine'
-import { Actors, Vacancies } from '../../types/state'
+import { Actors, Swaps, Vacancies } from '../../types/state'
 import { RoomProps } from '../../types/world'
 import { aiActions } from '../ai/ai_main'
 
@@ -11,6 +11,7 @@ export default class RoomState {
   roomName: string
   clearance: number
   stations: { [key: string]: string }
+  swaps: Swaps
   actors: Actors
   props?: string[]
   vacancies?: Vacancies
@@ -23,6 +24,7 @@ export default class RoomState {
     this.roomName = RoomsInitState[r].roomName
     this.clearance = RoomsInitState[r].clearance
     this.stations = RoomsInitState[r].stations
+    this.swaps = RoomsInitState[r].swaps
     this.actors = RoomsInitState[r].actors
     this.props = RoomsInitState[r].props || []
     this.vacancies = RoomsInitState[r].vacancies || {}

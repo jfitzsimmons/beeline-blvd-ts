@@ -244,7 +244,7 @@ export default class NpcState {
       math.random() + patients.length * 0.2 > 1 &&
       this.parent.getStationMap().infirmary.aid !== undefined
     ) {
-      this.clearStation()
+      this.parent.clearStation(this.currRoom, this.currStation, this.name)
       this.parent.setStation('infirmary', 'aid', this.name)
       this.parent.pruneStationMap('infirmary', 'aid')
     } else if (patients.length > 2) {
@@ -269,7 +269,7 @@ export default class NpcState {
       RoomsInitState[this.currRoom].clearance
     )
       this.fsm.setState('turn')
-    this.clearStation()
+    this.parent.clearStation(this.currRoom, this.currStation, this.name)
     const target = RoomsInitState[this.parent.getPlayerRoom()].matrix
     const rooms = this.makePriorityRoomList(target)
     this.findRoomPlaceStation(rooms)
@@ -341,15 +341,14 @@ export default class NpcState {
       this.fsm.setState('injury')
       return
     }
-    this.clearStation()
+    this.parent.clearStation(this.currRoom, this.currStation, this.name)
+
     const target = RoomsInitState[this.parent.getPlayerRoom()].matrix
     const rooms = this.makePriorityRoomList(target)
     this.findRoomPlaceStation(rooms)
   }
   private onTurnExit(): void {}
-  clearStation() {
-    this.parent.clearStation(this.currRoom, this.currStation, this.name)
-  }
+
   makePriorityRoomList(target: { x: number; y: number }): string[] {
     const npcPriorityProps = {
       matrix: this.matrix,
@@ -378,7 +377,7 @@ export default class NpcState {
       this.clan,
       this.parent.getStationMap()
     )
-
+    print('findrooomplacestation:: STATION:::', chosenRoom, chosenStation)
     this.currRoom = chosenRoom
     this.parent.setStation(chosenRoom, chosenStation, this.name)
     this.parent.pruneStationMap(chosenRoom, chosenStation)

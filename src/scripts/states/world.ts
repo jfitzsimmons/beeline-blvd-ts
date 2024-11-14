@@ -121,7 +121,9 @@ export default class World {
     this.tasks.taskBuilder(
       'security004',
       'questioning',
-      this.rooms.all.grounds.stations.assistant,
+      this.rooms.all.grounds.stations.guest === ''
+        ? this.rooms.all.grounds.swaps.guest[1]
+        : this.rooms.all.grounds.stations.guest,
       'testing'
     )
     //quest

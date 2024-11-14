@@ -47,24 +47,6 @@ function update_hud() {
   //sprite.play_flipbook("/hud#security_alert", 'alert_' .. tostring(world.player.alert_level))
   //msg.post("hud#map", "acquire_input_focus")
 }
-/** 
-function confrontation_scene() {
-  npcs.all[c.owner].convos = npcs.all[c.owner].convos + 1
-  novel.npc = npcs.all[c.owner]
-
-  //testjpf this is for player
-  //novel.reason is not the same thing as task.cause
-  //novel may need better naming conventions
-
-  // testjpf. not using this in noveltxts???
-  //these are always player /address_cautions related.
-  print('Con SCENE::: t owner/causereason::', c.owner, c.cause)
-  novel.reason = c.owner
-  novel.task = { ...c }
-  novel.forced = true
-  msg.post('proxies:/controller#novelcontroller', 'show_scene')
-}
-*/
 
 function game_turn() {
   novel.reset_novel()

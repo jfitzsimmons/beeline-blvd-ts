@@ -10,7 +10,16 @@ function load_npcs() {
       npc,
     }
     msg.post(`/${station}#npc_loader`, 'load_npc', params)
-    //params.script = params.roomName + "/" + world.player.checkpoint:sub(1, -2) + "aid"
+  }
+
+  const swaps = rooms.all[roomName].swaps
+  let swap: keyof typeof swaps
+  for (swap in swaps) {
+    const npc = swaps[swap][1]
+    const params = {
+      npc,
+    }
+    msg.post(`/${swaps[swap][0]}#npc_loader`, 'load_npc', params)
   }
 
   //TESTJPF do you need any of these sopecific level files?
