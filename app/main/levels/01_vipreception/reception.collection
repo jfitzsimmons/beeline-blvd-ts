@@ -244,7 +244,7 @@ instances {
   prototype: "/main/characters/npc_loader.go"
   position {
     x: 1218.0
-    y: 572.0
+    y: 575.0
     z: 0.1
   }
   rotation {

@@ -144,8 +144,8 @@ instances {
   id: "monitor"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 1058.0
-    y: 556.0
+    x: 1113.0
+    y: 553.0
     z: 0.0
   }
   rotation {
@@ -184,8 +184,48 @@ instances {
   id: "passer"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 703.0
-    y: 650.0
+    x: 665.0
+    y: 648.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "guest"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 856.0
+    y: 781.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "servants2"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 962.0
+    y: 598.0
     z: 0.0
   }
   rotation {
@@ -389,9 +429,11 @@ embedded_instances {
   children: "assistant"
   children: "boss"
   children: "guard"
+  children: "guest"
   children: "monitor"
   children: "passer"
   children: "patrol"
+  children: "servants2"
   data: ""
   position {
     x: 0.0

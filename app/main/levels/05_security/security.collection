@@ -259,6 +259,46 @@ instances {
     z: 1.0
   }
 }
+instances {
+  id: "guest2"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 258.0
+    y: 740.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "aid"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 869.0
+    y: 153.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
 collection_instances {
   id: "shared"
   collection: "/main/levels/shared.collection"
@@ -505,10 +545,12 @@ embedded_instances {
 }
 embedded_instances {
   id: "potential_npcs"
+  children: "aid"
   children: "assistant"
   children: "authority"
   children: "guard"
   children: "guest"
+  children: "guest2"
   children: "outside1"
   children: "passer"
   children: "prisoner1"
