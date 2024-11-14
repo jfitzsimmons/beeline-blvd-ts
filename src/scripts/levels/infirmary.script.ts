@@ -6,13 +6,21 @@ function load_npcs() {
   let station: keyof typeof stations
   for (station in stations) {
     const npc = stations[station]
-    //  if (npc != '') {
     station == 'assistant'
       ? msg.post('desk#station', 'loadStation', { npc, roomName })
       : msg.post(`/${station}#npc_loader`, 'load_npc', { npc })
-    //   }
-    //params.script = params.roomName + "/" + world.player.checkpoint:sub(1, -2) + "aid"
   }
+
+  const swaps = rooms.all[roomName].swaps
+  let swap: keyof typeof swaps
+  for (swap in swaps) {
+    const npc = swaps[swap][1]
+    const params = {
+      npc,
+    }
+    msg.post(`/${swaps[swap][0]}#npc_loader`, 'load_npc', params)
+  }
+
   msg.post('patient1#npc_loader', 'load_npc', {
     npc: rooms.all['infirmary'].vacancies!.patient1,
   })

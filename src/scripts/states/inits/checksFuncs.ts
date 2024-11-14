@@ -899,7 +899,14 @@ export function npcStealCheck(
   watcher: NpcState,
   loot: string[]
 ) {
-  print('npcSTEALchkLOOT:::', loot[0])
+  print(
+    'npcSTEALchkLOOT:::',
+    target.name,
+    target.currRoom,
+    watcher.name,
+    watcher.currRoom,
+    loot[0]
+  )
   //const target = this.parent.returnNpc(t)
   //const watcher = this.parent.returnNpc(w)
   const { binaries: wb, opinion: wo } = watcher.traits

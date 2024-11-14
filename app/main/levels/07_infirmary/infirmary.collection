@@ -239,6 +239,46 @@ instances {
     z: 1.0
   }
 }
+instances {
+  id: "worker1"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 465.0
+    y: 732.0
+    z: 0.1
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "servants1"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 715.0
+    y: 412.0
+    z: 0.1
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
 collection_instances {
   id: "shared"
   collection: "/main/levels/shared.collection"
@@ -682,7 +722,9 @@ embedded_instances {
   children: "patient2"
   children: "patient3"
   children: "patient4"
+  children: "servants1"
   children: "servants2"
+  children: "worker1"
   data: ""
   position {
     x: 0.0
