@@ -9,7 +9,7 @@ interface props {
 
 export function init(this: props): void {
   this.actions = {}
-  this.roomName = 'tesjpf'
+  this.roomName = ''
   this.storagename = ''
 }
 

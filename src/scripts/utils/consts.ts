@@ -221,3 +221,5 @@ export const fx: { [key: string]: Effect } = {
     },
   },
 }
+
+export const immobile = ['mender', 'mendee', 'injury', 'infirm']

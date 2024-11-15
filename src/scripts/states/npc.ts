@@ -114,9 +114,9 @@ export default class NpcState {
         onExit: this.onInterrogateExit.bind(this),
       })
       .addState('confront', {
-        onEnter: this.onConfrontEnter.bind(this),
-        onUpdate: this.onConfrontUpdate.bind(this),
-        onExit: this.onConfrontExit.bind(this),
+        onEnter: this.onConfrontPlayerEnter.bind(this),
+        onUpdate: this.onConfrontPlayerUpdate.bind(this),
+        onExit: this.onConfrontPlayerExit.bind(this),
       })
       .addState('trespass', {
         onEnter: this.onTrespassEnter.bind(this),
@@ -140,13 +140,14 @@ export default class NpcState {
       })
     this.addInvBonus = this.addInvBonus.bind(this)
     this.tendToPatient = this.tendToPatient.bind(this)
+    this.add_effects_bonus = this.add_effects_bonus.bind(this)
+    this.addOrExtendEffect = this.addOrExtendEffect.bind(this)
   }
-  //TESTJJPF Rename to confrontPlayer???
-  private onConfrontEnter(): void {
+  private onConfrontPlayerEnter(): void {
     this.convos++
   }
-  private onConfrontUpdate(): void {}
-  private onConfrontExit(): void {
+  private onConfrontPlayerUpdate(): void {}
+  private onConfrontPlayerExit(): void {
     const novelUpdates: NovelNpc = this.parent.getNovelUpdates()
     this.convos = novelUpdates.convos
     this.traits = {
@@ -377,7 +378,7 @@ export default class NpcState {
       this.clan,
       this.parent.getStationMap()
     )
-    print('findrooomplacestation:: STATION:::', chosenRoom, chosenStation)
+    // print('findrooomplacestation:: STATION:::', chosenRoom, chosenStation)
     this.currRoom = chosenRoom
     this.parent.setStation(chosenRoom, chosenStation, this.name)
     this.parent.pruneStationMap(chosenRoom, chosenStation)
@@ -417,6 +418,17 @@ export default class NpcState {
     for (bKey in item.binaries)
       this.traits.binaries[bKey] =
         this.traits.binaries[bKey] + item.binaries[bKey]
+  }
+  addOrExtendEffect(e: Effect) {
+    //   let ek: keyof typeof this.effects
+    for (const fx of this.effects) {
+      if (e.label === fx.label) {
+        fx.turns += 5
+        return
+      }
+    }
+    this.effects.push(e)
+    this.add_effects_bonus(e)
   }
   add_effects_bonus(e: Effect) {
     this.traits[e.fx.type][e.fx.stat] =

@@ -6,7 +6,7 @@ import WorldPlayer from './player'
 import StateMachine from './stateMachine'
 import { Consequence, Effect, Task, TasksChecks } from '../../types/tasks'
 import { TaskProps } from '../../types/world'
-import { fxLookup, fx } from '../utils/consts'
+import { fxLookup, fx, immobile } from '../utils/consts'
 import { shuffle } from '../utils/utils'
 import {
   removeRandom,
@@ -96,9 +96,7 @@ export default class TaskState {
   private onInjuryEnter(): void {}
   private onInjuryUpdate(): void {
     for (const doc of ['doc01', 'doc02', 'doc03']) {
-      const mobile = () =>
-        this.parent.npcHasTask(doc, 'any', ['mender', 'injury', 'infirm']) ===
-        null
+      const mobile = () => this.parent.npcHasTask(doc, 'any', immobile) === null
 
       if (this.parent.didCrossPaths(this.owner, doc) && mobile() === true) {
         print(this.owner, 'met doc for injury task::', doc)
@@ -152,6 +150,12 @@ export default class TaskState {
     holder.clearance = tonumber(this.scope.charAt(this.scope.length - 1))!
   }
   private onHallpassUpdate(): void {
+    print(
+      '000hallpassup:::',
+      this.owner,
+      this.turns,
+      this.parent.returnPlayer().clearance
+    )
     if (this.turns < 1) {
       const holder =
         this.owner == 'player'
@@ -162,6 +166,12 @@ export default class TaskState {
           ? PlayerInitState.clearance
           : NpcsInitState[this.owner].clearance
     }
+    print(
+      'hallpassup:::',
+      this.owner,
+      this.turns,
+      this.parent.returnPlayer().clearance
+    )
   }
   private onHallpassExit(): void {}
   private onConfrontEnter(): void {
@@ -204,9 +214,7 @@ export default class TaskState {
         'has effect:',
         fx_labels[1]
       )
-      //check if they already have effect? testjpf
-      listener.effects.push(effect)
-      listener.add_effects_bonus(effect)
+      listener.addOrExtendEffect(effect)
       break
     }
   }
@@ -219,8 +227,7 @@ export default class TaskState {
       .filter(
         (o) =>
           o !== this.owner &&
-          this.parent.npcHasTask(o, 'any', ['mender', 'injury', 'infirm']) ===
-            null
+          this.parent.npcHasTask(o, 'any', immobile) === null
       )
     const checks: Array<(target: string, listener: string) => Consequence> =
       this.cause == 'theft'

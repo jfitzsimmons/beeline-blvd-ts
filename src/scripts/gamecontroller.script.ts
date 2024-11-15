@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-//testjpf
 import { Game } from './states/game'
 import { gamesave, gamesettings } from '../types/legacylua'
 import { url } from '../types/utils'
@@ -19,7 +18,6 @@ interface props {
 }
 
 function handleGameFSMs(room: string, loadType: string) {
-  //testjpf what about adding faint and arrest
   if (loadType === 'room transition') {
     world.fsm.setState('turn')
   } else if (loadType === 'faint') {
@@ -29,8 +27,7 @@ function handleGameFSMs(room: string, loadType: string) {
   } else if (loadType === 'new game') {
     game.fsm.setState('new')
   }
-  //testjpf using exitroom - player hasn't been updated
-  //seems like it should be currRoom!!! BUG
+
   rooms.all[player.currRoom].fsm.setState('blur')
   rooms.all[room].fsm.setState('focus')
 }

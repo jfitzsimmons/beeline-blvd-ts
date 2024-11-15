@@ -19,7 +19,7 @@ export default class WorldQuests {
 
   constructor(questmethods: WorldQuestsMethods) {
     this.fsm = new StateMachine(this, 'quests')
-    this.checkpoint = 'tutorialA' //testjpf un-hardcode
+    this.checkpoint = 'tutorialA'
     this._questmethods = questmethods
     this._questmethods.qq = {
       percent_tutorial: this.percent_tutorial.bind(this),
@@ -55,9 +55,6 @@ export default class WorldQuests {
   }
   private onTurnUpdate(): void {
     this.update_quests_progress('turn')
-    //testjpf should loop thru each quest and update
-    //each quest should go through each condition and update
-    //quest and conditions should have active, waiting, complete, archivve type states
   }
   private onTurnExit(): void {}
   private onInteractEnter(): void {}
@@ -84,11 +81,9 @@ export default class WorldQuests {
   }
 
   // checks quest completion after interactions and turns
-  //TESTJPF all FSM stuff for quest turn
   update_quests_progress = (interval: string) => {
     //  print('checkpoint.slice(0, -1)', checkpoint.slice(0, -1))
     const quests = this.all[this.checkpoint.slice(0, -1)]
-
     let questKey: keyof typeof quests
     for (questKey in quests) {
       const quest = quests[questKey]

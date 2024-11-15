@@ -13,6 +13,7 @@ import { NpcProps, WorldNpcsArgs } from '../../types/world'
 import { shuffle } from '../utils/utils'
 import { RoomsInitState } from './inits/roomsInitState'
 import { confrontation_check } from './inits/checksFuncs'
+import { immobile } from '../utils/consts'
 
 const dt = math.randomseed(os.time())
 
@@ -136,11 +137,7 @@ export default class WorldNpcs {
   medical() {
     let count = this.infirmed.length
     for (const doc of this.returnDoctors()) {
-      const mobile = !['mender', 'mendee', 'injury', 'infirm'].includes(
-        doc.fsm.getState()
-      )
-      //testjpf todo unhardcode
-      //have a const that lists immobile states.!!!
+      const mobile = !immobile.includes(doc.fsm.getState())
       if (mobile === true && count > 1) {
         doc.fsm.setState('erfull')
         count = 0

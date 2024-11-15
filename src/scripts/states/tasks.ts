@@ -148,7 +148,6 @@ export default class WorldTasks {
       )
       if (task.turns < 1) {
         this.all.splice(i, 1)
-        return
       } else {
         task.turns = task.turns - 1
         task.fsm.update(dt)
@@ -307,7 +306,7 @@ export default class WorldTasks {
     const append: Task = {
       owner: owner.name,
       turns: 15,
-      label, // merits //testjpf state is a bad name
+      label,
       scope: 'npc',
       authority: owner.clan, //ex; labor
       target,

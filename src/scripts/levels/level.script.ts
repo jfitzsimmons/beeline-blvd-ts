@@ -51,11 +51,6 @@ function update_hud() {
 function game_turn() {
   novel.reset_novel()
   world.fsm.update(dt)
-  //Temp testjpf prob move to doc npx
-  //aidCheck()
-  //room as keyof typeof aiActions
-  //if (room in aiActions) aiActions[room as keyof typeof aiActions]
-
   quest_checker('turn')
 }
 interface props {

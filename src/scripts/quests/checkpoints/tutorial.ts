@@ -15,10 +15,8 @@ function injured_checks(conditions: QuestConditions) {
   const injured = npcs.all[rooms.all.grounds.stations.worker1]
 
   if (injury.fsm.getState() == 'idle' && injury.passed == true) {
-    //todo testjpf should all be condition FSM states!!!
     injury.fsm.setState('active')
     quest.fsm.setState('active')
-    //doc.fsm.setState('standby')
     injured.love = injured.love + 1
     info.add_interaction(`${injured.name} likes that you are helping them.`)
   }
@@ -39,6 +37,12 @@ function doctor_checks(conditions: QuestConditions) {
   // let's you interact with any doctor
   const doctor = npcs.all[novel.npc.name]
   const { '0': injury, '2': apple, '3': meds, '5': delivery } = conditions
+  print(
+    meds.fsm.getState(),
+    player.clearance - 2,
+    rooms.all[player.currRoom].clearance,
+    from_same_room(npcs.returnSecurity(), player.currRoom) !== null
+  )
   if (
     novel.reason == 'hungrydoc' &&
     injury.fsm.getState() == 'active' &&
@@ -93,8 +97,7 @@ function doctor_checks(conditions: QuestConditions) {
     apple.fsm.setState('complete')
 
     player.add_inventory('note')
-    // player.clearance = 3
-    //tesjpf change to label: 'hallpass'??
+
     tasks.append_task({
       label: 'hallpass',
       turns: 8,
@@ -126,6 +129,7 @@ function doctor_checks(conditions: QuestConditions) {
     player.clearance - 2 < rooms.all[player.currRoom].clearance &&
     from_same_room(npcs.returnSecurity(), player.currRoom) != null
   ) {
+    print('thebigelseif@!@!@!')
     novel.task.label = 'questioning'
     novel.task.cause = 'tutsclearance'
     novel.forced = true
@@ -219,6 +223,9 @@ function medic_assist_checks() {
   //const {"0":injury,"1":doc, "2":apple} = cons
   //const { "0": injury, "1": doc, "2": apple, "3": meds } = cons
   if (cons['0'].passed == true) injured_checks(cons)
+  /**
+   * testjpf this conditional sucks. BUG will break things based on who you last talked to.
+   */
   if (npcs.all[novel.npc.name].clan == 'doctors') {
     doctor_checks(cons)
     //TESTJPF

@@ -43,9 +43,7 @@ export default class QuestState {
   private onNewUpdate(): void {}
   private onNewExit(): void {}
   private onTurnEnter(): void {}
-  private onTurnUpdate(): void {
-    //testjpf
-  }
+  private onTurnUpdate(): void {}
   private onTurnExit(): void {}
   private onActiveEnter(): void {}
   private onActiveUpdate(): void {}
