@@ -31,7 +31,6 @@ export function attempt_to_fillStation(
   let chosenStation = ''
 
   while (placed == false) {
-    //    room_list.forEach((room: string) => {
     for (const room of room_list) {
       const shuffledStations: [string, string][] = shuffle(
         Object.entries(stationMap[room])
@@ -43,9 +42,6 @@ export function attempt_to_fillStation(
             : ks[0]
 
         const role = RoomsInitRoles[chosenStation]
-        //TESTJPF could do logic here const role =
-        //if station has swap 60/30
-        // cahnge chosenStation to ??.swap[station][0]
         if (role.includes(clan)) {
           //loop thru room stations see if empty or has correct role
           chosenRoom = room
@@ -131,7 +127,6 @@ export function set_room_priority(
   npc: { matrix: { x: number; y: number }; home: { x: number; y: number } }
 ): string[] {
   const room_list: (string | null)[] = []
-  //const current = npcs.all[npc].matrix
   //get list of possible rooms NPC could go to next in order to get to target
   if (target.y > npc.matrix.y) {
     room_list.push(RoomsInitLayout[npc.matrix.y + 1][npc.matrix.x])
@@ -191,7 +186,6 @@ export function set_npc_target(
     home: { x: number; y: number }
   }
 ) {
-  //const npc = npcs.all[n]
   let target = { x: 0, y: 0 }
   if (n.turns_since_encounter > 20) {
     target = direction.center
@@ -249,8 +243,3 @@ export function set_npc_target(
 
   return target
 }
-/**
-export function add_effects_bonus(a: Traits, e: Effect) {
-  a[e.fx.type][e.fx.stat] = a[e.fx.type][e.fx.stat] + e.fx.adjustment
-}
-  */

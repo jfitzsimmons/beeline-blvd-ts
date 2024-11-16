@@ -49,7 +49,7 @@ export function convos_check(args: [() => Npcs, number]): boolean {
   let nKey: keyof typeof npcs
   for (nKey in npcs) {
     if (npcs[nKey].convos >= args[1]) {
-      return true //tesjpf could return array with "hounded" ??? bad.
+      return true
     }
   }
   return false

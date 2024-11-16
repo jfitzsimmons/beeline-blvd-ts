@@ -108,8 +108,6 @@ export default class WorldRooms {
     let ksw: keyof typeof roomSwaps
     for (ksw in roomSwaps) {
       if (roomSwaps[ksw][0] === s) {
-        print('PARENTPRUNESTATION::: ', r, s, ksw, [ksw][0])
-
         delete this.stationsMap[r][ksw]
         return true
       }
@@ -117,15 +115,10 @@ export default class WorldRooms {
     return false
   }
   pruneStationMap(room: string, station: string) {
-    print('1PRUNESTATION::: ', room, station)
-
     this.stationsMap[room][station] !== null
       ? delete this.stationsMap[room][station]
       : this.pruneSwapParent(room, station) === false &&
         delete this.stationsMap.fallbacks[station]
-    //TEstjpf have swapparent loop through
-    //see if [0] == station prune parent statio
-    // return true/ default reutrn false
   }
   getStationMap(): { [key: string]: { [key: string]: string } } {
     return this.stationsMap
@@ -145,10 +138,6 @@ export default class WorldRooms {
     return false
   }
   setStation(room: string, station: string, npc: string) {
-    //testjpf could have condition
-    //if this station is a key of this.all[room].swaps
-    //50/50 shoose station
-    print('SETSTATION::: ', room, station, npc)
     this.all[room].stations[station] !== null
       ? (this.all[room].stations[station] = npc)
       : this.all[room].swaps !== undefined &&
@@ -167,9 +156,6 @@ export default class WorldRooms {
     return false
   }
   clearStation(room: string, station: string, npc: string) {
-    //if key of swapstation, clear boths stations!
-    print('ClearSTATION::: ', room, station, npc)
-
     if (npc == this.all[room].stations[station]) {
       this.all[room].stations[station] = ''
     } else if (this.clearSwapParent(room, station) === true) {
@@ -187,42 +173,24 @@ export default class WorldRooms {
   private onTurnUpdate(): void {
     this.resetStationMap()
     let kr: keyof typeof this.all
-    for (kr in this.all) {
-      // creat npc class constructor todo now testjpf
-      // seeded.push({ [ki]: new NpcState(ki) })
-      this.all[kr].fsm.update(dt)
-    }
+    for (kr in this.all) this.all[kr].fsm.update(dt)
   }
-  private onTurnExit(): void {
-    //todo
-  }
+  private onTurnExit(): void {}
   private onNewEnter(): void {
     this.resetStationMap()
     let kr: keyof typeof this.all
-    for (kr in this.all) {
-      // creat npc class constructor todo now testjpf
-      // seeded.push({ [ki]: new NpcState(ki) })
-      this.all[kr].fsm.setState('turn')
-    }
+    for (kr in this.all) this.all[kr].fsm.setState('turn')
     this.fsm.setState('turn')
   }
   private onNewUpdate(): void {}
-  private onNewExit(): void {
-    //todo
-  }
-  private onTransitionEnter(): void {
-    //todo
-  }
+  private onNewExit(): void {}
+  private onTransitionEnter(): void {}
   private onTransitionUpdate(): void {}
-  private onTransitionExit(): void {
-    //todo
-  }
+  private onTransitionExit(): void {}
   createStationsMap() {
     const stationMap: { [key: string]: { [key: string]: string } } = {}
     let ki: keyof typeof RoomsInitState
     for (ki in RoomsInitState) {
-      // creat npc class constructor todo now testjpf
-      // seeded.push({ [ki]: new NpcState(ki) })
       stationMap[ki] = { ...this.all[ki].stations }
     }
     stationMap['fallbacks'] = { ...this.fallbacks.stations }
@@ -232,11 +200,8 @@ export default class WorldRooms {
 
 function seedRooms(lists: RoomProps) {
   const seeded: Rooms = {}
-  //const inits = { ...NpcsInitState }
   let ki: keyof typeof RoomsInitState
   for (ki in RoomsInitState) {
-    // creat npc class constructor todo now testjpf
-    // seeded.push({ [ki]: new NpcState(ki) })
     seeded[ki] = new RoomState(ki, lists)
   }
   return seeded

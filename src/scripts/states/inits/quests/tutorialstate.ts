@@ -12,15 +12,12 @@ import QuestStep from '../../questStep'
 export const tutorialQuests = (
   questmethods: WorldQuestsMethods
 ): { [key: string]: QuestState } => {
-  //const { nq, tq, nvq } = questmethods
   const { nq, nvq } = questmethods
-  //testjpf tod need to add options to class params
   return {
     medic_assist: new QuestState({
       id: 'qma',
       passed: false,
       conditions: {
-        //testjfpf like new QuestState but new QuestStep()
         ['0']: new QuestStep({
           id: 'qmahtm',
           label: 'Agree to help injured man',
@@ -87,17 +84,13 @@ export const tutorialQuests = (
           args: [[nvq.get_reason, 'medassistcomplete']],
         }), //have you talked to a doctor?
       },
-      /** 
       side_quests: {
-        ['1']: {
-          label: 'Basically a doctor.',
+        hallpass: {
+          label: 'Aquire temporary clearance',
           solution: '',
           passed: false,
-          interval: ['turn'],
-          func: [returnfalse],
-          args: [[returnfalse, false]],
         },
-      },*/
+      },
     }),
   }
 

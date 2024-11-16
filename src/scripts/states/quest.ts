@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
-import { Quest } from '../../types/tasks'
+import { Quest, SideQuest } from '../../types/tasks'
 import QuestStep from './questStep'
 //const dt = math.randomseed(os.time())
 
@@ -10,11 +10,13 @@ export default class QuestState {
   passed: boolean
   fsm: StateMachine
   conditions: { [key: string]: QuestStep }
+  sideQuests: { [key: string]: SideQuest }
   constructor(questparams: Quest) {
     this.id = questparams.id
     this.fsm = new StateMachine(this, 'quest' + this.id)
     this.passed = questparams.passed
     this.conditions = questparams.conditions
+    this.sideQuests = questparams.side_quests
     //this._spawn = 'grounds'
     //this.mendingQueue = []
     this.fsm.addState('idle')
@@ -43,9 +45,7 @@ export default class QuestState {
   private onNewUpdate(): void {}
   private onNewExit(): void {}
   private onTurnEnter(): void {}
-  private onTurnUpdate(): void {
-    //testjpf
-  }
+  private onTurnUpdate(): void {}
   private onTurnExit(): void {}
   private onActiveEnter(): void {}
   private onActiveUpdate(): void {}

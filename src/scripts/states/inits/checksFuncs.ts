@@ -83,7 +83,6 @@ export function pledgeCheck(
   return { pass: false, type: 'neutral' }
 }
 
-//need to send cause TESTJPF
 export function playerSnitchCheck(
   this: WorldTasks,
   priors: boolean,
@@ -98,13 +97,12 @@ export function playerSnitchCheck(
   if (player.alert_level > 3) caution_state = 'arrest'
   player.alert_level =
     priors == null ? player.alert_level + 1 : player.alert_level + 2
-  if (player.alert_level > 5 && this.npcHasTask(cop, 'player') == null) {
+  if (player.alert_level > 5 && this.npcHasTask([cop], ['player']) == null) {
     this.taskBuilder(cop, 'snitch', 'player', cause)
   }
   print('plauer snitch chk :: alertlvl::', player.alert_level)
   return { pass: true, type: caution_state }
 }
-//need to send target TESTJPF
 export function npcCommitSnitchCheck(
   this: WorldTasks,
   c: string,
@@ -113,7 +111,7 @@ export function npcCommitSnitchCheck(
   let caution_state = 'questioning'
   const cop = this.parent.returnNpc(c)
   const target = this.parent.returnNpc(t)
-  if (this.npcHasTask(c, t, ['questioning', 'arrest'])) {
+  if (this.npcHasTask([c], [t], ['questioning', 'arrest'])) {
     cop.traits.opinion[target.clan] = cop.traits.opinion[target.clan] - 1
     print('NPCSNITCHCHK')
     if (math.random() < 0.33) caution_state = 'arrest'
@@ -122,18 +120,18 @@ export function npcCommitSnitchCheck(
 }
 //Checks and Helpers
 //effects
-function add_chaotic_good(this: WorldTasks, t: string, l: string) {
-  const listener = this.parent.returnNpc(l)
+function add_chaotic_good(_this: WorldTasks, t: string, l: string) {
+  const listener = _this.parent.returnNpc(l)
   if (t != 'player') {
-    const target = this.parent.returnNpc(t)
+    const target = _this.parent.returnNpc(t)
     const effects_list = ['crimewave', 'inspired', 'eagleeye', 'modesty']
     const effect: Effect = fx[shuffle(effects_list)[0]]
     if (effect.fx.type == 'opinion') effect.fx.stat = target.clan
-    listener.add_effects_bonus(effect)
-    listener.effects.push(effect)
+    listener.addOrExtendEffect(effect)
   } else {
     listener.love = listener.love - 2
   }
+  print('OUTCOMES:: addchaoticgood::', t, 'inspired::', l, 'to be chaoticgood.')
 }
 export function chaotic_good_check(
   this: WorldTasks,
@@ -149,12 +147,9 @@ export function chaotic_good_check(
   const advantage = tb.anti_authority > lb.anti_authority
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
-  // print('TESTJPF RESULT::: chaoticgood::', result)
+  print('CHECKS RESULT::: chaoticgood::', result)
   if (result > 5 && result <= 10) {
-    //testjpf did these ever work?
-    //fill args@!!!!!!
-    //can use task builder?
-    add_chaotic_good
+    add_chaotic_good(this, t, l)
     return { pass: true, type: 'chaoticgood' }
   }
 
@@ -170,14 +165,14 @@ export function chaotic_good_check(
   return { pass: false, type: 'neutral' }
 }
 function add_dumb_crook(_this: WorldTasks, t: string, l: string) {
+  print('OUTCOMES:: addumbcrook::', t, 'inspired::', l, 'to be dumbcrook.')
   const listener = _this.parent.returnNpc(l)
   if (t != 'player') {
     const target = _this.parent.returnNpc(t)
     const effects_list = ['admirer', 'opportunist', 'inspired', 'amped']
     const effect: Effect = fx[shuffle(effects_list)[0]]
     if (effect.fx.type == 'opinion') effect.fx.stat = target.clan
-    listener.add_effects_bonus(effect)
-    listener.effects.push(effect)
+    listener.addOrExtendEffect(effect)
   } else {
     listener.love = listener.love + 2
   }
@@ -196,7 +191,7 @@ export function dumb_crook_check(
   const advantage = tb.un_educated * -5 > ls.intelligence / 2
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
-  // print('TESTJPF RESULT::: dumbcrook::', result)
+  print('CHECKS RESULT::: DUMBCROOK::', result)
   if (result > 5 && result <= 10) {
     add_dumb_crook(this, t, l)
     return { pass: true, type: 'dumbcrook' }
@@ -214,14 +209,14 @@ export function dumb_crook_check(
   return { pass: false, type: 'neutral' }
 }
 function add_ignorant(this: WorldTasks, t: string, l: string) {
+  print('OUTCOMES:: ignorant::', t, 'inspired', l, 'to be ignorant')
   const listener = this.parent.returnNpc(l)
   if (t != 'player') {
     const effects_list = ['prejudice', 'incharge', 'boring', 'loudmouth']
     const effect: Effect = fx[shuffle(effects_list)[0]]
     if (effect.fx.type == 'opinion')
       effect.fx.stat = this.parent.returnNpc(t).clan
-    listener.add_effects_bonus(effect)
-    listener.effects.push(effect)
+    listener.addOrExtendEffect(effect)
   } else {
     listener.love = listener.love + 2
   }
@@ -239,8 +234,7 @@ export function ignorant_check(
   const modifier = Math.round(lb.un_educated * -5)
   const advantage = ts.intelligence > ls.perception
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
-
-  // print('TESTJPF RESULT::: ignorant::', result)
+  print('CHECKS RESULT::: Ignorant::', result)
   if (result > 5 && result <= 10) {
     add_ignorant
     return { pass: true, type: 'ignorant' }
@@ -274,12 +268,7 @@ function thief_consolation_checks(_this: WorldTasks, t: string, l: string) {
   print('did nothing after witnessing a theft attempt')
   return 'neutral'
 }
-//TESTJPF suspected BUG here!! need to pass watcher
-//this is creating cautions for the wrong npc???
 
-/**testjpf
- * so npcstealcheck created confront theft task for 1 turn
- */
 export function build_consequence(
   this: WorldTasks,
   t: Task,
@@ -341,8 +330,8 @@ export function decideToSnitchCheck(
     ls.perception + Math.abs(lb.passiveAggressive * 5) >
     ts.stealth + +Math.abs(tb.passiveAggressive * 5)
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
+  print('CHECKS RESULT:::', t, ' is going to snitch on ', l, '::???', result)
 
-  //print('TESTJPF RESULT::: snitch', result)
   if (result > 5 && result <= 10) {
     return { pass: true, type: 'snitch' }
   }
@@ -368,7 +357,8 @@ function meritsDemerits(t: string, l: string, _this?: WorldTasks): Consequence {
   const advantage =
     ls.constitution + (lb.passiveAggressive - tb.evil_good) * 5 > 7.5
   const result = rollSpecialDice(6, advantage, 3, 2) + clamp(modifier, -1, 1)
-  //print('TESTJPF RESULT::: evilmerits', result)
+  print('CHECKS RESULT:::', l, 'decides MERITS OR DEMERITS for::', t, result)
+
   if (result < 4) {
     return { pass: true, type: 'demerits' }
   }
@@ -399,7 +389,8 @@ export function recklessCheck(
   const advantage = ls.intelligence < 5 || lb.lawlessLawful < -0.1
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
-  //print('TESTJPF RESULT::: reckless', result)
+  print('CHECKS RESULT:::', t, 'made,', l, ' RECKLESS::??', result)
+
   if (result > 5 && result <= 10) {
     return { pass: true, type: 'reckless' }
   }
@@ -417,14 +408,14 @@ export function recklessCheck(
 }
 function add_predator(this: WorldTasks, t: string, l: string) {
   const listener = this.parent.returnNpc(l)
+  print('OUTCOMES:: Predator::', t, 'inspired', l, 'to be PREdATOR')
 
   if (t != 'player') {
     const target = this.parent.returnNpc(t)
     const effects_list = ['inspired', 'opportunist', 'vanity', 'inhiding']
     const effect: Effect = fx[shuffle(effects_list)[0]]
     if (effect.fx.type == 'opinion') effect.fx.stat = target.clan
-    listener.add_effects_bonus(effect)
-    listener.effects.push(effect)
+    listener.addOrExtendEffect(effect)
   } else {
     listener.love = listener.love + 2
   }
@@ -443,7 +434,7 @@ export function predator_check(
   const advantage = tb.anti_authority > lb.passiveAggressive
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
-  // print('TESTJPF RESULT::: predator::', result)
+  print('CHECKS RESULT::: ', t, 'made', l, 'PREDATOR::??', result)
   if (result > 5 && result <= 10) {
     add_predator
     return { pass: true, type: 'predator' }
@@ -462,6 +453,7 @@ export function predator_check(
 }
 function add_classy(_this: WorldTasks, t: string, l: string): void {
   const listener = _this.parent.returnNpc(l)
+  print('OUTCOMES:: classy::', t, 'inspired', l, 'to be classy')
 
   if (t != 'player') {
     const target = _this.parent.returnNpc(t)
@@ -470,8 +462,7 @@ function add_classy(_this: WorldTasks, t: string, l: string): void {
     if (effect.fx.type == 'opinion') effect.fx.stat = target.clan
     //tesjpf need to add to npc and player
     // already have remove
-    listener.add_effects_bonus(effect)
-    listener.effects.push(effect)
+    listener.addOrExtendEffect(effect)
   } else {
     listener.love = listener.love - 2
   }
@@ -490,7 +481,6 @@ export function classy_check(
   const advantage = ls.perception > ts.strength
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
-  // print('TESTJPF RESULT::: classy::', result)
   if (result > 5 && result <= 10) {
     add_classy(this, t, l)
     return { pass: true, type: 'classy' }
@@ -507,61 +497,6 @@ export function classy_check(
 
   return { pass: false, type: 'neutral' }
 }
-/** 
-export function npc_confront_consequence(this: WorldTasks, t: Task) {
-  //npconly
-  //print('QC::: ', c.owner, 'is NOW questioning:', c.target)
-  if (t.label == 'arrest') {
-    //print('CAUTION:: arrest.', c.owner, 'threw', s, 'in jail')
-    // go_to_jail(s)
-  }
-  const tempcons: Array<
-    (s: string, w: string) => { pass: boolean; type: string }
-  > = shuffle([
-    // pledge_check,
-    // bribe_check,
-    // targetPunchedCheck,
-    jailtime_check,
-    //admirer_check,
-    // prejudice_check,
-    // unlucky_check,
-  ])
-  build_consequence.bind(this)
-
-  build_consequence(t, tempcons, false)
-  t.turns = 0
-}
- 
-export function npc_confrontation(c: Task) {
-  if (c.label == 'questioning') {
-    question_consequence(c)
-  } else if (c.label == 'arrest') {
-    //print('CAUTION:: arrest.', c.owner, 'threw', s, 'in jail')
-    // go_to_jail(s)
-  }
-}
-
-export function go_to_jail(s: string) {
-  //would have to pass this to Task and fire when turns == 0  or 1???
-  //testjpf set npc to fsm 'arrestee' apply security room info
-  //have to figure out arrestee update!!! steal from infirmed update!!!
-  tasks.removeHeat(s)
-  const occupants: Vacancies = rooms.all.security.vacancies!
-  let station: keyof typeof occupants
-  for (station in occupants) {
-    const prisoner = occupants[station]
-    if (prisoner == '') {
-      rooms.all.security.vacancies![station] = s
-      npcs.all[s].matrix = rooms.all.security.matrix
-      npcs.all[s].cooldown = 8
-
-      // print(s, 'jailed for:', npcs.all[s].cooldown)
-      break
-      //testjpf if jail full, kick outside of hub
-    }
-  }
-}
-*/
 export function jailtime_check(
   this: WorldTasks,
   t: string,
@@ -582,7 +517,6 @@ export function jailtime_check(
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -4, 2)
   print('CHECKS:: JAILTIMECHECK::', t, 'jailed by', l, 'ROLL:', result)
 
-  //print('TESTJPF RESULT::: jailed', result)
   if (result > 5 && result <= 10) {
     target.fsm.setState('arrestee')
     return { pass: true, type: 'jailed' }
@@ -640,7 +574,6 @@ export function bribeCheck(
   const advantage = tb.evil_good < lb.evil_good - 0.3
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   print('CHECKS:: BRIBECHECK::', t, 'asked for bribe by', l, 'ROLL:', result)
-  //print('TESTJPF RESULT::: bribe', result)
   if (result > 5 && result <= 10) {
     if (this.outcomes.getExtorted(t, l) == '') this.outcomes.lConfrontPunchT(t)
     return { pass: true, type: 'bribe' }
@@ -653,8 +586,7 @@ export function bribeCheck(
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
-    //print('NEVER bribe')
-    //give em a dollar? testjpf
+    this.outcomes.given_gift(t, l)
     return { pass: true, type: 'critical' }
   }
 
@@ -691,7 +623,6 @@ export function targetPunchedCheck(
     result
   )
 
-  //print('TESTJPF RESULT::: w punch s', result)
   if (result > 5 && result <= 10) {
     this.outcomes.lConfrontPunchT(t, 1)
     return { pass: true, type: 'wPunchS' }
@@ -730,8 +661,6 @@ export function suspicious_check(
   )
   const advantage = lb.lawlessLawful > tb.lawlessLawful - 0.2
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
-  //startherer!!!!!!!!!!!!!!!!
-  //print('TESTJPF RESULT suspicious:::', result)
   if (result > 5 && result <= 10) {
     // create_suspicious(suspect, watcher)
     return { pass: true, type: 'suspicious' }
@@ -779,65 +708,12 @@ export function seen_check(
     ? { confront: false, type: 'seen' }
     : { confront: false, type: 'neutral' }
 }
-/** 
-export function thief_consequences(
-  //_this: WorldTasks,
-  t: string,
-  w: string,
-  c: { confront: boolean; type: string } = seen_check(_this, t, w)
-) {
-  if (w != '' && c.type == 'seen') {
-    //testjpf maybe here change stae of player or npc to
-    //confronted.  handle the rest of the logic in taskFSM
-    //use or base of handleConfrontation()
-    //This is where I's build new confront task?!
-    c.type = confrontationConsequence(_this, t, w, c.confront)
-  }
-
-  if (c.confront == false && c.type != 'neutral') {
-    _this.taskBuilder(w, c.type, t, 'theft')
-  }
-  return c
-}
-export function testjpfplayerthief_consequences(
-  //_this: WorldTasks,
-  t: string,
-  w: string,
-  c: { confront: boolean; type: string } = seen_check(_this, t, w)
-) {
-  if (w != '' && c.type == 'seen') {
-    const tTraits =
-      w === 'player'
-        ? _this.parent.returnPlayer().state.traits
-        : _this.parent.returnNpc(t).traits
-
-    const wTraits = _this.parent.returnNpc(w).traits
-
-    //so never confront true for NPcs?testjpf
-    c.confront =
-      t == 'player' &&
-      (c.confront == true || confrontation_check(tTraits, wTraits))
-
-    //testjpf maybe here change stae of player or npc to
-    //confronted.  handle the rest of the logic in taskFSM
-    //use or base of handleConfrontation()
-    //This is where I's build new confront task?!
-
-    c.type = confrontationConsequence(_this, t, w, c.confront)
-  }
-
-  if (c.confront == false && c.type != 'neutral') {
-    _this.taskBuilder(w, c.type, t, 'theft')
-  }
-  return c
-}
-  */
 export function take_check(taker: NpcState, actor: Npc | Actor) {
   const { skills, binaries } = taker.traits
   let modifier = Math.round(
     skills.stealth - skills.charisma + binaries.passiveAggressive * -5
   )
-  if (taker.parent.npcHasTask('any', taker.name, []) != null) {
+  if (taker.parent.npcHasTask([], [taker.name]) != null) {
     modifier = modifier - 1
   }
   const advantage = binaries.poor_wealthy + binaries.anti_authority * -1 > 0
@@ -858,7 +734,7 @@ export function take_check(taker: NpcState, actor: Npc | Actor) {
 export function stash_check(stasher: NpcState, actor: NpcState | Actor) {
   let modifier = stasher.inventory.length - actor.inventory.length
 
-  if (stasher.parent.npcHasTask('any', stasher.name, []) != null) {
+  if (stasher.parent.npcHasTask([], [stasher.name]) != null) {
     modifier = modifier + 1
   }
 
@@ -907,13 +783,10 @@ export function npcStealCheck(
     watcher.currRoom,
     loot[0]
   )
-  //const target = this.parent.returnNpc(t)
-  //const watcher = this.parent.returnNpc(w)
+
   const { binaries: wb, opinion: wo } = watcher.traits
   const { skills: ts, binaries: tb, opinion: to } = target.traits
 
-  // accept strings not Npcs
-  // const attempt = roll_Specia_dice
   if (target.cooldown > 0) return
 
   const modifier = Math.round(
@@ -928,43 +801,16 @@ export function npcStealCheck(
     wb.evil_good + wb.lawlessLawful
   const result =
     rollSpecialDice(5, advantage, 3, 2) + (modifier > -3 ? modifier : -3)
-  //testjpf need to set npcstate to thief?
   if (result < 5) return false
-
-  //testjpf this should just return boolean
-  //nothing below
-
   const consequence = seen_check(target, watcher)
-  //TESTJPF Need to some ho
-  //if (watcher != null) {
-  // consequence = thief_consequences(target.name, watcher.name)
   print('SEENCHECK::', consequence.type)
   if (consequence.type == 'seen') {
-    //testjpf maybe here change stae of player or npc to
-    //confronted.  handle the rest of the logic in taskFSM
-    //use or base of handleConfrontation()
-    //This is where I's build new confront task?!
-    //give npcs build consequence()????
-
     watcher.parent.taskBuilder(watcher.name, 'confront', target.name, 'theft')
-
+    //testjpf is this used??
     target.loot = loot
-
-    //consequence.type = confrontationConsequence( target, watcher, consequence.confront)
   }
-
-  //if (consequence.confront == false && consequence.type != 'neutral') {
-  // target.parent.taskBuilder(watcher, consequence.type, target, 'theft')
-  //}
-
-  //}
-  //consequence = confront.type
-
   if (consequence.type == 'neutral') {
     let chest_item = null
-    //const victim = false
-    //if w != null ){ utils.has_value(w.inventory, a[1]) }
-
     print('CHESTCHKSFUNCS:::', loot[0])
     if (math.random() < 0.4) {
       chest_item = removeRandom(target.inventory, loot)
@@ -976,106 +822,22 @@ export function npcStealCheck(
     print('SEENCHECK CHEST::', consequence.type, chest_item)
 
     target.addInvBonus(chest_item)
-    //if (victim == true ){ remove_chest_bonus(w, chest_item) }
     target.cooldown = math.random(5, 15)
   }
 
   target.cooldown = target.cooldown + 5
   print('SEENCHECK END::', consequence.type, target.cooldown)
 }
-// player interact.gui related
-//WHOLE THING SHOULD BE PART OF FSM FOR>>>
-//
-/**
-function confrontationConsequence(
-  //_this: WorldTasks,
-  s: string,
-  w: string,
-  confrontDecided = false
-): string {
-  let tempcons: Array<(s: string, w: string) => Consequence> = []
-  //let confrontDecided = true
-  //const consolation = { pass: true, type: 'concern' }
-  //if (s != 'player') {
-    //testjpf re-add confrontation_checks
-    //but from this
-    tempcons = shuffle([])
-    //confrontDecided = false
- //}/
- 
-  const caution: Task = {
-    owner: w,
-    turns: 1,
-    label: 'confront',
-    scope: 'clan',
-    authority: 'security',
-    target: s,
-    cause: 'theft',
-  }
-
-  //testjpf the rest of this would go to
-  //npc_confront_consequence or
-  //playerConfrontConsequence on Task state!!!
-  const consequence = _this.checks.build_consequence(
-    caution,
-    w,
-    tempcons,
-    confrontDecided == true && s == 'player'
-  )
-
-  return confrontDecided == true && s == 'player' ? 'concern' : consequence
-}
-function testjpfplayerconfrontationConsequence(
-  //_this: WorldTasks,
-  s: string,
-  w: string,
-  confrontDecided = false
-): string {
-  let tempcons: Array<(s: string, w: string) => Consequence> = []
-  //let confrontDecided = true
-  //const consolation = { pass: true, type: 'concern' }
-  if (s != 'player') {
-    //testjpf re-add confrontation_checks
-    //but from this
-    tempcons = shuffle([])
-    //confrontDecided = false
-  }
-  const caution: Task = {
-    owner: w,
-    turns: 1,
-    label: 'confront',
-    scope: 'clan',
-    authority: 'security',
-    target: s,
-    cause: 'theft',
-  }
-
-  //testjpf the rest of this would go to
-  //npc_confront_consequence or
-  //playerConfrontConsequence on Task state!!!
-  const consequence = _this.checks.build_consequence(
-    caution,
-    w,
-    tempcons,
-    confrontDecided == true && s == 'player'
-  )
-
-  return confrontDecided == true && s == 'player' ? 'concern' : consequence
-}
-*/
-
 function add_angel(listener: NpcState) {
   print('CCOUTCOME:: angel', listener)
   const effect: Effect = { ...fx.angel }
-  listener.effects.push(effect) // lawfulness increase?
-  listener.add_effects_bonus(effect)
+  listener.addOrExtendEffect(effect)
 }
 export function angel_check(
   this: WorldTasks,
   t: string,
   l: string
 ): Consequence {
-  //const target = t instanceof WorldPlayer ? t.state : t
   const target =
     t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
   const listener = this.parent.returnNpc(l)
@@ -1094,7 +856,6 @@ export function angel_check(
     'ROLL:',
     result
   )
-  // print('TESTJPF RESULT::: angel:', result)
   if (result > 5 && result <= 10) {
     add_angel(listener)
     return { pass: true, type: 'angel' }
@@ -1114,15 +875,13 @@ export function angel_check(
 function add_vanity(listener: NpcState) {
   print('CCOUTCOME:: vanity has overtaken', listener)
   const effect: Effect = { ...fx.vanity }
-  listener.effects.push(effect) // lawfulness increase?
-  listener.add_effects_bonus(effect)
+  listener.addOrExtendEffect(effect)
 }
 export function vanity_check(
   this: WorldTasks,
   t: string,
   l: string
 ): Consequence {
-  //const target = t instanceof WorldPlayer ? t.state : t
   const target =
     t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
   const listener = this.parent.returnNpc(l)
@@ -1136,7 +895,6 @@ export function vanity_check(
 
   print('CHECKS:: ANCGELCHK::', t, 'has made vane::', l, 'ROLL:', result)
 
-  // print('TESTJPF RESULT::: vanity', result)
   if (result > 5 && result <= 10) {
     add_vanity(listener)
     return { pass: true, type: 'vanity' }
@@ -1154,22 +912,20 @@ export function vanity_check(
   return { pass: false, type: 'neutral' }
 }
 function add_admirer(tClan: string, listener: NpcState) {
-  print('has admiration', listener)
+  print('OUTCOMESADMIRE::', listener.name, 'has admiration for:', tClan)
   if (tClan === 'player') {
     listener.love++
     return
   }
   const effect: Effect = { ...fx.admirer }
   effect.fx.stat = tClan
-  listener.effects.push(effect)
-  listener.add_effects_bonus(effect)
+  listener.addOrExtendEffect(effect)
 }
 export function admirer_check(
   this: WorldTasks,
   t: string,
   l: string
 ): Consequence {
-  //const target = t instanceof WorldPlayer ? t.state : t
   const target =
     t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
   const listener = this.parent.returnNpc(l)
@@ -1183,7 +939,6 @@ export function admirer_check(
 
   print('CHECKS:: ADMIRERCHK::', t, 'is admired by::', l, 'ROLL:', result)
 
-  // print('TESTJPF RESULT::: admirer', result)
   if (result > 5 && result <= 10) {
     add_admirer(target instanceof NpcState ? target.clan : 'player', listener)
     return { pass: true, type: 'admirer' }
@@ -1208,15 +963,13 @@ export function add_prejudice(tClan: string, listener: NpcState) {
   }
   const effect: Effect = { ...fx.prejudice }
   effect.fx.stat = tClan
-  listener.effects.push(effect)
-  listener.add_effects_bonus(effect)
+  listener.addOrExtendEffect(effect)
 }
 export function prejudice_check(
   this: WorldTasks,
   t: string,
   l: string
 ): Consequence {
-  //const target = t instanceof WorldPlayer ? t.state : t
   const target =
     t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
   const listener = this.parent.returnNpc(l)
@@ -1228,7 +981,6 @@ export function prejudice_check(
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   print('CHECKS:: PREJUDICECHK::', t, 'is hated by::', l, 'ROLL:', result)
 
-  // print('TESTJPF RESULT::: prejudice', result)
   if (result > 5 && result <= 10) {
     add_prejudice(target instanceof NpcState ? target.clan : 'player', listener)
     return { pass: true, type: 'prejudice' }
@@ -1251,7 +1003,6 @@ export function watcher_punched_check(
   t: string,
   l: string
 ): Consequence {
-  //const target = t instanceof WorldPlayer ? t.state : t
   const target =
     t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
   const listener = this.parent.returnNpc(l)
@@ -1265,7 +1016,6 @@ export function watcher_punched_check(
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   print('CHECKS:: Listenerpunched::', t, 'hits::', l, 'ROLL:', result)
 
-  //print('TESTJPF RESULT::: s punch w', result)
   if (result > 5 && result <= 10) {
     this.outcomes.tConfrontPunchL(listener.name, 1)
     return { pass: true, type: 'sPunchW' }
@@ -1309,7 +1059,6 @@ export function unlucky_check(
 
   print('CHECKS:: UNLUCKEY::', t, 'is unlucky with::', l, 'ROLL:', result)
 
-  //print('TESTJPF RESULT UNLUCKY:::', result)
   if (result > 5 && result <= 10) {
     const random = math.random(0, 4)
     if (random == 0) {
@@ -1345,11 +1094,6 @@ export function unlucky_check(
   }
   if (result <= 1) {
     print('NEVER unlucky')
-    /**
-    const tempcons: Array<
-    (t: string, l: string, _this?: WorldTasks) => Consequence
-  > = shuffle([decideToSnitchCheck, meritsDemerits, recklessCheck])
-   */
 
     shuffle([
       this.checks.charmed_merits.bind(this),
@@ -1368,7 +1112,6 @@ export function becomeASnitchCheck(
   t: string,
   l: string
 ): Consequence {
-  //const target = t instanceof WorldPlayer ? t.state : t
   const target =
     t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
   const listener = this.parent.returnNpc(l)
@@ -1383,7 +1126,6 @@ export function becomeASnitchCheck(
     ts.stealth + +Math.abs(tb.passiveAggressive * 5)
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
-  //print('TESTJPF RESULT::: snitch', result)
   if (result > 5 && result <= 10) {
     return { pass: true, type: 'snitch' }
   }
@@ -1420,7 +1162,6 @@ export function love_boost(
     rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   )
 
-  //print('TESTJPF RESULT::: loveboost', result)
   if (result > 5 && result <= 10) return { pass: true, type: 'loveboost' }
 
   if (result > 10) return { pass: true, type: 'special' }
@@ -1442,7 +1183,6 @@ export function ap_boost(this: WorldTasks, t: string, l: string): Consequence {
   const result =
     rollSpecialDice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
-  //print('TESTJPF RESULT::: apboost', result)
   if (result > 5 && result <= 10) return { pass: true, type: 'apboost' }
 
   if (result > 10) return { pass: true, type: 'special' }
@@ -1466,18 +1206,12 @@ export function charmed_merits(
   const result =
     rollSpecialDice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1)
 
-  //print('TESTJPF RESULT:::charmedmerits', result)
   if (result > 5 && result <= 10) return { pass: true, type: 'merits' }
 
   if (result > 10) return { pass: true, type: 'special' }
 
   return { pass: false, type: 'neutral' }
 }
-
-//positive consolations
-//export function generate_gift() {
-// player.state.inventory.push('berry02')
-//}
 export function given_gift(
   this: WorldTasks,
   t: string,
@@ -1496,7 +1230,7 @@ export function given_gift(
       : target.traits.skills
   )
 
-  if (gift == null) gift = 'berry02'
+  if (gift == null) gift = math.random() < 0.5 ? 'berry02' : 'coingold'
   target.inventory.push(gift)
   target.addInvBonus(gift)
 

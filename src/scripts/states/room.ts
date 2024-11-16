@@ -52,8 +52,7 @@ export default class RoomState {
   }
   private onFocusStart(): void {
     //highlight room neighbors and directions
-    //do something with stations, clear them
-    //testjpf getPlayerRoom method
+    //testjpf
     this.parent.setFocused(this.roomName)
   }
   private onFocusUpdate(): void {

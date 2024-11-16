@@ -1,6 +1,3 @@
-//local world = require "main.states.worldstate"
-//local novel = require "main.utils.novel"
-
 const { rooms } = globalThis.game.world
 function load_npcs() {
   const roomName = 'admin1' // testjpf remove hardcode string!

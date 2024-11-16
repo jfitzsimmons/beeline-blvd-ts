@@ -6,7 +6,7 @@ import WorldPlayer from './player'
 import StateMachine from './stateMachine'
 import { Consequence, Effect, Task, TasksChecks } from '../../types/tasks'
 import { TaskProps } from '../../types/world'
-import { fxLookup, fx } from '../utils/consts'
+import { fxLookup, fx, immobile, doctors } from '../utils/consts'
 import { shuffle } from '../utils/utils'
 import {
   removeRandom,
@@ -95,10 +95,8 @@ export default class TaskState {
   private onNewExit(): void {}
   private onInjuryEnter(): void {}
   private onInjuryUpdate(): void {
-    for (const doc of ['doc01', 'doc02', 'doc03']) {
-      const mobile = () =>
-        this.parent.npcHasTask(doc, 'any', ['mender', 'injury', 'infirm']) ===
-        null
+    for (const doc of doctors) {
+      const mobile = () => this.parent.npcHasTask([doc], [], immobile) === null
 
       if (this.parent.didCrossPaths(this.owner, doc) && mobile() === true) {
         print(this.owner, 'met doc for injury task::', doc)
@@ -120,10 +118,11 @@ export default class TaskState {
     ]) {
       if (!this.parent.didCrossPaths(this.owner, cop)) return
       print(this.owner, 'met cop for snitch task::', cop)
-      const priors = this.parent.npcHasTask(this.owner, this.target, [
-        'questioning',
-        'arrest',
-      ])
+      const priors = this.parent.npcHasTask(
+        [this.owner],
+        [this.target],
+        ['questioning', 'arrest']
+      )
       const caution_state: Consequence =
         this.target == 'player'
           ? this.checks.playerSnitchCheck!(priors !== null, cop, this.cause)
@@ -152,6 +151,12 @@ export default class TaskState {
     holder.clearance = tonumber(this.scope.charAt(this.scope.length - 1))!
   }
   private onHallpassUpdate(): void {
+    print(
+      '000hallpassup:::',
+      this.owner,
+      this.turns,
+      this.parent.returnPlayer().clearance
+    )
     if (this.turns < 1) {
       const holder =
         this.owner == 'player'
@@ -162,6 +167,12 @@ export default class TaskState {
           ? PlayerInitState.clearance
           : NpcsInitState[this.owner].clearance
     }
+    print(
+      'hallpassup:::',
+      this.owner,
+      this.turns,
+      this.parent.returnPlayer().clearance
+    )
   }
   private onHallpassExit(): void {}
   private onConfrontEnter(): void {
@@ -204,9 +215,7 @@ export default class TaskState {
         'has effect:',
         fx_labels[1]
       )
-      //check if they already have effect? testjpf
-      listener.effects.push(effect)
-      listener.add_effects_bonus(effect)
+      listener.addOrExtendEffect(effect)
       break
     }
   }
@@ -218,9 +227,7 @@ export default class TaskState {
       .getOccupants(owner.currRoom)
       .filter(
         (o) =>
-          o !== this.owner &&
-          this.parent.npcHasTask(o, 'any', ['mender', 'injury', 'infirm']) ===
-            null
+          o !== this.owner && this.parent.npcHasTask([o], [], immobile) === null
       )
     const checks: Array<(target: string, listener: string) => Consequence> =
       this.cause == 'theft'
@@ -289,11 +296,11 @@ export default class TaskState {
         ? this.parent.returnPlayer()
         : this.parent.returnNpc(this.target)
     if (
-      this.parent.npcHasTask(this.target, 'any', [
-        'mender',
-        'injury',
-        'infirm',
-      ]) !== null
+      this.parent.npcHasTask(
+        [this.target],
+        [],
+        ['mender', 'injury', 'infirm']
+      ) !== null
     )
       return
 

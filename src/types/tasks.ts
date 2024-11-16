@@ -76,7 +76,7 @@ export interface Quest {
   id: string
   passed: boolean
   conditions: QuestConditions
-  side_quests?: QuestConditions
+  side_quests: { [key: string]: SideQuest }
 }
 export interface QuestMethods {
   [key: string]: (
@@ -92,6 +92,12 @@ export interface QuestMethods {
     | void
     | string
     | null
+}
+
+export interface SideQuest {
+  label: string
+  solution?: string
+  passed: boolean
 }
 
 export type ObjectivesGroup = NoOptionals<ObjectivesGroupOpt>
