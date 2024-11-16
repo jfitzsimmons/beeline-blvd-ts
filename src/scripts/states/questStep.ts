@@ -24,13 +24,6 @@ export default class QuestStep {
     //this.mendingQueue = []
     this.fsm = new StateMachine(this, 'step' + step.id)
     this.fsm.addState('idle')
-    /**
-    this.fsm.addState('turn', {
-      onEnter: this.onTurnEnter.bind(this),
-      onUpdate: this.onTurnUpdate.bind(this),
-      onExit: this.onTurnExit.bind(this),
-    })
-      */
     this.fsm.addState('active', {
       onEnter: this.onActiveEnter.bind(this),
       onUpdate: this.onActiveUpdate.bind(this),
@@ -60,11 +53,6 @@ export default class QuestStep {
     }
   }
   private onNewExit(): void {}
-  private onTurnEnter(): void {
-    print('questStep TURN enter')
-  }
-  private onTurnUpdate(): void {}
-  private onTurnExit(): void {}
   private onActiveEnter(): void {
     if (this.passed == true) return
     for (let i = this.func.length; i-- !== 0; ) {
