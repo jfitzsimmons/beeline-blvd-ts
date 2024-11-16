@@ -60,6 +60,7 @@ export default class WorldNovel {
     this.get_reason = this.get_reason.bind(this)
     this.getNovelUpdates = this.getNovelUpdates.bind(this)
     this.setConfrontation = this.setConfrontation.bind(this)
+    this.get_novel_item = this.get_novel_item.bind(this)
   }
 
   /*
@@ -97,7 +98,10 @@ export default class WorldNovel {
   public set task(c: Task) {
     this._task = { ...c }
   }
-  get_novel_item = () => this._item
+  get_novel_item = () => {
+    print(this._item, 'GETNOVELITEM!!!')
+    return this._item
+  }
   public get item() {
     return this._item
   }

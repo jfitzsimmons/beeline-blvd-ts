@@ -8,6 +8,7 @@ import {
 } from '../../../utils/quest'
 import QuestState from '../../quest'
 import QuestStep from '../../questStep'
+import SideQuestStep from '../../sideQuest'
 
 export const tutorialQuests = (
   questmethods: WorldQuestsMethods
@@ -85,11 +86,12 @@ export const tutorialQuests = (
         }), //have you talked to a doctor?
       },
       side_quests: {
-        hallpass: {
+        hallpass: new SideQuestStep({
+          id: 'sqhlps',
           label: 'Aquire temporary clearance',
           solution: '',
           passed: false,
-        },
+        }),
       },
     }),
   }

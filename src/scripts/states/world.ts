@@ -112,7 +112,7 @@ export default class World {
     this.player.exitRoom = 'grounds'
     this.npcs.fsm.setState('new')
     this.tasks.fsm.setState('turn')
-    this.quests.fsm.setState('turn')
+    this.quests.fsm.setState('new')
     //debug defaults
     this.npcs.all[this.rooms.all.reception.stations.guest].hp = 0
     this.npcs.all[this.rooms.all.reception.stations.guest].fsm.setState(
