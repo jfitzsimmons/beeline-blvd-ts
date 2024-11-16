@@ -84,17 +84,13 @@ export const tutorialQuests = (
           args: [[nvq.get_reason, 'medassistcomplete']],
         }), //have you talked to a doctor?
       },
-      /** 
       side_quests: {
-        ['1']: {
-          label: 'Basically a doctor.',
+        hallpass: {
+          label: 'Aquire temporary clearance',
           solution: '',
           passed: false,
-          interval: ['turn'],
-          func: [returnfalse],
-          args: [[returnfalse, false]],
         },
-      },*/
+      },
     }),
   }
 

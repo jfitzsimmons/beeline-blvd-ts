@@ -79,7 +79,10 @@ export default class WorldQuests {
 
     return Math.round((passed / count) * 100)
   }
-
+  //TESTJPF NEW this really should just loop through each quest, update.
+  //each quest could update. each step can fire it's own function and args
+  // this could lead to better function imports
+  //and better FSM condtionals!!!
   // checks quest completion after interactions and turns
   update_quests_progress = (interval: string) => {
     //  print('checkpoint.slice(0, -1)', checkpoint.slice(0, -1))

@@ -97,7 +97,7 @@ export function playerSnitchCheck(
   if (player.alert_level > 3) caution_state = 'arrest'
   player.alert_level =
     priors == null ? player.alert_level + 1 : player.alert_level + 2
-  if (player.alert_level > 5 && this.npcHasTask(cop, 'player') == null) {
+  if (player.alert_level > 5 && this.npcHasTask([cop], ['player']) == null) {
     this.taskBuilder(cop, 'snitch', 'player', cause)
   }
   print('plauer snitch chk :: alertlvl::', player.alert_level)
@@ -111,7 +111,7 @@ export function npcCommitSnitchCheck(
   let caution_state = 'questioning'
   const cop = this.parent.returnNpc(c)
   const target = this.parent.returnNpc(t)
-  if (this.npcHasTask(c, t, ['questioning', 'arrest'])) {
+  if (this.npcHasTask([c], [t], ['questioning', 'arrest'])) {
     cop.traits.opinion[target.clan] = cop.traits.opinion[target.clan] - 1
     print('NPCSNITCHCHK')
     if (math.random() < 0.33) caution_state = 'arrest'
@@ -713,7 +713,7 @@ export function take_check(taker: NpcState, actor: Npc | Actor) {
   let modifier = Math.round(
     skills.stealth - skills.charisma + binaries.passiveAggressive * -5
   )
-  if (taker.parent.npcHasTask('any', taker.name, []) != null) {
+  if (taker.parent.npcHasTask([], [taker.name]) != null) {
     modifier = modifier - 1
   }
   const advantage = binaries.poor_wealthy + binaries.anti_authority * -1 > 0
@@ -734,7 +734,7 @@ export function take_check(taker: NpcState, actor: Npc | Actor) {
 export function stash_check(stasher: NpcState, actor: NpcState | Actor) {
   let modifier = stasher.inventory.length - actor.inventory.length
 
-  if (stasher.parent.npcHasTask('any', stasher.name, []) != null) {
+  if (stasher.parent.npcHasTask([], [stasher.name]) != null) {
     modifier = modifier + 1
   }
 

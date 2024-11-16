@@ -17,6 +17,7 @@ import {
   set_npc_target,
 } from '../utils/ai'
 import { surrounding_room_matrix } from '../utils/utils'
+import { doctors } from '../utils/consts'
 
 export default class NpcState {
   fsm: StateMachine
@@ -172,10 +173,7 @@ export default class NpcState {
   }
   private onInfirmUpdate(): void {
     this.turns_since_encounter = 99
-    this.parent.isStationedTogether(
-      ['doc03', 'doc02', 'doc01'],
-      'infirmary'
-    ) === true
+    this.parent.isStationedTogether(doctors, 'infirmary') === true
       ? (this.hp = this.hp + 2)
       : (this.hp = this.hp + 1)
 
@@ -214,7 +212,7 @@ export default class NpcState {
         break
       } else if (
         math.random() > 0.7 &&
-        this.parent.npcHasTask(helper, this.name, []) === null &&
+        this.parent.npcHasTask([helper], [this.name]) === null &&
         NpcsInitState[helper].clan !== 'doctors'
       ) {
         //if not a doctor, create injury caution if haven't already

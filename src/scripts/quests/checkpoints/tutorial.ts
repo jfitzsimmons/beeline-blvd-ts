@@ -1,6 +1,7 @@
 import { QuestConditions } from '../../../types/tasks'
 import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
 import QuestStep from '../../states/questStep'
+import { doctors } from '../../utils/consts'
 //import { npc_action_move } from '../../ai/ai_main'
 //import NpcState from '../../states/npc'
 import { from_same_room } from '../../utils/quest'
@@ -145,7 +146,7 @@ function doctor_checks(conditions: QuestConditions) {
     novel.forced = true
     //TESTjpf start here
     delivery.fsm.setState('active')
-    const waiting = tasks.task_has_npc('waitingformeds')
+    const waiting = tasks.taskHasOwner('waitingformeds')
     //testjpf doesnt work if you talk to someone else!!! BUG
     if (novel.npc.name == waiting) {
       print('WAITING DOES ANYHTING???!!!')
@@ -226,7 +227,10 @@ function medic_assist_checks() {
   /**
    * testjpf this conditional sucks. BUG will break things based on who you last talked to.
    */
-  if (npcs.all[novel.npc.name].clan == 'doctors') {
+  if (
+    npcs.all[novel.npc.name].clan == 'doctors' ||
+    tasks.npcHasTask(doctors, [], ['quest'])
+  ) {
     doctor_checks(cons)
     //TESTJPF
   } else if (npcs.all[novel.npc.name].currRoom == 'infirmary') {
@@ -373,7 +377,7 @@ function doctorsScripts() {
     // "I'm going as fast as i can" -doc
     //testjpf future naming files may be better:
     //docAsksForFavor, docActiveFavor
-    return tasks.task_has_npc('waitingformeds') == null
+    return tasks.taskHasOwner('waitingformeds') == null
       ? 'tutorial/askDocAfavor'
       : 'tutorial/medAssistComplete'
   }
