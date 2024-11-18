@@ -172,14 +172,8 @@ export default class World {
   private didCrossPaths(o: string, t: string): boolean {
     const owner = this.npcs.all[o]
     const target = this.npcs.all[t]
-    print(
-      'didcross:::',
-      owner.name,
-      target.name,
-      owner.currRoom == target.currRoom,
-      owner.currRoom == target.exitRoom,
-      owner.exitRoom == target.currRoom
-    )
+    // prettier-ignore
+    // print('didcross:::', owner.name, target.name, owner.currRoom == target.currRoom, owner.currRoom == target.exitRoom, owner.exitRoom == target.currRoom)
     return (
       owner.currRoom == target.currRoom ||
       (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)

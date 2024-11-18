@@ -75,13 +75,8 @@ export function address_busy_tasks() {
             npc: ts[i].owner,
           }
         )
-        print(
-          ts[i].owner,
-          'STATION MOVE VIA TASK mending',
-          ts[i].target,
-          'in',
-          npcs.all[ts[i].owner].currRoom
-        )
+        // prettier-ignore
+        //print(ts[i].owner, 'STATION MOVE VIA TASK mending', ts[i].target, 'in', npcs.all[ts[i].owner].currRoom)
       }
       if (hurt == false) {
         ts[i].turns = 0

@@ -99,7 +99,7 @@ export default class TaskState {
       const mobile = () => this.parent.npcHasTask([doc], [], immobile) === null
 
       if (this.parent.didCrossPaths(this.owner, doc) && mobile() === true) {
-        print(this.owner, 'met doc for injury task::', doc)
+        // print(this.owner, 'met doc for injury task::', doc)
         this.parent.addAdjustMendingQueue(this.target)
         this.turns = 0
         break
@@ -117,7 +117,7 @@ export default class TaskState {
       'security005',
     ]) {
       if (!this.parent.didCrossPaths(this.owner, cop)) return
-      print(this.owner, 'met cop for snitch task::', cop)
+      // print(this.owner, 'met cop for snitch task::', cop)
       const priors = this.parent.npcHasTask(
         [this.owner],
         [this.target],
@@ -151,12 +151,6 @@ export default class TaskState {
     holder.clearance = tonumber(this.scope.charAt(this.scope.length - 1))!
   }
   private onHallpassUpdate(): void {
-    print(
-      '000hallpassup:::',
-      this.owner,
-      this.turns,
-      this.parent.returnPlayer().clearance
-    )
     if (this.turns < 1) {
       const holder =
         this.owner == 'player'
@@ -167,12 +161,6 @@ export default class TaskState {
           ? PlayerInitState.clearance
           : NpcsInitState[this.owner].clearance
     }
-    print(
-      'hallpassup:::',
-      this.owner,
-      this.turns,
-      this.parent.returnPlayer().clearance
-    )
   }
   private onHallpassExit(): void {}
   private onConfrontEnter(): void {
@@ -204,17 +192,8 @@ export default class TaskState {
       if (effect.fx.type == 'opinion') {
         effect.fx.stat = NpcsInitState[this.target].clan
       }
-      print(
-        this.owner,
-        'found:',
-        npc,
-        'because',
-        this.label,
-        '.',
-        npc,
-        'has effect:',
-        fx_labels[1]
-      )
+      // prettier-ignore
+      // print(this.owner, 'found:', npc, 'because', this.label, '.', npc, 'has effect:', fx_labels[1])
       listener.addOrExtendEffect(effect)
       break
     }
@@ -313,12 +292,6 @@ export default class TaskState {
         ? this.playerConfrontConsequence(target.fsm, owner.fsm)
         : this.npc_confront_consequence()
       this.turns = 0
-      print(
-        'PLSYRTCONFRONT??:: ',
-        this.target == 'player',
-        this.owner,
-        this.target
-      )
     }
   }
   playerConfrontConsequence(playerfsm: StateMachine, npcfsm: StateMachine) {

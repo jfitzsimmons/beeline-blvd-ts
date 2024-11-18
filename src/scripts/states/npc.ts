@@ -12,7 +12,7 @@ import { Effect } from '../../types/tasks'
 import { NpcProps } from '../../types/world'
 import { NovelNpc } from '../../types/novel'
 import {
-  attempt_to_fillStation,
+  fillStationAttempt,
   set_room_priority,
   set_npc_target,
 } from '../utils/ai'
@@ -369,7 +369,7 @@ export default class NpcState {
     )
   }
   findRoomPlaceStation(rooms: string[]): void {
-    const { chosenRoom, chosenStation } = attempt_to_fillStation(
+    const { chosenRoom, chosenStation } = fillStationAttempt(
       rooms,
       this.name,
       this.matrix,
@@ -406,7 +406,6 @@ export default class NpcState {
         this.traits.binaries[bKey] - item.binaries[bKey]
   }
   addInvBonus(i: string) {
-    print('ADDINVBONUS::: NPC::', i)
     const item: InventoryTableItem = { ...itemStateInit[i] }
     let sKey: keyof typeof item.skills
     for (sKey in item.skills)
