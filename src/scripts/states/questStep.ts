@@ -46,10 +46,10 @@ export default class QuestStep {
     for (let i = this.func.length; i-- !== 0; ) {
       if (this.func[i](this.args[i]) == true) {
         this.passed = true
-        print('queststeppass???:::', this.passed)
+        //print('queststeppass???:::', this.passed)
       }
 
-      print(this.label, 'newupdaeteQUESTQUESTQUEST')
+      //print(this.label, 'newupdaeteQUESTQUESTQUEST')
     }
   }
   private onNewExit(): void {}
@@ -58,10 +58,10 @@ export default class QuestStep {
     for (let i = this.func.length; i-- !== 0; ) {
       if (this.func[i](this.args[i]) == true) {
         this.passed = true
-        print('queststeppass???:::', this.passed)
+        //print('queststeppass???:::', this.passed)
       }
 
-      print(this.label, 'ACTIVE ENTERQUESTQUESTQUEST')
+      //print(this.label, 'ACTIVE ENTERQUESTQUESTQUEST')
     }
   }
   private onActiveUpdate(): void {
@@ -69,10 +69,10 @@ export default class QuestStep {
     for (let i = this.func.length; i-- !== 0; ) {
       if (this.func[i](this.args[i]) == true) {
         this.passed = true
-        print('queststeppass???:::', this.passed)
+        //print('queststeppass???:::', this.passed)
       }
 
-      print(this.label, 'ACTIVEUP!!! QUESTQUESTQUEST')
+      //print(this.label, 'ACTIVEUP!!! QUESTQUESTQUEST')
     }
   }
   private onActiveExit(): void {}

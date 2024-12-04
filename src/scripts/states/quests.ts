@@ -45,14 +45,14 @@ export default class WorldQuests {
     })
   }
   private onNewEnter(): void {
-    print('questsNEWENTER')
+    //  print('questsNEWENTER')
     let kq: keyof typeof this.all.tutorial
     for (kq in this.all.tutorial) {
       this.all.tutorial[kq].fsm.setState('new')
     }
   }
   private onNewUpdate(): void {
-    print('questsNEWUPDATE')
+    // print('questsNEWUPDATE')
 
     const checkpointQuests = this.all[this.checkpoint.slice(0, -1)]
     let kq: keyof typeof checkpointQuests
@@ -63,7 +63,7 @@ export default class WorldQuests {
   }
   private onNewExit(): void {}
   private onTurnEnter(): void {
-    print('questsTURNENTER')
+    //  print('questsTURNENTER')
     let kq: keyof typeof this.all.tutorial
     for (kq in this.all.tutorial) {
       this.all.tutorial[kq].fsm.setState('turn')

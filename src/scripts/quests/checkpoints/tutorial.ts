@@ -22,7 +22,7 @@ function injured_checks() {
   }
 }
 function infirmary_checks(delivery: QuestStep) {
-  print('infirmary_checks', novel.reason, delivery.fsm.getState())
+  //print('infirmary_checks', novel.reason, delivery.fsm.getState())
   if (
     //testjpf this only works if talking to doctors
     // doctor sripts only gets called for doctors!!!
@@ -42,7 +42,7 @@ function doctor_checks() {
   // let's you interact with any doctor
   const doctor = npcs.all[novel.npc.name]
   const { '0': injury, '2': apple, '3': meds, '5': delivery } = quest.conditions
-  print('APPLE:PASSED:STATE::', novel.item, apple.passed, apple.fsm.getState())
+  //print('APPLE:PASSED:STATE::', novel.item, apple.passed, apple.fsm.getState())
   if (
     novel.reason == 'hungrydoc' &&
     injury.fsm.getState() == 'active' &&
@@ -129,12 +129,12 @@ function doctor_checks() {
     player.clearance - 2 < rooms.all[player.currRoom].clearance &&
     from_same_room(npcs.returnSecurity(), player.currRoom) != null
   ) {
-    print('thebigelseif@!@!@!')
+    // print('thebigelseif@!@!@!')
     novel.task.label = 'questioning'
     novel.task.cause = 'tutsclearance'
     novel.forced = true
     novel.npc = from_same_room(npcs.returnSecurity(), player.currRoom)!
-    print('tutsclearances', novel.reason, novel.npc.name)
+    // print('tutsclearances', novel.reason, novel.npc.name)
     quest.sideQuests.hallpass.fsm.setState('complete')
     quest.sideQuests.hallpass.passed = true
     msg.post('proxies:/controller#novelcontroller', 'show_scene')
@@ -149,7 +149,7 @@ function doctor_checks() {
     const waiting = tasks.taskHasOwner('waitingformeds')
     //testjpf doesnt work if you talk to someone else!!! BUG
     if (novel.npc.name == waiting) {
-      print('WAITING DOES ANYHTING???!!!')
+      // print('WAITING DOES ANYHTING???!!!')
       //meds.passed = true
       meds.fsm.setState('complete')
       info.add_interaction(`${waiting} likes that you gave them meds.`)
@@ -226,7 +226,7 @@ function medic_assist_checks() {
   if (conditions['0'].passed == true) injured_checks()
   /**
    * testjpf this conditional sucks. BUG will break things based on who you last talked to.
-   */
+
   print(
     'TUTTTS:: clan:',
     npcs.all[novel.npc.name].clan,
@@ -234,7 +234,7 @@ function medic_assist_checks() {
     tasks.npcHasTask(doctors, [], ['quest']),
     '| currroom:',
     npcs.all[novel.npc.name].currRoom
-  )
+  )   */
   if (
     npcs.all[novel.npc.name].clan == 'doctors' ||
     tasks.npcHasTask(doctors, [], ['quest']) !== null
@@ -243,7 +243,7 @@ function medic_assist_checks() {
     //TESTJPF
   }
   if (npcs.all[novel.npc.name].currRoom == 'infirmary') {
-    print('novel reason pre infirm check', novel.reason)
+    // print('novel reason pre infirm check', novel.reason)
     infirmary_checks(conditions['5'])
   }
   //TESTJPF ELSE if quest complete dialog, xp / money???

@@ -80,7 +80,7 @@ export default class WorldNovel {
     this._npcsWithQuest = this._npcsWithQuest.filter((n) => n !== r)
   }
   get_reason = () => {
-    print('get_reason = () => {', this._reason)
+    // print('get_reason = () => {', this._reason)
     return this._reason
   }
   public get reason() {
