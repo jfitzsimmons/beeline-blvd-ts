@@ -35,6 +35,9 @@ export const tutorialQuests = (
           passed: false,
           interval: ['interact'],
           func: [does_equal],
+          //doesnt use this reason testjpf
+          //in tutorial/getadoctor either getsomemeds or rejectmeds
+          //check for both or change completely
           args: [[nvq.get_reason, 'getadoctor']],
         }), //have you talked to a doctor?
         ['2']: new QuestStep({

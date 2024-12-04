@@ -22,10 +22,14 @@ function injured_checks() {
   }
 }
 function infirmary_checks(delivery: QuestStep) {
+  print('infirmary_checks', novel.reason, delivery.fsm.getState())
   if (
     //testjpf this only works if talking to doctors
     // doctor sripts only gets called for doctors!!!
-    novel.reason == 'favormedquest' &&
+    //BUG!! STOP hardcoding these TODO NOW!!
+    //Type not string, but "favormedsquest" |""|""etc...?
+    //or ENUMS?!?!?!
+    novel.reason == 'favormedsquest' &&
     delivery.fsm.getState() == 'new'
   ) {
     player.add_inventory('vial02')
@@ -223,13 +227,22 @@ function medic_assist_checks() {
   /**
    * testjpf this conditional sucks. BUG will break things based on who you last talked to.
    */
+  print(
+    'TUTTTS:: clan:',
+    npcs.all[novel.npc.name].clan,
+    '| docquest:?',
+    tasks.npcHasTask(doctors, [], ['quest']),
+    '| currroom:',
+    npcs.all[novel.npc.name].currRoom
+  )
   if (
     npcs.all[novel.npc.name].clan == 'doctors' ||
-    tasks.npcHasTask(doctors, [], ['quest'])
+    tasks.npcHasTask(doctors, [], ['quest']) !== null
   ) {
     doctor_checks()
     //TESTJPF
-  } else if (npcs.all[novel.npc.name].currRoom == 'infirmary') {
+  }
+  if (npcs.all[novel.npc.name].currRoom == 'infirmary') {
     print('novel reason pre infirm check', novel.reason)
     infirmary_checks(conditions['5'])
   }
@@ -388,6 +401,12 @@ function infirmaryScripts() {
   if (meds.fsm.getState() == 'active' && novel.npc.currStation == 'assistant') {
     novel.forced = true
     novel.reason = 'quest'
+    npcs.all[novel.npc.name].fsm.setState('turn')
+    player.fsm.setState('turn')
+    //testjpf there is no default for resetting these states
+    // after player caught 'stealing'
+    //may be case by case, will porbably need a new overall solution
+    //level repeats this functionality
     return 'tutorial/giveMeMeds'
   }
   return null

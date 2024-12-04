@@ -63,9 +63,7 @@ export default class QuestState {
   }
   private onNewExit(): void {}
   private onTurnEnter(): void {}
-  private onTurnUpdate(): void {}
-  private onTurnExit(): void {}
-  private onActiveEnter(): void {
+  private onTurnUpdate(): void {
     if (this.passed == true) return
     let kc: keyof typeof this.conditions
     for (kc in this.conditions) {
@@ -76,6 +74,8 @@ export default class QuestState {
       this.sideQuests[ksq].fsm.update(dt)
     }
   }
+  private onTurnExit(): void {}
+  private onActiveEnter(): void {}
   private onActiveUpdate(): void {
     if (this.passed == true) return
     let kc: keyof typeof this.conditions

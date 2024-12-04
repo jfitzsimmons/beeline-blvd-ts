@@ -64,6 +64,10 @@ export default class WorldQuests {
   private onNewExit(): void {}
   private onTurnEnter(): void {
     print('questsTURNENTER')
+    let kq: keyof typeof this.all.tutorial
+    for (kq in this.all.tutorial) {
+      this.all.tutorial[kq].fsm.setState('turn')
+    }
   }
   private onTurnUpdate(): void {
     print('<<< ::: QUESTSTurnUpdate() ::: >>>')
