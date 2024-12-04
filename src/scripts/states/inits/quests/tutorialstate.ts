@@ -8,6 +8,7 @@ import {
 } from '../../../utils/quest'
 import QuestState from '../../quest'
 import QuestStep from '../../questStep'
+import SideQuestStep from '../../sideQuest'
 
 export const tutorialQuests = (
   questmethods: WorldQuestsMethods
@@ -34,6 +35,9 @@ export const tutorialQuests = (
           passed: false,
           interval: ['interact'],
           func: [does_equal],
+          //doesnt use this reason testjpf
+          //in tutorial/getadoctor either getsomemeds or rejectmeds
+          //check for both or change completely
           args: [[nvq.get_reason, 'getadoctor']],
         }), //have you talked to a doctor?
         ['2']: new QuestStep({
@@ -85,11 +89,12 @@ export const tutorialQuests = (
         }), //have you talked to a doctor?
       },
       side_quests: {
-        hallpass: {
+        hallpass: new SideQuestStep({
+          id: 'sqhlps',
           label: 'Aquire temporary clearance',
           solution: '',
           passed: false,
-        },
+        }),
       },
     }),
   }

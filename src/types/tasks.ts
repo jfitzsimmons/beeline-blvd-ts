@@ -1,6 +1,7 @@
 import NpcState from '../scripts/states/npc'
 import QuestState from '../scripts/states/quest'
 import QuestStep from '../scripts/states/questStep'
+import SideQuest from '../scripts/states/sideQuest'
 //import WorldTasks from '../scripts/states/tasks'
 import { Npcs, Trait } from './state'
 import { NoOptionals } from './utils'
@@ -56,15 +57,20 @@ export interface TasksOutcomes {
 export interface QuestConditions {
   [key: string | number]: QuestStep
 }
-export interface QuestCondition {
+export interface QuestProps {
   id: string
   label: string
   solution?: string
   passed: boolean
-  //status: 'inactive' | 'active' | 'complete' | 'standby' | 'failed'
   interval: string[]
   func: { (args: [() => any, any]): boolean }[]
   args: [() => any, any][]
+}
+export interface SideQuestProps {
+  id: string
+  label: string
+  solution?: string
+  passed: boolean
 }
 export interface QuestsState {
   [key: string]: { [key: string]: QuestState }
@@ -92,12 +98,6 @@ export interface QuestMethods {
     | void
     | string
     | null
-}
-
-export interface SideQuest {
-  label: string
-  solution?: string
-  passed: boolean
 }
 
 export type ObjectivesGroup = NoOptionals<ObjectivesGroupOpt>

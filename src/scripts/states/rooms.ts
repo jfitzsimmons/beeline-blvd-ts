@@ -191,9 +191,9 @@ export default class WorldRooms {
     const stationMap: { [key: string]: { [key: string]: string } } = {}
     let ki: keyof typeof RoomsInitState
     for (ki in RoomsInitState) {
-      stationMap[ki] = { ...this.all[ki].stations }
+      stationMap[ki] = { ...RoomsInitState[ki].stations }
     }
-    stationMap['fallbacks'] = { ...this.fallbacks.stations }
+    stationMap['fallbacks'] = { ...RoomsInitFallbacks.stations }
     return stationMap
   }
 }

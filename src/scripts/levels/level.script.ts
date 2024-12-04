@@ -82,7 +82,8 @@ export function on_message(
       player.fsm.setState('turn')
     }
   } else if (messageId == hash('exit_gui')) {
-    quests.update_quests_progress('interact')
+    //quests.update_quests_progress('interact')
+    quests.fsm.update(dt)
     quest_checker('interact')
 
     print('exitgui reason::', novel.reason)

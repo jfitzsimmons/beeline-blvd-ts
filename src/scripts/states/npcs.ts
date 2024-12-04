@@ -92,6 +92,8 @@ export default class WorldNpcs {
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
       npc.fsm.update(dt)
+      // prettier-ignore
+      // print( 'NPCSonTurnUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
     }
     this.medical()
     this.security()

@@ -10,7 +10,7 @@ import { shuffle } from './utils'
 
 const count: { [key: string]: number } = {}
 const unplacedcount: { [key: string]: number } = {}
-export function attempt_to_fillStation(
+export function fillStationAttempt(
   room_list: string[],
   npc: string,
   matrix: { x: number; y: number },
@@ -45,21 +45,8 @@ export function attempt_to_fillStation(
         if (role.includes(clan)) {
           //loop thru room stations see if empty or has correct role
           chosenRoom = room
-
-          /**
-            print(
-              npc,
-              ',went to ,',
-              room,
-              ks[0],
-              ',from,',
-              RoomsInitLayout[matrix.y][matrix.x],
-              ',using,',
-              npcs.all[npc].ai_path,
-              ',TURNS,',
-              npcs.all[npc].turns_since_encounter
-            )
-   */
+          // prettier-ignore
+          // print(npc, ',went to ,', room, ks[0], ',from,', RoomsInitLayout[matrix.y][matrix.x])
           placed = true
           break
         }
@@ -114,7 +101,8 @@ export function attempt_to_fillStation(
       placed = true
     }
   }
-  print('FILLSTATIONEND:::', chosenRoom, chosenStation, npc)
+  // prettier-ignore
+  // print( 'fillStationAttempt::: ///utils/ai:: ||| chosenRoom:', chosenRoom, '| chosenStation:', chosenStation, '| npc: ', npc )
   return { chosenRoom, chosenStation }
 }
 /**

@@ -136,14 +136,8 @@ export default class WorldTasks {
     let i = this.all.length
     while (i-- !== 0) {
       const task = this.all[i]
-      print(
-        'TURNUPDATE::: task::',
-        task.label,
-        task.owner,
-        task.target,
-        task.cause,
-        task.turns
-      )
+      // prettier-ignore
+      // print('TURNUPDATE::: task::', task.label, task.owner, task.target, task.cause, task.turns)
       if (task.turns < 1) {
         this.all.splice(i, 1)
       } else {
@@ -170,7 +164,7 @@ export default class WorldTasks {
       if (this.mendingQueue.indexOf(patient) > 1)
         arraymove(this.mendingQueue, this.mendingQueue.indexOf(patient), 0)
     } else {
-      print('cautions caused patient:', patient, 'to be added to mendingQueue')
+      // print('cautions caused patient:', patient, 'to be added to mendingQueue')
       this.mendingQueue.push(patient)
     }
   }
@@ -347,18 +341,8 @@ export default class WorldTasks {
     } else if (label == 'confront') {
       append.turns = 1
     }
-
-    print(
-      append.owner,
-      'know that',
-      append.target,
-      'did',
-      append.cause,
-      'so created task:',
-      append.label,
-      'for turns:',
-      append.turns
-    )
+    // prettier-ignore
+    // print(append.owner, 'know that', append.target, 'did', append.cause, 'so created task:', append.label, 'for turns:', append.turns)
 
     this.append_task(append)
   }
