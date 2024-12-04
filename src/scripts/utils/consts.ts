@@ -1,5 +1,7 @@
 import { Effect } from '../../types/tasks'
 
+export const doctors = ['doc03', 'doc02', 'doc01']
+
 export const fxLookup = {
   merits: [
     'admirer',
@@ -221,3 +223,5 @@ export const fx: { [key: string]: Effect } = {
     },
   },
 }
+
+export const immobile = ['mender', 'mendee', 'injury', 'infirm']

@@ -21,7 +21,11 @@ export interface WorldTasksArgs extends WorldArgs {
 }
 export interface TaskProps extends WorldTasksArgs {
   addAdjustMendingQueue(patient: string): void
-  npcHasTask(owner: string, target: string, labels?: string[]): TaskState | null
+  npcHasTask(
+    owner: string[],
+    target: string[],
+    labels?: string[]
+  ): TaskState | null
   taskBuilder(owner: string, label: string, target: string, cause: string): void
 }
 export interface WorldPlayerArgs {
@@ -29,8 +33,7 @@ export interface WorldPlayerArgs {
   hasHallpass(owner: string): TaskState | null
   removeTaskByCause(target: string, cause: string): void
 }
-export interface WorldNpcsArgs extends WorldTasksArgs {
-  addAdjustMendingQueue(patient: string): void
+export interface WorldNpcsArgs extends TaskProps {
   isStationedTogether(npcs: string[], room: string): boolean
   getPlayerRoom(): string
   clearStation(room: string, station: string, npc: string): void
@@ -39,8 +42,6 @@ export interface WorldNpcsArgs extends WorldTasksArgs {
   getStationMap(): { [key: string]: { [key: string]: string } }
   sendToVacancy(room: string, npc: string): string | null
   getMendingQueue(): string[]
-  taskBuilder(owner: string, label: string, target: string, cause: string): void
-  npcHasTask(owner: string, target: string, labels: string[]): TaskState | null
   hasHallpass(owner: string): TaskState | null
   getFocusedRoom(): string
   removeTaskByCause(target: string, cause: string): void

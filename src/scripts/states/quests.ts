@@ -4,7 +4,7 @@ import { QuestsState } from '../../types/tasks'
 import { tutorialQuests } from './inits/quests/tutorialstate'
 import { WorldQuestsMethods } from '../../types/world'
 
-//const dt = math.randomseed(os.time())
+const dt = math.randomseed(os.time())
 
 function build_quests_state(questmethods: WorldQuestsMethods): QuestsState {
   return {
@@ -19,7 +19,7 @@ export default class WorldQuests {
 
   constructor(questmethods: WorldQuestsMethods) {
     this.fsm = new StateMachine(this, 'quests')
-    this.checkpoint = 'tutorialA' //testjpf un-hardcode
+    this.checkpoint = 'tutorialA'
     this._questmethods = questmethods
     this._questmethods.qq = {
       percent_tutorial: this.percent_tutorial.bind(this),
@@ -44,25 +44,50 @@ export default class WorldQuests {
       onExit: this.onNewExit.bind(this),
     })
   }
-  private onNewEnter(): void {}
-  private onNewUpdate(): void {}
-  private onNewExit(): void {}
-  private onTurnEnter(): void {
+  private onNewEnter(): void {
+    //  print('questsNEWENTER')
     let kq: keyof typeof this.all.tutorial
     for (kq in this.all.tutorial) {
       this.all.tutorial[kq].fsm.setState('new')
     }
   }
+  private onNewUpdate(): void {
+    // print('questsNEWUPDATE')
+
+    const checkpointQuests = this.all[this.checkpoint.slice(0, -1)]
+    let kq: keyof typeof checkpointQuests
+    for (kq in checkpointQuests) {
+      checkpointQuests[kq].fsm.update(dt)
+    }
+    this.fsm.setState('turn')
+  }
+  private onNewExit(): void {}
+  private onTurnEnter(): void {
+    //  print('questsTURNENTER')
+    let kq: keyof typeof this.all.tutorial
+    for (kq in this.all.tutorial) {
+      this.all.tutorial[kq].fsm.setState('turn')
+    }
+  }
   private onTurnUpdate(): void {
-    this.update_quests_progress('turn')
-    //testjpf should loop thru each quest and update
-    //each quest should go through each condition and update
-    //quest and conditions should have active, waiting, complete, archivve type states
+    print('<<< ::: QUESTSTurnUpdate() ::: >>>')
+    const checkpointQuests = this.all[this.checkpoint.slice(0, -1)]
+    let kq: keyof typeof checkpointQuests
+    for (kq in checkpointQuests) {
+      print('LOOP!!! QUESTSTurnUpdate() ::: >>>')
+
+      checkpointQuests[kq].fsm.update(dt)
+    }
   }
   private onTurnExit(): void {}
   private onInteractEnter(): void {}
   private onInteractUpdate(): void {
-    this.update_quests_progress('interact')
+    //testjpf rethink diff between turn and interact
+    const checkpointQuests = this.all[this.checkpoint]
+    let kq: keyof typeof checkpointQuests
+    for (kq in checkpointQuests) {
+      checkpointQuests[kq].fsm.update(dt)
+    }
   }
   private onInteractExit(): void {}
   public get all() {
@@ -82,15 +107,17 @@ export default class WorldQuests {
 
     return Math.round((passed / count) * 100)
   }
-
+  //TESTJPF NEW this really should just loop through each quest, update.
+  //each quest could update. each step can fire it's own function and args
+  // this could lead to better function imports
+  //and better FSM condtionals!!!
   // checks quest completion after interactions and turns
-  //TESTJPF all FSM stuff for quest turn
+  /** 
   update_quests_progress = (interval: string) => {
-    //  print('checkpoint.slice(0, -1)', checkpoint.slice(0, -1))
-    const quests = this.all[this.checkpoint.slice(0, -1)]
-
-    let questKey: keyof typeof quests
-    for (questKey in quests) {
+    //  print('.checkpointslice(0, -1)', checkpoint.slice(0, -1))
+   // const quests = this.all[this.checkpoint.slice(0, -1)]
+    //let questKey: keyof typeof quests
+    //for (questKey in quests) {
       const quest = quests[questKey]
       if (quest.passed == false) {
         let quest_passed = true
@@ -127,5 +154,5 @@ export default class WorldQuests {
         }
       }
     }
-  }
+  }*/
 }

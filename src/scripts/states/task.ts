@@ -6,7 +6,7 @@ import WorldPlayer from './player'
 import StateMachine from './stateMachine'
 import { Consequence, Effect, Task, TasksChecks } from '../../types/tasks'
 import { TaskProps } from '../../types/world'
-import { fxLookup, fx } from '../utils/consts'
+import { fxLookup, fx, immobile, doctors } from '../utils/consts'
 import { shuffle } from '../utils/utils'
 import {
   removeRandom,
@@ -95,13 +95,11 @@ export default class TaskState {
   private onNewExit(): void {}
   private onInjuryEnter(): void {}
   private onInjuryUpdate(): void {
-    for (const doc of ['doc01', 'doc02', 'doc03']) {
-      const mobile = () =>
-        this.parent.npcHasTask(doc, 'any', ['mender', 'injury', 'infirm']) ===
-        null
+    for (const doc of doctors) {
+      const mobile = () => this.parent.npcHasTask([doc], [], immobile) === null
 
       if (this.parent.didCrossPaths(this.owner, doc) && mobile() === true) {
-        print(this.owner, 'met doc for injury task::', doc)
+        // print(this.owner, 'met doc for injury task::', doc)
         this.parent.addAdjustMendingQueue(this.target)
         this.turns = 0
         break
@@ -119,11 +117,12 @@ export default class TaskState {
       'security005',
     ]) {
       if (!this.parent.didCrossPaths(this.owner, cop)) return
-      print(this.owner, 'met cop for snitch task::', cop)
-      const priors = this.parent.npcHasTask(this.owner, this.target, [
-        'questioning',
-        'arrest',
-      ])
+      // print(this.owner, 'met cop for snitch task::', cop)
+      const priors = this.parent.npcHasTask(
+        [this.owner],
+        [this.target],
+        ['questioning', 'arrest']
+      )
       const caution_state: Consequence =
         this.target == 'player'
           ? this.checks.playerSnitchCheck!(priors !== null, cop, this.cause)
@@ -193,20 +192,9 @@ export default class TaskState {
       if (effect.fx.type == 'opinion') {
         effect.fx.stat = NpcsInitState[this.target].clan
       }
-      print(
-        this.owner,
-        'found:',
-        npc,
-        'because',
-        this.label,
-        '.',
-        npc,
-        'has effect:',
-        fx_labels[1]
-      )
-      //check if they already have effect? testjpf
-      listener.effects.push(effect)
-      listener.add_effects_bonus(effect)
+      // prettier-ignore
+      // print(this.owner, 'found:', npc, 'because', this.label, '.', npc, 'has effect:', fx_labels[1])
+      listener.addOrExtendEffect(effect)
       break
     }
   }
@@ -218,9 +206,7 @@ export default class TaskState {
       .getOccupants(owner.currRoom)
       .filter(
         (o) =>
-          o !== this.owner &&
-          this.parent.npcHasTask(o, 'any', ['mender', 'injury', 'infirm']) ===
-            null
+          o !== this.owner && this.parent.npcHasTask([o], [], immobile) === null
       )
     const checks: Array<(target: string, listener: string) => Consequence> =
       this.cause == 'theft'
@@ -289,11 +275,11 @@ export default class TaskState {
         ? this.parent.returnPlayer()
         : this.parent.returnNpc(this.target)
     if (
-      this.parent.npcHasTask(this.target, 'any', [
-        'mender',
-        'injury',
-        'infirm',
-      ]) !== null
+      this.parent.npcHasTask(
+        [this.target],
+        [],
+        ['mender', 'injury', 'infirm']
+      ) !== null
     )
       return
 
@@ -306,12 +292,6 @@ export default class TaskState {
         ? this.playerConfrontConsequence(target.fsm, owner.fsm)
         : this.npc_confront_consequence()
       this.turns = 0
-      print(
-        'PLSYRTCONFRONT??:: ',
-        this.target == 'player',
-        this.owner,
-        this.target
-      )
     }
   }
   playerConfrontConsequence(playerfsm: StateMachine, npcfsm: StateMachine) {

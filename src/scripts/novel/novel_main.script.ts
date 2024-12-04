@@ -32,7 +32,7 @@ function prepare_novel_txts(
   if (extend == true) {
     checkpoint = player.checkpoint
   }
-  const task = tasks.npcHasTask(novel.npc.name, 'player')
+  const task = tasks.npcHasTask([novel.npc.name], ['player'])
   if (task != null) {
     print('NOVELVOVEL2 task1:', task.label)
     //could use this at level addresstasks testjpf

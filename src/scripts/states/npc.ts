@@ -12,11 +12,12 @@ import { Effect } from '../../types/tasks'
 import { NpcProps } from '../../types/world'
 import { NovelNpc } from '../../types/novel'
 import {
-  attempt_to_fillStation,
+  fillStationAttempt,
   set_room_priority,
   set_npc_target,
 } from '../utils/ai'
 import { surrounding_room_matrix } from '../utils/utils'
+import { doctors } from '../utils/consts'
 
 export default class NpcState {
   fsm: StateMachine
@@ -114,9 +115,9 @@ export default class NpcState {
         onExit: this.onInterrogateExit.bind(this),
       })
       .addState('confront', {
-        onEnter: this.onConfrontEnter.bind(this),
-        onUpdate: this.onConfrontUpdate.bind(this),
-        onExit: this.onConfrontExit.bind(this),
+        onEnter: this.onConfrontPlayerEnter.bind(this),
+        onUpdate: this.onConfrontPlayerUpdate.bind(this),
+        onExit: this.onConfrontPlayerExit.bind(this),
       })
       .addState('trespass', {
         onEnter: this.onTrespassEnter.bind(this),
@@ -140,13 +141,14 @@ export default class NpcState {
       })
     this.addInvBonus = this.addInvBonus.bind(this)
     this.tendToPatient = this.tendToPatient.bind(this)
+    this.add_effects_bonus = this.add_effects_bonus.bind(this)
+    this.addOrExtendEffect = this.addOrExtendEffect.bind(this)
   }
-  //TESTJJPF Rename to confrontPlayer???
-  private onConfrontEnter(): void {
+  private onConfrontPlayerEnter(): void {
     this.convos++
   }
-  private onConfrontUpdate(): void {}
-  private onConfrontExit(): void {
+  private onConfrontPlayerUpdate(): void {}
+  private onConfrontPlayerExit(): void {
     const novelUpdates: NovelNpc = this.parent.getNovelUpdates()
     this.convos = novelUpdates.convos
     this.traits = {
@@ -171,10 +173,7 @@ export default class NpcState {
   }
   private onInfirmUpdate(): void {
     this.turns_since_encounter = 99
-    this.parent.isStationedTogether(
-      ['doc03', 'doc02', 'doc01'],
-      'infirmary'
-    ) === true
+    this.parent.isStationedTogether(doctors, 'infirmary') === true
       ? (this.hp = this.hp + 2)
       : (this.hp = this.hp + 1)
 
@@ -213,7 +212,7 @@ export default class NpcState {
         break
       } else if (
         math.random() > 0.7 &&
-        this.parent.npcHasTask(helper, this.name, []) === null &&
+        this.parent.npcHasTask([helper], [this.name]) === null &&
         NpcsInitState[helper].clan !== 'doctors'
       ) {
         //if not a doctor, create injury caution if haven't already
@@ -228,6 +227,8 @@ export default class NpcState {
   private onParamedicUpdate(): void {
     const target = RoomsInitState[this.parent.returnMendeeLocation()!].matrix
     const rooms = this.makePriorityRoomList(target)
+    this.parent.clearStation(this.currRoom, this.currStation, this.name)
+
     this.findRoomPlaceStation(rooms)
     // if (this.parent.getMendingQueue().length < 1) {
     //   this.fsm.setState('turn')
@@ -239,12 +240,12 @@ export default class NpcState {
   private onERfullUpdate(): void {
     this.turns_since_encounter = 97
     const patients = this.parent.getInfirmed()
+    this.parent.clearStation(this.currRoom, this.currStation, this.name)
 
     if (
       math.random() + patients.length * 0.2 > 1 &&
       this.parent.getStationMap().infirmary.aid !== undefined
     ) {
-      this.parent.clearStation(this.currRoom, this.currStation, this.name)
       this.parent.setStation('infirmary', 'aid', this.name)
       this.parent.pruneStationMap('infirmary', 'aid')
     } else if (patients.length > 2) {
@@ -281,7 +282,7 @@ export default class NpcState {
       this.parent.clearStation(this.currRoom, this.currStation, this.name)
       this.currStation = vacancy
     }
-    this.turns_since_encounter = 99
+    this.turns_since_encounter = 96
     this.parent.addInfirmed(this.name)
     this.matrix = RoomsInitState.security.matrix
     this.cooldown = 8
@@ -314,10 +315,10 @@ export default class NpcState {
     this.parent.clearStation(this.currRoom, this.currStation, this.name)
   }
   private onMenderEnter(): void {
-    this.turns_since_encounter = 98
+    this.turns_since_encounter = 97
   }
   private onMenderUpdate(): void {
-    this.turns_since_encounter = 98
+    this.turns_since_encounter = 97
     this.parent.pruneStationMap(this.currRoom, this.currStation)
   }
   private onMenderExit(): void {}
@@ -332,7 +333,9 @@ export default class NpcState {
     this.fsm.setState('turn')
   }
   private onNewExit(): void {}
-  private onTurnEnter(): void {}
+  private onTurnEnter(): void {
+    this.turns_since_encounter = math.random(2, 15)
+  }
   private onTurnUpdate(): void {
     this.exitRoom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
     this.remove_effects(this.effects)
@@ -370,14 +373,14 @@ export default class NpcState {
     )
   }
   findRoomPlaceStation(rooms: string[]): void {
-    const { chosenRoom, chosenStation } = attempt_to_fillStation(
+    const { chosenRoom, chosenStation } = fillStationAttempt(
       rooms,
       this.name,
       this.matrix,
       this.clan,
       this.parent.getStationMap()
     )
-    print('findrooomplacestation:: STATION:::', chosenRoom, chosenStation)
+    // print('findrooomplacestation:: STATION:::', chosenRoom, chosenStation)
     this.currRoom = chosenRoom
     this.parent.setStation(chosenRoom, chosenStation, this.name)
     this.parent.pruneStationMap(chosenRoom, chosenStation)
@@ -407,7 +410,6 @@ export default class NpcState {
         this.traits.binaries[bKey] - item.binaries[bKey]
   }
   addInvBonus(i: string) {
-    print('ADDINVBONUS::: NPC::', i)
     const item: InventoryTableItem = { ...itemStateInit[i] }
     let sKey: keyof typeof item.skills
     for (sKey in item.skills)
@@ -417,6 +419,17 @@ export default class NpcState {
     for (bKey in item.binaries)
       this.traits.binaries[bKey] =
         this.traits.binaries[bKey] + item.binaries[bKey]
+  }
+  addOrExtendEffect(e: Effect) {
+    //   let ek: keyof typeof this.effects
+    for (const fx of this.effects) {
+      if (e.label === fx.label) {
+        fx.turns += 5
+        return
+      }
+    }
+    this.effects.push(e)
+    this.add_effects_bonus(e)
   }
   add_effects_bonus(e: Effect) {
     this.traits[e.fx.type][e.fx.stat] =

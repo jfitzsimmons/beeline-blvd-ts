@@ -51,11 +51,6 @@ function update_hud() {
 function game_turn() {
   novel.reset_novel()
   world.fsm.update(dt)
-  //Temp testjpf prob move to doc npx
-  //aidCheck()
-  //room as keyof typeof aiActions
-  //if (room in aiActions) aiActions[room as keyof typeof aiActions]
-
   quest_checker('turn')
 }
 interface props {
@@ -87,7 +82,8 @@ export function on_message(
       player.fsm.setState('turn')
     }
   } else if (messageId == hash('exit_gui')) {
-    quests.update_quests_progress('interact')
+    //quests.update_quests_progress('interact')
+    quests.fsm.update(dt)
     quest_checker('interact')
 
     print('exitgui reason::', novel.reason)

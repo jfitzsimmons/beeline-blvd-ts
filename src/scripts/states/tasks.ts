@@ -50,7 +50,6 @@ export default class WorldTasks {
   fsm: StateMachine
   quests: QuestMethods
   mendingQueue: string[]
-  medicalSys: string[]
   methods: TaskProps
   parent: WorldTasksArgs
   checks: TasksChecks
@@ -60,7 +59,6 @@ export default class WorldTasks {
     this._all = []
     this._spawn = 'grounds'
     this.mendingQueue = []
-    this.medicalSys = []
     this.parent = worldProps
     this.methods = {
       npcHasTask: this.npcHasTask.bind(this),
@@ -138,17 +136,10 @@ export default class WorldTasks {
     let i = this.all.length
     while (i-- !== 0) {
       const task = this.all[i]
-      print(
-        'TURNUPDATE::: task::',
-        task.label,
-        task.owner,
-        task.target,
-        task.cause,
-        task.turns
-      )
+      // prettier-ignore
+      // print('TURNUPDATE::: task::', task.label, task.owner, task.target, task.cause, task.turns)
       if (task.turns < 1) {
         this.all.splice(i, 1)
-        return
       } else {
         task.turns = task.turns - 1
         task.fsm.update(dt)
@@ -173,11 +164,11 @@ export default class WorldTasks {
       if (this.mendingQueue.indexOf(patient) > 1)
         arraymove(this.mendingQueue, this.mendingQueue.indexOf(patient), 0)
     } else {
-      print('cautions caused patient:', patient, 'to be added to mendingQueue')
+      // print('cautions caused patient:', patient, 'to be added to mendingQueue')
       this.mendingQueue.push(patient)
     }
   }
-  task_has_npc(cause: string): string | null {
+  taskHasOwner(cause: string): string | null {
     for (let i = this.all.length - 1; i >= 0; i--) {
       const c = this.all[i]
       if (c.cause == cause) {
@@ -255,14 +246,14 @@ export default class WorldTasks {
     return false
   }
   npcHasTask(
-    owner: string,
-    target: string,
+    owner: string[] = [],
+    target: string[] = [],
     labels: string[] = []
   ): TaskState | null {
     for (const c of this.all) {
       if (
-        (owner == 'any' || c.owner == owner) &&
-        (target == 'any' || c.target == target) &&
+        (owner.length < 1 || owner.includes(c.owner)) &&
+        (target.length < 1 || target.includes(c.target)) &&
         (labels.length < 1 || labels.includes(c.label))
       ) {
         return c
@@ -307,7 +298,7 @@ export default class WorldTasks {
     const append: Task = {
       owner: owner.name,
       turns: 15,
-      label, // merits //testjpf state is a bad name
+      label,
       scope: 'npc',
       authority: owner.clan, //ex; labor
       target,
@@ -350,18 +341,8 @@ export default class WorldTasks {
     } else if (label == 'confront') {
       append.turns = 1
     }
-
-    print(
-      append.owner,
-      'know that',
-      append.target,
-      'did',
-      append.cause,
-      'so created task:',
-      append.label,
-      'for turns:',
-      append.turns
-    )
+    // prettier-ignore
+    // print(append.owner, 'know that', append.target, 'did', append.cause, 'so created task:', append.label, 'for turns:', append.turns)
 
     this.append_task(append)
   }

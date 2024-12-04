@@ -1,6 +1,5 @@
 interface IState {
   name: string
-  //testjpf might need more specific turn based thing.
   onEnter?: () => void
   onUpdate?: (dt: number) => void
   onExit?: () => void

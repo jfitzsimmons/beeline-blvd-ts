@@ -8,19 +8,17 @@ import {
 } from '../../../utils/quest'
 import QuestState from '../../quest'
 import QuestStep from '../../questStep'
+import SideQuestStep from '../../sideQuest'
 
 export const tutorialQuests = (
   questmethods: WorldQuestsMethods
 ): { [key: string]: QuestState } => {
-  //const { nq, tq, nvq } = questmethods
   const { nq, nvq } = questmethods
-  //testjpf tod need to add options to class params
   return {
     medic_assist: new QuestState({
       id: 'qma',
       passed: false,
       conditions: {
-        //testjfpf like new QuestState but new QuestStep()
         ['0']: new QuestStep({
           id: 'qmahtm',
           label: 'Agree to help injured man',
@@ -37,6 +35,9 @@ export const tutorialQuests = (
           passed: false,
           interval: ['interact'],
           func: [does_equal],
+          //doesnt use this reason testjpf
+          //in tutorial/getadoctor either getsomemeds or rejectmeds
+          //check for both or change completely
           args: [[nvq.get_reason, 'getadoctor']],
         }), //have you talked to a doctor?
         ['2']: new QuestStep({
@@ -87,17 +88,14 @@ export const tutorialQuests = (
           args: [[nvq.get_reason, 'medassistcomplete']],
         }), //have you talked to a doctor?
       },
-      /** 
       side_quests: {
-        ['1']: {
-          label: 'Basically a doctor.',
+        hallpass: new SideQuestStep({
+          id: 'sqhlps',
+          label: 'Aquire temporary clearance',
           solution: '',
           passed: false,
-          interval: ['turn'],
-          func: [returnfalse],
-          args: [[returnfalse, false]],
-        },
-      },*/
+        }),
+      },
     }),
   }
 

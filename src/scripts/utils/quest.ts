@@ -36,6 +36,7 @@ export function returnfalse() {
 export function does_equal(
   args: [() => number | string, number | string]
 ): boolean {
+  // print('!!!does equal:::', args[0](), args[1], args[0]() == args[1])
   return args[0]() == args[1] ? true : false
 }
 
@@ -49,7 +50,7 @@ export function convos_check(args: [() => Npcs, number]): boolean {
   let nKey: keyof typeof npcs
   for (nKey in npcs) {
     if (npcs[nKey].convos >= args[1]) {
-      return true //tesjpf could return array with "hounded" ??? bad.
+      return true
     }
   }
   return false

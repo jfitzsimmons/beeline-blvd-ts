@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
-import { QuestCondition } from '../../types/tasks'
+import { QuestProps } from '../../types/tasks'
+
 //const dt = math.randomseed(os.time())
 
 export default class QuestStep {
@@ -13,7 +14,7 @@ export default class QuestStep {
   func: { (args: [() => any, any]): boolean }[]
   args: [() => any, any][]
   fsm: StateMachine
-  constructor(step: QuestCondition) {
+  constructor(step: QuestProps) {
     this.label = step.label
     this.passed = step.passed
     this.interval = step.interval
@@ -23,11 +24,6 @@ export default class QuestStep {
     //this.mendingQueue = []
     this.fsm = new StateMachine(this, 'step' + step.id)
     this.fsm.addState('idle')
-    this.fsm.addState('turn', {
-      onEnter: this.onTurnEnter.bind(this),
-      onUpdate: this.onTurnUpdate.bind(this),
-      onExit: this.onTurnExit.bind(this),
-    })
     this.fsm.addState('active', {
       onEnter: this.onActiveEnter.bind(this),
       onUpdate: this.onActiveUpdate.bind(this),
@@ -44,18 +40,41 @@ export default class QuestStep {
       onExit: this.onNewExit.bind(this),
     })
   }
-  private onNewEnter(): void {
-    this.fsm.setState('idle')
+  private onNewEnter(): void {}
+  private onNewUpdate(): void {
+    if (this.passed == true) return
+    for (let i = this.func.length; i-- !== 0; ) {
+      if (this.func[i](this.args[i]) == true) {
+        this.passed = true
+        //print('queststeppass???:::', this.passed)
+      }
+
+      //print(this.label, 'newupdaeteQUESTQUESTQUEST')
+    }
   }
-  private onNewUpdate(): void {}
   private onNewExit(): void {}
-  private onTurnEnter(): void {}
-  private onTurnUpdate(): void {
-    //testjpf
+  private onActiveEnter(): void {
+    if (this.passed == true) return
+    for (let i = this.func.length; i-- !== 0; ) {
+      if (this.func[i](this.args[i]) == true) {
+        this.passed = true
+        //print('queststeppass???:::', this.passed)
+      }
+
+      //print(this.label, 'ACTIVE ENTERQUESTQUESTQUEST')
+    }
   }
-  private onTurnExit(): void {}
-  private onActiveEnter(): void {}
-  private onActiveUpdate(): void {}
+  private onActiveUpdate(): void {
+    if (this.passed == true) return
+    for (let i = this.func.length; i-- !== 0; ) {
+      if (this.func[i](this.args[i]) == true) {
+        this.passed = true
+        //print('queststeppass???:::', this.passed)
+      }
+
+      //print(this.label, 'ACTIVEUP!!! QUESTQUESTQUEST')
+    }
+  }
   private onActiveExit(): void {}
   private onCompleteEnter(): void {}
   private onCompleteUpdate(): void {}

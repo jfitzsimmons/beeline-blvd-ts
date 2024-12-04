@@ -84,10 +84,10 @@
   resolved "https://registry.yarnpkg.com/@ts-defold/tstl-userdata-sugar/-/tstl-userdata-sugar-1.0.1.tgz#a22a696b1bdfe9dc99155894ed53f3d8fbdecc1a"
   integrity sha512-iEBt+EpMOvBnpr1/fwUMirVGUqUAE9yFIuzi4ir7BOJvQEEtqAgTvyco2RIms9D7OzEL2jqBSzt3NjoD7zdKpQ==
 
-"@ts-defold/types@^1.2.54":
-  version "1.2.54"
-  resolved "https://registry.yarnpkg.com/@ts-defold/types/-/types-1.2.54.tgz#e2705f811fde64b99b4abeefda97b321c6991c99"
-  integrity sha512-RJmCVBGSR8ePldkmKKhoaWI8Mqhy4qFTJfn0q1PmakwMajELoJITvh/stmj/m9brEkD7stSuXR091aP7F5dKcA==
+"@ts-defold/types@^1.2.56":
+  version "1.2.56"
+  resolved "https://registry.yarnpkg.com/@ts-defold/types/-/types-1.2.56.tgz#edd85cc969fe796afeb8f2c9544bc409ce7cf1a4"
+  integrity sha512-4z621188JK1hvolHyZZ4GTExnwa/BFJ1HZKmJg1+9POpzQfXbvIoVUx8GRDcvf6eOTYpeItHZy9UDWGa6UwXVg==
   dependencies:
     lua-types "^2.10.1"
 
@@ -288,9 +288,9 @@ concat-map@0.0.1:
   integrity sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==
 
 cross-spawn@^7.0.2:
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.3.tgz#f73a85b9d5d41d045551c177e2882d4ac85728a6"
-  integrity sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==
+  version "7.0.6"
+  resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.6.tgz#8a58fe78f00dcd70c370451759dfbfaf03e8ee9f"
+  integrity sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==
   dependencies:
     path-key "^3.1.0"
     shebang-command "^2.0.0"

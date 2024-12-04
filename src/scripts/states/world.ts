@@ -112,7 +112,7 @@ export default class World {
     this.player.exitRoom = 'grounds'
     this.npcs.fsm.setState('new')
     this.tasks.fsm.setState('turn')
-    this.quests.fsm.setState('turn')
+    this.quests.fsm.setState('new')
     //debug defaults
     this.npcs.all[this.rooms.all.reception.stations.guest].hp = 0
     this.npcs.all[this.rooms.all.reception.stations.guest].fsm.setState(
@@ -154,7 +154,14 @@ export default class World {
     this.player.alert_level = 0
     this.player.ap = this.player.ap_max - 6
   }
-  private onArrestUpdate(): void {}
+  private onArrestUpdate(): void {
+    this.player.fsm.update(dt)
+    this.rooms.fsm.update(dt)
+    this.npcs.fsm.update(dt)
+    this.quests.fsm.update(dt)
+    this.tasks.fsm.update(dt)
+    this.fsm.setState('turn')
+  }
   private onArrestExit(): void {}
   private onTurnEnter(): void {
     this.clock = this.clock + 1
@@ -172,14 +179,8 @@ export default class World {
   private didCrossPaths(o: string, t: string): boolean {
     const owner = this.npcs.all[o]
     const target = this.npcs.all[t]
-    print(
-      'didcross:::',
-      owner.name,
-      target.name,
-      owner.currRoom == target.currRoom,
-      owner.currRoom == target.exitRoom,
-      owner.exitRoom == target.currRoom
-    )
+    // prettier-ignore
+    // print('didcross:::', owner.name, target.name, owner.currRoom == target.currRoom, owner.currRoom == target.exitRoom, owner.exitRoom == target.currRoom)
     return (
       owner.currRoom == target.currRoom ||
       (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
