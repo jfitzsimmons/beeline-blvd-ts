@@ -59,7 +59,7 @@ function open_inventory(_this: props, actor: string, action: string) {
     _this.watcher = actor
   }
   if (_this.watcher != '' && _this.watcher != null) {
-    novel.npc = npcs.all[_this.npcname]
+    novel.npc = npcs.all[_this.watcher]
 
     const prev_caution = tasks.npcHasTask([_this.watcher], ['player'])
 
@@ -105,6 +105,7 @@ function check_nodes(
         c.action == 'give' ||
         c.action == 'pockets'
       ) {
+        print('pre npcname inv', _this.npcname)
         open_inventory(_this, c.actor, c.action)
       } else if (c.action == 'talk') {
         open_novel(_this)

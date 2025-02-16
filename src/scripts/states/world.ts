@@ -52,7 +52,7 @@ export default class World {
       hasHallpass: this.tasks.has_clearance.bind(this),
       removeTaskByCause: this.tasks.removeTaskByCause.bind(this),
     }
-    this.player = new WorldPlayer(playerProps)
+    this.player = new WorldPlayer('hero', playerProps)
     const npcsProps: WorldNpcsArgs = {
       isStationedTogether: this.rooms.isStationedTogether.bind(this),
       clearStation: this.rooms.clearStation.bind(this),
@@ -67,7 +67,7 @@ export default class World {
       addAdjustMendingQueue: this.tasks.addAdjustMendingQueue.bind(this),
       getNovelUpdates: this.novel.getNovelUpdates.bind(this),
       playerFSM: this.player.fsm,
-      playerTraits: this.player.state.traits,
+      playerTraits: this.player.traits,
       ...playerProps,
       ...tasksProps,
     }
@@ -137,8 +137,8 @@ export default class World {
   private onNewExit(): void {}
   private onFaintEnter(): void {
     this.clock = this.clock + 6
-    this.player.ap = this.player.ap_max - 6
-    this.player.hp = this.player.hp_max - 1
+    this.player.ap = this.player.apMax - 6
+    this.player.hp = this.player.hpMax - 1
   }
   private onFaintUpdate(): void {
     this.player.fsm.update(dt)
@@ -152,7 +152,7 @@ export default class World {
   private onArrestEnter(): void {
     this.clock = this.clock + 6
     this.player.alert_level = 0
-    this.player.ap = this.player.ap_max - 6
+    this.player.ap = this.player.apMax - 6
   }
   private onArrestUpdate(): void {
     this.player.fsm.update(dt)

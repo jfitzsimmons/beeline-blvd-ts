@@ -30,7 +30,7 @@ export interface NovelNpc {
   clan: string
   convos: number
   traits: Traits
-  turns_since_convo: number
+  sincePlayerConvo: number
   love: number
   currStation: string
 }

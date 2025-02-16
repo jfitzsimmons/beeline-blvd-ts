@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { NpcsInitState } from './inits/npcsInitState'
-import { PlayerInitState } from './inits/playerInitState'
 import NpcState from './npc'
 import WorldPlayer from './player'
 import StateMachine from './stateMachine'
@@ -150,6 +149,11 @@ export default class TaskState {
 
     holder.clearance = tonumber(this.scope.charAt(this.scope.length - 1))!
   }
+  /**
+   * testjpf remove player init state
+   * old clearance should be handled by capability
+   *
+   */
   private onHallpassUpdate(): void {
     if (this.turns < 1) {
       const holder =
@@ -157,9 +161,7 @@ export default class TaskState {
           ? this.parent.returnPlayer()
           : this.parent.returnNpc(this.owner)
       holder.clearance =
-        this.owner === 'player'
-          ? PlayerInitState.clearance
-          : NpcsInitState[this.owner].clearance
+        this.owner === 'player' ? 0 : NpcsInitState[this.owner].clearance
     }
   }
   private onHallpassExit(): void {}
@@ -342,15 +344,21 @@ export default class TaskState {
       if (consolation == 'neutral') {
         let chest_item = null
         //if w != null ){ utils.has_value(w.inventory, a[1]) }
-
+        /**
+         * TODO MAJOR
+         * Removed loot from states
+         * need fix
+         * temp hardcode
+         *
+         */
         if (math.random() < 0.4) {
-          chest_item = removeRandom(target.inventory, target.loot)
+          chest_item = removeRandom(target.inventory, ['apple02'])
         } else if (math.random() < 0.5) {
-          chest_item = removeValuable(target.inventory, target.loot)
+          chest_item = removeValuable(target.inventory, ['apple02'])
         } else {
           chest_item = removeAdvantageous(
             target.inventory,
-            target.loot,
+            ['apple02'],
             target.traits.skills
           )
         }

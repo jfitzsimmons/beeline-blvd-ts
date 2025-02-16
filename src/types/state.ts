@@ -15,11 +15,11 @@ export interface Npcs {
 export interface NpcDefaults {
   convos: number
   actions: string[]
-  ai_path: string
+  aiPath: string
   matrix: { x: number; y: number }
   traits: Traits
-  turns_since_encounter: number
-  turns_since_convo: number
+  sincePlayerRoom: number
+  sincePlayerConvo: number
   love: number
   hp: number
   cooldown: number
@@ -49,8 +49,8 @@ export interface PlayerState {
   alert_level: number
   clearance: number
   hp: number
-  hp_max: number
-  ap_max: number
+  hpMax: number
+  apMax: number
   ap: number
   turns: number
   checkpoint: string
@@ -60,7 +60,7 @@ export interface PlayerState {
   gangs: { [key: string]: number }
 }
 export interface Traits {
-  opinion?: Trait | never
+  opinion: Trait | never
   skills: Trait | never
   binaries: Trait | never
 }

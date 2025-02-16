@@ -167,20 +167,20 @@ export function set_room_priority(
 export function set_npc_target(
   direction: Direction,
   n: {
-    turns_since_encounter: number
-    ai_path: string
+    sincePlayerRoom: number
+    aiPath: string
     matrix: { x: number; y: number }
     target: { x: number; y: number }
     home: { x: number; y: number }
   }
 ) {
   let target = { x: 0, y: 0 }
-  if (n.turns_since_encounter > 20) {
+  if (n.sincePlayerRoom > 20) {
     target = direction.center
-  } else if (n.ai_path == 'pinky') {
+  } else if (n.aiPath == 'pinky') {
     //always targets 0 to 2 rooms infront of player
     target = direction.front
-  } else if (n.ai_path == 'blinky') {
+  } else if (n.aiPath == 'blinky') {
     //always targets 1 room behind player unless too far
     const distance = n.matrix.x - n.home.x + (n.matrix.y - n.home.y)
     if (distance < -5 || distance > 5) {
@@ -188,7 +188,7 @@ export function set_npc_target(
     } else {
       target = direction.back
     }
-  } else if (n.ai_path == 'inky') {
+  } else if (n.aiPath == 'inky') {
     //1/3 check to see if you 1: too far from home or 2: 50/50 left/right
     let distance = 0
     if (math.random() < 0.33) {
@@ -204,7 +204,7 @@ export function set_npc_target(
     } else {
       target = direction.left
     }
-  } else if (n.ai_path == 'clyde') {
+  } else if (n.aiPath == 'clyde') {
     const distance = n.matrix.x - n.target.x + (n.matrix.y - direction.center.y)
     //random front, back, left, right unless too close and fail 50/50 check
     if (distance > -2 && distance < 2 && math.random() > 0.5) {

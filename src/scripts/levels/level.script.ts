@@ -17,7 +17,7 @@ function calculate_heat(room: string) {
   heat += stations.length
   for (const npc of stations) {
     heat += npcs.all[npc].love * -1
-    if (npcs.all[npc].turns_since_convo <= 0) heat++
+    if (npcs.all[npc].sincePlayerConvo <= 0) heat++
   }
 
   heat +=
@@ -33,8 +33,8 @@ function calculate_heat(room: string) {
     (player.hp +
       player.clearance +
       tasks.all.length +
-      player.state.traits.skills.stealth +
-      player.state.traits.skills.charisma) *
+      player.traits.skills.stealth +
+      player.traits.skills.charisma) *
     2
 
   cold += player.ap
