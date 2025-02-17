@@ -28,8 +28,8 @@ export default class WorldNpcs {
   ignore: string[]
 
   constructor(npcsProps: WorldNpcsArgs) {
-    this.infirmed = []
-    this.injured = []
+    this.infirmed = [] // move to room? infrimed action?
+    this.injured = [] // room? injured action?
     this.ignore = []
     this.order = []
     this.quests = {

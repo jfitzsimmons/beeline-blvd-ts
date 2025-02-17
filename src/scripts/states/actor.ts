@@ -53,7 +53,6 @@ export default class ActorState {
       stealth: 5, // !!
     },
   }
-
   hp = 5
   hpMax = 8
   ap = 18

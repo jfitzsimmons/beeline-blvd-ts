@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { NpcsInitState } from './inits/npcsInitState'
-import {
-  RoomsInitLayout,
-  RoomsInitPriority,
-  RoomsInitState,
-} from './inits/roomsInitState'
+import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
 import { itemStateInit } from './inits/inventoryInitState'
 //import StateMachine from './stateMachine'
 import { InventoryTableItem } from '../../types/state'
@@ -19,6 +15,8 @@ import {
 import { surrounding_room_matrix } from '../utils/utils'
 import { doctors } from '../utils/consts'
 import ActorState from './actor'
+import TurnSequence from '../behaviors/sequences/turnSequence'
+import Sequence from '../behaviors/sequence'
 
 export default class NpcState extends ActorState {
   home: { x: number; y: number }
@@ -32,6 +30,7 @@ export default class NpcState extends ActorState {
   aiPath = ''
   sincePlayerRoom = 0
   sincePlayerConvo = 99
+  behavior: Sequence[] = []
   constructor(n: string, lists: NpcProps) {
     super(n, lists) // 👈️ call super() here
     this.home = NpcsInitState[n].home
@@ -303,18 +302,27 @@ export default class NpcState extends ActorState {
     this.sincePlayerRoom = math.random(2, 15)
   }
   private onTurnUpdate(): void {
-    this.exitRoom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
-    this.remove_effects(this.effects)
-    if (this.cooldown > 0) this.cooldown = this.cooldown - 1
-    if (this.hp < 1) {
-      this.fsm.setState('injury')
-      return
-    }
-    this.parent.clearStation(this.currRoom, this.currStation, this.name)
+    /**
+     * TESTJPF
+     * so instead we will access this.behaviors
+     * ...
+     * is this it's own sequence???
+     */
+    // this.exitRoom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
+    //this.remove_effects(this.effects)
+    //if (this.cooldown > 0) this.cooldown = this.cooldown - 1
+    //if (this.hp < 1) {
+    //  this.fsm.setState('injury')
+    // return
+    //}
+    // this.parent.clearStation(this.currRoom, this.currStation, this.name)
 
-    const target = RoomsInitState[this.parent.getPlayerRoom()].matrix
-    const rooms = this.makePriorityRoomList(target)
-    this.findRoomPlaceStation(rooms)
+    //const target = RoomsInitState[this.parent.getPlayerRoom()].//matrix
+    //const rooms = this.makePriorityRoomList(target)
+    // this.findRoomPlaceStation(rooms)
+    this.behavior.push(new TurnSequence(this))
+    // loop thru behVIORS AS TEST!!!
+    //testjpf STARTHERE
   }
   private onTurnExit(): void {}
 
