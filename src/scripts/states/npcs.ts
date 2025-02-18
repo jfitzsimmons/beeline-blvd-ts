@@ -92,10 +92,15 @@ export default class WorldNpcs {
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
+      //i could add logic here to
+      //handle doc logic separately.?
+      //testjpf
+      npc.behavior.children.push(new TurnSequence(npc))
       npc.fsm.update(dt)
       // prettier-ignore
       // print( 'NPCSonTurnUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
     }
+    //some of this NEED TO HAPPEN POST PLACING!
     this.medical()
     this.security()
   }
@@ -142,6 +147,7 @@ export default class WorldNpcs {
     for (const doc of this.returnDoctors()) {
       const mobile = !immobile.includes(doc.fsm.getState())
       if (mobile === true && count > 1) {
+        // should be action!
         doc.fsm.setState('erfull')
         count = 0
       } else if (
@@ -149,6 +155,7 @@ export default class WorldNpcs {
         count < 1 &&
         this.parent.getMendingQueue().length > 0
       ) {
+        // should be action!
         doc.fsm.setState('paramedic')
       } else if (mobile === true) {
         doc.fsm.setState('turn')

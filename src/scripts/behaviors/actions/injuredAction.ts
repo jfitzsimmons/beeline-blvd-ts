@@ -39,6 +39,13 @@ export default class InjuredAction extends Action {
            * this whole loop??
            * taskbuilder seems to be create action
            * for another NPC
+           *
+           * switch from InjuredSequence to
+           * MenderSequence (create)
+           * helper.behavior.children.push(new MenderSequence)
+           * return () => alternate(MendeeSequence)
+           *
+           * KEEP running into post placement and preplacement sequences / behavior
            */
           a.tendToPatient(a.name, helper)
           break
@@ -48,6 +55,7 @@ export default class InjuredAction extends Action {
           NpcsInitState[helper].clan !== 'doctors'
         ) {
           //if not a doctor, create injury caution if haven't already
+          //testjpf probably an ACTION::
           a.parent.taskBuilder(helper, 'injury', a.name, 'injury')
           break
         }

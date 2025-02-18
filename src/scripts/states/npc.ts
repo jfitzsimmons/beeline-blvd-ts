@@ -31,6 +31,8 @@ export default class NpcState extends ActorState {
   sincePlayerConvo = 99
   constructor(n: string, lists: NpcProps) {
     super(n, lists) // 👈️ call super() here
+    //TESTJPFDEBUG HP
+    this.hp = 1
     this.home = NpcsInitState[n].home
     this.name = NpcsInitState[n].name
     this.inventory = NpcsInitState[n].inventory
