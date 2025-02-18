@@ -3,7 +3,7 @@ import {
   RoomsInitLayout,
   RoomsInitState,
 } from '../../states/inits/roomsInitState'
-import NpcState from '../../states/npc'
+import { isNpc } from '../../utils/ai'
 import Action from '../action'
 import InjuryAction from './injuryAction'
 
@@ -23,7 +23,8 @@ export default class PlaceAction extends Action {
       return () => this.alternate(new InjuryAction(a))
     }
 
-    if (a instanceof NpcState) {
+    if (isNpc(a)) {
+      print('ISNPCUTIL!!!:::', isNpc(a))
       a.parent.clearStation(a.currRoom, a.currStation, a.name)
 
       const target = RoomsInitState[a.parent.getPlayerRoom()].matrix

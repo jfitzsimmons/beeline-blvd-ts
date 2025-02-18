@@ -7,6 +7,7 @@ export default class Sequence {
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
+      print('SEQCHILD')
       child.run()
     }
     return ''

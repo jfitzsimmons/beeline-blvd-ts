@@ -1,4 +1,5 @@
 import { Direction } from '../../types/ai'
+import ActorState from '../states/actor'
 //import { Traits } from '../../types/state'
 //import { Effect } from '../../types/tasks'
 import {
@@ -6,7 +7,13 @@ import {
   RoomsInitLayout,
   RoomsInitState,
 } from '../states/inits/roomsInitState'
+import type NpcState from '../states/npc'
 import { shuffle } from './utils'
+
+// user defined type guard
+export function isNpc(a: ActorState): a is NpcState {
+  return a.name !== 'player'
+}
 
 const count: { [key: string]: number } = {}
 const unplacedcount: { [key: string]: number } = {}

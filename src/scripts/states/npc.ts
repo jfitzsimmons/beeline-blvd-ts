@@ -15,7 +15,7 @@ import {
 import { surrounding_room_matrix } from '../utils/utils'
 import { doctors } from '../utils/consts'
 import ActorState from './actor'
-import TurnSequence from '../behaviors/sequences/turnSequence'
+//import TurnSequence from '../behaviors/sequences/turnSequence'
 
 export default class NpcState extends ActorState {
   home: { x: number; y: number }
@@ -324,11 +324,19 @@ export default class NpcState extends ActorState {
     //const target = RoomsInitState[this.parent.getPlayerRoom()].//matrix
     //const rooms = this.makePriorityRoomList(target)
     // this.findRoomPlaceStation(rooms)
-    this.behavior.children.push(new TurnSequence(this))
+    /**
+     * TESTJPF the circular ref error
+     * should be solved if you move pushing turnseq
+     * to somewhere else.
+     *
+     * I think a huge question is
+     * whether i need to consider PLAYER
+     * at all!!!
+     */
     this.behavior.run()
 
     // loop thru behVIORS AS TEST!!!
-    //testjpf STARTHERE
+    //testjpf STARTHERE h
   }
   private onTurnExit(): void {}
 

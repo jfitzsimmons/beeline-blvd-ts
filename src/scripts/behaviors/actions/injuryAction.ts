@@ -1,5 +1,5 @@
 import ActorState from '../../states/actor'
-import NpcState from '../../states/npc'
+import { isNpc } from '../../utils/ai'
 import Action from '../action'
 import InjuredSequence from '../sequences/injuredSequence'
 
@@ -10,7 +10,7 @@ export default class InjuryAction extends Action {
   run(): { (): void } {
     const { actor: a } = this
     //testjpf oninjurystart
-    if (a instanceof NpcState) {
+    if (isNpc(a)) {
       a.sincePlayerRoom = 99
       a.parent.addInjured(a.name)
     }

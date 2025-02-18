@@ -14,6 +14,7 @@ import { shuffle } from '../utils/utils'
 import { RoomsInitState } from './inits/roomsInitState'
 import { confrontation_check } from './inits/checksFuncs'
 import { immobile } from '../utils/consts'
+import TurnSequence from '../behaviors/sequences/turnSequence'
 
 const dt = math.randomseed(os.time())
 
@@ -229,7 +230,10 @@ function adjust_binaries(value: number, clan: string, binary: string) {
 function seedNpcs(lists: NpcProps) {
   const seeded: Npcs = {}
   let ki: keyof typeof NpcsInitState
-  for (ki in NpcsInitState) seeded[ki] = new NpcState(ki, lists)
+  for (ki in NpcsInitState) {
+    seeded[ki] = new NpcState(ki, lists)
+    seeded[ki].behavior.children.push(new TurnSequence(seeded[ki]))
+  }
   return seeded
 }
 
