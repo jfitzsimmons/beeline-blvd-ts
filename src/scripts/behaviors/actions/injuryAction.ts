@@ -1,7 +1,7 @@
 import ActorState from '../../states/actor'
 import NpcState from '../../states/npc'
 import Action from '../action'
-import InjuredSequence from '../sequences/InjuredSequence'
+import InjuredSequence from '../sequences/injuredSequence'
 
 export default class InjuryAction extends Action {
   constructor(a: ActorState) {
