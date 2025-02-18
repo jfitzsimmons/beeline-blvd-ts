@@ -43,14 +43,13 @@ function love_drop(n: string): Consequence {
   const npc = npcs.all[n]
 
   const modifier = Math.round(
-    player.state.traits.skills.wisdom +
-      player.state.traits.binaries.un_educated * 10 -
+    player.traits.skills.wisdom +
+      player.traits.binaries.un_educated * 10 -
       npc.traits.skills.charisma +
       Math.abs(npc.traits.binaries.evil_good * 10)
   )
   const advantage =
-    player.state.traits.skills.speed +
-      player.state.traits.binaries.lawlessLawful * 10 >
+    player.traits.skills.speed + player.traits.binaries.lawlessLawful * 10 >
     npc.traits.binaries.evil_good * 10 + npc.traits.skills.constitution
   const result = math.min(
     rollSpecialDice(5, advantage, 3, 2) + (modifier > -1 ? modifier : -1),

@@ -163,7 +163,7 @@ export function on_message(
     novel_start()
   } else if (messageId == hash('sleep')) {
     player.hp = message.hp
-    novel.npc.turns_since_convo = 0
+    novel.npc.sincePlayerConvo = 0
 
     novel_outcomes(message.reason)
     if (player.alert_level != message.alert) {

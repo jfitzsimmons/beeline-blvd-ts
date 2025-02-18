@@ -140,7 +140,7 @@ export default class WorldNovel {
       clan: n.clan,
       convos: n.convos,
       traits: n.traits,
-      turns_since_convo: n.turns_since_convo,
+      sincePlayerConvo: n.sincePlayerConvo,
       love: n.love,
     }
   }

@@ -14,6 +14,7 @@ import { shuffle } from '../utils/utils'
 import { RoomsInitState } from './inits/roomsInitState'
 import { confrontation_check } from './inits/checksFuncs'
 import { immobile } from '../utils/consts'
+import TurnSequence from '../behaviors/sequences/turnSequence'
 
 const dt = math.randomseed(os.time())
 
@@ -28,8 +29,8 @@ export default class WorldNpcs {
   ignore: string[]
 
   constructor(npcsProps: WorldNpcsArgs) {
-    this.infirmed = []
-    this.injured = []
+    this.infirmed = [] // move to room? infrimed action?
+    this.injured = [] // room? injured action?
     this.ignore = []
     this.order = []
     this.quests = {
@@ -199,7 +200,7 @@ export default class WorldNpcs {
   sort_npcs_by_encounter() {
     this.order.sort(
       (a: string, b: string) =>
-        this.all[a].turns_since_encounter - this.all[b].turns_since_encounter
+        this.all[a].sincePlayerRoom - this.all[b].sincePlayerRoom
     )
   }
   returnOrderAll(): [string[], Npcs] {
@@ -229,12 +230,15 @@ function adjust_binaries(value: number, clan: string, binary: string) {
 function seedNpcs(lists: NpcProps) {
   const seeded: Npcs = {}
   let ki: keyof typeof NpcsInitState
-  for (ki in NpcsInitState) seeded[ki] = new NpcState(ki, lists)
+  for (ki in NpcsInitState) {
+    seeded[ki] = new NpcState(ki, lists)
+    seeded[ki].behavior.children.push(new TurnSequence(seeded[ki]))
+  }
   return seeded
 }
 
 function random_attributes(npcs: Npcs, order: string[]) {
-  const ai_paths = ['inky', 'blinky', 'pinky', 'clyde']
+  const aiPaths = ['inky', 'blinky', 'pinky', 'clyde']
   const startskills = [1, 2, 3, 5, 7, 7, 8, 8]
   const startbins = [-0.3, 0.3, -1, -0.5, -0.1, 0.1, 0.5, 1]
   let path = 0
@@ -243,7 +247,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
   let kn: keyof typeof npcs
   for (kn in npcs) {
     order.splice(count, 0, kn)
-    npcs[kn].turns_since_encounter = math.random(5, 15)
+    npcs[kn].sincePlayerRoom = math.random(5, 15)
     npcs[kn].love = math.random(-1, 1)
     // random attitude
     npcs[kn].traits.opinion = {}
@@ -257,7 +261,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
       if (count > 6) count = 1
     }
     npcs[kn].race = `race0${path + 1}_0${count}`
-    npcs[kn].ai_path = ai_paths[path]
+    npcs[kn].aiPath = aiPaths[path]
     path = path + 1
 
     // random skills

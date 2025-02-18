@@ -21,7 +21,7 @@ interface props {
 }
 
 function absolute_binaries(): [string, number][] {
-  const bins = player.state.traits.binaries
+  const bins = player.traits.binaries
   const newbins: Array<[string, number]> = [
     [
       bins.evil_good < 0 ? 'evil' : 'good',
@@ -53,7 +53,7 @@ function absolute_binaries(): [string, number][] {
       bins.poor_wealthy < 0 ? 'modesty' : 'swanky',
       bins.poor_wealthy < 0 ? bins.poor_wealthy * -10 : bins.poor_wealthy * 10,
     ],
-    ...Object.entries(player.state.traits.skills),
+    ...Object.entries(player.traits.skills),
   ]
 
   newbins.sort((n1, n2) => {
@@ -95,13 +95,22 @@ function set_stats() {
 }
 
 function set_ranks() {
-  const factions = [...Object.entries(player.state.factions)].sort(function (
+  /**
+   * factions and gangs under opinion
+   * need to figure out new sort
+   * or make unique to player and npcs
+   * testjpf
+   */
+  const factions = [...Object.entries(player.traits.opinion)].sort(function (
     a,
     b
   ) {
     return b[1] - a[1]
   })
-  const gangs = [...Object.entries(player.state.gangs)].sort(function (a, b) {
+  const gangs = [...Object.entries(player.traits.opinion)].sort(function (
+    a,
+    b
+  ) {
     return b[1] - a[1]
   })
   const spacing = 28
