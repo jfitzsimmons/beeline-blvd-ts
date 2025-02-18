@@ -15,7 +15,8 @@
   "scripts": {
     "build": "tstl",
     "lint": "eslint src",
-    "dev": "tstl --watch"
+    "dev": "tstl --watch",
+    "clean": "rm -rf app/scripts && yarn build"
   },
   "devDependencies": {
     "@ts-defold/tstl-export-as-global": "^1.0.1",
