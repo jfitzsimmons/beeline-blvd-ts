@@ -153,6 +153,10 @@ export default class NpcState extends ActorState {
     //this.hp = 0
   }
   private onInjuryUpdate(): void {
+    //testjpf
+    // dont want to create new Sequence on update
+    // could have flag here that removes when healed
+    // but probably need to remove injuryState altogether???
     /**
     this.sincePlayerRoom = 99
     this.parent.pruneStationMap(this.currRoom, this.currStation)
