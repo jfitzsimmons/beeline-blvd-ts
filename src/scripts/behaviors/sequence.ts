@@ -5,9 +5,10 @@ export default class Sequence {
   constructor(actions: Action[]) {
     this.children = actions
   }
-  run() {
+  run(): 'REMOVE' | '' {
     for (const child of this.children) {
       child.run()
     }
+    return ''
   }
 }

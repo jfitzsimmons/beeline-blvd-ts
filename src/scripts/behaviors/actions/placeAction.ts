@@ -5,6 +5,7 @@ import {
 } from '../../states/inits/roomsInitState'
 import NpcState from '../../states/npc'
 import Action from '../action'
+import InjuryAction from './injuryAction'
 
 export default class PlaceAction extends Action {
   constructor(a: ActorState) {
@@ -19,7 +20,7 @@ export default class PlaceAction extends Action {
     if (a.hp < 1) {
       //testjpf create injuryaction
       //alternate logic??
-      return alternate(new InjuryAction(a))
+      return () => this.alternate(new InjuryAction(a))
     }
 
     if (a instanceof NpcState) {
@@ -30,8 +31,8 @@ export default class PlaceAction extends Action {
       a.findRoomPlaceStation(rooms)
     }
 
-    if (testjpfimmobile) return alternate(ImmobileAction(this))
-    if (testjpf) return fail('youfailed')
-    return success()
+    //if (testjpfimmobile) return () => this.alternate(ImmobileAction(this))
+    //  if (testjpf) return () => this.fail('youfailed')
+    return () => this.success()
   }
 }

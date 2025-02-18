@@ -16,7 +16,6 @@ import { surrounding_room_matrix } from '../utils/utils'
 import { doctors } from '../utils/consts'
 import ActorState from './actor'
 import TurnSequence from '../behaviors/sequences/turnSequence'
-import Sequence from '../behaviors/sequence'
 
 export default class NpcState extends ActorState {
   home: { x: number; y: number }
@@ -30,7 +29,6 @@ export default class NpcState extends ActorState {
   aiPath = ''
   sincePlayerRoom = 0
   sincePlayerConvo = 99
-  behavior: Sequence[] = []
   constructor(n: string, lists: NpcProps) {
     super(n, lists) // 👈️ call super() here
     this.home = NpcsInitState[n].home
@@ -150,11 +148,12 @@ export default class NpcState extends ActorState {
     this.parent.removeIgnore(this.name)
   }
   private onInjuryStart(): void {
-    this.sincePlayerRoom = 99
-    this.parent.addInjured(this.name)
-    this.hp = 0
+    //this.sincePlayerRoom = 99
+    //this.parent.addInjured(this.name)
+    //this.hp = 0
   }
   private onInjuryUpdate(): void {
+    /**
     this.sincePlayerRoom = 99
     this.parent.pruneStationMap(this.currRoom, this.currStation)
     if (this.parent.getIgnore().includes(this.name)) return
@@ -185,6 +184,7 @@ export default class NpcState extends ActorState {
         break
       }
     }
+      */
   }
 
   private onInjuryEnd(): void {}
@@ -320,7 +320,9 @@ export default class NpcState extends ActorState {
     //const target = RoomsInitState[this.parent.getPlayerRoom()].//matrix
     //const rooms = this.makePriorityRoomList(target)
     // this.findRoomPlaceStation(rooms)
-    this.behavior.push(new TurnSequence(this))
+    this.behavior.children.push(new TurnSequence(this))
+    this.behavior.run()
+
     // loop thru behVIORS AS TEST!!!
     //testjpf STARTHERE
   }

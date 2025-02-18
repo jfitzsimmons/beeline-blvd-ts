@@ -1,14 +1,13 @@
 import ActorState from '../../states/actor'
 import Action from '../action'
-import EffectsAction from '../actions/effectsAction'
-import PlaceAction from '../actions/placeAction'
+import InjuredAction from '../actions/injuredAction'
 import Sequence from '../sequence'
 
-export default class TurnSequence extends Sequence {
+export default class InjuredSequence extends Sequence {
   constructor(a: ActorState) {
     const turnActions: Action[] = []
 
-    turnActions.push(...[new EffectsAction(a), new PlaceAction(a)])
+    turnActions.push(...[new InjuredAction(a)])
 
     super(turnActions)
   }
@@ -16,6 +15,6 @@ export default class TurnSequence extends Sequence {
     for (const child of this.children) {
       child.run()
     }
-    return 'REMOVE'
+    return ''
   }
 }
