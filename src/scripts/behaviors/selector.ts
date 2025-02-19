@@ -9,8 +9,8 @@ export default class Selector {
     for (const child of this.children) {
       print('SELECTERCHILD')
 
-      const remove = child.run()
-      if (remove === 'REMOVE')
+      const proceed = child.run()
+      if (proceed === 'REMOVE')
         this.children.splice(this.children.indexOf(child), 1)
     }
   }

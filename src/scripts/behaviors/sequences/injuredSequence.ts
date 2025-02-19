@@ -13,7 +13,7 @@ export default class InjuredSequence extends Sequence {
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
-      child.run()
+      child.run()()
     }
     return ''
   }

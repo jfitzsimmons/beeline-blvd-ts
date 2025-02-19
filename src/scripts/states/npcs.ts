@@ -14,7 +14,8 @@ import { shuffle } from '../utils/utils'
 import { RoomsInitState } from './inits/roomsInitState'
 import { confrontation_check } from './inits/checksFuncs'
 import { immobile } from '../utils/consts'
-import TurnSequence from '../behaviors/sequences/turnSequence'
+import TurnSequence from '../behaviors/sequences/placeSequence'
+import Selector from '../behaviors/selector'
 
 const dt = math.randomseed(os.time())
 
@@ -61,48 +62,71 @@ export default class WorldNpcs {
     this.inventory_init()
     this.fsm = new StateMachine(this, 'npcs')
     this.fsm.addState('idle')
-    this.fsm.addState('turn', {
-      onEnter: this.onTurnEnter.bind(this),
-      onUpdate: this.onTurnUpdate.bind(this),
-      onExit: this.onTurnExit.bind(this),
+    this.fsm.addState('place', {
+      onEnter: this.onPlaceEnter.bind(this),
+      onUpdate: this.onPlaceUpdate.bind(this),
+      onExit: this.onPlaceExit.bind(this),
+    })
+    this.fsm.addState('active', {
+      onEnter: this.onActiveEnter.bind(this),
+      onUpdate: this.onActiveUpdate.bind(this),
+      onExit: this.onActiveExit.bind(this),
     })
     this.fsm.addState('new', {
       onEnter: this.onNewEnter.bind(this),
-      onUpdate: this.onNewUpdate.bind(this),
-      onExit: this.onNewExit.bind(this),
+      // onUpdate: this.onNewUpdate.bind(this),
+      //onExit: this.onNewExit.bind(this),
     })
 
     this.returnDoctors = this.returnDoctors.bind(this)
     this.returnSecurity = this.returnSecurity.bind(this)
   }
-  private onNewEnter(): void {
-    print('npcsNewupdate')
-    this.sort_npcs_by_encounter()
-    for (let i = this.order.length; i-- !== 0; ) {
-      const npc = this.all[this.order[i]]
-      npc.fsm.setState('new')
-    }
-    this.fsm.setState('turn')
-  }
-  private onNewUpdate(): void {}
-  private onNewExit(): void {}
-  private onTurnEnter(): void {}
-  private onTurnUpdate(): void {
-    print('<< :: NPCSturnUpdate() :: >>')
-    this.sort_npcs_by_encounter()
-    for (let i = this.order.length; i-- !== 0; ) {
-      const npc = this.all[this.order[i]]
-      npc.fsm.update(dt)
-      // prettier-ignore
-      // print( 'NPCSonTurnUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
-    }
-    this.medical()
-    this.security()
-  }
-  private onTurnExit(): void {}
   public get all(): Npcs {
     return this._all
   }
+  private onNewEnter(): void {
+    print('npcsNewEnter')
+    this.sort_npcs_by_encounter()
+    for (let i = this.order.length; i-- !== 0; ) {
+      const npc = this.all[this.order[i]]
+
+      npc.behavior.place = new Selector([])
+      npc.behavior.active = new Selector([])
+      npc.fsm.update(dt)
+    }
+  }
+  // private onNewUpdate(): void {}
+  //private onNewExit(): void {}
+  private onPlaceEnter(): void {}
+  private onPlaceUpdate(): void {
+    print('<< :: NPCSplaceUpdate() :: >>')
+    this.sort_npcs_by_encounter()
+    for (let i = this.order.length; i-- !== 0; ) {
+      const npc = this.all[this.order[i]]
+      //i could add logic here to
+      //handle doc logic separately.?
+      //testjpf
+      npc.behavior.place.children.push(new TurnSequence(npc))
+      npc.fsm.update(dt)
+      // prettier-ignore
+      // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
+    }
+    //some of this NEED TO HAPPEN POST PLACING!
+    /**
+     * testjpf
+     * loop again?
+     * change state to something else (MTG terms)
+     * loop there. better game logic?
+     */
+    this.fsm.setState('active')
+  }
+  private onPlaceExit(): void {}
+  private onActiveEnter(): void {
+    this.medical()
+    this.security()
+  }
+  private onActiveUpdate(): void {}
+  private onActiveExit(): void {}
   returnMendeeLocation(): string | null {
     const injured = this.parent.getMendingQueue()[0]
     return injured === null ? null : this.all[injured].currRoom
@@ -142,6 +166,7 @@ export default class WorldNpcs {
     for (const doc of this.returnDoctors()) {
       const mobile = !immobile.includes(doc.fsm.getState())
       if (mobile === true && count > 1) {
+        // should be action!
         doc.fsm.setState('erfull')
         count = 0
       } else if (
@@ -149,6 +174,7 @@ export default class WorldNpcs {
         count < 1 &&
         this.parent.getMendingQueue().length > 0
       ) {
+        // should be action!
         doc.fsm.setState('paramedic')
       } else if (mobile === true) {
         doc.fsm.setState('turn')
@@ -232,7 +258,7 @@ function seedNpcs(lists: NpcProps) {
   let ki: keyof typeof NpcsInitState
   for (ki in NpcsInitState) {
     seeded[ki] = new NpcState(ki, lists)
-    seeded[ki].behavior.children.push(new TurnSequence(seeded[ki]))
+    seeded[ki].behavior.place.children.push(new TurnSequence(seeded[ki]))
   }
   return seeded
 }

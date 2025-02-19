@@ -11,8 +11,8 @@ export default class Action {
     this.success = this.success.bind(this)
     this.alternate = this.alternate.bind(this)
   }
-  run() {
-    print('ACTIONclass run()default::: ', this.actor.name)
+  run(): () => void {
+    return () => print('ACTIONclass run()default::: ', this.actor.name)
   }
   fail(str: string) {
     print('ACTIONfailed', str)
@@ -20,7 +20,19 @@ export default class Action {
   success() {
     print('ACTIONsuccess')
   }
-  alternate(a: Action | Sequence) {
-    return a.run()
+  alternate(as: Action | Sequence) {
+    return as.run()
+  }
+  delay(a: ActorState, s: Sequence) {
+    /**
+     * testjpf
+     *  i think it makes sense to do something like
+     * behavior.place.children
+     * and
+     * behavior.active.children
+     * both will be Selctor class at same level
+     * TODO
+     */
+    a.behavior.place.children.push(s)
   }
 }

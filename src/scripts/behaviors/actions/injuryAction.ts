@@ -19,8 +19,8 @@ export default class InjuryAction extends Action {
     //make the rest injuredAction???
     //will also need onSCreen logic
     //instead of Place sequence, behavior should be InjuredSequence??
-
-    a.behavior.children.push(new InjuredSequence(a))
+    return () => this.delay(a, new InjuredSequence(a))
+    //a.behavior.children.push(new InjuredSequence(a))
 
     /**
     if (a.cooldown > 0) a.cooldown = a.cooldown - 1
