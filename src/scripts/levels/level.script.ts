@@ -76,6 +76,8 @@ export function on_message(
     msg.post(this.roomName + ':/level#' + this.roomName, 'room_load')
     //position player on screen
     msg.post('/shared/adam#adam', 'wake_up')
+    print('111 --- === ::: NEW ROOM LOADED ::: === --- 111')
+
     if (player.fsm.getState() === 'confronted') {
       msg.post('proxies:/controller#novelcontroller', 'show_scene')
       npcs.all[novel.npc.name].fsm.setState('turn')

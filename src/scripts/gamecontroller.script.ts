@@ -4,6 +4,18 @@ import { Game } from './states/game'
 import { gamesave, gamesettings } from '../types/legacylua'
 import { url } from '../types/utils'
 
+/**
+ * TESTJPF
+ * I think the problem is
+ * this is both a game controller and a world controller
+ * need to separate and assignment assert world
+ * the GC need MVP to set
+ * game.fsm.setSate('new') to trigger new World()
+ * later:: save, load, settings
+ * that means main.collection needs to point to
+ * world.collection (create) with it's own controller
+ */
+
 globalThis.game = new Game()
 const game = globalThis.game
 const { world } = game
@@ -18,6 +30,7 @@ interface props {
 }
 
 function handleGameFSMs(loadType: string) {
+  print('!!! --- === ::: Updating State ::: === --- !!!')
   if (loadType === 'room transition') {
     world.fsm.setState('turn')
     npcs.fsm.setState('place')
@@ -80,7 +93,7 @@ export function on_message(
       }
       rooms.all[player.currRoom].fsm.setState('blur')
       rooms.all[this.roomName].fsm.setState('focus')
-      print('--- === ::: NEW ROOM LOADED ::: === ---')
+      print('000 --- === ::: NEW ROOM LOADING ::: === --- 000')
       msg.post(this.roomName + ':/shared/scripts#level', 'room_load', params)
     }
     msg.post(_sender, 'enable')
