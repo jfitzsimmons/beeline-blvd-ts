@@ -17,7 +17,7 @@ function calculate_heat(room: string) {
   heat += stations.length
   for (const npc of stations) {
     heat += npcs.all[npc].love * -1
-    if (npcs.all[npc].turns_since_convo <= 0) heat++
+    if (npcs.all[npc].sincePlayerConvo <= 0) heat++
   }
 
   heat +=
@@ -33,8 +33,8 @@ function calculate_heat(room: string) {
     (player.hp +
       player.clearance +
       tasks.all.length +
-      player.state.traits.skills.stealth +
-      player.state.traits.skills.charisma) *
+      player.traits.skills.stealth +
+      player.traits.skills.charisma) *
     2
 
   cold += player.ap
@@ -76,6 +76,8 @@ export function on_message(
     msg.post(this.roomName + ':/level#' + this.roomName, 'room_load')
     //position player on screen
     msg.post('/shared/adam#adam', 'wake_up')
+    print('111 --- === ::: NEW ROOM LOADED ::: === --- 111')
+
     if (player.fsm.getState() === 'confronted') {
       msg.post('proxies:/controller#novelcontroller', 'show_scene')
       npcs.all[novel.npc.name].fsm.setState('turn')

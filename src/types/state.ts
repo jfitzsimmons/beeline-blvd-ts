@@ -1,3 +1,4 @@
+import Selector from '../scripts/behaviors/selector'
 import NpcState from '../scripts/states/npc'
 import RoomState from '../scripts/states/room'
 import { Effect } from './tasks'
@@ -15,11 +16,11 @@ export interface Npcs {
 export interface NpcDefaults {
   convos: number
   actions: string[]
-  ai_path: string
+  aiPath: string
   matrix: { x: number; y: number }
   traits: Traits
-  turns_since_encounter: number
-  turns_since_convo: number
+  sincePlayerRoom: number
+  sincePlayerConvo: number
   love: number
   hp: number
   cooldown: number
@@ -37,7 +38,10 @@ export interface Npc extends NpcDefaults {
   clan: string
   body: string
 }
-
+export interface Behavior {
+  place: Selector
+  active: Selector
+}
 export interface PlayerState {
   currRoom: string
   exitRoom: string
@@ -49,8 +53,8 @@ export interface PlayerState {
   alert_level: number
   clearance: number
   hp: number
-  hp_max: number
-  ap_max: number
+  hpMax: number
+  apMax: number
   ap: number
   turns: number
   checkpoint: string
@@ -60,7 +64,7 @@ export interface PlayerState {
   gangs: { [key: string]: number }
 }
 export interface Traits {
-  opinion?: Trait | never
+  opinion: Trait | never
   skills: Trait | never
   binaries: Trait | never
 }

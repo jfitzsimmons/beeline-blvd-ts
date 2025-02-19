@@ -1,5 +1,5 @@
 import WorldTasks from '../tasks'
-import { Actor, Npc, PlayerState, Traits } from '../../../types/state'
+import { Actor, Npc, Traits } from '../../../types/state'
 import { Effect, Consequence, Task } from '../../../types/tasks'
 import {
   removeAdvantageous,
@@ -43,7 +43,7 @@ export function pledgeCheck(
   const { skills: ls, binaries: lb } = this.parent.returnNpc(l).traits
   const { skills: ts, binaries: tb } =
     t === 'player'
-      ? this.parent.returnPlayer().state.traits
+      ? this.parent.returnPlayer().traits
       : this.parent.returnNpc(t).traits
 
   const modifier = Math.round(
@@ -130,7 +130,7 @@ export function chaotic_good_check(
   const { skills: ls, binaries: lb } = this.parent.returnNpc(l).traits
   const { binaries: tb } =
     t === 'player'
-      ? this.parent.returnPlayer().state.traits
+      ? this.parent.returnPlayer().traits
       : this.parent.returnNpc(t).traits
   const modifier = Math.round(ls.wisdom / 2 + lb.evil_good * 5)
   const advantage = tb.anti_authority > lb.anti_authority
@@ -174,7 +174,7 @@ export function dumb_crook_check(
   const { skills: ls, binaries: lb } = this.parent.returnNpc(l).traits
   const { binaries: tb } =
     t === 'player'
-      ? this.parent.returnPlayer().state.traits
+      ? this.parent.returnPlayer().traits
       : this.parent.returnNpc(t).traits
   const modifier = Math.round(lb.lawlessLawful * -5)
   const advantage = tb.un_educated * -5 > ls.intelligence / 2
@@ -218,7 +218,7 @@ export function ignorant_check(
   const { skills: ls, binaries: lb } = this.parent.returnNpc(l).traits
   const { skills: ts } =
     t === 'player'
-      ? this.parent.returnPlayer().state.traits
+      ? this.parent.returnPlayer().traits
       : this.parent.returnNpc(t).traits
   const modifier = Math.round(lb.un_educated * -5)
   const advantage = ts.intelligence > ls.perception
@@ -303,7 +303,7 @@ export function decideToSnitchCheck(
   const { skills: ls, binaries: lb } = _this!.parent.returnNpc(l).traits
   const { binaries: tb, skills: ts } =
     t === 'player'
-      ? _this!.parent.returnPlayer().state.traits
+      ? _this!.parent.returnPlayer().traits
       : _this!.parent.returnNpc(t).traits
 
   const modifier = Math.round(
@@ -334,7 +334,7 @@ function meritsDemerits(t: string, l: string, _this?: WorldTasks): Consequence {
   const { skills: ls, binaries: lb } = _this!.parent.returnNpc(l).traits
   const { binaries: tb } =
     t === 'player'
-      ? _this!.parent.returnPlayer().state.traits
+      ? _this!.parent.returnPlayer().traits
       : _this!.parent.returnNpc(t).traits
   const modifier = Math.round((lb.evil_good + lb.lawlessLawful) * -2.5)
   const advantage =
@@ -360,7 +360,7 @@ export function recklessCheck(
   const { skills: ls, binaries: lb } = _this!.parent.returnNpc(l).traits
   const { binaries: tb, skills: ts } =
     t === 'player'
-      ? _this!.parent.returnPlayer().state.traits
+      ? _this!.parent.returnPlayer().traits
       : _this!.parent.returnNpc(t).traits
 
   const modifier = Math.round(
@@ -411,7 +411,7 @@ export function predator_check(
   const { binaries: lb } = this.parent.returnNpc(l).traits
   const { binaries: tb } =
     t === 'player'
-      ? this.parent.returnPlayer().state.traits
+      ? this.parent.returnPlayer().traits
       : this.parent.returnNpc(t).traits
   const modifier = Math.round(lb.evil_good * -5)
   const advantage = tb.anti_authority > lb.passiveAggressive
@@ -458,7 +458,7 @@ export function classy_check(
   const { binaries: lb, skills: ls } = this.parent.returnNpc(l).traits
   const { skills: ts } =
     t === 'player'
-      ? this.parent.returnPlayer().state.traits
+      ? this.parent.returnPlayer().traits
       : this.parent.returnNpc(t).traits
   const modifier = Math.round(lb.un_educated * 5)
   const advantage = ls.perception > ts.strength
@@ -490,7 +490,7 @@ export function jailtime_check(
   const { binaries: lb, skills: ls } = this.parent.returnNpc(l).traits
   const { skills: ts, binaries: tb } =
     t === 'player'
-      ? this.parent.returnPlayer().state.traits
+      ? this.parent.returnPlayer().traits
       : this.parent.returnNpc(t).traits
 
   const modifier = Math.round(
@@ -532,7 +532,7 @@ export function lConfrontPunchT(
 export function getExtorted(this: WorldTasks, t: string, l: string): string {
   const tInv =
     t === 'player'
-      ? this.parent.returnPlayer().state.inventory
+      ? this.parent.returnPlayer().inventory
       : this.parent.returnNpc(t).inventory
   const lInv = this.parent.returnNpc(l).inventory
   // print('OUTCOMES:: ', t, 'GETSEXTORTED')
@@ -548,7 +548,7 @@ export function bribeCheck(
   const { binaries: lb, skills: ls } = this.parent.returnNpc(l).traits
   const { binaries: tb, skills: ts } =
     t === 'player'
-      ? this.parent.returnPlayer().state.traits
+      ? this.parent.returnPlayer().traits
       : this.parent.returnNpc(t).traits
 
   const modifier = Math.round(
@@ -589,7 +589,7 @@ export function targetPunchedCheck(
   const { binaries: lb, skills: ls } = this.parent.returnNpc(l).traits
   const { binaries: tb, skills: ts } =
     t === 'player'
-      ? this.parent.returnPlayer().state.traits
+      ? this.parent.returnPlayer().traits
       : this.parent.returnNpc(t).traits
 
   const modifier = Math.round(
@@ -627,7 +627,7 @@ export function suspicious_check(
   const { binaries: lb, skills: ls } = this.parent.returnNpc(l).traits
   const { binaries: tb, skills: ts } =
     t === 'player'
-      ? this.parent.returnPlayer().state.traits
+      ? this.parent.returnPlayer().traits
       : this.parent.returnNpc(t).traits
 
   const modifier = Math.round(
@@ -659,10 +659,10 @@ export function suspicious_check(
 
 export function seen_check(
   //_this: WorldTasks,
-  t: NpcState | PlayerState,
+  t: NpcState | WorldPlayer,
   watcher: NpcState
 ): { confront: boolean; type: string } {
-  const target = t instanceof WorldPlayer ? t.state : t
+  const target = t
   const { binaries: wb, skills: ws } = watcher.traits
   const { skills: ts, binaries: tb } = target.traits
 
@@ -778,7 +778,7 @@ export function npcStealCheck(
   if (consequence.type == 'seen') {
     watcher.parent.taskBuilder(watcher.name, 'confront', target.name, 'theft')
     //testjpf is this used??
-    target.loot = loot
+    // target.loot = loot
   }
   if (consequence.type == 'neutral') {
     let chest_item = null
@@ -807,7 +807,7 @@ export function angel_check(
   l: string
 ): Consequence {
   const target =
-    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
   const listener = this.parent.returnNpc(l)
   const { skills: ls, binaries: lb } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
@@ -844,7 +844,7 @@ export function vanity_check(
   l: string
 ): Consequence {
   const target =
-    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
   const listener = this.parent.returnNpc(l)
   const { skills: ls, binaries: lb } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
@@ -888,7 +888,7 @@ export function admirer_check(
   l: string
 ): Consequence {
   const target =
-    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
   const listener = this.parent.returnNpc(l)
   const { skills: ls, binaries: lb } = listener.traits
   const { skills: ts } = target.traits
@@ -932,7 +932,7 @@ export function prejudice_check(
   l: string
 ): Consequence {
   const target =
-    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
   const listener = this.parent.returnNpc(l)
   const { skills: ls, binaries: lb } = listener.traits
   const { binaries: tb } = target.traits
@@ -965,7 +965,7 @@ export function watcher_punched_check(
   l: string
 ): Consequence {
   const target =
-    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
   const listener = this.parent.returnNpc(l)
   const { skills: ls } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
@@ -1062,7 +1062,7 @@ export function becomeASnitchCheck(
   l: string
 ): Consequence {
   const target =
-    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
   const listener = this.parent.returnNpc(l)
   const { skills: ls, binaries: lb } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
@@ -1095,7 +1095,7 @@ export function love_boost(
   l: string
 ): Consequence {
   const target =
-    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
   const listener = this.parent.returnNpc(l)
   const { skills: ls, binaries: lb } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
@@ -1116,7 +1116,7 @@ export function love_boost(
 }
 export function ap_boost(this: WorldTasks, t: string, l: string): Consequence {
   const target =
-    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
   const listener = this.parent.returnNpc(l)
   const { skills: ls, binaries: lb } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
@@ -1141,7 +1141,7 @@ export function charmed_merits(
   l: string
 ): Consequence {
   const target =
-    t === 'player' ? this.parent.returnPlayer().state : this.parent.returnNpc(t)
+    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
   const listener = this.parent.returnNpc(l)
   const { skills: ls, binaries: lb } = listener.traits
   const { skills: ts } = target.traits
@@ -1172,9 +1172,7 @@ export function given_gift(
   let gift = removeAdvantageous(
     target.inventory,
     listener.inventory,
-    target instanceof WorldPlayer
-      ? target.state.traits.skills
-      : target.traits.skills
+    target instanceof WorldPlayer ? target.traits.skills : target.traits.skills
   )
 
   if (gift == null) gift = math.random() < 0.5 ? 'berry02' : 'coingold'

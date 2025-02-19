@@ -1,16 +1,19 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { InventoryTableItem, PlayerState, Trait } from '../../types/state'
+import { InventoryTableItem, Trait } from '../../types/state'
 import { QuestMethods } from '../../types/tasks'
-import { PlayerInitState } from './inits/playerInitState'
 import { shuffle } from '../utils/utils'
 import { RoomsInitLayout, RoomsInitState } from './inits/roomsInitState'
-import StateMachine from './stateMachine'
+//import StateMachine from './stateMachine'
 import { itemStateInit } from './inits/inventoryInitState'
 import { WorldPlayerArgs } from '../../types/world'
+import ActorState from './actor'
 
 function randomTrait(skills: Trait, bins: Trait) {
   let tempvals: number[] = shuffle([1, 1, 3, 4, 5, 6, 6, 7])
   let count = 0
+  /*** START HERE TESTJPF
+   * need the skills key. hardcode? make a type?!?!
+   */
   let ks: keyof typeof skills // Type is "one" | "two" | "three"
   for (ks in skills) {
     skills[ks] = tempvals[count] + math.random(-1, 1)
@@ -26,16 +29,36 @@ function randomTrait(skills: Trait, bins: Trait) {
   }
 }
 
-export default class WorldPlayer {
-  private _state: PlayerState
-  fsm: StateMachine
+export default class WorldPlayer extends ActorState {
+  pos = { x: 704, y: 448 }
+  heat = 0
+  alert_level = 0
+  turns = 0
+  checkpoint = 'tutorialA'
   quests: QuestMethods
   parent: WorldPlayerArgs
 
-  constructor(playerProps: WorldPlayerArgs) {
-    this.fsm = new StateMachine(this, 'player')
-    this._state = { ...PlayerInitState }
-    randomTrait(this._state.traits.skills, this._state.traits.binaries)
+  constructor(p: string, playerProps: WorldPlayerArgs) {
+    print('pre player super')
+    super(p, playerProps) // call super() here
+    //this.pos= { x: 704, y: 448 }
+    print('post player super')
+
+    //this.fsm = new StateMachine(this, 'player' + p)
+    print('post player FSM')
+
+    this.currRoom = 'grounds'
+    print('post player currom')
+
+    this.matrix = { x: 0, y: 4 }
+    this.name = 'player'
+
+    print('pre player traits')
+
+    randomTrait(this.traits.skills, this.traits.binaries)
+    print('post player super')
+    this.inventory = ['axe', 'apple01']
+
     this.quests = {
       return_inventory: this.return_inventory.bind(this),
       return_skills: this.return_skills.bind(this),
@@ -117,7 +140,7 @@ export default class WorldPlayer {
   private onConfrontedUpdate(): void {}
   private onConfrontedExit(): void {}
   setRoomInfo() {
-    this.exitRoom = RoomsInitLayout[this.matrix_y][this.matrix_x]!
+    this.exitRoom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
     this.currRoom = this.parent.getFocusedRoom()
     this.matrix = RoomsInitState[this.currRoom].matrix
     print('::: SETROOMINFO:::exit,enter::', this.exitRoom, this.currRoom)
@@ -129,135 +152,44 @@ export default class WorldPlayer {
     const item: InventoryTableItem = { ...itemStateInit[i] }
     let sKey: keyof typeof item.skills
     for (sKey in item.skills)
-      this.state.traits.skills[sKey] =
-        this.state.traits.skills[sKey] - item.skills[sKey]
+      this.traits.skills[sKey] = this.traits.skills[sKey] - item.skills[sKey]
 
     let bKey: keyof typeof item.binaries
     for (bKey in item.binaries)
-      this.state.traits.binaries[bKey] =
-        this.state.traits.binaries[bKey] - item.binaries[bKey]
+      this.traits.binaries[bKey] =
+        this.traits.binaries[bKey] - item.binaries[bKey]
   }
 
   addInvBonus(i: string) {
     const item: InventoryTableItem = { ...itemStateInit[i] }
     let sKey: keyof typeof item.skills
     for (sKey in item.skills)
-      this.state.traits.skills[sKey] =
-        this.state.traits.skills[sKey] + item.skills[sKey]
+      this.traits.skills[sKey] = this.traits.skills[sKey] + item.skills[sKey]
 
     let bKey: keyof typeof item.binaries
     for (bKey in item.binaries)
-      this.state.traits.binaries[bKey] =
-        this.state.traits.binaries[bKey] + item.binaries[bKey]
-  }
-  public set pos(p: { x: number; y: number }) {
-    this._state.pos = p
-  }
-  public get pos() {
-    return this._state.pos
-  }
-  public get state() {
-    return this._state
-  }
-  public set inventory(i: string[]) {
-    this._state.inventory = i
-  }
-  public get inventory() {
-    return this._state.inventory
-  }
-  public set clearance(c: number) {
-    this._state.clearance = c
-  }
-  public get clearance() {
-    return this._state.clearance
-  }
-  public set hp(n: number) {
-    this._state.hp = n
-  }
-  public get hp() {
-    return this._state.hp
-  }
-  public set heat(h: number) {
-    this._state.heat = h
-  }
-  public get heat() {
-    return this._state.heat
-  }
-  public set ap(n: number) {
-    this._state.ap = n
-  }
-  public get ap() {
-    return this._state.ap
-  }
-  public set hp_max(n: number) {
-    this._state.hp_max = n
-  }
-  public get hp_max() {
-    return this._state.hp_max
-  }
-  public set ap_max(n: number) {
-    this._state.ap_max = n
-  }
-  public get ap_max() {
-    return this._state.ap_max
-  }
-  public set currRoom(r: string) {
-    this._state.currRoom = r
-  }
-  public get currRoom(): string {
-    return this._state.currRoom
+      this.traits.binaries[bKey] =
+        this.traits.binaries[bKey] + item.binaries[bKey]
   }
 
-  public set turns(n: number) {
-    this._state.turns = n
-  }
-  public get turns() {
-    return this._state.turns
-  }
-  public set exitRoom(r: string) {
-    this._state.exitRoom = r
-  }
-  public get exitRoom() {
-    return this._state.exitRoom
-  }
-  public get alert_level() {
-    return this._state.alert_level
-  }
-  public set alert_level(n: number) {
-    this._state.alert_level = n
-  }
-  public set matrix(m: { x: number; y: number }) {
-    this._state.matrix = m
-  }
-  public get matrix(): { x: number; y: number } {
-    return this._state.matrix
-  }
-  public get matrix_x(): number {
-    return this._state.matrix.x
-  }
-  public get matrix_y(): number {
-    return this._state.matrix.y
-  }
-  public get checkpoint(): string {
-    return this._state.checkpoint
-  }
   add_inventory(i: string) {
-    this._state.inventory.push(i)
+    this.inventory.push(i)
   }
   return_inventory(): string[] {
-    return this._state.inventory
+    return this.inventory
   }
   return_skills(): Trait {
-    return this._state.traits.skills
+    return this.traits.skills
   }
   return_playerroom(): string {
-    return this._state.currRoom
+    return this.currRoom
   }
   addToAlertLevel(n: number) {
     this.alert_level += n
   }
   private inventory_init() {
-    for (const item of this.state.inventory) {
+    for (const item of this.inventory) {
+      print('item:::', item)
       this.addInvBonus(item)
     }
   }

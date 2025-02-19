@@ -1,13 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { NpcsInitState } from './inits/npcsInitState'
-import {
-  RoomsInitLayout,
-  RoomsInitPriority,
-  RoomsInitState,
-} from './inits/roomsInitState'
+import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
 import { itemStateInit } from './inits/inventoryInitState'
-import StateMachine from './stateMachine'
-import { InventoryTableItem, Trait } from '../../types/state'
+//import StateMachine from './stateMachine'
+import { InventoryTableItem } from '../../types/state'
 import { Effect } from '../../types/tasks'
 import { NpcProps } from '../../types/world'
 import { NovelNpc } from '../../types/novel'
@@ -18,64 +14,33 @@ import {
 } from '../utils/ai'
 import { surrounding_room_matrix } from '../utils/utils'
 import { doctors } from '../utils/consts'
+import ActorState from './actor'
+//import TurnSequence from '../behaviors/sequences/turnSequence'
 
-export default class NpcState {
-  fsm: StateMachine
+export default class NpcState extends ActorState {
   home: { x: number; y: number }
-  name: string
-  inventory: string[]
-  loot: string[]
-  clearance: number
   clan: string
   body: string
-  convos: number
-  actions: string[]
-  ai_path: string
-  matrix: { x: number; y: number }
-  traits: {
-    opinion: Trait | never
-    skills: Trait | never
-    binaries: Trait | never
-  }
-  turns_since_encounter: number
-  turns_since_convo: number
-  love: number
-  hp: number
-  cooldown: number
-  effects: Effect[]
-  currRoom: string
-  exitRoom: string
-  currStation: string
-  race: string
+  love = 0
+  currStation = ''
   parent: NpcProps
+  convos = 0
+  actions: string[] = ['talk', 'give', 'trade', 'pockets']
+  aiPath = ''
+  sincePlayerRoom = 0
+  sincePlayerConvo = 99
   constructor(n: string, lists: NpcProps) {
+    super(n, lists) // 👈️ call super() here
+    //TESTJPFDEBUG HP
+    this.hp = 1
     this.home = NpcsInitState[n].home
     this.name = NpcsInitState[n].name
     this.inventory = NpcsInitState[n].inventory
-    this.loot = []
     this.clearance = NpcsInitState[n].clearance
     this.clan = NpcsInitState[n].clan
     this.body = NpcsInitState[n].body
-    this.fsm = new StateMachine(this, 'npc' + n)
-    this.convos = 0
-    this.actions = ['talk', 'give', 'trade', 'pockets']
-    this.ai_path = ''
+    // this.fsm = new StateMachine(this, 'npc' + n)
     this.matrix = { x: 0, y: 0 }
-    this.traits = {
-      opinion: {},
-      skills: {},
-      binaries: {},
-    }
-    this.turns_since_encounter = 0
-    this.turns_since_convo = 99
-    this.love = 0
-    this.hp = 5
-    this.cooldown = 0
-    this.effects = []
-    this.currRoom = ''
-    this.exitRoom = ''
-    this.currStation = ''
-    this.race = ''
     this.parent = lists
     this.fsm
       .addState('idle')
@@ -139,6 +104,7 @@ export default class NpcState {
         onUpdate: this.onNewUpdate.bind(this),
         onExit: this.onNewExit.bind(this),
       })
+    this.fsm.setState('new')
     this.addInvBonus = this.addInvBonus.bind(this)
     this.tendToPatient = this.tendToPatient.bind(this)
     this.add_effects_bonus = this.add_effects_bonus.bind(this)
@@ -156,7 +122,7 @@ export default class NpcState {
       binaries: { ...novelUpdates.traits.binaries },
       opinion: { ...novelUpdates.traits.opinion },
     }
-    this.turns_since_convo = novelUpdates.turns_since_convo
+    this.sincePlayerConvo = novelUpdates.sincePlayerConvo
     this.love = novelUpdates.love
   }
   private onInterrogateEnter(): void {}
@@ -165,14 +131,14 @@ export default class NpcState {
   private onInfirmEnter(): void {
     this.hp = 5
     this.parent.clearStation(this.currRoom, this.currStation, this.name)
-    this.turns_since_encounter = 99
+    this.sincePlayerRoom = 99
     this.parent.addInfirmed(this.name)
     this.matrix = RoomsInitState.infirmary.matrix
     this.cooldown = 8
     this.currRoom = 'infirmary'
   }
   private onInfirmUpdate(): void {
-    this.turns_since_encounter = 99
+    this.sincePlayerRoom = 99
     this.parent.isStationedTogether(doctors, 'infirmary') === true
       ? (this.hp = this.hp + 2)
       : (this.hp = this.hp + 1)
@@ -185,12 +151,17 @@ export default class NpcState {
     this.parent.removeIgnore(this.name)
   }
   private onInjuryStart(): void {
-    this.turns_since_encounter = 99
-    this.parent.addInjured(this.name)
-    this.hp = 0
+    //this.sincePlayerRoom = 99
+    //this.parent.addInjured(this.name)
+    //this.hp = 0
   }
   private onInjuryUpdate(): void {
-    this.turns_since_encounter = 99
+    //testjpf
+    // dont want to create new Sequence on update
+    // could have flag here that removes when healed
+    // but probably need to remove injuryState altogether???
+    /**
+    this.sincePlayerRoom = 99
     this.parent.pruneStationMap(this.currRoom, this.currStation)
     if (this.parent.getIgnore().includes(this.name)) return
     const helpers = Object.values(this.parent.getOccupants(this.currRoom))
@@ -220,6 +191,7 @@ export default class NpcState {
         break
       }
     }
+      */
   }
 
   private onInjuryEnd(): void {}
@@ -238,7 +210,7 @@ export default class NpcState {
   private onParamedicExit(): void {}
   private onERfullEnter(): void {}
   private onERfullUpdate(): void {
-    this.turns_since_encounter = 97
+    this.sincePlayerRoom = 97
     const patients = this.parent.getInfirmed()
     this.parent.clearStation(this.currRoom, this.currStation, this.name)
 
@@ -282,7 +254,7 @@ export default class NpcState {
       this.parent.clearStation(this.currRoom, this.currStation, this.name)
       this.currStation = vacancy
     }
-    this.turns_since_encounter = 96
+    this.sincePlayerRoom = 96
     this.parent.addInfirmed(this.name)
     this.matrix = RoomsInitState.security.matrix
     this.cooldown = 8
@@ -294,12 +266,12 @@ export default class NpcState {
   }
   private onArresteeExit(): void {}
   private onMendeeEnter(): void {
-    this.turns_since_encounter = 98
+    this.sincePlayerRoom = 98
     this.parent.addIgnore(this.name)
     this.parent.addAdjustMendingQueue(this.name)
   }
   private onMendeeUpdate(): void {
-    this.turns_since_encounter = 98
+    this.sincePlayerRoom = 98
     this.hp = this.hp + 1
     if (this.hp > 4) {
       const vacancy = this.parent.sendToVacancy('infirmary', this.name)
@@ -315,40 +287,59 @@ export default class NpcState {
     this.parent.clearStation(this.currRoom, this.currStation, this.name)
   }
   private onMenderEnter(): void {
-    this.turns_since_encounter = 97
+    this.sincePlayerRoom = 97
   }
   private onMenderUpdate(): void {
-    this.turns_since_encounter = 97
+    this.sincePlayerRoom = 97
     this.parent.pruneStationMap(this.currRoom, this.currStation)
   }
   private onMenderExit(): void {}
-  private onNewEnter(): void {
+  private onNewEnter(): void {}
+  private onNewUpdate(): void {
+    //  this.fsm.setState('turn')
     if (this.hp > 0) {
       this.findRoomPlaceStation(RoomsInitPriority)
+      this.fsm.setState('turn')
     } else {
       this.fsm.setState('injury')
     }
   }
-  private onNewUpdate(): void {
-    this.fsm.setState('turn')
-  }
   private onNewExit(): void {}
   private onTurnEnter(): void {
-    this.turns_since_encounter = math.random(2, 15)
+    this.sincePlayerRoom = math.random(2, 15)
   }
   private onTurnUpdate(): void {
-    this.exitRoom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
-    this.remove_effects(this.effects)
-    if (this.cooldown > 0) this.cooldown = this.cooldown - 1
-    if (this.hp < 1) {
-      this.fsm.setState('injury')
-      return
-    }
-    this.parent.clearStation(this.currRoom, this.currStation, this.name)
+    /**
+     * TESTJPF
+     * so instead we will access this.behaviors
+     * ...
+     * is this it's own sequence???
+     */
+    // this.exitRoom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
+    //this.remove_effects(this.effects)
+    //if (this.cooldown > 0) this.cooldown = this.cooldown - 1
+    //if (this.hp < 1) {
+    //  this.fsm.setState('injury')
+    // return
+    //}
+    // this.parent.clearStation(this.currRoom, this.currStation, this.name)
 
-    const target = RoomsInitState[this.parent.getPlayerRoom()].matrix
-    const rooms = this.makePriorityRoomList(target)
-    this.findRoomPlaceStation(rooms)
+    //const target = RoomsInitState[this.parent.getPlayerRoom()].//matrix
+    //const rooms = this.makePriorityRoomList(target)
+    // this.findRoomPlaceStation(rooms)
+    /**
+     * TESTJPF the circular ref error
+     * should be solved if you move pushing turnseq
+     * to somewhere else.
+     *
+     * I think a huge question is
+     * whether i need to consider PLAYER
+     * at all!!!
+     */
+    this.behavior.place.run()
+
+    // loop thru behVIORS AS TEST!!!
+    //testjpf STARTHERE h
   }
   private onTurnExit(): void {}
 
@@ -358,8 +349,8 @@ export default class NpcState {
       home: this.home,
     }
     const npcTurnProps = {
-      turns_since_encounter: this.turns_since_encounter,
-      ai_path: this.ai_path,
+      sincePlayerRoom: this.sincePlayerRoom,
+      aiPath: this.aiPath,
       target: target,
       ...npcPriorityProps,
     }
@@ -380,7 +371,7 @@ export default class NpcState {
       this.clan,
       this.parent.getStationMap()
     )
-    // print('findrooomplacestation:: STATION:::', chosenRoom, chosenStation)
+    print('findrooomplacestation:: STATION:::', chosenRoom, chosenStation)
     this.currRoom = chosenRoom
     this.parent.setStation(chosenRoom, chosenStation, this.name)
     this.parent.pruneStationMap(chosenRoom, chosenStation)
@@ -393,9 +384,9 @@ export default class NpcState {
     this.matrix = RoomsInitState[chosenRoom].matrix
     this.currStation = chosenStation
     if (chosenRoom != this.parent.getPlayerRoom()) {
-      this.turns_since_encounter = this.turns_since_encounter + 1
+      this.sincePlayerRoom = this.sincePlayerRoom + 1
     } else {
-      this.turns_since_encounter = 0
+      this.sincePlayerRoom = 0
     }
   }
   removeInvBonus(i: string) {
@@ -432,12 +423,12 @@ export default class NpcState {
     this.add_effects_bonus(e)
   }
   add_effects_bonus(e: Effect) {
-    this.traits[e.fx.type][e.fx.stat] =
-      this.traits[e.fx.type][e.fx.stat] + e.fx.adjustment
+    this.traits[e.fx.type]![e.fx.stat] =
+      this.traits[e.fx.type]![e.fx.stat] + e.fx.adjustment
   }
   remove_effects_bonus(e: Effect) {
-    this.traits[e.fx.type][e.fx.stat] =
-      this.traits[e.fx.type][e.fx.stat] - e.fx.adjustment
+    this.traits[e.fx.type]![e.fx.stat] =
+      this.traits[e.fx.type]![e.fx.stat] - e.fx.adjustment
   }
   remove_effects(effects: Effect[]) {
     if (effects.length < 1) return

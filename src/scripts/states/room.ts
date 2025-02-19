@@ -49,6 +49,7 @@ export default class RoomState {
         onUpdate: this.onBlurUpdate.bind(this),
         onExit: this.onBlurExit.bind(this),
       })
+    this.fsm.setState('turn')
   }
   private onFocusStart(): void {
     //highlight room neighbors and directions

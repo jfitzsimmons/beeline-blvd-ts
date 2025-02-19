@@ -33,7 +33,7 @@ function testjpfplayerthief_consequences(
   c: { confront: boolean; type: string }
 ) {
   if (w != '' && c.type == 'seen') {
-    const tTraits = tasks.parent.returnPlayer().state.traits
+    const tTraits = tasks.parent.returnPlayer().traits
     const wTraits = tasks.parent.returnNpc(w).traits
 
     c.confront = c.confront == true || confrontation_check(tTraits, wTraits)
@@ -55,7 +55,7 @@ export function witness_player(w: string): { confront: boolean; type: string } {
   consequence = testjpfplayerthief_consequences(
     'player',
     w,
-    seen_check(player.state, npcs.all[w])
+    seen_check(player, npcs.all[w])
   )
 
   return consequence

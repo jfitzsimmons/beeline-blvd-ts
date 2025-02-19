@@ -169,19 +169,16 @@ export default class WorldRooms {
       this.all[room].vacancies![station] = ''
     }
   }
-  private onTurnEnter(): void {}
+  private onTurnEnter(): void {
+    this.resetStationMap()
+  }
   private onTurnUpdate(): void {
     this.resetStationMap()
     let kr: keyof typeof this.all
     for (kr in this.all) this.all[kr].fsm.update(dt)
   }
   private onTurnExit(): void {}
-  private onNewEnter(): void {
-    this.resetStationMap()
-    let kr: keyof typeof this.all
-    for (kr in this.all) this.all[kr].fsm.setState('turn')
-    this.fsm.setState('turn')
-  }
+  private onNewEnter(): void {}
   private onNewUpdate(): void {}
   private onNewExit(): void {}
   private onTransitionEnter(): void {}
