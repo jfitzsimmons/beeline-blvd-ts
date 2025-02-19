@@ -20,7 +20,7 @@ function transition() {
     }
   }
   player.pos = go.get_position()
-  msg.post('proxies:/controller#gamecontroller', 'pick_room', params)
+  msg.post('worldproxies:/controller#worldcontroller', 'pick_room', params)
 }
 
 export function on_message(

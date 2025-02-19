@@ -91,7 +91,7 @@ export function on_message(
     print('exitgui reason::', novel.reason)
     novel.reset_novel()
     //calculate_heat(this.roomName)
-    msg.post(this.roomName + ':/shared/adam#adam', 'acquire_input_focus')
+    msg.post('/shared/adam#adam', 'get_focus')
   } else if (messageId == hash('update_alert')) {
     sprite.play_flipbook(
       'hud#security_alert',
