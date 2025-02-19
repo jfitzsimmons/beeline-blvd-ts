@@ -104,6 +104,7 @@ export default class NpcState extends ActorState {
         onUpdate: this.onNewUpdate.bind(this),
         onExit: this.onNewExit.bind(this),
       })
+    this.fsm.setState('new')
     this.addInvBonus = this.addInvBonus.bind(this)
     this.tendToPatient = this.tendToPatient.bind(this)
     this.add_effects_bonus = this.add_effects_bonus.bind(this)
@@ -293,15 +294,15 @@ export default class NpcState extends ActorState {
     this.parent.pruneStationMap(this.currRoom, this.currStation)
   }
   private onMenderExit(): void {}
-  private onNewEnter(): void {
+  private onNewEnter(): void {}
+  private onNewUpdate(): void {
+    //  this.fsm.setState('turn')
     if (this.hp > 0) {
       this.findRoomPlaceStation(RoomsInitPriority)
+      this.fsm.setState('turn')
     } else {
       this.fsm.setState('injury')
     }
-  }
-  private onNewUpdate(): void {
-    this.fsm.setState('turn')
   }
   private onNewExit(): void {}
   private onTurnEnter(): void {
@@ -335,7 +336,7 @@ export default class NpcState extends ActorState {
      * whether i need to consider PLAYER
      * at all!!!
      */
-    this.behavior.run()
+    this.behavior.place.run()
 
     // loop thru behVIORS AS TEST!!!
     //testjpf STARTHERE h
@@ -370,7 +371,7 @@ export default class NpcState extends ActorState {
       this.clan,
       this.parent.getStationMap()
     )
-    // print('findrooomplacestation:: STATION:::', chosenRoom, chosenStation)
+    print('findrooomplacestation:: STATION:::', chosenRoom, chosenStation)
     this.currRoom = chosenRoom
     this.parent.setStation(chosenRoom, chosenStation, this.name)
     this.parent.pruneStationMap(chosenRoom, chosenStation)

@@ -7,7 +7,7 @@ import { url } from '../types/utils'
 globalThis.game = new Game()
 const game = globalThis.game
 const { world } = game
-const { rooms, player } = world
+const { rooms, player, npcs } = world
 
 interface props {
   inGame: boolean
@@ -17,19 +17,18 @@ interface props {
   loadType: string
 }
 
-function handleGameFSMs(room: string, loadType: string) {
+function handleGameFSMs(loadType: string) {
   if (loadType === 'room transition') {
     world.fsm.setState('turn')
+    npcs.fsm.setState('place')
   } else if (loadType === 'faint') {
     world.fsm.setState('faint')
   } else if (loadType === 'arrest') {
     world.fsm.setState('arrest')
   } else if (loadType === 'new game') {
     game.fsm.setState('new')
+    world.fsm.setState('turn')
   }
-
-  rooms.all[player.currRoom].fsm.setState('blur')
-  rooms.all[room].fsm.setState('focus')
 }
 
 function show(currentProxy: url | null, p: string) {
@@ -68,7 +67,7 @@ export function on_message(
     this.inGame = true
     this.loadType = message.loadType
 
-    handleGameFSMs(this.roomName, this.loadType)
+    handleGameFSMs(this.loadType)
     show(this.currentProxy, '#' + this.roomName)
   }
   //PROXY_LOADED
@@ -79,6 +78,8 @@ export function on_message(
         roomName: this.roomName,
         loadType: this.loadType,
       }
+      rooms.all[player.currRoom].fsm.setState('blur')
+      rooms.all[this.roomName].fsm.setState('focus')
       print('--- === ::: NEW ROOM LOADED ::: === ---')
       msg.post(this.roomName + ':/shared/scripts#level', 'room_load', params)
     }

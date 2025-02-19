@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
-import { Traits } from '../../types/state'
+import { Behavior, Traits } from '../../types/state'
 import { Effect } from '../../types/tasks'
 import { NpcProps, WorldPlayerArgs } from '../../types/world'
 import Selector from '../behaviors/selector'
@@ -14,7 +14,7 @@ export default class ActorState {
   cooldown = 0
   convos = 0
   matrix = { x: 0, y: 0 }
-  behavior: Selector
+  behavior: Behavior
   traits: Traits = {
     opinion: {
       church: 0,
@@ -66,7 +66,10 @@ export default class ActorState {
   parent: NpcProps | WorldPlayerArgs
   constructor(n: string, lists: NpcProps | WorldPlayerArgs) {
     this.fsm = new StateMachine(this, 'actor_' + n)
-    this.behavior = new Selector([])
+    this.behavior = {
+      place: new Selector([]),
+      active: new Selector([]),
+    }
     this.parent = lists
   }
 }

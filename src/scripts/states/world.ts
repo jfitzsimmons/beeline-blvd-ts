@@ -107,12 +107,13 @@ export default class World {
       })
   }
   private onNewEnter(): void {
-    this.rooms.fsm.setState('new')
+    this.rooms.fsm.setState('turn')
     this.player.fsm.setState('turn')
     this.player.exitRoom = 'grounds'
     this.npcs.fsm.setState('new')
     this.tasks.fsm.setState('turn')
     this.quests.fsm.setState('new')
+
     //debug defaults
     this.npcs.all[this.rooms.all.reception.stations.guest].hp = 0
     this.npcs.all[this.rooms.all.reception.stations.guest].fsm.setState(
@@ -166,6 +167,7 @@ export default class World {
   private onTurnEnter(): void {
     this.clock = this.clock + 1
     if (this.clock > 23) this.clock = this.clock - 24
+    this.npcs.fsm.setState('place')
   }
   private onTurnUpdate(): void {
     print('<<< ::: WORLDTurnUpdate() ::: >>>')

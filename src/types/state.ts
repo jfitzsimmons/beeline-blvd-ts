@@ -1,3 +1,4 @@
+import Selector from '../scripts/behaviors/selector'
 import NpcState from '../scripts/states/npc'
 import RoomState from '../scripts/states/room'
 import { Effect } from './tasks'
@@ -37,7 +38,10 @@ export interface Npc extends NpcDefaults {
   clan: string
   body: string
 }
-
+export interface Behavior {
+  place: Selector
+  active: Selector
+}
 export interface PlayerState {
   currRoom: string
   exitRoom: string

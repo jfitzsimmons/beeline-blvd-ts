@@ -27,12 +27,12 @@ export default class Action {
     /**
      * testjpf
      *  i think it makes sense to do something like
-     * behavior.preturn.children
+     * behavior.place.children
      * and
-     * behavior.postturn.children
+     * behavior.active.children
      * both will be Selctor class at same level
      * TODO
      */
-    a.behavior.children.push(s)
+    a.behavior.place.children.push(s)
   }
 }
