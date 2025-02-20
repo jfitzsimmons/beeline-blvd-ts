@@ -16,7 +16,7 @@ interface props {
 }
 
 function handleGameFSMs(loadType: string) {
-  print('!!! --- === ::: World State Transitions ::: === --- !!!')
+  print('!!! --- === ::: World State Transitions ::: === --- !!!', loadType)
   if (loadType === 'room transition') {
     world.fsm.setState('turn')
     npcs.fsm.setState('place')
@@ -44,7 +44,6 @@ export function init(this: props) {
   this.currentProxy = null
   this.loadType = 'run'
   this.roomName = 'admin1'
-  this.isPaused = false
 }
 
 export function on_message(
@@ -60,10 +59,8 @@ export function on_message(
   if (messageId == hash('pick_room')) {
     this.roomName = message.roomName
     this.loadType = message.loadType
-
     handleGameFSMs(this.loadType)
     show(this.currentProxy, '#' + this.roomName)
-    this.isPaused = false
     msg.post('#', 'acquire_input_focus')
   }
   //PROXY_LOADED
@@ -76,8 +73,18 @@ export function on_message(
       }
       rooms.all[player.currRoom].fsm.setState('blur')
       rooms.all[this.roomName].fsm.setState('focus')
-      print('000 --- === ::: NEW ROOM LOADING ::: === --- 000')
-      msg.post(this.roomName + ':/shared/scripts#level', 'room_load', params)
+      print(
+        '000 --- === ::: NEW ROOM LOADING ::: === --- 000',
+        this.isPaused,
+        this.loadType
+      )
+
+      msg.post(
+        this.roomName + ':/shared/scripts#level',
+        this.loadType === 'game paused' ? 'quick_load' : 'room_load',
+        params
+      )
+      this.isPaused = false
     }
     msg.post(_sender, 'enable')
   }
