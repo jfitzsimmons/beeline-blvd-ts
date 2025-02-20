@@ -9,7 +9,7 @@ interface props {
 export function init(this: props) {
   msg.post('#camera', 'acquire_camera_focus')
   msg.post('@render:', 'use_camera_projection')
-  msg.post('#', 'acquire_input_focus')
+  //msg.post('#', 'acquire_input_focus')
 
   this.dir = vmath.vector3()
   this.current_anim = hash('idle')
@@ -70,6 +70,12 @@ export function on_message(
     }
 
     go.set_position(vmath.vector3(targetpos.x, targetpos.y, 0.5))
+    print('wakeupcall')
+    msg.post('#', 'acquire_input_focus')
+  } else if (messageId === hash('get_focus')) {
+    print('getfocuscall')
+
+    msg.post('#', 'acquire_input_focus')
   }
   // Handle collision
   if (messageId == hash('contact_point_response')) {
