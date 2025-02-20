@@ -156,6 +156,7 @@ export default class WorldRooms {
     return false
   }
   clearStation(room: string, station: string, npc: string) {
+    if (room === '') return
     if (npc == this.all[room].stations[station]) {
       this.all[room].stations[station] = ''
     } else if (this.clearSwapParent(room, station) === true) {

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { NpcsInitState } from './inits/npcsInitState'
-import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
+import { RoomsInitState } from './inits/roomsInitState'
 import { itemStateInit } from './inits/inventoryInitState'
 //import StateMachine from './stateMachine'
 import { InventoryTableItem } from '../../types/state'
@@ -296,13 +296,15 @@ export default class NpcState extends ActorState {
   private onMenderExit(): void {}
   private onNewEnter(): void {}
   private onNewUpdate(): void {
-    //  this.fsm.setState('turn')
+    this.behavior.place.run()
+    /**
     if (this.hp > 0) {
       this.findRoomPlaceStation(RoomsInitPriority)
       this.fsm.setState('turn')
     } else {
       this.fsm.setState('injury')
     }
+      **/
   }
   private onNewExit(): void {}
   private onTurnEnter(): void {

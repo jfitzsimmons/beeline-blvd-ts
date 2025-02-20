@@ -92,6 +92,8 @@ export default class WorldNpcs {
 
       npc.behavior.place = new Selector([])
       npc.behavior.active = new Selector([])
+      npc.behavior.place.children.push(new TurnSequence(npc))
+
       npc.fsm.update(dt)
     }
   }
