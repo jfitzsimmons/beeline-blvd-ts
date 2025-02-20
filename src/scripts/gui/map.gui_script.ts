@@ -7,7 +7,7 @@ function check_room_nodes(action: { x: number; y: number }) {
 
     if (gui.pick_node(node, action.x, action.y)) {
       const params = {
-        enterRoom: kr,
+        roomName: kr,
       }
       msg.post('gameproxies:/controller#gamecontroller', 'pick_room', params)
     }

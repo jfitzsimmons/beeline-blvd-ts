@@ -113,13 +113,13 @@ function consolation_outcomes(love: number) {
 function novel_outcomes(reason: string) {
   if (reason == 'faint' || player.hp <= 0) {
     msg.post('worldproxies:/controller#worldcontroller', 'pick_room', {
-      enterRoom: tasks.spawn,
+      roomName: tasks.spawn,
       loadType: 'faint',
     })
   } else if (reason == 'arrested') {
     tasks.removeHeat('player')
     msg.post('worldproxies:/controller#worldcontroller', 'pick_room', {
-      enterRoom: 'security',
+      roomName: 'security',
       loadType: 'arrest',
     })
   } else if (reason.substring(0, 6) == 'quest:') {

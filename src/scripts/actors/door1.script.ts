@@ -11,11 +11,11 @@ const room_lookup = {
 function transition() {
   let params = {
     loadType: 'room transition',
-    enterRoom: room_lookup[hash_to_hex(go.get_id())],
+    roomName: room_lookup[hash_to_hex(go.get_id())],
   }
   if (player.ap <= 0) {
     params = {
-      enterRoom: tasks.spawn,
+      roomName: tasks.spawn,
       loadType: 'faint',
     }
   }

@@ -57,9 +57,7 @@ export function init(this: props) {
   this.inGame = true
   this.currentProxy = null
   this.loadType = 'run'
-
-  //gamesave.init() // checks if theres app support data and if you're out of save slots
-  // gamesettings.init() // checks if menu settings file, creates new or reads
+  this.roomName = 'admin1'
   print('WORLDINITFOCUS')
   //msg.post('#', 'acquire_input_focus')
   //msg.post('#', 'show_menu')
@@ -69,15 +67,15 @@ export function on_message(
   this: props,
   messageId: hash,
   message: {
-    enterRoom: string
+    roomName: string
     loadType: string
   },
   _sender: url
 ): void {
   //PICK_ROOM
   if (messageId == hash('pick_room')) {
-    print('GCpick_room::', message.enterRoom)
-    this.roomName = message.enterRoom
+    print('GCpick_room::', message.roomName, message.loadType, this.roomName)
+    this.roomName = message.roomName
     this.loadType = message.loadType
 
     handleGameFSMs(this.loadType)
@@ -100,14 +98,6 @@ export function on_message(
     }
     msg.post(_sender, 'enable')
   }
-  //SHOW_MENU
-  /**
-  else if (messageId == hash('show_menu')) {
-    this.inGame = false
-    // should eventually change game state fsm // testjpf
-    show(this.currentProxy, '#main_menu')
-  }
-    */
   //TOGGLE_INFO
   else if (messageId == hash('toggle_info')) {
     this.inGame = false
@@ -123,9 +113,8 @@ export function on_input(
   }
 ) {
   if (actionId == hash('main_menu') && action.released) {
-    // msg.post('#', 'show_menu')
     const params = {
-      enterRoom: this.roomName,
+      roomName: this.roomName,
       loadType: this.inGame == true ? 'game paused' : 'return to game',
     }
     // this.inGame = this.inGame == true ? false : true
