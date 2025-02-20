@@ -1,6 +1,7 @@
 import ActorState from '../../states/actor'
 import { isNpc } from '../../utils/ai'
 import Action from '../action'
+import Sequence from '../sequence'
 import InjuredSequence from '../sequences/injuredSequence'
 
 export default class InjuryAction extends Action {
@@ -13,6 +14,7 @@ export default class InjuryAction extends Action {
     if (isNpc(a)) {
       a.sincePlayerRoom = 99
       a.parent.addInjured(a.name)
+      a.parent.pruneStationMap(a.currRoom, a.currStation)
     }
     a.hp = 0
     print('InjuryAction:: return delay(InjuredSequence):', a.name)
@@ -20,7 +22,7 @@ export default class InjuryAction extends Action {
     //make the rest injuredAction???
     //will also need onSCreen logic
     //instead of Place sequence, behavior should be InjuredSequence??
-    return () => this.delay(a, new InjuredSequence(a))
+    return this.delay(a, new InjuredSequence(a))
     //a.behavior.children.push(new InjuredSequence(a))
 
     /**
@@ -40,6 +42,10 @@ export default class InjuryAction extends Action {
     if (testjpf) return () => this.fail('youfailed')
     
     **/
-    return () => this.success()
+    //return () => this.success()
+  }
+  delay(a: ActorState, s: Sequence) {
+    a.behavior.active.children.push(s)
+    return () => print('INJUREDSEQUENCE DELAYED FOR::', a.name)
   }
 }

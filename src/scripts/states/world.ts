@@ -184,6 +184,7 @@ export default class World {
     this.npcs.fsm.update(dt)
     this.quests.fsm.update(dt)
     this.tasks.fsm.update(dt)
+    this.npcs.fsm.setState('active')
   }
   private onTurnExit(): void {}
   private didCrossPaths(o: string, t: string): boolean {

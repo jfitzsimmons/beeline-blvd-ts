@@ -15,7 +15,6 @@ export default class InjuredAction extends Action {
 
       a.sincePlayerRoom = 99
       // a.parent.addInjured(a.name)
-
       a.parent.pruneStationMap(a.currRoom, a.currStation)
       if (a.parent.getIgnore().includes(a.name))
         return () => this.fail('FAILignore - must ignore injured:::' + a.name)
@@ -63,7 +62,7 @@ export default class InjuredAction extends Action {
         }
       }
     } else {
-      return () => this.fail('FAIL404 - no InjuredAction for Player')
+      return () => this.fail('FAIL404 - no InjuredAction for Actor')
     }
     return () => this.success()
   }

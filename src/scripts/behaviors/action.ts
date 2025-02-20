@@ -24,16 +24,6 @@ export default class Action {
     return as.run()
   }
   delay(a: ActorState, s: Sequence) {
-    /**
-     * testjpf
-     *  i think it makes sense to do something like
-     * behavior.place.children
-     * and
-     * behavior.active.children
-     * both will be Selctor class at same level
-     * TODO
-     */
-    print('ACTION DELAYED FOR::', a.name)
-    a.behavior.active.children.push(s)
+    print('ACTION DELAYED FOR::', a.name, typeof s)
   }
 }
