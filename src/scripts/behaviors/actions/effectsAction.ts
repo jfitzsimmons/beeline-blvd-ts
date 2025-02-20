@@ -5,9 +5,14 @@ export default class EffectsAction extends Action {
   constructor(a: ActorState) {
     super(a)
   }
+  fail() {
+    // no log
+  }
   run(): () => void {
     const { effects, traits } = this.actor
-    if (effects.length < 1) return () => this.fail('No FX to remove')
+    // if (effects.length < 1) return () => this.fail('No FX to remove')
+    if (effects.length < 1) return () => this.fail()
+
     for (const effect of effects) {
       if (effect.turns < 0) {
         traits[effect.fx.type]![effect.fx.stat] =

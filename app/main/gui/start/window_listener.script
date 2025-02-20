@@ -10,7 +10,6 @@ end
 
 
 function init(self)
-	print("INIT WINDOW LISTENER")
 	window.set_listener(listener)
 end
 

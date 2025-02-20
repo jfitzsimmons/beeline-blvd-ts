@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { NpcsInitState } from './inits/npcsInitState'
-import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
+import { RoomsInitState } from './inits/roomsInitState'
 import { itemStateInit } from './inits/inventoryInitState'
 //import StateMachine from './stateMachine'
 import { InventoryTableItem } from '../../types/state'
@@ -15,7 +15,6 @@ import {
 import { surrounding_room_matrix } from '../utils/utils'
 import { doctors } from '../utils/consts'
 import ActorState from './actor'
-//import TurnSequence from '../behaviors/sequences/turnSequence'
 
 export default class NpcState extends ActorState {
   home: { x: number; y: number }
@@ -74,10 +73,10 @@ export default class NpcState extends ActorState {
         onUpdate: this.onMenderUpdate.bind(this),
         onExit: this.onMenderExit.bind(this),
       })
-      .addState('interrogate', {
-        onEnter: this.onInterrogateEnter.bind(this),
-        onUpdate: this.onInterrogateUpdate.bind(this),
-        onExit: this.onInterrogateExit.bind(this),
+      .addState('active', {
+        onEnter: this.onActiveEnter.bind(this),
+        onUpdate: this.onActiveUpdate.bind(this),
+        onExit: this.onActiveExit.bind(this),
       })
       .addState('confront', {
         onEnter: this.onConfrontPlayerEnter.bind(this),
@@ -125,9 +124,7 @@ export default class NpcState extends ActorState {
     this.sincePlayerConvo = novelUpdates.sincePlayerConvo
     this.love = novelUpdates.love
   }
-  private onInterrogateEnter(): void {}
-  private onInterrogateUpdate(): void {}
-  private onInterrogateExit(): void {}
+
   private onInfirmEnter(): void {
     this.hp = 5
     this.parent.clearStation(this.currRoom, this.currStation, this.name)
@@ -296,13 +293,9 @@ export default class NpcState extends ActorState {
   private onMenderExit(): void {}
   private onNewEnter(): void {}
   private onNewUpdate(): void {
-    //  this.fsm.setState('turn')
-    if (this.hp > 0) {
-      this.findRoomPlaceStation(RoomsInitPriority)
-      this.fsm.setState('turn')
-    } else {
-      this.fsm.setState('injury')
-    }
+    print('NEWUPDATE place run')
+
+    this.behavior.place.run()
   }
   private onNewExit(): void {}
   private onTurnEnter(): void {
@@ -336,13 +329,17 @@ export default class NpcState extends ActorState {
      * whether i need to consider PLAYER
      * at all!!!
      */
+    print('TURNUPDATE place run')
+
     this.behavior.place.run()
 
     // loop thru behVIORS AS TEST!!!
     //testjpf STARTHERE h
   }
   private onTurnExit(): void {}
-
+  private onActiveEnter(): void {}
+  private onActiveUpdate(): void {}
+  private onActiveExit(): void {}
   makePriorityRoomList(target: { x: number; y: number }): string[] {
     const npcPriorityProps = {
       matrix: this.matrix,

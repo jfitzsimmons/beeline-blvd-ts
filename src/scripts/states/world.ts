@@ -70,6 +70,7 @@ export default class World {
       playerTraits: this.player.traits,
       ...playerProps,
       ...tasksProps,
+      getNpcByRoomStation: this.rooms.getNpcByRoomStation.bind(this),
     }
     this.npcs = new WorldNpcs(npcsProps)
     const allquestmethods: WorldQuestsMethods = {
@@ -115,10 +116,10 @@ export default class World {
     this.quests.fsm.setState('new')
 
     //debug defaults
-    this.npcs.all[this.rooms.all.reception.stations.guest].hp = 0
-    this.npcs.all[this.rooms.all.reception.stations.guest].fsm.setState(
-      'injury'
-    )
+
+    //this.npcs.all[this.rooms.all.reception.stations.guest].fsm.setState(
+    //     'injury'
+    //   )
     this.tasks.taskBuilder(
       'security004',
       'questioning',
@@ -128,10 +129,17 @@ export default class World {
       'testing'
     )
     //quest
-    this.npcs.all[this.rooms.all.grounds.stations.worker1].hp = 0
-    this.npcs.all[this.rooms.all.grounds.stations.worker1].fsm.setState(
-      'injury'
+
+    print(
+      'TESTJINJUREDNPCS:::',
+      this.npcs.all[this.rooms.all.grounds.stations.worker1].name,
+      this.npcs.all[this.rooms.all.grounds.stations.worker1].hp,
+      this.npcs.all[this.rooms.all.reception.stations.guest].name,
+      this.npcs.all[this.rooms.all.reception.stations.guest].hp
     )
+    // this.npcs.all[this.rooms.all.grounds.stations.worker1].fsm.//setState(
+    //   'injury'
+    // )
     this.npcs.addIgnore(this.rooms.all.grounds.stations.worker1)
   }
   private onNewUpdate(): void {}

@@ -184,7 +184,7 @@ export function on_message(
     }
 
     //
-    msg.post('proxies:/controller#novelcontroller', 'unload_novel')
+    msg.post('worldproxies:/controller#novelcontroller', 'unload_novel')
     msg.post(player.currRoom + ':/shared/scripts#level', 'exit_gui')
   }
 }

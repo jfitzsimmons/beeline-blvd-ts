@@ -18,6 +18,7 @@ interface props {
 
 function show(currentProxy: url | null, p: string) {
   if (currentProxy) {
+    print('currprox,p', currentProxy, p)
     msg.post(currentProxy, 'unload')
     currentProxy = null
   }
@@ -30,6 +31,7 @@ export function init(this: props) {
   this.currentProxy = null
   this.loadType = 'game init'
   this.roomName = 'grounds'
+  this.isPaused = false
 
   gamesave.init() // checks if theres app support data and if you're out of save slots
   gamesettings.init() // checks if menu settings file, creates new or reads
@@ -37,6 +39,8 @@ export function init(this: props) {
     roomName: this.roomName,
     loadType: this.loadType,
   }
+  print('||| >>> GAME CONTROLLER INITIALIZED <<< |||')
+
   msg.post('#', 'show_menu', params)
 }
 
@@ -80,6 +84,7 @@ export function on_message(
     this.loadType = message.loadType
 
     show(this.currentProxy, '#main_menu')
+    this.isPaused = this.isPaused === true ? false : true
     msg.post('#', 'acquire_input_focus')
   }
   //NEW_GAME
@@ -99,9 +104,14 @@ export function on_input(
     released: boolean
   }
 ) {
-  if (actionId == hash('main_menu') && action.released) {
+  if (
+    actionId == hash('main_menu') &&
+    action.released &&
+    this.isPaused == false
+  ) {
     //back to game without interruption or changing state.
     show(this.currentProxy, '#world')
+    this.isPaused = true
     msg.post('#', 'acquire_input_focus')
   }
 }

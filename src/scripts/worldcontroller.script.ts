@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Game } from './states/game'
 import { url } from '../types/utils'
 
-globalThis.game = new Game()
 const game = globalThis.game
 const { world } = game
 const { rooms, player, npcs } = world
@@ -14,10 +12,11 @@ interface props {
   storagename: string
   currentProxy: url | null
   loadType: string
+  isPaused: boolean
 }
 
 function handleGameFSMs(loadType: string) {
-  print('!!! --- === ::: Updating States ::: === --- !!!')
+  print('!!! --- === ::: World State Transitions ::: === --- !!!', loadType)
   if (loadType === 'room transition') {
     world.fsm.setState('turn')
     npcs.fsm.setState('place')
@@ -39,10 +38,9 @@ function show(currentProxy: url | null, p: string) {
   msg.post(p, 'async_load')
 }
 
-//init from bootstrap (main.collection)
+//init from  (world.collection)
 export function init(this: props) {
   print('|| >>> WORLD CONTROLLER INITIALIZED <<< ||')
-  //this.inGame = true
   this.currentProxy = null
   this.loadType = 'run'
   this.roomName = 'admin1'
@@ -61,11 +59,9 @@ export function on_message(
   if (messageId == hash('pick_room')) {
     this.roomName = message.roomName
     this.loadType = message.loadType
-
     handleGameFSMs(this.loadType)
     show(this.currentProxy, '#' + this.roomName)
     msg.post('#', 'acquire_input_focus')
-    //this.inGame = true
   }
   //PROXY_LOADED
   else if (messageId == hash('proxy_loaded')) {
@@ -77,8 +73,18 @@ export function on_message(
       }
       rooms.all[player.currRoom].fsm.setState('blur')
       rooms.all[this.roomName].fsm.setState('focus')
-      print('000 --- === ::: NEW ROOM LOADING ::: === --- 000')
-      msg.post(this.roomName + ':/shared/scripts#level', 'room_load', params)
+      print(
+        '000 --- === ::: NEW ROOM LOADING ::: === --- 000',
+        this.isPaused,
+        this.loadType
+      )
+
+      msg.post(
+        this.roomName + ':/shared/scripts#level',
+        this.loadType === 'game paused' ? 'quick_load' : 'room_load',
+        params
+      )
+      this.isPaused = false
     }
     msg.post(_sender, 'enable')
   }
@@ -96,12 +102,16 @@ export function on_input(
     released: boolean
   }
 ) {
-  if (actionId == hash('main_menu') && action.released) {
+  if (
+    actionId == hash('main_menu') &&
+    action.released &&
+    this.isPaused == false
+  ) {
+    this.isPaused = true
     const params = {
       roomName: this.roomName,
       loadType: 'game paused',
     }
-    // this.inGame = this.inGame == true ? false : true
     msg.post('gameproxies:/controller#gamecontroller', 'show_menu', params)
   } else if (actionId == hash('info_gui') && action.released) {
     msg.post('#', 'toggle_info')

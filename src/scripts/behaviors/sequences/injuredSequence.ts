@@ -10,8 +10,11 @@ export default class InjuredSequence extends Sequence {
     turnActions.push(...[new InjuredAction(a)])
 
     super(turnActions)
+    print('INJUREDSEQ CREATED!!!')
   }
   run(): 'REMOVE' | '' {
+    print('INJUREDSEQ RUNRUNRUN!!!')
+
     for (const child of this.children) {
       child.run()()
     }

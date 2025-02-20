@@ -15,6 +15,7 @@ export default class InjuryAction extends Action {
       a.parent.addInjured(a.name)
     }
     a.hp = 0
+    print('InjuryAction:: return delay(InjuredSequence):', a.name)
 
     //make the rest injuredAction???
     //will also need onSCreen logic

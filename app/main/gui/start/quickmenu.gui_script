@@ -229,7 +229,6 @@ local function press_button(i)
 end
 
 function init(self)
-	print("q menu init")
 	msg.post("window_listener#window_listener", "add_listener")
 	create_buttons()
 	load_lock()

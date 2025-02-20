@@ -11,6 +11,8 @@ export default class InjuredAction extends Action {
     const { actor: a } = this
     //testjpf oninjurystart
     if (a instanceof NpcState) {
+      print('InjurEDAction:: a instanceof NpcState:', a.name)
+
       a.sincePlayerRoom = 99
       // a.parent.addInjured(a.name)
 
