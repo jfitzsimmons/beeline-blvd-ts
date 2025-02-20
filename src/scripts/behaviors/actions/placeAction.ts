@@ -20,7 +20,7 @@ export default class PlaceAction extends Action {
     if (a.cooldown > 0) a.cooldown = a.cooldown - 1
 
     a.exitRoom = RoomsInitLayout[a.matrix.y][a.matrix.x]!
-
+    print('placeactionhp::', a.hp, a.name)
     if (a.hp < 1) {
       //testjpf create injuryaction
       //alternate logic??

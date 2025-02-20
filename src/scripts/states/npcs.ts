@@ -16,6 +16,7 @@ import { confrontation_check } from './inits/checksFuncs'
 import { immobile } from '../utils/consts'
 import TurnSequence from '../behaviors/sequences/placeSequence'
 import Selector from '../behaviors/selector'
+import InjuredSequence from '../behaviors/sequences/injuredSequence'
 
 const dt = math.randomseed(os.time())
 
@@ -75,7 +76,7 @@ export default class WorldNpcs {
     this.fsm.addState('new', {
       onEnter: this.onNewEnter.bind(this),
       // onUpdate: this.onNewUpdate.bind(this),
-      //onExit: this.onNewExit.bind(this),
+      onExit: this.onNewExit.bind(this),
     })
 
     this.returnDoctors = this.returnDoctors.bind(this)
@@ -96,9 +97,33 @@ export default class WorldNpcs {
 
       npc.fsm.update(dt)
     }
+
+    // TEST DATA
+    const guest = this.parent.getNpcByRoomStation('reception', 'guest')
+    const worker = this.parent.getNpcByRoomStation('grounds', 'worker1')
+    this.all[guest].hp = 0
+    this.all[guest].behavior.active.children.push(
+      new InjuredSequence(this.all[guest])
+    )
+    this.all[worker].hp = 0
+    this.all[worker].behavior.active.children.push(
+      new InjuredSequence(this.all[worker])
+    )
   }
   // private onNewUpdate(): void {}
-  //private onNewExit(): void {}
+  private onNewExit(): void {
+    for (let i = this.order.length; i-- !== 0; ) {
+      const npc = this.all[this.order[i]]
+      //i could add logic here to
+      //handle doc logic separately.?
+      //testjpf
+      print('PREACHNPCACTIVE RUN()')
+      npc.behavior.active.run()
+      // npc.fsm.update(dt)
+      // prettier-ignore
+      // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
+    }
+  }
   private onPlaceEnter(): void {}
   private onPlaceUpdate(): void {
     print('<< :: NPCSplaceUpdate() :: >>')
@@ -120,10 +145,11 @@ export default class WorldNpcs {
      * change state to something else (MTG terms)
      * loop there. better game logic?
      */
-    this.fsm.setState('active')
+    //this.fsm.setState('active')
   }
   private onPlaceExit(): void {}
   private onActiveEnter(): void {
+    print('npcsActiveEnter')
     this.medical()
     this.security()
   }

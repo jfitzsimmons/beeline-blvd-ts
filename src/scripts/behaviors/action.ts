@@ -33,6 +33,7 @@ export default class Action {
      * both will be Selctor class at same level
      * TODO
      */
-    a.behavior.place.children.push(s)
+    print('ACTION DELAYED FOR::', a.name)
+    a.behavior.active.children.push(s)
   }
 }

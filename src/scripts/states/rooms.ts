@@ -65,6 +65,7 @@ export default class WorldRooms {
     this.setSwapParent = this.setSwapParent.bind(this)
     this.pruneSwapParent = this.pruneSwapParent.bind(this)
     this.clearSwapParent = this.clearSwapParent.bind(this)
+    this.getNpcByRoomStation = this.getNpcByRoomStation.bind(this)
   }
   public get all(): Rooms {
     return this._all
@@ -169,6 +170,10 @@ export default class WorldRooms {
     ) {
       this.all[room].vacancies![station] = ''
     }
+  }
+  getNpcByRoomStation(room: string, station: string): string {
+    print('getNpcByRoomStation', room, station)
+    return this.all[room].stations[station]
   }
   private onTurnEnter(): void {
     this.resetStationMap()

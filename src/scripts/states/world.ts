@@ -70,6 +70,7 @@ export default class World {
       playerTraits: this.player.traits,
       ...playerProps,
       ...tasksProps,
+      getNpcByRoomStation: this.rooms.getNpcByRoomStation.bind(this),
     }
     this.npcs = new WorldNpcs(npcsProps)
     const allquestmethods: WorldQuestsMethods = {
@@ -115,7 +116,7 @@ export default class World {
     this.quests.fsm.setState('new')
 
     //debug defaults
-    this.npcs.all[this.rooms.all.reception.stations.guest].hp = 0
+
     //this.npcs.all[this.rooms.all.reception.stations.guest].fsm.setState(
     //     'injury'
     //   )
@@ -128,7 +129,7 @@ export default class World {
       'testing'
     )
     //quest
-    this.npcs.all[this.rooms.all.grounds.stations.worker1].hp = 0
+
     print(
       'TESTJINJUREDNPCS:::',
       this.npcs.all[this.rooms.all.grounds.stations.worker1].name,
