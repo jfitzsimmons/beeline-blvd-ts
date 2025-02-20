@@ -18,18 +18,15 @@ interface props {
 
 function show(currentProxy: url | null, p: string) {
   if (currentProxy) {
-    print('is this unloaded curprox::', currentProxy, p)
     msg.post(currentProxy, 'unload')
     currentProxy = null
   }
-  print('PPPPPPP::::::', p)
   msg.post('#', 'release_input_focus')
   msg.post(p, 'async_load')
 }
 
 //init from bootstrap (main.collection)
 export function init(this: props) {
-  //this.isPaused = false
   this.currentProxy = null
   this.loadType = 'game init'
   this.roomName = 'grounds'
@@ -59,7 +56,6 @@ export function on_message(
     if (this.loadType === 'new game') {
       //YOU DONT WANT TO UNLOAD GAME!!! There is NO GAME PROXY!!
       //THE GAMEPROXY IS A LIE! TESTJPF
-
       const params = {
         roomName: 'grounds',
         loadType: 'new game',
@@ -69,57 +65,27 @@ export function on_message(
       this.loadType !== 'game init' &&
       _sender.fragment !== hash('main_menu')
     ) {
+      // back-to game
       const params = {
         roomName: this.roomName,
         loadType: this.loadType,
       }
-      print(
-        'PLEASEPLEASE:::  this.currentProxy::',
-        // this.isPaused,
-        this.currentProxy,
-        _sender.fragment,
-        this.roomName
-      )
-      //print('000 --- === ::: NEW ROOM LOADING ::: === --- 000')
-      msg.post('worldproxies:/controller#worldcontroller', 'pick_room', {
-        ...params,
-      })
+      msg.post('worldproxies:/controller#worldcontroller', 'pick_room', params)
     }
-
     msg.post(_sender, 'enable')
   }
   //SHOW_MENU
   else if (messageId == hash('show_menu')) {
     this.roomName = message.roomName
     this.loadType = message.loadType
-    // this.isPaused = this.loadType === 'game paused'
 
-    print(
-      // this.isPaused,
-      _sender.fragment,
-      this.loadType,
-      this.roomName,
-      //'this.isPaused',
-      'senderfrag',
-      'loadtype',
-      'this.roomName'
-    )
     show(this.currentProxy, '#main_menu')
     msg.post('#', 'acquire_input_focus')
-    //  }
-  } else if (messageId == hash('new_game')) {
+  }
+  //NEW_GAME
+  else if (messageId == hash('new_game')) {
     this.roomName = message.roomName
-    //this.isPaused = _sender.fragment == hash('worldproxies')
     this.loadType = message.loadType
-    print('NERWGAME!!', this.loadType, this.roomName)
-    print(
-      //    this.isPaused,
-      _sender.fragment,
-      this.loadType,
-      //  'this.isPaused',
-      'senderfrag',
-      'loadtype'
-    )
 
     show(this.currentProxy, '#world')
     msg.post('#', 'acquire_input_focus')
@@ -135,14 +101,7 @@ export function on_input(
 ) {
   if (actionId == hash('main_menu') && action.released) {
     //back to game without interruption or changing state.
-    print(
-      //this.isPaused,
-      'INPUT',
-      this.loadType,
-      //'this.isPaused',
-      'senderfrag',
-      'loadtype'
-    )
     show(this.currentProxy, '#world')
+    msg.post('#', 'acquire_input_focus')
   }
 }
