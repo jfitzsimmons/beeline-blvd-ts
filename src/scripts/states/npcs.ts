@@ -147,7 +147,12 @@ export default class WorldNpcs {
      */
     //this.fsm.setState('active')
   }
-  private onPlaceExit(): void {}
+  private onPlaceExit(): void {
+    for (let i = this.order.length; i-- !== 0; ) {
+      const npc = this.all[this.order[i]]
+      npc.behavior.active.run()
+    }
+  }
   private onActiveEnter(): void {
     print('npcsActiveEnter')
     this.medical()
