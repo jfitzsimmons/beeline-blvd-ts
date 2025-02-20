@@ -20,6 +20,7 @@ export default class PlaceAction extends Action {
     if (a.hp < 1) {
       //testjpf create injuryaction
       //alternate logic??
+      print('PlaceAction:: hp<1:', a.name)
       return () => this.alternate(new InjuryAction(a))
     }
 

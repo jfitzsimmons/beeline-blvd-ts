@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Game } from './states/game'
 import { url } from '../types/utils'
 
-globalThis.game = new Game()
 const game = globalThis.game
 const { world } = game
 const { rooms, player, npcs } = world
@@ -14,10 +12,11 @@ interface props {
   storagename: string
   currentProxy: url | null
   loadType: string
+  isPaused: boolean
 }
 
 function handleGameFSMs(loadType: string) {
-  print('!!! --- === ::: Updating States ::: === --- !!!')
+  print('!!! --- === ::: World State Transitions ::: === --- !!!')
   if (loadType === 'room transition') {
     world.fsm.setState('turn')
     npcs.fsm.setState('place')
@@ -39,13 +38,13 @@ function show(currentProxy: url | null, p: string) {
   msg.post(p, 'async_load')
 }
 
-//init from bootstrap (main.collection)
+//init from  (world.collection)
 export function init(this: props) {
   print('|| >>> WORLD CONTROLLER INITIALIZED <<< ||')
-  //this.inGame = true
   this.currentProxy = null
   this.loadType = 'run'
   this.roomName = 'admin1'
+  this.isPaused = false
 }
 
 export function on_message(
@@ -64,8 +63,8 @@ export function on_message(
 
     handleGameFSMs(this.loadType)
     show(this.currentProxy, '#' + this.roomName)
+    this.isPaused = false
     msg.post('#', 'acquire_input_focus')
-    //this.inGame = true
   }
   //PROXY_LOADED
   else if (messageId == hash('proxy_loaded')) {
@@ -96,12 +95,16 @@ export function on_input(
     released: boolean
   }
 ) {
-  if (actionId == hash('main_menu') && action.released) {
+  if (
+    actionId == hash('main_menu') &&
+    action.released &&
+    this.isPaused == false
+  ) {
+    this.isPaused = true
     const params = {
       roomName: this.roomName,
       loadType: 'game paused',
     }
-    // this.inGame = this.inGame == true ? false : true
     msg.post('gameproxies:/controller#gamecontroller', 'show_menu', params)
   } else if (actionId == hash('info_gui') && action.released) {
     msg.post('#', 'toggle_info')
