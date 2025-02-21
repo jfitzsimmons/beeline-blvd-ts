@@ -126,6 +126,7 @@ export default class NpcState extends ActorState {
   }
 
   private onInfirmEnter(): void {
+    /**
     this.hp = 5
     this.parent.clearStation(this.currRoom, this.currStation, this.name)
     this.sincePlayerRoom = 99
@@ -133,6 +134,7 @@ export default class NpcState extends ActorState {
     this.matrix = RoomsInitState.infirmary.matrix
     this.cooldown = 8
     this.currRoom = 'infirmary'
+    */
   }
   private onInfirmUpdate(): void {
     this.sincePlayerRoom = 99
@@ -225,11 +227,12 @@ export default class NpcState extends ActorState {
   }
   private onArresteeExit(): void {}
   private onMendeeEnter(): void {
-    this.sincePlayerRoom = 98
-    this.parent.addIgnore(this.name)
-    this.parent.addAdjustMendingQueue(this.name)
+    // this.sincePlayerRoom = 98
+    // this.parent.addIgnore(this.name)
+    // this.parent.addAdjustMendingQueue(this.name)
   }
   private onMendeeUpdate(): void {
+    /**
     this.sincePlayerRoom = 98
     this.hp = this.hp + 1
     if (this.hp > 4) {
@@ -241,9 +244,10 @@ export default class NpcState extends ActorState {
     } else {
       this.parent.pruneStationMap(this.currRoom, this.currStation)
     }
+      */
   }
   private onMendeeExit(): void {
-    this.parent.clearStation(this.currRoom, this.currStation, this.name)
+    //this.parent.clearStation(this.currRoom, this.currStation, this.name)
   }
   private onMenderEnter(): void {
     //this.sincePlayerRoom = 97
