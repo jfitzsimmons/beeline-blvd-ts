@@ -2,10 +2,13 @@ import ActorState from '../../states/actor'
 import Action from '../action'
 
 export default class ImmobileAction extends Action {
+  a: ActorState
   constructor(a: ActorState) {
     super(a)
+    this.a = a
   }
   run(): { (): void } {
+    print('immobileAction for::', this.a)
     /**
      * TESTJPF TODO!!!
      */
