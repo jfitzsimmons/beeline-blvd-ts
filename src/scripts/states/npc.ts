@@ -15,6 +15,9 @@ import {
 import { surrounding_room_matrix } from '../utils/utils'
 import { doctors } from '../utils/consts'
 import ActorState from './actor'
+//import InjuredSequence from '../behaviors/sequences/injuredSequence'
+
+//const dt = math.randomseed(os.time())
 
 export default class NpcState extends ActorState {
   home: { x: number; y: number }
@@ -126,6 +129,7 @@ export default class NpcState extends ActorState {
   }
 
   private onInfirmEnter(): void {
+    /**
     this.hp = 5
     this.parent.clearStation(this.currRoom, this.currStation, this.name)
     this.sincePlayerRoom = 99
@@ -133,6 +137,7 @@ export default class NpcState extends ActorState {
     this.matrix = RoomsInitState.infirmary.matrix
     this.cooldown = 8
     this.currRoom = 'infirmary'
+    */
   }
   private onInfirmUpdate(): void {
     this.sincePlayerRoom = 99
@@ -152,45 +157,7 @@ export default class NpcState extends ActorState {
     //this.parent.addInjured(this.name)
     //this.hp = 0
   }
-  private onInjuryUpdate(): void {
-    //testjpf
-    // dont want to create new Sequence on update
-    // could have flag here that removes when healed
-    // but probably need to remove injuryState altogether???
-    /**
-    this.sincePlayerRoom = 99
-    this.parent.pruneStationMap(this.currRoom, this.currStation)
-    if (this.parent.getIgnore().includes(this.name)) return
-    const helpers = Object.values(this.parent.getOccupants(this.currRoom))
-      .filter((s) => s != '')
-      .sort(function (a, b) {
-        if (a.slice(0, 3) === 'doc' && b.slice(0, 3) !== 'doc') return -1
-        if (b.slice(0, 3) === 'doc' && a.slice(0, 3) !== 'doc') return 1
-        return 0
-      })
-    for (const helper of helpers) {
-      //doctors start mending after RNG weighted by patient priority
-      const ticket = this.parent.getMendingQueue().indexOf(this.name)
-      const random = math.random(0, 4)
-      if (
-        NpcsInitState[helper].clan == 'doctors' &&
-        ((ticket != -1 && ticket < random) || (ticket == -1 && random > 3))
-      ) {
-        this.tendToPatient(this.name, helper)
-        break
-      } else if (
-        math.random() > 0.7 &&
-        this.parent.npcHasTask([helper], [this.name]) === null &&
-        NpcsInitState[helper].clan !== 'doctors'
-      ) {
-        //if not a doctor, create injury caution if haven't already
-        this.parent.taskBuilder(helper, 'injury', this.name, 'injury')
-        break
-      }
-    }
-      */
-  }
-
+  private onInjuryUpdate(): void {}
   private onInjuryEnd(): void {}
   private onParamedicEnter(): void {}
   private onParamedicUpdate(): void {
@@ -263,11 +230,12 @@ export default class NpcState extends ActorState {
   }
   private onArresteeExit(): void {}
   private onMendeeEnter(): void {
-    this.sincePlayerRoom = 98
-    this.parent.addIgnore(this.name)
-    this.parent.addAdjustMendingQueue(this.name)
+    // this.sincePlayerRoom = 98
+    // this.parent.addIgnore(this.name)
+    // this.parent.addAdjustMendingQueue(this.name)
   }
   private onMendeeUpdate(): void {
+    /**
     this.sincePlayerRoom = 98
     this.hp = this.hp + 1
     if (this.hp > 4) {
@@ -279,27 +247,30 @@ export default class NpcState extends ActorState {
     } else {
       this.parent.pruneStationMap(this.currRoom, this.currStation)
     }
+      */
   }
   private onMendeeExit(): void {
-    this.parent.clearStation(this.currRoom, this.currStation, this.name)
+    //this.parent.clearStation(this.currRoom, this.currStation, this.name)
   }
   private onMenderEnter(): void {
-    this.sincePlayerRoom = 97
+    //this.sincePlayerRoom = 97
   }
   private onMenderUpdate(): void {
-    this.sincePlayerRoom = 97
-    this.parent.pruneStationMap(this.currRoom, this.currStation)
+    // this.sincePlayerRoom = 97
+    // this.parent.pruneStationMap(this.currRoom, this.currStation)
   }
   private onMenderExit(): void {}
   private onNewEnter(): void {}
   private onNewUpdate(): void {
-    print('NEWUPDATE place run')
-
     this.behavior.place.run()
+
+    print('NEWUPDATE place run', this.name, this.hp)
   }
   private onNewExit(): void {}
   private onTurnEnter(): void {
-    this.sincePlayerRoom = math.random(2, 15)
+    // this.sincePlayerRoom = math.random(2, 15)
+    print('NPCCLASS::: onTurnEnter()')
+    // this.fsm.update(dt)
   }
   private onTurnUpdate(): void {
     /**

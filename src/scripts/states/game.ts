@@ -20,6 +20,9 @@ export class Game {
   }
   private onNewEnter(): void {
     this.world.fsm.setState('new')
+    print('... ___ NEW GAME LOADED ||| AI Taking Turn... ... ...')
+
+    this.world.fsm.setState('turn')
   }
   // private onNewUpdate(): void {}
   // private onNewExit(): void {}

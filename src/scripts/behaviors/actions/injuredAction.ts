@@ -2,6 +2,8 @@ import ActorState from '../../states/actor'
 import { NpcsInitState } from '../../states/inits/npcsInitState'
 import NpcState from '../../states/npc'
 import Action from '../action'
+import MendeeSequence from '../sequences/mendeeSequence'
+import MenderSequence from '../sequences/menderSequence'
 
 export default class InjuredAction extends Action {
   constructor(a: ActorState) {
@@ -17,7 +19,8 @@ export default class InjuredAction extends Action {
       // a.parent.addInjured(a.name)
       a.parent.pruneStationMap(a.currRoom, a.currStation)
       if (a.parent.getIgnore().includes(a.name))
-        return () => this.fail('FAILignore - must ignore injured:::' + a.name)
+        return () => this.continue('IGNORE WILLTHISWORJ UNJUREDACTIONCONT')
+      //return () => this.fail('FAILignore - must ignore injured:::' + a.name)
 
       const helpers = Object.values(a.parent.getOccupants(a.currRoom))
         .filter((s) => s != '')
@@ -48,8 +51,11 @@ export default class InjuredAction extends Action {
            *
            * KEEP running into post placement and preplacement sequences / behavior
            */
-          a.tendToPatient(a.name, helper)
-          break
+          // a.tendToPatient(a.name, helper)
+          print('INJUREDACTION::: DOC::', helper, 'ismending', a.name)
+          const doc = a.parent.returnNpc(helper)
+          doc.behavior.active.children.push(new MenderSequence(doc, a.name))
+          return () => this.alternate(new MendeeSequence(a))
         } else if (
           math.random() > 0.7 &&
           a.parent.npcHasTask([helper], [a.name]) === null &&
@@ -62,8 +68,8 @@ export default class InjuredAction extends Action {
         }
       }
     } else {
-      return () => this.fail('FAIL404 - no InjuredAction for Actor')
+      return () => this.fail('FAIL404 - no InjuredAction for Player')
     }
-    return () => this.success()
+    return () => this.continue('WILLTHISWORJ UNJUREDACTIONCONT')
   }
 }

@@ -2,7 +2,6 @@ import ActorState from '../states/actor'
 import Sequence from './sequence'
 
 export default class Action {
-  action?: { (): void }
   actor: ActorState
   constructor(actorProps: ActorState) {
     this.actor = actorProps
@@ -10,8 +9,9 @@ export default class Action {
     this.fail = this.fail.bind(this)
     this.success = this.success.bind(this)
     this.alternate = this.alternate.bind(this)
+    this.continue = this.continue.bind(this)
   }
-  run(): () => void {
+  run(): () => void | string {
     return () => print('ACTIONclass run()default::: ', this.actor.name)
   }
   fail(str: string) {
@@ -25,5 +25,9 @@ export default class Action {
   }
   delay(a: ActorState, s: Sequence) {
     print('ACTION DELAYED FOR::', a.name, typeof s)
+  }
+  continue(s: string): string {
+    print('ActionContinue:::', s)
+    return 'continue'
   }
 }

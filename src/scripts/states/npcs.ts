@@ -14,7 +14,7 @@ import { shuffle } from '../utils/utils'
 import { RoomsInitState } from './inits/roomsInitState'
 import { confrontation_check } from './inits/checksFuncs'
 import { immobile } from '../utils/consts'
-import TurnSequence from '../behaviors/sequences/placeSequence'
+import PlaceSequence from '../behaviors/sequences/placeSequence'
 import Selector from '../behaviors/selector'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
 
@@ -93,7 +93,7 @@ export default class WorldNpcs {
 
       npc.behavior.place = new Selector([])
       npc.behavior.active = new Selector([])
-      npc.behavior.place.children.push(new TurnSequence(npc))
+      npc.behavior.place.children.push(new PlaceSequence(npc))
 
       npc.fsm.update(dt)
     }
@@ -117,14 +117,20 @@ export default class WorldNpcs {
       //i could add logic here to
       //handle doc logic separately.?
       //testjpf
-      print('PREACHNPCACTIVE RUN()')
+      print('npc:', npc.name, 'activebehaviorRUN!!!')
       npc.behavior.active.run()
       // npc.fsm.update(dt)
       // prettier-ignore
       // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
     }
   }
-  private onPlaceEnter(): void {}
+  private onPlaceEnter(): void {
+    for (let i = this.order.length; i-- !== 0; ) {
+      const npc = this.all[this.order[i]]
+      print('SETSTATETURN for::', npc.name)
+      npc.fsm.setState('turn')
+    }
+  }
   private onPlaceUpdate(): void {
     print('<< :: NPCSplaceUpdate() :: >>')
     this.sort_npcs_by_encounter()
@@ -133,7 +139,7 @@ export default class WorldNpcs {
       //i could add logic here to
       //handle doc logic separately.?
       //testjpf
-      npc.behavior.place.children.push(new TurnSequence(npc))
+      npc.behavior.place.children.push(new PlaceSequence(npc))
       npc.fsm.update(dt)
       // prettier-ignore
       // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
@@ -291,7 +297,7 @@ function seedNpcs(lists: NpcProps) {
   let ki: keyof typeof NpcsInitState
   for (ki in NpcsInitState) {
     seeded[ki] = new NpcState(ki, lists)
-    seeded[ki].behavior.place.children.push(new TurnSequence(seeded[ki]))
+    seeded[ki].behavior.place.children.push(new PlaceSequence(seeded[ki]))
   }
   return seeded
 }

@@ -2,7 +2,6 @@ import ActorState from '../../states/actor'
 import { isNpc } from '../../utils/ai'
 import Action from '../action'
 import Sequence from '../sequence'
-import InjuredSequence from '../sequences/injuredSequence'
 
 export default class InjuryAction extends Action {
   constructor(a: ActorState) {
@@ -22,7 +21,7 @@ export default class InjuryAction extends Action {
     //make the rest injuredAction???
     //will also need onSCreen logic
     //instead of Place sequence, behavior should be InjuredSequence??
-    return this.delay(a, new InjuredSequence(a))
+    return () => this.continue('DEARGOD TRYINGTOCONT THE INJURYACTION')
     //a.behavior.children.push(new InjuredSequence(a))
 
     /**
@@ -45,7 +44,25 @@ export default class InjuryAction extends Action {
     //return () => this.success()
   }
   delay(a: ActorState, s: Sequence) {
+    print(
+      a.name,
+      'ANYTHIGNATALL!!! a.behavior.active.children',
+      a.behavior.active.children.length
+    )
+
     a.behavior.active.children.push(s)
-    return () => print('INJUREDSEQUENCE DELAYED FOR::', a.name)
+
+    print(
+      a.name,
+      'ANYTHIGNATALL!!!!!!@@@@@@22222',
+      a.behavior.active.children.length
+    )
+
+    return () =>
+      print(
+        a.name,
+        'INJUREDSEQUENCE DELAYED FOR::a.behavior.active.children',
+        a.behavior.active.children.length
+      )
   }
 }

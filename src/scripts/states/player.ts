@@ -52,7 +52,7 @@ export default class WorldPlayer extends ActorState {
 
     this.matrix = { x: 0, y: 4 }
     this.name = 'player'
-
+    this.exitRoom = 'grounds'
     print('pre player traits')
 
     randomTrait(this.traits.skills, this.traits.binaries)
