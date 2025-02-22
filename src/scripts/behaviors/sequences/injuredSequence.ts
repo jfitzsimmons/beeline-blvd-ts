@@ -20,9 +20,12 @@ export default class InjuredSequence extends Sequence {
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
       const proceed = child.run()()
+      print('INJUREDSEQUENCE::: Proceed::', proceed)
       if (proceed === 'continue')
         this.a.behavior.place.children.push(new InjuredSequence(this.a))
     }
+    print('INJUREDSEQUENCE::: COMPLETE:: Remove?')
+
     return 'REMOVE'
   }
 }

@@ -16,6 +16,8 @@ import { confrontation_check } from './inits/checksFuncs'
 import { immobile } from '../utils/consts'
 import PlaceSequence from '../behaviors/sequences/placeSequence'
 import Selector from '../behaviors/selector'
+//import InjuredSequence from '../behaviors/sequences/injuredSequence'
+import InjuryAction from '../behaviors/actions/injuryAction'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
 
 const dt = math.randomseed(os.time())
@@ -96,9 +98,22 @@ export default class WorldNpcs {
       npc.behavior.place.children.push(new PlaceSequence(npc))
 
       npc.fsm.update(dt)
+      //TEST DEFAULTS
+      if (
+        (npc.currRoom == 'grounds' && npc.currStation == 'worker1') ||
+        (npc.currRoom == 'reception' && npc.currStation == 'guest')
+      ) {
+        //this.a.behavior.place.children.push(new InjuredSequence(this.a))
+        npc.hp = 0
+        const IA = new InjuryAction(npc)
+        const proceed = IA.run()
+        proceed()
+        npc.behavior.active.children.push(new InjuredSequence(npc))
+      }
     }
 
     // TEST DATA
+    /**
     const guest = this.parent.getNpcByRoomStation('reception', 'guest')
     const worker = this.parent.getNpcByRoomStation('grounds', 'worker1')
     this.all[guest].hp = 0
@@ -109,28 +124,16 @@ export default class WorldNpcs {
     this.all[worker].behavior.active.children.push(
       new InjuredSequence(this.all[worker])
     )
+      **/
   }
   // private onNewUpdate(): void {}
   private onNewExit(): void {
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
-      //i could add logic here to
-      //handle doc logic separately.?
-      //testjpf
-      print('npc:', npc.name, 'activebehaviorRUN!!!')
-      npc.behavior.active.run()
-      // npc.fsm.update(dt)
-      // prettier-ignore
-      // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
-    }
-  }
-  private onPlaceEnter(): void {
-    for (let i = this.order.length; i-- !== 0; ) {
-      const npc = this.all[this.order[i]]
-      print('SETSTATETURN for::', npc.name)
       npc.fsm.setState('turn')
     }
   }
+  private onPlaceEnter(): void {}
   private onPlaceUpdate(): void {
     print('<< :: NPCSplaceUpdate() :: >>')
     this.sort_npcs_by_encounter()
@@ -156,7 +159,7 @@ export default class WorldNpcs {
   private onPlaceExit(): void {
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
-      npc.behavior.active.run()
+      npc.fsm.setState('active')
     }
   }
   private onActiveEnter(): void {

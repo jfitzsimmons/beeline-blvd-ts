@@ -72,4 +72,8 @@ export default class InjuredAction extends Action {
     }
     return () => this.continue('WILLTHISWORJ UNJUREDACTIONCONT')
   }
+  continue(s: string): string {
+    print('InjuredAction:: Continue:', s)
+    return 'continue'
+  }
 }

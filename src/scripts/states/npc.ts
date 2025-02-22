@@ -263,10 +263,20 @@ export default class NpcState extends ActorState {
   private onNewEnter(): void {}
   private onNewUpdate(): void {
     this.behavior.place.run()
-
-    print('NEWUPDATE place run', this.name, this.hp)
   }
-  private onNewExit(): void {}
+  private onNewExit(): void {
+    // for (let i = this.order.length; i-- !== 0; ) {
+    // const npc = this.all[this.order[i]]
+    //i could add logic here to
+    //handle doc logic separately.?
+    //testjpf
+    print('npc:', this.name, 'activebehaviorRUN!!!')
+    this.behavior.active.run()
+    // npc.fsm.update(dt)
+    // prettier-ignore
+    // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
+    // }
+  }
   private onTurnEnter(): void {
     // this.sincePlayerRoom = math.random(2, 15)
     print('NPCCLASS::: onTurnEnter()')
@@ -275,9 +285,6 @@ export default class NpcState extends ActorState {
   private onTurnUpdate(): void {
     /**
      * TESTJPF
-     * so instead we will access this.behaviors
-     * ...
-     * is this it's own sequence???
      */
     // this.exitRoom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
     //this.remove_effects(this.effects)
@@ -287,27 +294,17 @@ export default class NpcState extends ActorState {
     // return
     //}
     // this.parent.clearStation(this.currRoom, this.currStation, this.name)
-
     //const target = RoomsInitState[this.parent.getPlayerRoom()].//matrix
     //const rooms = this.makePriorityRoomList(target)
     // this.findRoomPlaceStation(rooms)
-    /**
-     * TESTJPF the circular ref error
-     * should be solved if you move pushing turnseq
-     * to somewhere else.
-     *
-     * I think a huge question is
-     * whether i need to consider PLAYER
-     * at all!!!
-     */
+
     print('TURNUPDATE place run')
 
     this.behavior.place.run()
-
-    // loop thru behVIORS AS TEST!!!
-    //testjpf STARTHERE h
   }
-  private onTurnExit(): void {}
+  private onTurnExit(): void {
+    this.behavior.active.run()
+  }
   private onActiveEnter(): void {}
   private onActiveUpdate(): void {}
   private onActiveExit(): void {}

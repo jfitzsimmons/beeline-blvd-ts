@@ -26,8 +26,8 @@ export default class Action {
   delay(a: ActorState, s: Sequence) {
     print('ACTION DELAYED FOR::', a.name, typeof s)
   }
-  continue(s: string): string {
+  continue(s = 'continue'): string {
     print('ActionContinue:::', s)
-    return 'continue'
+    return s
   }
 }
