@@ -7,6 +7,7 @@ import {
 import { isNpc } from '../../utils/ai'
 import Action from '../action'
 import ImmobileAction from './immobileAction'
+//import ImmobileAction from './immobileAction'
 import InjuryAction from './injuryAction'
 
 export default class PlaceAction extends Action {
@@ -21,6 +22,10 @@ export default class PlaceAction extends Action {
     if (a.cooldown > 0) a.cooldown = a.cooldown - 1
     a.exitRoom = RoomsInitLayout[a.matrix.y][a.matrix.x]!
     if (isNpc(a) && a.sincePlayerRoom > 89) {
+      // testjpf could do:::
+      // return () =>
+      // this.fail(`PlaceAction::: ${a.name}: DidNotPlace. Is immobile.`)
+      print(a.name, 'CHOSE IMMOBILEACTION')
       return () => this.alternate(new ImmobileAction(a))
     }
     if (a.hp < 1) {

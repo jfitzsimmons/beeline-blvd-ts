@@ -6,9 +6,10 @@ export default class ImmobileAction extends Action {
   constructor(a: ActorState) {
     super(a)
     this.a = a
+    this.fail = this.fail.bind(this)
   }
   run(): { (): void } {
-    print('immobileAction for:: TODO::', this.a.name)
+    return () => this.fail()
     //testjpf do you infimrdseq, mender mendee,..
     // is this where a blackboard could come in?
     //in injuredAction::
@@ -23,6 +24,9 @@ export default class ImmobileAction extends Action {
      */
     //if (testjpfimmobile) return () => this.alternate(ImmobileAction(this))
     // if (testjpf) return () => this.fail('youfailed')
-    return () => this.success()
+    // return () => this.success()
+  }
+  fail() {
+    print(`PlaceAction>> ImmobileAction ${this.a.name}: DidNotPlace.`)
   }
 }

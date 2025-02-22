@@ -10,7 +10,7 @@ export default class MenderSequence extends Sequence {
   constructor(a: ActorState, mendee: string) {
     const turnActions: Action[] = []
 
-    turnActions.push(...[new MenderAction(a)]) //ne to add MoveNpcAction?
+    turnActions.push(...[new MenderAction(a, mendee)]) //ne to add MoveNpcAction?
 
     super(turnActions)
     this.a = a
@@ -21,7 +21,11 @@ export default class MenderSequence extends Sequence {
     // print('INJUREDSEQ RUNRUNRUN!!!')
 
     for (const child of this.children) {
-      child.run()()
+      const proceed = child.run()()
+      if (proceed === 'continue')
+        this.a.behavior.place.children.push(
+          new MenderSequence(this.a, this.mendee)
+        )
     }
 
     //  const hurt = npcs.all[ts[i].target].hp < 5

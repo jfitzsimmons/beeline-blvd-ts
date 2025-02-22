@@ -117,14 +117,20 @@ export default class WorldNpcs {
       //i could add logic here to
       //handle doc logic separately.?
       //testjpf
-      print('PREACHNPCACTIVE RUN()')
+      print('npc:', npc.name, 'activebehaviorRUN!!!')
       npc.behavior.active.run()
       // npc.fsm.update(dt)
       // prettier-ignore
       // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
     }
   }
-  private onPlaceEnter(): void {}
+  private onPlaceEnter(): void {
+    for (let i = this.order.length; i-- !== 0; ) {
+      const npc = this.all[this.order[i]]
+      print('SETSTATETURN for::', npc.name)
+      npc.fsm.setState('turn')
+    }
+  }
   private onPlaceUpdate(): void {
     print('<< :: NPCSplaceUpdate() :: >>')
     this.sort_npcs_by_encounter()

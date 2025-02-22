@@ -19,7 +19,8 @@ export default class InjuredAction extends Action {
       // a.parent.addInjured(a.name)
       a.parent.pruneStationMap(a.currRoom, a.currStation)
       if (a.parent.getIgnore().includes(a.name))
-        return () => this.fail('FAILignore - must ignore injured:::' + a.name)
+        return () => this.continue('IGNORE WILLTHISWORJ UNJUREDACTIONCONT')
+      //return () => this.fail('FAILignore - must ignore injured:::' + a.name)
 
       const helpers = Object.values(a.parent.getOccupants(a.currRoom))
         .filter((s) => s != '')
@@ -51,6 +52,7 @@ export default class InjuredAction extends Action {
            * KEEP running into post placement and preplacement sequences / behavior
            */
           // a.tendToPatient(a.name, helper)
+          print('INJUREDACTION::: DOC::', helper, 'ismending', a.name)
           const doc = a.parent.returnNpc(helper)
           doc.behavior.active.children.push(new MenderSequence(doc, a.name))
           return () => this.alternate(new MendeeSequence(a))
@@ -68,6 +70,6 @@ export default class InjuredAction extends Action {
     } else {
       return () => this.fail('FAIL404 - no InjuredAction for Player')
     }
-    return () => this.success()
+    return () => this.continue('WILLTHISWORJ UNJUREDACTIONCONT')
   }
 }

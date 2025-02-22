@@ -4,7 +4,7 @@ import { url } from '../types/utils'
 
 const game = globalThis.game
 const { world } = game
-const { rooms, player, npcs } = world
+const { rooms, player } = world
 
 interface props {
   inGame: boolean
@@ -19,14 +19,12 @@ function handleGameFSMs(loadType: string) {
   print('!!! --- === ::: World State Transitions ::: === --- !!!', loadType)
   if (loadType === 'room transition') {
     world.fsm.setState('turn')
-    npcs.fsm.setState('place')
   } else if (loadType === 'faint') {
     world.fsm.setState('faint')
   } else if (loadType === 'arrest') {
     world.fsm.setState('arrest')
   } else if (loadType === 'new game') {
     game.fsm.setState('new')
-    world.fsm.setState('turn')
   }
 }
 

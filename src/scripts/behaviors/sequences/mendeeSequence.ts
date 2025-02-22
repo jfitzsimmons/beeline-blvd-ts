@@ -4,6 +4,7 @@ import MendeeAction from '../actions/mendeeAction'
 import Sequence from '../sequence'
 
 export default class MendeeSequence extends Sequence {
+  a: ActorState
   constructor(a: ActorState) {
     const turnActions: Action[] = []
 
@@ -11,12 +12,15 @@ export default class MendeeSequence extends Sequence {
 
     super(turnActions)
     // print('INJUREDSEQ CREATED!!!')
+    this.a = a
   }
   run(): 'REMOVE' | '' {
     //   print('INJUREDSEQ RUNRUNRUN!!!')
 
     for (const child of this.children) {
-      child.run()()
+      const proceed = child.run()()
+      if (proceed === 'continue')
+        this.a.behavior.place.children.push(new MendeeSequence(this.a))
     }
     return ''
   }

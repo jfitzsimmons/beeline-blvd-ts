@@ -15,6 +15,9 @@ import {
 import { surrounding_room_matrix } from '../utils/utils'
 import { doctors } from '../utils/consts'
 import ActorState from './actor'
+//import InjuredSequence from '../behaviors/sequences/injuredSequence'
+
+//const dt = math.randomseed(os.time())
 
 export default class NpcState extends ActorState {
   home: { x: number; y: number }
@@ -259,13 +262,15 @@ export default class NpcState extends ActorState {
   private onMenderExit(): void {}
   private onNewEnter(): void {}
   private onNewUpdate(): void {
-    print('NEWUPDATE place run')
-
     this.behavior.place.run()
+
+    print('NEWUPDATE place run', this.name, this.hp)
   }
   private onNewExit(): void {}
   private onTurnEnter(): void {
-    this.sincePlayerRoom = math.random(2, 15)
+    // this.sincePlayerRoom = math.random(2, 15)
+    print('NPCCLASS::: onTurnEnter()')
+    // this.fsm.update(dt)
   }
   private onTurnUpdate(): void {
     /**

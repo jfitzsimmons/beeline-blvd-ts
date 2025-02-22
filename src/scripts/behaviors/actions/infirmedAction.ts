@@ -17,7 +17,10 @@ export default class InfirmedAction extends Action {
         ? (this.a.hp = this.a.hp + 2)
         : (this.a.hp = this.a.hp + 1)
 
-      if (this.a.hp > 9) print('INFIRMEDaction:: Need new behavior logic HERE') //this.a.fsm.setState('turn')
+      if (this.a.hp > 9) {
+        this.a.sincePlayerRoom = math.random(15, 40)
+        print('INFIRMEDaction:: sinceplayerroom reset. RE-PLACE npc??') //this.a.fsm.setState('turn')
+      }
     }
     /**
      * TESTJPF TODO!!!
