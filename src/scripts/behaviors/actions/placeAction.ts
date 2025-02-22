@@ -11,12 +11,12 @@ import ImmobileAction from './immobileAction'
 import InjuryAction from './injuryAction'
 
 export default class PlaceAction extends Action {
+  a: ActorState
   constructor(a: ActorState) {
     super(a)
+    this.a = a
   }
-  success() {
-    // no log
-  }
+
   run(): { (): void } {
     const { actor: a } = this
     if (a.cooldown > 0) a.cooldown = a.cooldown - 1
@@ -29,6 +29,8 @@ export default class PlaceAction extends Action {
       return () => this.alternate(new ImmobileAction(a))
     }
     if (a.hp < 1) {
+      print(a.name, 'CHOSE injuryACTION')
+
       return () => this.alternate(new InjuryAction(a))
     }
     /**
@@ -49,5 +51,9 @@ export default class PlaceAction extends Action {
     }
 
     return () => this.success()
+  }
+  success() {
+    // prettier-ignore
+    if (isNpc(this.a))print('PlaceAction:: Success::', this.a.name, 'placedin:', this.a.currRoom, this.a.currStation, '||| from:',   this.a.exitRoom ) //testjpf
   }
 }

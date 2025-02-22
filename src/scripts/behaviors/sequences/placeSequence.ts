@@ -4,6 +4,7 @@ import Action from '../action'
 import EffectsAction from '../actions/effectsAction'
 import PlaceAction from '../actions/placeAction'
 import Sequence from '../sequence'
+import InjuredSequence from './injuredSequence'
 const lookup: {
   [key: string]: () => typeof Action
 } = {
@@ -16,6 +17,7 @@ function clanActions(clan: string): typeof Action {
   return lookup[clan] == undefined ? PlaceAction : lookup[clan]()
 }
 export default class PlaceSequence extends Sequence {
+  a: ActorState
   constructor(a: ActorState) {
     const placeActions: Action[] = []
     // or testjpf I could
@@ -30,10 +32,13 @@ export default class PlaceSequence extends Sequence {
     placeActions.push(...[new EffectsAction(a), new clanAction(a)])
 
     super(placeActions)
+    this.a = a
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
-      child.run()()
+      const proceed = child.run()()
+      if (proceed === 'injury')
+        this.a.behavior.active.children.push(new InjuredSequence(this.a))
     }
     return 'REMOVE'
   }
