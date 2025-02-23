@@ -21,7 +21,7 @@ export default class Action {
     print('ACTIONsuccess')
   }
   alternate(as: Action | Sequence) {
-    return as.run()
+    return as instanceof Action ? as.run()() : as.run()
   }
   delay(a: ActorState, s: Sequence) {
     print('ACTION DELAYED FOR::', a.name, typeof s)

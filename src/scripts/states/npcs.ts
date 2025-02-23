@@ -89,7 +89,6 @@ export default class WorldNpcs {
   }
   private onNewEnter(): void {
     print('npcsNewEnter')
-    this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
 
@@ -108,6 +107,7 @@ export default class WorldNpcs {
         const IA = new InjuryAction(npc)
         const proceed = IA.run()
         proceed()
+        npc.behavior.place.children = []
         npc.behavior.active.children.push(new InjuredSequence(npc))
       }
     }
@@ -128,6 +128,7 @@ export default class WorldNpcs {
   }
   // private onNewUpdate(): void {}
   private onNewExit(): void {
+    this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
       npc.fsm.setState('turn')

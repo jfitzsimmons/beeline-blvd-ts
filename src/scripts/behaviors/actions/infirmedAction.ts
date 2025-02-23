@@ -22,11 +22,7 @@ export default class InfirmedAction extends Action {
         print('INFIRMEDaction:: sinceplayerroom reset. RE-PLACE npc??') //this.a.fsm.setState('turn')
       }
     }
-    /**
-     * TESTJPF TODO!!!
-     */
-    //if (testjpfimmobile) return () => this.alternate(ImmobileAction(this))
-    // if (testjpf) return () => this.fail('youfailed')
+
     return () => this.success()
   }
 }

@@ -24,14 +24,6 @@ export default class InfirmAction extends Action {
       this.a.currRoom = 'infirmary'
     }
 
-    /**
-     * TESTJPF TODO!!!
-     * I think I want to got to next place action
-     * have logic in immobileSeq? that
-     * checks if infirmed?
-     */
-    //if (testjpfimmobile) return () => this.alternate(ImmobileAction(this))
-    // if (testjpf) return () => this.fail('youfailed')
     return () => this.success()
   }
 }

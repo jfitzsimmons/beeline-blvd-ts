@@ -19,6 +19,7 @@ export default class MenderSequence extends Sequence {
   }
   run(): 'REMOVE' | '' {
     // print('INJUREDSEQ RUNRUNRUN!!!')
+    print('Mend-ER-Sequence:: Running for:', this.a.name)
 
     for (const child of this.children) {
       const proceed = child.run()()

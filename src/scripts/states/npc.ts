@@ -262,7 +262,16 @@ export default class NpcState extends ActorState {
   private onMenderExit(): void {}
   private onNewEnter(): void {}
   private onNewUpdate(): void {
+    print(
+      '111::: onNewUpdate() ::: 1st b.place.run():: length:',
+      this.behavior.place.children.length
+    )
+
     this.behavior.place.run()
+    print(
+      '222::: onNewUpdate() ::: 1st b.place.run():: length:',
+      this.behavior.place.children.length
+    )
   }
   private onNewExit(): void {
     // for (let i = this.order.length; i-- !== 0; ) {
@@ -271,7 +280,15 @@ export default class NpcState extends ActorState {
     //handle doc logic separately.?
     //testjpf
     print('npc:', this.name, 'activebehaviorRUN!!!')
+    print(
+      '111::: onNew-EXIT-() ::: 1st b.active.run():: length:',
+      this.behavior.active.children.length
+    )
     this.behavior.active.run()
+    print(
+      '222::: onNew-EXIT-() ::: 1st b.active.run():: length:',
+      this.behavior.active.children.length
+    )
     // npc.fsm.update(dt)
     // prettier-ignore
     // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )

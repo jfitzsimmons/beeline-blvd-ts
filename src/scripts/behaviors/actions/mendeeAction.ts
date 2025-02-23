@@ -36,8 +36,5 @@ export default class MendeeAction extends Action {
      *
      */
     return () => this.continue(`${a.name} is continuing another MendeeSequence`)
-
-    // a.behavior.place.children.push(new MendeeSequence(a))
-    //return () => this.success()
   }
 }

@@ -8,7 +8,7 @@ export default class InjuredSequence extends Sequence {
   a: ActorState
 
   constructor(a: ActorState) {
-    print('CLASSinjuredseq created for:::', a.name)
+    // print('CLASSinjuredseq created for:::', a.name)
     const turnActions: Action[] = []
 
     turnActions.push(...[new InjuredAction(a)])
@@ -20,11 +20,20 @@ export default class InjuredSequence extends Sequence {
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
       const proceed = child.run()()
-      print('INJUREDSEQUENCE::: Proceed::', proceed)
-      if (proceed === 'continue')
+      print('INJUREDSEQUENCE::: Proceed::', this.a.name, ':', proceed)
+      if (proceed === 'continue') {
+        print(
+          '111::: INJSEQ:: place.childrenlenght:',
+          this.a.behavior.place.children.length
+        )
         this.a.behavior.place.children.push(new InjuredSequence(this.a))
+        print(
+          '222::: INJSEQ:: place.childrenlenght:',
+          this.a.behavior.place.children.length
+        )
+      }
     }
-    print('INJUREDSEQUENCE::: COMPLETE:: Remove?')
+    // print('INJUREDSEQUENCE::: COMPLETE:: Remove?')
 
     return 'REMOVE'
   }
