@@ -95,7 +95,7 @@ export default class WorldNpcs {
       npc.behavior.place = new Selector([])
       npc.behavior.active = new Selector([])
       npc.behavior.place.children.push(new PlaceSequence(npc))
-
+      // testjpf npc setState is 'new'
       npc.fsm.update(dt)
       //TEST DEFAULTS
       if (
@@ -111,27 +111,13 @@ export default class WorldNpcs {
         npc.behavior.active.children.push(new InjuredSequence(npc))
       }
     }
-
-    // TEST DATA
-    /**
-    const guest = this.parent.getNpcByRoomStation('reception', 'guest')
-    const worker = this.parent.getNpcByRoomStation('grounds', 'worker1')
-    this.all[guest].hp = 0
-    this.all[guest].behavior.active.children.push(
-      new InjuredSequence(this.all[guest])
-    )
-    this.all[worker].hp = 0
-    this.all[worker].behavior.active.children.push(
-      new InjuredSequence(this.all[worker])
-    )
-      **/
   }
   // private onNewUpdate(): void {}
   private onNewExit(): void {
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
-      npc.fsm.setState('turn')
+      npc.fsm.setState('active')
     }
   }
   private onPlaceEnter(): void {}
@@ -169,7 +155,14 @@ export default class WorldNpcs {
     this.security()
   }
   private onActiveUpdate(): void {}
-  private onActiveExit(): void {}
+  private onActiveExit(): void {
+    print('NPCSAVTIVEEXIT!!!')
+    this.sort_npcs_by_encounter()
+    for (let i = this.order.length; i-- !== 0; ) {
+      const npc = this.all[this.order[i]]
+      npc.fsm.setState('turn')
+    }
+  }
   returnMendeeLocation(): string | null {
     const injured = this.parent.getMendingQueue()[0]
     return injured === null ? null : this.all[injured].currRoom

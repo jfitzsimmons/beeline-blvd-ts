@@ -85,8 +85,6 @@ export default class World {
     this.fsm
       .addState('idle')
       .addState('new', {
-        //game??
-        //onInit?
         onEnter: this.onNewEnter.bind(this),
         onUpdate: this.onNewUpdate.bind(this),
         onExit: this.onNewExit.bind(this),
@@ -110,8 +108,7 @@ export default class World {
   private onNewEnter(): void {
     this.rooms.fsm.setState('turn')
     this.player.fsm.setState('turn')
-    this.npcs.fsm.setState('new')
-    //this.npcs.fsm.setState('place')
+    this.npcs.fsm.setState('new') //Adds a PlaceSeq and runs it //also test defaults
     this.tasks.fsm.setState('turn')
     this.quests.fsm.setState('new')
 
@@ -124,22 +121,10 @@ export default class World {
         : this.rooms.all.grounds.stations.guest,
       'testing'
     )
-    //quest
-
-    print(
-      'TESTJINJUREDNPCS:::',
-      this.npcs.all[this.rooms.all.grounds.stations.worker1].name,
-      this.npcs.all[this.rooms.all.grounds.stations.worker1].hp,
-      this.npcs.all[this.rooms.all.reception.stations.guest].name,
-      this.npcs.all[this.rooms.all.reception.stations.guest].hp
-    )
-    // this.npcs.all[this.rooms.all.grounds.stations.worker1].fsm.//setState(
-    //   'injury'
-    // )
     this.npcs.addIgnore(this.rooms.all.grounds.stations.worker1)
   }
   private onNewUpdate(): void {}
-  private onNewExit(): void {}
+
   private onFaintEnter(): void {
     this.clock = this.clock + 6
     this.player.ap = this.player.apMax - 6
@@ -168,13 +153,18 @@ export default class World {
     this.fsm.setState('turn')
   }
   private onArrestExit(): void {}
+  private onNewExit(): void {
+    //testjpf i think this should be 'active'
+    //the room transtition sets it to turn
+    print('WORLDNEWEXIT()!!! set npc-S ACTIVE')
+    this.npcs.fsm.setState('active') //each npc gets set to 'active' which runs active behavior from newExit
+  }
   private onTurnEnter(): void {
-    this.npcs.fsm.setState('place')
     print('<<< ::: AI TURN HAS ENDED ::: >>>')
   }
   private onTurnUpdate(): void {
-    this.npcs.fsm.setState('place')
     print('<<< ::: WORLDTurnUpdate() ::: >>>')
+    this.npcs.fsm.setState('place')
     this.clock = this.clock + 1
     if (this.clock > 23) this.clock = this.clock - 24
     this.player.fsm.update(dt)
@@ -182,7 +172,7 @@ export default class World {
     this.npcs.fsm.update(dt)
     this.quests.fsm.update(dt)
     this.tasks.fsm.update(dt)
-    this.npcs.fsm.setState('active')
+    //this.npcs.fsm.setState('active')
   }
   private onTurnExit(): void {}
   private didCrossPaths(o: string, t: string): boolean {
