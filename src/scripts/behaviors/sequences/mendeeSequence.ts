@@ -16,7 +16,7 @@ export default class MendeeSequence extends Sequence {
   }
   run(): 'REMOVE' | '' {
     //   print('INJUREDSEQ RUNRUNRUN!!!')
-
+    print('MendeeSequence:: Running for:', this.a.name)
     for (const child of this.children) {
       const proceed = child.run()()
       if (proceed === 'continue')

@@ -56,6 +56,11 @@ export function on_message(
     this.roomName = message.roomName
     this.loadType = message.loadType
     handleGameFSMs(this.loadType)
+    print(
+      '000 --- === ::: NEW ROOM LOADING ::: === --- 000',
+      this.isPaused,
+      this.loadType
+    )
     show(this.currentProxy, '#' + this.roomName)
     msg.post('#', 'acquire_input_focus')
   }
@@ -69,11 +74,6 @@ export function on_message(
       }
       rooms.all[player.currRoom].fsm.setState('blur')
       rooms.all[this.roomName].fsm.setState('focus')
-      print(
-        '000 --- === ::: NEW ROOM LOADING ::: === --- 000',
-        this.isPaused,
-        this.loadType
-      )
 
       msg.post(
         this.roomName + ':/shared/scripts#level',

@@ -6,10 +6,13 @@ export default class Sequence {
     this.children = actions
   }
   run(): 'REMOVE' | '' {
+    print('SEQUENCE::: childrenlength: PRERUN:', this.children.length)
+
     for (const child of this.children) {
       print('SEQCHILD')
       child.run()
     }
-    return ''
+    print('SEQUENCE::: childrenlength:', this.children.length)
+    return 'REMOVE'
   }
 }

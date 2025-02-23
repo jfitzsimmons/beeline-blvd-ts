@@ -17,7 +17,6 @@ export default class MenderAction extends Action {
       a.parent.pruneStationMap(a.currRoom, a.currStation)
       if (a.parent.returnNpc(this.mendee).hp < 5) {
         print('Tryingtokeep mendering!!!')
-        // a.behavior.place.children.push(new MenderSequence(a, this.mendee))
         return () =>
           this.continue(
             `${a.name} is continuing another MenderSequence on: ${this.mendee}`

@@ -13,13 +13,14 @@ export default class InjuredAction extends Action {
     const { actor: a } = this
     //testjpf oninjurystart
     if (a instanceof NpcState) {
-      print('InjurEDAction:: a instanceof NpcState:', a.name)
-
       a.sincePlayerRoom = 99
       // a.parent.addInjured(a.name)
       a.parent.pruneStationMap(a.currRoom, a.currStation)
       if (a.parent.getIgnore().includes(a.name))
-        return () => this.continue('IGNORE WILLTHISWORJ UNJUREDACTIONCONT')
+        return () =>
+          this.continue(
+            'Injur-ED-action:: IGNORE - Quest related NPC:' + a.name
+          )
       //return () => this.fail('FAILignore - must ignore injured:::' + a.name)
 
       const helpers = Object.values(a.parent.getOccupants(a.currRoom))
@@ -44,11 +45,7 @@ export default class InjuredAction extends Action {
            * taskbuilder seems to be create action
            * for another NPC
            *
-           * switch from InjuredSequence to
-           * MenderSequence (create)
-           * helper.behavior.children.push(new MenderSequence)
-           * return () => alternate(MendeeSequence)
-           *
+ 
            * KEEP running into post placement and preplacement sequences / behavior
            */
           // a.tendToPatient(a.name, helper)
@@ -70,10 +67,13 @@ export default class InjuredAction extends Action {
     } else {
       return () => this.fail('FAIL404 - no InjuredAction for Player')
     }
-    return () => this.continue('WILLTHISWORJ UNJUREDACTIONCONT')
+    return () =>
+      this.continue(
+        'Injur-ED-action:: Default - Add Another InjuredSequence for:' + a.name
+      )
   }
   continue(s: string): string {
-    print('InjuredAction:: Continue:', s)
+    print('Injur-ed-Action:: Continue:', s)
     return 'continue'
   }
 }

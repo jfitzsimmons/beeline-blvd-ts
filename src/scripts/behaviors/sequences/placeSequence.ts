@@ -37,8 +37,13 @@ export default class PlaceSequence extends Sequence {
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
       const proceed = child.run()()
-      if (proceed === 'injury')
+      if (proceed === 'injury') {
+        print(
+          'PlaceSequence::: InjuryAction:: Add new InjuredSequence:',
+          this.a.name
+        )
         this.a.behavior.active.children.push(new InjuredSequence(this.a))
+      }
     }
     return 'REMOVE'
   }

@@ -6,6 +6,7 @@ export default class Selector {
     this.children = sequences
   }
   run() {
+    if (this.children.length < 1) print('SELECTOR::: EMPTY!!!')
     for (const child of this.children) {
       const proceed = child.run()
       if (proceed === 'REMOVE') {
