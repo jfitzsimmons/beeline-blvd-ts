@@ -6,12 +6,14 @@ export default class Selector {
     this.children = sequences
   }
   run() {
+    if (this.children.length < 1) print('SELECTOR::: EMPTY!!!')
     for (const child of this.children) {
-      print('SELECTERCHILD')
-
       const proceed = child.run()
-      if (proceed === 'REMOVE')
+      if (proceed === 'REMOVE') {
+        print('SELECTOR::: REMOVE:: LEngth:', this.children.length)
         this.children.splice(this.children.indexOf(child), 1)
+        print('22SELECTOR::: REMOVE:: LEngth:', this.children.length)
+      }
     }
   }
 }

@@ -7,9 +7,9 @@ function check_room_nodes(action: { x: number; y: number }) {
 
     if (gui.pick_node(node, action.x, action.y)) {
       const params = {
-        enterRoom: kr,
+        roomName: kr,
       }
-      msg.post('proxies:/controller#gamecontroller', 'pick_room', params)
+      msg.post('gameproxies:/controller#gamecontroller', 'pick_room', params)
     }
   }
 }
@@ -25,7 +25,7 @@ export function on_input(
   if (actionId == hash('touch') && action.released) {
     check_room_nodes(action)
   } else if (actionId == hash('actionbtn') && action.released) {
-    msg.post('proxies:/controller#infocontroller', 'show_menu')
+    msg.post('worldproxies:/controller#infocontroller', 'show_menu')
   }
 }
 

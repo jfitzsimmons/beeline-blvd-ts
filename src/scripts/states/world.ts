@@ -70,6 +70,7 @@ export default class World {
       playerTraits: this.player.traits,
       ...playerProps,
       ...tasksProps,
+      getNpcByRoomStation: this.rooms.getNpcByRoomStation.bind(this),
     }
     this.npcs = new WorldNpcs(npcsProps)
     const allquestmethods: WorldQuestsMethods = {
@@ -109,16 +110,12 @@ export default class World {
   private onNewEnter(): void {
     this.rooms.fsm.setState('turn')
     this.player.fsm.setState('turn')
-    this.player.exitRoom = 'grounds'
     this.npcs.fsm.setState('new')
+    //this.npcs.fsm.setState('place')
     this.tasks.fsm.setState('turn')
     this.quests.fsm.setState('new')
 
     //debug defaults
-    this.npcs.all[this.rooms.all.reception.stations.guest].hp = 0
-    this.npcs.all[this.rooms.all.reception.stations.guest].fsm.setState(
-      'injury'
-    )
     this.tasks.taskBuilder(
       'security004',
       'questioning',
@@ -128,10 +125,17 @@ export default class World {
       'testing'
     )
     //quest
-    this.npcs.all[this.rooms.all.grounds.stations.worker1].hp = 0
-    this.npcs.all[this.rooms.all.grounds.stations.worker1].fsm.setState(
-      'injury'
+
+    print(
+      'TESTJINJUREDNPCS:::',
+      this.npcs.all[this.rooms.all.grounds.stations.worker1].name,
+      this.npcs.all[this.rooms.all.grounds.stations.worker1].hp,
+      this.npcs.all[this.rooms.all.reception.stations.guest].name,
+      this.npcs.all[this.rooms.all.reception.stations.guest].hp
     )
+    // this.npcs.all[this.rooms.all.grounds.stations.worker1].fsm.//setState(
+    //   'injury'
+    // )
     this.npcs.addIgnore(this.rooms.all.grounds.stations.worker1)
   }
   private onNewUpdate(): void {}
@@ -165,17 +169,20 @@ export default class World {
   }
   private onArrestExit(): void {}
   private onTurnEnter(): void {
-    this.clock = this.clock + 1
-    if (this.clock > 23) this.clock = this.clock - 24
     this.npcs.fsm.setState('place')
+    print('<<< ::: AI TURN HAS ENDED ::: >>>')
   }
   private onTurnUpdate(): void {
+    this.npcs.fsm.setState('place')
     print('<<< ::: WORLDTurnUpdate() ::: >>>')
+    this.clock = this.clock + 1
+    if (this.clock > 23) this.clock = this.clock - 24
     this.player.fsm.update(dt)
     this.rooms.fsm.update(dt)
     this.npcs.fsm.update(dt)
     this.quests.fsm.update(dt)
     this.tasks.fsm.update(dt)
+    this.npcs.fsm.setState('active')
   }
   private onTurnExit(): void {}
   private didCrossPaths(o: string, t: string): boolean {

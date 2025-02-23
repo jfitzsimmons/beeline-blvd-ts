@@ -18,10 +18,10 @@ function steal_stash_checks(this: RoomState) {
   let loot: string[] = []
   let attendant =
     this.stations.desk === '' ? '' : this.parent.returnNpc(this.stations.desk)
-  print('this.stations.guest', this.stations.guest)
+  // print('this.stations.guest', this.stations.guest)
   if (cicadaModulus() && this.stations.guest != '') {
     victim = this.parent.returnNpc(this.stations.guest)
-    print('victim.name', victim.name)
+    //  print('victim.name', victim.name)
 
     loot = victim.inventory
     actor = this.actors.drawer

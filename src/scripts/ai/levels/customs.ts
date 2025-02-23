@@ -13,7 +13,6 @@ function steal_stash_checks(this: RoomState) {
   let actor: Actor
   let attendant =
     this.stations.desk === '' ? '' : this.parent.returnNpc(this.stations.desk)
-  //print("this.stations.guest",this.stations.guest)
   if (this.stations.guest !== '') {
     suspect = this.parent.returnNpc(this.stations.guest)
     //print("victim.name",victim.name)

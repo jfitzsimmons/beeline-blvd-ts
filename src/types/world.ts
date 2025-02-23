@@ -48,6 +48,7 @@ export interface WorldNpcsArgs extends TaskProps {
   getNovelUpdates(): NovelNpc
   playerFSM: StateMachine
   playerTraits: Traits
+  getNpcByRoomStation(room: string, station: string): string
 }
 export interface NpcProps extends WorldNpcsArgs {
   addInfirmed(n: string): void

@@ -6,6 +6,7 @@ export class Game {
   fsm: StateMachine
 
   constructor() {
+    print('... ___ CREATING GAME STATE ___ ...')
     this.fsm = new StateMachine(this, 'game')
     this.world = new World()
     //this.saves
@@ -15,11 +16,14 @@ export class Game {
       // onUpdate: this.onNewUpdate.bind(this),
       // onExit: this.onNewExit.bind(this),
     })
+    print('... ___ FINISHED CREATING GAME STATE ___ ...')
   }
   private onNewEnter(): void {
     this.world.fsm.setState('new')
+    print('... ___ NEW GAME LOADED ||| AI Taking Turn... ... ...')
+
+    this.world.fsm.setState('turn')
   }
   // private onNewUpdate(): void {}
   // private onNewExit(): void {}
 }
-//globalThis.game = new Game()

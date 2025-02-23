@@ -44,7 +44,7 @@ function open_novel(_this: props) {
   novel.npc = npcs.all[_this.npcname]
   novel.reason = _this.consequence.type
 
-  msg.post('proxies:/controller#novelcontroller', 'show_scene')
+  msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
   msg.post('#', 'release_input_focus')
 }
 function open_inventory(_this: props, actor: string, action: string) {

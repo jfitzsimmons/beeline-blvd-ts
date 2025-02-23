@@ -2,7 +2,6 @@ import ActorState from '../states/actor'
 import Sequence from './sequence'
 
 export default class Action {
-  action?: { (): void }
   actor: ActorState
   constructor(actorProps: ActorState) {
     this.actor = actorProps
@@ -10,8 +9,9 @@ export default class Action {
     this.fail = this.fail.bind(this)
     this.success = this.success.bind(this)
     this.alternate = this.alternate.bind(this)
+    this.continue = this.continue.bind(this)
   }
-  run(): () => void {
+  run(): () => void | string {
     return () => print('ACTIONclass run()default::: ', this.actor.name)
   }
   fail(str: string) {
@@ -21,18 +21,13 @@ export default class Action {
     print('ACTIONsuccess')
   }
   alternate(as: Action | Sequence) {
-    return as.run()
+    return as instanceof Action ? as.run()() : as.run()
   }
   delay(a: ActorState, s: Sequence) {
-    /**
-     * testjpf
-     *  i think it makes sense to do something like
-     * behavior.place.children
-     * and
-     * behavior.active.children
-     * both will be Selctor class at same level
-     * TODO
-     */
-    a.behavior.place.children.push(s)
+    print('ACTION DELAYED FOR::', a.name, typeof s)
+  }
+  continue(s = 'continue'): string {
+    print('ActionContinue:::', s)
+    return s
   }
 }

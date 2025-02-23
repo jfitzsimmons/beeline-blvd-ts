@@ -91,7 +91,7 @@ function doctor_checks() {
     info.add_interaction(`${injured.name} likes that you got a doctor.`)
     injured.love = injured.love + 1
 
-    msg.post('proxies:/controller#novelcontroller', 'show_scene')
+    msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
   } else if (novel.reason == 'getsomemeds' && meds.fsm.getState() == 'new') {
     meds.fsm.setState('active')
     apple.fsm.setState('complete')
@@ -137,7 +137,7 @@ function doctor_checks() {
     // print('tutsclearances', novel.reason, novel.npc.name)
     quest.sideQuests.hallpass.fsm.setState('complete')
     quest.sideQuests.hallpass.passed = true
-    msg.post('proxies:/controller#novelcontroller', 'show_scene')
+    msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
   } else if (
     novel.item == 'vial02' &&
     meds.passed == true &&
@@ -191,7 +191,7 @@ function doctor_checks() {
     }
     novel.forced = true
 
-    msg.post('proxies:/controller#novelcontroller', 'show_scene')
+    msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
     // removed after scene
     /** 
     if (waiting != null) {
@@ -337,7 +337,7 @@ export function tutorialA(interval = 'turn') {
        cause: 'apple',
         roomName: 'grounds',
       }
-      msg.post('proxies:/controller#novelcontroller', 'show_scene', params)
+      msg.post('worldproxies:/controller#novelcontroller', 'show_scene', params)
     } else if (
       injury.passed == true &&
       interval == 'interact' &&

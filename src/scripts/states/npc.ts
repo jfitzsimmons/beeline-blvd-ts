@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { NpcsInitState } from './inits/npcsInitState'
-import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
+import { RoomsInitState } from './inits/roomsInitState'
 import { itemStateInit } from './inits/inventoryInitState'
 //import StateMachine from './stateMachine'
 import { InventoryTableItem } from '../../types/state'
@@ -15,7 +15,9 @@ import {
 import { surrounding_room_matrix } from '../utils/utils'
 import { doctors } from '../utils/consts'
 import ActorState from './actor'
-//import TurnSequence from '../behaviors/sequences/turnSequence'
+//import InjuredSequence from '../behaviors/sequences/injuredSequence'
+
+//const dt = math.randomseed(os.time())
 
 export default class NpcState extends ActorState {
   home: { x: number; y: number }
@@ -74,10 +76,10 @@ export default class NpcState extends ActorState {
         onUpdate: this.onMenderUpdate.bind(this),
         onExit: this.onMenderExit.bind(this),
       })
-      .addState('interrogate', {
-        onEnter: this.onInterrogateEnter.bind(this),
-        onUpdate: this.onInterrogateUpdate.bind(this),
-        onExit: this.onInterrogateExit.bind(this),
+      .addState('active', {
+        onEnter: this.onActiveEnter.bind(this),
+        onUpdate: this.onActiveUpdate.bind(this),
+        onExit: this.onActiveExit.bind(this),
       })
       .addState('confront', {
         onEnter: this.onConfrontPlayerEnter.bind(this),
@@ -125,10 +127,9 @@ export default class NpcState extends ActorState {
     this.sincePlayerConvo = novelUpdates.sincePlayerConvo
     this.love = novelUpdates.love
   }
-  private onInterrogateEnter(): void {}
-  private onInterrogateUpdate(): void {}
-  private onInterrogateExit(): void {}
+
   private onInfirmEnter(): void {
+    /**
     this.hp = 5
     this.parent.clearStation(this.currRoom, this.currStation, this.name)
     this.sincePlayerRoom = 99
@@ -136,6 +137,7 @@ export default class NpcState extends ActorState {
     this.matrix = RoomsInitState.infirmary.matrix
     this.cooldown = 8
     this.currRoom = 'infirmary'
+    */
   }
   private onInfirmUpdate(): void {
     this.sincePlayerRoom = 99
@@ -155,45 +157,7 @@ export default class NpcState extends ActorState {
     //this.parent.addInjured(this.name)
     //this.hp = 0
   }
-  private onInjuryUpdate(): void {
-    //testjpf
-    // dont want to create new Sequence on update
-    // could have flag here that removes when healed
-    // but probably need to remove injuryState altogether???
-    /**
-    this.sincePlayerRoom = 99
-    this.parent.pruneStationMap(this.currRoom, this.currStation)
-    if (this.parent.getIgnore().includes(this.name)) return
-    const helpers = Object.values(this.parent.getOccupants(this.currRoom))
-      .filter((s) => s != '')
-      .sort(function (a, b) {
-        if (a.slice(0, 3) === 'doc' && b.slice(0, 3) !== 'doc') return -1
-        if (b.slice(0, 3) === 'doc' && a.slice(0, 3) !== 'doc') return 1
-        return 0
-      })
-    for (const helper of helpers) {
-      //doctors start mending after RNG weighted by patient priority
-      const ticket = this.parent.getMendingQueue().indexOf(this.name)
-      const random = math.random(0, 4)
-      if (
-        NpcsInitState[helper].clan == 'doctors' &&
-        ((ticket != -1 && ticket < random) || (ticket == -1 && random > 3))
-      ) {
-        this.tendToPatient(this.name, helper)
-        break
-      } else if (
-        math.random() > 0.7 &&
-        this.parent.npcHasTask([helper], [this.name]) === null &&
-        NpcsInitState[helper].clan !== 'doctors'
-      ) {
-        //if not a doctor, create injury caution if haven't already
-        this.parent.taskBuilder(helper, 'injury', this.name, 'injury')
-        break
-      }
-    }
-      */
-  }
-
+  private onInjuryUpdate(): void {}
   private onInjuryEnd(): void {}
   private onParamedicEnter(): void {}
   private onParamedicUpdate(): void {
@@ -266,11 +230,12 @@ export default class NpcState extends ActorState {
   }
   private onArresteeExit(): void {}
   private onMendeeEnter(): void {
-    this.sincePlayerRoom = 98
-    this.parent.addIgnore(this.name)
-    this.parent.addAdjustMendingQueue(this.name)
+    // this.sincePlayerRoom = 98
+    // this.parent.addIgnore(this.name)
+    // this.parent.addAdjustMendingQueue(this.name)
   }
   private onMendeeUpdate(): void {
+    /**
     this.sincePlayerRoom = 98
     this.hp = this.hp + 1
     if (this.hp > 4) {
@@ -282,38 +247,61 @@ export default class NpcState extends ActorState {
     } else {
       this.parent.pruneStationMap(this.currRoom, this.currStation)
     }
+      */
   }
   private onMendeeExit(): void {
-    this.parent.clearStation(this.currRoom, this.currStation, this.name)
+    //this.parent.clearStation(this.currRoom, this.currStation, this.name)
   }
   private onMenderEnter(): void {
-    this.sincePlayerRoom = 97
+    //this.sincePlayerRoom = 97
   }
   private onMenderUpdate(): void {
-    this.sincePlayerRoom = 97
-    this.parent.pruneStationMap(this.currRoom, this.currStation)
+    // this.sincePlayerRoom = 97
+    // this.parent.pruneStationMap(this.currRoom, this.currStation)
   }
   private onMenderExit(): void {}
   private onNewEnter(): void {}
   private onNewUpdate(): void {
-    //  this.fsm.setState('turn')
-    if (this.hp > 0) {
-      this.findRoomPlaceStation(RoomsInitPriority)
-      this.fsm.setState('turn')
-    } else {
-      this.fsm.setState('injury')
-    }
+    print(
+      '111::: onNewUpdate() ::: 1st b.place.run():: length:',
+      this.behavior.place.children.length
+    )
+
+    this.behavior.place.run()
+    print(
+      '222::: onNewUpdate() ::: 1st b.place.run():: length:',
+      this.behavior.place.children.length
+    )
   }
-  private onNewExit(): void {}
+  private onNewExit(): void {
+    // for (let i = this.order.length; i-- !== 0; ) {
+    // const npc = this.all[this.order[i]]
+    //i could add logic here to
+    //handle doc logic separately.?
+    //testjpf
+    print('npc:', this.name, 'activebehaviorRUN!!!')
+    print(
+      '111::: onNew-EXIT-() ::: 1st b.active.run():: length:',
+      this.behavior.active.children.length
+    )
+    this.behavior.active.run()
+    print(
+      '222::: onNew-EXIT-() ::: 1st b.active.run():: length:',
+      this.behavior.active.children.length
+    )
+    // npc.fsm.update(dt)
+    // prettier-ignore
+    // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
+    // }
+  }
   private onTurnEnter(): void {
-    this.sincePlayerRoom = math.random(2, 15)
+    // this.sincePlayerRoom = math.random(2, 15)
+    print('NPCCLASS::: onTurnEnter()')
+    // this.fsm.update(dt)
   }
   private onTurnUpdate(): void {
     /**
      * TESTJPF
-     * so instead we will access this.behaviors
-     * ...
-     * is this it's own sequence???
      */
     // this.exitRoom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
     //this.remove_effects(this.effects)
@@ -323,26 +311,20 @@ export default class NpcState extends ActorState {
     // return
     //}
     // this.parent.clearStation(this.currRoom, this.currStation, this.name)
-
     //const target = RoomsInitState[this.parent.getPlayerRoom()].//matrix
     //const rooms = this.makePriorityRoomList(target)
     // this.findRoomPlaceStation(rooms)
-    /**
-     * TESTJPF the circular ref error
-     * should be solved if you move pushing turnseq
-     * to somewhere else.
-     *
-     * I think a huge question is
-     * whether i need to consider PLAYER
-     * at all!!!
-     */
+
+    print('TURNUPDATE place run')
+
     this.behavior.place.run()
-
-    // loop thru behVIORS AS TEST!!!
-    //testjpf STARTHERE h
   }
-  private onTurnExit(): void {}
-
+  private onTurnExit(): void {
+    this.behavior.active.run()
+  }
+  private onActiveEnter(): void {}
+  private onActiveUpdate(): void {}
+  private onActiveExit(): void {}
   makePriorityRoomList(target: { x: number; y: number }): string[] {
     const npcPriorityProps = {
       matrix: this.matrix,

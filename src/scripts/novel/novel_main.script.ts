@@ -112,14 +112,14 @@ function consolation_outcomes(love: number) {
 
 function novel_outcomes(reason: string) {
   if (reason == 'faint' || player.hp <= 0) {
-    msg.post('proxies:/controller#gamecontroller', 'pick_room', {
-      enterRoom: tasks.spawn,
+    msg.post('worldproxies:/controller#worldcontroller', 'pick_room', {
+      roomName: tasks.spawn,
       loadType: 'faint',
     })
   } else if (reason == 'arrested') {
     tasks.removeHeat('player')
-    msg.post('proxies:/controller#gamecontroller', 'pick_room', {
-      enterRoom: 'security',
+    msg.post('worldproxies:/controller#worldcontroller', 'pick_room', {
+      roomName: 'security',
       loadType: 'arrest',
     })
   } else if (reason.substring(0, 6) == 'quest:') {
@@ -184,7 +184,7 @@ export function on_message(
     }
 
     //
-    msg.post('proxies:/controller#novelcontroller', 'unload_novel')
+    msg.post('worldproxies:/controller#novelcontroller', 'unload_novel')
     msg.post(player.currRoom + ':/shared/scripts#level', 'exit_gui')
   }
 }
