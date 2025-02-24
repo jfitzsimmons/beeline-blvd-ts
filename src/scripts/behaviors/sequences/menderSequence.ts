@@ -1,5 +1,4 @@
 import ActorState from '../../states/actor'
-import { isNpc } from '../../utils/ai'
 import Action from '../action'
 import MenderAction from '../actions/menderAction'
 import Sequence from '../sequence'
@@ -32,19 +31,6 @@ export default class MenderSequence extends Sequence {
 
     //  const hurt = npcs.all[ts[i].target].hp < 5
 
-    //testjpf Maybe make AttendToAction ??
-    if (isNpc(this.a) && this.a.currRoom == this.a.parent.getFocusedRoom()) {
-      msg.post(
-        `/${this.a.currStation}#npc_loader`,
-        hash('move_npc'),
-        {
-          station: this.a.parent.returnNpc(this.mendee).currStation,
-          npc: this.a.name,
-        }
-      )
-      // prettier-ignore
-      //print(ts[i].owner, 'STATION MOVE VIA TASK mending', ts[i].target, 'in', npcs.all[ts[i].owner].currRoom)
-    }
     /**
     if (hurt == false) {
       ts[i].turns = 0

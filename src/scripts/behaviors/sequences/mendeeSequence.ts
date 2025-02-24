@@ -20,12 +20,12 @@ export default class MendeeSequence extends Sequence {
 
     //   print('INJUREDSEQ RUNRUNRUN!!!')
     print('MendeeSequence:: Running for:', this.a.name)
-    for (let i = 0; i < this.children.length; i++) {
-      //for (const child of this.children) {
-      const proceed = this.children[i].run()()
+    // for (let i = 0; i < this.children.length; i++) {
+    for (const child of this.children) {
+      const proceed = child.run()()
       if (proceed === 'mend')
-        this.a.behavior.active.children.unshift(new MendeeSequence(this.a))
-      i++
+        this.a.behavior.active.children.push(new MendeeSequence(this.a))
+      //i++
     }
     return 'REMOVE'
   }

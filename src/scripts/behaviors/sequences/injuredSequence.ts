@@ -19,17 +19,16 @@ export default class InjuredSequence extends Sequence {
   }
   run(): 'REMOVE' | '' {
     if (isNpc(this.a)) this.a.sincePlayerRoom = 99
-    for (let i = 0; i < this.children.length; i++) {
-      //for (const child of this.children) {
-      const proceed = this.children[i].run()()
+    //for (let i = 0; i < this.children.length; i++) {
+    for (const child of this.children) {
+      const proceed = child.run()()
       print('INJUREDSEQUENCE::: Proceed::', this.a.name, ':', proceed)
       print(
         '111::: INJSEQ:: place.childrenlenght:',
         this.a.behavior.place.children.length
       )
       if (proceed === 'continue') {
-        this.a.behavior.active.children.unshift(new InjuredSequence(this.a))
-        i++
+        this.a.behavior.active.children.push(new InjuredSequence(this.a))
       } else if (proceed == 'mend') {
         this.a.behavior.active.children.push(new MendeeSequence(this.a))
       }
