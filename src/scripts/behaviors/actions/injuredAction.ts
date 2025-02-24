@@ -1,13 +1,18 @@
 import ActorState from '../../states/actor'
 import { NpcsInitState } from '../../states/inits/npcsInitState'
 import NpcState from '../../states/npc'
+import { isNpc } from '../../utils/ai'
 import Action from '../action'
-import MendeeSequence from '../sequences/mendeeSequence'
+import Sequence from '../sequence'
 import MenderSequence from '../sequences/menderSequence'
+import MendeeAction from './mendeeAction'
 
 export default class InjuredAction extends Action {
+  a: ActorState
+  doc = ''
   constructor(a: ActorState) {
     super(a)
+    this.a = a
   }
   run(): { (): void } {
     const { actor: a } = this
@@ -15,7 +20,6 @@ export default class InjuredAction extends Action {
     if (a instanceof NpcState) {
       a.sincePlayerRoom = 99
       // a.parent.addInjured(a.name)
-      a.parent.pruneStationMap(a.currRoom, a.currStation)
       if (a.parent.getIgnore().includes(a.name))
         return () =>
           this.continue(
@@ -50,9 +54,8 @@ export default class InjuredAction extends Action {
            */
           // a.tendToPatient(a.name, helper)
           print('INJUREDACTION::: DOC::', helper, 'ismending', a.name)
-          const doc = a.parent.returnNpc(helper)
-          doc.behavior.active.children.push(new MenderSequence(doc, a.name))
-          return () => this.alternate(new MendeeSequence(a))
+          this.doc = helper
+          return () => this.alternate(new MendeeAction(a))
         } else if (
           math.random() > 0.7 &&
           a.parent.npcHasTask([helper], [a.name]) === null &&
@@ -75,5 +78,13 @@ export default class InjuredAction extends Action {
   continue(s: string): string {
     print('Injur-ed-Action:: Continue:', s)
     return 'continue'
+  }
+  alternate(as: Action | Sequence): string | void {
+    if (isNpc(this.a)) {
+      const doc = this.a.parent.returnNpc(this.doc)
+      doc.behavior.active.children.push(new MenderSequence(doc, this.a.name))
+    }
+    // new MenderSequence(this.a.parent.returnNpc(this.doc), this.a.name).run()
+    return as instanceof Action ? as.run()() : as.run()
   }
 }

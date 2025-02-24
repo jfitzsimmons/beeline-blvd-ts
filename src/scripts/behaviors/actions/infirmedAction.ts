@@ -10,7 +10,7 @@ export default class InfirmedAction extends Action {
     this.a = a
   }
   run(): { (): void } {
-    print('infirmEDAction for::', this.a)
+    print('infirmEDAction for::', this.a.name)
     if (isNpc(this.a)) {
       this.a.sincePlayerRoom = 99
       this.a.parent.isStationedTogether(doctors, 'infirmary') === true
@@ -20,9 +20,9 @@ export default class InfirmedAction extends Action {
       if (this.a.hp > 9) {
         this.a.sincePlayerRoom = math.random(15, 40)
         print('INFIRMEDaction:: sinceplayerroom reset. RE-PLACE npc??') //this.a.fsm.setState('turn')
+        return () => this.success()
       }
     }
-
-    return () => this.success()
+    return () => this.continue('continue')
   }
 }
