@@ -151,7 +151,7 @@ export default class WorldNpcs {
   }
   private onActiveEnter(): void {
     print('npcsActiveEnter')
-    this.medical()
+    // this.medical()
     this.security()
   }
   private onActiveUpdate(): void {}

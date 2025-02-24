@@ -24,7 +24,8 @@ export default class MenderSequence extends Sequence {
     for (const child of this.children) {
       const proceed = child.run()()
       if (proceed === 'continue')
-        this.a.behavior.place.children.push(
+        // may need to rely on mendee
+        this.a.behavior.active.children.push(
           new MenderSequence(this.a, this.mendee)
         )
     }
@@ -50,6 +51,6 @@ export default class MenderSequence extends Sequence {
       npcs.all[ts[i].owner].fsm.setState('turn')
     }
       */
-    return ''
+    return 'REMOVE'
   }
 }

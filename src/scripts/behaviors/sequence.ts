@@ -4,6 +4,7 @@ export default class Sequence {
   children: Action[]
   constructor(actions: Action[]) {
     this.children = actions
+    this.run = this.run.bind(this)
   }
   run(): 'REMOVE' | '' {
     print('SEQUENCE::: childrenlength: PRERUN:', this.children.length)

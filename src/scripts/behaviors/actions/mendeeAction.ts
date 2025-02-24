@@ -6,8 +6,10 @@ import Action from '../action'
 import InfirmAction from './infirmAction'
 
 export default class MendeeAction extends Action {
+  a: ActorState
   constructor(a: ActorState) {
     super(a)
+    this.a = a
   }
   run(): { (): void } {
     const { actor: a } = this
@@ -19,7 +21,7 @@ export default class MendeeAction extends Action {
     a.parent.addAdjustMendingQueue(a.name)
 
     a.hp = a.hp + 1
-    print('MendeeAction for::', a.name)
+    print('MendeeAction for::', a.name, '| HP:', a.hp)
     if (a.hp > 4) {
       const vacancy = a.parent.sendToVacancy('infirmary', a.name)
       if (vacancy != null) {
@@ -28,13 +30,17 @@ export default class MendeeAction extends Action {
         print('MendeeAction::', a.name, 'IS BEING INFIRMED')
         return () => this.alternate(new InfirmAction(a))
       }
-    } else {
-      a.parent.pruneStationMap(a.currRoom, a.currStation)
     }
+    //a.parent.pruneStationMap(a.currRoom, a.currStation)
+
     /**
      * seems I could add another MendeeSeq to next-turns place.children?
      *
      */
-    return () => this.continue(`${a.name} is continuing another MendeeSequence`)
+    return () => this.continue('mend')
+  }
+  continue(s: string): string {
+    print(`${this.a.name} is continuing another MendeeSequence`)
+    return s
   }
 }
