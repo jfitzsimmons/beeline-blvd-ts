@@ -18,7 +18,7 @@ export default class MenderAction extends Action {
       print('FROMMENDER:: Mendee HP:::', a.parent.returnNpc(this.mendee).hp)
       if (a.parent.returnNpc(this.mendee).hp < 5) {
         //a.parent.pruneStationMap(a.currRoom, a.currStation)
-        a.sincePlayerRoom = 97
+        a.sincePlayerRoom = 98
         print('Tryingtokeep mendering!!!')
         //testjpf Maybe make AttendToAction ??
         if (

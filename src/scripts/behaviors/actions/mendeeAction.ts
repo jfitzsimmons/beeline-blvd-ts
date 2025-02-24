@@ -14,23 +14,23 @@ export default class MendeeAction extends Action {
   }
   run(): { (): void } {
     const { actor: a } = this
-    if (!isNpc(a)) return () => this.fail('NO MendeeAction for Player')
-    a.sincePlayerRoom = 98
+    if (!isNpc(this.a)) return () => this.fail('NO MendeeAction for Player')
+    this.a.sincePlayerRoom = 98
     //testjpf os this needed?
     //is it duping in the ignore array?
-    a.parent.addIgnore(a.name)
-    a.parent.addAdjustMendingQueue(a.name)
+    this.a.parent.addIgnore(a.name)
+    this.a.parent.addAdjustMendingQueue(a.name)
 
-    a.hp = a.hp + 1
+    this.a.hp = a.hp + 1
     print('MendeeAction for::', a.name, '| HP:', a.hp)
-    if (a.hp > 4) {
+    if (this.a.hp > 4) {
       //testjpf
       //check for infirmed with most HP and boot them!?!?!
       //  const vacancy = a.parent.sendToVacancy('infirmary', a.name)
       // if (vacancy != null) {
       //  a.currStation = vacancy
       //a.fsm.setState('infirm')
-      print('MendeeAction::', a.name, 'IS BEING INFIRMED')
+      print('MendeeAction::', this.a.name, 'IS BEING INFIRMED')
       return () => this.delay(new InfirmSequence(a))
       //  }
     }

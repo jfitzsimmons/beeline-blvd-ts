@@ -174,7 +174,7 @@ export default class NpcState extends ActorState {
   private onParamedicExit(): void {}
   private onERfullEnter(): void {}
   private onERfullUpdate(): void {
-    this.sincePlayerRoom = 97
+    this.sincePlayerRoom = 98
     const patients = this.parent.getInfirmed()
     this.parent.clearStation(this.currRoom, this.currStation, this.name)
 
