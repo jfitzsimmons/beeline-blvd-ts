@@ -10,7 +10,6 @@ export default class Selector {
     for (let i = this.children.length; i-- !== 0; ) {
       const proceed = this.children[i].run()
       if (proceed === 'REMOVE') {
-        print('SELECTOR::: REMOVE:: LEngth:', this.children.length)
         this.children.splice(i, 1)
         print('22SELECTOR::: REMOVE:: LEngth:', this.children.length)
       }

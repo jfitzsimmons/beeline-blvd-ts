@@ -1,4 +1,5 @@
 import ActorState from '../../states/actor'
+import { isNpc } from '../../utils/ai'
 import Action from '../action'
 import MenderAction from '../actions/menderAction'
 import Sequence from '../sequence'
@@ -16,9 +17,19 @@ export default class MenderSequence extends Sequence {
     super(turnActions)
     this.a = a
     this.mendee = mendee
-    //print('INJUREDSEQ CREATED!!!')
+    if (isNpc(this.a))
+      print(
+        'MENDERSEQ CREATED!!!:: DOC,a::',
+        a.name,
+        mendee,
+        this.a.sincePlayerRoom,
+        this.a.currRoom,
+        this.a.currStation
+      )
   }
   run(): 'REMOVE' | '' {
+    if (isNpc(this.a)) this.a.sincePlayerRoom = 98
+
     // print('INJUREDSEQ RUNRUNRUN!!!')
     print('Mend-ER-Sequence:: Running for:', this.a.name)
 

@@ -17,6 +17,7 @@ import { immobile } from '../utils/consts'
 import PlaceSequence from '../behaviors/sequences/placeSequence'
 import Selector from '../behaviors/selector'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
+import InjuryAction from '../behaviors/actions/injuryAction'
 
 const dt = math.randomseed(os.time())
 
@@ -103,7 +104,8 @@ export default class WorldNpcs {
       ) {
         //this.a.behavior.place.children.push(new InjuredSequence(this.a))
         npc.hp = 0
-        npc.behavior.place.children.unshift(new PlaceSequence(npc))
+        new InjuryAction(npc).run()
+        // npc.behavior.place.children.unshift(new PlaceSequence(npc))
       }
     }
   }
@@ -159,7 +161,7 @@ export default class WorldNpcs {
       const npc = this.all[this.order[i]]
       //testjpf Rethink??
       if (npc.behavior.place.children.length < 1)
-        npc.behavior.active.children.push(new PlaceSequence(npc))
+        npc.behavior.place.children.push(new PlaceSequence(npc))
 
       npc.fsm.setState('turn')
     }
