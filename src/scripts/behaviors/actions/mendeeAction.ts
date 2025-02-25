@@ -24,12 +24,6 @@ export default class MendeeAction extends Action {
     this.a.hp = a.hp + 1
     print('MendeeAction for::', a.name, '| HP:', a.hp)
     if (this.a.hp > 4) {
-      //testjpf
-      //check for infirmed with most HP and boot them!?!?!
-      //  const vacancy = a.parent.sendToVacancy('infirmary', a.name)
-      // if (vacancy != null) {
-      //  a.currStation = vacancy
-      //a.fsm.setState('infirm')
       print('MendeeAction::', this.a.name, 'IS BEING INFIRMED')
       return () => this.delay(new InfirmSequence(a))
       //  }

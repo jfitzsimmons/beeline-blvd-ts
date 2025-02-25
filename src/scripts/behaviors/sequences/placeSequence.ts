@@ -2,12 +2,10 @@ import ActorState from '../../states/actor'
 import { isNpc } from '../../utils/ai'
 import Action from '../action'
 import EffectsAction from '../actions/effectsAction'
-import ImmobileAction from '../actions/immobileAction'
 import InjuryAction from '../actions/injuryAction'
 import MedicPlaceAction from '../actions/MedicPlaceAction'
 import PlaceAction from '../actions/placeAction'
 import Sequence from '../sequence'
-import InjuredSequence from './injuredSequence'
 const lookup: {
   [key: string]: () => typeof Action
 } = {
@@ -30,16 +28,23 @@ export default class PlaceSequence extends Sequence {
     //where an NPC should go.
     placeActions.push(new EffectsAction(a))
     if (isNpc(a)) print('PLACESEQ::: SPR::', a.name, a.sincePlayerRoom)
-    if (isNpc(a) && a.sincePlayerRoom > 97) {
-      //testjpf 97 is infirmSeq
-      // testjpf could do:::
-      // return () =>
-      // this.fail(`PlaceAction::: ${a.name}: DidNotPlace. Is immobile.`)
-      print(a.name, 'CHOSE IMMOBILEACTION', a.sincePlayerRoom)
-      placeActions.push(new ImmobileAction(a))
-    } else if (a.hp < 1) {
+    //testjpf 97 is infirmSeq
+    // testjpf could do:::
+    // return () =>
+    if (a.hp < 1) {
       print(a.name, 'CHOSE injuryACTION')
-
+      //testjpf
+      //need injury sequence
+      //should be given to testnpc on new
+      /**
+       * when should npcs be checked for hp == 0???!!!
+       * in the FSM???
+       * KEEP!?!!?: I think we'll need this as a catch all
+       * for non component code TEMP TEMP TEMP
+       * TODO
+       * basically I dont have the ability to trigger
+       *  ingame Injury Actions!!! ATM.
+       */
       placeActions.push(new InjuryAction(a))
     } else {
       const clanAction: typeof Action = clanActions(isNpc(a) ? a.clan : '')
@@ -63,7 +68,7 @@ export default class PlaceSequence extends Sequence {
           'PlaceSequence::: InjuryAction:: Add new InjuredSequence:',
           this.a.name
         )
-        this.a.behavior.active.children.push(new InjuredSequence(this.a))
+        //        this.a.behavior.active.children.push(new InjuredSequence(this.a))
       }
     }
     return 'REMOVE'

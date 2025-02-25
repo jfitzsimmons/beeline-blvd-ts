@@ -3,6 +3,7 @@ import { isNpc } from '../../utils/ai'
 import Action from '../action'
 import MendeeAction from '../actions/mendeeAction'
 import Sequence from '../sequence'
+import ImmobileSequence from './immobileSequence'
 
 export default class MendeeSequence extends Sequence {
   a: ActorState
@@ -23,8 +24,10 @@ export default class MendeeSequence extends Sequence {
     // for (let i = 0; i < this.children.length; i++) {
     for (const child of this.children) {
       const proceed = child.run()()
-      if (proceed === 'mend')
-        this.a.behavior.active.children.push(new MendeeSequence(this.a))
+      if (proceed === 'mend') {
+        this.a.behavior.place.children.push(new ImmobileSequence(this.a))
+        this.a.behavior.active.children.unshift(new MendeeSequence(this.a))
+      }
       //i++
     }
     return 'REMOVE'

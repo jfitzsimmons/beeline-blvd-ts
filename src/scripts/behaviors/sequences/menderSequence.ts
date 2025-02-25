@@ -2,6 +2,8 @@ import ActorState from '../../states/actor'
 import Action from '../action'
 import MenderAction from '../actions/menderAction'
 import Sequence from '../sequence'
+import ImmobileSequence from './immobileSequence'
+import PlaceSequence from './placeSequence'
 
 export default class MenderSequence extends Sequence {
   a: ActorState
@@ -22,11 +24,18 @@ export default class MenderSequence extends Sequence {
 
     for (const child of this.children) {
       const proceed = child.run()()
-      if (proceed === 'continue')
-        // may need to rely on mendee
+      if (proceed === 'continue') {
         this.a.behavior.active.children.push(
           new MenderSequence(this.a, this.mendee)
         )
+        this.a.behavior.place.children.push(new ImmobileSequence(this.a))
+      } else {
+        this.a.behavior.place.children.push(new PlaceSequence(this.a))
+      }
+      //testjpf ex::!!!!
+      //this.a.behavior.active.children.push(
+      // new ImmobileSequence(this.a, this.mendee)
+      //)
     }
 
     //  const hurt = npcs.all[ts[i].target].hp < 5

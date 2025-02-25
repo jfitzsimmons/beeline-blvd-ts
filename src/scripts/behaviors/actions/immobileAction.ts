@@ -8,18 +8,22 @@ export default class ImmobileAction extends Action {
     super(a)
     this.a = a
     this.fail = this.fail.bind(this)
+    if (isNpc(this.a))
+      print(
+        'NEWIMMOBILEACT::: FOR::',
+        this.a.name,
+        'SPR:::',
+        this.a.sincePlayerRoom
+      )
   }
   run(): { (): void } {
-    if (isNpc(this.a))
+    if (isNpc(this.a)) {
       print('IMMOBILEACT::: SPR::', this.a.name, this.a.sincePlayerRoom)
-
-    if (isNpc(this.a) && this.a.sincePlayerRoom > 97)
-      // testjpf 97 = infirmSeq
       this.a.parent.pruneStationMap(this.a.currRoom, this.a.currStation)
-
+    }
     return () => this.fail()
   }
   fail() {
-    print(`PlaceAction>> ImmobileAction ${this.a.name}: DidNotPlace.`)
+    print(`ImmobileAction:: ${this.a.name}: DidNotPlace.`)
   }
 }

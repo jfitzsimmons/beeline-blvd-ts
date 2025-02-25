@@ -6,9 +6,6 @@ import {
 } from '../../states/inits/roomsInitState'
 import { isNpc } from '../../utils/ai'
 import Action from '../action'
-//import ImmobileAction from './immobileAction'
-//import ImmobileAction from './immobileAction'
-//import InjuryAction from './injuryAction'
 
 export default class PlaceAction extends Action {
   a: ActorState

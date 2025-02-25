@@ -27,8 +27,6 @@ export default class InfirmAction extends Action {
         this.a.cooldown = 8
         this.a.currRoom = 'infirmary'
         this.a.currStation = vacancy
-        //a.fsm.setState('infirm')
-        //    print('MendeeAction::', a.name, 'IS BEING INFIRMED')
         return () => this.delay(new InfirmedSequence(this.a))
       }
       return () => this.fail('InfirmAction:: Need noVacancy logic')
