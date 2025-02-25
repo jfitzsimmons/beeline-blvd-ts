@@ -1,7 +1,6 @@
 import ActorState from '../../states/actor'
 import { isNpc } from '../../utils/ai'
 import Action from '../action'
-//import MenderSequence from '../sequences/menderSequence'
 
 export default class MenderAction extends Action {
   mendee: string
@@ -18,21 +17,17 @@ export default class MenderAction extends Action {
       print('FROMMENDER:: Mendee HP:::', a.parent.returnNpc(this.mendee).hp)
       if (a.parent.returnNpc(this.mendee).hp < 5) {
         //a.parent.pruneStationMap(a.currRoom, a.currStation)
-        a.sincePlayerRoom = 97
+        a.sincePlayerRoom = 98
         print('Tryingtokeep mendering!!!')
         //testjpf Maybe make AttendToAction ??
         if (
           isNpc(this.a) &&
           this.a.currRoom == this.a.parent.getFocusedRoom()
         ) {
-          msg.post(
-        `/${this.a.currStation}#npc_loader`,
-        hash('move_npc'),
-        {
-          station: this.a.parent.returnNpc(this.mendee).currStation,
-          npc: this.a.name,
-        }
-      )
+          msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+            station: this.a.parent.returnNpc(this.mendee).currStation,
+            npc: this.a.name,
+          })
           // prettier-ignore
           //print(ts[i].owner, 'STATION MOVE VIA TASK mending', ts[i].target, 'in', npcs.all[ts[i].owner].currRoom)
         }

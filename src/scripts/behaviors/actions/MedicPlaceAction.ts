@@ -7,7 +7,7 @@ import {
 import { isNpc } from '../../utils/ai'
 import Action from '../action'
 
-export default class PlaceAction extends Action {
+export default class MedicPlaceAction extends Action {
   a: ActorState
   constructor(a: ActorState) {
     super(a)
@@ -38,6 +38,6 @@ export default class PlaceAction extends Action {
   }
   success() {
     // prettier-ignore
-    if (isNpc(this.a))print('PlaceAction:: Success::', this.a.name, 'placedin:', this.a.currRoom, this.a.currStation, '||| from:',   this.a.exitRoom ) //testjpf
+    if (isNpc(this.a))print('MedicPlaceAction:: Success::', this.a.name, 'placedin:', this.a.currRoom, this.a.currStation, '||| from:',   this.a.exitRoom ) //testjpf
   }
 }

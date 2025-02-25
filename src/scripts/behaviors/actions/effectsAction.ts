@@ -13,13 +13,14 @@ export default class EffectsAction extends Action {
     // if (effects.length < 1) return () => this.fail('No FX to remove')
     if (effects.length < 1) return () => this.fail()
 
-    for (const effect of effects) {
-      if (effect.turns < 0) {
-        traits[effect.fx.type]![effect.fx.stat] =
-          traits[effect.fx.type]![effect.fx.stat] - effect.fx.adjustment
-        effects.splice(effects.indexOf(effect), 1)
+    for (let i = effects.length; i-- !== 0; ) {
+      const e = effects[i]
+      if (e.turns < 0) {
+        traits[e.fx.type]![e.fx.stat] =
+          traits[e.fx.type]![e.fx.stat] - e.fx.adjustment
+        effects.splice(i, 1)
       } else {
-        effect.turns = effect.turns - 1
+        e.turns = e.turns - 1
       }
     }
 

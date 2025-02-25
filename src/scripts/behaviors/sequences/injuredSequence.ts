@@ -3,6 +3,7 @@ import { isNpc } from '../../utils/ai'
 import Action from '../action'
 import InjuredAction from '../actions/injuredAction'
 import Sequence from '../sequence'
+import ImmobileSequence from './immobileSequence'
 import MendeeSequence from './mendeeSequence'
 
 export default class InjuredSequence extends Sequence {
@@ -29,9 +30,12 @@ export default class InjuredSequence extends Sequence {
       )
       if (proceed === 'continue') {
         this.a.behavior.active.children.push(new InjuredSequence(this.a))
+        this.a.behavior.place.children.push(new ImmobileSequence(this.a))
       } else if (proceed == 'mend') {
         this.a.behavior.active.children.push(new MendeeSequence(this.a))
+        this.a.behavior.place.children.push(new ImmobileSequence(this.a))
       }
+
       print(
         '222::: INJSEQ:: place.childrenlenght:',
         this.a.behavior.place.children.length

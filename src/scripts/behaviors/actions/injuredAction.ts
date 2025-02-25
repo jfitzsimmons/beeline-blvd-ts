@@ -15,19 +15,15 @@ export default class InjuredAction extends Action {
     this.a = a
   }
   run(): { (): void } {
-    const { actor: a } = this
-    //testjpf oninjurystart
-    if (a instanceof NpcState) {
-      a.sincePlayerRoom = 99
-      // a.parent.addInjured(a.name)
-      if (a.parent.getIgnore().includes(a.name))
+    if (this.a instanceof NpcState) {
+      this.a.sincePlayerRoom = 99
+      if (this.a.parent.getIgnore().includes(this.a.name))
         return () =>
           this.continue(
-            'Injur-ED-action:: IGNORE - Quest related NPC:' + a.name
+            'Injur-ED-action:: IGNORE - Quest related NPC:' + this.a.name
           )
-      //return () => this.fail('FAILignore - must ignore injured:::' + a.name)
 
-      const helpers = Object.values(a.parent.getOccupants(a.currRoom))
+      const helpers = Object.values(this.a.parent.getOccupants(this.a.currRoom))
         .filter((s) => s != '')
         .sort(function (a, b) {
           if (a.slice(0, 3) === 'doc' && b.slice(0, 3) !== 'doc') return -1
@@ -35,36 +31,35 @@ export default class InjuredAction extends Action {
           return 0
         })
       for (const helper of helpers) {
-        //doctors start mending after RNG weighted by patient priority
-        const ticket = a.parent.getMendingQueue().indexOf(a.name)
-        const random = math.random(0, 4)
-        if (
-          NpcsInitState[helper].clan == 'doctors' &&
-          ((ticket != -1 && ticket < random) || (ticket == -1 && random > 3))
-        ) {
-          /**
-           * TESTJPF STARTHERE
-           * This needs to be another action??
-           * this whole loop??
-           * taskbuilder seems to be create action
-           * for another NPC
-           *
- 
-           * KEEP running into post placement and preplacement sequences / behavior
-           */
-          // a.tendToPatient(a.name, helper)
-          print('INJUREDACTION::: DOC::', helper, 'ismending', a.name)
-          this.doc = helper
-          return () => this.alternate(new MendeeAction(a))
-        } else if (
-          math.random() > 0.7 &&
-          a.parent.npcHasTask([helper], [a.name]) === null &&
-          NpcsInitState[helper].clan !== 'doctors'
-        ) {
-          //if not a doctor, create injury caution if haven't already
-          //testjpf probably an ACTION::
-          a.parent.taskBuilder(helper, 'injury', a.name, 'injury')
-          break
+        if (this.a.parent.returnNpc(helper).sincePlayerRoom < 97) {
+          //doctors start mending after RNG weighted by patient priority
+          const ticket = this.a.parent.getMendingQueue().indexOf(this.a.name)
+          const random = math.random(0, 4)
+          if (
+            NpcsInitState[helper].clan == 'doctors' &&
+            ((ticket != -1 && ticket < random) || (ticket == -1 && random > 3))
+          ) {
+            const testjpf = this.a.parent.returnNpc(helper)
+            print(
+              'INJUREDACTION::: DOC::',
+              helper,
+              'ismending',
+              this.a.name,
+              testjpf.currRoom,
+              testjpf.currStation
+            )
+            this.doc = helper
+            return () => this.alternate(new MendeeAction(this.a))
+          } else if (
+            math.random() > 0.7 &&
+            this.a.parent.npcHasTask([helper], [this.a.name]) === null &&
+            NpcsInitState[helper].clan !== 'doctors'
+          ) {
+            //if not a doctor, create injury caution if haven't already
+            //testjpf probably an ACTION::
+            this.a.parent.taskBuilder(helper, 'injury', this.a.name, 'injury')
+            break
+          }
         }
       }
     } else {
@@ -72,7 +67,8 @@ export default class InjuredAction extends Action {
     }
     return () =>
       this.continue(
-        'Injur-ED-action:: Default - Add Another InjuredSequence for:' + a.name
+        'Injur-ED-action:: Default - Add Another InjuredSequence for:' +
+          this.a.name
       )
   }
   continue(s: string): string {
@@ -82,7 +78,22 @@ export default class InjuredAction extends Action {
   alternate(as: Action | Sequence): string | void {
     if (isNpc(this.a)) {
       const doc = this.a.parent.returnNpc(this.doc)
+      doc.sincePlayerRoom = 98
+      print(
+        'injuredAction:: alternate doc mender sequence:: doc,a:',
+        this.doc,
+        this.a.name,
+        doc.behavior.active.children.length,
+        doc.currRoom,
+        doc.currStation
+      )
       doc.behavior.active.children.push(new MenderSequence(doc, this.a.name))
+      print(
+        'injuredAction:: alternate doc mender sequence:: doc,a:',
+        this.doc,
+        this.a.name,
+        doc.behavior.active.children.length
+      )
     }
     // new MenderSequence(this.a.parent.returnNpc(this.doc), this.a.name).run()
     return as instanceof Action ? as.run()() : as.run()
