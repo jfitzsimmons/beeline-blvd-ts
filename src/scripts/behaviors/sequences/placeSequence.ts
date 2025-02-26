@@ -3,7 +3,7 @@ import { isNpc } from '../../utils/ai'
 import Action from '../action'
 import EffectsAction from '../actions/effectsAction'
 //import InjuryAction from '../actions/injuryAction'
-import MedicPlaceAction from '../actions/medicPlaceAction'
+import MedicPlaceAction from '../actions/MedicPlaceAction'
 import PlaceAction from '../actions/placeAction'
 import Sequence from '../sequence'
 const lookup: {
