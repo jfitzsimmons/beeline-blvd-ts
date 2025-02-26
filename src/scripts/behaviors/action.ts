@@ -1,4 +1,5 @@
 import ActorState from '../states/actor'
+import { isNpc } from '../utils/ai'
 import Sequence from './sequence'
 
 export default class Action {
@@ -23,8 +24,9 @@ export default class Action {
   alternate(as: Action | Sequence) {
     return as instanceof Action ? as.run()() : as.run()
   }
-  delay(a: ActorState, s: Sequence) {
-    print('ACTION DELAYED FOR::', a.name, typeof s)
+  delay(s: Sequence) {
+    print('ACTION DELAYED ::', typeof s)
+    if (isNpc(this.actor)) this.actor.behavior.active.children.push(s)
   }
   continue(s = 'continue'): string {
     print('ActionContinue:::', s)

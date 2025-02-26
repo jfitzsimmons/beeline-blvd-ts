@@ -16,9 +16,8 @@ import { confrontation_check } from './inits/checksFuncs'
 import { immobile } from '../utils/consts'
 import PlaceSequence from '../behaviors/sequences/placeSequence'
 import Selector from '../behaviors/selector'
-//import InjuredSequence from '../behaviors/sequences/injuredSequence'
-import InjuryAction from '../behaviors/actions/injuryAction'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
+import InjuryAction from '../behaviors/actions/injuryAction'
 
 const dt = math.randomseed(os.time())
 
@@ -94,44 +93,31 @@ export default class WorldNpcs {
 
       npc.behavior.place = new Selector([])
       npc.behavior.active = new Selector([])
-      npc.behavior.place.children.push(new PlaceSequence(npc))
-
+      npc.behavior.place.children.unshift(new PlaceSequence(npc))
+      // testjpf npc setState is 'new'
       npc.fsm.update(dt)
       //TEST DEFAULTS
+      //Simulating behaviors.Active
       if (
         (npc.currRoom == 'grounds' && npc.currStation == 'worker1') ||
         (npc.currRoom == 'reception' && npc.currStation == 'guest')
       ) {
         //this.a.behavior.place.children.push(new InjuredSequence(this.a))
         npc.hp = 0
-        const IA = new InjuryAction(npc)
-        const proceed = IA.run()
-        proceed()
-        npc.behavior.place.children = []
-        npc.behavior.active.children.push(new InjuredSequence(npc))
+        new InjuryAction(npc).run()
+        // npc.behavior.place.children.unshift(new PlaceSequence(npc))
       }
     }
-
-    // TEST DATA
-    /**
-    const guest = this.parent.getNpcByRoomStation('reception', 'guest')
-    const worker = this.parent.getNpcByRoomStation('grounds', 'worker1')
-    this.all[guest].hp = 0
-    this.all[guest].behavior.active.children.push(
-      new InjuredSequence(this.all[guest])
-    )
-    this.all[worker].hp = 0
-    this.all[worker].behavior.active.children.push(
-      new InjuredSequence(this.all[worker])
-    )
-      **/
   }
   // private onNewUpdate(): void {}
   private onNewExit(): void {
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
-      npc.fsm.setState('turn')
+      if (npc.hp < 1) {
+        npc.behavior.active.children.push(new InjuredSequence(npc))
+      }
+      npc.fsm.setState('active')
     }
   }
   private onPlaceEnter(): void {}
@@ -140,36 +126,46 @@ export default class WorldNpcs {
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
-      //i could add logic here to
-      //handle doc logic separately.?
-      //testjpf
-      npc.behavior.place.children.push(new PlaceSequence(npc))
+
       npc.fsm.update(dt)
       // prettier-ignore
       // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
     }
-    //some of this NEED TO HAPPEN POST PLACING!
-    /**
-     * testjpf
-     * loop again?
-     * change state to something else (MTG terms)
-     * loop there. better game logic?
-     */
-    //this.fsm.setState('active')
   }
   private onPlaceExit(): void {
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
+
+      //testjpf:: TEMP until legacy checks : TODO
+      if (npc.hp < 1 && npc.behavior.active.children.length < 1) {
+        npc.behavior.active.children.push(new InjuredSequence(npc))
+        print(
+          npc.name,
+          '222onPLaceExit!!!::: active length::',
+          npc.behavior.active.children.length
+        )
+      }
       npc.fsm.setState('active')
     }
   }
   private onActiveEnter(): void {
     print('npcsActiveEnter')
-    this.medical()
+    // this.medical()
     this.security()
   }
   private onActiveUpdate(): void {}
-  private onActiveExit(): void {}
+  private onActiveExit(): void {
+    print('NPCSAVTIVEEXIT!!!')
+    this.sort_npcs_by_encounter()
+    for (let i = this.order.length; i-- !== 0; ) {
+      const npc = this.all[this.order[i]]
+      //testjpf Rethink??
+      if (npc.behavior.place.children.length < 1)
+        npc.behavior.place.children.push(new PlaceSequence(npc))
+
+      npc.fsm.setState('turn')
+    }
+  }
   returnMendeeLocation(): string | null {
     const injured = this.parent.getMendingQueue()[0]
     return injured === null ? null : this.all[injured].currRoom
@@ -301,7 +297,6 @@ function seedNpcs(lists: NpcProps) {
   let ki: keyof typeof NpcsInitState
   for (ki in NpcsInitState) {
     seeded[ki] = new NpcState(ki, lists)
-    seeded[ki].behavior.place.children.push(new PlaceSequence(seeded[ki]))
   }
   return seeded
 }

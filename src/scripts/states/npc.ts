@@ -2,7 +2,6 @@
 import { NpcsInitState } from './inits/npcsInitState'
 import { RoomsInitState } from './inits/roomsInitState'
 import { itemStateInit } from './inits/inventoryInitState'
-//import StateMachine from './stateMachine'
 import { InventoryTableItem } from '../../types/state'
 import { Effect } from '../../types/tasks'
 import { NpcProps } from '../../types/world'
@@ -13,7 +12,6 @@ import {
   set_npc_target,
 } from '../utils/ai'
 import { surrounding_room_matrix } from '../utils/utils'
-import { doctors } from '../utils/consts'
 import ActorState from './actor'
 //import InjuredSequence from '../behaviors/sequences/injuredSequence'
 
@@ -128,25 +126,8 @@ export default class NpcState extends ActorState {
     this.love = novelUpdates.love
   }
 
-  private onInfirmEnter(): void {
-    /**
-    this.hp = 5
-    this.parent.clearStation(this.currRoom, this.currStation, this.name)
-    this.sincePlayerRoom = 99
-    this.parent.addInfirmed(this.name)
-    this.matrix = RoomsInitState.infirmary.matrix
-    this.cooldown = 8
-    this.currRoom = 'infirmary'
-    */
-  }
-  private onInfirmUpdate(): void {
-    this.sincePlayerRoom = 99
-    this.parent.isStationedTogether(doctors, 'infirmary') === true
-      ? (this.hp = this.hp + 2)
-      : (this.hp = this.hp + 1)
-
-    if (this.hp > 9) this.fsm.setState('turn')
-  }
+  private onInfirmEnter(): void {}
+  private onInfirmUpdate(): void {}
   private onInfirmEnd(): void {
     this.parent.removeInfirmed(this.name)
     this.parent.removeInjured(this.name)
@@ -174,7 +155,7 @@ export default class NpcState extends ActorState {
   private onParamedicExit(): void {}
   private onERfullEnter(): void {}
   private onERfullUpdate(): void {
-    this.sincePlayerRoom = 97
+    this.sincePlayerRoom = 98
     const patients = this.parent.getInfirmed()
     this.parent.clearStation(this.currRoom, this.currStation, this.name)
 
@@ -219,7 +200,7 @@ export default class NpcState extends ActorState {
       this.currStation = vacancy
     }
     this.sincePlayerRoom = 96
-    this.parent.addInfirmed(this.name)
+    // this.parent.addInfirmed(this.name)
     this.matrix = RoomsInitState.security.matrix
     this.cooldown = 8
     this.currRoom = 'security'
@@ -415,12 +396,13 @@ export default class NpcState extends ActorState {
   remove_effects(effects: Effect[]) {
     if (effects.length < 1) return
     //let eKey: keyof typeof
-    for (const effect of effects) {
-      if (effect.turns < 0) {
-        this.remove_effects_bonus(effect)
-        effects.splice(effects.indexOf(effect), 1)
+    for (let i = effects.length; i-- !== 0; ) {
+      const e = effects[i]
+      if (e.turns < 0) {
+        this.remove_effects_bonus(e)
+        effects.splice(i, 1)
       } else {
-        effect.turns = effect.turns - 1
+        e.turns = e.turns - 1
       }
     }
   }

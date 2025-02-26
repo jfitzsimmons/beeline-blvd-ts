@@ -42,6 +42,7 @@ export interface WorldNpcsArgs extends TaskProps {
   getStationMap(): { [key: string]: { [key: string]: string } }
   sendToVacancy(room: string, npc: string): string | null
   getMendingQueue(): string[]
+  removeMendee(mendee: string): void
   hasHallpass(owner: string): TaskState | null
   getFocusedRoom(): string
   removeTaskByCause(target: string, cause: string): void
