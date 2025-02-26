@@ -21,9 +21,10 @@ export default class MendeeAction extends Action {
     this.a.parent.addIgnore(a.name)
     this.a.parent.addAdjustMendingQueue(a.name)
 
-    this.a.hp = a.hp + 1
+    if (math.random() > 0.4) this.a.hp = a.hp + 1
     print('MendeeAction for::', a.name, '| HP:', a.hp)
     if (this.a.hp > 4) {
+      this.a.parent.removeMendee(this.a.name)
       print('MendeeAction::', this.a.name, 'IS BEING INFIRMED')
       return () => this.delay(new InfirmSequence(a))
       //  }

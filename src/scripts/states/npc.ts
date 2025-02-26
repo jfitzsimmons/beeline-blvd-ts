@@ -200,7 +200,7 @@ export default class NpcState extends ActorState {
       this.currStation = vacancy
     }
     this.sincePlayerRoom = 96
-    this.parent.addInfirmed(this.name)
+    // this.parent.addInfirmed(this.name)
     this.matrix = RoomsInitState.security.matrix
     this.cooldown = 8
     this.currRoom = 'security'

@@ -51,6 +51,8 @@ export default class WorldPlayer extends ActorState {
     print('post player currom')
 
     this.matrix = { x: 0, y: 4 }
+    this.ap = 30
+    this.apMax = 30
     this.name = 'player'
     this.exitRoom = 'grounds'
     print('pre player traits')

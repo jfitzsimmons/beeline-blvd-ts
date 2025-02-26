@@ -62,6 +62,7 @@ export default class World {
       sendToVacancy: this.rooms.sendToVacancy.bind(this),
       getPlayerRoom: this.player.getPlayerRoom.bind(this),
       getMendingQueue: this.tasks.getMendingQueue.bind(this),
+      removeMendee: this.tasks.removeMendee.bind(this),
       taskBuilder: this.tasks.taskBuilder.bind(this),
       npcHasTask: this.tasks.npcHasTask.bind(this),
       addAdjustMendingQueue: this.tasks.addAdjustMendingQueue.bind(this),

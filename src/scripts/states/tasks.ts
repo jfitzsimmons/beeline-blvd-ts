@@ -127,6 +127,7 @@ export default class WorldTasks {
     this.npcHasTask = this.npcHasTask.bind(this)
     this.taskBuilder = this.taskBuilder.bind(this)
     this.addAdjustMendingQueue = this.addAdjustMendingQueue.bind(this)
+    this.removeMendee = this.removeMendee.bind(this)
   }
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
@@ -158,6 +159,9 @@ export default class WorldTasks {
   }
   getMendingQueue(): string[] {
     return this.mendingQueue
+  }
+  removeMendee(m: string) {
+    this.mendingQueue.splice(this.mendingQueue.indexOf(m), 1)
   }
   addAdjustMendingQueue(patient: string) {
     if (this.mendingQueue.includes(patient) == true) {

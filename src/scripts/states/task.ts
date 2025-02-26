@@ -5,7 +5,7 @@ import WorldPlayer from './player'
 import StateMachine from './stateMachine'
 import { Consequence, Effect, Task, TasksChecks } from '../../types/tasks'
 import { TaskProps } from '../../types/world'
-import { fxLookup, fx, immobile, doctors } from '../utils/consts'
+import { fxLookup, fx, immobile } from '../utils/consts'
 import { shuffle } from '../utils/utils'
 import {
   removeRandom,
@@ -94,6 +94,7 @@ export default class TaskState {
   private onNewExit(): void {}
   private onInjuryEnter(): void {}
   private onInjuryUpdate(): void {
+    /**
     for (const doc of doctors) {
       const mobile = () => this.parent.npcHasTask([doc], [], immobile) === null
 
@@ -104,6 +105,7 @@ export default class TaskState {
         break
       }
     }
+      */
   }
   private onInjuryExit(): void {}
   private onSnitchEnter(): void {}

@@ -59,6 +59,8 @@ export default class InjuredAction extends Action {
             //testjpf probably an ACTION::
             this.a.parent.taskBuilder(helper, 'injury', this.a.name, 'injury')
             break
+          } else if (NpcsInitState[helper].clan == 'doctors') {
+            this.a.parent.addAdjustMendingQueue(this.a.name)
           }
         }
       }
