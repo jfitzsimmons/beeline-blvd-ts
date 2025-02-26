@@ -33,6 +33,7 @@ export const RoomsInitState: { [key: string]: Room } = {
       assistant: '',
       browse: '',
       vipguest: '',
+      bench: '',
     },
     actors: {
       luggage_1: {
@@ -550,7 +551,15 @@ export const RoomsInitRoles: { [key: string]: string[] } = {
     'security',
     'custodians',
   ],
-  bench: ['labor', 'contractors', 'gang1', 'gang3', 'maintenance', 'mailroom'],
+  bench: [
+    'labor',
+    'contractors',
+    'gang1',
+    'gang3',
+    'maintenance',
+    'mailroom',
+    'doctors',
+  ],
   browse: [
     'staff',
     'labor',
