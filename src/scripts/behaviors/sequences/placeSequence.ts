@@ -22,10 +22,7 @@ export default class PlaceSequence extends Sequence {
   a: ActorState
   constructor(a: ActorState) {
     const placeActions: Action[] = []
-    // or testjpf I could
-    // handle doc/ security/ future logic herere?
-    //put it here if it has to do with
-    //where an NPC should go.
+
     placeActions.push(new EffectsAction(a))
     if (isNpc(a)) print('PLACESEQ::: SPR::', a.name, a.sincePlayerRoom)
 
