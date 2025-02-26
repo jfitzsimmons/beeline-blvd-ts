@@ -11,13 +11,13 @@ import { Npcs } from '../../types/state'
 import { QuestMethods } from '../../types/tasks'
 import { NpcProps, WorldNpcsArgs } from '../../types/world'
 import { shuffle } from '../utils/utils'
-import { RoomsInitState } from './inits/roomsInitState'
+import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
 import { confrontation_check } from './inits/checksFuncs'
 import { immobile } from '../utils/consts'
 import PlaceSequence from '../behaviors/sequences/placeSequence'
 import Selector from '../behaviors/selector'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
-import InjuryAction from '../behaviors/actions/injuryAction'
+//import InjuryAction from '../behaviors/actions/injuryAction'
 
 const dt = math.randomseed(os.time())
 
@@ -93,7 +93,11 @@ export default class WorldNpcs {
 
       npc.behavior.place = new Selector([])
       npc.behavior.active = new Selector([])
-      npc.behavior.place.children.unshift(new PlaceSequence(npc))
+
+      //   npc.behavior.place.children.unshift(
+      //    new PlaceSequence(npc.getBehaviorProps.bind(this))
+      // )
+      npc.findRoomPlaceStation({ x: 0, y: 0 }, RoomsInitPriority)
       // testjpf npc setState is 'new'
       npc.fsm.update(dt)
       //TEST DEFAULTS
@@ -102,10 +106,10 @@ export default class WorldNpcs {
         (npc.currRoom == 'grounds' && npc.currStation == 'worker1') ||
         (npc.currRoom == 'reception' && npc.currStation == 'guest')
       ) {
-        //this.a.behavior.place.children.push(new InjuredSequence(this.a))
         npc.hp = 0
-        new InjuryAction(npc).run()
-        // npc.behavior.place.children.unshift(new PlaceSequence(npc))
+        npc.sincePlayerRoom = 99
+        npc.parent.addInjured(npc.name)
+        //new InjuryAction(npc.getBehaviorProps.bind(this)).run()
       }
     }
   }
@@ -115,7 +119,9 @@ export default class WorldNpcs {
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
       if (npc.hp < 1) {
-        npc.behavior.active.children.push(new InjuredSequence(npc))
+        npc.behavior.active.children.push(
+          new InjuredSequence(npc.getBehaviorProps.bind(this))
+        )
       }
       npc.fsm.setState('active')
     }
@@ -138,7 +144,9 @@ export default class WorldNpcs {
 
       //testjpf:: TEMP until legacy checks : TODO
       if (npc.hp < 1 && npc.behavior.active.children.length < 1) {
-        npc.behavior.active.children.push(new InjuredSequence(npc))
+        npc.behavior.active.children.push(
+          new InjuredSequence(npc.getBehaviorProps.bind(this))
+        )
         print(
           npc.name,
           '222onPLaceExit!!!::: active length::',
@@ -161,7 +169,9 @@ export default class WorldNpcs {
       const npc = this.all[this.order[i]]
       //testjpf Rethink??
       if (npc.behavior.place.children.length < 1)
-        npc.behavior.place.children.push(new PlaceSequence(npc))
+        npc.behavior.place.children.push(
+          new PlaceSequence(npc.getBehaviorProps.bind(this))
+        )
 
       npc.fsm.setState('turn')
     }
@@ -240,6 +250,8 @@ export default class WorldNpcs {
   }
   addInjured(n: string): void {
     this.injured.push(n)
+    const npc = this.parent.returnNpc(n)
+    this.parent.pruneStationMap(npc.currRoom, npc.currStation)
   }
   getInjured(): string[] {
     return this.injured

@@ -1,22 +1,29 @@
-import ActorState from '../../states/actor'
-import { isNpc } from '../../utils/ai'
+import {
+  ActionProps,
+  BehaviorKeys,
+  InfirmProps,
+} from '../../../types/behaviors'
+
 import Action from '../action'
 import EffectsAction from '../actions/effectsAction'
 import InfirmAction from '../actions/infirmAction'
 import Sequence from '../sequence'
 
 export default class InfirmSequence extends Sequence {
-  a: ActorState
-  constructor(a: ActorState) {
+  a: InfirmProps
+  //getProps: (behavior: BehaviorKeys) => ActionProps
+  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
     const placeActions: Action[] = []
 
-    placeActions.push(...[new EffectsAction(a), new InfirmAction(a)])
+    placeActions.push(
+      ...[new EffectsAction(getProps), new InfirmAction(getProps)]
+    )
 
     super(placeActions)
-    this.a = a
+    this.a = getProps('infirm') as InfirmProps
   }
   run(): 'REMOVE' | '' {
-    if (isNpc(this.a)) this.a.sincePlayerRoom = 97
+    this.a.sincePlayerRoom = 97
 
     for (const child of this.children) {
       child.run()()

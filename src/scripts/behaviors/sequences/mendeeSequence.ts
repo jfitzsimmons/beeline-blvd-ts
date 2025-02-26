@@ -1,23 +1,29 @@
-import ActorState from '../../states/actor'
-import { isNpc } from '../../utils/ai'
+import {
+  ActionProps,
+  BehaviorKeys,
+  MendeeProps,
+} from '../../../types/behaviors'
 import Action from '../action'
 import MendeeAction from '../actions/mendeeAction'
 import Sequence from '../sequence'
 import ImmobileSequence from './immobileSequence'
 
 export default class MendeeSequence extends Sequence {
-  a: ActorState
-  constructor(a: ActorState) {
-    const turnActions: Action[] = []
+  a: MendeeProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
 
-    turnActions.push(...[new MendeeAction(a)])
+  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+    const turnActions: Action[] = []
+    const props = getProps('mendee') as MendeeProps
+    turnActions.push(...[new MendeeAction(getProps)])
 
     super(turnActions)
     // print('INJUREDSEQ CREATED!!!')
-    this.a = a
+    this.a = props
+    this.getProps = getProps
   }
   run(): 'REMOVE' | '' {
-    if (isNpc(this.a)) this.a.sincePlayerRoom = 98
+    this.a.sincePlayerRoom = 98
 
     //   print('INJUREDSEQ RUNRUNRUN!!!')
     print('MendeeSequence:: Running for:', this.a.name)
@@ -25,8 +31,9 @@ export default class MendeeSequence extends Sequence {
     for (const child of this.children) {
       const proceed = child.run()()
       if (proceed === 'mend') {
-        this.a.behavior.place.children.push(new ImmobileSequence(this.a))
-        this.a.behavior.active.children.unshift(new MendeeSequence(this.a))
+        // const props = this.getProps('immobile') as ImmobileProps
+        this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
+        this.a.addToBehavior('active', new MendeeSequence(this.getProps), true)
       }
       //i++
     }

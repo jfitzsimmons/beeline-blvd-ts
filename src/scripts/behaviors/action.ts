@@ -1,10 +1,9 @@
-import ActorState from '../states/actor'
-import { isNpc } from '../utils/ai'
+import { ActionProps } from '../../types/behaviors'
 import Sequence from './sequence'
 
 export default class Action {
-  actor: ActorState
-  constructor(actorProps: ActorState) {
+  actor: ActionProps
+  constructor(actorProps: ActionProps) {
     this.actor = actorProps
     this.run = this.run.bind(this)
     this.fail = this.fail.bind(this)
@@ -13,7 +12,7 @@ export default class Action {
     this.continue = this.continue.bind(this)
   }
   run(): () => void | string {
-    return () => print('ACTIONclass run()default::: ', this.actor.name)
+    return () => print('ACTIONclass run()default::: ')
   }
   fail(str: string) {
     print('ACTIONfailed', str)
@@ -26,7 +25,7 @@ export default class Action {
   }
   delay(s: Sequence) {
     print('ACTION DELAYED ::', typeof s)
-    if (isNpc(this.actor)) this.actor.behavior.active.children.push(s)
+    //  if (isNpc(this.actor)) this.actor.behavior.active.children.push(s)
   }
   continue(s = 'continue'): string {
     print('ActionContinue:::', s)

@@ -1,12 +1,11 @@
-import ActorState from '../../states/actor'
-import { isNpc } from '../../utils/ai'
+import { InfirmedProps } from '../../../types/behaviors'
 import { doctors } from '../../utils/consts'
 import Action from '../action'
 //import PlaceSequence from '../sequences/placeSequence'
 
 export default class InfirmedAction extends Action {
-  a: ActorState
-  constructor(a: ActorState) {
+  a: InfirmedProps
+  constructor(a: InfirmedProps) {
     super(a)
     this.a = a
   }
@@ -17,25 +16,19 @@ export default class InfirmedAction extends Action {
      * severity of injury
      * - hp
      */
-    if (isNpc(this.a)) {
-      this.a.parent.isStationedTogether(doctors, 'infirmary') === true &&
-      Math.random() > 0.3
-        ? (this.a.hp = this.a.hp + 2)
-        : Math.random() > 0.3 && (this.a.hp = this.a.hp + 1)
+    //  if (isNpc(this.a)) {
+    this.a.isStationedTogether(doctors, 'infirmary') === true &&
+    Math.random() > 0.3
+      ? (this.a.hp = this.a.hp + 2)
+      : Math.random() > 0.3 && (this.a.hp = this.a.hp + 1)
 
-      if (this.a.hp > 9) {
-        print('this.a.sincePlayerRoom', this.a.sincePlayerRoom)
-        this.a.sincePlayerRoom = math.random(15, 40)
-        this.a.parent.removeInfirmed(this.a.name)
-        print('INFIRMEDaction:: sinceplayerroom reset. RE-PLACE npc??') //this.a.fsm.setState('turn')
-        print('this.a.sincePlayerRoom2', this.a.sincePlayerRoom)
-        // this.a.behavior.place.children.push(new PlaceSequence(this.a))
-        return () => this.success()
-      }
-      //tesjpf this could be moved to menderseq
-      // as a 'default' with continue
-      // this.a.behavior.place.children.push(new ImmobileSequence(this.a))
+    if (this.a.hp > 9) {
+      this.a.sincePlayerRoom = math.random(15, 40)
+      this.a.removeInfirmed(this.a.name)
+      print('INFIRMEDaction:: sinceplayerroom reset. RE-PLACE npc??')
+      return () => this.success()
     }
+    //  }
     return () => this.continue('continue')
   }
 }

@@ -39,7 +39,6 @@ function set_objectives() {
         nodepos.y = nodepos.y - spacing
         nodepos = vmath.vector3(nodepos)
         const node = gui.get_node('quest')
-        //const testjpffart = tostring(qKey)
         gui.set_text(node, tostring(qKey))
         const clone = gui.clone(node)
         gui.set_position(clone, nodepos)
@@ -49,7 +48,6 @@ function set_objectives() {
         let cNum: keyof typeof objectives
         for (cNum in objectives) {
           if (objectives[cNum].status == 'active') {
-            //testjpf
             const objective = objectives[cNum]
 
             nodepos.y = nodepos.y - spacing
