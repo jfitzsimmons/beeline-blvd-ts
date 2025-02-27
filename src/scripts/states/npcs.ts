@@ -137,7 +137,6 @@ export default class WorldNpcs {
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
 
-      //testjpf:: TEMP until legacy checks : TODO
       if (npc.hp < 1 && npc.behavior.active.children.length < 1) {
         npc.behavior.active.children.push(
           new InjuredSequence(npc.getBehaviorProps.bind(this))

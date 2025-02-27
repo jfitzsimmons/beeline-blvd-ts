@@ -229,10 +229,11 @@ export default class NpcState extends ActorState {
     print('NPCCLASS::: onTurnEnter()')
   }
   private onTurnUpdate(): void {
-    print('TURNUPDATE place run')
+    print('TURNUPDATE placerun')
     this.behavior.place.run()
   }
   private onTurnExit(): void {
+    print('TURNEXIT ACTIVErun')
     this.behavior.active.run()
   }
   private onActiveEnter(): void {}
