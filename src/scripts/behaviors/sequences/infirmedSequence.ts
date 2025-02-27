@@ -11,11 +11,11 @@ import PlaceSequence from './placeSequence'
 
 export default class InfirmedSequence extends Sequence {
   a: InfirmedProps
-  getProps: (behavior: BehaviorKeys) => ActionProps
+  getProps: (behavior: BehaviorKeys) => () => ActionProps
 
-  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
     const turnActions: Action[] = []
-    const props = getProps('infirmed') as InfirmedProps
+    const props = getProps('infirmed')() as InfirmedProps
     turnActions.push(...[new InfirmedAction(props)])
 
     super(turnActions)
@@ -33,7 +33,6 @@ export default class InfirmedSequence extends Sequence {
           new InfirmedSequence(this.getProps),
           true
         )
-        //const props = this.getProps('immobile') as ImmobileProps
         this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
       } else {
         this.a.addToBehavior('place', new PlaceSequence(this.getProps), false)

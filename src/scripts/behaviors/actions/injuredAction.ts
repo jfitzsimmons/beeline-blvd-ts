@@ -13,9 +13,9 @@ import MendeeAction from './mendeeAction'
 export default class InjuredAction extends Action {
   a: InjuredProps
   doc = ''
-  getProps: (behavior: BehaviorKeys) => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
-    const props = getProps('injured') as InjuredProps
+  getProps: (behavior: BehaviorKeys) => () => ActionProps
+  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
+    const props = getProps('injured')() as InjuredProps
     super(props)
     this.a = props
     this.getProps = getProps
@@ -48,7 +48,7 @@ export default class InjuredAction extends Action {
           //const props = this.getProps('mendee')
           return () => this.alternate(new MendeeAction(this.getProps))
         } else if (
-          math.random() > 0.7 &&
+          math.random() > 0.8 &&
           // this.a.parent.npcHasTask([helper], [this.a.name]) === null &&
           NpcsInitState[helper].clan !== 'doctors'
         ) {
@@ -64,9 +64,21 @@ export default class InjuredAction extends Action {
           )
           this.continue(
             'Injur-ED-action:: GoodSamrtian - Add HELPERSequence for:' +
-              scout.name
+              scout.name +
+              '| VICTIM:' +
+              this.a.name
           )
-        } else if (NpcsInitState[helper].clan == 'doctors') {
+        } else if (
+          NpcsInitState[helper].clan == 'doctors' &&
+          math.random() > 0.5
+        ) {
+          print(
+            'INJUREDACTION::: Doc:',
+            helper,
+            'added',
+            this.a.name,
+            'to QUEUE!'
+          )
           this.a.addAdjustMendingQueue(this.a.name)
         }
       }

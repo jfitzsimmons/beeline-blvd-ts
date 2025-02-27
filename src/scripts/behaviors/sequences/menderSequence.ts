@@ -14,12 +14,12 @@ import PlaceSequence from './placeSequence'
 export default class MenderSequence extends Sequence {
   a: MenderProps
   mendee: InjuredProps
-  getProps: (behavior: BehaviorKeys) => ActionProps
+  getProps: (behavior: BehaviorKeys) => () => ActionProps
   constructor(
-    getProps: (behavior: BehaviorKeys) => ActionProps,
+    getProps: (behavior: BehaviorKeys) => () => ActionProps,
     mendee: InjuredProps
   ) {
-    const props = getProps('mender') as MenderProps
+    const props = getProps('mender')() as MenderProps
 
     const turnActions: Action[] = []
 
@@ -29,7 +29,6 @@ export default class MenderSequence extends Sequence {
     this.a = props
     this.mendee = mendee
     this.getProps = getProps
-    //  if (isNpc(this.a))
     print(
       this.a.name,
       'MENDERSEQ CREATED!!!:: DOC,a::',
@@ -41,10 +40,7 @@ export default class MenderSequence extends Sequence {
   }
   run(): 'REMOVE' | '' {
     this.a.sincePlayerRoom = 98
-
-    // print('INJUREDSEQ RUNRUNRUN!!!')
     print('Mend-ER-Sequence:: Running for:', this.a.name)
-
     for (const child of this.children) {
       const proceed = child.run()()
       if (proceed === 'continue') {
@@ -52,7 +48,6 @@ export default class MenderSequence extends Sequence {
           'active',
           new MenderSequence(this.getProps, this.mendee)
         )
-        //const props = this.getProps('immobile') as ImmobileProps
         this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
       } else {
         this.a.addToBehavior('place', new PlaceSequence(this.getProps))

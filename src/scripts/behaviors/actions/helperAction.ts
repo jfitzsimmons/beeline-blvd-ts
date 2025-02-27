@@ -8,12 +8,12 @@ import Action from '../action'
 export default class HelperAction extends Action {
   a: HelperProps
   victim = ''
-  getProps: (behavior: BehaviorKeys) => ActionProps
+  getProps: (behavior: BehaviorKeys) => () => ActionProps
   constructor(
-    getProps: (behavior: BehaviorKeys) => ActionProps,
+    getProps: (behavior: BehaviorKeys) => () => ActionProps,
     victim: string
   ) {
-    const props = getProps('helper') as HelperProps
+    const props = getProps('helper')() as HelperProps
     super(props)
     this.a = props
     this.getProps = getProps
@@ -24,20 +24,36 @@ export default class HelperAction extends Action {
     if (
       this.a.returnNpc(this.victim).hp > 0 ||
       this.a.getMendingQueue().includes(this.victim)
-    )
+    ) {
+      this.a.addAdjustMendingQueue(this.victim)
       return () =>
         this.fail(
-          `HELPERACTION:: injured:${this.victim} has already been helped`
+          `HELPERACTION:: injured:${this.victim} has already been helped. AdjustedQueue. Job Done.`
         )
-
-    const helpers = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
-      (s: string) => s != '' && s.slice(0, 3) === 'doc'
+    }
+    print(
+      'INCASE THERES AN EXIT ROOM CRASH:::',
+      this.a.exitRoom,
+      this.a.name,
+      this.a.currRoom,
+      this.a.currStation
+    )
+    const prevRoom = Object.values(this.a.getOccupants(this.a.exitRoom)).filter(
+      (s: string) =>
+        s.slice(0, 3) === 'doc' &&
+        this.a.returnNpc(s).exitRoom == this.a.currRoom
+    )
+    const currRoom = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
+      (s: string) => s.slice(0, 3) === 'doc'
     )
 
-    for (const helper of helpers) {
-      if (this.a.returnNpc(helper).sincePlayerRoom < 97) {
+    for (const helper of [...new Set([...prevRoom, ...currRoom])]) {
+      if (
+        this.a.returnNpc(helper).sincePlayerRoom < 97 &&
+        math.random() > 0.4
+      ) {
         //available doctor found
-        this.a.addAdjustMendingQueue(this.a.name)
+        this.a.addAdjustMendingQueue(this.victim)
         print(
           'HELPERACTION',
           helper,

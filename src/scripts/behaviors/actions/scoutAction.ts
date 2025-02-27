@@ -10,14 +10,12 @@ export default class ScoutAction extends Action {
   a: HelperProps
   room: string
   constructor(props: HelperProps, room: string) {
-    //const props = getProps('place') as PlaceProps
     super(props)
     this.a = props
     this.room = room
   }
 
   run(): { (): void } {
-    // const { actor: a } = this
     if (this.a.cooldown > 0) this.a.cooldown = this.a.cooldown - 1
     this.a.exitRoom = RoomsInitLayout[this.a.matrix.y][this.a.matrix.x]!
 

@@ -7,21 +7,13 @@ import {
 import Action from '../action'
 
 export default class MedicPlaceAction extends Action {
-  //TESTJPF MAYBE use DocPlaceProps
   a: MedicPlaceProps
   constructor(props: ActionProps) {
-    /**testjpf
-     * do something like
-     * constructor(getProps: () => ActionProps)
-     */
-    // const props = getProps('medplace') as MedicPlaceProps
     super(props)
     this.a = props as MedicPlaceProps
   }
 
   run(): { (): void } {
-    //TESTJPF NEED a bulletin board
-    // if (!isNpc(this.a)) return () => this.fail('MedicPlaceAction::: not npc')
     const mobile = this.a.sincePlayerRoom < 90
     const infirmed = this.a.getInfirmed().length
 
@@ -29,12 +21,7 @@ export default class MedicPlaceAction extends Action {
     this.a.exitRoom = RoomsInitLayout[this.a.matrix.y][this.a.matrix.x]!
 
     if (mobile === true && infirmed > 1) {
-      //const patients = this.a.parent.getInfirmed()
-      if (
-        math.random() + infirmed * 0.2 >
-        1 //&&
-        //  this.a.parent.getStationMap().infirmary.aid !== undefined
-      ) {
+      if (math.random() + infirmed * 0.2 > 1) {
         const filled = this.a.checkSetStation('infirmary', 'aid', this.a.name)
         print('ERfull 1st')
         if (filled == true) return () => this.success()
