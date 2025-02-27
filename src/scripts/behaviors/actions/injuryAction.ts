@@ -1,22 +1,25 @@
-import ActorState from '../../states/actor'
-import { isNpc } from '../../utils/ai'
+import {
+  ActionProps,
+  BehaviorKeys,
+  InjuryProps,
+} from '../../../types/behaviors'
+
 import Action from '../action'
 
 export default class InjuryAction extends Action {
-  a: ActorState
-  constructor(a: ActorState) {
-    super(a)
-    this.a = a
+  a: InjuryProps
+  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
+    const props = getProps('injury')() as InjuryProps
+    super(props)
+    this.a = props
   }
   run(): { (): void } {
-    const { actor: a } = this
-    //testjpf oninjurystart
-    if (isNpc(a)) {
-      a.sincePlayerRoom = 99
-      a.parent.addInjured(a.name)
-      a.parent.pruneStationMap(a.currRoom, a.currStation)
-    }
-    a.hp = 0
+    //const { actor: a } = this
+    this.a.sincePlayerRoom = 99
+    this.a.addInjured(this.a.name)
+    // a.parent.pruneStationMap(a.currRoom, a.currStation)
+
+    this.a.hp = 0
 
     //testjpf returns to PlaceSequence
     return () => this.continue('injury')

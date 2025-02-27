@@ -34,11 +34,11 @@ export interface WorldPlayerArgs {
   removeTaskByCause(target: string, cause: string): void
 }
 export interface WorldNpcsArgs extends TaskProps {
-  isStationedTogether(npcs: string[], room: string): boolean
   getPlayerRoom(): string
   clearStation(room: string, station: string, npc: string): void
-  setStation(room: string, station: string, npc: string): void
+  checkSetStation(room: string, station: string, npc: string): boolean
   pruneStationMap(room: string, station: string): void
+  setStation(room: string, station: string, npc: string): void
   getStationMap(): { [key: string]: { [key: string]: string } }
   sendToVacancy(room: string, npc: string): string | null
   getMendingQueue(): string[]
@@ -49,10 +49,9 @@ export interface WorldNpcsArgs extends TaskProps {
   getNovelUpdates(): NovelNpc
   playerFSM: StateMachine
   playerTraits: Traits
-  getNpcByRoomStation(room: string, station: string): string
 }
 export interface NpcProps extends WorldNpcsArgs {
-  addInfirmed(n: string): void
+  addInfirmed(n: string, vacancy: string): void
   getInfirmed(): string[]
   removeInfirmed(n: string): void
   addInjured(n: string): void

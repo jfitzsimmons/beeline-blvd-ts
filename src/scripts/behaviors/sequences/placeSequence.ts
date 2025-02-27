@@ -1,5 +1,4 @@
-import ActorState from '../../states/actor'
-import { isNpc } from '../../utils/ai'
+import { ActionProps, BehaviorKeys, PlaceProps } from '../../../types/behaviors'
 import Action from '../action'
 import EffectsAction from '../actions/effectsAction'
 //import InjuryAction from '../actions/injuryAction'
@@ -7,42 +6,42 @@ import MedicPlaceAction from '../actions/medicPlaceAction'
 import PlaceAction from '../actions/placeAction'
 import Sequence from '../sequence'
 const lookup: {
-  [key: string]: () => typeof Action
+  [key: string]: (
+    getProps: (behavior: BehaviorKeys) => () => ActionProps
+  ) => Action
 } = {
   doctors: doctorActions,
 }
-function doctorActions() {
-  print('DODOCTORACTIONSWORK???')
-  return MedicPlaceAction
+function doctorActions(
+  getProps: (behavior: BehaviorKeys) => () => ActionProps
+) {
+  const props = getProps('medplace')()
+  return new MedicPlaceAction(props)
 }
-function clanActions(clan: string): typeof Action {
-  return lookup[clan] == undefined ? PlaceAction : lookup[clan]()
+function clanActions(
+  clan: string,
+  getProps: (behavior: BehaviorKeys) => () => ActionProps
+): Action {
+  if (lookup[clan] == undefined) {
+    const props = getProps('place')()
+    return new PlaceAction(props)
+  } else {
+    return lookup[clan](getProps)
+  }
 }
 export default class PlaceSequence extends Sequence {
-  a: ActorState
-  constructor(a: ActorState) {
+  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
+    const props = getProps('place')() as PlaceProps
     const placeActions: Action[] = []
 
-    placeActions.push(new EffectsAction(a))
-    if (isNpc(a)) print('PLACESEQ::: SPR::', a.name, a.sincePlayerRoom)
-
-    const clanAction: typeof Action = clanActions(isNpc(a) ? a.clan : '')
-
-    placeActions.push(new clanAction(a))
+    placeActions.push(new EffectsAction(getProps))
+    placeActions.push(clanActions(props.clan, getProps))
 
     super(placeActions)
-    this.a = a
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
-      const proceed = child.run()()
-      if (proceed === 'injury') {
-        print(
-          'PlaceSequence::: InjuryAction:: Add new InjuredSequence:',
-          this.a.name
-        )
-        //        this.a.behavior.active.children.push(new InjuredSequence(this.a))
-      }
+      child.run()()
     }
     return 'REMOVE'
   }

@@ -1,5 +1,8 @@
-import ActorState from '../../states/actor'
-import { isNpc } from '../../utils/ai'
+import {
+  ActionProps,
+  BehaviorKeys,
+  InfirmedProps,
+} from '../../../types/behaviors'
 import Action from '../action'
 import InfirmedAction from '../actions/infirmedAction'
 import Sequence from '../sequence'
@@ -7,25 +10,32 @@ import ImmobileSequence from './immobileSequence'
 import PlaceSequence from './placeSequence'
 
 export default class InfirmedSequence extends Sequence {
-  a: ActorState
-  constructor(a: ActorState) {
-    const turnActions: Action[] = []
+  a: InfirmedProps
+  getProps: (behavior: BehaviorKeys) => () => ActionProps
 
-    turnActions.push(...[new InfirmedAction(a)])
+  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
+    const turnActions: Action[] = []
+    const props = getProps('infirmed')() as InfirmedProps
+    turnActions.push(...[new InfirmedAction(props)])
 
     super(turnActions)
-    this.a = a
+    this.getProps = getProps
+    this.a = props
   }
   run(): 'REMOVE' | '' {
-    if (isNpc(this.a)) this.a.sincePlayerRoom = 98
+    this.a.sincePlayerRoom = 98
 
     for (const child of this.children) {
       const proceed = child.run()()
       if (proceed === 'continue') {
-        this.a.behavior.active.children.unshift(new InfirmedSequence(this.a))
-        this.a.behavior.place.children.push(new ImmobileSequence(this.a))
+        this.a.addToBehavior(
+          'active',
+          new InfirmedSequence(this.getProps),
+          true
+        )
+        this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
       } else {
-        this.a.behavior.place.children.push(new PlaceSequence(this.a))
+        this.a.addToBehavior('place', new PlaceSequence(this.getProps), false)
       }
     }
     return 'REMOVE'

@@ -1,17 +1,21 @@
-import ActorState from '../../states/actor'
+import {
+  ActionProps,
+  BehaviorKeys,
+  EffectsProps,
+} from '../../../types/behaviors'
 import Action from '../action'
 
 export default class EffectsAction extends Action {
-  constructor(a: ActorState) {
-    super(a)
-  }
-  fail() {
-    // no log
+  a: EffectsProps
+  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
+    const props = getProps('effects')() as EffectsProps
+    super(props)
+    this.a = props
   }
   run(): () => void {
-    const { effects, traits } = this.actor
-    // if (effects.length < 1) return () => this.fail('No FX to remove')
-    if (effects.length < 1) return () => this.fail()
+    const { effects, traits } = this.actor as EffectsProps
+    if (effects.length < 1) return () => this.fail('No FX to remove')
+    //if (effects.length < 1) return () => this.fail()
 
     for (let i = effects.length; i-- !== 0; ) {
       const e = effects[i]
