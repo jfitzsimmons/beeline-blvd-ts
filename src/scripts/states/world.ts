@@ -71,7 +71,6 @@ export default class World {
       playerTraits: this.player.traits,
       ...playerProps,
       ...tasksProps,
-      getNpcByRoomStation: this.rooms.getNpcByRoomStation.bind(this),
     }
     this.npcs = new WorldNpcs(npcsProps)
     const allquestmethods: WorldQuestsMethods = {
