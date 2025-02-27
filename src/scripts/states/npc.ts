@@ -19,6 +19,7 @@ import {
   BehaviorKeys,
   DefaultBehaviorProps,
   EffectsProps,
+  HelperProps,
   ImmobileProps,
   InfirmedProps,
   InfirmProps,
@@ -337,6 +338,7 @@ export default class NpcState extends ActorState {
       mendee: MendeeProps
       infirm: InfirmProps
       infirmed: InfirmedProps
+      helper: HelperProps
     } = {
       effects: { effects: this.effects, traits: this.traits },
       place: {
@@ -374,6 +376,18 @@ export default class NpcState extends ActorState {
         getOccupants: this.parent.getOccupants.bind(this),
         getIgnore: this.parent.getIgnore.bind(this),
         addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),
+
+        ...defaults,
+      },
+      helper: {
+        clan: this.clan,
+        returnNpc: this.parent.returnNpc.bind(this),
+        getOccupants: this.parent.getOccupants.bind(this),
+        addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),
+        exitRoom: this.exitRoom,
+        findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
+        makePriorityRoomList: this.makePriorityRoomList.bind(this),
+        getMendingQueue: this.parent.getMendingQueue.bind(this),
         ...defaults,
       },
       mendee: {

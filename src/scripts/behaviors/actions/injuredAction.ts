@@ -6,6 +6,7 @@ import {
 import { NpcsInitState } from '../../states/inits/npcsInitState'
 import Action from '../action'
 import Sequence from '../sequence'
+import HelperSequence from '../sequences/helperSequence'
 import MenderSequence from '../sequences/menderSequence'
 import MendeeAction from './mendeeAction'
 
@@ -28,7 +29,7 @@ export default class InjuredAction extends Action {
         )
 
     const helpers = Object.values(this.a.getOccupants(this.a.currRoom))
-      .filter((s) => s != '')
+      .filter((s) => s != '' && s != this.a.name)
       .sort(function (a, b) {
         if (a.slice(0, 3) === 'doc' && b.slice(0, 3) !== 'doc') return -1
         if (b.slice(0, 3) === 'doc' && a.slice(0, 3) !== 'doc') return 1
@@ -55,7 +56,16 @@ export default class InjuredAction extends Action {
           //testjpf probably an ACTION::
           //TODO NEXT START HERE!!!
           //   this.a.parent.taskBuilder(helper, 'injury', this.a.name, 'injury')
-          break
+          const scout = this.a.returnNpc(helper)
+
+          scout.addToBehavior(
+            'active',
+            new HelperSequence(scout.getBehaviorProps.bind(this), this.a.name)
+          )
+          this.continue(
+            'Injur-ED-action:: GoodSamrtian - Add HELPERSequence for:' +
+              scout.name
+          )
         } else if (NpcsInitState[helper].clan == 'doctors') {
           this.a.addAdjustMendingQueue(this.a.name)
         }
@@ -73,19 +83,19 @@ export default class InjuredAction extends Action {
     return 'continue'
   }
   alternate(as: Action | Sequence): string | void {
-    //if (isNpc(this.a)) {
-    const doc = this.a.returnNpc(this.doc)
-    doc.sincePlayerRoom = 98
-    doc.behavior.active.children.push(
-      new MenderSequence(doc.getBehaviorProps.bind(this), this.a)
-    )
-    print(
-      'injuredAction:: alternate doc mender sequence:: doc,a:',
-      this.doc,
-      this.a.name,
-      doc.behavior.active.children.length
-    )
-
+    if (this.doc != '') {
+      const doc = this.a.returnNpc(this.doc)
+      doc.sincePlayerRoom = 98
+      doc.behavior.active.children.push(
+        new MenderSequence(doc.getBehaviorProps.bind(this), this.a)
+      )
+      print(
+        'injuredAction:: alternate doc mender sequence:: doc,a:',
+        this.doc,
+        this.a.name,
+        doc.behavior.active.children.length
+      )
+    }
     // new MenderSequence(this.a.parent.returnNpc(this.doc), this.a.name).run()
     return as instanceof Action ? as.run()() : as.run()
   }
