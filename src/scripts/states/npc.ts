@@ -377,6 +377,7 @@ export default class NpcState extends ActorState {
         ...defaults,
       },
       mendee: {
+        returnNpc: this.parent.returnNpc.bind(this),
         addIgnore: this.parent.addIgnore.bind(this),
         removeMendee: this.parent.removeMendee.bind(this),
         addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),

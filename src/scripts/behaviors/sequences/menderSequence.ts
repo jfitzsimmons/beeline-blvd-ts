@@ -1,6 +1,7 @@
 import {
   ActionProps,
   BehaviorKeys,
+  InjuredProps,
   MenderProps,
 } from '../../../types/behaviors'
 //import ActorState from '../../states/actor'
@@ -12,11 +13,11 @@ import PlaceSequence from './placeSequence'
 
 export default class MenderSequence extends Sequence {
   a: MenderProps
-  mendee: string
+  mendee: InjuredProps
   getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(
     getProps: (behavior: BehaviorKeys) => ActionProps,
-    mendee: string
+    mendee: InjuredProps
   ) {
     const props = getProps('mender') as MenderProps
 

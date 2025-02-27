@@ -55,7 +55,7 @@ export default class ActorState {
       stealth: 5, // !!
     },
   }
-  hp = 5
+  private _hp = 5
   hpMax = 8
   ap = 18
   apMax = 20
@@ -71,5 +71,12 @@ export default class ActorState {
       active: new Selector([]),
     }
     this.parent = lists
+  }
+
+  public get hp() {
+    return this._hp
+  }
+  public set hp(p: number) {
+    this._hp = p
   }
 }

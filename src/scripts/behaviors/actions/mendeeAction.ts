@@ -24,10 +24,10 @@ export default class MendeeAction extends Action {
     //is it duping in the ignore array?
     this.a.addIgnore(this.a.name)
     this.a.addAdjustMendingQueue(this.a.name)
-
-    if (math.random() > 0.4) this.a.hp = this.a.hp + 1
-    print('MendeeAction for::', this.a.name, '| HP:', this.a.hp)
-    if (this.a.hp > 4) {
+    const mendee = this.a.returnNpc(this.a.name)
+    if (math.random() > 0.4) mendee.hp = mendee.hp + 1
+    print('MendeeAction for::', this.a.name, '| HP:', mendee.hp)
+    if (mendee.hp > 4) {
       this.a.removeMendee(this.a.name)
       print('MendeeAction::', this.a.name, 'IS BEING INFIRMED')
       return () => this.delay(new InfirmSequence(this.getProps))

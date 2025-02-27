@@ -76,16 +76,8 @@ export default class InjuredAction extends Action {
     //if (isNpc(this.a)) {
     const doc = this.a.returnNpc(this.doc)
     doc.sincePlayerRoom = 98
-    print(
-      'injuredAction:: alternate doc mender sequence:: doc,a:',
-      this.doc,
-      this.a.name,
-      doc.behavior.active.children.length,
-      doc.currRoom,
-      doc.currStation
-    )
     doc.behavior.active.children.push(
-      new MenderSequence(doc.getBehaviorProps.bind(this), this.a.name)
+      new MenderSequence(doc.getBehaviorProps.bind(this), this.a)
     )
     print(
       'injuredAction:: alternate doc mender sequence:: doc,a:',

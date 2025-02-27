@@ -74,6 +74,7 @@ export interface InjuredProps extends DefaultBehaviorProps {
   addAdjustMendingQueue(patient: string): void
 }
 export interface MendeeProps extends DefaultBehaviorProps {
+  returnNpc(n: string): NpcState
   addIgnore(n: string): void
   addAdjustMendingQueue(patient: string): void
   removeMendee(n: string): void
