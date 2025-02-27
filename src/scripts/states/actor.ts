@@ -60,7 +60,7 @@ export default class ActorState {
   ap = 18
   apMax = 20
   effects: Effect[] = []
-  currRoom = ''
+  currRoom = 'grounds'
   exitRoom = ''
   race = ''
   parent: NpcProps | WorldPlayerArgs

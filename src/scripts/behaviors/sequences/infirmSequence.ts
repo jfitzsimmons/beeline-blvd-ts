@@ -11,8 +11,7 @@ import Sequence from '../sequence'
 
 export default class InfirmSequence extends Sequence {
   a: InfirmProps
-  //getProps: (behavior: BehaviorKeys) => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
     const placeActions: Action[] = []
 
     placeActions.push(
@@ -20,7 +19,7 @@ export default class InfirmSequence extends Sequence {
     )
 
     super(placeActions)
-    this.a = getProps('infirm') as InfirmProps
+    this.a = getProps('infirm')() as InfirmProps
   }
   run(): 'REMOVE' | '' {
     this.a.sincePlayerRoom = 97

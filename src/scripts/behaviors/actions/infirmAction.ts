@@ -10,9 +10,9 @@ import InfirmedSequence from '../sequences/infirmedSequence'
 
 export default class InfirmAction extends Action {
   a: InfirmProps
-  getProps: (behavior: BehaviorKeys) => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
-    const props = getProps('infirm') as InfirmProps
+  getProps: (behavior: BehaviorKeys) => () => ActionProps
+  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
+    const props = getProps('infirm')() as InfirmProps
     super(props)
     this.a = props
     this.getProps = getProps

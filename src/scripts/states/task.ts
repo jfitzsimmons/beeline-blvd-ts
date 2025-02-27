@@ -93,20 +93,7 @@ export default class TaskState {
   private onNewUpdate(): void {}
   private onNewExit(): void {}
   private onInjuryEnter(): void {}
-  private onInjuryUpdate(): void {
-    /**
-    for (const doc of doctors) {
-      const mobile = () => this.parent.npcHasTask([doc], [], immobile) === null
-
-      if (this.parent.didCrossPaths(this.owner, doc) && mobile() === true) {
-        // print(this.owner, 'met doc for injury task::', doc)
-        this.parent.addAdjustMendingQueue(this.target)
-        this.turns = 0
-        break
-      }
-    }
-      */
-  }
+  private onInjuryUpdate(): void {}
   private onInjuryExit(): void {}
   private onSnitchEnter(): void {}
   private onSnitchUpdate(): void {

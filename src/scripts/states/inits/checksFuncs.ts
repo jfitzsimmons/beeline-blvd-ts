@@ -508,7 +508,7 @@ export function jailtime_check(
   if (result > 10) {
     target.fsm.setState('arrestee')
     target.hp = target.hp - 1
-    // print('SPECIAL jailed')
+    print('SPECIAL jailed', target.name)
     return { pass: true, type: 'special' }
   }
   if (result <= 1) {
@@ -526,7 +526,7 @@ export function lConfrontPunchT(
 ) {
   const target = this.parent.returnNpc(t)
   target.hp = target.hp - hit
-  // print('OUTCOMES:: LcT::', target.name, 'HITFOR::', hit)
+  print('OUTCOMES:: LcT::', target.name, 'HITFOR::', hit)
 }
 
 export function getExtorted(this: WorldTasks, t: string, l: string): string {
@@ -579,7 +579,7 @@ export function bribeCheck(
 export function tConfrontPunchL(this: WorldTasks, l: string, hit = 1) {
   const listener = this.parent.returnNpc(l)
   listener.hp = listener.hp - hit
-  // print('OUTCOMES:: TcL::', listener.name, 'HITFOR::', hit)
+  print('OUTCOMES:: TcL::', listener.name, 'HITFOR::', hit)
 }
 export function targetPunchedCheck(
   this: WorldTasks,

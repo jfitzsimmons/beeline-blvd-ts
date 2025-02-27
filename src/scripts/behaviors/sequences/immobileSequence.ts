@@ -11,8 +11,8 @@ import Sequence from '../sequence'
 
 export default class ImmobileSequence extends Sequence {
   a: ImmobileProps
-  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
-    const props = getProps('immobile') as ImmobileProps
+  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
+    const props = getProps('immobile')() as ImmobileProps
     const placeActions: Action[] = []
 
     placeActions.push(

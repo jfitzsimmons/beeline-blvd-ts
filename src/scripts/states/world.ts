@@ -54,7 +54,6 @@ export default class World {
     }
     this.player = new WorldPlayer('hero', playerProps)
     const npcsProps: WorldNpcsArgs = {
-      isStationedTogether: this.rooms.isStationedTogether.bind(this),
       clearStation: this.rooms.clearStation.bind(this),
       setStation: this.rooms.setStation.bind(this),
       checkSetStation: this.rooms.checkSetStation.bind(this),
@@ -72,7 +71,6 @@ export default class World {
       playerTraits: this.player.traits,
       ...playerProps,
       ...tasksProps,
-      getNpcByRoomStation: this.rooms.getNpcByRoomStation.bind(this),
     }
     this.npcs = new WorldNpcs(npcsProps)
     const allquestmethods: WorldQuestsMethods = {

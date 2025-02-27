@@ -9,9 +9,9 @@ import InfirmSequence from '../sequences/infirmSequence'
 
 export default class MendeeAction extends Action {
   a: MendeeProps
-  getProps: (behavior: BehaviorKeys) => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
-    const props = getProps('mendee') as MendeeProps
+  getProps: (behavior: BehaviorKeys) => () => ActionProps
+  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
+    const props = getProps('mendee')() as MendeeProps
     super(props)
     this.a = props
     this.getProps = getProps

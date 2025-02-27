@@ -94,12 +94,7 @@ export default class WorldNpcs {
 
       npc.behavior.place = new Selector([])
       npc.behavior.active = new Selector([])
-
-      //   npc.behavior.place.children.unshift(
-      //    new PlaceSequence(npc.getBehaviorProps.bind(this))
-      // )
-      npc.findRoomPlaceStation({ x: 0, y: 0 }, RoomsInitPriority)
-      // testjpf npc setState is 'new'
+      npc.findRoomPlaceStation({ x: 0, y: 0 }, [...RoomsInitPriority])
       npc.fsm.update(dt)
       //TEST DEFAULTS
       //Simulating behaviors.Active
@@ -114,7 +109,6 @@ export default class WorldNpcs {
       }
     }
   }
-  // private onNewUpdate(): void {}
   private onNewExit(): void {
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
@@ -143,7 +137,6 @@ export default class WorldNpcs {
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
 
-      //testjpf:: TEMP until legacy checks : TODO
       if (npc.hp < 1 && npc.behavior.active.children.length < 1) {
         npc.behavior.active.children.push(
           new InjuredSequence(npc.getBehaviorProps.bind(this))

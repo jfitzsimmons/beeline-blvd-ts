@@ -14,6 +14,7 @@ export type ActionProps =
   | MendeeProps
   | InfirmProps
   | InfirmedProps
+  | HelperProps
 
 export type BehaviorKeys =
   | 'place'
@@ -26,6 +27,7 @@ export type BehaviorKeys =
   | 'mendee'
   | 'infirm'
   | 'infirmed'
+  | 'helper'
 
 export interface DefaultBehaviorProps {
   name: string
@@ -73,6 +75,13 @@ export interface InjuredProps extends DefaultBehaviorProps {
   getIgnore(): string[]
   addAdjustMendingQueue(patient: string): void
 }
+export interface HelperProps extends PlaceProps {
+  returnNpc(n: string): NpcState
+  getOccupants(r: string): string[]
+  addAdjustMendingQueue(patient: string): void
+  makePriorityRoomList(target: { x: number; y: number }): string[]
+  getMendingQueue(): string[]
+}
 export interface MendeeProps extends DefaultBehaviorProps {
   returnNpc(n: string): NpcState
   addIgnore(n: string): void
@@ -80,7 +89,7 @@ export interface MendeeProps extends DefaultBehaviorProps {
   removeMendee(n: string): void
 }
 export interface InfirmedProps extends DefaultBehaviorProps {
-  isStationedTogether(npcs: string[], room: string): boolean
+  getOccupants(r: string): string[]
   removeInfirmed(n: string): void
 }
 export interface ImmobileProps extends DefaultBehaviorProps {

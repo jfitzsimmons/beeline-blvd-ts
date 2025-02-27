@@ -19,6 +19,7 @@ import {
   BehaviorKeys,
   DefaultBehaviorProps,
   EffectsProps,
+  HelperProps,
   ImmobileProps,
   InfirmedProps,
   InfirmProps,
@@ -146,11 +147,7 @@ export default class NpcState extends ActorState {
 
   private onInfirmEnter(): void {}
   private onInfirmUpdate(): void {}
-  private onInfirmEnd(): void {
-    this.parent.removeInfirmed(this.name)
-    this.parent.removeInjured(this.name)
-    this.parent.removeIgnore(this.name)
-  }
+  private onInfirmEnd(): void {}
   private onInjuryStart(): void {
     //this.sincePlayerRoom = 99
     //this.parent.addInjured(this.name)
@@ -226,18 +223,17 @@ export default class NpcState extends ActorState {
       this.behavior.active.children.length
     )
     // prettier-ignore
-    // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
-    // }
+    // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', this.currRoom, '| exit:', this.exitRoom, '| name: ', this.name )
   }
   private onTurnEnter(): void {
     print('NPCCLASS::: onTurnEnter()')
   }
   private onTurnUpdate(): void {
-    print('TURNUPDATE place run')
-
+    print('TURNUPDATE placerun')
     this.behavior.place.run()
   }
   private onTurnExit(): void {
+    print('TURNEXIT ACTIVErun')
     this.behavior.active.run()
   }
   private onActiveEnter(): void {}
@@ -277,6 +273,7 @@ export default class NpcState extends ActorState {
       this.parent.getStationMap()
     )
     print('findrooomplacestation:: STATION:::', chosenRoom, chosenStation)
+    this.exitRoom = this.currRoom
     this.currRoom = chosenRoom
     this.parent.setStation(chosenRoom, chosenStation, this.name)
     //this.parent.pruneStationMap(chosenRoom, chosenStation)
@@ -299,7 +296,7 @@ export default class NpcState extends ActorState {
       ? this.behavior[selector].children.push(s)
       : this.behavior[selector].children.unshift(s)
   }
-  getBehaviorProps(behavior: BehaviorKeys): ActionProps | EffectsProps {
+  getBehaviorProps(behavior: BehaviorKeys): () => ActionProps | EffectsProps {
     /**
     const defaultProps = {
       name: this.name,
@@ -337,6 +334,7 @@ export default class NpcState extends ActorState {
       mendee: MendeeProps
       infirm: InfirmProps
       infirmed: InfirmedProps
+      helper: HelperProps
     } = {
       effects: { effects: this.effects, traits: this.traits },
       place: {
@@ -374,6 +372,18 @@ export default class NpcState extends ActorState {
         getOccupants: this.parent.getOccupants.bind(this),
         getIgnore: this.parent.getIgnore.bind(this),
         addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),
+
+        ...defaults,
+      },
+      helper: {
+        clan: this.clan,
+        returnNpc: this.parent.returnNpc.bind(this),
+        getOccupants: this.parent.getOccupants.bind(this),
+        addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),
+        exitRoom: this.exitRoom,
+        findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
+        makePriorityRoomList: this.makePriorityRoomList.bind(this),
+        getMendingQueue: this.parent.getMendingQueue.bind(this),
         ...defaults,
       },
       mendee: {
@@ -389,7 +399,7 @@ export default class NpcState extends ActorState {
         ...defaults,
       },
       infirmed: {
-        isStationedTogether: this.parent.isStationedTogether.bind(this),
+        getOccupants: this.parent.getOccupants.bind(this),
         removeInfirmed: this.parent.removeInfirmed.bind(this),
         ...defaults,
       },
@@ -411,7 +421,8 @@ export default class NpcState extends ActorState {
     )
       */
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return { ...props[behavior], ...defaults } as ActionProps
+    const returnProps = { ...props[behavior], ...defaults } as ActionProps
+    return () => returnProps
   }
   removeInvBonus(i: string) {
     const item: InventoryTableItem = { ...itemStateInit[i] }

@@ -54,7 +54,6 @@ export default class WorldRooms {
 
     this.clearStation = this.clearStation.bind(this)
     this.setStation = this.setStation.bind(this)
-    this.isStationedTogether = this.isStationedTogether.bind(this)
     this.pruneStationMap = this.pruneStationMap.bind(this)
     this.getStationMap = this.getStationMap.bind(this)
     this.checkSetStation = this.checkSetStation.bind(this)
@@ -66,7 +65,6 @@ export default class WorldRooms {
     this.setSwapParent = this.setSwapParent.bind(this)
     this.pruneSwapParent = this.pruneSwapParent.bind(this)
     this.clearSwapParent = this.clearSwapParent.bind(this)
-    this.getNpcByRoomStation = this.getNpcByRoomStation.bind(this)
   }
   public get all(): Rooms {
     return this._all
@@ -97,14 +95,7 @@ export default class WorldRooms {
     }
     return null
   }
-  isStationedTogether(npcs: string[], room: string): boolean {
-    const stations = this.all[room].stations
-    let ks: keyof typeof stations
-    for (ks in stations) {
-      if (npcs.includes(stations[ks])) return true
-    }
-    return false
-  }
+
   pruneSwapParent(r: string, s: string): boolean {
     const roomSwaps = this._all[r].swaps
     let ksw: keyof typeof roomSwaps
@@ -182,10 +173,7 @@ export default class WorldRooms {
       this.all[room].vacancies![station] = ''
     }
   }
-  getNpcByRoomStation(room: string, station: string): string {
-    print('getNpcByRoomStation', room, station)
-    return this.all[room].stations[station]
-  }
+
   private onTurnEnter(): void {
     this.resetStationMap()
   }
