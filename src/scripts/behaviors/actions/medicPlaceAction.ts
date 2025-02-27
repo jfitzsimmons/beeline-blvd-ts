@@ -1,64 +1,79 @@
-import ActorState from '../../states/actor'
+import { ActionProps, MedicPlaceProps } from '../../../types/behaviors'
 import {
   RoomsInitLayout,
-  RoomsInitPriority,
   RoomsInitState,
 } from '../../states/inits/roomsInitState'
-import { isNpc } from '../../utils/ai'
+//import { isNpc } from '../../utils/ai'
 import Action from '../action'
 
 export default class MedicPlaceAction extends Action {
-  a: ActorState
-  constructor(a: ActorState) {
-    super(a)
-    this.a = a
+  //TESTJPF MAYBE use DocPlaceProps
+  a: MedicPlaceProps
+  constructor(props: ActionProps) {
+    /**testjpf
+     * do something like
+     * constructor(getProps: () => ActionProps)
+     */
+    // const props = getProps('medplace') as MedicPlaceProps
+    super(props)
+    this.a = props as MedicPlaceProps
   }
 
   run(): { (): void } {
     //TESTJPF NEED a bulletin board
-    if (!isNpc(this.a)) return () => this.fail('MedicPlaceAction::: not npc')
+    // if (!isNpc(this.a)) return () => this.fail('MedicPlaceAction::: not npc')
     const mobile = this.a.sincePlayerRoom < 90
-    const infirmed = this.a.parent.getInfirmed().length
-    let rooms =
-      this.a.currRoom !== ''
-        ? this.a.makePriorityRoomList(
-            RoomsInitState[this.a.parent.getPlayerRoom()].matrix
-          )
-        : RoomsInitPriority
+    const infirmed = this.a.getInfirmed().length
 
-    this.a.parent.clearStation(this.a.currRoom, this.a.currStation, this.a.name)
+    if (this.a.cooldown > 0) this.a.cooldown = this.a.cooldown - 1
+    this.a.exitRoom = RoomsInitLayout[this.a.matrix.y][this.a.matrix.x]!
 
     if (mobile === true && infirmed > 1) {
       //const patients = this.a.parent.getInfirmed()
       if (
-        math.random() + infirmed * 0.2 > 1 &&
-        this.a.parent.getStationMap().infirmary.aid !== undefined
+        math.random() + infirmed * 0.2 >
+        1 //&&
+        //  this.a.parent.getStationMap().infirmary.aid !== undefined
       ) {
-        this.a.parent.setStation('infirmary', 'aid', this.a.name)
-        this.a.parent.pruneStationMap('infirmary', 'aid')
+        const filled = this.a.checkSetStation('infirmary', 'aid', this.a.name)
         print('ERfull 1st')
+        if (filled == true) return () => this.success()
+        //testjpf instead parent.checkSetStation()
+        //would have to redo conditional logic.
+        //!! I think this logic is badd anyway
+        //this has no ELSE!!!
+        //!!! RELY on () => success()  INSTEAD
+        //   this.a.parent.pruneStationMap('infirmary', 'aid')
       } else if (infirmed > 2) {
         const target = RoomsInitState.infirmary.matrix
-        rooms = this.a.makePriorityRoomList(target)
+        print('findRoomPlaceStation MEDICPLACEACTION')
+        this.a.findRoomPlaceStation(target)
+        //  rooms = this.a.makePriorityRoomList(target)
         print('ERfull help')
+        return () => this.success()
       }
     } else if (
       mobile === true &&
       infirmed < 1 &&
-      this.a.parent.getMendingQueue().length > 1
+      this.a.getMendingQueue().length > 1
     ) {
-      const target =
-        RoomsInitState[this.a.parent.returnMendeeLocation()!].matrix
-      rooms = this.a.makePriorityRoomList(target)
+      const target = RoomsInitState[this.a.returnMendeeLocation()!].matrix
+      print('findRoomPlaceStation MEDICPLACEACTION2')
+
+      this.a.findRoomPlaceStation(target)
+      //rooms = this.a.makePriorityRoomList(target)
       print('Paramedic!')
+      return () => this.success()
     }
-    if (this.a.cooldown > 0) this.a.cooldown = this.a.cooldown - 1
-    this.a.exitRoom = RoomsInitLayout[this.a.matrix.y][this.a.matrix.x]!
-    this.a.findRoomPlaceStation(rooms)
+    print('findRoomPlaceStation MEDICPLACEACTION3')
+
+    this.a.findRoomPlaceStation()
+
+    // this.a.findRoomPlaceStation(target)
     return () => this.success()
   }
   success() {
     // prettier-ignore
-    if (isNpc(this.a))print('MedicPlaceAction:: Success::', this.a.name, 'placedin:', this.a.currRoom, this.a.currStation, '||| from:',   this.a.exitRoom ) //testjpf
+   //if (print('MedicPlaceAction:: Success::', this.a.name, 'placedin:', this.a.currRoom, this.a.currStation, '||| from:',   this.a.exitRoom )
   }
 }

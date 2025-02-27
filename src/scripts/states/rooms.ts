@@ -57,6 +57,7 @@ export default class WorldRooms {
     this.isStationedTogether = this.isStationedTogether.bind(this)
     this.pruneStationMap = this.pruneStationMap.bind(this)
     this.getStationMap = this.getStationMap.bind(this)
+    this.checkSetStation = this.checkSetStation.bind(this)
     this.resetStationMap = this.resetStationMap.bind(this)
     this.sendToVacancy = this.sendToVacancy.bind(this)
     this.setFocused = this.setFocused.bind(this)
@@ -138,12 +139,22 @@ export default class WorldRooms {
     }
     return false
   }
+  checkSetStation(room: string, station: string, npc: string): boolean {
+    const map = this.getStationMap()
+    if (map[room][station] !== undefined) {
+      this.setStation(room, station, npc)
+      return true
+    }
+    return false
+  }
   setStation(room: string, station: string, npc: string) {
     this.all[room].stations[station] !== null
       ? (this.all[room].stations[station] = npc)
       : this.all[room].swaps !== undefined &&
         this.setSwapParent(room, station, npc) === false &&
         (this.fallbacks.stations[station] = npc)
+
+    this.pruneStationMap(room, station)
   }
   clearSwapParent(r: string, s: string): boolean {
     const roomSwaps = this._all[r].swaps

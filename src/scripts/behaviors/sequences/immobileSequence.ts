@@ -1,4 +1,8 @@
-import ActorState from '../../states/actor'
+import {
+  ActionProps,
+  BehaviorKeys,
+  ImmobileProps,
+} from '../../../types/behaviors'
 //import { isNpc } from '../../utils/ai'
 import Action from '../action'
 import EffectsAction from '../actions/effectsAction'
@@ -6,14 +10,17 @@ import ImmobileAction from '../actions/immobileAction'
 import Sequence from '../sequence'
 
 export default class ImmobileSequence extends Sequence {
-  a: ActorState
-  constructor(a: ActorState) {
+  a: ImmobileProps
+  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+    const props = getProps('immobile') as ImmobileProps
     const placeActions: Action[] = []
 
-    placeActions.push(...[new EffectsAction(a), new ImmobileAction(a)])
+    placeActions.push(
+      ...[new EffectsAction(getProps), new ImmobileAction(props)]
+    )
 
     super(placeActions)
-    this.a = a
+    this.a = props
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {

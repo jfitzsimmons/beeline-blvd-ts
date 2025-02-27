@@ -57,6 +57,7 @@ export default class World {
       isStationedTogether: this.rooms.isStationedTogether.bind(this),
       clearStation: this.rooms.clearStation.bind(this),
       setStation: this.rooms.setStation.bind(this),
+      checkSetStation: this.rooms.checkSetStation.bind(this),
       pruneStationMap: this.rooms.pruneStationMap.bind(this),
       getStationMap: this.rooms.getStationMap.bind(this),
       sendToVacancy: this.rooms.sendToVacancy.bind(this),
@@ -155,8 +156,6 @@ export default class World {
   }
   private onArrestExit(): void {}
   private onNewExit(): void {
-    //testjpf i think this should be 'active'
-    //the room transtition sets it to turn
     print('WORLDNEWEXIT()!!! set npc-S ACTIVE')
     this.npcs.fsm.setState('active') //each npc gets set to 'active' which runs active behavior from newExit
   }
@@ -187,6 +186,7 @@ export default class World {
     )
   }
   returnNpc(n: string): NpcState {
+    print('this.npcs.all[n]', n, this.npcs.all[n].hp)
     return this.npcs.all[n]
   }
   returnPlayer(): WorldPlayer {
