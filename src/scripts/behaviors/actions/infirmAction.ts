@@ -3,7 +3,6 @@ import {
   BehaviorKeys,
   InfirmProps,
 } from '../../../types/behaviors'
-import { RoomsInitState } from '../../states/inits/roomsInitState'
 import Action from '../action'
 import Sequence from '../sequence'
 //import Sequence from '../sequence'
@@ -23,11 +22,8 @@ export default class InfirmAction extends Action {
 
     const vacancy = this.a.sendToVacancy('infirmary', this.a.name)
     if (vacancy != null) {
-      this.a.addInfirmed(this.a.name)
-      this.a.matrix = RoomsInitState.infirmary.matrix
-      this.a.cooldown = 8
-      this.a.currRoom = 'infirmary'
-      this.a.currStation = vacancy
+      this.a.addInfirmed(this.a.name, vacancy)
+
       return () => this.delay(new InfirmedSequence(this.getProps))
     }
     return () => this.fail('InfirmAction:: Need noVacancy logic')

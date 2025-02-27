@@ -88,5 +88,5 @@ export interface ImmobileProps extends DefaultBehaviorProps {
 }
 export interface InfirmProps extends DefaultBehaviorProps {
   sendToVacancy(room: string, npc: string): string | null
-  addInfirmed(n: string): void
+  addInfirmed(n: string, vacancy: string): void
 }

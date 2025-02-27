@@ -54,7 +54,7 @@ export interface WorldNpcsArgs extends TaskProps {
   getNpcByRoomStation(room: string, station: string): string
 }
 export interface NpcProps extends WorldNpcsArgs {
-  addInfirmed(n: string): void
+  addInfirmed(n: string, vacancy: string): void
   getInfirmed(): string[]
   removeInfirmed(n: string): void
   addInjured(n: string): void

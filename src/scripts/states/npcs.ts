@@ -17,6 +17,7 @@ import { immobile } from '../utils/consts'
 import PlaceSequence from '../behaviors/sequences/placeSequence'
 import Selector from '../behaviors/selector'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
+import ImmobileSequence from '../behaviors/sequences/immobileSequence'
 //import InjuryAction from '../behaviors/actions/injuryAction'
 
 const dt = math.randomseed(os.time())
@@ -147,6 +148,9 @@ export default class WorldNpcs {
         npc.behavior.active.children.push(
           new InjuredSequence(npc.getBehaviorProps.bind(this))
         )
+        npc.behavior.place.children.push(
+          new ImmobileSequence(npc.getBehaviorProps.bind(this))
+        )
         print(
           npc.name,
           '222onPLaceExit!!!::: active length::',
@@ -239,19 +243,24 @@ export default class WorldNpcs {
   removeIgnore(n: string): void {
     this.ignore.splice(this.ignore.indexOf(n), 1)
   }
-  addInfirmed(n: string): void {
+  addInfirmed(n: string, vacancy: string): void {
     this.infirmed.push(n)
+    this._all[n].matrix = RoomsInitState.infirmary.matrix
+    this._all[n].cooldown = 8
+    this._all[n].currRoom = 'infirmary'
+    this._all[n].currStation = vacancy
   }
   getInfirmed(): string[] {
     return this.infirmed
   }
   removeInfirmed(n: string): void {
     this.infirmed.splice(this.infirmed.indexOf(n), 1)
+    print('removeInfirmed', this._all[n].currRoom, this._all[n].currStation)
+    this.parent.clearStation(this._all[n].currRoom, this._all[n].currStation, n)
   }
   addInjured(n: string): void {
     this.injured.push(n)
-    const npc = this.parent.returnNpc(n)
-    this.parent.pruneStationMap(npc.currRoom, npc.currStation)
+    this.parent.pruneStationMap(this._all[n].currRoom, this._all[n].currStation)
   }
   getInjured(): string[] {
     return this.injured

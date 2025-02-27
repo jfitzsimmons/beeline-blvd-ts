@@ -36,6 +36,7 @@ export default class MedicPlaceAction extends Action {
         //  this.a.parent.getStationMap().infirmary.aid !== undefined
       ) {
         const filled = this.a.checkSetStation('infirmary', 'aid', this.a.name)
+        print('ERfull 1st')
         if (filled == true) return () => this.success()
         //testjpf instead parent.checkSetStation()
         //would have to redo conditional logic.
@@ -43,13 +44,13 @@ export default class MedicPlaceAction extends Action {
         //this has no ELSE!!!
         //!!! RELY on () => success()  INSTEAD
         //   this.a.parent.pruneStationMap('infirmary', 'aid')
-        print('ERfull 1st')
       } else if (infirmed > 2) {
         const target = RoomsInitState.infirmary.matrix
         print('findRoomPlaceStation MEDICPLACEACTION')
         this.a.findRoomPlaceStation(target)
         //  rooms = this.a.makePriorityRoomList(target)
         print('ERfull help')
+        return () => this.success()
       }
     } else if (
       mobile === true &&
