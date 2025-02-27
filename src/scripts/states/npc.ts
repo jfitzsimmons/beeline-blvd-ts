@@ -398,7 +398,7 @@ export default class NpcState extends ActorState {
         ...defaults,
       },
       infirmed: {
-        isStationedTogether: this.parent.isStationedTogether.bind(this),
+        getOccupants: this.parent.getOccupants.bind(this),
         removeInfirmed: this.parent.removeInfirmed.bind(this),
         ...defaults,
       },

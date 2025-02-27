@@ -54,7 +54,6 @@ export default class World {
     }
     this.player = new WorldPlayer('hero', playerProps)
     const npcsProps: WorldNpcsArgs = {
-      isStationedTogether: this.rooms.isStationedTogether.bind(this),
       clearStation: this.rooms.clearStation.bind(this),
       setStation: this.rooms.setStation.bind(this),
       checkSetStation: this.rooms.checkSetStation.bind(this),

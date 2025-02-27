@@ -89,7 +89,7 @@ export interface MendeeProps extends DefaultBehaviorProps {
   removeMendee(n: string): void
 }
 export interface InfirmedProps extends DefaultBehaviorProps {
-  isStationedTogether(npcs: string[], room: string): boolean
+  getOccupants(r: string): string[]
   removeInfirmed(n: string): void
 }
 export interface ImmobileProps extends DefaultBehaviorProps {
