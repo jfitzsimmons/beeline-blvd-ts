@@ -12,7 +12,6 @@ import { NpcProps, WorldNpcsArgs } from '../../types/world'
 import { shuffle } from '../utils/utils'
 import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
 import { confrontation_check } from './inits/checksFuncs'
-import { immobile } from '../utils/consts'
 import PlaceSequence from '../behaviors/sequences/placeSequence'
 import Selector from '../behaviors/selector'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
@@ -153,7 +152,6 @@ export default class WorldNpcs {
   }
   private onActiveEnter(): void {
     print('npcsActiveEnter')
-    // this.medical()
     this.security()
   }
   // private onActiveUpdate(): void {}
@@ -202,26 +200,6 @@ export default class WorldNpcs {
         confrontation_check(cop.traits, this.parent.playerTraits) == true
       ) {
         this.parent.taskBuilder(cop.name, 'questioning', 'player', 'clearance')
-      }
-    }
-  }
-  medical() {
-    let count = this.infirmed.length
-    for (const doc of this.returnDoctors()) {
-      const mobile = !immobile.includes(doc.fsm.getState())
-      if (mobile === true && count > 1) {
-        // should be action!
-        doc.fsm.setState('erfull')
-        count = 0
-      } else if (
-        mobile === true &&
-        count < 1 &&
-        this.parent.getMendingQueue().length > 0
-      ) {
-        // should be action!
-        doc.fsm.setState('paramedic')
-      } else if (mobile === true) {
-        doc.fsm.setState('turn')
       }
     }
   }

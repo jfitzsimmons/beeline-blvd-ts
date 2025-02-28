@@ -305,7 +305,10 @@ export default class NpcState extends ActorState {
     this.currRoom = chosenRoom
     this.parent.setStation(chosenRoom, chosenStation, this.name)
     //this.parent.pruneStationMap(chosenRoom, chosenStation)
-
+    /**testjpf clearance needs complete overhaul
+     * make ClearanceSequence
+     * !!!
+     */
     if (
       RoomsInitState[chosenRoom].clearance >
       this.clearance + math.random(1, 5)
