@@ -29,6 +29,20 @@ export type BehaviorKeys =
   | 'infirmed'
   | 'helper'
 
+export interface BehaviorProps {
+  effects: EffectsProps
+  place: PlaceProps
+  medplace: MedicPlaceProps
+  injury: InjuryProps
+  mender: MenderProps
+  immobile: ImmobileProps
+  injured: InjuredProps
+  mendee: MendeeProps
+  infirm: InfirmProps
+  infirmed: InfirmedProps
+  helper: HelperProps
+}
+
 export interface DefaultBehaviorProps {
   name: string
   sincePlayerRoom: number
