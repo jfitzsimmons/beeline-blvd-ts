@@ -58,6 +58,7 @@ export interface DefaultBehaviorProps {
   ): void
 }
 export interface PlaceProps extends DefaultBehaviorProps {
+  clearance: number
   clan: string
   exitRoom: string
   findRoomPlaceStation(t?: { x: number; y: number }, r?: string[]): void

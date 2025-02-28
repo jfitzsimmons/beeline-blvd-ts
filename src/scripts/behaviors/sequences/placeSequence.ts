@@ -1,7 +1,6 @@
 import { ActionProps, BehaviorKeys, PlaceProps } from '../../../types/behaviors'
 import Action from '../action'
 import EffectsAction from '../actions/effectsAction'
-//import InjuryAction from '../actions/injuryAction'
 import MedicPlaceAction from '../actions/medicPlaceAction'
 import PlaceAction from '../actions/placeAction'
 import Sequence from '../sequence'
@@ -23,8 +22,7 @@ function clanActions(
   getProps: (behavior: BehaviorKeys) => () => ActionProps
 ): Action {
   if (lookup[clan] == undefined) {
-    const props = getProps('place')()
-    return new PlaceAction(props)
+    return new PlaceAction(getProps)
   } else {
     return lookup[clan](getProps)
   }
