@@ -4,8 +4,7 @@ import {
   InjuredProps,
 } from '../../../types/behaviors'
 import Action from '../action'
-import Sequence from '../sequence'
-import MenderSequence from '../sequences/menderSequence'
+//import MenderSequence from '../sequences/menderSequence'
 import {
   //build_consequence,
   jailtime_check,
@@ -56,22 +55,5 @@ export default class QuestionAction extends Action {
   continue(s: string): string {
     print('Injur-ed-Action:: Continue:', s)
     return 'continue'
-  }
-  alternate(as: Action | Sequence): string | void {
-    if (this.doc != '') {
-      const doc = this.a.returnNpc(this.doc)
-      doc.sincePlayerRoom = 98
-      doc.behavior.active.children.push(
-        new MenderSequence(doc.getBehaviorProps.bind(this), this.a)
-      )
-      print(
-        'injuredAction:: alternate doc mender sequence:: doc,a:',
-        this.doc,
-        this.a.name,
-        doc.behavior.active.children.length
-      )
-    }
-    // new MenderSequence(this.a.parent.returnNpc(this.doc), this.a.name).run()
-    return as instanceof Action ? as.run()() : as.run()
   }
 }

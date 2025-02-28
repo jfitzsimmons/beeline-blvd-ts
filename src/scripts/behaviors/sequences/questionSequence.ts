@@ -7,8 +7,8 @@ import Action from '../action'
 //import InjuredAction from '../actions/injuredAction'
 import QuestionAction from '../actions/questionAction'
 import Sequence from '../sequence'
-import ImmobileSequence from './immobileSequence'
-import MendeeSequence from './mendeeSequence'
+//import ImmobileSequence from './immobileSequence'
+//import MendeeSequence from './mendeeSequence'
 
 export default class QuestionSequence extends Sequence {
   a: InjuredProps
@@ -44,10 +44,10 @@ export default class QuestionSequence extends Sequence {
       print('INJUREDSEQUENCE::: Proceed::', this.a.name, ':', proceed)
       if (proceed === 'continue') {
         //this.a.addToBehavior('active', new InjuredSequence(this.getProps))
-        this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
+        //   this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
       } else if (proceed == 'mend') {
-        this.a.addToBehavior('active', new MendeeSequence(this.getProps))
-        this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
+        //   this.a.addToBehavior('active', new MendeeSequence(this.getProps))
+        //  this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
       }
     }
     return 'REMOVE'

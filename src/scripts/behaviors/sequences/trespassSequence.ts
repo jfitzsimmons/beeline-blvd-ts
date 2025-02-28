@@ -6,7 +6,7 @@ import {
 import Action from '../action'
 import TrespassAction from '../actions/trespassAction'
 import Sequence from '../sequence'
-import PlaceSequence from './placeSequence'
+//import PlaceSequence from './placeSequence'
 //import ImmobileSequence from './immobileSequence'
 //import InjuredSequence from './injuredSequence'
 //import MendeeSequence from './mendeeSequence'
@@ -30,7 +30,7 @@ export default class TrespassSequence extends Sequence {
       const proceed = child.run()()
       print('TRESPASSSEQUENCE::: Proceed::', this.a.name, ':', proceed)
       if (proceed === 'continue') {
-        this.a.addToBehavior('place', new PlaceSequence(this.getProps))
+        // this.a.addToBehavior('place', new PlaceSequence(this.getProps))
       }
     }
     return 'REMOVE'
