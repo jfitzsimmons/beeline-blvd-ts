@@ -39,7 +39,7 @@ import {
   TasksChecks,
 } from '../../types/tasks'
 import TaskState from './task'
-import { arraymove } from '../utils/utils'
+//import { arraymove } from '../utils/utils'
 import { TaskProps, WorldTasksArgs } from '../../types/world'
 
 const dt = math.randomseed(os.time())
@@ -49,7 +49,7 @@ export default class WorldTasks {
   private _spawn: string
   fsm: StateMachine
   quests: QuestMethods
-  mendingQueue: string[]
+  // mendingQueue: string[]
   methods: TaskProps
   parent: WorldTasksArgs
   checks: TasksChecks
@@ -58,11 +58,11 @@ export default class WorldTasks {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
     this._spawn = 'grounds'
-    this.mendingQueue = []
+    // this.mendingQueue = []
     this.parent = worldProps
     this.methods = {
       npcHasTask: this.npcHasTask.bind(this),
-      addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
+      //addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
       didCrossPaths: this.parent.didCrossPaths.bind(this),
       returnNpc: this.parent.returnNpc.bind(this),
       returnPlayer: this.parent.returnPlayer.bind(this),
@@ -123,11 +123,11 @@ export default class WorldTasks {
     this.removeTaskByCause = this.removeTaskByCause.bind(this)
     this.removeTaskByLabel = this.removeTaskByLabel.bind(this)
     this.has_clearance = this.has_clearance.bind(this)
-    this.getMendingQueue = this.getMendingQueue.bind(this)
+    // this.getMendingQueue = this.getMendingQueue.bind(this)
     this.npcHasTask = this.npcHasTask.bind(this)
     this.taskBuilder = this.taskBuilder.bind(this)
-    this.addAdjustMendingQueue = this.addAdjustMendingQueue.bind(this)
-    this.removeMendee = this.removeMendee.bind(this)
+    //this.addAdjustMendingQueue = this.addAdjustMendingQueue.bind(this)
+    // this.removeMendee = this.removeMendee.bind(this)
   }
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
@@ -157,21 +157,10 @@ export default class WorldTasks {
   public get all() {
     return this._all
   }
-  getMendingQueue(): string[] {
-    return this.mendingQueue
-  }
-  removeMendee(m: string) {
-    this.mendingQueue.splice(this.mendingQueue.indexOf(m), 1)
-  }
-  addAdjustMendingQueue(patient: string) {
-    if (this.mendingQueue.includes(patient) == true) {
-      if (this.mendingQueue.indexOf(patient) > 1)
-        arraymove(this.mendingQueue, this.mendingQueue.indexOf(patient), 0)
-    } else {
-      // print('cautions caused patient:', patient, 'to be added to mendingQueue')
-      this.mendingQueue.push(patient)
-    }
-  }
+  //getMendingQueue(): string[] {
+  //return this.mendingQueue
+  //}
+
   taskHasOwner(cause: string): string | null {
     for (let i = this.all.length - 1; i >= 0; i--) {
       const c = this.all[i]

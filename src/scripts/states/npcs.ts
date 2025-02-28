@@ -9,7 +9,7 @@ import StateMachine from './stateMachine'
 import { Npcs } from '../../types/state'
 import { QuestMethods } from '../../types/tasks'
 import { NpcProps, WorldNpcsArgs } from '../../types/world'
-import { shuffle } from '../utils/utils'
+import { arraymove, shuffle } from '../utils/utils'
 import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
 import { confrontation_check } from './inits/checksFuncs'
 import PlaceSequence from '../behaviors/sequences/placeSequence'
@@ -28,10 +28,12 @@ export default class WorldNpcs {
   infirmed: string[]
   injured: string[]
   ignore: string[]
+  mendingQueue: string[]
 
   constructor(npcsProps: WorldNpcsArgs) {
     this.infirmed = [] // move to room? infrimed action?
     this.injured = [] // room? injured action?
+    this.mendingQueue = []
     this.ignore = []
     this.order = []
     this.quests = {
@@ -55,6 +57,9 @@ export default class WorldNpcs {
       returnSecurity: this.returnDoctors.bind(this),
       returnAll: this.returnAll.bind(this),
       returnOrderAll: this.returnOrderAll.bind(this),
+      getMendingQueue: this.getMendingQueue.bind(this),
+      addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
+      removeMendee: this.removeMendee.bind(this),
       ...npcsProps,
     }
     this._all = seedNpcs(this.parent)
@@ -169,8 +174,20 @@ export default class WorldNpcs {
       npc.fsm.setState('turn')
     }
   }
+  removeMendee(m: string) {
+    this.mendingQueue.splice(this.mendingQueue.indexOf(m), 1)
+  }
+  addAdjustMendingQueue(patient: string) {
+    if (this.mendingQueue.includes(patient) == true) {
+      if (this.mendingQueue.indexOf(patient) > 1)
+        arraymove(this.mendingQueue, this.mendingQueue.indexOf(patient), 0)
+    } else {
+      // print('cautions caused patient:', patient, 'to be added to mendingQueue')
+      this.mendingQueue.push(patient)
+    }
+  }
   returnMendeeLocation(): string | null {
-    const injured = this.parent.getMendingQueue()[0]
+    const injured = this.getMendingQueue()[0]
     return injured === null ? null : this.all[injured].currRoom
   }
   security() {
@@ -202,6 +219,9 @@ export default class WorldNpcs {
         this.parent.taskBuilder(cop.name, 'questioning', 'player', 'clearance')
       }
     }
+  }
+  getMendingQueue(): string[] {
+    return this.mendingQueue
   }
   addIgnore(n: string): void {
     this.ignore.push(n)
