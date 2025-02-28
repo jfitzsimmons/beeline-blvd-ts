@@ -20,7 +20,7 @@ export interface WorldTasksArgs extends WorldArgs {
   setConfrontation(t: Task): void
 }
 export interface TaskProps extends WorldTasksArgs {
-  addAdjustMendingQueue(patient: string): void
+  //addAdjustMendingQueue(patient: string): void
   npcHasTask(
     owner: string[],
     target: string[],
@@ -41,8 +41,8 @@ export interface WorldNpcsArgs extends TaskProps {
   setStation(room: string, station: string, npc: string): void
   getStationMap(): { [key: string]: { [key: string]: string } }
   sendToVacancy(room: string, npc: string): string | null
-  getMendingQueue(): string[]
-  removeMendee(mendee: string): void
+  //getMendingQueue(): string[]
+  //removeMendee(mendee: string): void
   hasHallpass(owner: string): TaskState | null
   getFocusedRoom(): string
   removeTaskByCause(target: string, cause: string): void
@@ -51,6 +51,9 @@ export interface WorldNpcsArgs extends TaskProps {
   playerTraits: Traits
 }
 export interface NpcProps extends WorldNpcsArgs {
+  addAdjustMendingQueue(patient: string): void
+  getMendingQueue(): string[]
+  removeMendee(mendee: string): void
   addInfirmed(n: string, vacancy: string): void
   getInfirmed(): string[]
   removeInfirmed(n: string): void

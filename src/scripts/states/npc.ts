@@ -67,12 +67,14 @@ export default class NpcState extends ActorState {
       props: {
         effects: { effects: this.effects, traits: this.traits },
         place: {
+          clearance: this.clearance,
           clan: this.clan,
           exitRoom: this.exitRoom,
           findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
           ...behaviorDefaults,
         },
         medplace: {
+          clearance: this.clearance,
           clan: this.clan,
           exitRoom: this.exitRoom,
           findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
@@ -105,6 +107,7 @@ export default class NpcState extends ActorState {
           ...behaviorDefaults,
         },
         helper: {
+          clearance: this.clearance,
           clan: this.clan,
           returnNpc: this.parent.returnNpc.bind(this),
           getOccupants: this.parent.getOccupants.bind(this),

@@ -1,19 +1,33 @@
-import { ActionProps, PlaceProps } from '../../../types/behaviors'
+import { ActionProps, BehaviorKeys, PlaceProps } from '../../../types/behaviors'
+import { RoomsInitState } from '../../states/inits/roomsInitState'
 import Action from '../action'
+import TrespassSequence from '../sequences/trespassSequence'
 
 export default class PlaceAction extends Action {
   a: PlaceProps
-  constructor(props: ActionProps) {
-    super(props)
-    this.a = props as PlaceProps
-  }
+  getProps: (behavior: BehaviorKeys) => () => ActionProps
+  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
+    const props = getProps('place')() as PlaceProps
 
+    super(props)
+    this.a = props
+    this.getProps = getProps
+  }
   run(): { (): void } {
     if (this.a.cooldown > 0) this.a.cooldown = this.a.cooldown - 1
     this.a.exitRoom = this.a.currRoom
     print('findRoomPlaceStation REGPLACEACTION:', this.a.name)
 
     this.a.findRoomPlaceStation()
+    /**
+     * testjpf
+     * if this.a.clearance < than currroom.clearance
+     * return alternate(TrespassSeq)!!!??
+     */
+
+    if (this.a.clearance < RoomsInitState[this.a.currRoom].clearance) {
+      return () => this.alternate(new TrespassSequence(this.getProps))
+    }
 
     return () => this.success()
   }
