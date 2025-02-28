@@ -3,7 +3,6 @@ import StateMachine from './stateMachine'
 import { Behavior, Traits } from '../../types/state'
 import { Effect } from '../../types/tasks'
 import { NpcProps, WorldPlayerArgs } from '../../types/world'
-import Selector from '../behaviors/selector'
 
 export default class ActorState {
   fsm: StateMachine
@@ -14,7 +13,7 @@ export default class ActorState {
   cooldown = 0
   convos = 0
   matrix = { x: 0, y: 0 }
-  behavior: Behavior
+  behavior: Partial<Behavior>
   traits: Traits = {
     opinion: {
       church: 0,
@@ -66,10 +65,7 @@ export default class ActorState {
   parent: NpcProps | WorldPlayerArgs
   constructor(n: string, lists: NpcProps | WorldPlayerArgs) {
     this.fsm = new StateMachine(this, 'actor_' + n)
-    this.behavior = {
-      place: new Selector([]),
-      active: new Selector([]),
-    }
+    this.behavior = {}
     this.parent = lists
   }
 

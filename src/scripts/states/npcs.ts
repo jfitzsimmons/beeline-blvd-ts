@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import {
   NpcsInitState,
   seedBinaries,
@@ -13,12 +12,10 @@ import { NpcProps, WorldNpcsArgs } from '../../types/world'
 import { shuffle } from '../utils/utils'
 import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
 import { confrontation_check } from './inits/checksFuncs'
-import { immobile } from '../utils/consts'
 import PlaceSequence from '../behaviors/sequences/placeSequence'
 import Selector from '../behaviors/selector'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
 import ImmobileSequence from '../behaviors/sequences/immobileSequence'
-//import InjuryAction from '../behaviors/actions/injuryAction'
 
 const dt = math.randomseed(os.time())
 
@@ -66,13 +63,13 @@ export default class WorldNpcs {
     this.fsm = new StateMachine(this, 'npcs')
     this.fsm.addState('idle')
     this.fsm.addState('place', {
-      onEnter: this.onPlaceEnter.bind(this),
+      // onEnter: this.onPlaceEnter.bind(this),
       onUpdate: this.onPlaceUpdate.bind(this),
       onExit: this.onPlaceExit.bind(this),
     })
     this.fsm.addState('active', {
       onEnter: this.onActiveEnter.bind(this),
-      onUpdate: this.onActiveUpdate.bind(this),
+      // onUpdate: this.onActiveUpdate.bind(this),
       onExit: this.onActiveExit.bind(this),
     })
     this.fsm.addState('new', {
@@ -121,7 +118,7 @@ export default class WorldNpcs {
       npc.fsm.setState('active')
     }
   }
-  private onPlaceEnter(): void {}
+  // private onPlaceEnter(): void {}
   private onPlaceUpdate(): void {
     print('<< :: NPCSplaceUpdate() :: >>')
     this.sort_npcs_by_encounter()
@@ -155,10 +152,9 @@ export default class WorldNpcs {
   }
   private onActiveEnter(): void {
     print('npcsActiveEnter')
-    // this.medical()
     this.security()
   }
-  private onActiveUpdate(): void {}
+  // private onActiveUpdate(): void {}
   private onActiveExit(): void {
     print('NPCSAVTIVEEXIT!!!')
     this.sort_npcs_by_encounter()
@@ -207,26 +203,6 @@ export default class WorldNpcs {
       }
     }
   }
-  medical() {
-    let count = this.infirmed.length
-    for (const doc of this.returnDoctors()) {
-      const mobile = !immobile.includes(doc.fsm.getState())
-      if (mobile === true && count > 1) {
-        // should be action!
-        doc.fsm.setState('erfull')
-        count = 0
-      } else if (
-        mobile === true &&
-        count < 1 &&
-        this.parent.getMendingQueue().length > 0
-      ) {
-        // should be action!
-        doc.fsm.setState('paramedic')
-      } else if (mobile === true) {
-        doc.fsm.setState('turn')
-      }
-    }
-  }
   addIgnore(n: string): void {
     this.ignore.push(n)
   }
@@ -240,6 +216,7 @@ export default class WorldNpcs {
     this.infirmed.push(n)
     this._all[n].matrix = RoomsInitState.infirmary.matrix
     this._all[n].cooldown = 8
+    this._all[n].exitRoom = this._all[n].currRoom
     this._all[n].currRoom = 'infirmary'
     this._all[n].currStation = vacancy
   }
