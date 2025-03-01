@@ -27,11 +27,8 @@ export default class TrespassSequence extends Sequence {
   run(): 'REMOVE' | '' {
     // this.a.sincePlayerRoom = 99
     for (const child of this.children) {
-      const proceed = child.run()()
-      print('TRESPASSSEQUENCE::: Proceed::', this.a.name, ':', proceed)
-      if (proceed === 'continue') {
-        // this.a.addToBehavior('place', new PlaceSequence(this.getProps))
-      }
+      child.run()()
+      print('TRESPASSSEQUENCE::: Proceed::', this.a.name)
     }
     return 'REMOVE'
   }

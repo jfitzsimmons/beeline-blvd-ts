@@ -15,6 +15,7 @@ export type ActionProps =
   | InfirmProps
   | InfirmedProps
   | HelperProps
+  | QuestionProps
 
 export type BehaviorKeys =
   | 'place'
@@ -28,6 +29,7 @@ export type BehaviorKeys =
   | 'infirm'
   | 'infirmed'
   | 'helper'
+  | 'question'
 
 export interface BehaviorProps {
   effects: EffectsProps
@@ -41,6 +43,7 @@ export interface BehaviorProps {
   infirm: InfirmProps
   infirmed: InfirmedProps
   helper: HelperProps
+  question: QuestionProps
 }
 
 export interface DefaultBehaviorProps {
@@ -77,6 +80,14 @@ export interface EffectsProps {
 }
 export interface InjuryProps extends DefaultBehaviorProps {
   addInjured(n: string): void
+}
+export interface QuestionProps extends DefaultBehaviorProps {
+  traits: Traits
+  inventory: string[]
+  clan: string
+  love: number
+  addInvBonus(item: string): void
+  addOrExtendEffect(effect: Effect): void
 }
 
 export interface MenderProps extends DefaultBehaviorProps {

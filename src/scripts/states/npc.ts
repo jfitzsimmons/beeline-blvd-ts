@@ -135,6 +135,15 @@ export default class NpcState extends ActorState {
           removeInfirmed: this.parent.removeInfirmed.bind(this),
           ...behaviorDefaults,
         },
+        question: {
+          traits: this.traits,
+          inventory: this.inventory,
+          clan: this.clan,
+          love: this.love,
+          addInvBonus: this.addInvBonus.bind(this),
+          addOrExtendEffect: this.addOrExtendEffect.bind(this),
+          ...behaviorDefaults,
+        },
       },
     }
 
@@ -306,6 +315,9 @@ export default class NpcState extends ActorState {
       this.exitRoom
     )
     this.currRoom = chosenRoom
+    this.currStation = chosenStation
+    this.matrix = RoomsInitState[chosenRoom].matrix
+
     this.parent.setStation(chosenRoom, chosenStation, this.name)
     //this.parent.pruneStationMap(chosenRoom, chosenStation)
     /**testjpf clearance needs complete overhaul
@@ -317,8 +329,6 @@ export default class NpcState extends ActorState {
       this.clearance + math.random(1, 5)
     )
       this.fsm.setState('trespass')
-    this.matrix = RoomsInitState[chosenRoom].matrix
-    this.currStation = chosenStation
     if (chosenRoom != this.parent.getPlayerRoom()) {
       this.sincePlayerRoom = this.sincePlayerRoom + 1
     } else {
