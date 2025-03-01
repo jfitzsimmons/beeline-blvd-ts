@@ -19,12 +19,12 @@ import { shuffle } from '../../utils/utils'
 export default class QuestionAction extends Action {
   a: QuestionProps
   perp: QuestionProps
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(
-    getProps: (behavior: BehaviorKeys) => () => ActionProps,
+    getProps: (behavior: BehaviorKeys) => ActionProps,
     perp: QuestionProps
   ) {
-    const props = getProps('question')() as QuestionProps
+    const props = getProps('question') as QuestionProps
     super(props)
     this.a = props
     this.perp = perp

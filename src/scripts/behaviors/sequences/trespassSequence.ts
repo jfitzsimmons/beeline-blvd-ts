@@ -13,9 +13,9 @@ import Sequence from '../sequence'
 
 export default class TrespassSequence extends Sequence {
   a: InjuredProps
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
-    const props = getProps('injured')() as InjuredProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
+  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+    const props = getProps('injured') as InjuredProps
     const turnActions: Action[] = []
 
     turnActions.push(...[new TrespassAction(getProps)])

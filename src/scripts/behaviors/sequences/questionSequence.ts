@@ -13,12 +13,12 @@ import Sequence from '../sequence'
 export default class QuestionSequence extends Sequence {
   a: QuestionProps
   perp: QuestionProps
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(
-    getProps: (behavior: BehaviorKeys) => () => ActionProps,
+    getProps: (behavior: BehaviorKeys) => ActionProps,
     perp: QuestionProps
   ) {
-    const props = getProps('question')() as QuestionProps
+    const props = getProps('question') as QuestionProps
     const turnActions: Action[] = []
     /**
      * testjpf

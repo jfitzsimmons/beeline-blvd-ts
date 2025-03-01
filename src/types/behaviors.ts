@@ -32,18 +32,18 @@ export type BehaviorKeys =
   | 'question'
 
 export interface BehaviorProps {
-  effects: EffectsProps
-  place: PlaceProps
-  medplace: MedicPlaceProps
-  injury: InjuryProps
-  mender: MenderProps
-  immobile: ImmobileProps
-  injured: InjuredProps
-  mendee: MendeeProps
-  infirm: InfirmProps
-  infirmed: InfirmedProps
-  helper: HelperProps
-  question: QuestionProps
+  effects: () => EffectsProps
+  place: () => PlaceProps
+  medplace: () => MedicPlaceProps
+  injury: () => InjuryProps
+  mender: () => MenderProps
+  immobile: () => ImmobileProps
+  injured: () => InjuredProps
+  mendee: () => MendeeProps
+  infirm: () => InfirmProps
+  infirmed: () => InfirmedProps
+  helper: () => HelperProps
+  question: () => QuestionProps
 }
 
 export interface DefaultBehaviorProps {

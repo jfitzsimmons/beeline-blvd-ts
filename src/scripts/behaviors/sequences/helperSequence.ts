@@ -11,12 +11,12 @@ import ScoutSequence from './scoutSequence'
 export default class HelperSequence extends Sequence {
   a: HelperProps
   victim = ''
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(
-    getProps: (behavior: BehaviorKeys) => () => ActionProps,
+    getProps: (behavior: BehaviorKeys) => ActionProps,
     victim: string
   ) {
-    const props = getProps('helper')() as HelperProps
+    const props = getProps('helper') as HelperProps
     const turnActions: Action[] = []
 
     turnActions.push(...[new HelperAction(getProps, victim)])

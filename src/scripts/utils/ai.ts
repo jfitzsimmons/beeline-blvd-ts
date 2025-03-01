@@ -23,7 +23,7 @@ export function fillStationAttempt(
   matrix: { x: number; y: number },
   clan: string,
   stationMap: { [key: string]: { [key: string]: string } }
-) {
+): { chosenRoom: string; chosenStation: string } {
   //testjpf debug number of roomlist occurences
   room_list.forEach((element) => {
     if (count[element] != null) {

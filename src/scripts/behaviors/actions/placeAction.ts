@@ -5,9 +5,9 @@ import TrespassSequence from '../sequences/trespassSequence'
 
 export default class PlaceAction extends Action {
   a: PlaceProps
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
-    const props = getProps('place')() as PlaceProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
+  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+    const props = getProps('place') as PlaceProps
 
     super(props)
     this.a = props

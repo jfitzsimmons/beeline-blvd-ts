@@ -11,9 +11,9 @@ import MendeeSequence from './mendeeSequence'
 
 export default class InjuredSequence extends Sequence {
   a: InjuredProps
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
-    const props = getProps('injured')() as InjuredProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
+  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+    const props = getProps('injured') as InjuredProps
     const turnActions: Action[] = []
 
     turnActions.push(...[new InjuredAction(getProps)])

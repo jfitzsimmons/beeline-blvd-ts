@@ -13,9 +13,9 @@ import MendeeAction from './mendeeAction'
 export default class InjuredAction extends Action {
   a: InjuredProps
   doc = ''
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
-    const props = getProps('injured')() as InjuredProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
+  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+    const props = getProps('injured') as InjuredProps
     super(props)
     this.a = props
     this.getProps = getProps

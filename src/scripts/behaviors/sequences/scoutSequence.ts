@@ -9,14 +9,11 @@ import ScoutAction from '../actions/scoutAction'
 import Sequence from '../sequence'
 
 export default class ScoutSequence extends Sequence {
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
   a: HelperProps
   room: string
-  constructor(
-    getProps: (behavior: BehaviorKeys) => () => ActionProps,
-    room: string
-  ) {
-    const props = getProps('helper')() as HelperProps
+  constructor(getProps: (behavior: BehaviorKeys) => ActionProps, room: string) {
+    const props = getProps('helper') as HelperProps
     const placeActions: Action[] = []
 
     placeActions.push(new EffectsAction(getProps), new ScoutAction(props, room))
