@@ -1,12 +1,11 @@
 import {
   ActionProps,
   BehaviorKeys,
-  InjuredProps,
+  QuestionProps,
 } from '../../../types/behaviors'
 import Action from '../action'
-//import MenderSequence from '../sequences/menderSequence'
 import {
-  //build_consequence,
+  build_consequence,
   jailtime_check,
   pledgeCheck,
   bribeCheck,
@@ -18,13 +17,17 @@ import {
 import { shuffle } from '../../utils/utils'
 
 export default class QuestionAction extends Action {
-  a: InjuredProps
-  doc = ''
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
-    const props = getProps('injured')() as InjuredProps
+  a: QuestionProps
+  perp: QuestionProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
+  constructor(
+    getProps: (behavior: BehaviorKeys) => ActionProps,
+    perp: QuestionProps
+  ) {
+    const props = getProps('question') as QuestionProps
     super(props)
     this.a = props
+    this.perp = perp
     this.getProps = getProps
   }
   run(): { (): void } {
@@ -34,7 +37,10 @@ export default class QuestionAction extends Action {
     // } else if (this.label == 'questioning') {
     //testjpf convert rest!!!:::
     const tempcons: Array<
-      (s: string, w: string) => { pass: boolean; type: string }
+      (
+        chkr: QuestionProps,
+        chkd: QuestionProps
+      ) => { pass: boolean; type: string }
     > = shuffle([
       pledgeCheck,
       bribeCheck,
@@ -44,7 +50,8 @@ export default class QuestionAction extends Action {
       prejudice_check,
       unlucky_check,
     ])
-    //  build_consequence!(this, this.owner, tempcons, false)
+
+    build_consequence(this.a, this.perp, tempcons, false)
     //}
     print(tempcons)
     return () => this.success()

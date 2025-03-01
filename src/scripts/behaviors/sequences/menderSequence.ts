@@ -14,12 +14,12 @@ import PlaceSequence from './placeSequence'
 export default class MenderSequence extends Sequence {
   a: MenderProps
   mendee: InjuredProps
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(
-    getProps: (behavior: BehaviorKeys) => () => ActionProps,
+    getProps: (behavior: BehaviorKeys) => ActionProps,
     mendee: InjuredProps
   ) {
-    const props = getProps('mender')() as MenderProps
+    const props = getProps('mender') as MenderProps
 
     const turnActions: Action[] = []
 

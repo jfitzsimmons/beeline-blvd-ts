@@ -2,16 +2,18 @@ import {
   ActionProps,
   BehaviorKeys,
   InjuredProps,
+  QuestionProps,
 } from '../../../types/behaviors'
 import Action from '../action'
+import QuestionSequence from '../sequences/questionSequence'
 //import QuestionSequence from '../sequences/questionSequence'
 
 export default class TrespassAction extends Action {
   a: InjuredProps
   doc = ''
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
-    const props = getProps('injured')() as InjuredProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
+  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+    const props = getProps('injured') as InjuredProps
     super(props)
     this.a = props
     this.getProps = getProps
@@ -43,9 +45,11 @@ export default class TrespassAction extends Action {
          * so need QuestioningSequence for security
          */
         ///STARTHERE
-        // enforcer.addToBehavior(
-        //  'active',
-        //  new QuestionSequence(enforcer.getBehaviorProps('question'))
+        const perp = this.getProps('question') as QuestionProps
+        enforcer.addToBehavior(
+          'active',
+          new QuestionSequence(enforcer.getBehaviorProps.bind(this), perp)
+        )
         /**
            * testjpf
            * needs to do:::

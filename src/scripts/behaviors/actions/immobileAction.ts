@@ -16,7 +16,13 @@ export default class ImmobileAction extends Action {
     )
   }
   run(): { (): void } {
-    print('IMMOBILEACT::: SPR::', this.a.name, this.a.sincePlayerRoom)
+    print(
+      'IMMOBILEACT::: SPR::',
+      this.a.name,
+      this.a.sincePlayerRoom,
+      this.a.currRoom,
+      this.a.currStation
+    )
     this.a.pruneStationMap(this.a.currRoom, this.a.currStation)
 
     return () => this.fail()

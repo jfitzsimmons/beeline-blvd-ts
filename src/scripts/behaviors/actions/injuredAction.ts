@@ -13,9 +13,9 @@ import MendeeAction from './mendeeAction'
 export default class InjuredAction extends Action {
   a: InjuredProps
   doc = ''
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
-    const props = getProps('injured')() as InjuredProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
+  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+    const props = getProps('injured') as InjuredProps
     super(props)
     this.a = props
     this.getProps = getProps
@@ -25,7 +25,10 @@ export default class InjuredAction extends Action {
     if (this.a.getIgnore().includes(this.a.name))
       return () =>
         this.continue(
-          'Injur-ED-action:: IGNORE - Quest related NPC:' + this.a.name
+          'Injur-ED-action:: IGNORE - Quest related NPC:' +
+            this.a.name +
+            ':' +
+            this.a.sincePlayerRoom
         )
 
     const helpers = Object.values(this.a.getOccupants(this.a.currRoom))
@@ -66,7 +69,9 @@ export default class InjuredAction extends Action {
             'Injur-ED-action:: GoodSamrtian - Add HELPERSequence for:' +
               scout.name +
               '| VICTIM:' +
-              this.a.name
+              this.a.name +
+              ':' +
+              this.a.sincePlayerRoom
           )
         } else if (
           NpcsInitState[helper].clan == 'doctors' &&
@@ -77,7 +82,7 @@ export default class InjuredAction extends Action {
             helper,
             'added',
             this.a.name,
-            'to QUEUE!'
+            'to QUEUE!' + ':' + this.a.sincePlayerRoom
           )
           this.a.addAdjustMendingQueue(this.a.name)
         }
@@ -87,7 +92,9 @@ export default class InjuredAction extends Action {
     return () =>
       this.continue(
         'Injur-ED-action:: Default - Add Another InjuredSequence for:' +
-          this.a.name
+          this.a.name +
+          ':' +
+          this.a.sincePlayerRoom
       )
   }
   continue(s: string): string {

@@ -10,11 +10,11 @@ import ImmobileSequence from './immobileSequence'
 
 export default class MendeeSequence extends Sequence {
   a: MendeeProps
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
 
-  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
+  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
     const turnActions: Action[] = []
-    const props = getProps('mendee')() as MendeeProps
+    const props = getProps('mendee') as MendeeProps
     turnActions.push(...[new MendeeAction(getProps)])
 
     super(turnActions)

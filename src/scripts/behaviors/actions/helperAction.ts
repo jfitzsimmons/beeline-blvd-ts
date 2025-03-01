@@ -8,12 +8,12 @@ import Action from '../action'
 export default class HelperAction extends Action {
   a: HelperProps
   victim = ''
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(
-    getProps: (behavior: BehaviorKeys) => () => ActionProps,
+    getProps: (behavior: BehaviorKeys) => ActionProps,
     victim: string
   ) {
-    const props = getProps('helper')() as HelperProps
+    const props = getProps('helper') as HelperProps
     super(props)
     this.a = props
     this.getProps = getProps

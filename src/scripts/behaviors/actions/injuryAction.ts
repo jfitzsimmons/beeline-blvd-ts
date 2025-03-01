@@ -8,8 +8,8 @@ import Action from '../action'
 
 export default class InjuryAction extends Action {
   a: InjuryProps
-  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
-    const props = getProps('injury')() as InjuryProps
+  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+    const props = getProps('injury') as InjuryProps
     super(props)
     this.a = props
   }

@@ -1,7 +1,7 @@
 import {
   ActionProps,
   BehaviorKeys,
-  InjuredProps,
+  QuestionProps,
 } from '../../../types/behaviors'
 import Action from '../action'
 //import InjuredAction from '../actions/injuredAction'
@@ -11,10 +11,14 @@ import Sequence from '../sequence'
 //import MendeeSequence from './mendeeSequence'
 
 export default class QuestionSequence extends Sequence {
-  a: InjuredProps
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
-    const props = getProps('injured')() as InjuredProps
+  a: QuestionProps
+  perp: QuestionProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
+  constructor(
+    getProps: (behavior: BehaviorKeys) => ActionProps,
+    perp: QuestionProps
+  ) {
+    const props = getProps('question') as QuestionProps
     const turnActions: Action[] = []
     /**
      * testjpf
@@ -32,9 +36,10 @@ export default class QuestionSequence extends Sequence {
      * so remove hastask and mendee logic from Task.
      * Move to NPCS!!!
      */
-    turnActions.push(...[new QuestionAction(getProps)])
+    turnActions.push(...[new QuestionAction(getProps, perp)])
     super(turnActions)
     this.a = props
+    this.perp = perp
     this.getProps = getProps
   }
   run(): 'REMOVE' | '' {

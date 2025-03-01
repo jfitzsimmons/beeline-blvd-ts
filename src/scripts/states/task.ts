@@ -5,13 +5,8 @@ import WorldPlayer from './player'
 import StateMachine from './stateMachine'
 import { Consequence, Effect, Task, TasksChecks } from '../../types/tasks'
 import { TaskProps } from '../../types/world'
-import { fxLookup, fx, immobile } from '../utils/consts'
+import { fxLookup, fx } from '../utils/consts'
 import { shuffle } from '../utils/utils'
-import {
-  removeRandom,
-  removeValuable,
-  removeAdvantageous,
-} from '../systems/inventorysystem'
 
 export default class TaskState {
   fsm: StateMachine
@@ -192,6 +187,7 @@ export default class TaskState {
   private onMeritExit(): void {}
   private onRecklessEnter(): void {}
   private onRecklessUpdate(): void {
+    /**
     const owner = this.parent.returnNpc(this.owner)
     const others = this.parent
       .getOccupants(owner.currRoom)
@@ -210,8 +206,8 @@ export default class TaskState {
             this.checks.classy_check!.bind(this),
             this.checks.predator_check!.bind(this),
           ])
-
-    this.checks.build_consequence!(this, others[0], checks, false)
+**/
+    //  this.checks.build_consequence!(this, others[0], checks, false)
   }
   private onRecklessExit(): void {}
   private onTurnEnter(): void {}
@@ -226,7 +222,7 @@ export default class TaskState {
       }
     } else if (label == 'reckless') {
       return {
-        build_consequence: checks.build_consequence.bind(this),
+        // build_consequence: checks.build_consequence.bind(this),
         ignorant_check: checks.ignorant_check.bind(this),
         dumb_crook_check: checks.dumb_crook_check.bind(this),
         chaotic_good_check: checks.chaotic_good_check.bind(this),
@@ -235,25 +231,25 @@ export default class TaskState {
       }
     } else if (['questioning', 'arrest'].includes(label)) {
       return {
-        jailtime_check: checks.jailtime_check.bind(this),
-        build_consequence: checks.build_consequence.bind(this),
-        pledgeCheck: checks.pledgeCheck.bind(this),
-        bribeCheck: checks.bribeCheck.bind(this),
-        targetPunchedCheck: checks.targetPunchedCheck.bind(this),
-        prejudice_check: checks.prejudice_check.bind(this),
-        admirer_check: checks.admirer_check.bind(this),
-        unlucky_check: checks.unlucky_check.bind(this),
+        //jailtime_check: checks.jailtime_check.bind(this),
+        //   build_consequence: checks.build_consequence.bind(this),
+        //   pledgeCheck: checks.pledgeCheck.bind(this),
+        //   bribeCheck: checks.bribeCheck.bind(this),
+        //   targetPunchedCheck: checks.targetPunchedCheck.bind(this),
+        //   prejudice_check: checks.prejudice_check.bind(this),
+        //   admirer_check: checks.admirer_check.bind(this),
+        //   unlucky_check: checks.unlucky_check.bind(this),
       }
     } else if (label == 'confront') {
       return {
-        build_consequence: checks.build_consequence.bind(this),
+        //build_consequence: checks.build_consequence.bind(this),
         suspicious_check: checks.suspicious_check.bind(this),
         becomeASnitchCheck: checks.becomeASnitchCheck.bind(this),
-        targetPunchedCheck: checks.targetPunchedCheck.bind(this),
+        // targetPunchedCheck: checks.targetPunchedCheck.bind(this),
         vanity_check: checks.vanity_check.bind(this),
-        prejudice_check: checks.prejudice_check.bind(this),
+        // prejudice_check: checks.prejudice_check.bind(this),
         angel_check: checks.angel_check.bind(this),
-        unlucky_check: checks.unlucky_check.bind(this),
+        //unlucky_check: checks.unlucky_check.bind(this),
         watcher_punched_check: checks.watcher_punched_check.bind(this),
       }
     }
@@ -296,6 +292,7 @@ export default class TaskState {
       return
     } else if (this.label == 'questioning') {
       //testjpf convert rest!!!:::
+      /**
       const tempcons: Array<
         (s: string, w: string) => { pass: boolean; type: string }
       > = shuffle([
@@ -308,7 +305,9 @@ export default class TaskState {
         this.checks.unlucky_check!.bind(this),
       ])
       this.checks.build_consequence!(this, this.owner, tempcons, false)
+      */
     } else if (this.label === 'confront') {
+      /**
       const tempcons: Array<
         (s: string, w: string) => { pass: boolean; type: string }
       > = shuffle([
@@ -333,17 +332,17 @@ export default class TaskState {
       if (consolation == 'neutral') {
         let chest_item = null
         //if w != null ){ utils.has_value(w.inventory, a[1]) }
-        /**
+        
          * TODO MAJOR
          * Removed loot from states
          * need fix
          * temp hardcode
          *
-         */
+         
         if (math.random() < 0.4) {
-          chest_item = removeRandom(target.inventory, ['apple02'])
+          chest_item = removeRandom(target.inventory, ['apple01'])
         } else if (math.random() < 0.5) {
-          chest_item = removeValuable(target.inventory, ['apple02'])
+          chest_item = removeValuable(target.inventory, ['apple01'])
         } else {
           chest_item = removeAdvantageous(
             target.inventory,
@@ -358,6 +357,7 @@ export default class TaskState {
       }
 
       target.cooldown = target.cooldown + 5
+      **/
     }
   }
 }
