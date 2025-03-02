@@ -18,7 +18,7 @@ export default class ArrestAction extends Action {
     this.getProps = getProps
   }
   run(): { (): void } {
-    print('ARRESTAction for::', this.a.name)
+    print('ARRESTAction for::', this.a.name, 'sent to jail.')
 
     const vacancy = this.a.sendToVacancy(
       'security',
@@ -28,7 +28,7 @@ export default class ArrestAction extends Action {
     )
     if (vacancy != null) {
       this.a.currStation = vacancy
-      this.a.sincePlayerRoom = 96
+      this.a.sincePlayerRoom = 97
       // this.a.parent.addInfirmed(this.name)
       this.a.matrix = RoomsInitState.security.matrix
       this.a.cooldown = 8

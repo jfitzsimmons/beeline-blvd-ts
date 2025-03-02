@@ -29,7 +29,6 @@ export default class InfirmAction extends Action {
     )
     if (vacancy != null) {
       this.a.matrix = RoomsInitState.infirmary.matrix
-      this.a.cooldown = 8
       this.a.exitRoom = this.a.currRoom
       this.a.currRoom = 'infirmary'
       this.a.currStation = vacancy

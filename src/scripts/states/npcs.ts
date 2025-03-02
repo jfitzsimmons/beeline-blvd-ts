@@ -16,6 +16,7 @@ import PlaceSequence from '../behaviors/sequences/placeSequence'
 import Selector from '../behaviors/selector'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
 import ImmobileSequence from '../behaviors/sequences/immobileSequence'
+import TrespassSequence from '../behaviors/sequences/trespassSequence'
 
 const dt = math.randomseed(os.time())
 
@@ -119,6 +120,13 @@ export default class WorldNpcs {
         npc.behavior.active.children.push(
           new InjuredSequence(npc.getBehaviorProps.bind(this))
         )
+      } else if (
+        npc.clearance + math.random(0, 1) <
+        RoomsInitState[npc.currRoom].clearance
+      ) {
+        npc.behavior.active.children.push(
+          new TrespassSequence(npc.getBehaviorProps.bind(this))
+        )
       }
       npc.fsm.setState('active')
     }
@@ -146,12 +154,14 @@ export default class WorldNpcs {
         npc.behavior.place.children.push(
           new ImmobileSequence(npc.getBehaviorProps.bind(this))
         )
-        print(
-          npc.name,
-          '222onPLaceExit!!!::: active length::',
-          npc.behavior.active.children.length
+      } else if (
+        npc.clearance + math.random(0, 4) <
+        RoomsInitState[npc.currRoom].clearance
+      )
+        npc.behavior.active.children.push(
+          new TrespassSequence(npc.getBehaviorProps.bind(this))
         )
-      }
+
       npc.fsm.setState('active')
     }
   }

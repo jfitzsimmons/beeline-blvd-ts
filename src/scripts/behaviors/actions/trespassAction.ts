@@ -23,7 +23,7 @@ export default class TrespassAction extends Action {
     this.a.sincePlayerRoom = 96 // so can add QuestionSeq to available security
     if (this.a.getIgnore().includes(this.a.name))
       return () =>
-        this.continue('TrespassAction:: IGNORE - injured NPC???:' + this.a.name)
+        this.fail('TrespassAction:: IGNORE - injured NPC???:' + this.a.name)
 
     const currRoom = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
       (s) => s != '' && s != this.a.name && this.a.name.slice(0, 4) === 'secu'
@@ -58,7 +58,7 @@ export default class TrespassAction extends Action {
           new QuestionSequence(enforcer.getBehaviorProps.bind(this), perp)
         )
         return () =>
-          this.success(
+          this.fail(
             'trespassAction:: Enforcer:' +
               enforcer.name +
               'is going to question:' +
@@ -99,16 +99,11 @@ export default class TrespassAction extends Action {
     }
 
     return () =>
-      this.continue(
-        'TrespassAction:: Default - Add PlaceSequnce for:' + this.a.name
+      this.success(
+        'TrespassAction:: Default - trespass succecful for:' + this.a.name
       )
-  }
-  continue(s: string): string {
-    print('TrespassAction:: Continue:', s)
-    return 'continue'
   }
   success(s?: string): void {
     print('TrespassAction:: Success:', s)
-    //return 'continue'
   }
 }

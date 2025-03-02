@@ -83,9 +83,11 @@ export interface QuestionProps extends DefaultBehaviorProps {
   inventory: string[]
   clan: string
   love: number
+  exitRoom: string
   addInvBonus(item: string): void
   addOrExtendEffect(effect: Effect): void
   getBehaviorProps(behavior: string): ActionProps
+  getOccupants(r: string): string[]
 }
 
 export interface MenderProps extends DefaultBehaviorProps {

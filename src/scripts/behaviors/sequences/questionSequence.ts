@@ -7,6 +7,7 @@ import Action from '../action'
 //import InjuredAction from '../actions/injuredAction'
 import QuestionAction from '../actions/questionAction'
 import Sequence from '../sequence'
+import ArrestSequence from './arrestSequence'
 //import ImmobileSequence from './immobileSequence'
 //import MendeeSequence from './mendeeSequence'
 
@@ -47,12 +48,18 @@ export default class QuestionSequence extends Sequence {
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
       const proceed = child.run()()
-      print('INJUREDSEQUENCE::: Proceed::', this.a.name, ':', proceed)
+      print('QuestionSEQUENCE::: Proceed::', this.a.name, ':', proceed)
       if (proceed === 'continue') {
         this.a.addToBehavior(
           'active',
           new QuestionSequence(this.getProps, this.perp),
           true
+        )
+      } else if (proceed == 'jailed') {
+        this.perp.sincePlayerRoom = 97
+        this.perp.addToBehavior(
+          'place',
+          new ArrestSequence(this.perp.getBehaviorProps.bind(this.perp))
         )
       }
     }

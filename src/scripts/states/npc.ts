@@ -164,9 +164,11 @@ export default class NpcState extends ActorState {
             inventory: this.inventory,
             clan: this.clan,
             love: this.love,
+            exitRoom: this.exitRoom,
             addInvBonus: this.addInvBonus.bind(this),
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
+            getOccupants: this.parent.getOccupants.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -265,8 +267,8 @@ export default class NpcState extends ActorState {
     **/
   }
   private onArresteeUpdate(): void {
-    this.cooldown--
-    if (this.cooldown < 1) this.fsm.setState('turn')
+    //this.cooldown--
+    //if (this.cooldown < 1) this.fsm.setState('turn')
   }
   private onArresteeExit(): void {}
   private onNewEnter(): void {}
@@ -351,12 +353,13 @@ export default class NpcState extends ActorState {
     /**testjpf clearance needs complete overhaul
      * make ClearanceSequence
      * !!!
-     */
+    
     if (
       RoomsInitState[chosenRoom].clearance >
       this.clearance + math.random(1, 5)
     )
       this.fsm.setState('trespass')
+       */
     if (chosenRoom != this.parent.getPlayerRoom()) {
       this.sincePlayerRoom = this.sincePlayerRoom + 1
     } else {

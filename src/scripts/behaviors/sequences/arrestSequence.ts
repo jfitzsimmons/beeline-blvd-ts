@@ -3,7 +3,6 @@ import {
   BehaviorKeys,
   InfirmProps,
 } from '../../../types/behaviors'
-
 import Action from '../action'
 import ArrestAction from '../actions/arrestAction'
 import EffectsAction from '../actions/effectsAction'

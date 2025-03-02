@@ -2,6 +2,7 @@ import NpcState from '../scripts/states/npc'
 import QuestState from '../scripts/states/quest'
 import QuestStep from '../scripts/states/questStep'
 import SideQuest from '../scripts/states/sideQuest'
+import { QuestionProps } from './behaviors'
 //import WorldTasks from '../scripts/states/tasks'
 import { Npcs, Trait } from './state'
 import { NoOptionals } from './utils'
@@ -30,7 +31,7 @@ export interface TasksChecks {
   watcher_punched_check(t: string, l: string): Consequence
 }
 export interface TasksOutcomes {
-  add_prejudice(tClan: string, listener: NpcState): void
+  add_prejudice(tClan: string, listener: QuestionProps): void
 }
 export interface QuestConditions {
   [key: string | number]: QuestStep
