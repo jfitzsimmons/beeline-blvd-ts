@@ -60,6 +60,7 @@ export default class World {
       pruneStationMap: this.rooms.pruneStationMap.bind(this),
       getStationMap: this.rooms.getStationMap.bind(this),
       sendToVacancy: this.rooms.sendToVacancy.bind(this),
+      getWards: this.rooms.getWards.bind(this),
       getPlayerRoom: this.player.getPlayerRoom.bind(this),
       //getMendingQueue: this.tasks.getMendingQueue.bind(this),
       // removeMendee: this.tasks.removeMendee.bind(this),

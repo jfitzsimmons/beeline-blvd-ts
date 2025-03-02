@@ -22,16 +22,16 @@ function load_npcs() {
   }
 
   msg.post('patient1#npc_loader', 'load_npc', {
-    npc: rooms.all['infirmary'].vacancies!.patient1,
+    npc: rooms.all['infirmary'].wards!.patient1,
   })
   msg.post('patient2#npc_loader', 'load_npc', {
-    npc: rooms.all['infirmary'].vacancies!.patient2,
+    npc: rooms.all['infirmary'].wards!.patient2,
   })
   msg.post('patient3#npc_loader', 'load_npc', {
-    npc: rooms.all['infirmary'].vacancies!.patient3,
+    npc: rooms.all['infirmary'].wards!.patient3,
   })
   msg.post('patient4#npc_loader', 'load_npc', {
-    npc: rooms.all['infirmary'].vacancies!.patient4,
+    npc: rooms.all['infirmary'].wards!.patient4,
   })
 
   msg.post('/outside1#npc_loader', 'load_npc', {

@@ -91,9 +91,9 @@ export interface Room {
   swaps: Swaps
   actors: Actors
   props?: string[]
-  vacancies?: Vacancies
+  wards?: Wards
 }
-export interface Vacancies {
+export interface Wards {
   [key: string]: string
 }
 export interface Swaps {

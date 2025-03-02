@@ -4,13 +4,14 @@ import {
   QuestionProps,
 } from '../../../types/behaviors'
 import Action from '../action'
+import ConfrontAction from '../actions/confrontAction'
 //import InjuredAction from '../actions/injuredAction'
-import QuestionAction from '../actions/questionAction'
+//import QuestionAction from '../actions/questionAction'
 import Sequence from '../sequence'
 //import ImmobileSequence from './immobileSequence'
 //import MendeeSequence from './mendeeSequence'
 
-export default class QuestionSequence extends Sequence {
+export default class ConfrontSequence extends Sequence {
   a: QuestionProps
   perp: QuestionProps
   getProps: (behavior: BehaviorKeys) => ActionProps
@@ -35,25 +36,24 @@ export default class QuestionSequence extends Sequence {
      * similar to has task, should we have has Sequence?!!!
      * so remove hastask and mendee logic from Task.
      * Move to NPCS!!!
-     *
-     * need to make sure the timeout after so many TURNS
      */
-    turnActions.push(...[new QuestionAction(getProps, perp)])
+    turnActions.push(...[new ConfrontAction(getProps, perp)])
     super(turnActions)
     this.a = props
     this.perp = perp
     this.getProps = getProps
   }
   run(): 'REMOVE' | '' {
+    this.a.sincePlayerRoom = 99
     for (const child of this.children) {
       const proceed = child.run()()
       print('INJUREDSEQUENCE::: Proceed::', this.a.name, ':', proceed)
       if (proceed === 'continue') {
-        this.a.addToBehavior(
-          'active',
-          new QuestionSequence(this.getProps, this.perp),
-          true
-        )
+        //this.a.addToBehavior('active', new InjuredSequence(this.getProps))
+        //   this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
+      } else if (proceed == 'mend') {
+        //   this.a.addToBehavior('active', new MendeeSequence(this.getProps))
+        //  this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
       }
     }
     return 'REMOVE'

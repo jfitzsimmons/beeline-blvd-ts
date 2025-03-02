@@ -4,6 +4,7 @@ import {
   InjuredProps,
   QuestionProps,
 } from '../../../types/behaviors'
+import { confrontation_check } from '../../states/inits/checksFuncs'
 import Action from '../action'
 import QuestionSequence from '../sequences/questionSequence'
 //import QuestionSequence from '../sequences/questionSequence'
@@ -24,15 +25,21 @@ export default class TrespassAction extends Action {
       return () =>
         this.continue('TrespassAction:: IGNORE - injured NPC???:' + this.a.name)
 
-    const authority = Object.values(
-      this.a.getOccupants(this.a.currRoom)
-    ).filter(
+    const currRoom = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
       (s) => s != '' && s != this.a.name && this.a.name.slice(0, 4) === 'secu'
     )
-
-    for (const e of authority) {
+    const prevRoom = Object.values(this.a.getOccupants(this.a.exitRoom)).filter(
+      (s: string) =>
+        s.slice(0, 4) === 'secu' &&
+        this.a.returnNpc(s).exitRoom == this.a.currRoom
+    )
+    for (const e of [...new Set([...prevRoom, ...currRoom])]) {
       const enforcer = this.a.returnNpc(e)
-      if (enforcer.sincePlayerRoom < 96 && math.random() > 0.4) {
+      if (
+        enforcer.sincePlayerRoom < 96 &&
+        math.random() > 0.4 &&
+        confrontation_check(enforcer.traits, this.a.traits) == true
+      ) {
         /**
          * testjpf
          * options:?:
@@ -50,6 +57,13 @@ export default class TrespassAction extends Action {
           'active',
           new QuestionSequence(enforcer.getBehaviorProps.bind(this), perp)
         )
+        return () =>
+          this.success(
+            'trespassAction:: Enforcer:' +
+              enforcer.name +
+              'is going to question:' +
+              this.a.name
+          )
         /**
            * testjpf
            * needs to do:::
@@ -92,5 +106,9 @@ export default class TrespassAction extends Action {
   continue(s: string): string {
     print('TrespassAction:: Continue:', s)
     return 'continue'
+  }
+  success(s?: string): void {
+    print('TrespassAction:: Success:', s)
+    //return 'continue'
   }
 }

@@ -14,6 +14,7 @@ import { shuffle, clamp } from '../../utils/utils'
 import NpcState from '../npc'
 import WorldPlayer from '../player'
 import { QuestionProps } from '../../../types/behaviors'
+import ArrestSequence from '../../behaviors/sequences/arrestSequence'
 
 export function confrontation_check(watcher: Traits, target: Traits): boolean {
   const { skills: ls, binaries: lb } = watcher
@@ -485,7 +486,11 @@ export function jailtime_check(
 
   if (result > 5 && result <= 10) {
     // target.fsm.setState('arrestee')
-    print('need ArrestSequence for:', chkd.name, 'ENFORCER:::', chkr.name) //chkd.addToBehavior('place', new ArrestSequence())
+    print('need ArrestSequence for:', chkd.name, 'ENFORCER:::', chkr.name)
+    chkd.addToBehavior(
+      'place',
+      new ArrestSequence(chkd.getBehaviorProps.bind(chkd))
+    )
     return { pass: true, type: 'jailed' }
   }
 
@@ -495,7 +500,11 @@ export function jailtime_check(
       chkd.name,
       'ENFORCER:::',
       chkr.name
-    ) //chkd.addToBehavior('place', new ArrestSequence())
+    )
+    chkd.addToBehavior(
+      'place',
+      new ArrestSequence(chkd.getBehaviorProps.bind(chkd))
+    )
 
     chkd.hp = chkd.hp - 1
     print('SPECIAL jailed', chkd.name)
@@ -971,8 +980,12 @@ export function watcher_punched_check(
 function call_security(chkr: QuestionProps, chkd: QuestionProps) {
   const watcher = chkr
   watcher.clan == 'security'
-    ? print('need ArrestSequence for:', chkd.name, 'ENFORCER:::', chkr.name) //chkd.addToBehavior('place', new ArrestSequence())
-    : print('need PhoneSequence for:', chkd.name, 'ENFORCER:::', chkr.name) //chkr.addToBehavior('active', new PhoneSequence())
+    ? chkd.addToBehavior(
+        'place',
+        new ArrestSequence(chkd.getBehaviorProps.bind(chkd))
+      )
+    : print('need PhoneSequence for:', chkd.name, 'ENFORCER:::', chkr.name)
+  //chkr.addToBehavior('active', new PhoneSequence())
 }
 
 export function unlucky_check(

@@ -59,6 +59,7 @@ export default class WorldRooms {
     this.checkSetStation = this.checkSetStation.bind(this)
     this.resetStationMap = this.resetStationMap.bind(this)
     this.sendToVacancy = this.sendToVacancy.bind(this)
+    this.getWards = this.getWards.bind(this)
     this.setFocused = this.setFocused.bind(this)
     this.get_focused = this.get_focused.bind(this)
     this.getOccupants = this.getOccupants.bind(this)
@@ -84,11 +85,17 @@ export default class WorldRooms {
   get_focused(): string {
     return this.focused
   }
-  sendToVacancy(room: string, npc: string): string | null {
-    const occs = this.all[room].vacancies!
+  sendToVacancy(
+    room: string,
+    npc: string,
+    currRoom: string,
+    currStation: string
+  ): string | null {
+    const occs = this.all[room].wards!
     let ko: keyof typeof occs
     for (ko in occs) {
       if (occs[ko] == '') {
+        this.clearStation(currRoom, currStation, npc)
         occs[ko] = npc
         return ko
       }
@@ -167,10 +174,10 @@ export default class WorldRooms {
     } else if (npc == this.fallbacks.stations[station]) {
       this.fallbacks.stations[station] = ''
     } else if (
-      this.all[room].vacancies !== undefined &&
-      npc == this.all[room].vacancies?.[station]
+      this.all[room].wards !== undefined &&
+      npc == this.all[room].wards?.[station]
     ) {
-      this.all[room].vacancies![station] = ''
+      this.all[room].wards![station] = ''
     }
   }
 
@@ -189,6 +196,9 @@ export default class WorldRooms {
   private onTransitionEnter(): void {}
   private onTransitionUpdate(): void {}
   private onTransitionExit(): void {}
+  getWards(room: string): string[] {
+    return Object.values(this.all[room].wards!).filter((s) => s !== '')
+  }
   createStationsMap() {
     const stationMap: { [key: string]: { [key: string]: string } } = {}
     let ki: keyof typeof RoomsInitState

@@ -1,7 +1,13 @@
 import { Effect } from '../../types/tasks'
 
 export const doctors = ['doc03', 'doc02', 'doc01']
-
+export const security = [
+  'security001',
+  'security002',
+  'security003',
+  'security004',
+  'security005',
+]
 export const fxLookup = {
   merits: [
     'admirer',

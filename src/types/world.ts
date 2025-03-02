@@ -40,9 +40,13 @@ export interface WorldNpcsArgs extends TaskProps {
   pruneStationMap(room: string, station: string): void
   setStation(room: string, station: string, npc: string): void
   getStationMap(): { [key: string]: { [key: string]: string } }
-  sendToVacancy(room: string, npc: string): string | null
-  //getMendingQueue(): string[]
-  //removeMendee(mendee: string): void
+  sendToVacancy(
+    room: string,
+    npc: string,
+    currRoom: string,
+    currStation: string
+  ): string | null
+  getWards(room: string): string[]
   hasHallpass(owner: string): TaskState | null
   getFocusedRoom(): string
   removeTaskByCause(target: string, cause: string): void
@@ -54,12 +58,11 @@ export interface NpcProps extends WorldNpcsArgs {
   addAdjustMendingQueue(patient: string): void
   getMendingQueue(): string[]
   removeMendee(mendee: string): void
-  addInfirmed(n: string, vacancy: string): void
-  getInfirmed(): string[]
-  removeInfirmed(n: string): void
-  addInjured(n: string): void
-  getInjured(): string[]
-  removeInjured(n: string): void
+  //addInfirmed(n: string, vacancy: string): void
+  //removeInfirmed(n: string): void
+  //addInjured(n: string): void
+  //getInjured(): string[]
+  //removeInjured(n: string): void
   addIgnore(n: string): void
   removeIgnore(n: string): void
   returnDoctors(): NpcState[]

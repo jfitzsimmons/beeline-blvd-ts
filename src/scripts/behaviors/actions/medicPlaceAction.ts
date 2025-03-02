@@ -12,7 +12,7 @@ export default class MedicPlaceAction extends Action {
 
   run(): { (): void } {
     const mobile = this.a.sincePlayerRoom < 90
-    const infirmed = this.a.getInfirmed().length
+    const infirmed = this.a.getWards('infirmary').length
 
     if (this.a.cooldown > 0) this.a.cooldown = this.a.cooldown - 1
     this.a.exitRoom = this.a.currRoom

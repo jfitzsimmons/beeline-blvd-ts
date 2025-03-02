@@ -15,8 +15,8 @@ import {
   unlucky_check,
 } from '../../states/inits/checksFuncs'
 import { shuffle } from '../../utils/utils'
-
-export default class QuestionAction extends Action {
+//TESTJPF TODO@#!!!!!!!!!!
+export default class ConfrontAction extends Action {
   a: QuestionProps
   perp: QuestionProps
   getProps: (behavior: BehaviorKeys) => ActionProps
@@ -31,11 +31,6 @@ export default class QuestionAction extends Action {
     this.getProps = getProps
   }
   run(): { (): void } {
-    //if (this.a.getApb().includes(target)) {
-    // this.parent.returnNpc(this.target).fsm.setState('arrestee')
-    // return
-    // } else if (this.label == 'questioning') {
-    //testjpf convert rest!!!:::
     const tempcons: Array<
       (
         chkr: QuestionProps,
@@ -53,7 +48,7 @@ export default class QuestionAction extends Action {
 
     build_consequence(this.a, this.perp, tempcons, false)
     //}
-    //print(tempcons)
+    print(tempcons)
     return () => this.success()
     //need something that checks response
     //does response need EffectsAction, sequences, something else???

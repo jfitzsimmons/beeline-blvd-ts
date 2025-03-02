@@ -6,8 +6,6 @@ import { Effect } from './tasks'
 export type ActionProps =
   | EffectsProps
   | PlaceProps
-  | MedicPlaceProps
-  | InjuryProps
   | MenderProps
   | ImmobileProps
   | InjuredProps
@@ -16,6 +14,7 @@ export type ActionProps =
   | InfirmedProps
   | HelperProps
   | QuestionProps
+  | DefaultBehaviorProps
 
 export type BehaviorKeys =
   | 'place'
@@ -35,7 +34,7 @@ export interface BehaviorProps {
   effects: () => EffectsProps
   place: () => PlaceProps
   medplace: () => MedicPlaceProps
-  injury: () => InjuryProps
+  injury: () => DefaultBehaviorProps
   mender: () => MenderProps
   immobile: () => ImmobileProps
   injured: () => InjuredProps
@@ -69,7 +68,7 @@ export interface PlaceProps extends DefaultBehaviorProps {
 
 export interface MedicPlaceProps extends PlaceProps {
   checkSetStation(room: string, station: string, npc: string): boolean
-  getInfirmed(): string[]
+  getWards(room: string): string[]
   getMendingQueue(): string[]
   returnMendeeLocation(): string | null
 }
@@ -78,9 +77,7 @@ export interface EffectsProps {
   effects: Effect[]
   traits: Traits
 }
-export interface InjuryProps extends DefaultBehaviorProps {
-  addInjured(n: string): void
-}
+//export interface InjuryProps extends DefaultBehaviorProps {}
 export interface QuestionProps extends DefaultBehaviorProps {
   traits: Traits
   inventory: string[]
@@ -88,6 +85,7 @@ export interface QuestionProps extends DefaultBehaviorProps {
   love: number
   addInvBonus(item: string): void
   addOrExtendEffect(effect: Effect): void
+  getBehaviorProps(behavior: string): ActionProps
 }
 
 export interface MenderProps extends DefaultBehaviorProps {
@@ -95,6 +93,8 @@ export interface MenderProps extends DefaultBehaviorProps {
   getFocusedRoom(): string
 }
 export interface InjuredProps extends DefaultBehaviorProps {
+  traits: Traits
+  exitRoom: string
   returnNpc(n: string): NpcState
   getMendingQueue(): string[]
   getOccupants(r: string): string[]
@@ -116,12 +116,18 @@ export interface MendeeProps extends DefaultBehaviorProps {
 }
 export interface InfirmedProps extends DefaultBehaviorProps {
   getOccupants(r: string): string[]
-  removeInfirmed(n: string): void
+  //removeInfirmed(n: string): void
 }
 export interface ImmobileProps extends DefaultBehaviorProps {
   pruneStationMap(currRoom: string, currStation: string): void
 }
 export interface InfirmProps extends DefaultBehaviorProps {
-  sendToVacancy(room: string, npc: string): string | null
-  addInfirmed(n: string, vacancy: string): void
+  exitRoom: string
+  sendToVacancy(
+    room: string,
+    npc: string,
+    currRoom: string,
+    currStation: string
+  ): string | null
+  // addInfirmed(n: string, vacancy: string): void
 }

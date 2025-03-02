@@ -83,7 +83,7 @@ export default class NpcState extends ActorState {
             exitRoom: this.exitRoom,
             findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
             checkSetStation: this.parent.checkSetStation.bind(this),
-            getInfirmed: this.parent.getInfirmed.bind(this),
+            getWards: this.parent.getWards.bind(this),
             getMendingQueue: this.parent.getMendingQueue.bind(this),
             returnMendeeLocation: this.parent.returnMendeeLocation.bind(this),
             ...behaviorDefaults(),
@@ -91,7 +91,7 @@ export default class NpcState extends ActorState {
         },
         injury: () => {
           return {
-            addInjured: this.parent.addInjured.bind(this),
+            //addInjured: this.parent.addInjured.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -110,6 +110,8 @@ export default class NpcState extends ActorState {
         },
         injured: () => {
           return {
+            traits: this.traits,
+            exitRoom: this.exitRoom,
             returnNpc: this.parent.returnNpc.bind(this),
             getMendingQueue: this.parent.getMendingQueue.bind(this),
             getOccupants: this.parent.getOccupants.bind(this),
@@ -143,15 +145,16 @@ export default class NpcState extends ActorState {
         },
         infirm: () => {
           return {
+            exitRoom: this.exitRoom,
             sendToVacancy: this.parent.sendToVacancy.bind(this),
-            addInfirmed: this.parent.addInfirmed.bind(this),
+            // addInfirmed: this.parent.addInfirmed.bind(this),
             ...behaviorDefaults(),
           }
         },
         infirmed: () => {
           return {
             getOccupants: this.parent.getOccupants.bind(this),
-            removeInfirmed: this.parent.removeInfirmed.bind(this),
+            // removeInfirmed: this.parent.removeInfirmed.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -163,6 +166,7 @@ export default class NpcState extends ActorState {
             love: this.love,
             addInvBonus: this.addInvBonus.bind(this),
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
+            getBehaviorProps: this.getBehaviorProps.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -247,6 +251,7 @@ export default class NpcState extends ActorState {
   }
   private onTrespassExit(): void {}
   private onArresteeEnter(): void {
+    /**
     const vacancy = this.parent.sendToVacancy('security', this.name)
     if (vacancy != null) {
       this.parent.clearStation(this.currRoom, this.currStation, this.name)
@@ -257,6 +262,7 @@ export default class NpcState extends ActorState {
     this.matrix = RoomsInitState.security.matrix
     this.cooldown = 8
     this.currRoom = 'security'
+    **/
   }
   private onArresteeUpdate(): void {
     this.cooldown--
