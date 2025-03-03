@@ -6,31 +6,14 @@ import {
   chaotic_good_check,
   dumb_crook_check,
   ignorant_check,
-  build_consequence,
-  recklessCheck,
   classy_check,
   predator_check,
-  jailtime_check,
-  pledgeCheck,
-  bribeCheck,
-  addPledge,
-  lConfrontPunchT,
-  getExtorted,
-  tConfrontPunchL,
-  targetPunchedCheck,
   suspicious_check,
   vanity_check,
   angel_check,
-  prejudice_check,
   add_prejudice,
-  admirer_check,
-  unlucky_check,
   becomeASnitchCheck,
   watcher_punched_check,
-  charmed_merits,
-  ap_boost,
-  given_gift,
-  love_boost,
 } from './inits/checksFuncs'
 import {
   TasksOutcomes,
@@ -39,7 +22,7 @@ import {
   TasksChecks,
 } from '../../types/tasks'
 import TaskState from './task'
-import { arraymove } from '../utils/utils'
+//import { arraymove } from '../utils/utils'
 import { TaskProps, WorldTasksArgs } from '../../types/world'
 
 const dt = math.randomseed(os.time())
@@ -49,7 +32,7 @@ export default class WorldTasks {
   private _spawn: string
   fsm: StateMachine
   quests: QuestMethods
-  mendingQueue: string[]
+  // mendingQueue: string[]
   methods: TaskProps
   parent: WorldTasksArgs
   checks: TasksChecks
@@ -58,11 +41,11 @@ export default class WorldTasks {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
     this._spawn = 'grounds'
-    this.mendingQueue = []
+    // this.mendingQueue = []
     this.parent = worldProps
     this.methods = {
       npcHasTask: this.npcHasTask.bind(this),
-      addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
+      //addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
       didCrossPaths: this.parent.didCrossPaths.bind(this),
       returnNpc: this.parent.returnNpc.bind(this),
       returnPlayer: this.parent.returnPlayer.bind(this),
@@ -79,33 +62,33 @@ export default class WorldTasks {
       ignorant_check: ignorant_check.bind(this),
       dumb_crook_check: dumb_crook_check.bind(this),
       chaotic_good_check: chaotic_good_check.bind(this),
-      build_consequence: build_consequence.bind(this),
-      recklessCheck: recklessCheck.bind(this),
+      // build_consequence: build_consequence.bind(this),
+      // recklessCheck: recklessCheck.bind(this),
       classy_check: classy_check.bind(this),
       predator_check: predator_check.bind(this),
-      jailtime_check: jailtime_check.bind(this),
-      pledgeCheck: pledgeCheck.bind(this),
-      bribeCheck: bribeCheck.bind(this),
-      targetPunchedCheck: targetPunchedCheck.bind(this),
+      // jailtime_check: jailtime_check.bind(this),
+      // pledgeCheck: pledgeCheck.bind(this),
+      // bribeCheck: bribeCheck.bind(this),
+      // targetPunchedCheck: targetPunchedCheck.bind(this),
       suspicious_check: suspicious_check.bind(this),
       vanity_check: vanity_check.bind(this),
       angel_check: angel_check.bind(this),
-      prejudice_check: prejudice_check.bind(this),
-      admirer_check: admirer_check.bind(this),
-      unlucky_check: unlucky_check.bind(this),
+      //  prejudice_check: prejudice_check.bind(this),
+      //  admirer_check: admirer_check.bind(this),
+      // unlucky_check: unlucky_check.bind(this),
       becomeASnitchCheck: becomeASnitchCheck.bind(this),
       watcher_punched_check: watcher_punched_check.bind(this),
-      charmed_merits: charmed_merits.bind(this),
-      ap_boost: ap_boost.bind(this),
-      love_boost: love_boost.bind(this),
+      // charmed_merits: charmed_merits.bind(this),
+      //  ap_boost: ap_boost.bind(this),
+      // love_boost: love_boost.bind(this),
     }
     this.outcomes = {
-      addPledge: addPledge.bind(this),
-      lConfrontPunchT: lConfrontPunchT.bind(this),
-      getExtorted: getExtorted.bind(this),
-      tConfrontPunchL: tConfrontPunchL.bind(this),
+      // addPledge: addPledge.bind(this),
+      // lConfrontPunchT: lConfrontPunchT.bind(this),
+      // getExtorted: getExtorted.bind(this),
+      // tConfrontPunchL: tConfrontPunchL.bind(this),
       add_prejudice: add_prejudice.bind(this),
-      given_gift: given_gift.bind(this),
+      //given_gift: given_gift.bind(this),
     }
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
@@ -123,11 +106,11 @@ export default class WorldTasks {
     this.removeTaskByCause = this.removeTaskByCause.bind(this)
     this.removeTaskByLabel = this.removeTaskByLabel.bind(this)
     this.has_clearance = this.has_clearance.bind(this)
-    this.getMendingQueue = this.getMendingQueue.bind(this)
+    // this.getMendingQueue = this.getMendingQueue.bind(this)
     this.npcHasTask = this.npcHasTask.bind(this)
     this.taskBuilder = this.taskBuilder.bind(this)
-    this.addAdjustMendingQueue = this.addAdjustMendingQueue.bind(this)
-    this.removeMendee = this.removeMendee.bind(this)
+    //this.addAdjustMendingQueue = this.addAdjustMendingQueue.bind(this)
+    // this.removeMendee = this.removeMendee.bind(this)
   }
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
@@ -157,21 +140,10 @@ export default class WorldTasks {
   public get all() {
     return this._all
   }
-  getMendingQueue(): string[] {
-    return this.mendingQueue
-  }
-  removeMendee(m: string) {
-    this.mendingQueue.splice(this.mendingQueue.indexOf(m), 1)
-  }
-  addAdjustMendingQueue(patient: string) {
-    if (this.mendingQueue.includes(patient) == true) {
-      if (this.mendingQueue.indexOf(patient) > 1)
-        arraymove(this.mendingQueue, this.mendingQueue.indexOf(patient), 0)
-    } else {
-      // print('cautions caused patient:', patient, 'to be added to mendingQueue')
-      this.mendingQueue.push(patient)
-    }
-  }
+  //getMendingQueue(): string[] {
+  //return this.mendingQueue
+  //}
+
   taskHasOwner(cause: string): string | null {
     for (let i = this.all.length - 1; i >= 0; i--) {
       const c = this.all[i]

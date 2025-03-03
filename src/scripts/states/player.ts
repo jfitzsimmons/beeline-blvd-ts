@@ -2,8 +2,7 @@
 import { InventoryTableItem, Trait } from '../../types/state'
 import { QuestMethods } from '../../types/tasks'
 import { shuffle } from '../utils/utils'
-import { RoomsInitLayout, RoomsInitState } from './inits/roomsInitState'
-//import StateMachine from './stateMachine'
+import { RoomsInitState } from './inits/roomsInitState'
 import { itemStateInit } from './inits/inventoryInitState'
 import { WorldPlayerArgs } from '../../types/world'
 import ActorState from './actor'
@@ -142,7 +141,7 @@ export default class WorldPlayer extends ActorState {
   private onConfrontedUpdate(): void {}
   private onConfrontedExit(): void {}
   setRoomInfo() {
-    this.exitRoom = RoomsInitLayout[this.matrix.y][this.matrix.x]!
+    this.exitRoom = this.currRoom
     this.currRoom = this.parent.getFocusedRoom()
     this.matrix = RoomsInitState[this.currRoom].matrix
     print('::: SETROOMINFO:::exit,enter::', this.exitRoom, this.currRoom)

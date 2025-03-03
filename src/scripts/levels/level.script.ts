@@ -27,8 +27,7 @@ function calculate_heat(room: string) {
     2
 
   cold +=
-    Object.values(rooms.all.security.vacancies!).filter((s) => s != '').length *
-    3
+    Object.values(rooms.all.security.wards!).filter((s) => s != '').length * 3
   cold +=
     (player.hp +
       player.clearance +

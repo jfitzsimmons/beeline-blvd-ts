@@ -1,13 +1,13 @@
-import { Task } from '../../types/tasks'
 import { confrontation_check, seen_check } from '../states/inits/checksFuncs'
 
 const { tasks, npcs, player } = globalThis.game.world
 
 function testjpfplayerconfrontationConsequence(
   // s: string,
-  w: string,
+  // w: string,
   confrontDecided = false
 ): string {
+  /**
   const caution: Task = {
     owner: w,
     turns: 1,
@@ -17,15 +17,17 @@ function testjpfplayerconfrontationConsequence(
     target: 'player',
     cause: 'theft',
   }
-
+ 
   const consequence = tasks.checks.build_consequence(
     caution,
     w,
     [],
     confrontDecided
   )
+*/
+  return confrontDecided == true ? 'concern' : 'testjpf'
 
-  return confrontDecided == true ? 'concern' : consequence
+  // return confrontDecided == true ? 'concern' : consequence
 }
 function testjpfplayerthief_consequences(
   t: string,
@@ -37,7 +39,7 @@ function testjpfplayerthief_consequences(
     const wTraits = tasks.parent.returnNpc(w).traits
 
     c.confront = c.confront == true || confrontation_check(tTraits, wTraits)
-    c.type = testjpfplayerconfrontationConsequence(w, c.confront)
+    c.type = testjpfplayerconfrontationConsequence()
   }
 
   if (c.confront == false && c.type != 'neutral')

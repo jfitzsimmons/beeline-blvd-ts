@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import {
   NpcsInitState,
   seedBinaries,
@@ -10,15 +9,14 @@ import StateMachine from './stateMachine'
 import { Npcs } from '../../types/state'
 import { QuestMethods } from '../../types/tasks'
 import { NpcProps, WorldNpcsArgs } from '../../types/world'
-import { shuffle } from '../utils/utils'
+import { arraymove, shuffle } from '../utils/utils'
 import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
 import { confrontation_check } from './inits/checksFuncs'
-import { immobile } from '../utils/consts'
 import PlaceSequence from '../behaviors/sequences/placeSequence'
 import Selector from '../behaviors/selector'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
 import ImmobileSequence from '../behaviors/sequences/immobileSequence'
-//import InjuryAction from '../behaviors/actions/injuryAction'
+import TrespassSequence from '../behaviors/sequences/trespassSequence'
 
 const dt = math.randomseed(os.time())
 
@@ -28,13 +26,15 @@ export default class WorldNpcs {
   order: string[]
   quests: QuestMethods
   parent: NpcProps
-  infirmed: string[]
-  injured: string[]
+  //infirmed: string[]
+  //injured: string[]
   ignore: string[]
+  mendingQueue: string[]
 
   constructor(npcsProps: WorldNpcsArgs) {
-    this.infirmed = [] // move to room? infrimed action?
-    this.injured = [] // room? injured action?
+    // this.infirmed = [] // move to room? infrimed action?
+    //this.injured = [] // room? injured action?
+    this.mendingQueue = []
     this.ignore = []
     this.order = []
     this.quests = {
@@ -44,13 +44,13 @@ export default class WorldNpcs {
       returnOrderAll: this.returnOrderAll.bind(this),
     }
     this.parent = {
-      addInfirmed: this.addInfirmed.bind(this),
-      getInfirmed: this.getInfirmed.bind(this),
-      getInjured: this.getInjured.bind(this),
+      // addInfirmed: this.addInfirmed.bind(this),
+      //getWards: this.parent.getWards.bind(this),
+      //getInjured: this.getInjured.bind(this),
       getIgnore: this.getIgnore.bind(this),
-      removeInfirmed: this.removeInfirmed.bind(this),
-      addInjured: this.addInjured.bind(this),
-      removeInjured: this.removeInjured.bind(this),
+      //  removeInfirmed: this.removeInfirmed.bind(this),
+      //addInjured: this.addInjured.bind(this),
+      // removeInjured: this.removeInjured.bind(this),
       addIgnore: this.addIgnore.bind(this),
       removeIgnore: this.removeIgnore.bind(this),
       returnMendeeLocation: this.returnMendeeLocation.bind(this),
@@ -58,6 +58,9 @@ export default class WorldNpcs {
       returnSecurity: this.returnDoctors.bind(this),
       returnAll: this.returnAll.bind(this),
       returnOrderAll: this.returnOrderAll.bind(this),
+      getMendingQueue: this.getMendingQueue.bind(this),
+      addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
+      removeMendee: this.removeMendee.bind(this),
       ...npcsProps,
     }
     this._all = seedNpcs(this.parent)
@@ -66,13 +69,13 @@ export default class WorldNpcs {
     this.fsm = new StateMachine(this, 'npcs')
     this.fsm.addState('idle')
     this.fsm.addState('place', {
-      onEnter: this.onPlaceEnter.bind(this),
+      // onEnter: this.onPlaceEnter.bind(this),
       onUpdate: this.onPlaceUpdate.bind(this),
       onExit: this.onPlaceExit.bind(this),
     })
     this.fsm.addState('active', {
       onEnter: this.onActiveEnter.bind(this),
-      onUpdate: this.onActiveUpdate.bind(this),
+      // onUpdate: this.onActiveUpdate.bind(this),
       onExit: this.onActiveExit.bind(this),
     })
     this.fsm.addState('new', {
@@ -104,7 +107,7 @@ export default class WorldNpcs {
       ) {
         npc.hp = 0
         npc.sincePlayerRoom = 99
-        npc.parent.addInjured(npc.name)
+        //npc.parent.addInjured(npc.name)
         //new InjuryAction(npc.getBehaviorProps.bind(this)).run()
       }
     }
@@ -117,11 +120,18 @@ export default class WorldNpcs {
         npc.behavior.active.children.push(
           new InjuredSequence(npc.getBehaviorProps.bind(this))
         )
+      } else if (
+        npc.clearance + math.random(0, 1) <
+        RoomsInitState[npc.currRoom].clearance
+      ) {
+        npc.behavior.active.children.push(
+          new TrespassSequence(npc.getBehaviorProps.bind(this))
+        )
       }
       npc.fsm.setState('active')
     }
   }
-  private onPlaceEnter(): void {}
+  // private onPlaceEnter(): void {}
   private onPlaceUpdate(): void {
     print('<< :: NPCSplaceUpdate() :: >>')
     this.sort_npcs_by_encounter()
@@ -144,21 +154,22 @@ export default class WorldNpcs {
         npc.behavior.place.children.push(
           new ImmobileSequence(npc.getBehaviorProps.bind(this))
         )
-        print(
-          npc.name,
-          '222onPLaceExit!!!::: active length::',
-          npc.behavior.active.children.length
+      } else if (
+        npc.clearance + math.random(0, 2) <
+        RoomsInitState[npc.currRoom].clearance
+      )
+        npc.behavior.active.children.push(
+          new TrespassSequence(npc.getBehaviorProps.bind(this))
         )
-      }
+
       npc.fsm.setState('active')
     }
   }
   private onActiveEnter(): void {
     print('npcsActiveEnter')
-    // this.medical()
     this.security()
   }
-  private onActiveUpdate(): void {}
+  // private onActiveUpdate(): void {}
   private onActiveExit(): void {
     print('NPCSAVTIVEEXIT!!!')
     this.sort_npcs_by_encounter()
@@ -173,8 +184,20 @@ export default class WorldNpcs {
       npc.fsm.setState('turn')
     }
   }
+  removeMendee(m: string) {
+    this.mendingQueue.splice(this.mendingQueue.indexOf(m), 1)
+  }
+  addAdjustMendingQueue(patient: string) {
+    if (this.mendingQueue.includes(patient) == true) {
+      if (this.mendingQueue.indexOf(patient) > 1)
+        arraymove(this.mendingQueue, this.mendingQueue.indexOf(patient), 0)
+    } else {
+      // print('cautions caused patient:', patient, 'to be added to mendingQueue')
+      this.mendingQueue.push(patient)
+    }
+  }
   returnMendeeLocation(): string | null {
-    const injured = this.parent.getMendingQueue()[0]
+    const injured = this.getMendingQueue()[0]
     return injured === null ? null : this.all[injured].currRoom
   }
   security() {
@@ -207,25 +230,8 @@ export default class WorldNpcs {
       }
     }
   }
-  medical() {
-    let count = this.infirmed.length
-    for (const doc of this.returnDoctors()) {
-      const mobile = !immobile.includes(doc.fsm.getState())
-      if (mobile === true && count > 1) {
-        // should be action!
-        doc.fsm.setState('erfull')
-        count = 0
-      } else if (
-        mobile === true &&
-        count < 1 &&
-        this.parent.getMendingQueue().length > 0
-      ) {
-        // should be action!
-        doc.fsm.setState('paramedic')
-      } else if (mobile === true) {
-        doc.fsm.setState('turn')
-      }
-    }
+  getMendingQueue(): string[] {
+    return this.mendingQueue
   }
   addIgnore(n: string): void {
     this.ignore.push(n)
@@ -233,24 +239,27 @@ export default class WorldNpcs {
   getIgnore(): string[] {
     return this.ignore
   }
+
   removeIgnore(n: string): void {
     this.ignore.splice(this.ignore.indexOf(n), 1)
   }
+  /** 
   addInfirmed(n: string, vacancy: string): void {
+    this.parent.clearStation(this._all[n].currRoom, this._all[n].currStation, n)
     this.infirmed.push(n)
     this._all[n].matrix = RoomsInitState.infirmary.matrix
     this._all[n].cooldown = 8
+    this._all[n].exitRoom = this._all[n].currRoom
     this._all[n].currRoom = 'infirmary'
     this._all[n].currStation = vacancy
   }
-  getInfirmed(): string[] {
-    return this.infirmed
-  }
+
   removeInfirmed(n: string): void {
     this.infirmed.splice(this.infirmed.indexOf(n), 1)
     print('removeInfirmed', this._all[n].currRoom, this._all[n].currStation)
     this.parent.clearStation(this._all[n].currRoom, this._all[n].currStation, n)
   }
+   
   addInjured(n: string): void {
     this.injured.push(n)
     this.parent.pruneStationMap(this._all[n].currRoom, this._all[n].currStation)
@@ -260,7 +269,7 @@ export default class WorldNpcs {
   }
   removeInjured(n: string): void {
     this.injured.splice(this.injured.indexOf(n), 1)
-  }
+  } **/
   returnDoctors(): NpcState[] {
     return [this.all.doc01, this.all.doc02, this.all.doc03]
   }

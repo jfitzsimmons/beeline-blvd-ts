@@ -3,18 +3,17 @@ import StateMachine from './stateMachine'
 import { Behavior, Traits } from '../../types/state'
 import { Effect } from '../../types/tasks'
 import { NpcProps, WorldPlayerArgs } from '../../types/world'
-import Selector from '../behaviors/selector'
 
 export default class ActorState {
   fsm: StateMachine
   name = ''
   inventory: string[] = []
   // loot: string[] make command object?
-  clearance = 0
+  private _clearance = 0
   cooldown = 0
   convos = 0
   matrix = { x: 0, y: 0 }
-  behavior: Behavior
+  behavior: Partial<Behavior>
   traits: Traits = {
     opinion: {
       church: 0,
@@ -66,10 +65,7 @@ export default class ActorState {
   parent: NpcProps | WorldPlayerArgs
   constructor(n: string, lists: NpcProps | WorldPlayerArgs) {
     this.fsm = new StateMachine(this, 'actor_' + n)
-    this.behavior = {
-      place: new Selector([]),
-      active: new Selector([]),
-    }
+    this.behavior = {}
     this.parent = lists
   }
 
@@ -78,5 +74,11 @@ export default class ActorState {
   }
   public set hp(p: number) {
     this._hp = p
+  }
+  public get clearance() {
+    return this._clearance
+  }
+  public set clearance(c: number) {
+    this._clearance = c
   }
 }

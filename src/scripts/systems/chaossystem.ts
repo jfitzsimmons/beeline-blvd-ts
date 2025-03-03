@@ -2,18 +2,18 @@ import { Consequence } from '../../types/tasks'
 import { rollSpecialDice } from '../utils/dice'
 import { shuffle } from '../utils/utils'
 
-const { npcs, player, tasks } = globalThis.game.world
+const { npcs, player } = globalThis.game.world
 
 export const pos_consolations = [
-  tasks.checks.charmed_merits.bind(this),
-  tasks.checks.ap_boost.bind(this),
-  tasks.outcomes.given_gift.bind(this),
-  tasks.checks.love_boost.bind(this),
+  //tasks.checks.charmed_merits.bind(this),
+  //tasks.checks.ap_boost.bind(this),
+  //tasks.outcomes.given_gift.bind(this),
+  //tasks.checks.love_boost.bind(this),
 ]
 export const neg_consolations = [
-  tasks.checks.recklessCheck.bind(this),
+  //tasks.checks.recklessCheck.bind(this),
   love_drop,
-  tasks.checks.suspicious_check.bind(this),
+  //tasks.checks.suspicious_check.bind(this),
 ]
 
 //These two are for Novel FSM TESTJPF

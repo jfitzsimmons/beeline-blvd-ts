@@ -16,7 +16,7 @@ export const RoomsInitState: { [key: string]: Room } = {
       guest: '',
       servants2: '',
     },
-    vacancies: { prisoner1: '', prisoner2: '', prisoner3: '', prisoner4: '' },
+    wards: { prisoner1: '', prisoner2: '', prisoner3: '', prisoner4: '' },
     actors: {},
   },
   baggage: {
@@ -500,7 +500,7 @@ export const RoomsInitState: { [key: string]: Room } = {
       loiter4: '',
       servants2: '',
     },
-    vacancies: { patient1: '', patient2: '', patient3: '', patient4: '' },
+    wards: { patient1: '', patient2: '', patient3: '', patient4: '' },
     actors: {
       drawer: {
         inventory: ['vial02', 'banana', 'vial01'],

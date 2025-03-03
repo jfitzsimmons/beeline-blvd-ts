@@ -11,19 +11,23 @@ import MendeeSequence from './mendeeSequence'
 
 export default class InjuredSequence extends Sequence {
   a: InjuredProps
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
-    const props = getProps('injured')() as InjuredProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
+  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+    const props = getProps('injured') as InjuredProps
     const turnActions: Action[] = []
 
     turnActions.push(...[new InjuredAction(getProps)])
 
     super(turnActions)
+    //testjpf updating a doesnt update npc? getter setter?
     this.a = props
     this.getProps = getProps
+    this.a.updateFromBehavior('sincePlayerRoom', 99)
   }
   run(): 'REMOVE' | '' {
-    this.a.sincePlayerRoom = 99
+    // this.a.returnNpc(this.a.name).sincePlayerRoom = 99
+    this.a.updateFromBehavior('sincePlayerRoom', 99)
+
     for (const child of this.children) {
       const proceed = child.run()()
       print('INJUREDSEQUENCE::: Proceed::', this.a.name, ':', proceed)

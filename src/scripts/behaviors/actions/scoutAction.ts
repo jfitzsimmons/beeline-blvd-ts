@@ -1,9 +1,5 @@
 import { HelperProps } from '../../../types/behaviors'
-import {
-  RoomsInitLayout,
-  RoomsInitState,
-} from '../../states/inits/roomsInitState'
-//import { isNpc } from '../../utils/ai'
+import { RoomsInitState } from '../../states/inits/roomsInitState'
 import Action from '../action'
 
 export default class ScoutAction extends Action {
@@ -17,7 +13,7 @@ export default class ScoutAction extends Action {
 
   run(): { (): void } {
     if (this.a.cooldown > 0) this.a.cooldown = this.a.cooldown - 1
-    this.a.exitRoom = RoomsInitLayout[this.a.matrix.y][this.a.matrix.x]!
+    this.a.exitRoom = this.a.currRoom
 
     const victimMatirix: { x: number; y: number } =
       RoomsInitState[this.room].matrix

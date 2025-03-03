@@ -1,8 +1,5 @@
 import { ActionProps, MedicPlaceProps } from '../../../types/behaviors'
-import {
-  RoomsInitLayout,
-  RoomsInitState,
-} from '../../states/inits/roomsInitState'
+import { RoomsInitState } from '../../states/inits/roomsInitState'
 //import { isNpc } from '../../utils/ai'
 import Action from '../action'
 
@@ -15,16 +12,19 @@ export default class MedicPlaceAction extends Action {
 
   run(): { (): void } {
     const mobile = this.a.sincePlayerRoom < 90
-    const infirmed = this.a.getInfirmed().length
+    const infirmed = this.a.getWards('infirmary').length
 
     if (this.a.cooldown > 0) this.a.cooldown = this.a.cooldown - 1
-    this.a.exitRoom = RoomsInitLayout[this.a.matrix.y][this.a.matrix.x]!
+    this.a.exitRoom = this.a.currRoom
 
     if (mobile === true && infirmed > 1) {
       if (math.random() + infirmed * 0.2 > 1) {
         const filled = this.a.checkSetStation('infirmary', 'aid', this.a.name)
         print('ERfull 1st', this.a.name)
-        if (filled == true) return () => this.success()
+        if (filled == true) {
+          this.a.currRoom = 'infirmary'
+          return () => this.success()
+        }
         //testjpf instead parent.checkSetStation()
         //would have to redo conditional logic.
         //!! I think this logic is badd anyway

@@ -3,27 +3,26 @@ import {
   BehaviorKeys,
   InfirmProps,
 } from '../../../types/behaviors'
-
 import Action from '../action'
+import ArrestAction from '../actions/arrestAction'
 import EffectsAction from '../actions/effectsAction'
-import InfirmAction from '../actions/infirmAction'
 import Sequence from '../sequence'
 
-export default class InfirmSequence extends Sequence {
+export default class ArrestSequence extends Sequence {
   a: InfirmProps
   constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
     const placeActions: Action[] = []
 
     placeActions.push(
-      ...[new EffectsAction(getProps), new InfirmAction(getProps)]
+      ...[new EffectsAction(getProps), new ArrestAction(getProps)]
     )
 
     super(placeActions)
     this.a = getProps('infirm') as InfirmProps
-    this.a.updateFromBehavior('sincePlayerRoom', 97)
+    this.a.updateFromBehavior('sincePlayerRoom', 96)
   }
   run(): 'REMOVE' | '' {
-    //this.a.sincePlayerRoom = 97
+    // this.a.sincePlayerRoom = 97
 
     for (const child of this.children) {
       child.run()()

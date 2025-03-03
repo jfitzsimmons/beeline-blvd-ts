@@ -10,19 +10,20 @@ import ImmobileSequence from './immobileSequence'
 
 export default class MendeeSequence extends Sequence {
   a: MendeeProps
-  getProps: (behavior: BehaviorKeys) => () => ActionProps
+  getProps: (behavior: BehaviorKeys) => ActionProps
 
-  constructor(getProps: (behavior: BehaviorKeys) => () => ActionProps) {
+  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
     const turnActions: Action[] = []
-    const props = getProps('mendee')() as MendeeProps
+    const props = getProps('mendee') as MendeeProps
     turnActions.push(...[new MendeeAction(getProps)])
 
     super(turnActions)
     this.a = props
     this.getProps = getProps
+    this.a.updateFromBehavior('sincePlayerRoom', 98)
   }
   run(): 'REMOVE' | '' {
-    this.a.sincePlayerRoom = 98
+    //  this.a.sincePlayerRoom = 98
 
     print('MendeeSequence:: Running for:', this.a.name)
     for (const child of this.children) {

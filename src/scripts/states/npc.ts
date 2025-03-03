@@ -2,7 +2,7 @@
 import { NpcsInitState } from './inits/npcsInitState'
 import { RoomsInitState } from './inits/roomsInitState'
 import { itemStateInit } from './inits/inventoryInitState'
-import { InventoryTableItem } from '../../types/state'
+import { Behavior, InventoryTableItem } from '../../types/state'
 import { Effect } from '../../types/tasks'
 import { NpcProps } from '../../types/world'
 import { NovelNpc } from '../../types/novel'
@@ -17,35 +17,25 @@ import Sequence from '../behaviors/sequence'
 import {
   ActionProps,
   BehaviorKeys,
-  DefaultBehaviorProps,
-  EffectsProps,
-  HelperProps,
-  ImmobileProps,
-  InfirmedProps,
-  InfirmProps,
-  InjuredProps,
-  InjuryProps,
-  MedicPlaceProps,
-  MendeeProps,
-  MenderProps,
-  PlaceProps,
+  BehaviorSetters,
 } from '../../types/behaviors'
-//import InjuredSequence from '../behaviors/sequences/injuredSequence'
-
-//const dt = math.randomseed(os.time())
-
+import Selector from '../behaviors/selector'
 export default class NpcState extends ActorState {
+  //prototype: any
   home: { x: number; y: number }
   clan: string
   body: string
   love = 0
   currStation = ''
+  currRoom = 'grounds'
+  exitRoom = 'grounds'
   parent: NpcProps
   convos = 0
   actions: string[] = ['talk', 'give', 'trade', 'pockets']
   aiPath = ''
-  sincePlayerRoom = 0
+  private _sincePlayerRoom = 0
   sincePlayerConvo = 99
+  behavior: Behavior
   constructor(n: string, lists: NpcProps) {
     super(n, lists) // 👈️ call super() here
     //TESTJPFDEBUG HP
@@ -59,38 +49,154 @@ export default class NpcState extends ActorState {
     // this.fsm = new StateMachine(this, 'npc' + n)
     this.matrix = { x: 0, y: 0 }
     this.parent = lists
+
+    const behaviorDefaults = () => {
+      return {
+        name: this.name,
+        matrix: this.matrix,
+        cooldown: this.cooldown,
+        sincePlayerRoom: this._sincePlayerRoom,
+        currRoom: this.currRoom,
+        currStation: this.currStation,
+        addToBehavior: this.addToBehavior.bind(this),
+        hp: this.hp,
+        updateFromBehavior: this.updateFromBehavior.bind(this),
+      }
+    }
+
+    //    const behaviorProps:
+    this.behavior = {
+      place: new Selector([]),
+      active: new Selector([]),
+      update: {
+        cooldown: (value) => (this.cooldown = value as number),
+        hp: (value) => (this.hp = value as number),
+        clearance: (value) => (this.clearance = value as number),
+        sincePlayerRoom: (value) => (this.sincePlayerRoom = value as number),
+        station: (value) => {
+          const v = value as [string, string]
+          this.matrix = RoomsInitState[v[0]].matrix
+          this.exitRoom = this.currRoom
+          this.currRoom = v[0]
+          this.currStation = v[1]
+          //return
+        },
+      },
+      props: {
+        effects: () => {
+          return { effects: this.effects, traits: this.traits }
+        },
+        place: () => {
+          return {
+            clearance: this.clearance,
+            clan: this.clan,
+            exitRoom: this.exitRoom,
+            findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
+        medplace: () => {
+          return {
+            clearance: this.clearance,
+            clan: this.clan,
+            exitRoom: this.exitRoom,
+            findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
+            checkSetStation: this.parent.checkSetStation.bind(this),
+            getWards: this.parent.getWards.bind(this),
+            getMendingQueue: this.parent.getMendingQueue.bind(this),
+            returnMendeeLocation: this.parent.returnMendeeLocation.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
+        injury: () => {
+          return {
+            //addInjured: this.parent.addInjured.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
+        mender: () => {
+          return {
+            returnNpc: this.parent.returnNpc.bind(this),
+            getFocusedRoom: this.parent.getFocusedRoom.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
+        immobile: () => {
+          return {
+            pruneStationMap: this.parent.pruneStationMap.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
+        injured: () => {
+          return {
+            traits: this.traits,
+            exitRoom: this.exitRoom,
+            returnNpc: this.parent.returnNpc.bind(this),
+            getMendingQueue: this.parent.getMendingQueue.bind(this),
+            getOccupants: this.parent.getOccupants.bind(this),
+            getIgnore: this.parent.getIgnore.bind(this),
+            addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
+        helper: () => {
+          return {
+            clearance: this.clearance,
+            clan: this.clan,
+            returnNpc: this.parent.returnNpc.bind(this),
+            getOccupants: this.parent.getOccupants.bind(this),
+            addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),
+            exitRoom: this.exitRoom,
+            findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
+            makePriorityRoomList: this.makePriorityRoomList.bind(this),
+            getMendingQueue: this.parent.getMendingQueue.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
+        mendee: () => {
+          return {
+            returnNpc: this.parent.returnNpc.bind(this),
+            addIgnore: this.parent.addIgnore.bind(this),
+            removeMendee: this.parent.removeMendee.bind(this),
+            addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
+        infirm: () => {
+          return {
+            exitRoom: this.exitRoom,
+            sendToVacancy: this.parent.sendToVacancy.bind(this),
+            // addInfirmed: this.parent.addInfirmed.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
+        infirmed: () => {
+          return {
+            clearance: this.clearance,
+            getOccupants: this.parent.getOccupants.bind(this),
+            // removeInfirmed: this.parent.removeInfirmed.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
+        question: () => {
+          return {
+            traits: this.traits,
+            inventory: this.inventory,
+            clan: this.clan,
+            love: this.love,
+            exitRoom: this.exitRoom,
+            addInvBonus: this.addInvBonus.bind(this),
+            addOrExtendEffect: this.addOrExtendEffect.bind(this),
+            getBehaviorProps: this.getBehaviorProps.bind(this),
+            getOccupants: this.parent.getOccupants.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
+      },
+    }
+
     this.fsm
       .addState('idle')
-      .addState('infirm', {
-        onEnter: this.onInfirmEnter.bind(this),
-        onUpdate: this.onInfirmUpdate.bind(this),
-        onExit: this.onInfirmEnd.bind(this),
-      })
-      .addState('injury', {
-        onEnter: this.onInjuryStart.bind(this),
-        onUpdate: this.onInjuryUpdate.bind(this),
-        onExit: this.onInjuryEnd.bind(this),
-      })
-      .addState('erfull', {
-        onEnter: this.onERfullEnter.bind(this),
-        onUpdate: this.onERfullUpdate.bind(this),
-        onExit: this.onERfullExit.bind(this),
-      })
-      .addState('paramedic', {
-        onEnter: this.onParamedicEnter.bind(this),
-        onUpdate: this.onParamedicUpdate.bind(this),
-        onExit: this.onParamedicExit.bind(this),
-      })
-      .addState('mendee', {
-        onEnter: this.onMendeeEnter.bind(this),
-        onUpdate: this.onMendeeUpdate.bind(this),
-        onExit: this.onMendeeExit.bind(this),
-      })
-      .addState('mender', {
-        onEnter: this.onMenderEnter.bind(this),
-        onUpdate: this.onMenderUpdate.bind(this),
-        onExit: this.onMenderExit.bind(this),
-      })
       .addState('active', {
         onEnter: this.onActiveEnter.bind(this),
         onUpdate: this.onActiveUpdate.bind(this),
@@ -123,11 +229,17 @@ export default class NpcState extends ActorState {
       })
     this.fsm.setState('new')
     this.addInvBonus = this.addInvBonus.bind(this)
-    this.tendToPatient = this.tendToPatient.bind(this)
     this.add_effects_bonus = this.add_effects_bonus.bind(this)
     this.addOrExtendEffect = this.addOrExtendEffect.bind(this)
     this.addToBehavior = this.addToBehavior.bind(this)
     this.getBehaviorProps = this.getBehaviorProps.bind(this)
+    this.updateFromBehavior = this.updateFromBehavior.bind(this)
+  }
+  public get sincePlayerRoom(): number {
+    return this._sincePlayerRoom
+  }
+  public set sincePlayerRoom(t: number) {
+    this._sincePlayerRoom = t
   }
   private onConfrontPlayerEnter(): void {
     this.convos++
@@ -144,23 +256,6 @@ export default class NpcState extends ActorState {
     this.sincePlayerConvo = novelUpdates.sincePlayerConvo
     this.love = novelUpdates.love
   }
-
-  private onInfirmEnter(): void {}
-  private onInfirmUpdate(): void {}
-  private onInfirmEnd(): void {}
-  private onInjuryStart(): void {
-    //this.sincePlayerRoom = 99
-    //this.parent.addInjured(this.name)
-    //this.hp = 0
-  }
-  private onInjuryUpdate(): void {}
-  private onInjuryEnd(): void {}
-  private onParamedicEnter(): void {}
-  private onParamedicUpdate(): void {}
-  private onParamedicExit(): void {}
-  private onERfullEnter(): void {}
-  private onERfullUpdate(): void {}
-  private onERfullExit(): void {}
   private onTrespassEnter(): void {
     const hallpass = this.parent.hasHallpass(this.name)
     if (
@@ -185,6 +280,7 @@ export default class NpcState extends ActorState {
   }
   private onTrespassExit(): void {}
   private onArresteeEnter(): void {
+    /**
     const vacancy = this.parent.sendToVacancy('security', this.name)
     if (vacancy != null) {
       this.parent.clearStation(this.currRoom, this.currStation, this.name)
@@ -195,18 +291,13 @@ export default class NpcState extends ActorState {
     this.matrix = RoomsInitState.security.matrix
     this.cooldown = 8
     this.currRoom = 'security'
+    **/
   }
   private onArresteeUpdate(): void {
-    this.cooldown--
-    if (this.cooldown < 1) this.fsm.setState('turn')
+    //this.cooldown--
+    //if (this.cooldown < 1) this.fsm.setState('turn')
   }
   private onArresteeExit(): void {}
-  private onMendeeEnter(): void {}
-  private onMendeeUpdate(): void {}
-  private onMendeeExit(): void {}
-  private onMenderEnter(): void {}
-  private onMenderUpdate(): void {}
-  private onMenderExit(): void {}
   private onNewEnter(): void {}
   private onNewUpdate(): void {
     this.behavior.place.run()
@@ -245,7 +336,7 @@ export default class NpcState extends ActorState {
       home: this.home,
     }
     const npcTurnProps = {
-      sincePlayerRoom: this.sincePlayerRoom,
+      sincePlayerRoom: this._sincePlayerRoom,
       aiPath: this.aiPath,
       target: target,
       ...npcPriorityProps,
@@ -263,7 +354,7 @@ export default class NpcState extends ActorState {
     const target =
       t !== undefined ? t : RoomsInitState[this.parent.getPlayerRoom()].matrix
     const rooms = r !== undefined ? r : this.makePriorityRoomList(target)
-
+    this.exitRoom = this.currRoom
     this.parent.clearStation(this.currRoom, this.currStation, this.name)
     const { chosenRoom, chosenStation } = fillStationAttempt(
       rooms,
@@ -272,23 +363,34 @@ export default class NpcState extends ActorState {
       this.clan,
       this.parent.getStationMap()
     )
-    print('findrooomplacestation:: STATION:::', chosenRoom, chosenStation)
-    this.exitRoom = this.currRoom
+    print(
+      'findrooomplacestation:: STATION:::',
+      chosenRoom,
+      chosenStation,
+      'exit room:',
+      this.exitRoom
+    )
+
     this.currRoom = chosenRoom
+    this.currStation = chosenStation
+    this.matrix = RoomsInitState[chosenRoom].matrix
+
     this.parent.setStation(chosenRoom, chosenStation, this.name)
     //this.parent.pruneStationMap(chosenRoom, chosenStation)
-
+    /**testjpf clearance needs complete overhaul
+     * make ClearanceSequence
+     * !!!
+    
     if (
       RoomsInitState[chosenRoom].clearance >
       this.clearance + math.random(1, 5)
     )
       this.fsm.setState('trespass')
-    this.matrix = RoomsInitState[chosenRoom].matrix
-    this.currStation = chosenStation
+       */
     if (chosenRoom != this.parent.getPlayerRoom()) {
-      this.sincePlayerRoom = this.sincePlayerRoom + 1
+      this._sincePlayerRoom = this._sincePlayerRoom + 1
     } else {
-      this.sincePlayerRoom = 0
+      this._sincePlayerRoom = 0
     }
   }
   addToBehavior(selector: 'place' | 'active', s: Sequence, unshift = false) {
@@ -296,134 +398,20 @@ export default class NpcState extends ActorState {
       ? this.behavior[selector].children.push(s)
       : this.behavior[selector].children.unshift(s)
   }
-  getBehaviorProps(behavior: BehaviorKeys): () => ActionProps | EffectsProps {
-    /**
-    const defaultProps = {
-      name: this.name,
-      clan: this.clan,
-      effects: this.effects,
-      traits: this.traits,
-      cooldown: this.cooldown,
-      exitRoom: this.exitRoom,
-      matrix: this.matrix,
-      sincePlayerRoom: this.sincePlayerRoom,
-      addToBehavior: this.addToBehavior.bind(this),
-    }
-    const placeProps: ActionProps = {
-      ...(behavior == 'place' && { defaultProps }),
-    }
-      */
-    const defaults: DefaultBehaviorProps = {
-      name: this.name,
-      matrix: this.matrix,
-      cooldown: this.cooldown,
-      sincePlayerRoom: this.sincePlayerRoom,
-      currRoom: this.currRoom,
-      currStation: this.currStation,
-      addToBehavior: this.addToBehavior.bind(this),
-      hp: this.hp,
-    }
-    const props: {
-      effects: EffectsProps
-      place: PlaceProps
-      medplace: MedicPlaceProps
-      injury: InjuryProps
-      mender: MenderProps
-      immobile: ImmobileProps
-      injured: InjuredProps
-      mendee: MendeeProps
-      infirm: InfirmProps
-      infirmed: InfirmedProps
-      helper: HelperProps
-    } = {
-      effects: { effects: this.effects, traits: this.traits },
-      place: {
-        clan: this.clan,
-        exitRoom: this.exitRoom,
-        findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
-        ...defaults,
-      },
-      medplace: {
-        clan: this.clan,
-        exitRoom: this.exitRoom,
-        findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
-        checkSetStation: this.parent.checkSetStation.bind(this),
-        getInfirmed: this.parent.getInfirmed.bind(this),
-        getMendingQueue: this.parent.getMendingQueue.bind(this),
-        returnMendeeLocation: this.parent.returnMendeeLocation.bind(this),
-        ...defaults,
-      },
-      injury: {
-        addInjured: this.parent.addInjured.bind(this),
-        ...defaults,
-      },
-      mender: {
-        returnNpc: this.parent.returnNpc.bind(this),
-        getFocusedRoom: this.parent.getFocusedRoom.bind(this),
-        ...defaults,
-      },
-      immobile: {
-        pruneStationMap: this.parent.pruneStationMap.bind(this),
-        ...defaults,
-      },
-      injured: {
-        returnNpc: this.parent.returnNpc.bind(this),
-        getMendingQueue: this.parent.getMendingQueue.bind(this),
-        getOccupants: this.parent.getOccupants.bind(this),
-        getIgnore: this.parent.getIgnore.bind(this),
-        addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),
-
-        ...defaults,
-      },
-      helper: {
-        clan: this.clan,
-        returnNpc: this.parent.returnNpc.bind(this),
-        getOccupants: this.parent.getOccupants.bind(this),
-        addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),
-        exitRoom: this.exitRoom,
-        findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
-        makePriorityRoomList: this.makePriorityRoomList.bind(this),
-        getMendingQueue: this.parent.getMendingQueue.bind(this),
-        ...defaults,
-      },
-      mendee: {
-        returnNpc: this.parent.returnNpc.bind(this),
-        addIgnore: this.parent.addIgnore.bind(this),
-        removeMendee: this.parent.removeMendee.bind(this),
-        addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),
-        ...defaults,
-      },
-      infirm: {
-        sendToVacancy: this.parent.sendToVacancy.bind(this),
-        addInfirmed: this.parent.addInfirmed.bind(this),
-        ...defaults,
-      },
-      infirmed: {
-        getOccupants: this.parent.getOccupants.bind(this),
-        removeInfirmed: this.parent.removeInfirmed.bind(this),
-        ...defaults,
-      },
-    }
-
-    /**
-    Object.assign(
-      props,
-      behavior == 'place' && { placeProps },
-      behavior == 'effects' && { effectsProps },
-      behavior == 'medplace' && { medProps },
-      behavior == 'injury' && { injuryProps },
-      behavior == 'mender' && { menderProps },
-      behavior == 'immobile' && { immobileProps },
-      behavior == 'injured' && { injuredProps },
-      behavior == 'mendee' && { mendeeProps },
-      behavior == 'infirm' && { infirmProps },
-      behavior == 'infirmed' && { infirmedProps }
-    )
-      */
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const returnProps = { ...props[behavior], ...defaults } as ActionProps
-    return () => returnProps
+  getBehaviorProps(behavior: BehaviorKeys): ActionProps {
+    return this.behavior.props[behavior]()
   }
+  updateFromBehavior(
+    prop: keyof BehaviorSetters,
+    value: number | [string, string]
+  ): void {
+    this.behavior.update[prop](value)
+
+    //this.behavior.props[behavior]()
+  }
+  //updateBehaviorProps(behavior: NpcKeys, value: NpcValues) {
+  // this[behavior] = value
+  //}
   removeInvBonus(i: string) {
     const item: InventoryTableItem = { ...itemStateInit[i] }
     let sKey: keyof typeof item.skills
@@ -477,11 +465,5 @@ export default class NpcState extends ActorState {
         e.turns = e.turns - 1
       }
     }
-  }
-  tendToPatient(p: string, doc: string) {
-    this.parent.returnNpc(doc).fsm.setState('mender')
-    this.parent.returnNpc(p).fsm.setState('mendee')
-    //tasks.removeHeat(p)
-    this.parent.taskBuilder(doc, 'mender', p, 'injury')
   }
 }
