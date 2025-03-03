@@ -9,7 +9,7 @@ export default class ActorState {
   name = ''
   inventory: string[] = []
   // loot: string[] make command object?
-  clearance = 0
+  private _clearance = 0
   cooldown = 0
   convos = 0
   matrix = { x: 0, y: 0 }
@@ -74,5 +74,11 @@ export default class ActorState {
   }
   public set hp(p: number) {
     this._hp = p
+  }
+  public get clearance() {
+    return this._clearance
+  }
+  public set clearance(c: number) {
+    this._clearance = c
   }
 }

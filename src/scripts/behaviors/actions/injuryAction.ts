@@ -5,7 +5,7 @@ import {
 } from '../../../types/behaviors'
 
 import Action from '../action'
-
+//testjpf DELTEE ME ?!?!?!?
 export default class InjuryAction extends Action {
   a: DefaultBehaviorProps
   constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
@@ -15,11 +15,10 @@ export default class InjuryAction extends Action {
   }
   run(): { (): void } {
     //const { actor: a } = this
-    this.a.sincePlayerRoom = 99
     //this.a.addInjured(this.a.name)
     // a.parent.pruneStationMap(a.currRoom, a.currStation)
 
-    this.a.hp = 0
+    //this.a.hp = 0
 
     //testjpf returns to PlaceSequence
     return () => this.continue('injury')

@@ -49,7 +49,7 @@ export default class HelperAction extends Action {
 
     for (const helper of [...new Set([...prevRoom, ...currRoom])]) {
       if (
-        this.a.returnNpc(helper).sincePlayerRoom < 97 &&
+        this.a.returnNpc(helper).sincePlayerRoom < 96 &&
         math.random() > 0.4
       ) {
         //available doctor found

@@ -20,7 +20,19 @@ export default class TrespassAction extends Action {
     this.getProps = getProps
   }
   run(): { (): void } {
-    this.a.sincePlayerRoom = 96 // so can add QuestionSeq to available security
+    const stationSlice = this.a.currStation.slice(-7, -1)
+    print('TrespassAction:: slice::', stationSlice)
+    if (
+      stationSlice == 'utside' ||
+      stationSlice == '_passe' ||
+      stationSlice == 'isoner' ||
+      stationSlice == 'atient'
+    )
+      return () =>
+        this.fail(
+          `TrespassAction:: ${this.a.name} gets 1 turn clearance for ${this.a.currStation}`
+        )
+    this.a.updateFromBehavior('sincePlayerRoom', 96) // so can add QuestionSeq to available security
     if (this.a.getIgnore().includes(this.a.name))
       return () =>
         this.fail('TrespassAction:: IGNORE - injured NPC???:' + this.a.name)
@@ -37,7 +49,7 @@ export default class TrespassAction extends Action {
       const enforcer = this.a.returnNpc(e)
       if (
         enforcer.sincePlayerRoom < 96 &&
-        math.random() > 0.4 &&
+        math.random() > 0.1 &&
         confrontation_check(enforcer.traits, this.a.traits) == true
       ) {
         /**
@@ -99,11 +111,13 @@ export default class TrespassAction extends Action {
     }
 
     return () =>
-      this.success(
-        'TrespassAction:: Default - trespass succecful for:' + this.a.name
-      )
+      this.continue('Default - trespass succecful for:' + this.a.name)
   }
   success(s?: string): void {
     print('TrespassAction:: Success:', s)
+  }
+  continue(s: string): string {
+    print('TrespassAction:: Continue:', s)
+    return 'continue'
   }
 }

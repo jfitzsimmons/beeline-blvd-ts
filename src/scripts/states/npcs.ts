@@ -155,7 +155,7 @@ export default class WorldNpcs {
           new ImmobileSequence(npc.getBehaviorProps.bind(this))
         )
       } else if (
-        npc.clearance + math.random(0, 4) <
+        npc.clearance + math.random(0, 2) <
         RoomsInitState[npc.currRoom].clearance
       )
         npc.behavior.active.children.push(

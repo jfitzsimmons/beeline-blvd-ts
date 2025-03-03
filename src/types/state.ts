@@ -1,7 +1,7 @@
 import Selector from '../scripts/behaviors/selector'
 import NpcState from '../scripts/states/npc'
 import RoomState from '../scripts/states/room'
-import { BehaviorProps } from './behaviors'
+import { BehaviorProps, BehaviorSetters } from './behaviors'
 import { Effect } from './tasks'
 
 export interface NpcsState {
@@ -42,6 +42,7 @@ export interface Npc extends NpcDefaults {
 export interface Behavior {
   place: Selector
   active: Selector
+  update: BehaviorSetters
   props: BehaviorProps
 }
 export interface PlayerState {

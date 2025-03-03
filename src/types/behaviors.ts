@@ -30,6 +30,14 @@ export type BehaviorKeys =
   | 'helper'
   | 'question'
 
+export interface BehaviorSetters {
+  cooldown: (value: number | [string, string]) => void
+  hp: (value: number | [string, string]) => void
+  clearance: (value: number | [string, string]) => void
+  sincePlayerRoom: (value: number | [string, string]) => void
+  station: (value: number | [string, string]) => void
+}
+
 export interface BehaviorProps {
   effects: () => EffectsProps
   place: () => PlaceProps
@@ -57,6 +65,10 @@ export interface DefaultBehaviorProps {
     selector: 'place' | 'active',
     s: Sequence,
     unshift?: boolean
+  ): void
+  updateFromBehavior(
+    prop: keyof BehaviorSetters,
+    value: number | [string, string]
   ): void
 }
 export interface PlaceProps extends DefaultBehaviorProps {
@@ -117,6 +129,7 @@ export interface MendeeProps extends DefaultBehaviorProps {
   removeMendee(n: string): void
 }
 export interface InfirmedProps extends DefaultBehaviorProps {
+  clearance: number
   getOccupants(r: string): string[]
   //removeInfirmed(n: string): void
 }

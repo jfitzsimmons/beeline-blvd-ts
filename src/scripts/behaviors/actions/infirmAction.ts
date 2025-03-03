@@ -3,7 +3,7 @@ import {
   BehaviorKeys,
   InfirmProps,
 } from '../../../types/behaviors'
-import { RoomsInitState } from '../../states/inits/roomsInitState'
+//import { RoomsInitState } from '../../states/inits/roomsInitState'
 import Action from '../action'
 import Sequence from '../sequence'
 //import Sequence from '../sequence'
@@ -28,10 +28,12 @@ export default class InfirmAction extends Action {
       this.a.currStation
     )
     if (vacancy != null) {
-      this.a.matrix = RoomsInitState.infirmary.matrix
-      this.a.exitRoom = this.a.currRoom
-      this.a.currRoom = 'infirmary'
-      this.a.currStation = vacancy
+      //testjpf make 1 update!!!
+      this.a.updateFromBehavior('station', ['infirmary', vacancy])
+      // this.a.matrix = RoomsInitState.infirmary.matrix
+      //  this.a.exitRoom = this.a.currRoom
+      //  this.a.currRoom = 'infirmary'
+      // this.a.currStation = vacancy
 
       return () => this.delay(new InfirmedSequence(this.getProps))
     }

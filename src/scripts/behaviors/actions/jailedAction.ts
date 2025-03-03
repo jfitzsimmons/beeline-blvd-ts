@@ -17,8 +17,15 @@ export default class JailedAction extends Action {
     ) && Math.random() > 0.3
       ? (this.a.cooldown = this.a.cooldown - 2)
       : Math.random() > 0.3 && this.a.cooldown--
+
+    print(
+      'JailedAction::',
+      this.a.name,
+      'jailed for another Turn. Cooldown:',
+      this.a.cooldown
+    )
     if (this.a.cooldown < 1) {
-      this.a.sincePlayerRoom = math.random(15, 40)
+      //cooldown too??? testjpf
       //this.a.removeInfirmed(this.a.name)
       print('JailedAction:: cooldown reset. RE-PLACE npc??')
       return () => this.success()

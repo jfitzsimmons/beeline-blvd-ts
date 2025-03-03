@@ -75,7 +75,7 @@ export default class QuestionAction extends Action {
       false
     )
     if (consequence === 'jailed') {
-      this.perp.sincePlayerRoom = 97
+      this.perp.updateFromBehavior('sincePlayerRoom', 97)
       print('QuestionAction::', this.a.name, 'has Arrested::', this.perp.name)
       this.perp.addToBehavior(
         'place',

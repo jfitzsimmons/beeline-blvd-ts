@@ -182,7 +182,7 @@ export function set_npc_target(
   }
 ) {
   let target = { x: 0, y: 0 }
-  if (n.sincePlayerRoom > 20) {
+  if (n.sincePlayerRoom > 25) {
     target = direction.center
   } else if (n.aiPath == 'pinky') {
     //always targets 0 to 2 rooms infront of player

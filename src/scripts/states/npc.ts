@@ -14,10 +14,14 @@ import {
 import { surrounding_room_matrix } from '../utils/utils'
 import ActorState from './actor'
 import Sequence from '../behaviors/sequence'
-import { ActionProps, BehaviorKeys } from '../../types/behaviors'
+import {
+  ActionProps,
+  BehaviorKeys,
+  BehaviorSetters,
+} from '../../types/behaviors'
 import Selector from '../behaviors/selector'
-
 export default class NpcState extends ActorState {
+  //prototype: any
   home: { x: number; y: number }
   clan: string
   body: string
@@ -29,7 +33,7 @@ export default class NpcState extends ActorState {
   convos = 0
   actions: string[] = ['talk', 'give', 'trade', 'pockets']
   aiPath = ''
-  sincePlayerRoom = 0
+  private _sincePlayerRoom = 0
   sincePlayerConvo = 99
   behavior: Behavior
   constructor(n: string, lists: NpcProps) {
@@ -51,11 +55,12 @@ export default class NpcState extends ActorState {
         name: this.name,
         matrix: this.matrix,
         cooldown: this.cooldown,
-        sincePlayerRoom: this.sincePlayerRoom,
+        sincePlayerRoom: this._sincePlayerRoom,
         currRoom: this.currRoom,
         currStation: this.currStation,
         addToBehavior: this.addToBehavior.bind(this),
         hp: this.hp,
+        updateFromBehavior: this.updateFromBehavior.bind(this),
       }
     }
 
@@ -63,6 +68,20 @@ export default class NpcState extends ActorState {
     this.behavior = {
       place: new Selector([]),
       active: new Selector([]),
+      update: {
+        cooldown: (value) => (this.cooldown = value as number),
+        hp: (value) => (this.hp = value as number),
+        clearance: (value) => (this.clearance = value as number),
+        sincePlayerRoom: (value) => (this.sincePlayerRoom = value as number),
+        station: (value) => {
+          const v = value as [string, string]
+          this.matrix = RoomsInitState[v[0]].matrix
+          this.exitRoom = this.currRoom
+          this.currRoom = v[0]
+          this.currStation = v[1]
+          //return
+        },
+      },
       props: {
         effects: () => {
           return { effects: this.effects, traits: this.traits }
@@ -153,6 +172,7 @@ export default class NpcState extends ActorState {
         },
         infirmed: () => {
           return {
+            clearance: this.clearance,
             getOccupants: this.parent.getOccupants.bind(this),
             // removeInfirmed: this.parent.removeInfirmed.bind(this),
             ...behaviorDefaults(),
@@ -213,6 +233,13 @@ export default class NpcState extends ActorState {
     this.addOrExtendEffect = this.addOrExtendEffect.bind(this)
     this.addToBehavior = this.addToBehavior.bind(this)
     this.getBehaviorProps = this.getBehaviorProps.bind(this)
+    this.updateFromBehavior = this.updateFromBehavior.bind(this)
+  }
+  public get sincePlayerRoom(): number {
+    return this._sincePlayerRoom
+  }
+  public set sincePlayerRoom(t: number) {
+    this._sincePlayerRoom = t
   }
   private onConfrontPlayerEnter(): void {
     this.convos++
@@ -309,7 +336,7 @@ export default class NpcState extends ActorState {
       home: this.home,
     }
     const npcTurnProps = {
-      sincePlayerRoom: this.sincePlayerRoom,
+      sincePlayerRoom: this._sincePlayerRoom,
       aiPath: this.aiPath,
       target: target,
       ...npcPriorityProps,
@@ -361,9 +388,9 @@ export default class NpcState extends ActorState {
       this.fsm.setState('trespass')
        */
     if (chosenRoom != this.parent.getPlayerRoom()) {
-      this.sincePlayerRoom = this.sincePlayerRoom + 1
+      this._sincePlayerRoom = this._sincePlayerRoom + 1
     } else {
-      this.sincePlayerRoom = 0
+      this._sincePlayerRoom = 0
     }
   }
   addToBehavior(selector: 'place' | 'active', s: Sequence, unshift = false) {
@@ -374,6 +401,17 @@ export default class NpcState extends ActorState {
   getBehaviorProps(behavior: BehaviorKeys): ActionProps {
     return this.behavior.props[behavior]()
   }
+  updateFromBehavior(
+    prop: keyof BehaviorSetters,
+    value: number | [string, string]
+  ): void {
+    this.behavior.update[prop](value)
+
+    //this.behavior.props[behavior]()
+  }
+  //updateBehaviorProps(behavior: NpcKeys, value: NpcValues) {
+  // this[behavior] = value
+  //}
   removeInvBonus(i: string) {
     const item: InventoryTableItem = { ...itemStateInit[i] }
     let sKey: keyof typeof item.skills

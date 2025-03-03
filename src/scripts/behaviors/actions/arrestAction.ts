@@ -3,7 +3,7 @@ import {
   BehaviorKeys,
   InfirmProps,
 } from '../../../types/behaviors'
-import { RoomsInitState } from '../../states/inits/roomsInitState'
+//import { RoomsInitState } from '../../states/inits/roomsInitState'
 import Action from '../action'
 import Sequence from '../sequence'
 import JailedSequence from '../sequences/jailedSequence'
@@ -27,12 +27,12 @@ export default class ArrestAction extends Action {
       this.a.currStation
     )
     if (vacancy != null) {
-      this.a.currStation = vacancy
-      this.a.sincePlayerRoom = 97
+      this.a.updateFromBehavior('station', ['security', vacancy])
+      // this.a.currStation = vacancy
       // this.a.parent.addInfirmed(this.name)
-      this.a.matrix = RoomsInitState.security.matrix
-      this.a.cooldown = 8
-      this.a.currRoom = 'security'
+      // this.a.matrix = RoomsInitState.security.matrix
+      this.a.updateFromBehavior('cooldown', 10)
+      // this.a.currRoom = 'security'
       return () => this.delay(new JailedSequence(this.getProps))
     }
     return () => this.fail('ArrestAction:: Need noVacancy logic')
