@@ -24,15 +24,15 @@ export default class TrespassSequence extends Sequence {
     super(turnActions)
     this.a = props
     this.getProps = getProps
-    this.prevSpr = this.a.sincePlayerRoom
+    this.prevSpr = this.a.turnPriority
     print('TrespassSeq:: new for', this.a.name, 'in', this.a.currRoom)
-    //this.a.updateFromBehavior('sincePlayerRoom', 96)
+    //this.a.updateFromBehavior('turnPriority', 96)
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
       const proceed = child.run()()
       if (proceed == 'continue')
-        this.a.updateFromBehavior('sincePlayerRoom', this.prevSpr)
+        this.a.updateFromBehavior('turnPriority', this.prevSpr)
     }
 
     return 'REMOVE'

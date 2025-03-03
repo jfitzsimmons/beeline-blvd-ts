@@ -23,12 +23,12 @@ export default class InfirmedSequence extends Sequence {
     this.getProps = getProps
     this.a = props
     this.prevClearance = this.a.clearance
-    this.a.updateFromBehavior('sincePlayerRoom', 98)
+    this.a.updateFromBehavior('turnPriority', 98)
     this.a.updateFromBehavior('clearance', 4)
     // this.a.clearance = 4
   }
   run(): 'REMOVE' | '' {
-    // this.a.updateFromBehavior('sincePlayerRoom', 98)
+    // this.a.updateFromBehavior('turnPriority', 98)
 
     for (const child of this.children) {
       const proceed = child.run()()
@@ -41,7 +41,7 @@ export default class InfirmedSequence extends Sequence {
         this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
       } else {
         this.a.updateFromBehavior('clearance', this.prevClearance)
-        this.a.updateFromBehavior('sincePlayerRoom', math.random(15, 40))
+        this.a.updateFromBehavior('turnPriority', math.random(15, 40))
         this.a.updateFromBehavior('hp', 10)
         this.a.addToBehavior('place', new PlaceSequence(this.getProps), false)
       }

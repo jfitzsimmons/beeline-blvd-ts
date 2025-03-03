@@ -1,7 +1,7 @@
 import Selector from '../scripts/behaviors/selector'
 import NpcState from '../scripts/states/npc'
 import RoomState from '../scripts/states/room'
-import { BehaviorProps, BehaviorSetters } from './behaviors'
+import { BehaviorProps, BehaviorSetters, HeroBehaviorProps } from './behaviors'
 import { Effect } from './tasks'
 
 export interface NpcsState {
@@ -20,7 +20,7 @@ export interface NpcDefaults {
   aiPath: string
   matrix: { x: number; y: number }
   traits: Traits
-  sincePlayerRoom: number
+  turnPriority: number
   sincePlayerConvo: number
   love: number
   hp: number
@@ -43,7 +43,7 @@ export interface Behavior {
   place: Selector
   active: Selector
   update: BehaviorSetters
-  props: BehaviorProps
+  props: BehaviorProps | HeroBehaviorProps
 }
 export interface PlayerState {
   currRoom: string

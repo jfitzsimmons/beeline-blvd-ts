@@ -20,10 +20,10 @@ export default class InfirmSequence extends Sequence {
 
     super(placeActions)
     this.a = getProps('infirm') as InfirmProps
-    this.a.updateFromBehavior('sincePlayerRoom', 97)
+    this.a.updateFromBehavior('turnPriority', 97)
   }
   run(): 'REMOVE' | '' {
-    //this.a.sincePlayerRoom = 97
+    //this.a.turnPriority = 97
 
     for (const child of this.children) {
       child.run()()

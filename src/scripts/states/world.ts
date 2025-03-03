@@ -48,9 +48,11 @@ export default class World {
     }
     this.tasks = new WorldTasks(tasksProps)
     const playerProps: WorldPlayerArgs = {
+      returnNpc: this.returnNpc.bind(this),
       getFocusedRoom: this.rooms.get_focused.bind(this),
       hasHallpass: this.tasks.has_clearance.bind(this),
       removeTaskByCause: this.tasks.removeTaskByCause.bind(this),
+      getOccupants: this.rooms.getOccupants.bind(this),
     }
     this.player = new WorldPlayer('hero', playerProps)
     const npcsProps: WorldNpcsArgs = {

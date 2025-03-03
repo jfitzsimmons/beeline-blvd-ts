@@ -32,7 +32,7 @@ export default class TrespassAction extends Action {
         this.fail(
           `TrespassAction:: ${this.a.name} gets 1 turn clearance for ${this.a.currStation}`
         )
-    this.a.updateFromBehavior('sincePlayerRoom', 96) // so can add QuestionSeq to available security
+    this.a.updateFromBehavior('turnPriority', 96) // so can add QuestionSeq to available security
     if (this.a.getIgnore().includes(this.a.name))
       return () =>
         this.fail('TrespassAction:: IGNORE - injured NPC???:' + this.a.name)
@@ -48,7 +48,7 @@ export default class TrespassAction extends Action {
     for (const e of [...new Set([...prevRoom, ...currRoom])]) {
       const enforcer = this.a.returnNpc(e)
       if (
-        enforcer.sincePlayerRoom < 96 &&
+        enforcer.turnPriority < 96 &&
         math.random() > 0.1 &&
         confrontation_check(enforcer.traits, this.a.traits) == true
       ) {

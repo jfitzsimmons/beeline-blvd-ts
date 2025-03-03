@@ -29,9 +29,11 @@ export interface TaskProps extends WorldTasksArgs {
   taskBuilder(owner: string, label: string, target: string, cause: string): void
 }
 export interface WorldPlayerArgs {
+  returnNpc(n: string): NpcState
   getFocusedRoom(): string
   hasHallpass(owner: string): TaskState | null
   removeTaskByCause(target: string, cause: string): void
+  getOccupants(r: string): string[]
 }
 export interface WorldNpcsArgs extends TaskProps {
   getPlayerRoom(): string
