@@ -4,6 +4,7 @@ import {
   InjuredProps,
   QuestionProps,
 } from '../../../types/behaviors'
+import { confrontation_check } from '../../states/inits/checksFuncs'
 import Action from '../action'
 import QuestionSequence from '../sequences/questionSequence'
 //import QuestionSequence from '../sequences/questionSequence'
@@ -19,20 +20,38 @@ export default class TrespassAction extends Action {
     this.getProps = getProps
   }
   run(): { (): void } {
-    this.a.sincePlayerRoom = 96 // so can add QuestionSeq to available security
+    const stationSlice = this.a.currStation.slice(-7, -1)
+    print('TrespassAction:: slice::', stationSlice)
+    if (
+      stationSlice == 'utside' ||
+      stationSlice == '_passe' ||
+      stationSlice == 'isoner' ||
+      stationSlice == 'atient'
+    )
+      return () =>
+        this.fail(
+          `TrespassAction:: ${this.a.name} gets 1 turn clearance for ${this.a.currStation}`
+        )
+    this.a.updateFromBehavior('sincePlayerRoom', 96) // so can add QuestionSeq to available security
     if (this.a.getIgnore().includes(this.a.name))
       return () =>
-        this.continue('TrespassAction:: IGNORE - injured NPC???:' + this.a.name)
+        this.fail('TrespassAction:: IGNORE - injured NPC???:' + this.a.name)
 
-    const authority = Object.values(
-      this.a.getOccupants(this.a.currRoom)
-    ).filter(
+    const currRoom = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
       (s) => s != '' && s != this.a.name && this.a.name.slice(0, 4) === 'secu'
     )
-
-    for (const e of authority) {
+    const prevRoom = Object.values(this.a.getOccupants(this.a.exitRoom)).filter(
+      (s: string) =>
+        s.slice(0, 4) === 'secu' &&
+        this.a.returnNpc(s).exitRoom == this.a.currRoom
+    )
+    for (const e of [...new Set([...prevRoom, ...currRoom])]) {
       const enforcer = this.a.returnNpc(e)
-      if (enforcer.sincePlayerRoom < 96 && math.random() > 0.4) {
+      if (
+        enforcer.sincePlayerRoom < 96 &&
+        math.random() > 0.1 &&
+        confrontation_check(enforcer.traits, this.a.traits) == true
+      ) {
         /**
          * testjpf
          * options:?:
@@ -50,6 +69,13 @@ export default class TrespassAction extends Action {
           'active',
           new QuestionSequence(enforcer.getBehaviorProps.bind(this), perp)
         )
+        return () =>
+          this.fail(
+            'trespassAction:: Enforcer:' +
+              enforcer.name +
+              'is going to question:' +
+              this.a.name
+          )
         /**
            * testjpf
            * needs to do:::
@@ -85,9 +111,10 @@ export default class TrespassAction extends Action {
     }
 
     return () =>
-      this.continue(
-        'TrespassAction:: Default - Add PlaceSequnce for:' + this.a.name
-      )
+      this.continue('Default - trespass succecful for:' + this.a.name)
+  }
+  success(s?: string): void {
+    print('TrespassAction:: Success:', s)
   }
   continue(s: string): string {
     print('TrespassAction:: Continue:', s)

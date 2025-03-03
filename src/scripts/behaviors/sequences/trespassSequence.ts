@@ -13,6 +13,7 @@ import Sequence from '../sequence'
 
 export default class TrespassSequence extends Sequence {
   a: InjuredProps
+  prevSpr: number
   getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
     const props = getProps('injured') as InjuredProps
@@ -23,13 +24,17 @@ export default class TrespassSequence extends Sequence {
     super(turnActions)
     this.a = props
     this.getProps = getProps
+    this.prevSpr = this.a.sincePlayerRoom
+    print('TrespassSeq:: new for', this.a.name, 'in', this.a.currRoom)
+    //this.a.updateFromBehavior('sincePlayerRoom', 96)
   }
   run(): 'REMOVE' | '' {
-    // this.a.sincePlayerRoom = 99
     for (const child of this.children) {
-      child.run()()
-      print('TRESPASSSEQUENCE::: Proceed::', this.a.name)
+      const proceed = child.run()()
+      if (proceed == 'continue')
+        this.a.updateFromBehavior('sincePlayerRoom', this.prevSpr)
     }
+
     return 'REMOVE'
   }
 }

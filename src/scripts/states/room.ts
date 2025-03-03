@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { RoomsInitState } from './inits/roomsInitState'
 import StateMachine from './stateMachine'
-import { Actors, Swaps, Vacancies } from '../../types/state'
+import { Actors, Swaps, Wards } from '../../types/state'
 import { RoomProps } from '../../types/world'
 import { aiActions } from '../ai/ai_main'
 
@@ -14,7 +14,7 @@ export default class RoomState {
   swaps: Swaps
   actors: Actors
   props?: string[]
-  vacancies?: Vacancies
+  wards?: Wards
   parent: RoomProps
   //checks: RoomChecks
   //outcomes: RoomOutcomes
@@ -27,7 +27,7 @@ export default class RoomState {
     this.swaps = RoomsInitState[r].swaps
     this.actors = RoomsInitState[r].actors
     this.props = RoomsInitState[r].props || []
-    this.vacancies = RoomsInitState[r].vacancies || {}
+    this.wards = RoomsInitState[r].wards || {}
     this.parent = roomProps
     //this.checks = {}
     //this.outcomes = {}

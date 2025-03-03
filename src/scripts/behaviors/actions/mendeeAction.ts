@@ -19,7 +19,6 @@ export default class MendeeAction extends Action {
   run(): { (): void } {
     // const { actor: a } = this
     // if (!isNpc(this.a)) return () => this.fail('NO MendeeAction for Player')
-    this.a.sincePlayerRoom = 98
     //testjpf os this needed?
     //is it duping in the ignore array?
     this.a.addIgnore(this.a.name)
@@ -33,7 +32,9 @@ export default class MendeeAction extends Action {
        * update hp inside of removeMendee
        * but FIRST move mendingQueue from Tasks to NPCS
        */
-      this.a.returnNpc(this.a.name).hp = 5
+      // this.a.returnNpc(this.a.name).hp = 5
+      this.a.updateFromBehavior('hp', 5)
+
       this.a.removeMendee(this.a.name)
       print('MendeeAction::', this.a.name, 'IS BEING INFIRMED')
       return () => this.delay(new InfirmSequence(this.getProps))

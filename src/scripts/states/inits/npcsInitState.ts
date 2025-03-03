@@ -444,7 +444,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     home: { x: 2, y: 4 }, //admin1
     name: 'corps02',
     inventory: ['magicb3', 'vial01'],
-    clearance: 1,
+    clearance: 2,
     clan: 'corps',
     body: 'corps01body',
     ...npc_defaults,
@@ -453,7 +453,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     home: { x: 3, y: 5 }, //admin2
     name: 'corps01',
     inventory: ['sack', 'banana'],
-    clearance: 1,
+    clearance: 3,
     clan: 'corps',
     body: 'corps02body',
     ...npc_defaults,
@@ -462,7 +462,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     home: { x: 1, y: 5 }, //vip
     name: 'corps03',
     inventory: ['magica4', 'mushroom02'],
-    clearance: 1,
+    clearance: 3,
     clan: 'corps',
     body: 'corps03body',
     ...npc_defaults,
@@ -471,7 +471,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     home: { x: 1, y: 3 }, //customs
     name: 'security001',
     inventory: ['potion', 'orange'],
-    clearance: 1,
+    clearance: 3,
     clan: 'security',
     body: 'security01body',
     ...npc_defaults,
@@ -481,7 +481,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     home: { x: 0, y: 3 }, //baggage
     name: 'security002',
     inventory: ['ring', 'mushroom03'],
-    clearance: 1,
+    clearance: 3,
     clan: 'security',
     body: 'security02body',
     ...npc_defaults,
@@ -490,7 +490,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     home: { x: 4, y: 4 }, //store
     name: 'security003',
     inventory: ['drumstick01', 'tomato'],
-    clearance: 2,
+    clearance: 3,
     clan: 'security',
     body: 'security03body',
     ...npc_defaults,
@@ -499,7 +499,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     home: { x: 4, y: 1 }, //maint
     name: 'security004',
     inventory: ['coffeemug', 'orange'],
-    clearance: 2,
+    clearance: 3,
     clan: 'security',
     body: 'security04body',
     ...npc_defaults,
@@ -508,7 +508,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     home: { x: 4, y: 1 }, //maint
     name: 'security005',
     inventory: ['coffeemug', 'orange'],
-    clearance: 2,
+    clearance: 3,
     clan: 'security',
     body: 'security04body',
     ...npc_defaults,

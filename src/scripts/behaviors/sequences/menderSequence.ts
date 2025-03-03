@@ -29,6 +29,7 @@ export default class MenderSequence extends Sequence {
     this.a = props
     this.mendee = mendee
     this.getProps = getProps
+    this.a.updateFromBehavior('sincePlayerRoom', 98)
     print(
       this.a.name,
       'MENDERSEQ CREATED!!!:: DOC,a::',
@@ -39,7 +40,7 @@ export default class MenderSequence extends Sequence {
     )
   }
   run(): 'REMOVE' | '' {
-    this.a.sincePlayerRoom = 98
+    // this.a.sincePlayerRoom = 98
     print('Mend-ER-Sequence:: Running for:', this.a.name)
     for (const child of this.children) {
       const proceed = child.run()()
@@ -50,6 +51,7 @@ export default class MenderSequence extends Sequence {
         )
         this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
       } else {
+        this.a.updateFromBehavior('sincePlayerRoom', math.random(10, 30))
         this.a.addToBehavior('place', new PlaceSequence(this.getProps))
       }
     }

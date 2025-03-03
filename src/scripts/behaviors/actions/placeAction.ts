@@ -1,7 +1,6 @@
 import { ActionProps, BehaviorKeys, PlaceProps } from '../../../types/behaviors'
-import { RoomsInitState } from '../../states/inits/roomsInitState'
+//import { RoomsInitState } from '../../states/inits/roomsInitState'
 import Action from '../action'
-import TrespassSequence from '../sequences/trespassSequence'
 
 export default class PlaceAction extends Action {
   a: PlaceProps
@@ -25,9 +24,9 @@ export default class PlaceAction extends Action {
      * return alternate(TrespassSeq)!!!??
      */
 
-    if (this.a.clearance < RoomsInitState[this.a.currRoom].clearance) {
-      return () => this.alternate(new TrespassSequence(this.getProps))
-    }
+    //if (this.a.clearance < RoomsInitState[this.a.currRoom].clearance) {
+    // return () => this.continue('trespass')
+    //// }
 
     return () => this.success()
   }

@@ -21,7 +21,6 @@ export default class InjuredAction extends Action {
     this.getProps = getProps
   }
   run(): { (): void } {
-    this.a.sincePlayerRoom = 99
     if (this.a.getIgnore().includes(this.a.name))
       return () =>
         this.continue(
@@ -39,7 +38,7 @@ export default class InjuredAction extends Action {
         return 0
       })
     for (const helper of helpers) {
-      if (this.a.returnNpc(helper).sincePlayerRoom < 97) {
+      if (this.a.returnNpc(helper).sincePlayerRoom < 96) {
         //doctors start mending after RNG weighted by patient priority
         const ticket = this.a.getMendingQueue().indexOf(this.a.name)
         const random = math.random(0, 4)

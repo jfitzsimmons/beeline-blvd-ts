@@ -1,25 +1,24 @@
 import {
   ActionProps,
   BehaviorKeys,
-  InjuryProps,
+  DefaultBehaviorProps,
 } from '../../../types/behaviors'
 
 import Action from '../action'
-
+//testjpf DELTEE ME ?!?!?!?
 export default class InjuryAction extends Action {
-  a: InjuryProps
+  a: DefaultBehaviorProps
   constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
-    const props = getProps('injury') as InjuryProps
+    const props = getProps('injury') as DefaultBehaviorProps
     super(props)
     this.a = props
   }
   run(): { (): void } {
     //const { actor: a } = this
-    this.a.sincePlayerRoom = 99
-    this.a.addInjured(this.a.name)
+    //this.a.addInjured(this.a.name)
     // a.parent.pruneStationMap(a.currRoom, a.currStation)
 
-    this.a.hp = 0
+    //this.a.hp = 0
 
     //testjpf returns to PlaceSequence
     return () => this.continue('injury')
