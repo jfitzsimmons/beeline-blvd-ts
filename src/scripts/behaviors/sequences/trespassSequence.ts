@@ -1,20 +1,27 @@
-import { GetProps, InjuredProps } from '../../../types/behaviors'
+import {
+  GetProps,
+  HeroInjuredProps,
+  InjuredProps,
+} from '../../../types/behaviors'
 import Action from '../action'
 import TrespassAction from '../actions/trespassAction'
 import Sequence from '../sequence'
 
 export default class TrespassSequence extends Sequence {
-  a: InjuredProps
+  a: InjuredProps | HeroInjuredProps
   prevSpr: number
   getProps: GetProps
   constructor(getProps: GetProps) {
-    const props = getProps('injured') as InjuredProps
+    const props = getProps('injured')
     const turnActions: Action[] = []
 
     turnActions.push(...[new TrespassAction(getProps)])
 
     super(turnActions)
-    this.a = props
+    this.a =
+      props.name === 'player'
+        ? (props as HeroInjuredProps)
+        : (props as InjuredProps)
     this.getProps = getProps
     this.prevSpr = this.a.turnPriority
     print('TrespassSeq:: new for', this.a.name, 'in', this.a.currRoom)

@@ -10,6 +10,7 @@ export type ActionProps =
   | MenderProps
   | ImmobileProps
   | InjuredProps
+  | HeroInjuredProps
   | MendeeProps
   | InfirmProps
   | InfirmedProps
@@ -111,6 +112,7 @@ export interface MedicPlaceProps extends PlaceProps {
 }
 
 export interface EffectsProps {
+  name: string
   effects: Effect[]
   traits: Traits
 }

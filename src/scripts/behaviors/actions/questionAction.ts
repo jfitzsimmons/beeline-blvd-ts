@@ -20,6 +20,7 @@ import ArrestSequence from '../sequences/arrestSequence'
 export default class QuestionAction extends Action {
   a: QuestionProps
   perp: QuestionProps
+  isHero: boolean
   getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(
     getProps: (behavior: BehaviorKeys) => ActionProps,
@@ -30,13 +31,30 @@ export default class QuestionAction extends Action {
     this.a = props
     this.perp = perp
     this.getProps = getProps
+    this.isHero = this.perp.name === 'player' ? true : false
   }
+
   run(): { (): void } {
     //if (this.a.getApb().includes(target)) {
     // this.parent.returnNpc(this.target).fsm.setState('arrestee')
     // return
     // } else if (this.label == 'questioning') {
     //testjpf convert rest!!!:::
+
+    /**
+     * testjpf
+     * going to have to think about what i want to do with player questioning.
+     * right now launches novel and relies on outcome???
+     * creates confront task
+     * sets player to confronted
+     * level checks player state
+     * launches novel
+     * novel was set by IN THEORY QuestionAction
+     * AKA::: Right here
+     * i like the idea of using check but with user interaction.
+     *  maybe traits also determine what choices you get.
+     * as well as if you pass.
+     */
     const currRoom = Object.values(
       this.a.getOccupants(this.a.currRoom)
     ).includes(this.perp.name)

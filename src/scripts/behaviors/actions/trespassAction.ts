@@ -1,21 +1,33 @@
-import { GetProps, InjuredProps, QuestionProps } from '../../../types/behaviors'
+import {
+  GetProps,
+  HeroInjuredProps,
+  InjuredProps,
+  QuestionProps,
+} from '../../../types/behaviors'
 import { confrontation_check } from '../../states/inits/checksFuncs'
 import Action from '../action'
 import QuestionSequence from '../sequences/questionSequence'
 //import QuestionSequence from '../sequences/questionSequence'
 
 export default class TrespassAction extends Action {
-  a: InjuredProps
+  a: InjuredProps | HeroInjuredProps
   doc = ''
+  isHero: boolean
   getProps: GetProps
   constructor(getProps: GetProps) {
-    const props = getProps('injured') as InjuredProps
+    const props = getProps('injured')
     super(props)
-    this.a = props
+    this.a =
+      props.name === 'player'
+        ? (props as HeroInjuredProps)
+        : (props as InjuredProps)
     this.getProps = getProps
+    this.isHero = this.a.name === 'player' ? true : false
   }
   run(): { (): void } {
+    print(this.isHero, this.a.name)
     if (
+      this.isHero == false &&
       ['utside', '_passe', 'isoner', 'atient'].includes(
         this.a.currStation.slice(-7, -1)
       )
@@ -27,9 +39,9 @@ export default class TrespassAction extends Action {
 
     this.a.updateFromBehavior('turnPriority', 96) // so can add QuestionSeq to available security
 
-    if (this.a.getIgnore().includes(this.a.name))
-      return () =>
-        this.fail('TrespassAction:: IGNORE - injured NPC???:' + this.a.name)
+    //if (this.a.getIgnore().includes(this.a.name))
+    // return () =>
+    // this.fail('TrespassAction:: IGNORE - injured NPC???:' + this.a.name)
 
     const currRoom = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
       (s) => s != '' && s != this.a.name && this.a.name.slice(0, 4) === 'secu'
