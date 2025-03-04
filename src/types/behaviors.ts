@@ -61,7 +61,7 @@ export interface HeroBehaviorProps {
   infirm: () => InfirmProps
   infirmed: () => InfirmedProps
   helper: () => HelperProps
-  question: () => QuestionProps
+  question: () => QuestionProps | HeroQuestionProps
 }
 
 export interface BehaviorProps extends HeroBehaviorProps {
@@ -127,6 +127,9 @@ export interface QuestionProps extends DefaultBehaviorProps {
   addOrExtendEffect(effect: Effect): void
   getBehaviorProps(behavior: string): ActionProps
   getOccupants(r: string): string[]
+}
+export interface HeroQuestionProps extends QuestionProps {
+  setConfrontation(npc: string, reason: string): void
 }
 
 export interface MenderProps extends DefaultBehaviorProps {

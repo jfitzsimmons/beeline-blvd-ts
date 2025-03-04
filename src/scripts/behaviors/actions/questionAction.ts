@@ -1,6 +1,7 @@
 import {
   ActionProps,
   BehaviorKeys,
+  HeroQuestionProps,
   QuestionProps,
 } from '../../../types/behaviors'
 import Action from '../action'
@@ -20,18 +21,21 @@ import ArrestSequence from '../sequences/arrestSequence'
 export default class QuestionAction extends Action {
   a: QuestionProps
   perp: QuestionProps
-  isHero: boolean
+  hero: HeroQuestionProps | null
   getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(
     getProps: (behavior: BehaviorKeys) => ActionProps,
-    perp: QuestionProps
+    perp: QuestionProps | HeroQuestionProps
   ) {
     const props = getProps('question') as QuestionProps
     super(props)
     this.a = props
-    this.perp = perp
+    this.hero = perp.name == 'player' ? (perp as HeroQuestionProps) : null
+
+    this.perp = this.hero == null ? (perp as QuestionProps) : this.hero
     this.getProps = getProps
-    this.isHero = this.perp.name === 'player' ? true : false
+    // this.hero = this.perp === null ? (perp as HeroQuestionProps) : null
+    //if (this.hero !== null) this.perp = this.hero
   }
 
   run(): { (): void } {
@@ -54,6 +58,9 @@ export default class QuestionAction extends Action {
      * i like the idea of using check but with user interaction.
      *  maybe traits also determine what choices you get.
      * as well as if you pass.
+     *
+     * use a different set of tempcons?
+     * ex watcherpunch instead of other way around
      */
     const currRoom = Object.values(
       this.a.getOccupants(this.a.currRoom)
@@ -71,6 +78,25 @@ export default class QuestionAction extends Action {
         this.continue(
           `QuestionAction::: ${this.a.name} did not cross paths with ${this.perp.name}`
         )
+
+    if (this.hero !== null) {
+      this.hero.setConfrontation(this.a.name, 'questioning')
+      /**
+       * probably need to add some sort of
+       * new ConfrontSequence
+       * level shoudl load get all npcs in player currroom
+       * move them to their own array
+       * DONT RUN ACTIVE
+       * then add player to that array
+       * sort by turnpriority
+       * and run those ahead of player then stop.
+       * wait for player interaction.
+       */
+      return () =>
+        this.success(
+          'QuestionAction::: HERO:: this should set novel for player confrontation.'
+        )
+    }
 
     const tempcons: Array<
       (
@@ -111,5 +137,8 @@ export default class QuestionAction extends Action {
   continue(s: string): string {
     print('QuestionAction:: Continue:', s)
     return 'continue'
+  }
+  success(s?: string) {
+    print('QuestionAction:: Success:', s)
   }
 }

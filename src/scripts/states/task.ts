@@ -284,7 +284,7 @@ export default class TaskState {
   playerConfrontConsequence(playerfsm: StateMachine, npcfsm: StateMachine) {
     playerfsm.setState('confronted')
     npcfsm.setState('confront')
-    this.parent.setConfrontation(this)
+    // this.parent.setConfrontation(this)
   }
   npc_confront_consequence() {
     if (this.label == 'arrest') {

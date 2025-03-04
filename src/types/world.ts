@@ -4,7 +4,7 @@ import StateMachine from '../scripts/states/stateMachine'
 import TaskState from '../scripts/states/task'
 import { NovelNpc } from './novel'
 import { Npcs, Traits } from './state'
-import { QuestMethods, Task } from './tasks'
+import { QuestMethods } from './tasks'
 
 export interface WorldArgs {
   returnNpc(n: string): NpcState
@@ -17,7 +17,7 @@ export interface WorldTasksArgs extends WorldArgs {
   didCrossPaths(owner: string, target: string): boolean
   returnPlayer(): WorldPlayer
   getOccupants(r: string): string[]
-  setConfrontation(t: Task): void
+  setConfrontation(npc: string, reason: string): void
 }
 export interface TaskProps extends WorldTasksArgs {
   //addAdjustMendingQueue(patient: string): void
