@@ -1,3 +1,4 @@
+import { AttendantProps } from '../../../types/ai'
 import { npcStealCheck, take_or_stash } from '../../states/inits/checksFuncs'
 import RoomState from '../../states/room'
 import { shuffle } from '../../utils/utils'
@@ -22,7 +23,13 @@ function steal_stash_checks(_this: RoomState) {
     loot.inventory.length > 0 &&
     suspect.cooldown <= 0
   ) {
-    npcStealCheck(suspect, victim, loot.inventory)
+    const victimProps: AttendantProps = {
+      name: victim.name,
+      traits: victim.traits,
+      clan: victim.clan,
+      taskBuilder: victim.parent.taskBuilder.bind(victim),
+    }
+    npcStealCheck(suspect, victimProps, loot.inventory)
   } else if (suspect != null) {
     take_or_stash(suspect, loot)
   }

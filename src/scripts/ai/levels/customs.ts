@@ -1,6 +1,6 @@
+import { AttendantProps } from '../../../types/ai'
 import { Actor } from '../../../types/state'
 import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
-import NpcState from '../../states/npc'
 import RoomState from '../../states/room'
 import { shuffle } from '../../utils/utils'
 
@@ -12,14 +12,20 @@ function steal_stash_checks(this: RoomState) {
   let victim = null
   let actor: Actor
   let attendant =
-    this.stations.desk === '' ? '' : this.parent.returnNpc(this.stations.desk)
+    this.stations.desk === '' ? null : this.parent.returnNpc(this.stations.desk)
   if (this.stations.guest !== '') {
     suspect = this.parent.returnNpc(this.stations.guest)
     //print("victim.name",victim.name)
     actor = this.actors.desks
     //loot = actor.inventory
-    if (actor.inventory.length > 0 && attendant instanceof NpcState) {
-      npcStealCheck(suspect, attendant, actor.inventory)
+    if (actor.inventory.length > 0 && attendant !== null) {
+      const attendantProps: AttendantProps = {
+        name: attendant.name,
+        traits: attendant.traits,
+        clan: attendant.clan,
+        taskBuilder: attendant.parent.taskBuilder.bind(attendant),
+      }
+      npcStealCheck(suspect, attendantProps, actor.inventory)
     } else if (actor.inventory.length > 0) {
       take_or_stash(suspect, actor)
     }
@@ -31,11 +37,18 @@ function steal_stash_checks(this: RoomState) {
       this.parent.returnNpc(this.stations.loiter4),
       this.parent.returnNpc(this.stations.guard),
     ])
-    if (victim.inventory.length > 0 && suspect.cooldown <= 0)
-      npcStealCheck(suspect, victim, victim.inventory)
+    if (victim.inventory.length > 0 && suspect.cooldown <= 0) {
+      const victimProps: AttendantProps = {
+        name: victim.name,
+        traits: victim.traits,
+        clan: victim.clan,
+        taskBuilder: victim.parent.taskBuilder.bind(victim),
+      }
+      npcStealCheck(suspect, victimProps, victim.inventory)
+    }
   }
 
-  if (attendant instanceof NpcState) {
+  if (attendant !== null) {
     actor = this.actors.locker
     take_or_stash(attendant, actor)
   }

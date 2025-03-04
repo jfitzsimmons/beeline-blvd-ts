@@ -20,7 +20,7 @@ export default class HelperAction extends Action {
     this.victim = victim
   }
   run(): { (): void } {
-    //this.a.sincePlayerRoom = 99
+    //this.a.turnPriority = 99
     if (
       this.a.returnNpc(this.victim).hp > 0 ||
       this.a.getMendingQueue().includes(this.victim)
@@ -48,10 +48,7 @@ export default class HelperAction extends Action {
     )
 
     for (const helper of [...new Set([...prevRoom, ...currRoom])]) {
-      if (
-        this.a.returnNpc(helper).sincePlayerRoom < 96 &&
-        math.random() > 0.4
-      ) {
+      if (this.a.returnNpc(helper).turnPriority < 96 && math.random() > 0.4) {
         //available doctor found
         this.a.addAdjustMendingQueue(this.victim)
         print(

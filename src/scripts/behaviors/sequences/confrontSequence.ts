@@ -44,7 +44,7 @@ export default class ConfrontSequence extends Sequence {
     this.getProps = getProps
   }
   run(): 'REMOVE' | '' {
-    this.a.sincePlayerRoom = 99
+    this.a.turnPriority = 99
     for (const child of this.children) {
       const proceed = child.run()()
       print('INJUREDSEQUENCE::: Proceed::', this.a.name, ':', proceed)

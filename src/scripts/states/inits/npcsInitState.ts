@@ -5,7 +5,7 @@ export const npc_defaults: NpcDefaults = {
   aiPath: '',
   matrix: { x: 0, y: 0 },
   traits: { opinion: {}, skills: {}, binaries: {} },
-  sincePlayerRoom: 0,
+  turnPriority: 0,
   sincePlayerConvo: 99,
   love: 0,
   hp: 5,

@@ -1,3 +1,4 @@
+import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
 import { Actor } from '../../../types/state'
 import {
   take_check,
@@ -12,23 +13,40 @@ import { cicadaModulus } from '../../utils/utils'
 //import { take_check, npcStealCheck, take_or_stash } from '../ai_checks'
 
 function steal_stash_checks(this: RoomState) {
-  let victim = null
+  let thiefVictim = null
   let thief = null
   let actor: Actor
   let loot: string[] = []
   let attendant =
-    this.stations.desk === '' ? '' : this.parent.returnNpc(this.stations.desk)
+    this.stations.desk === '' ? null : this.parent.returnNpc(this.stations.desk)
   // print('this.stations.guest', this.stations.guest)
   if (cicadaModulus() && this.stations.guest != '') {
-    victim = this.parent.returnNpc(this.stations.guest)
+    thiefVictim = this.parent.returnNpc(this.stations.guest)
+    const thiefVictimProps: ThiefVictimProps = {
+      name: thiefVictim.name,
+      traits: thiefVictim.traits,
+      inventory: thiefVictim.inventory,
+      clan: thiefVictim.clan,
+      cooldown: thiefVictim.cooldown,
+      removeInvBonus: thiefVictim.removeInvBonus.bind(thiefVictim),
+      addInvBonus: thiefVictim.addInvBonus.bind(thiefVictim),
+      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+    }
+
     //  print('victim.name', victim.name)
 
-    loot = victim.inventory
+    loot = thiefVictim.inventory
     actor = this.actors.drawer
-    if (actor.inventory.length > 0 && typeof attendant !== 'string') {
-      npcStealCheck(victim, attendant, actor.inventory)
+    if (actor.inventory.length > 0 && attendant !== null) {
+      const attendantProps: AttendantProps = {
+        name: attendant.name,
+        traits: attendant.traits,
+        clan: attendant.clan,
+        taskBuilder: attendant.parent.taskBuilder.bind(attendant),
+      }
+      npcStealCheck(thiefVictimProps, attendantProps, actor.inventory)
     } else if (actor.inventory.length > 0) {
-      take_check(victim, actor)
+      take_check(thiefVictimProps, actor)
     }
   }
 
@@ -37,26 +55,73 @@ function steal_stash_checks(this: RoomState) {
   }
   if (
     cicadaModulus() &&
-    victim != null &&
+    thiefVictim != null &&
     thief != null &&
     loot.length > 0 &&
     thief.cooldown <= 0
   ) {
-    npcStealCheck(thief, victim, loot)
+    const victimProps: AttendantProps = {
+      name: thiefVictim.name,
+      traits: thiefVictim.traits,
+      clan: thiefVictim.clan,
+      taskBuilder: thiefVictim.parent.taskBuilder.bind(thiefVictim),
+      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+    }
+    const thiefProps: ThiefVictimProps = {
+      name: thief.name,
+      traits: thief.traits,
+      inventory: thief.inventory,
+      clan: thief.clan,
+      cooldown: thief.cooldown,
+      removeInvBonus: thief.removeInvBonus.bind(thief),
+      addInvBonus: thief.addInvBonus.bind(thief),
+      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+    }
+    npcStealCheck(thiefProps, victimProps, loot)
   }
-  if (cicadaModulus() && typeof attendant !== 'string') {
+  if (cicadaModulus() && attendant !== null) {
     actor = this.actors.drawer
-    take_or_stash(attendant, actor)
+    const attendantProps: ThiefVictimProps = {
+      name: attendant.name,
+      traits: attendant.traits,
+      inventory: attendant.inventory,
+      clan: attendant.clan,
+      cooldown: attendant.cooldown,
+      removeInvBonus: attendant.removeInvBonus.bind(attendant),
+      addInvBonus: attendant.addInvBonus.bind(attendant),
+      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+    }
+    take_or_stash(attendantProps, actor)
   }
   if (cicadaModulus() && this.stations.patrol != '') {
     attendant = this.parent.returnNpc(this.stations.patrol)
+    const attendantProps: ThiefVictimProps = {
+      name: attendant.name,
+      traits: attendant.traits,
+      inventory: attendant.inventory,
+      clan: attendant.clan,
+      cooldown: attendant.cooldown,
+      removeInvBonus: attendant.removeInvBonus.bind(attendant),
+      addInvBonus: attendant.addInvBonus.bind(attendant),
+      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+    }
     actor = this.actors.vase2
-    take_or_stash(attendant, actor)
+    take_or_stash(attendantProps, actor)
   }
   if (cicadaModulus() && this.stations.loiter2 != '') {
     attendant = this.parent.returnNpc(this.stations.loiter2)
+    const attendantProps: ThiefVictimProps = {
+      name: attendant.name,
+      traits: attendant.traits,
+      inventory: attendant.inventory,
+      clan: attendant.clan,
+      cooldown: attendant.cooldown,
+      removeInvBonus: attendant.removeInvBonus.bind(attendant),
+      addInvBonus: attendant.addInvBonus.bind(attendant),
+      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+    }
     actor = this.actors.vase
-    take_or_stash(attendant, actor)
+    take_or_stash(attendantProps, actor)
   }
 }
 

@@ -17,6 +17,7 @@ import Sequence from '../behaviors/sequence'
 import {
   ActionProps,
   BehaviorKeys,
+  BehaviorProps,
   BehaviorSetters,
 } from '../../types/behaviors'
 import Selector from '../behaviors/selector'
@@ -33,7 +34,6 @@ export default class NpcState extends ActorState {
   convos = 0
   actions: string[] = ['talk', 'give', 'trade', 'pockets']
   aiPath = ''
-  private _sincePlayerRoom = 0
   sincePlayerConvo = 99
   behavior: Behavior
   constructor(n: string, lists: NpcProps) {
@@ -55,7 +55,7 @@ export default class NpcState extends ActorState {
         name: this.name,
         matrix: this.matrix,
         cooldown: this.cooldown,
-        sincePlayerRoom: this._sincePlayerRoom,
+        turnPriority: this.turnPriority,
         currRoom: this.currRoom,
         currStation: this.currStation,
         addToBehavior: this.addToBehavior.bind(this),
@@ -72,7 +72,7 @@ export default class NpcState extends ActorState {
         cooldown: (value) => (this.cooldown = value as number),
         hp: (value) => (this.hp = value as number),
         clearance: (value) => (this.clearance = value as number),
-        sincePlayerRoom: (value) => (this.sincePlayerRoom = value as number),
+        turnPriority: (value) => (this.turnPriority = value as number),
         station: (value) => {
           const v = value as [string, string]
           this.matrix = RoomsInitState[v[0]].matrix
@@ -192,7 +192,7 @@ export default class NpcState extends ActorState {
             ...behaviorDefaults(),
           }
         },
-      },
+      } as BehaviorProps,
     }
 
     this.fsm
@@ -234,12 +234,6 @@ export default class NpcState extends ActorState {
     this.addToBehavior = this.addToBehavior.bind(this)
     this.getBehaviorProps = this.getBehaviorProps.bind(this)
     this.updateFromBehavior = this.updateFromBehavior.bind(this)
-  }
-  public get sincePlayerRoom(): number {
-    return this._sincePlayerRoom
-  }
-  public set sincePlayerRoom(t: number) {
-    this._sincePlayerRoom = t
   }
   private onConfrontPlayerEnter(): void {
     this.convos++
@@ -286,7 +280,7 @@ export default class NpcState extends ActorState {
       this.parent.clearStation(this.currRoom, this.currStation, this.name)
       this.currStation = vacancy
     }
-    this.sincePlayerRoom = 96
+    this.turnPriority = 96
     // this.parent.addInfirmed(this.name)
     this.matrix = RoomsInitState.security.matrix
     this.cooldown = 8
@@ -336,7 +330,7 @@ export default class NpcState extends ActorState {
       home: this.home,
     }
     const npcTurnProps = {
-      sincePlayerRoom: this._sincePlayerRoom,
+      turnPriority: this.turnPriority,
       aiPath: this.aiPath,
       target: target,
       ...npcPriorityProps,
@@ -388,9 +382,9 @@ export default class NpcState extends ActorState {
       this.fsm.setState('trespass')
        */
     if (chosenRoom != this.parent.getPlayerRoom()) {
-      this._sincePlayerRoom = this._sincePlayerRoom + 1
+      this.turnPriority = this.turnPriority + 1
     } else {
-      this._sincePlayerRoom = 0
+      this.turnPriority = 0
     }
   }
   addToBehavior(selector: 'place' | 'active', s: Sequence, unshift = false) {
@@ -399,7 +393,8 @@ export default class NpcState extends ActorState {
       : this.behavior[selector].children.unshift(s)
   }
   getBehaviorProps(behavior: BehaviorKeys): ActionProps {
-    return this.behavior.props[behavior]()
+    const props = this.behavior.props as BehaviorProps
+    return props[behavior]()
   }
   updateFromBehavior(
     prop: keyof BehaviorSetters,

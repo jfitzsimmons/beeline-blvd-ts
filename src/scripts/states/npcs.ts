@@ -106,7 +106,7 @@ export default class WorldNpcs {
         (npc.currRoom == 'reception' && npc.currStation == 'guest')
       ) {
         npc.hp = 0
-        npc.sincePlayerRoom = 99
+        npc.turnPriority = 99
         //npc.parent.addInjured(npc.name)
         //new InjuryAction(npc.getBehaviorProps.bind(this)).run()
       }
@@ -203,10 +203,11 @@ export default class WorldNpcs {
   security() {
     const cops = this.returnSecurity()
     for (const cop of cops) {
-      const stations = RoomsInitState[cop.currRoom].stations
-      let sKey: keyof typeof stations
-      let target = ''
-      for (sKey in stations) {
+      // const stations = RoomsInitState[cop.currRoom].stations
+      //let sKey: keyof typeof stations
+      const target = 'player'
+      /**
+       * for (sKey in stations) {
         target = stations[sKey]
         if (
           target !== '' &&
@@ -219,7 +220,8 @@ export default class WorldNpcs {
           break
         }
         target = 'player'
-      }
+      }*/
+      // testjpf need to push trespassSeq to player behavior
       if (
         target == 'player' &&
         cop.currRoom == this.parent.getPlayerRoom() &&
@@ -288,7 +290,7 @@ export default class WorldNpcs {
   sort_npcs_by_encounter() {
     this.order.sort(
       (a: string, b: string) =>
-        this.all[a].sincePlayerRoom - this.all[b].sincePlayerRoom
+        this.all[a].turnPriority - this.all[b].turnPriority
     )
   }
   returnOrderAll(): [string[], Npcs] {
@@ -334,7 +336,7 @@ function random_attributes(npcs: Npcs, order: string[]) {
   let kn: keyof typeof npcs
   for (kn in npcs) {
     order.splice(count, 0, kn)
-    npcs[kn].sincePlayerRoom = math.random(5, 15)
+    npcs[kn].turnPriority = math.random(5, 15)
     npcs[kn].love = math.random(-1, 1)
     // random attitude
     npcs[kn].traits.opinion = {}

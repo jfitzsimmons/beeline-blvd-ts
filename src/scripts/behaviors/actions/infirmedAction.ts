@@ -19,7 +19,7 @@ export default class InfirmedAction extends Action {
       : Math.random() > 0.3 && (this.a.hp = this.a.hp + 1)
     if (this.a.hp > 9) {
       // this.a.removeInfirmed(this.a.name)
-      print('INFIRMEDaction:: sinceplayerroom reset. RE-PLACE npc??')
+      print('INFIRMEDaction:: turnPriority reset. RE-PLACE npc??')
       return () => this.success()
     }
     //  }

@@ -22,11 +22,11 @@ export default class InjuredSequence extends Sequence {
     //testjpf updating a doesnt update npc? getter setter?
     this.a = props
     this.getProps = getProps
-    this.a.updateFromBehavior('sincePlayerRoom', 99)
+    this.a.updateFromBehavior('turnPriority', 99)
   }
   run(): 'REMOVE' | '' {
-    // this.a.returnNpc(this.a.name).sincePlayerRoom = 99
-    this.a.updateFromBehavior('sincePlayerRoom', 99)
+    // this.a.returnNpc(this.a.name).turnPriority = 99
+    this.a.updateFromBehavior('turnPriority', 99)
 
     for (const child of this.children) {
       const proceed = child.run()()

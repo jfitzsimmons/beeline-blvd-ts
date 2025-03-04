@@ -19,10 +19,10 @@ export default class ArrestSequence extends Sequence {
 
     super(placeActions)
     this.a = getProps('infirm') as InfirmProps
-    this.a.updateFromBehavior('sincePlayerRoom', 96)
+    this.a.updateFromBehavior('turnPriority', 96)
   }
   run(): 'REMOVE' | '' {
-    // this.a.sincePlayerRoom = 97
+    // this.a.turnPriority = 97
 
     for (const child of this.children) {
       child.run()()
