@@ -14,6 +14,8 @@ import {
   HeroBehaviorKeys,
   HeroBehaviorProps,
 } from '../../types/behaviors'
+import PlaceSequence from '../behaviors/sequences/placeSequence'
+import TrespassSequence from '../behaviors/sequences/trespassSequence'
 
 function randomTrait(skills: Trait, bins: Trait) {
   let tempvals: number[] = shuffle([1, 1, 3, 4, 5, 6, 6, 7])
@@ -94,7 +96,7 @@ export default class WorldPlayer extends ActorState {
             clearance: this.clearance,
             clan: 'hero',
             exitRoom: this.exitRoom,
-            //findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
+            setRoomInfo: this.setRoomInfo.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -168,10 +170,15 @@ export default class WorldPlayer extends ActorState {
     this.inventory_init()
     this.fsm
       .addState('idle')
-      .addState('turn', {
-        onEnter: this.onTurnEnter.bind(this),
-        onUpdate: this.onTurnUpdate.bind(this),
-        onExit: this.onTurnExit.bind(this),
+      .addState('place', {
+        onEnter: this.onPlaceEnter.bind(this),
+        onUpdate: this.onPlaceUpdate.bind(this),
+        onExit: this.onPlaceExit.bind(this),
+      })
+      .addState('active', {
+        onEnter: this.onActiveEnter.bind(this),
+        onUpdate: this.onActiveUpdate.bind(this),
+        onExit: this.onActiveExit.bind(this),
       })
       .addState('trespass', {
         onEnter: this.onTrespassEnter.bind(this),
@@ -193,14 +200,18 @@ export default class WorldPlayer extends ActorState {
     this.getBehaviorProps = this.getBehaviorProps.bind(this)
     this.updateFromBehavior = this.updateFromBehavior.bind(this)
   }
-  private onTurnEnter(): void {}
-  private onTurnUpdate(): void {
+  private onPlaceEnter(): void {
     //todo
     print('<< :: PLAYER-UPDATE-FSM :: >>')
-    this.ap = this.ap - 1
-    this.turns = this.turns + 1
-    this.setRoomInfo()
-    if (this.clearance < RoomsInitState[this.currRoom].clearance) {
+    if (this.behavior.place.children.length < 1)
+      this.behavior.place.children.push(
+        new PlaceSequence(this.getBehaviorProps.bind(this))
+      )
+  }
+  private onPlaceUpdate(): void {
+    this.behavior.place.run()
+    //this.setRoomInfo()
+    /** if (this.clearance < RoomsInitState[this.currRoom].clearance) {
       print(
         'PLAYER::: NEWQUESTIONED!!!',
         this.clearance,
@@ -209,10 +220,24 @@ export default class WorldPlayer extends ActorState {
       )
       this.fsm.setState('trespass')
     }
+      **/
   }
-  private onTurnExit(): void {
-    // print(this.name, 'has entered MOVE STATE')
+  private onPlaceExit(): void {
+    if (
+      this.clearance + math.random(0, 2) <
+      RoomsInitState[this.currRoom].clearance
+    )
+      //TESTJPF I think i need to remove player and
+      // npcstate from checkfuncs init!!!
+      this.behavior.active.children.push(
+        new TrespassSequence(this.getBehaviorProps.bind(this))
+      )
+
+    this.behavior.active.run()
   }
+  private onActiveEnter(): void {}
+  private onActiveUpdate(): void {}
+  private onActiveExit(): void {}
   private onTrespassEnter(): void {
     const hallpass = this.parent.hasHallpass('player')
     print('HALLPASS::', hallpass, this.currRoom, this.clearance)
@@ -246,6 +271,8 @@ export default class WorldPlayer extends ActorState {
   private onConfrontedUpdate(): void {}
   private onConfrontedExit(): void {}
   setRoomInfo() {
+    this.ap = this.ap - 1
+    this.turns = this.turns + 1
     this.exitRoom = this.currRoom
     this.currRoom = this.parent.getFocusedRoom()
     this.matrix = RoomsInitState[this.currRoom].matrix
@@ -263,7 +290,8 @@ export default class WorldPlayer extends ActorState {
     //this.behavior.props[behavior]()
   }
   getBehaviorProps(behavior: HeroBehaviorKeys): ActionProps {
-    return this.behavior.props[behavior]()
+    const b = behavior
+    return this.behavior.props[b]()
   }
   addToBehavior(selector: 'place' | 'active', s: Sequence, unshift = false) {
     unshift === false

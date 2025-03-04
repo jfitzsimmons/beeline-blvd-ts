@@ -1,3 +1,4 @@
+import { AttendantProps } from '../../../types/ai'
 import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
 import QuestStep from '../../states/questStep'
 import { doctors } from '../../utils/consts'
@@ -275,13 +276,29 @@ export function tutorialA(interval = 'turn') {
     const worker2 = npcs.all[rooms.all['grounds'].stations.worker2]
 
     if (worker2 != null && worker2.cooldown <= 0) {
-      guest2 == null
-        ? take_or_stash(worker2, rooms.all.grounds.actors.player_luggage)
-        : npcStealCheck(worker2, guest2, luggage.inventory)
+      if (guest2 == null) {
+        take_or_stash(worker2, rooms.all.grounds.actors.player_luggage)
+      } else {
+        const guestProps: AttendantProps = {
+          name: guest2.name,
+          traits: guest2.traits,
+          clan: guest2.clan,
+          taskBuilder: guest2.parent.taskBuilder.bind(guest2),
+        }
+        npcStealCheck(worker2, guestProps, luggage.inventory)
+      }
     } else if (guest2 != null && guest2.cooldown <= 0) {
-      worker2 == null
-        ? take_or_stash(guest2, rooms.all.grounds.actors.player_luggage)
-        : npcStealCheck(guest2, worker2, luggage.inventory)
+      if (worker2 == null) {
+        take_or_stash(guest2, rooms.all.grounds.actors.player_luggage)
+      } else {
+        const workerProps: AttendantProps = {
+          name: worker2.name,
+          traits: worker2.traits,
+          clan: worker2.clan,
+          taskBuilder: worker2.parent.taskBuilder.bind(worker2),
+        }
+        npcStealCheck(guest2, workerProps, luggage.inventory)
+      }
     }
   }
   if (apple.passed == false) {

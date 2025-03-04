@@ -1,21 +1,13 @@
-import {
-  ActionProps,
-  BehaviorKeys,
-  InjuredProps,
-} from '../../../types/behaviors'
+import { GetProps, InjuredProps } from '../../../types/behaviors'
 import Action from '../action'
 import TrespassAction from '../actions/trespassAction'
 import Sequence from '../sequence'
-//import PlaceSequence from './placeSequence'
-//import ImmobileSequence from './immobileSequence'
-//import InjuredSequence from './injuredSequence'
-//import MendeeSequence from './mendeeSequence'
 
 export default class TrespassSequence extends Sequence {
   a: InjuredProps
   prevSpr: number
-  getProps: (behavior: BehaviorKeys) => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+  getProps: GetProps
+  constructor(getProps: GetProps) {
     const props = getProps('injured') as InjuredProps
     const turnActions: Action[] = []
 

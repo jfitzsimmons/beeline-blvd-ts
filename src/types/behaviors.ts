@@ -6,6 +6,7 @@ import { Effect } from './tasks'
 export type ActionProps =
   | EffectsProps
   | PlaceProps
+  | HeroPlaceProps
   | MenderProps
   | ImmobileProps
   | InjuredProps
@@ -47,6 +48,10 @@ export interface BehaviorSetters {
   turnPriority: (value: number | [string, string]) => void
   station: (value: number | [string, string]) => void
 }
+
+export type GetProps =
+  | { (behavior: BehaviorKeys): ActionProps }
+  | { (behavior: HeroBehaviorKeys): ActionProps }
 export interface HeroBehaviorProps {
   effects: () => EffectsProps
   place: () => PlaceProps | HeroPlaceProps
@@ -83,14 +88,18 @@ export interface DefaultBehaviorProps {
     value: number | [string, string]
   ): void
 }
-export interface HeroPlaceProps extends DefaultBehaviorProps {
+
+export interface HeroPlaceProps extends SharedPlaceProps {
+  setRoomInfo(): void
+}
+export interface SharedPlaceProps extends DefaultBehaviorProps {
   clearance: number
   clan: string
   exitRoom: string
   //findRoomPlaceStation(t?: { x: number; y: number }, r?: string[]): void
 }
 
-export interface PlaceProps extends HeroPlaceProps {
+export interface PlaceProps extends SharedPlaceProps {
   findRoomPlaceStation(t?: { x: number; y: number }, r?: string[]): void
 }
 

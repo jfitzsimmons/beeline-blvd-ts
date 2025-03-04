@@ -1,22 +1,33 @@
-import { ActionProps, BehaviorKeys, PlaceProps } from '../../../types/behaviors'
+import {
+  ActionProps,
+  BehaviorKeys,
+  GetProps,
+  HeroBehaviorKeys,
+  PlaceProps,
+} from '../../../types/behaviors'
 import Action from '../action'
 import EffectsAction from '../actions/effectsAction'
+import HeroPlaceAction from '../actions/heroPlaceAction'
 import MedicPlaceAction from '../actions/medicPlaceAction'
 import PlaceAction from '../actions/placeAction'
 import Sequence from '../sequence'
 const lookup: {
-  [key: string]: (getProps: (behavior: BehaviorKeys) => ActionProps) => Action
+  [key: string]: (getProps: GetProps) => Action
 } = {
   doctors: doctorActions,
+  hero: playerActions,
 }
-function doctorActions(getProps: (behavior: BehaviorKeys) => ActionProps) {
-  const props = getProps('medplace')
+
+function doctorActions(getProps: GetProps) {
+  const gp = getProps as (behavior: BehaviorKeys) => ActionProps
+  const props = gp('medplace')
   return new MedicPlaceAction(props)
 }
-function clanActions(
-  clan: string,
-  getProps: (behavior: BehaviorKeys) => ActionProps
-): Action {
+function playerActions(getProps: (behavior: HeroBehaviorKeys) => ActionProps) {
+  const props = getProps
+  return new HeroPlaceAction(props)
+}
+function clanActions(clan: string, getProps: GetProps): Action {
   if (lookup[clan] == undefined) {
     return new PlaceAction(getProps)
   } else {
@@ -24,7 +35,7 @@ function clanActions(
   }
 }
 export default class PlaceSequence extends Sequence {
-  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+  constructor(getProps: GetProps) {
     const props = getProps('place') as PlaceProps
     const placeActions: Action[] = []
 

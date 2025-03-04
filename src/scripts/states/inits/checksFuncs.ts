@@ -1,5 +1,5 @@
 import WorldTasks from '../tasks'
-import { Actor, Npc, Traits } from '../../../types/state'
+import { Actor, Traits } from '../../../types/state'
 import { Effect, Consequence } from '../../../types/tasks'
 import {
   removeAdvantageous,
@@ -11,10 +11,10 @@ import {
 import { fx } from '../../utils/consts'
 import { rollSpecialDice } from '../../utils/dice'
 import { shuffle, clamp } from '../../utils/utils'
-import NpcState from '../npc'
-import WorldPlayer from '../player'
+//import NpcState from '../npc'
+//impor from '../player'
 import { QuestionProps } from '../../../types/behaviors'
-//import ArrestSequence from '../../behaviors/sequences/arrestSequence'
+import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
 
 export function confrontation_check(watcher: Traits, target: Traits): boolean {
   const { skills: ls, binaries: lb } = watcher
@@ -486,11 +486,7 @@ export function jailtime_check(
 
   if (result > 5 && result <= 10) {
     // target.fsm.setState('arrestee')
-    print('need ArrestSequence for:', chkd.name, 'ENFORCER:::', chkr.name)
-    //  chkd.addToBehavior(
-    //  'place',
-    // new ArrestSequence(chkd.getBehaviorProps.bind(chkd))
-    // )
+    print('need ArrestSequence for:', chkd.name, 'ENFORCER:::', chkr.name) //chkd.addToBehavior('place', new ArrestSequence())
     return { pass: true, type: 'jailed' }
   }
 
@@ -500,11 +496,7 @@ export function jailtime_check(
       chkd.name,
       'ENFORCER:::',
       chkr.name
-    )
-    //chkd.addToBehavior(
-    // 'place',
-    // new ArrestSequence(chkd.getBehaviorProps.bind(chkd))
-    //)
+    ) //chkd.addToBehavior('place', new ArrestSequence())
 
     chkd.hp = chkd.hp - 1
     print('SPECIAL jailed', chkd.name)
@@ -643,17 +635,19 @@ export function suspicious_check(
 
 export function seen_check(
   //_this: WorldTasks,
-  t: NpcState | WorldPlayer,
-  watcher: NpcState
+  //TESTJPF\
+  //REMOVE player, trimdown npc state.
+  t: ThiefVictimProps,
+  watcher: AttendantProps
 ): { confront: boolean; type: string } {
   const target = t
   const { binaries: wb, skills: ws } = watcher.traits
   const { skills: ts, binaries: tb } = target.traits
 
-  const heat = 'heat' in target ? target.heat * 10 : wb.poor_wealthy * -4
+  // const heat = 'heat' in target ? target.heat * 10 : wb.poor_wealthy * -4
 
   const modifier = Math.round(
-    ts.stealth + tb.lawlessLawful * -4 - ws.stealth - ws.perception - heat
+    ts.stealth + tb.lawlessLawful * -4 - ws.stealth - ws.perception //- heat
   )
   const advantage =
     ts.speed - wb.lawlessLawful * 5 >
@@ -669,14 +663,17 @@ export function seen_check(
     ? { confront: false, type: 'seen' }
     : { confront: false, type: 'neutral' }
 }
-export function take_check(taker: NpcState, actor: Npc | Actor) {
+export function take_check(
+  taker: ThiefVictimProps,
+  actor: ThiefVictimProps | Actor
+) {
   const { skills, binaries } = taker.traits
-  let modifier = Math.round(
+  const modifier = Math.round(
     skills.stealth - skills.charisma + binaries.passiveAggressive * -5
   )
-  if (taker.parent.npcHasTask([], [taker.name]) != null) {
-    modifier = modifier - 1
-  }
+  //if (taker.parent.npcHasTask([], [taker.name]) != null) {
+  //  modifier = modifier - 1
+  // }
   const advantage = binaries.poor_wealthy + binaries.anti_authority * -1 > 0
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
   if (result < 5) return false
@@ -692,12 +689,15 @@ export function take_check(taker: NpcState, actor: Npc | Actor) {
   taker.addInvBonus(chest_item)
 }
 
-export function stash_check(stasher: NpcState, actor: NpcState | Actor) {
-  let modifier = stasher.inventory.length - actor.inventory.length
+export function stash_check(
+  stasher: ThiefVictimProps,
+  actor: ThiefVictimProps | Actor
+) {
+  const modifier = stasher.inventory.length - actor.inventory.length
 
-  if (stasher.parent.npcHasTask([], [stasher.name]) != null) {
-    modifier = modifier + 1
-  }
+  //if (stasher.parent.npcHasTask([], [stasher.name]) != null) {
+  //  modifier = modifier + 1
+  //}
 
   const advantage = actor.inventory.length < 2 || stasher.inventory.length > 5
   const result = rollSpecialDice(5, advantage, 3, 2) + modifier
@@ -718,7 +718,10 @@ export function stash_check(stasher: NpcState, actor: NpcState | Actor) {
   stasher.removeInvBonus(chest_item)
   // if victim == true ){ add_chest_bonus(n, chest_item) }
 }
-export function take_or_stash(attendant: NpcState, actor: NpcState | Actor) {
+export function take_or_stash(
+  attendant: ThiefVictimProps,
+  actor: ThiefVictimProps | Actor
+) {
   if (
     actor.inventory.length > 0 &&
     (attendant.inventory.length == 0 || math.random() < 0.5)
@@ -732,8 +735,8 @@ export function take_or_stash(attendant: NpcState, actor: NpcState | Actor) {
 //this.npcs.checks.stealCheck
 export function npcStealCheck(
   // this: WorldTasks,
-  target: NpcState,
-  watcher: NpcState,
+  target: ThiefVictimProps,
+  watcher: AttendantProps,
   loot: string[]
 ) {
   // prettier-ignore
@@ -742,7 +745,7 @@ export function npcStealCheck(
   const { binaries: wb, opinion: wo } = watcher.traits
   const { skills: ts, binaries: tb, opinion: to } = target.traits
 
-  if (target.cooldown > 0) return
+  //if (target.cooldown > 0) return
 
   const modifier = Math.round(
     ts.speed +
@@ -760,7 +763,7 @@ export function npcStealCheck(
   const consequence = seen_check(target, watcher)
   // print('SEENCHECK::', consequence.type)
   if (consequence.type == 'seen') {
-    watcher.parent.taskBuilder(watcher.name, 'confront', target.name, 'theft')
+    watcher.taskBuilder(watcher.name, 'confront', target.name, 'theft')
     //testjpf is this used??
     // target.loot = loot
   }
@@ -780,10 +783,10 @@ export function npcStealCheck(
   target.cooldown = target.cooldown + 5
   // print('SEENCHECK END::', consequence.type, target.cooldown)
 }
-function add_angel(listener: NpcState) {
+function add_angel(add: (effect: Effect) => void): void {
   // print('CCOUTCOME:: angel', listener)
   const effect: Effect = { ...fx.angel }
-  listener.addOrExtendEffect(effect)
+  add(effect)
 }
 export function angel_check(
   this: WorldTasks,
@@ -802,7 +805,7 @@ export function angel_check(
   // prettier-ignore
   // print('CHECKS:: ANCGELCHK::', t, 'is thought of as an angel by?', l, 'ROLL:', result)
   if (result > 5 && result <= 10) {
-    add_angel(listener)
+    add_angel(listener.addOrExtendEffect.bind(this))
     return { pass: true, type: 'angel' }
   }
 
@@ -817,10 +820,10 @@ export function angel_check(
 
   return { pass: false, type: 'neutral' }
 }
-function add_vanity(listener: NpcState) {
+function add_vanity(add: (effect: Effect) => void): void {
   // print('CCOUTCOME:: vanity has overtaken', listener)
   const effect: Effect = { ...fx.vanity }
-  listener.addOrExtendEffect(effect)
+  add(effect)
 }
 export function vanity_check(
   this: WorldTasks,
@@ -841,7 +844,7 @@ export function vanity_check(
   // print('CHECKS:: ANCGELCHK::', t, 'has made vane::', l, 'ROLL:', result)
 
   if (result > 5 && result <= 10) {
-    add_vanity(listener)
+    add_vanity(listener.addOrExtendEffect.bind(this))
     return { pass: true, type: 'vanity' }
   }
 
@@ -980,9 +983,8 @@ export function watcher_punched_check(
 function call_security(chkr: QuestionProps, chkd: QuestionProps) {
   const watcher = chkr
   watcher.clan == 'security'
-    ? print('CIRCREF') //chkd.addToBehavior('place',  new ArrestSequence(chkd.getBehaviorProps.bind(chkd)) )
-    : print('need PhoneSequence for:', chkd.name, 'ENFORCER:::', chkr.name)
-  //chkr.addToBehavior('active', new PhoneSequence())
+    ? print('need ArrestSequence for:', chkd.name, 'ENFORCER:::', chkr.name) //chkd.addToBehavior('place', new ArrestSequence())
+    : print('need PhoneSequence for:', chkd.name, 'ENFORCER:::', chkr.name) //chkr.addToBehavior('active', new PhoneSequence())
 }
 
 export function unlucky_check(
@@ -1132,7 +1134,7 @@ export function given_gift(
   let gift = removeAdvantageous(
     chkd.inventory,
     chkr.inventory,
-    chkd instanceof WorldPlayer ? chkd.traits.skills : chkd.traits.skills
+    chkd.traits.skills
   )
 
   if (gift == null) gift = math.random() < 0.5 ? 'berry02' : 'coingold'

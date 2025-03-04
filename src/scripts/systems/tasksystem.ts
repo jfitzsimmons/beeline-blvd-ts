@@ -1,4 +1,4 @@
-import { confrontation_check, seen_check } from '../states/inits/checksFuncs'
+import { confrontation_check } from '../states/inits/checksFuncs'
 
 const { tasks, npcs, player } = globalThis.game.world
 
@@ -53,12 +53,11 @@ export function witness_player(w: string): { confront: boolean; type: string } {
     confront: false,
     type: 'neutral',
   }
-
-  consequence = testjpfplayerthief_consequences(
-    'player',
-    w,
-    seen_check(player, npcs.all[w])
-  )
+  //USED TODO CHFUNCS SEEN_CHECK()
+  consequence = testjpfplayerthief_consequences('player', w, {
+    confront: false,
+    type: 'neutral',
+  })
 
   return consequence
 }

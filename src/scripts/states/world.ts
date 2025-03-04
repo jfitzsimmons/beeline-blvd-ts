@@ -97,11 +97,6 @@ export default class World {
         onUpdate: this.onFaintUpdate.bind(this),
         onExit: this.onFaintExit.bind(this),
       })
-      .addState('arrest', {
-        onEnter: this.onArrestEnter.bind(this),
-        onUpdate: this.onArrestUpdate.bind(this),
-        onExit: this.onArrestExit.bind(this),
-      })
       .addState('turn', {
         onEnter: this.onTurnEnter.bind(this),
         onUpdate: this.onTurnUpdate.bind(this),
@@ -110,7 +105,7 @@ export default class World {
   }
   private onNewEnter(): void {
     this.rooms.fsm.setState('turn')
-    this.player.fsm.setState('turn')
+    this.player.fsm.setState('place')
     this.npcs.fsm.setState('new') //Adds a PlaceSeq and runs it //also test defaults
     this.tasks.fsm.setState('turn')
     this.quests.fsm.setState('new')
@@ -142,20 +137,6 @@ export default class World {
     this.fsm.setState('turn')
   }
   private onFaintExit(): void {}
-  private onArrestEnter(): void {
-    this.clock = this.clock + 6
-    this.player.alert_level = 0
-    this.player.ap = this.player.apMax - 6
-  }
-  private onArrestUpdate(): void {
-    this.player.fsm.update(dt)
-    this.rooms.fsm.update(dt)
-    this.npcs.fsm.update(dt)
-    this.quests.fsm.update(dt)
-    this.tasks.fsm.update(dt)
-    this.fsm.setState('turn')
-  }
-  private onArrestExit(): void {}
   private onNewExit(): void {
     print('WORLDNEWEXIT()!!! set npc-S ACTIVE')
     this.npcs.fsm.setState('active') //each npc gets set to 'active' which runs active behavior from newExit
@@ -165,6 +146,11 @@ export default class World {
   }
   private onTurnUpdate(): void {
     print('<<< ::: WORLDTurnUpdate() ::: >>>')
+    /**
+     * testjpf
+     * do same place/active for player
+     */
+    this.player.fsm.setState('place')
     this.npcs.fsm.setState('place')
     this.clock = this.clock + 1
     if (this.clock > 23) this.clock = this.clock - 24
@@ -173,6 +159,7 @@ export default class World {
     this.npcs.fsm.update(dt)
     this.quests.fsm.update(dt)
     this.tasks.fsm.update(dt)
+    this.player.fsm.setState('active')
     this.npcs.fsm.setState('active')
   }
   private onTurnExit(): void {}
