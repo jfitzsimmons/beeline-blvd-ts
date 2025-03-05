@@ -54,6 +54,7 @@ export default class WorldPlayer extends ActorState {
     this.matrix = { x: 0, y: 4 }
     this.ap = 30
     this.apMax = 30
+    this.clearance = 0
     this.name = 'player'
     this.exitRoom = 'grounds'
     const behaviorDefaults = () => {
@@ -154,6 +155,7 @@ export default class WorldPlayer extends ActorState {
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
             getOccupants: this.parent.getOccupants.bind(this),
+            setConfrontation: this.parent.setConfrontation.bind(this),
             ...behaviorDefaults(),
           }
         },

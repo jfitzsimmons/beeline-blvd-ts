@@ -2,22 +2,25 @@ import {
   ActionProps,
   BehaviorKeys,
   InjuredProps,
+  MenderProps,
 } from '../../../types/behaviors'
 import { NpcsInitState } from '../../states/inits/npcsInitState'
 import Action from '../action'
 import Sequence from '../sequence'
 import HelperSequence from '../sequences/helperSequence'
+import ImmobileSequence from '../sequences/immobileSequence'
 import MenderSequence from '../sequences/menderSequence'
 import MendeeAction from './mendeeAction'
 
 export default class InjuredAction extends Action {
   a: InjuredProps
-  doc = ''
+  doc: null | { (behavior: BehaviorKeys): ActionProps }
   getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
     const props = getProps('injured') as InjuredProps
     super(props)
     this.a = props
+    this.doc = null
     this.getProps = getProps
   }
   run(): { (): void } {
@@ -46,7 +49,7 @@ export default class InjuredAction extends Action {
           NpcsInitState[helper].clan == 'doctors' &&
           ((ticket != -1 && ticket < random) || (ticket == -1 && random > 3))
         ) {
-          this.doc = helper
+          this.doc = this.a.returnNpc(helper).getBehaviorProps.bind(this)
           //const props = this.getProps('mendee')
           return () => this.alternate(new MendeeAction(this.getProps))
         } else if (
@@ -101,17 +104,15 @@ export default class InjuredAction extends Action {
     return 'continue'
   }
   alternate(as: Action | Sequence): string | void {
-    if (this.doc != '') {
-      const doc = this.a.returnNpc(this.doc)
-      doc.turnPriority = 98
-      doc.behavior.active.children.push(
-        new MenderSequence(doc.getBehaviorProps.bind(this), this.a)
-      )
+    if (this.doc != null) {
+      const doc = this.doc('mender') as MenderProps
+      doc.updateFromBehavior('turnPriority', 98)
+      doc.addToBehavior('active', new MenderSequence(this.doc, this.a))
+      doc.addToBehavior('place', new ImmobileSequence(this.doc))
       print(
         'injuredAction:: alternate doc mender sequence:: doc,a:',
         this.doc,
-        this.a.name,
-        doc.behavior.active.children.length
+        this.a.name
       )
     }
     // new MenderSequence(this.a.parent.returnNpc(this.doc), this.a.name).run()

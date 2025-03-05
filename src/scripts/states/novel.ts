@@ -147,10 +147,10 @@ export default class WorldNovel {
   getNovelUpdates(): NovelNpc {
     return this.npc
   }
-  setConfrontation(t: Task) {
-    this.npc = this.parent.returnNpc(t.owner)
-    this.reason = t.owner
-    this._task = { ...t }
+  setConfrontation(npc: string, action: string, reason: string) {
+    this.npc = this.parent.returnNpc(npc)
+    this.reason = reason
+    this._task.label = action
     this.forced = true
   }
   addScript(s: string) {

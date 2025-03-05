@@ -19,7 +19,7 @@ export default class HeroPlaceAction extends Action {
     if (this.a.cooldown > 0) this.a.cooldown = this.a.cooldown - 1
 
     this.a.setRoomInfo()
-    print('findRoomPlaceStation REGPLACEACTION:', this.a.name)
+    print('setRoomInfo HEROPLACEACTION:', this.a.name)
 
     //this.a.findRoomPlaceStation()
     /**

@@ -10,6 +10,7 @@ export type ActionProps =
   | MenderProps
   | ImmobileProps
   | InjuredProps
+  | HeroInjuredProps
   | MendeeProps
   | InfirmProps
   | InfirmedProps
@@ -60,7 +61,7 @@ export interface HeroBehaviorProps {
   infirm: () => InfirmProps
   infirmed: () => InfirmedProps
   helper: () => HelperProps
-  question: () => QuestionProps
+  question: () => QuestionProps | HeroQuestionProps
 }
 
 export interface BehaviorProps extends HeroBehaviorProps {
@@ -111,6 +112,7 @@ export interface MedicPlaceProps extends PlaceProps {
 }
 
 export interface EffectsProps {
+  name: string
   effects: Effect[]
   traits: Traits
 }
@@ -125,6 +127,9 @@ export interface QuestionProps extends DefaultBehaviorProps {
   addOrExtendEffect(effect: Effect): void
   getBehaviorProps(behavior: string): ActionProps
   getOccupants(r: string): string[]
+}
+export interface HeroQuestionProps extends QuestionProps {
+  setConfrontation(npc: string, action: string, reason: string): void
 }
 
 export interface MenderProps extends DefaultBehaviorProps {

@@ -4,7 +4,7 @@ import StateMachine from '../scripts/states/stateMachine'
 import TaskState from '../scripts/states/task'
 import { NovelNpc } from './novel'
 import { Npcs, Traits } from './state'
-import { QuestMethods, Task } from './tasks'
+import { QuestMethods } from './tasks'
 
 export interface WorldArgs {
   returnNpc(n: string): NpcState
@@ -17,7 +17,7 @@ export interface WorldTasksArgs extends WorldArgs {
   didCrossPaths(owner: string, target: string): boolean
   returnPlayer(): WorldPlayer
   getOccupants(r: string): string[]
-  setConfrontation(t: Task): void
+  setConfrontation(npc: string, action: string, reason: string): void
 }
 export interface TaskProps extends WorldTasksArgs {
   //addAdjustMendingQueue(patient: string): void
@@ -34,6 +34,7 @@ export interface WorldPlayerArgs {
   hasHallpass(owner: string): TaskState | null
   removeTaskByCause(target: string, cause: string): void
   getOccupants(r: string): string[]
+  setConfrontation(npc: string, action: string, reason: string): void
 }
 export interface WorldNpcsArgs extends TaskProps {
   getPlayerRoom(): string
@@ -57,6 +58,7 @@ export interface WorldNpcsArgs extends TaskProps {
   playerTraits: Traits
 }
 export interface NpcProps extends WorldNpcsArgs {
+  onScreen: string[]
   addAdjustMendingQueue(patient: string): void
   getMendingQueue(): string[]
   removeMendee(mendee: string): void
