@@ -68,7 +68,7 @@ export default class QuestionAction extends Action {
         (this.a.currRoom == this.hero.exitRoom &&
           this.a.exitRoom == this.hero.currRoom))
     ) {
-      this.hero.setConfrontation(this.a.name, 'questioning')
+      this.hero.setConfrontation(this.a.name, 'questioning', 'clearance')
       /**
        * probably need to add some sort of
        * new ConfrontSequence

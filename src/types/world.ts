@@ -17,7 +17,7 @@ export interface WorldTasksArgs extends WorldArgs {
   didCrossPaths(owner: string, target: string): boolean
   returnPlayer(): WorldPlayer
   getOccupants(r: string): string[]
-  setConfrontation(npc: string, reason: string): void
+  setConfrontation(npc: string, action: string, reason: string): void
 }
 export interface TaskProps extends WorldTasksArgs {
   //addAdjustMendingQueue(patient: string): void
@@ -34,7 +34,7 @@ export interface WorldPlayerArgs {
   hasHallpass(owner: string): TaskState | null
   removeTaskByCause(target: string, cause: string): void
   getOccupants(r: string): string[]
-  setConfrontation(npc: string, reason: string): void
+  setConfrontation(npc: string, action: string, reason: string): void
 }
 export interface WorldNpcsArgs extends TaskProps {
   getPlayerRoom(): string

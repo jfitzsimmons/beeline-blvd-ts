@@ -82,7 +82,7 @@ export function on_message(
     //position player on screen
     //  msg.post('/shared/adam#adam', 'wake_up')
 
-    if (player.fsm.getState() === 'confronted') {
+    if (novel.forced === true) {
       calculate_heat(this.roomName)
       msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
       npcs.all[novel.npc.name].fsm.setState('turn')

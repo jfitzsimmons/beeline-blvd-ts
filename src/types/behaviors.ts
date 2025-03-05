@@ -129,7 +129,7 @@ export interface QuestionProps extends DefaultBehaviorProps {
   getOccupants(r: string): string[]
 }
 export interface HeroQuestionProps extends QuestionProps {
-  setConfrontation(npc: string, reason: string): void
+  setConfrontation(npc: string, action: string, reason: string): void
 }
 
 export interface MenderProps extends DefaultBehaviorProps {

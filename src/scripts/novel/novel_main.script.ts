@@ -32,32 +32,32 @@ function prepare_novel_txts(
   if (extend == true) {
     checkpoint = player.checkpoint
   }
-  const task = tasks.npcHasTask([novel.npc.name], ['player'])
-  if (task != null) {
-    print('NOVELVOVEL2 task1:', task.label)
-    //could use this at level addresstasks testjpf
-    novel.task = { ...task }
-    //used for ai witnessing player and failing confrontation check
-    //questioning without accusation
-    if (!['concern'].includes(novel.reason)) novel.reason = task.cause
-    print('NOVELVOVEL2 task2: novel.reason:', novel.reason)
-    /**TESTJPF
-     * this is checking if npcs has arrest or task.
-     * Player is checked on level
-     * I believe this will overwrite player if NPX also has one of these tasks
-     * could test with test npc on grounds
-     * FIX:::
-     * this checks if already set
-     * naming could be better
-     */
-  }
+  //const task = tasks.npcHasTask([novel.npc.name], ['player'])
+  //if (task != null) {
+  // print('NOVELVOVEL2 task1:', task.label)
+  //could use this at level addresstasks testjpf
+  // novel.task = { ...task }
+  //used for ai witnessing player and failing confrontation check
+  //questioning without accusation
+  // if (!['concern'].includes(novel.reason)) novel.reason = task.cause
+  // print('NOVELVOVEL2 task2: novel.reason:', novel.reason)
+  /**TESTJPF
+   * this is checking if npcs has arrest or task.
+   * Player is checked on level
+   * I believe this will overwrite player if NPX also has one of these tasks
+   * could test with test npc on grounds
+   * FIX:::
+   * this checks if already set
+   * naming could be better
+   */
+  //}
   print('posttaskchk', novel.reason)
-  if (
-    !['questioning', 'arrest'].includes(novel.reason) &&
-    ['questioning', 'arrest'].includes(novel.task.label)
-  ) {
-    novel.reason = novel.task.cause
-  }
+  // if (
+  //  !['questioning', 'arrest'].includes(novel.reason) &&
+  //  ['questioning', 'arrest'].includes(novel.task.label)
+  // ) {
+  //  novel.reason = novel.task.cause
+  // }
   print('NOVELVOVEL2 task3: novel.reason:', novel.reason)
 
   if (novel.npcsWithQuest.includes(novel.npc.name)) novel.reason = 'quest'
