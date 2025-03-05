@@ -217,6 +217,11 @@ export default class NpcState extends ActorState {
         onUpdate: this.onArresteeUpdate.bind(this),
         onExit: this.onArresteeExit.bind(this),
       })
+      .addState('onscreen', {
+        onEnter: this.onOnScreenEnter.bind(this),
+        onUpdate: this.onOnScreenUpdate.bind(this),
+        onExit: this.onOnScreenExit.bind(this),
+      })
       .addState('turn', {
         onEnter: this.onTurnEnter.bind(this),
         onUpdate: this.onTurnUpdate.bind(this),
@@ -311,19 +316,26 @@ export default class NpcState extends ActorState {
     // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', this.currRoom, '| exit:', this.exitRoom, '| name: ', this.name )
   }
   private onTurnEnter(): void {
-    print('NPCCLASS::: onTurnEnter()')
+    //  print('NPCCLASS::: onTurnEnter()')
   }
   private onTurnUpdate(): void {
-    print('TURNUPDATE placerun')
+    print('NPCSTATE:: FOR::', this.name, 'onTurnUpdate PLACErun')
     this.behavior.place.run()
   }
   private onTurnExit(): void {
-    print('TURNEXIT ACTIVErun')
+    //  print('TURNEXIT ACTIVErun')
+  }
+  private onActiveEnter(): void {
+    print('NPCSTATE:: FOR::', this.name, 'onActiveEnter ACTIVErun')
     this.behavior.active.run()
   }
-  private onActiveEnter(): void {}
   private onActiveUpdate(): void {}
   private onActiveExit(): void {}
+  private onOnScreenEnter(): void {
+    this.behavior.active.run()
+  }
+  private onOnScreenUpdate(): void {}
+  private onOnScreenExit(): void {}
   makePriorityRoomList(target: { x: number; y: number }): string[] {
     const npcPriorityProps = {
       matrix: this.matrix,
@@ -368,7 +380,6 @@ export default class NpcState extends ActorState {
     this.currRoom = chosenRoom
     this.currStation = chosenStation
     this.matrix = RoomsInitState[chosenRoom].matrix
-
     this.parent.setStation(chosenRoom, chosenStation, this.name)
     //this.parent.pruneStationMap(chosenRoom, chosenStation)
     /**testjpf clearance needs complete overhaul

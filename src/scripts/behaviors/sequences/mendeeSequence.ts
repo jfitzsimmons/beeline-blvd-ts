@@ -23,9 +23,6 @@ export default class MendeeSequence extends Sequence {
     this.a.updateFromBehavior('turnPriority', 98)
   }
   run(): 'REMOVE' | '' {
-    //  this.a.turnPriority = 98
-
-    print('MendeeSequence:: Running for:', this.a.name)
     for (const child of this.children) {
       const proceed = child.run()()
       if (proceed === 'mend') {

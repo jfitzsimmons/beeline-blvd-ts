@@ -53,6 +53,7 @@ export default class World {
       hasHallpass: this.tasks.has_clearance.bind(this),
       removeTaskByCause: this.tasks.removeTaskByCause.bind(this),
       getOccupants: this.rooms.getOccupants.bind(this),
+      setConfrontation: this.novel.setConfrontation.bind(this),
     }
     this.player = new WorldPlayer('hero', playerProps)
     const npcsProps: WorldNpcsArgs = {
@@ -174,7 +175,6 @@ export default class World {
     )
   }
   returnNpc(n: string): NpcState {
-    print('this.npcs.all[n]', n, this.npcs.all[n].hp)
     return this.npcs.all[n]
   }
   returnPlayer(): WorldPlayer {

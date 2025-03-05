@@ -24,6 +24,7 @@ export default class WorldNpcs {
   fsm: StateMachine
   private _all: Npcs
   order: string[]
+  onScreen: string[]
   quests: QuestMethods
   parent: NpcProps
   //infirmed: string[]
@@ -37,6 +38,7 @@ export default class WorldNpcs {
     this.mendingQueue = []
     this.ignore = []
     this.order = []
+    this.onScreen = []
     this.quests = {
       returnDoctors: this.returnDoctors.bind(this),
       returnSecurity: this.returnDoctors.bind(this),
@@ -44,6 +46,7 @@ export default class WorldNpcs {
       returnOrderAll: this.returnOrderAll.bind(this),
     }
     this.parent = {
+      onScreen: this.onScreen,
       // addInfirmed: this.addInfirmed.bind(this),
       //getWards: this.parent.getWards.bind(this),
       //getInjured: this.getInjured.bind(this),
@@ -69,13 +72,13 @@ export default class WorldNpcs {
     this.fsm = new StateMachine(this, 'npcs')
     this.fsm.addState('idle')
     this.fsm.addState('place', {
-      // onEnter: this.onPlaceEnter.bind(this),
+      onEnter: this.onPlaceEnter.bind(this),
       onUpdate: this.onPlaceUpdate.bind(this),
       onExit: this.onPlaceExit.bind(this),
     })
     this.fsm.addState('active', {
       onEnter: this.onActiveEnter.bind(this),
-      // onUpdate: this.onActiveUpdate.bind(this),
+      onUpdate: this.onActiveUpdate.bind(this),
       onExit: this.onActiveExit.bind(this),
     })
     this.fsm.addState('new', {
@@ -118,67 +121,120 @@ export default class WorldNpcs {
       const npc = this.all[this.order[i]]
       if (npc.hp < 1) {
         npc.behavior.active.children.push(
-          new InjuredSequence(npc.getBehaviorProps.bind(this))
+          new InjuredSequence(npc.getBehaviorProps.bind(npc))
         )
       } else if (
         npc.clearance + math.random(0, 1) <
         RoomsInitState[npc.currRoom].clearance
       ) {
         npc.behavior.active.children.push(
-          new TrespassSequence(npc.getBehaviorProps.bind(this))
+          new TrespassSequence(npc.getBehaviorProps.bind(npc))
         )
       }
       npc.fsm.setState('active')
     }
   }
-  // private onPlaceEnter(): void {}
+  private onPlaceEnter(): void {
+    //testjpf
+  }
   private onPlaceUpdate(): void {
+    this.onScreen = []
+
     print('<< :: NPCSplaceUpdate() :: >>')
+    const playerRoom = this.parent.getPlayerRoom()
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
 
       npc.fsm.update(dt)
+      if (playerRoom == npc.currRoom) this.onScreen.push(npc.name)
+
       // prettier-ignore
       // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
     }
   }
   private onPlaceExit(): void {
+    //filter out onscreen testjpf
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
 
       if (npc.hp < 1 && npc.behavior.active.children.length < 1) {
         npc.behavior.active.children.push(
-          new InjuredSequence(npc.getBehaviorProps.bind(this))
+          new InjuredSequence(npc.getBehaviorProps.bind(npc))
         )
         npc.behavior.place.children.push(
-          new ImmobileSequence(npc.getBehaviorProps.bind(this))
+          new ImmobileSequence(npc.getBehaviorProps.bind(npc))
         )
       } else if (
         npc.clearance + math.random(0, 2) <
         RoomsInitState[npc.currRoom].clearance
       )
         npc.behavior.active.children.push(
-          new TrespassSequence(npc.getBehaviorProps.bind(this))
+          new TrespassSequence(npc.getBehaviorProps.bind(npc))
         )
 
-      npc.fsm.setState('active')
+      // npc.fsm.setState('active')
+    }
+
+    const offscreen = this.order.filter((npc) => !this.onScreen.includes(npc))
+    for (let i = offscreen.length; i-- !== 0; ) {
+      this.all[offscreen[i]].fsm.setState('active')
+    }
+    this.onScreen.push('player')
+    const player = this.parent.returnPlayer()
+    print('this.onScreen.length', this.onScreen.length)
+    for (let i = this.onScreen.length; i-- !== 0; ) {
+      const actor =
+        this.onScreen[i] === 'player' ? player : this.all[this.onScreen[i]]
+      const actions = actor.behavior.active.children
+      for (let i = actions.length; i-- !== 0; ) {
+        print(
+          'onscreen::: ',
+          actor.name,
+          actions[i].constructor.name,
+          ' :::length::',
+          actions.length
+        )
+      }
+      if (actor.name !== 'player') actor.fsm.setState('onscreen')
+
+      /**
+       * I', leaning on a fsm state onscreen
+       * that way ican move active run on npc
+       * from turn exit to active enter
+       * and i can add it to onscreen exit
+       */
     }
   }
   private onActiveEnter(): void {
+    //  this.sort_npcs_by_encounter()
     print('npcsActiveEnter')
     this.security()
   }
-  // private onActiveUpdate(): void {}
+  private onActiveUpdate(): void {
+    /**
+     * need some sort of logic
+     * for player level interaction
+     * how does onScreen behavior work?
+     */
+  }
   private onActiveExit(): void {
     print('NPCSAVTIVEEXIT!!!')
+    const player = this.parent.returnPlayer()
+    for (let i = this.onScreen.length; i-- !== 0; ) {
+      const actor =
+        this.onScreen[i] === 'player' ? player : this.all[this.onScreen[i]]
+      print('onActiveExit:: update actor state:: ONCREENONCREEN:::', actor.name)
+      // actor.fsm.update(dt)
+    }
+
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
       //testjpf Rethink??
       if (npc.behavior.place.children.length < 1)
         npc.behavior.place.children.push(
-          new PlaceSequence(npc.getBehaviorProps.bind(this))
+          new PlaceSequence(npc.getBehaviorProps.bind(npc))
         )
 
       npc.fsm.setState('turn')

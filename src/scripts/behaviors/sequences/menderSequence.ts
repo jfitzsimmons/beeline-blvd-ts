@@ -32,16 +32,15 @@ export default class MenderSequence extends Sequence {
     this.a.updateFromBehavior('turnPriority', 98)
     print(
       this.a.name,
-      'MENDERSEQ CREATED!!!:: DOC,a::',
-      mendee,
+      'NEWMENDERSEQ CREATED!!!:: ',
       this.a.turnPriority,
       this.a.currRoom,
-      this.a.currStation
+      this.a.currStation,
+      'mendee::',
+      mendee.name
     )
   }
   run(): 'REMOVE' | '' {
-    // this.a.turnPriority = 98
-    print('Mend-ER-Sequence:: Running for:', this.a.name)
     for (const child of this.children) {
       const proceed = child.run()()
       if (proceed === 'continue') {

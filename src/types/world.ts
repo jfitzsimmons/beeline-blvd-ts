@@ -34,6 +34,7 @@ export interface WorldPlayerArgs {
   hasHallpass(owner: string): TaskState | null
   removeTaskByCause(target: string, cause: string): void
   getOccupants(r: string): string[]
+  setConfrontation(npc: string, reason: string): void
 }
 export interface WorldNpcsArgs extends TaskProps {
   getPlayerRoom(): string
@@ -57,6 +58,7 @@ export interface WorldNpcsArgs extends TaskProps {
   playerTraits: Traits
 }
 export interface NpcProps extends WorldNpcsArgs {
+  onScreen: string[]
   addAdjustMendingQueue(patient: string): void
   getMendingQueue(): string[]
   removeMendee(mendee: string): void

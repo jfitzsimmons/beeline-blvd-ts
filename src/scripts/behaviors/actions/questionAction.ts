@@ -62,24 +62,12 @@ export default class QuestionAction extends Action {
      * use a different set of tempcons?
      * ex watcherpunch instead of other way around
      */
-    const currRoom = Object.values(
-      this.a.getOccupants(this.a.currRoom)
-    ).includes(this.perp.name)
-    const crossedPaths =
-      currRoom === true
-        ? currRoom
-        : Object.values(this.a.getOccupants(this.a.exitRoom)).filter(
-            (s: string) =>
-              s === this.perp.name && this.perp.exitRoom == this.a.currRoom
-          ).length > 0
-
-    if (crossedPaths === false)
-      return () =>
-        this.continue(
-          `QuestionAction::: ${this.a.name} did not cross paths with ${this.perp.name}`
-        )
-
-    if (this.hero !== null) {
+    if (
+      this.hero !== null &&
+      (this.hero.currRoom == this.a.currRoom ||
+        (this.a.currRoom == this.hero.exitRoom &&
+          this.a.exitRoom == this.hero.currRoom))
+    ) {
       this.hero.setConfrontation(this.a.name, 'questioning')
       /**
        * probably need to add some sort of
@@ -97,6 +85,23 @@ export default class QuestionAction extends Action {
           'QuestionAction::: HERO:: this should set novel for player confrontation.'
         )
     }
+
+    const currRoom = Object.values(
+      this.a.getOccupants(this.a.currRoom)
+    ).includes(this.perp.name)
+    const crossedPaths =
+      currRoom === true
+        ? currRoom
+        : Object.values(this.a.getOccupants(this.a.exitRoom)).filter(
+            (s: string) =>
+              s === this.perp.name && this.perp.exitRoom == this.a.currRoom
+          ).length > 0
+
+    if (crossedPaths === false)
+      return () =>
+        this.continue(
+          `QuestionAction::: ${this.a.name} did not cross paths with ${this.perp.name}`
+        )
 
     const tempcons: Array<
       (
