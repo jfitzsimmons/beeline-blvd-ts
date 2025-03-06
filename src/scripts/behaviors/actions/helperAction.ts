@@ -20,7 +20,6 @@ export default class HelperAction extends Action {
     this.victim = victim
   }
   run(): { (): void } {
-    //this.a.turnPriority = 99
     if (
       this.a.returnNpc(this.victim).hp > 0 ||
       this.a.getMendingQueue().includes(this.victim)
