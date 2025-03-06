@@ -656,7 +656,7 @@ export function seen_check(
   if (result > 10) return { confront: false, type: 'seenspecial' }
   if (result < 0) return { confront: true, type: 'critcal' }
   const bossResult = rollSpecialDice(7, true, 3, 2)
-  const seen = result - 99 <= bossResult
+  const seen = result <= bossResult
   return seen === true
     ? { confront: false, type: 'seen' }
     : { confront: false, type: 'neutral' }
