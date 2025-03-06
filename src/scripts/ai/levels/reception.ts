@@ -1,16 +1,14 @@
 import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
+import { QuestionProps } from '../../../types/behaviors'
 import { Actor } from '../../../types/state'
+import ConfrontSequence from '../../behaviors/sequences/confrontSequence'
 import {
   take_check,
   npcStealCheck,
   take_or_stash,
 } from '../../states/inits/checksFuncs'
-//import npcs from '../../states/npcs'
 import RoomState from '../../states/room'
 import { cicadaModulus } from '../../utils/utils'
-
-//const { rooms, npcs } = globalThis.game.world
-//import { take_check, npcStealCheck, take_or_stash } from '../ai_checks'
 
 function steal_stash_checks(this: RoomState) {
   let thiefVictim = null
@@ -42,9 +40,20 @@ function steal_stash_checks(this: RoomState) {
         name: attendant.name,
         traits: attendant.traits,
         clan: attendant.clan,
-        taskBuilder: attendant.parent.taskBuilder.bind(attendant),
+        // taskBuilder: attendant.parent.taskBuilder.bind(attendant),
       }
-      npcStealCheck(thiefVictimProps, attendantProps, actor.inventory)
+      const confront: string | null = npcStealCheck(
+        thiefVictimProps,
+        attendantProps,
+        actor.inventory
+      )
+      if (confront == 'confront') {
+        const perp = thiefVictim.getBehaviorProps('question') as QuestionProps
+        attendant.addToBehavior(
+          'active',
+          new ConfrontSequence(attendant.getBehaviorProps.bind(attendant), perp)
+        )
+      }
     } else if (actor.inventory.length > 0) {
       take_check(thiefVictimProps, actor)
     }
@@ -64,7 +73,7 @@ function steal_stash_checks(this: RoomState) {
       name: thiefVictim.name,
       traits: thiefVictim.traits,
       clan: thiefVictim.clan,
-      taskBuilder: thiefVictim.parent.taskBuilder.bind(thiefVictim),
+      // taskBuilder: thiefVictim.parent.taskBuilder.bind(thiefVictim),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
     const thiefProps: ThiefVictimProps = {
@@ -77,7 +86,17 @@ function steal_stash_checks(this: RoomState) {
       addInvBonus: thief.addInvBonus.bind(thief),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
-    npcStealCheck(thiefProps, victimProps, loot)
+    const confront: string | null = npcStealCheck(thiefProps, victimProps, loot)
+    if (confront == 'confront') {
+      const perp = thief.getBehaviorProps('question') as QuestionProps
+      thiefVictim.addToBehavior(
+        'active',
+        new ConfrontSequence(
+          thiefVictim.getBehaviorProps.bind(thiefVictim),
+          perp
+        )
+      )
+    }
   }
   if (cicadaModulus() && attendant !== null) {
     actor = this.actors.drawer

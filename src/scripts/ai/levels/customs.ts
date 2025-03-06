@@ -1,5 +1,7 @@
 import { AttendantProps } from '../../../types/ai'
+import { QuestionProps } from '../../../types/behaviors'
 import { Actor } from '../../../types/state'
+import ConfrontSequence from '../../behaviors/sequences/confrontSequence'
 import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
 import RoomState from '../../states/room'
 import { shuffle } from '../../utils/utils'
@@ -23,9 +25,15 @@ function steal_stash_checks(this: RoomState) {
         name: attendant.name,
         traits: attendant.traits,
         clan: attendant.clan,
-        taskBuilder: attendant.parent.taskBuilder.bind(attendant),
       }
-      npcStealCheck(suspect, attendantProps, actor.inventory)
+      const confront = npcStealCheck(suspect, attendantProps, actor.inventory)
+      if (confront == 'confront') {
+        const perp = suspect.getBehaviorProps('question') as QuestionProps
+        attendant.addToBehavior(
+          'active',
+          new ConfrontSequence(attendant.getBehaviorProps.bind(attendant), perp)
+        )
+      }
     } else if (actor.inventory.length > 0) {
       take_or_stash(suspect, actor)
     }
@@ -42,9 +50,15 @@ function steal_stash_checks(this: RoomState) {
         name: victim.name,
         traits: victim.traits,
         clan: victim.clan,
-        taskBuilder: victim.parent.taskBuilder.bind(victim),
       }
-      npcStealCheck(suspect, victimProps, victim.inventory)
+      const confront = npcStealCheck(suspect, victimProps, victim.inventory)
+      if (confront == 'confront') {
+        const perp = suspect.getBehaviorProps('question') as QuestionProps
+        victim.addToBehavior(
+          'active',
+          new ConfrontSequence(victim.getBehaviorProps.bind(victim), perp)
+        )
+      }
     }
   }
 
