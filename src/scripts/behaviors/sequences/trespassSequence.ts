@@ -1,38 +1,37 @@
 import {
-  ActionProps,
-  BehaviorKeys,
+  GetProps,
+  HeroInjuredProps,
   InjuredProps,
 } from '../../../types/behaviors'
 import Action from '../action'
 import TrespassAction from '../actions/trespassAction'
 import Sequence from '../sequence'
-//import PlaceSequence from './placeSequence'
-//import ImmobileSequence from './immobileSequence'
-//import InjuredSequence from './injuredSequence'
-//import MendeeSequence from './mendeeSequence'
 
 export default class TrespassSequence extends Sequence {
-  a: InjuredProps
+  a: InjuredProps | HeroInjuredProps
   prevSpr: number
-  getProps: (behavior: BehaviorKeys) => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
-    const props = getProps('injured') as InjuredProps
+  getProps: GetProps
+  constructor(getProps: GetProps) {
+    const props = getProps('injured')
     const turnActions: Action[] = []
 
     turnActions.push(...[new TrespassAction(getProps)])
 
     super(turnActions)
-    this.a = props
+    this.a =
+      props.name === 'player'
+        ? (props as HeroInjuredProps)
+        : (props as InjuredProps)
     this.getProps = getProps
-    this.prevSpr = this.a.sincePlayerRoom
+    this.prevSpr = this.a.turnPriority
     print('TrespassSeq:: new for', this.a.name, 'in', this.a.currRoom)
-    //this.a.updateFromBehavior('sincePlayerRoom', 96)
+    if (this.a.name == 'player') this.a.updateFromBehavior('turnPriority', 99)
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
       const proceed = child.run()()
       if (proceed == 'continue')
-        this.a.updateFromBehavior('sincePlayerRoom', this.prevSpr)
+        this.a.updateFromBehavior('turnPriority', this.prevSpr)
     }
 
     return 'REMOVE'

@@ -2,22 +2,25 @@ import {
   ActionProps,
   BehaviorKeys,
   InjuredProps,
+  MenderProps,
 } from '../../../types/behaviors'
 import { NpcsInitState } from '../../states/inits/npcsInitState'
 import Action from '../action'
 import Sequence from '../sequence'
 import HelperSequence from '../sequences/helperSequence'
+import ImmobileSequence from '../sequences/immobileSequence'
 import MenderSequence from '../sequences/menderSequence'
 import MendeeAction from './mendeeAction'
 
 export default class InjuredAction extends Action {
   a: InjuredProps
-  doc = ''
+  doc: null | { (behavior: BehaviorKeys): ActionProps }
   getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
     const props = getProps('injured') as InjuredProps
     super(props)
     this.a = props
+    this.doc = null
     this.getProps = getProps
   }
   run(): { (): void } {
@@ -27,7 +30,7 @@ export default class InjuredAction extends Action {
           'Injur-ED-action:: IGNORE - Quest related NPC:' +
             this.a.name +
             ':' +
-            this.a.sincePlayerRoom
+            this.a.turnPriority
         )
 
     const helpers = Object.values(this.a.getOccupants(this.a.currRoom))
@@ -38,7 +41,7 @@ export default class InjuredAction extends Action {
         return 0
       })
     for (const helper of helpers) {
-      if (this.a.returnNpc(helper).sincePlayerRoom < 96) {
+      if (this.a.returnNpc(helper).turnPriority < 96) {
         //doctors start mending after RNG weighted by patient priority
         const ticket = this.a.getMendingQueue().indexOf(this.a.name)
         const random = math.random(0, 4)
@@ -46,7 +49,7 @@ export default class InjuredAction extends Action {
           NpcsInitState[helper].clan == 'doctors' &&
           ((ticket != -1 && ticket < random) || (ticket == -1 && random > 3))
         ) {
-          this.doc = helper
+          this.doc = this.a.returnNpc(helper).getBehaviorProps.bind(this)
           //const props = this.getProps('mendee')
           return () => this.alternate(new MendeeAction(this.getProps))
         } else if (
@@ -70,7 +73,7 @@ export default class InjuredAction extends Action {
               '| VICTIM:' +
               this.a.name +
               ':' +
-              this.a.sincePlayerRoom
+              this.a.turnPriority
           )
         } else if (
           NpcsInitState[helper].clan == 'doctors' &&
@@ -81,7 +84,7 @@ export default class InjuredAction extends Action {
             helper,
             'added',
             this.a.name,
-            'to QUEUE!' + ':' + this.a.sincePlayerRoom
+            'to QUEUE!' + ':' + this.a.turnPriority
           )
           this.a.addAdjustMendingQueue(this.a.name)
         }
@@ -93,7 +96,7 @@ export default class InjuredAction extends Action {
         'Injur-ED-action:: Default - Add Another InjuredSequence for:' +
           this.a.name +
           ':' +
-          this.a.sincePlayerRoom
+          this.a.turnPriority
       )
   }
   continue(s: string): string {
@@ -101,17 +104,15 @@ export default class InjuredAction extends Action {
     return 'continue'
   }
   alternate(as: Action | Sequence): string | void {
-    if (this.doc != '') {
-      const doc = this.a.returnNpc(this.doc)
-      doc.sincePlayerRoom = 98
-      doc.behavior.active.children.push(
-        new MenderSequence(doc.getBehaviorProps.bind(this), this.a)
-      )
+    if (this.doc != null) {
+      const doc = this.doc('mender') as MenderProps
+      doc.updateFromBehavior('turnPriority', 98)
+      doc.addToBehavior('active', new MenderSequence(this.doc, this.a))
+      doc.addToBehavior('place', new ImmobileSequence(this.doc))
       print(
         'injuredAction:: alternate doc mender sequence:: doc,a:',
         this.doc,
-        this.a.name,
-        doc.behavior.active.children.length
+        this.a.name
       )
     }
     // new MenderSequence(this.a.parent.returnNpc(this.doc), this.a.name).run()

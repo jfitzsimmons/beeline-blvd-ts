@@ -11,11 +11,8 @@ export default class MenderAction extends Action {
     this.a = a
   }
   run(): { (): void } {
-    // const { actor: a } = this
     const mendee = this.a.returnNpc(this.mendee.name)
-    print('FROMMENDER:: Mendee HP:::', this.mendee.name, mendee.hp)
     if (mendee.hp < 5) {
-      // this.a.sincePlayerRoom = 98
       if (this.a.currRoom == this.a.getFocusedRoom()) {
         msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
             station: this.mendee.currStation,

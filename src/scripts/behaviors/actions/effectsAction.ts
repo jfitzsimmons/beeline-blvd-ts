@@ -1,13 +1,9 @@
-import {
-  ActionProps,
-  BehaviorKeys,
-  EffectsProps,
-} from '../../../types/behaviors'
+import { EffectsProps, GetProps } from '../../../types/behaviors'
 import Action from '../action'
 
 export default class EffectsAction extends Action {
   a: EffectsProps
-  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+  constructor(getProps: GetProps) {
     const props = getProps('effects') as EffectsProps
     super(props)
     this.a = props

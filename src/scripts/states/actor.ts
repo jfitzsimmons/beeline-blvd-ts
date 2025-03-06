@@ -10,6 +10,7 @@ export default class ActorState {
   inventory: string[] = []
   // loot: string[] make command object?
   private _clearance = 0
+  turnPriority = 0
   cooldown = 0
   convos = 0
   matrix = { x: 0, y: 0 }

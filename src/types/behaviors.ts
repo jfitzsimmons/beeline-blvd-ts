@@ -6,15 +6,27 @@ import { Effect } from './tasks'
 export type ActionProps =
   | EffectsProps
   | PlaceProps
+  | HeroPlaceProps
   | MenderProps
   | ImmobileProps
   | InjuredProps
+  | HeroInjuredProps
   | MendeeProps
   | InfirmProps
   | InfirmedProps
   | HelperProps
   | QuestionProps
   | DefaultBehaviorProps
+
+export type HeroBehaviorKeys =
+  | 'place'
+  | 'effects'
+  | 'immobile'
+  | 'injured'
+  | 'infirm'
+  | 'infirmed'
+  | 'helper'
+  | 'question'
 
 export type BehaviorKeys =
   | 'place'
@@ -34,28 +46,34 @@ export interface BehaviorSetters {
   cooldown: (value: number | [string, string]) => void
   hp: (value: number | [string, string]) => void
   clearance: (value: number | [string, string]) => void
-  sincePlayerRoom: (value: number | [string, string]) => void
+  turnPriority: (value: number | [string, string]) => void
   station: (value: number | [string, string]) => void
 }
 
-export interface BehaviorProps {
+export type GetProps =
+  | { (behavior: BehaviorKeys): ActionProps }
+  | { (behavior: HeroBehaviorKeys): ActionProps }
+export interface HeroBehaviorProps {
   effects: () => EffectsProps
-  place: () => PlaceProps
-  medplace: () => MedicPlaceProps
-  injury: () => DefaultBehaviorProps
-  mender: () => MenderProps
+  place: () => PlaceProps | HeroPlaceProps
   immobile: () => ImmobileProps
   injured: () => InjuredProps
-  mendee: () => MendeeProps
   infirm: () => InfirmProps
   infirmed: () => InfirmedProps
   helper: () => HelperProps
-  question: () => QuestionProps
+  question: () => QuestionProps | HeroQuestionProps
+}
+
+export interface BehaviorProps extends HeroBehaviorProps {
+  medplace: () => MedicPlaceProps
+  injury: () => DefaultBehaviorProps
+  mender: () => MenderProps
+  mendee: () => MendeeProps
 }
 
 export interface DefaultBehaviorProps {
   name: string
-  sincePlayerRoom: number
+  turnPriority: number
   currRoom: string
   currStation: string
   hp: number
@@ -71,10 +89,18 @@ export interface DefaultBehaviorProps {
     value: number | [string, string]
   ): void
 }
-export interface PlaceProps extends DefaultBehaviorProps {
+
+export interface HeroPlaceProps extends SharedPlaceProps {
+  setRoomInfo(): void
+}
+export interface SharedPlaceProps extends DefaultBehaviorProps {
   clearance: number
   clan: string
   exitRoom: string
+  //findRoomPlaceStation(t?: { x: number; y: number }, r?: string[]): void
+}
+
+export interface PlaceProps extends SharedPlaceProps {
   findRoomPlaceStation(t?: { x: number; y: number }, r?: string[]): void
 }
 
@@ -86,6 +112,7 @@ export interface MedicPlaceProps extends PlaceProps {
 }
 
 export interface EffectsProps {
+  name: string
   effects: Effect[]
   traits: Traits
 }
@@ -101,12 +128,21 @@ export interface QuestionProps extends DefaultBehaviorProps {
   getBehaviorProps(behavior: string): ActionProps
   getOccupants(r: string): string[]
 }
+export interface HeroQuestionProps extends QuestionProps {
+  setConfrontation(npc: string, action: string, reason: string): void
+}
 
 export interface MenderProps extends DefaultBehaviorProps {
   returnNpc(n: string): NpcState
   getFocusedRoom(): string
 }
-export interface InjuredProps extends DefaultBehaviorProps {
+export interface HeroInjuredProps extends DefaultBehaviorProps {
+  traits: Traits
+  exitRoom: string
+  returnNpc(n: string): NpcState
+  getOccupants(r: string): string[]
+}
+export interface InjuredProps extends HeroInjuredProps {
   traits: Traits
   exitRoom: string
   returnNpc(n: string): NpcState

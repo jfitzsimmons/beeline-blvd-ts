@@ -78,15 +78,11 @@ export function on_message(
     address_busy_tasks()
     // calculate_heat(this.roomName)
     quickLoad(this, message.roomName)
-    //  msg.post(this.roomName + ':/level#' + this.roomName, 'room_load')
-    //position player on screen
-    //  msg.post('/shared/adam#adam', 'wake_up')
-
-    if (player.fsm.getState() === 'confronted') {
+    if (novel.forced === true) {
       calculate_heat(this.roomName)
       msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
-      npcs.all[novel.npc.name].fsm.setState('turn')
-      player.fsm.setState('turn')
+      //  npcs.all[novel.npc.name].fsm.setState('turn')
+      //  player.fsm.setState('turn')
     }
   } else if (messageId == hash('quick_load')) {
     quickLoad(this, message.roomName)

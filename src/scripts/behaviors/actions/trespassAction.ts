@@ -1,6 +1,8 @@
 import {
   ActionProps,
   BehaviorKeys,
+  GetProps,
+  HeroInjuredProps,
   InjuredProps,
   QuestionProps,
 } from '../../../types/behaviors'
@@ -10,35 +12,43 @@ import QuestionSequence from '../sequences/questionSequence'
 //import QuestionSequence from '../sequences/questionSequence'
 
 export default class TrespassAction extends Action {
-  a: InjuredProps
-  doc = ''
-  getProps: (behavior: BehaviorKeys) => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
-    const props = getProps('injured') as InjuredProps
+  a: InjuredProps | HeroInjuredProps
+  isHero: boolean
+  enforcer: null | { (behavior: BehaviorKeys): ActionProps }
+
+  getProps: GetProps
+  constructor(getProps: GetProps) {
+    const props = getProps('injured')
     super(props)
-    this.a = props
+    this.a =
+      props.name === 'player'
+        ? (props as HeroInjuredProps)
+        : (props as InjuredProps)
     this.getProps = getProps
+    this.isHero = this.a.name === 'player' ? true : false
+    this.enforcer = null
   }
   run(): { (): void } {
-    const stationSlice = this.a.currStation.slice(-7, -1)
-    print('TrespassAction:: slice::', stationSlice)
+    print(this.isHero, this.a.name)
     if (
-      stationSlice == 'utside' ||
-      stationSlice == '_passe' ||
-      stationSlice == 'isoner' ||
-      stationSlice == 'atient'
+      this.isHero == false &&
+      ['utside', '_passe', 'isoner', 'atient'].includes(
+        this.a.currStation.slice(-7, -1)
+      )
     )
       return () =>
         this.fail(
           `TrespassAction:: ${this.a.name} gets 1 turn clearance for ${this.a.currStation}`
         )
-    this.a.updateFromBehavior('sincePlayerRoom', 96) // so can add QuestionSeq to available security
-    if (this.a.getIgnore().includes(this.a.name))
-      return () =>
-        this.fail('TrespassAction:: IGNORE - injured NPC???:' + this.a.name)
+
+    this.a.updateFromBehavior('turnPriority', 96) // so can add QuestionSeq to available security
+
+    //if (this.a.getIgnore().includes(this.a.name))
+    // return () =>
+    // this.fail('TrespassAction:: IGNORE - injured NPC???:' + this.a.name)
 
     const currRoom = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
-      (s) => s != '' && s != this.a.name && this.a.name.slice(0, 4) === 'secu'
+      (s) => s != '' && s != this.a.name && s.slice(0, 4) === 'secu'
     )
     const prevRoom = Object.values(this.a.getOccupants(this.a.exitRoom)).filter(
       (s: string) =>
@@ -46,28 +56,18 @@ export default class TrespassAction extends Action {
         this.a.returnNpc(s).exitRoom == this.a.currRoom
     )
     for (const e of [...new Set([...prevRoom, ...currRoom])]) {
-      const enforcer = this.a.returnNpc(e)
+      if (this.isHero === true) print('ISHERO ENFORCERS::', e)
+      this.enforcer = this.a.returnNpc(e).getBehaviorProps.bind(this)
+      const enforcer = this.enforcer('question') as QuestionProps
       if (
-        enforcer.sincePlayerRoom < 96 &&
-        math.random() > 0.1 &&
+        enforcer.turnPriority < 96 &&
+        math.random() > 0.2 &&
         confrontation_check(enforcer.traits, this.a.traits) == true
       ) {
-        /**
-         * testjpf
-         * options:?:
-         * warn
-         * arrest?
-         *
-         * current
-         * does :: confrontation_check(cop.traits, this._all[target].traits) == true
-         * adds questioning task for security (means I probably should sort trespassers)
-         * so need QuestioningSequence for security
-         */
-        ///STARTHERE
         const perp = this.getProps('question') as QuestionProps
         enforcer.addToBehavior(
           'active',
-          new QuestionSequence(enforcer.getBehaviorProps.bind(this), perp)
+          new QuestionSequence(this.enforcer, perp)
         )
         return () =>
           this.fail(
