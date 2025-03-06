@@ -332,10 +332,18 @@ export default class NpcState extends ActorState {
   private onActiveUpdate(): void {}
   private onActiveExit(): void {}
   private onOnScreenEnter(): void {
-    this.behavior.active.run()
+    print(
+      'NPCSTATE:: FOR::',
+      this.name,
+      'onOnScreenEnter NO-RUN: this.behavior.active:',
+      this.behavior.active.children.length
+    )
   }
   private onOnScreenUpdate(): void {}
-  private onOnScreenExit(): void {}
+  private onOnScreenExit(): void {
+    print('NPCSTATE:: FOR::', this.name, 'onOnScreenExit yes-RUN')
+    this.behavior.active.run()
+  }
   makePriorityRoomList(target: { x: number; y: number }): string[] {
     const npcPriorityProps = {
       matrix: this.matrix,

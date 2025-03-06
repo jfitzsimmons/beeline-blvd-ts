@@ -109,7 +109,7 @@ export default class WorldNpcs {
         (npc.currRoom == 'reception' && npc.currStation == 'guest')
       ) {
         npc.hp = 0
-        npc.turnPriority = 99
+        npc.turnPriority = 98
         //npc.parent.addInjured(npc.name)
         //new InjuryAction(npc.getBehaviorProps.bind(this)).run()
       }
@@ -148,7 +148,13 @@ export default class WorldNpcs {
 
       npc.fsm.update(dt)
       if (playerRoom == npc.currRoom) this.onScreen.push(npc.name)
-
+      if (
+          npc.clearance + math.random(0, 2) <
+          RoomsInitState[npc.currRoom].clearance
+        )
+          npc.behavior.active.children.push(
+            new TrespassSequence(npc.getBehaviorProps.bind(npc))
+          )
       // prettier-ignore
       // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
     }
@@ -165,13 +171,7 @@ export default class WorldNpcs {
         npc.behavior.place.children.push(
           new ImmobileSequence(npc.getBehaviorProps.bind(npc))
         )
-      } else if (
-        npc.clearance + math.random(0, 2) <
-        RoomsInitState[npc.currRoom].clearance
-      )
-        npc.behavior.active.children.push(
-          new TrespassSequence(npc.getBehaviorProps.bind(npc))
-        )
+      }
 
       // npc.fsm.setState('active')
     }
@@ -195,6 +195,10 @@ export default class WorldNpcs {
           ' :::length::',
           actions.length
         )
+      }
+      if (actor.turnPriority == 99) {
+        print('NPCS::: onplaceExit:: InjuredPriority!!! ONSCREEN:', actor.name)
+        actor.behavior.active.run()
       }
       if (actor.name !== 'player') actor.fsm.setState('onscreen')
 
@@ -220,12 +224,14 @@ export default class WorldNpcs {
   }
   private onActiveExit(): void {
     print('NPCSAVTIVEEXIT!!!')
-    const player = this.parent.returnPlayer()
+    // const player = this.parent.returnPlayer()
     for (let i = this.onScreen.length; i-- !== 0; ) {
-      const actor =
-        this.onScreen[i] === 'player' ? player : this.all[this.onScreen[i]]
-      print('onActiveExit:: update actor state:: ONCREENONCREEN:::', actor.name)
-      // actor.fsm.update(dt)
+      print(
+        'onActiveExit:: update actor state:: ONCREENONCREEN:::',
+        this.onScreen[i]
+      )
+      this.onScreen[i] !== 'player' &&
+        this.all[this.onScreen[i]].fsm.setState('turn')
     }
 
     this.sort_npcs_by_encounter()
