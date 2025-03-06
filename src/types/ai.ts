@@ -23,5 +23,4 @@ export interface AttendantProps {
   name: string
   traits: Traits
   clan: string
-  taskBuilder(o: string, label: string, target: string, cause: string): void
 }

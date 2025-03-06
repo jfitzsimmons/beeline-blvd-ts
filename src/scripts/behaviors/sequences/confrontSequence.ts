@@ -5,11 +5,7 @@ import {
 } from '../../../types/behaviors'
 import Action from '../action'
 import ConfrontAction from '../actions/confrontAction'
-//import InjuredAction from '../actions/injuredAction'
-//import QuestionAction from '../actions/questionAction'
 import Sequence from '../sequence'
-//import ImmobileSequence from './immobileSequence'
-//import MendeeSequence from './mendeeSequence'
 
 export default class ConfrontSequence extends Sequence {
   a: QuestionProps
@@ -42,18 +38,16 @@ export default class ConfrontSequence extends Sequence {
     this.a = props
     this.perp = perp
     this.getProps = getProps
+    print(
+      'CONFRONTSEQ::: CREATED FOR::',
+      this.a.name,
+      'CONFRONTING:',
+      this.perp.name
+    )
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
-      const proceed = child.run()()
-      print('INJUREDSEQUENCE::: Proceed::', this.a.name, ':', proceed)
-      if (proceed === 'continue') {
-        //this.a.addToBehavior('active', new InjuredSequence(this.getProps))
-        //   this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
-      } else if (proceed == 'mend') {
-        //   this.a.addToBehavior('active', new MendeeSequence(this.getProps))
-        //  this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
-      }
+      child.run()()
     }
     return 'REMOVE'
   }

@@ -243,14 +243,14 @@ export default class TaskState {
     } else if (label == 'confront') {
       return {
         //build_consequence: checks.build_consequence.bind(this),
-        suspicious_check: checks.suspicious_check.bind(this),
-        becomeASnitchCheck: checks.becomeASnitchCheck.bind(this),
+        // suspicious_check: checks.suspicious_check.bind(this),
+        // becomeASnitchCheck: checks.becomeASnitchCheck.bind(this),
         // targetPunchedCheck: checks.targetPunchedCheck.bind(this),
-        vanity_check: checks.vanity_check.bind(this),
+        //  vanity_check: checks.vanity_check.bind(this),
         // prejudice_check: checks.prejudice_check.bind(this),
-        angel_check: checks.angel_check.bind(this),
+        //  angel_check: checks.angel_check.bind(this),
         //unlucky_check: checks.unlucky_check.bind(this),
-        watcher_punched_check: checks.watcher_punched_check.bind(this),
+        //  watcher_punched_check: checks.watcher_punched_check.bind(this),
       }
     }
 

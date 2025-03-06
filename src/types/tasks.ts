@@ -24,11 +24,6 @@ export interface TasksChecks {
   chaotic_good_check(target: string, listener: string): Consequence
   classy_check(t: string, l: string): Consequence
   predator_check(t: string, l: string): Consequence
-  suspicious_check(t: string, l: string): Consequence
-  vanity_check(t: string, l: string): Consequence
-  angel_check(t: string, l: string): Consequence
-  becomeASnitchCheck(t: string, l: string): Consequence
-  watcher_punched_check(t: string, l: string): Consequence
 }
 export interface TasksOutcomes {
   add_prejudice(tClan: string, listener: QuestionProps): void

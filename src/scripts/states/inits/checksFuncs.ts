@@ -596,15 +596,13 @@ export function targetPunchedCheck(
 }
 // Misc. Checks
 export function suspicious_check(
-  this: WorldTasks,
-  t: string,
-  l: string
+  chkr: QuestionProps,
+  chkd: QuestionProps
 ): Consequence {
-  const { binaries: lb, skills: ls } = this.parent.returnNpc(l).traits
-  const { binaries: tb, skills: ts } =
-    t === 'player'
-      ? this.parent.returnPlayer().traits
-      : this.parent.returnNpc(t).traits
+  const target = chkd
+  const listener = chkr
+  const { skills: ls, binaries: lb } = listener.traits
+  const { skills: ts, binaries: tb } = target.traits
 
   const modifier = Math.round(
     ls.charisma -
@@ -658,7 +656,7 @@ export function seen_check(
   if (result > 10) return { confront: false, type: 'seenspecial' }
   if (result < 0) return { confront: true, type: 'critcal' }
   const bossResult = rollSpecialDice(7, true, 3, 2)
-  const seen = result <= bossResult
+  const seen = result - 99 <= bossResult
   return seen === true
     ? { confront: false, type: 'seen' }
     : { confront: false, type: 'neutral' }
@@ -738,7 +736,7 @@ export function npcStealCheck(
   target: ThiefVictimProps,
   watcher: AttendantProps,
   loot: string[]
-) {
+): null | string {
   // prettier-ignore
   // print('npcSTEALchkLOOT:::', target.name, target.currRoom, watcher.name, watcher.currRoom, loot[0])
 
@@ -759,11 +757,15 @@ export function npcStealCheck(
     wb.evil_good + wb.lawlessLawful
   const result =
     rollSpecialDice(5, advantage, 3, 2) + (modifier > -3 ? modifier : -3)
-  if (result < 5) return false
+  if (result < 5) return 'unseen'
   const consequence = seen_check(target, watcher)
-  // print('SEENCHECK::', consequence.type)
+  // print('CHECKSCHECKS!!!::: SEENCHECK::', consequence.type)
+
   if (consequence.type == 'seen') {
-    watcher.taskBuilder(watcher.name, 'confront', target.name, 'theft')
+    //   print('CHECKSCHECKS!!!::: CONFRONT!!! SEENCHECK::', consequence.type)
+
+    //watcher.taskBuilder(watcher.name, 'confront', target.name, 'theft')
+    return 'confront'
     //testjpf is this used??
     // target.loot = loot
   }
@@ -782,6 +784,7 @@ export function npcStealCheck(
 
   target.cooldown = target.cooldown + 5
   // print('SEENCHECK END::', consequence.type, target.cooldown)
+  return null
 }
 function add_angel(add: (effect: Effect) => void): void {
   // print('CCOUTCOME:: angel', listener)
@@ -789,13 +792,11 @@ function add_angel(add: (effect: Effect) => void): void {
   add(effect)
 }
 export function angel_check(
-  this: WorldTasks,
-  t: string,
-  l: string
+  chkr: QuestionProps,
+  chkd: QuestionProps
 ): Consequence {
-  const target =
-    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
-  const listener = this.parent.returnNpc(l)
+  const target = chkd
+  const listener = chkr
   const { skills: ls, binaries: lb } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
 
@@ -805,7 +806,7 @@ export function angel_check(
   // prettier-ignore
   // print('CHECKS:: ANCGELCHK::', t, 'is thought of as an angel by?', l, 'ROLL:', result)
   if (result > 5 && result <= 10) {
-    add_angel(listener.addOrExtendEffect.bind(this))
+    add_angel(listener.addOrExtendEffect.bind(listener))
     return { pass: true, type: 'angel' }
   }
 
@@ -826,13 +827,11 @@ function add_vanity(add: (effect: Effect) => void): void {
   add(effect)
 }
 export function vanity_check(
-  this: WorldTasks,
-  t: string,
-  l: string
+  chkr: QuestionProps,
+  chkd: QuestionProps
 ): Consequence {
-  const target =
-    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
-  const listener = this.parent.returnNpc(l)
+  const target = chkd
+  const listener = chkr
   const { skills: ls, binaries: lb } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
 
@@ -844,7 +843,7 @@ export function vanity_check(
   // print('CHECKS:: ANCGELCHK::', t, 'has made vane::', l, 'ROLL:', result)
 
   if (result > 5 && result <= 10) {
-    add_vanity(listener.addOrExtendEffect.bind(this))
+    add_vanity(listener.addOrExtendEffect.bind(listener))
     return { pass: true, type: 'vanity' }
   }
 
@@ -943,13 +942,11 @@ export function prejudice_check(
 }
 
 export function watcher_punched_check(
-  this: WorldTasks,
-  t: string,
-  l: string
+  chkr: QuestionProps,
+  chkd: QuestionProps
 ): Consequence {
-  const target =
-    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
-  const listener = this.parent.returnNpc(l)
+  const target = chkd
+  const listener = chkr
   const { skills: ls } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
 
@@ -1026,13 +1023,11 @@ export function unlucky_check(
 }
 
 export function becomeASnitchCheck(
-  this: WorldTasks,
-  t: string,
-  l: string
+  chkr: QuestionProps,
+  chkd: QuestionProps
 ): Consequence {
-  const target =
-    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
-  const listener = this.parent.returnNpc(l)
+  const target = chkd
+  const listener = chkr
   const { skills: ls, binaries: lb } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
 
