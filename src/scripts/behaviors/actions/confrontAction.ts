@@ -34,6 +34,17 @@ export default class ConfrontAction extends Action {
     this.a = props
     this.perp = perp
     this.getProps = getProps
+    if (
+      this.a.currRoom == this.perp.currRoom &&
+      this.a.currRoom == this.a.getFocusedRoom()
+    ) {
+      msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+        station: this.perp.currStation,
+        npc: this.a.name,
+      })
+      // prettier-ignore
+      print("NEWNEW",this.a.name, 'STATION MOVE VIA TASK confront', this.perp.name, 'in', this.a.currRoom)
+    }
   }
   run(): { (): void } {
     const tempcons: Array<
@@ -59,7 +70,12 @@ export default class ConfrontAction extends Action {
       'confronter:',
       this.a.name,
       'perp:',
-      this.perp.name
+      this.perp.name,
+      'inroom:',
+      this.a.currRoom,
+      this.perp.currRoom,
+      '||| PLAYERROOM:',
+      this.a.getFocusedRoom()
     )
 
     if (consolation == 'neutral') {
@@ -68,6 +84,7 @@ export default class ConfrontAction extends Action {
        * need sequence for snitch!!
        * need returns for chkfuncs call_security
        *
+       
        * testjpf NEW
        * this is why you had that loot STATE prop
        * confront sequence needs loot.
@@ -88,17 +105,27 @@ export default class ConfrontAction extends Action {
       this.a.addInvBonus(chest_item)
       //if (victim == true ){ remove_chest_bonus(w, chest_item) }
       this.a.cooldown = math.random(5, 15)
+      return () =>
+        this.fail(
+          `ConfrontAction::: Failed:: ${this.a.name} had no effect on ${this.perp.name}`
+        )
     }
 
     this.a.cooldown = this.a.cooldown + 5
-
+    if (
+      this.a.currRoom == this.perp.currRoom &&
+      this.a.currRoom == this.a.getFocusedRoom()
+    ) {
+      msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+        station: this.perp.currStation,
+        npc: this.a.name,
+      })
+      // prettier-ignore
+      print("runrun",this.a.name, 'STATION MOVE VIA TASK confront', this.perp.name, 'in', this.a.currRoom)
+    }
     return () => this.success()
     //need something that checks response
     //does response need EffectsAction, sequences, something else???
     //testjpf
-  }
-  continue(s: string): string {
-    print('CONFRONT-Action:: Continue:', s)
-    return 'continue'
   }
 }

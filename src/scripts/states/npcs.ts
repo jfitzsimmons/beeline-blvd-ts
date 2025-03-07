@@ -175,7 +175,7 @@ export default class WorldNpcs {
 
       // npc.fsm.setState('active')
     }
-
+    this.sort_npcs_by_encounter()
     const offscreen = this.order.filter((npc) => !this.onScreen.includes(npc))
     for (let i = offscreen.length; i-- !== 0; ) {
       this.all[offscreen[i]].fsm.setState('active')
@@ -224,17 +224,23 @@ export default class WorldNpcs {
   }
   private onActiveExit(): void {
     print('NPCSAVTIVEEXIT!!!')
+    this.sort_npcs_by_encounter()
+
     // const player = this.parent.returnPlayer()
+    this.onScreen.splice(1, this.onScreen.indexOf('player'))
+    this.onScreen.sort(
+      (a: string, b: string) =>
+        this.all[a].turnPriority - this.all[b].turnPriority
+    )
     for (let i = this.onScreen.length; i-- !== 0; ) {
       print(
-        'onActiveExit:: update actor state:: ONCREENONCREEN:::',
+        'NPCS:: onActiveExit:: update actor state:: ONCREENONCREEN:::',
         this.onScreen[i]
       )
       this.onScreen[i] !== 'player' &&
         this.all[this.onScreen[i]].fsm.setState('turn')
     }
 
-    this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
       //testjpf Rethink??

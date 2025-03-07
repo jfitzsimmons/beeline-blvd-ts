@@ -1,8 +1,4 @@
-import {
-  ActionProps,
-  BehaviorKeys,
-  InfirmProps,
-} from '../../../types/behaviors'
+import { GetProps, InfirmProps } from '../../../types/behaviors'
 import Action from '../action'
 import ArrestAction from '../actions/arrestAction'
 import EffectsAction from '../actions/effectsAction'
@@ -10,7 +6,7 @@ import Sequence from '../sequence'
 
 export default class ArrestSequence extends Sequence {
   a: InfirmProps
-  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+  constructor(getProps: GetProps) {
     const placeActions: Action[] = []
 
     placeActions.push(
