@@ -1,8 +1,4 @@
-import {
-  ActionProps,
-  BehaviorKeys,
-  ImmobileProps,
-} from '../../../types/behaviors'
+import { GetProps, ImmobileProps } from '../../../types/behaviors'
 //import { isNpc } from '../../utils/ai'
 import Action from '../action'
 import EffectsAction from '../actions/effectsAction'
@@ -11,7 +7,7 @@ import Sequence from '../sequence'
 
 export default class ImmobileSequence extends Sequence {
   a: ImmobileProps
-  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+  constructor(getProps: GetProps) {
     const props = getProps('immobile') as ImmobileProps
     const placeActions: Action[] = []
 

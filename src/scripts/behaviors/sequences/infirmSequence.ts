@@ -23,8 +23,6 @@ export default class InfirmSequence extends Sequence {
     this.a.updateFromBehavior('turnPriority', 97)
   }
   run(): 'REMOVE' | '' {
-    //this.a.turnPriority = 97
-
     for (const child of this.children) {
       child.run()()
     }

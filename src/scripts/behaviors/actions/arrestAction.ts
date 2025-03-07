@@ -1,8 +1,4 @@
-import {
-  ActionProps,
-  BehaviorKeys,
-  InfirmProps,
-} from '../../../types/behaviors'
+import { GetProps, InfirmProps } from '../../../types/behaviors'
 //import { RoomsInitState } from '../../states/inits/roomsInitState'
 import Action from '../action'
 import Sequence from '../sequence'
@@ -10,8 +6,8 @@ import JailedSequence from '../sequences/jailedSequence'
 
 export default class ArrestAction extends Action {
   a: InfirmProps
-  getProps: (behavior: BehaviorKeys) => ActionProps
-  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+  getProps: GetProps
+  constructor(getProps: GetProps) {
     const props = getProps('infirm') as InfirmProps
     super(props)
     this.a = props

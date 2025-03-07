@@ -77,7 +77,7 @@ export default class WorldRooms {
     this._focused = f
   }
   getOccupants(r: string): string[] {
-    return Object.values(this.all[r].stations).filter((s) => s != '')
+    return [...Object.values(this.all[r].stations).filter((s) => s != '')]
   }
   setFocused(r: string) {
     this.focused = r

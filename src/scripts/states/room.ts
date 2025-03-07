@@ -29,9 +29,6 @@ export default class RoomState {
     this.props = RoomsInitState[r].props || []
     this.wards = RoomsInitState[r].wards || {}
     this.parent = roomProps
-    //this.checks = {}
-    //this.outcomes = {}
-
     this.fsm
       .addState('idle')
       .addState('turn', {

@@ -21,6 +21,7 @@ import {
   BehaviorSetters,
 } from '../../types/behaviors'
 import Selector from '../behaviors/selector'
+
 export default class NpcState extends ActorState {
   //prototype: any
   home: { x: number; y: number }
@@ -185,10 +186,12 @@ export default class NpcState extends ActorState {
             clan: this.clan,
             love: this.love,
             exitRoom: this.exitRoom,
+            getFocusedRoom: this.parent.getFocusedRoom.bind(this),
             addInvBonus: this.addInvBonus.bind(this),
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
             getOccupants: this.parent.getOccupants.bind(this),
+            updateInventory: this.updateInventory.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -278,20 +281,7 @@ export default class NpcState extends ActorState {
     this.findRoomPlaceStation()
   }
   private onTrespassExit(): void {}
-  private onArresteeEnter(): void {
-    /**
-    const vacancy = this.parent.sendToVacancy('security', this.name)
-    if (vacancy != null) {
-      this.parent.clearStation(this.currRoom, this.currStation, this.name)
-      this.currStation = vacancy
-    }
-    this.turnPriority = 96
-    // this.parent.addInfirmed(this.name)
-    this.matrix = RoomsInitState.security.matrix
-    this.cooldown = 8
-    this.currRoom = 'security'
-    **/
-  }
+  private onArresteeEnter(): void {}
   private onArresteeUpdate(): void {
     //this.cooldown--
     //if (this.cooldown < 1) this.fsm.setState('turn')
@@ -338,11 +328,13 @@ export default class NpcState extends ActorState {
       'onOnScreenEnter NO-RUN: this.behavior.active:',
       this.behavior.active.children.length
     )
+    //testjpf remove ideal would be onscreen exit.??
+    this.behavior.active.run()
   }
   private onOnScreenUpdate(): void {}
   private onOnScreenExit(): void {
     print('NPCSTATE:: FOR::', this.name, 'onOnScreenExit yes-RUN')
-    this.behavior.active.run()
+    //    this.behavior.active.run()
   }
   makePriorityRoomList(target: { x: number; y: number }): string[] {
     const npcPriorityProps = {
@@ -439,6 +431,7 @@ export default class NpcState extends ActorState {
   }
   addInvBonus(i: string) {
     const item: InventoryTableItem = { ...itemStateInit[i] }
+    print('NPCADDinvONUS: Item', i)
     let sKey: keyof typeof item.skills
     for (sKey in item.skills)
       this.traits.skills[sKey] = this.traits.skills[sKey] + item.skills[sKey]
@@ -447,6 +440,34 @@ export default class NpcState extends ActorState {
     for (bKey in item.binaries)
       this.traits.binaries[bKey] =
         this.traits.binaries[bKey] + item.binaries[bKey]
+  }
+  updateInventory(addDelete: 'add' | 'delete', item: string) {
+    // const inventory = this[storage].inventory
+    print(
+      addDelete,
+      'npcupdateinv::: Item ...traits::speed, charisma,evil,authority:',
+      item,
+      this.traits.skills.speed,
+      this.traits.skills.charisma,
+      this.traits.binaries.evil_good,
+      this.traits.binaries.anti_authority
+    )
+    if (addDelete == 'add') {
+      this.inventory.push(item)
+      this.addInvBonus(item)
+    } else {
+      this.inventory.splice(1, this.inventory.indexOf(item))
+      this.removeInvBonus(item)
+    }
+    print(
+      addDelete,
+      'npcupdateinv::: Item ...traits::speed, charisma,evil,authority:',
+      item,
+      this.traits.skills.speed,
+      this.traits.skills.charisma,
+      this.traits.binaries.evil_good,
+      this.traits.binaries.anti_authority
+    )
   }
   addOrExtendEffect(e: Effect) {
     //   let ek: keyof typeof this.effects

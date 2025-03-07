@@ -12,6 +12,7 @@ export interface ThiefVictimProps {
   name: string
   addInvBonus: (chest_item: string) => void
   removeInvBonus: (chest_item: string) => void
+  updateInventory: (addDelete: 'add' | 'delete', item: string) => void
 
   traits: Traits
   inventory: string[]
@@ -23,5 +24,6 @@ export interface AttendantProps {
   name: string
   traits: Traits
   clan: string
-  taskBuilder(o: string, label: string, target: string, cause: string): void
+  inventory: string[]
+  updateInventory: (addDelete: 'add' | 'delete', item: string) => void
 }

@@ -1,11 +1,9 @@
 import WorldTasks from '../tasks'
-import { Actor, Traits } from '../../../types/state'
+import { Traits } from '../../../types/state'
 import { Effect, Consequence } from '../../../types/tasks'
 import {
   removeAdvantageous,
-  removeLast,
   removeOfValue,
-  removeRandom,
   removeValuable,
 } from '../../systems/inventorysystem'
 import { fx } from '../../utils/consts'
@@ -15,6 +13,7 @@ import { shuffle, clamp } from '../../utils/utils'
 //impor from '../player'
 import { QuestionProps } from '../../../types/behaviors'
 import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
+import Storage from '../storage'
 
 export function confrontation_check(watcher: Traits, target: Traits): boolean {
   const { skills: ls, binaries: lb } = watcher
@@ -519,7 +518,10 @@ export function lConfrontPunchT(
   print('OUTCOMES:: LcT::', chkd.name, 'HITFOR::', hit)
 }
 
-export function getExtorted(chkr: QuestionProps, chkd: QuestionProps): string {
+export function getExtorted(
+  chkr: QuestionProps,
+  chkd: QuestionProps
+): string | null {
   // print('OUTCOMES:: ', t, 'GETSEXTORTED')
   return removeOfValue(chkr.inventory, chkd.inventory)
 }
@@ -596,15 +598,13 @@ export function targetPunchedCheck(
 }
 // Misc. Checks
 export function suspicious_check(
-  this: WorldTasks,
-  t: string,
-  l: string
+  chkr: QuestionProps,
+  chkd: QuestionProps
 ): Consequence {
-  const { binaries: lb, skills: ls } = this.parent.returnNpc(l).traits
-  const { binaries: tb, skills: ts } =
-    t === 'player'
-      ? this.parent.returnPlayer().traits
-      : this.parent.returnNpc(t).traits
+  const target = chkd
+  const listener = chkr
+  const { skills: ls, binaries: lb } = listener.traits
+  const { skills: ts, binaries: tb } = target.traits
 
   const modifier = Math.round(
     ls.charisma -
@@ -665,7 +665,7 @@ export function seen_check(
 }
 export function take_check(
   taker: ThiefVictimProps,
-  actor: ThiefVictimProps | Actor
+  actor: ThiefVictimProps | Storage
 ) {
   const { skills, binaries } = taker.traits
   const modifier = Math.round(
@@ -680,18 +680,24 @@ export function take_check(
 
   let chest_item = null
   if (math.random() < 0.5) {
-    chest_item = removeValuable(taker.inventory, actor.inventory)
+    chest_item = removeValuable(actor.inventory)
   } else if (math.random() < 0.51) {
-    chest_item = removeAdvantageous(taker.inventory, actor.inventory, skills)
+    chest_item = removeAdvantageous(actor.inventory, skills)
   } else {
-    chest_item = removeRandom(taker.inventory, actor.inventory)
+    chest_item = actor.inventory[math.random(0, actor.inventory.length)]
   }
-  taker.addInvBonus(chest_item)
+
+  print('CHKFUNCS::: TAKECHECK::, checstitem:', chest_item)
+  if (chest_item !== null) {
+    taker.updateInventory('add', chest_item)
+    actor.updateInventory('delete', chest_item)
+    // taker.addInvBonus(chest_item)
+  }
 }
 
 export function stash_check(
   stasher: ThiefVictimProps,
-  actor: ThiefVictimProps | Actor
+  actor: ThiefVictimProps | Storage
 ) {
   const modifier = stasher.inventory.length - actor.inventory.length
 
@@ -705,22 +711,23 @@ export function stash_check(
 
   let chest_item: string | null = null
   if (math.random() < 0.5) {
-    chest_item = removeValuable(actor.inventory, stasher.inventory)
+    chest_item = removeValuable(stasher.inventory)
   } else if (math.random() < 0.51) {
-    chest_item = removeAdvantageous(
-      actor.inventory,
-      stasher.inventory,
-      stasher.traits.skills
-    )
+    chest_item = removeAdvantageous(stasher.inventory, stasher.traits.skills)
   } else {
-    chest_item = removeLast(actor.inventory, stasher.inventory)
+    chest_item = stasher.inventory[stasher.inventory.length - 1]
   }
-  stasher.removeInvBonus(chest_item)
+  print('CHKFUNCS::: stashCHECK::, checstitem:', chest_item)
+
+  if (chest_item !== null) {
+    stasher.updateInventory('delete', chest_item)
+    actor.updateInventory('add', chest_item)
+  }
   // if victim == true ){ add_chest_bonus(n, chest_item) }
 }
 export function take_or_stash(
   attendant: ThiefVictimProps,
-  actor: ThiefVictimProps | Actor
+  actor: ThiefVictimProps | Storage
 ) {
   if (
     actor.inventory.length > 0 &&
@@ -737,8 +744,8 @@ export function npcStealCheck(
   // this: WorldTasks,
   target: ThiefVictimProps,
   watcher: AttendantProps,
-  loot: string[]
-) {
+  storage?: Storage
+): null | string {
   // prettier-ignore
   // print('npcSTEALchkLOOT:::', target.name, target.currRoom, watcher.name, watcher.currRoom, loot[0])
 
@@ -759,29 +766,42 @@ export function npcStealCheck(
     wb.evil_good + wb.lawlessLawful
   const result =
     rollSpecialDice(5, advantage, 3, 2) + (modifier > -3 ? modifier : -3)
-  if (result < 5) return false
+  if (result < 5) return 'unseen'
   const consequence = seen_check(target, watcher)
-  // print('SEENCHECK::', consequence.type)
+  // print('CHECKSCHECKS!!!::: SEENCHECK::', consequence.type)
+
   if (consequence.type == 'seen') {
-    watcher.taskBuilder(watcher.name, 'confront', target.name, 'theft')
+    //   print('CHECKSCHECKS!!!::: CONFRONT!!! SEENCHECK::', consequence.type)
+
+    //watcher.taskBuilder(watcher.name, 'confront', target.name, 'theft')
+    return 'confront'
     //testjpf is this used??
     // target.loot = loot
+    //Could I return loot here too?
   }
   if (consequence.type == 'neutral') {
+    const actor = storage === undefined ? watcher : storage
     let chest_item = null
     if (math.random() < 0.4) {
-      chest_item = removeRandom(target.inventory, loot)
+      chest_item = actor.inventory[math.random(0, actor.inventory.length - 1)] // removeRandom(target.inventory, loot)
     } else if (math.random() < 0.5) {
-      chest_item = removeValuable(target.inventory, loot)
+      chest_item = removeValuable(actor.inventory)
     } else {
-      chest_item = removeAdvantageous(target.inventory, loot, ts)
+      chest_item = removeAdvantageous(actor.inventory, ts)
     }
-    target.addInvBonus(chest_item)
+
+    if (chest_item !== null) {
+      target.updateInventory('add', chest_item)
+      actor.updateInventory('delete', chest_item)
+
+      // target.addInvBonus(chest_item)
+    }
     target.cooldown = math.random(5, 15)
   }
 
   target.cooldown = target.cooldown + 5
   // print('SEENCHECK END::', consequence.type, target.cooldown)
+  return null
 }
 function add_angel(add: (effect: Effect) => void): void {
   // print('CCOUTCOME:: angel', listener)
@@ -789,13 +809,11 @@ function add_angel(add: (effect: Effect) => void): void {
   add(effect)
 }
 export function angel_check(
-  this: WorldTasks,
-  t: string,
-  l: string
+  chkr: QuestionProps,
+  chkd: QuestionProps
 ): Consequence {
-  const target =
-    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
-  const listener = this.parent.returnNpc(l)
+  const target = chkd
+  const listener = chkr
   const { skills: ls, binaries: lb } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
 
@@ -805,7 +823,7 @@ export function angel_check(
   // prettier-ignore
   // print('CHECKS:: ANCGELCHK::', t, 'is thought of as an angel by?', l, 'ROLL:', result)
   if (result > 5 && result <= 10) {
-    add_angel(listener.addOrExtendEffect.bind(this))
+    add_angel(listener.addOrExtendEffect.bind(listener))
     return { pass: true, type: 'angel' }
   }
 
@@ -826,13 +844,11 @@ function add_vanity(add: (effect: Effect) => void): void {
   add(effect)
 }
 export function vanity_check(
-  this: WorldTasks,
-  t: string,
-  l: string
+  chkr: QuestionProps,
+  chkd: QuestionProps
 ): Consequence {
-  const target =
-    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
-  const listener = this.parent.returnNpc(l)
+  const target = chkd
+  const listener = chkr
   const { skills: ls, binaries: lb } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
 
@@ -844,7 +860,7 @@ export function vanity_check(
   // print('CHECKS:: ANCGELCHK::', t, 'has made vane::', l, 'ROLL:', result)
 
   if (result > 5 && result <= 10) {
-    add_vanity(listener.addOrExtendEffect.bind(this))
+    add_vanity(listener.addOrExtendEffect.bind(listener))
     return { pass: true, type: 'vanity' }
   }
 
@@ -943,13 +959,11 @@ export function prejudice_check(
 }
 
 export function watcher_punched_check(
-  this: WorldTasks,
-  t: string,
-  l: string
+  chkr: QuestionProps,
+  chkd: QuestionProps
 ): Consequence {
-  const target =
-    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
-  const listener = this.parent.returnNpc(l)
+  const target = chkd
+  const listener = chkr
   const { skills: ls } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
 
@@ -1026,13 +1040,11 @@ export function unlucky_check(
 }
 
 export function becomeASnitchCheck(
-  this: WorldTasks,
-  t: string,
-  l: string
+  chkr: QuestionProps,
+  chkd: QuestionProps
 ): Consequence {
-  const target =
-    t === 'player' ? this.parent.returnPlayer() : this.parent.returnNpc(t)
-  const listener = this.parent.returnNpc(l)
+  const target = chkd
+  const listener = chkr
   const { skills: ls, binaries: lb } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
 
@@ -1131,15 +1143,11 @@ export function given_gift(
   chkd: QuestionProps
 ): Consequence {
   //testjpf check if inventory full?!
-  let gift = removeAdvantageous(
-    chkd.inventory,
-    chkr.inventory,
-    chkd.traits.skills
-  )
+  let gift = removeAdvantageous(chkr.inventory, chkd.traits.skills)
 
   if (gift == null) gift = math.random() < 0.5 ? 'berry02' : 'coingold'
-  chkd.inventory.push(gift)
-  chkd.addInvBonus(gift)
+  chkd.updateInventory('add', gift)
+  //chkd.addInvBonus(gift)
 
   return { pass: true, type: 'gift' }
 }
