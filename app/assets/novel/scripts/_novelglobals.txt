@@ -29,7 +29,7 @@ alert = _G.game.world.player.alert_level
 hp = _G.game.world.player.hp
 reason = _G.game.world.novel.reason
 caution = _G.game.world.novel.task.label
-convos =  _G.game.world.novel.npc.turns_since_convo
+convos =  _G.game.world.novel.npc.sincePlayerConvo
 activeq = _G.game.world.novel.active_quest
 priority = _G.game.world.novel.forced
 

@@ -16,10 +16,7 @@ import {
   watcher_punched_check,
 } from '../../states/inits/checksFuncs'
 import { shuffle } from '../../utils/utils'
-import {
-  removeValuable,
-  removeAdvantageous,
-} from '../../systems/inventorysystem'
+import { removeValuable, removeAdvantageous } from '../../utils/inventory'
 import Storage from '../../states/storage'
 export default class ConfrontAction extends Action {
   a: QuestionProps

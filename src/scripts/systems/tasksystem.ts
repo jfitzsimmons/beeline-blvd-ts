@@ -1,31 +1,22 @@
-import { confrontation_check } from '../states/inits/checksFuncs'
+import { AttendantProps, ThiefVictimProps } from '../../types/ai'
+import { QuestionProps } from '../../types/behaviors'
+import {
+  confrontation_check,
+  seen_check,
+  build_consequence,
+} from '../states/inits/checksFuncs'
 
-const { tasks, npcs, player } = globalThis.game.world
+const { tasks, player, npcs } = globalThis.game.world
 
 function testjpfplayerconfrontationConsequence(
-  // s: string,
-  // w: string,
+  w: string,
   confrontDecided = false
 ): string {
-  /**
-  const caution: Task = {
-    owner: w,
-    turns: 1,
-    label: 'confront',
-    scope: 'clan',
-    authority: 'security',
-    target: 'player',
-    cause: 'theft',
-  }
- 
-  const consequence = tasks.checks.build_consequence(
-    caution,
-    w,
-    [],
-    confrontDecided
-  )
-*/
-  return confrontDecided == true ? 'concern' : 'testjpf'
+  const checker = npcs.all[w].getBehaviorProps('question') as QuestionProps
+  const checked = player.getBehaviorProps('question') as QuestionProps
+  const consequence = build_consequence(checker, checked, [], confrontDecided)
+
+  return confrontDecided == true ? 'concern' : consequence
 
   // return confrontDecided == true ? 'concern' : consequence
 }
@@ -39,7 +30,7 @@ function testjpfplayerthief_consequences(
     const wTraits = tasks.parent.returnNpc(w).traits
 
     c.confront = c.confront == true || confrontation_check(tTraits, wTraits)
-    c.type = testjpfplayerconfrontationConsequence()
+    c.type = testjpfplayerconfrontationConsequence(w, c.confront)
   }
 
   if (c.confront == false && c.type != 'neutral')
@@ -49,40 +40,38 @@ function testjpfplayerthief_consequences(
 }
 
 export function witness_player(w: string): { confront: boolean; type: string } {
+  print('witness_player')
   let consequence = {
     confront: false,
     type: 'neutral',
   }
+
   //USED TODO CHFUNCS SEEN_CHECK()
-  consequence = testjpfplayerthief_consequences('player', w, {
-    confront: false,
-    type: 'neutral',
-  })
+  const thiefprops: ThiefVictimProps = {
+    name: player.name,
+    addInvBonus: player.addInvBonus.bind(player),
+    removeInvBonus: player.removeInvBonus.bind(player),
+    updateInventory: player.updateInventory.bind(player),
+    traits: player.traits,
+    inventory: player.inventory,
+    cooldown: player.cooldown,
+    clan: player.clan,
+  }
+  const attendantProps: AttendantProps = {
+    name: npcs.all[w].name,
+    traits: npcs.all[w].traits,
+    clan: npcs.all[w].clan,
+    inventory: npcs.all[w].inventory,
+    updateInventory: npcs.all[w].updateInventory.bind(npcs.all[w]),
+  }
+  const seen = seen_check(thiefprops, attendantProps)
+  consequence = testjpfplayerthief_consequences('player', w, seen)
+  print(
+    'witness_player:: w,confront,type::',
+    w,
+    consequence.confront,
+    consequence.type
+  )
 
   return consequence
-}
-
-export function address_busy_tasks() {
-  const ts = tasks.all.filter((t) => t.label == 'mender')
-  for (let i = ts.length - 1; i >= 0; i--) {
-    if (ts[i].cause == 'injury' && ts[i].label == 'mender') {
-      const hurt = npcs.all[ts[i].target].hp < 5
-      if (npcs.all[ts[i].owner].currRoom == player.currRoom && hurt == true) {
-        msg.post(
-          `/${npcs.all[ts[i].owner].currStation}#npc_loader`,
-          hash('move_npc'),
-          {
-            station: npcs.all[ts[i].target].currStation,
-            npc: ts[i].owner,
-          }
-        )
-        // prettier-ignore
-        //print(ts[i].owner, 'STATION MOVE VIA TASK mending', ts[i].target, 'in', npcs.all[ts[i].owner].currRoom)
-      }
-      if (hurt == false) {
-        ts[i].turns = 0
-        npcs.all[ts[i].owner].fsm.setState('turn')
-      }
-    }
-  }
 }

@@ -43,6 +43,7 @@ function open_novel(_this: props) {
   npcs.all[_this.npcname].convos = npcs.all[_this.npcname].convos + 1
   novel.npc = npcs.all[_this.npcname]
   novel.reason = _this.consequence.type
+  novel.forced = true
 
   msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
   msg.post('#', 'release_input_focus')
@@ -75,8 +76,12 @@ function open_inventory(_this: props, actor: string, action: string) {
   }
   if (_this.consequence.confront == true) {
     if (_this.isNpc == false) _this.npcname = _this.watcher
-    player.fsm.setState('confronted')
-
+    // player.fsm.setState('confronted')
+    //TESTJPF NEW
+    //should create confrontSeq?confronted?
+    //should do something where it picks a random person on screen
+    // and runs their acions
+    // each interaction, player loses an option
     open_novel(_this)
   } else {
     const params = {
@@ -93,6 +98,7 @@ function check_nodes(
   _this: props,
   action: { released: boolean; x: number; y: number }
 ) {
+  novel.forced = false
   _this.consequence = { confront: false, type: 'neutral' }
   for (const c of _this.clones) {
     if (

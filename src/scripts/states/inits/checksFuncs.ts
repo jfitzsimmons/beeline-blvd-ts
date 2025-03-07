@@ -5,7 +5,7 @@ import {
   removeAdvantageous,
   removeOfValue,
   removeValuable,
-} from '../../systems/inventorysystem'
+} from '../../utils/inventory'
 import { fx } from '../../utils/consts'
 import { rollSpecialDice } from '../../utils/dice'
 import { shuffle, clamp } from '../../utils/utils'
