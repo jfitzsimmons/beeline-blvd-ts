@@ -1,6 +1,5 @@
 import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
 import { QuestionProps } from '../../../types/behaviors'
-import { Actor } from '../../../types/state'
 import ConfrontSequence from '../../behaviors/sequences/confrontSequence'
 import {
   take_check,
@@ -8,12 +7,13 @@ import {
   take_or_stash,
 } from '../../states/inits/checksFuncs'
 import RoomState from '../../states/room'
+import Storage from '../../states/storage'
 import { cicadaModulus } from '../../utils/utils'
 
 function steal_stash_checks(this: RoomState) {
   let thiefVictim = null
   let thief = null
-  let actor: Actor
+  let actor: Storage
   let loot: string[] = []
   let attendant =
     this.stations.desk === '' ? null : this.parent.returnNpc(this.stations.desk)
@@ -28,6 +28,7 @@ function steal_stash_checks(this: RoomState) {
       cooldown: thiefVictim.cooldown,
       removeInvBonus: thiefVictim.removeInvBonus.bind(thiefVictim),
       addInvBonus: thiefVictim.addInvBonus.bind(thiefVictim),
+      updateInventory: thiefVictim.updateInventory.bind(thiefVictim),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
 
@@ -40,18 +41,23 @@ function steal_stash_checks(this: RoomState) {
         name: attendant.name,
         traits: attendant.traits,
         clan: attendant.clan,
-        // taskBuilder: attendant.parent.taskBuilder.bind(attendant),
+        inventory: attendant.inventory,
+        updateInventory: attendant.updateInventory.bind(attendant),
       }
       const confront: string | null = npcStealCheck(
         thiefVictimProps,
         attendantProps,
-        actor.inventory
+        actor
       )
       if (confront == 'confront') {
         const perp = thiefVictim.getBehaviorProps('question') as QuestionProps
         attendant.addToBehavior(
           'active',
-          new ConfrontSequence(attendant.getBehaviorProps.bind(attendant), perp)
+          new ConfrontSequence(
+            attendant.getBehaviorProps.bind(attendant),
+            perp,
+            actor
+          )
         )
       }
     } else if (actor.inventory.length > 0) {
@@ -73,6 +79,9 @@ function steal_stash_checks(this: RoomState) {
       name: thiefVictim.name,
       traits: thiefVictim.traits,
       clan: thiefVictim.clan,
+      inventory: thiefVictim.inventory,
+      updateInventory: thiefVictim.updateInventory.bind(thiefVictim),
+
       // taskBuilder: thiefVictim.parent.taskBuilder.bind(thiefVictim),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
@@ -84,9 +93,10 @@ function steal_stash_checks(this: RoomState) {
       cooldown: thief.cooldown,
       removeInvBonus: thief.removeInvBonus.bind(thief),
       addInvBonus: thief.addInvBonus.bind(thief),
+      updateInventory: thief.updateInventory.bind(thief),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
-    const confront: string | null = npcStealCheck(thiefProps, victimProps, loot)
+    const confront: string | null = npcStealCheck(thiefProps, victimProps)
     if (confront == 'confront') {
       const perp = thief.getBehaviorProps('question') as QuestionProps
       thiefVictim.addToBehavior(
@@ -108,6 +118,7 @@ function steal_stash_checks(this: RoomState) {
       cooldown: attendant.cooldown,
       removeInvBonus: attendant.removeInvBonus.bind(attendant),
       addInvBonus: attendant.addInvBonus.bind(attendant),
+      updateInventory: attendant.updateInventory.bind(attendant),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
     take_or_stash(attendantProps, actor)
@@ -122,6 +133,7 @@ function steal_stash_checks(this: RoomState) {
       cooldown: attendant.cooldown,
       removeInvBonus: attendant.removeInvBonus.bind(attendant),
       addInvBonus: attendant.addInvBonus.bind(attendant),
+      updateInventory: attendant.updateInventory.bind(attendant),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
     actor = this.actors.vase2
@@ -137,6 +149,7 @@ function steal_stash_checks(this: RoomState) {
       cooldown: attendant.cooldown,
       removeInvBonus: attendant.removeInvBonus.bind(attendant),
       addInvBonus: attendant.addInvBonus.bind(attendant),
+      updateInventory: attendant.updateInventory.bind(attendant),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
     actor = this.actors.vase

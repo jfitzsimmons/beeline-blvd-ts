@@ -29,7 +29,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   mailroom02: {
     home: { x: 1, y: 1 }, //warehouse
     name: 'mailroom02',
-    inventory: ['mushroom03', 'vial01'],
+    inventory: ['mushroom02', 'leaf02'],
     clearance: 1,
     clan: 'mailroom',
     body: 'mailroom02body',
@@ -38,7 +38,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   mailroom03: {
     home: { x: 2, y: 4 }, //warehouse
     name: 'mailroom03',
-    inventory: ['mushroom03', 'vial01'],
+    inventory: ['magicb3', 'shrimp02'],
     clearance: 1,
     clan: 'mailroom',
     body: 'mailroom01body',
@@ -56,7 +56,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   custodian02: {
     home: { x: 1, y: 1 }, //warehouse
     name: 'custodian02',
-    inventory: ['mushroom03', 'vial01'],
+    inventory: ['magica4', 'drumstick01'],
     clearance: 1,
     clan: 'custodians',
     body: 'custodian02body',
@@ -74,7 +74,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   maintenance02: {
     home: { x: 2, y: 3 }, //warehouse
     name: 'maintenance02',
-    inventory: ['mushroom03', 'vial01'],
+    inventory: ['string', 'mirror'],
     clearance: 1,
     clan: 'maintenance',
     body: 'maintenance02body',
@@ -92,7 +92,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   labor02: {
     home: { x: 1, y: 1 }, //warehouse
     name: 'labor02',
-    inventory: ['mushroom03', 'vial01'],
+    inventory: ['feather01', 'vial01'],
     clearance: 1,
     clan: 'labor',
     body: 'labor02body',

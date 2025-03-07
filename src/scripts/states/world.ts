@@ -157,9 +157,9 @@ export default class World {
     if (this.clock > 23) this.clock = this.clock - 24
     this.player.fsm.update(dt)
     this.rooms.fsm.update(dt)
-    this.npcs.fsm.update(dt)
     this.quests.fsm.update(dt)
     this.tasks.fsm.update(dt)
+    this.npcs.fsm.update(dt)
     this.player.fsm.setState('active')
     this.npcs.fsm.setState('active')
   }

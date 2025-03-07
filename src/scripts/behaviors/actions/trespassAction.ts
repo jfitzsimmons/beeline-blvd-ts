@@ -64,13 +64,13 @@ export default class TrespassAction extends Action {
         math.random() > 0.2 &&
         confrontation_check(enforcer.traits, this.a.traits) == true
       ) {
-        const perp = this.getProps('question') as QuestionProps
+        //const perp = this.getProps('question') as QuestionProps
         enforcer.addToBehavior(
           'active',
-          new QuestionSequence(this.enforcer, perp)
+          new QuestionSequence(this.enforcer, this.getProps)
         )
         return () =>
-          this.fail(
+          this.continue(
             'trespassAction:: Enforcer:' +
               enforcer.name +
               'is going to question:' +

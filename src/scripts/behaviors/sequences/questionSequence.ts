@@ -1,8 +1,4 @@
-import {
-  ActionProps,
-  BehaviorKeys,
-  QuestionProps,
-} from '../../../types/behaviors'
+import { GetProps, QuestionProps } from '../../../types/behaviors'
 import Action from '../action'
 //import InjuredAction from '../actions/injuredAction'
 import QuestionAction from '../actions/questionAction'
@@ -13,12 +9,9 @@ import ArrestSequence from './arrestSequence'
 
 export default class QuestionSequence extends Sequence {
   a: QuestionProps
-  perp: QuestionProps
-  getProps: (behavior: BehaviorKeys) => ActionProps
-  constructor(
-    getProps: (behavior: BehaviorKeys) => ActionProps,
-    perp: QuestionProps
-  ) {
+  perp: GetProps
+  getProps: GetProps
+  constructor(getProps: GetProps, perp: GetProps) {
     const props = getProps('question') as QuestionProps
     const turnActions: Action[] = []
     /**
@@ -39,7 +32,9 @@ export default class QuestionSequence extends Sequence {
      *
      * need to make sure the timeout after so many TURNS
      */
-    turnActions.push(...[new QuestionAction(getProps, perp)])
+    turnActions.push(
+      ...[new QuestionAction(getProps, perp('question') as QuestionProps)]
+    )
     super(turnActions)
     this.a = props
     this.perp = perp
@@ -56,11 +51,8 @@ export default class QuestionSequence extends Sequence {
           true
         )
       } else if (proceed == 'jailed') {
-        // this.perp.turnPriority = 97
-        this.perp.addToBehavior(
-          'place',
-          new ArrestSequence(this.perp.getBehaviorProps.bind(this.perp))
-        )
+        const perp = this.perp('question') as QuestionProps
+        perp.addToBehavior('place', new ArrestSequence(this.perp))
       }
     }
     return 'REMOVE'

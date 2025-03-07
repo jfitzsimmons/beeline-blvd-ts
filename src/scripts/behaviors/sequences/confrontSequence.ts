@@ -3,6 +3,7 @@ import {
   BehaviorKeys,
   QuestionProps,
 } from '../../../types/behaviors'
+import Storage from '../../states/storage'
 import Action from '../action'
 import ConfrontAction from '../actions/confrontAction'
 import Sequence from '../sequence'
@@ -11,9 +12,11 @@ export default class ConfrontSequence extends Sequence {
   a: QuestionProps
   perp: QuestionProps
   getProps: (behavior: BehaviorKeys) => ActionProps
+  storage?: Storage
   constructor(
     getProps: (behavior: BehaviorKeys) => ActionProps,
-    perp: QuestionProps
+    perp: QuestionProps,
+    storage?: Storage
   ) {
     const props = getProps('question') as QuestionProps
     const turnActions: Action[] = []
@@ -33,11 +36,12 @@ export default class ConfrontSequence extends Sequence {
      * so remove hastask and mendee logic from Task.
      * Move to NPCS!!!
      */
-    turnActions.push(...[new ConfrontAction(getProps, perp)])
+    turnActions.push(...[new ConfrontAction(getProps, perp, storage)])
     super(turnActions)
     this.a = props
     this.perp = perp
     this.getProps = getProps
+    this.storage = storage
     print(
       'CONFRONTSEQ::: CREATED FOR::',
       this.a.name,

@@ -1,6 +1,5 @@
 import {
-  ActionProps,
-  BehaviorKeys,
+  GetProps,
   HeroQuestionProps,
   QuestionProps,
 } from '../../../types/behaviors'
@@ -22,11 +21,8 @@ export default class QuestionAction extends Action {
   a: QuestionProps
   perp: QuestionProps
   hero: HeroQuestionProps | null
-  getProps: (behavior: BehaviorKeys) => ActionProps
-  constructor(
-    getProps: (behavior: BehaviorKeys) => ActionProps,
-    perp: QuestionProps | HeroQuestionProps
-  ) {
+  getProps: GetProps
+  constructor(getProps: GetProps, perp: QuestionProps | HeroQuestionProps) {
     const props = getProps('question') as QuestionProps
     super(props)
     this.a = props
@@ -34,11 +30,22 @@ export default class QuestionAction extends Action {
 
     this.perp = this.hero == null ? (perp as QuestionProps) : this.hero
     this.getProps = getProps
-    // this.hero = this.perp === null ? (perp as HeroQuestionProps) : null
-    //if (this.hero !== null) this.perp = this.hero
+    if (
+      this.a.currRoom == this.perp.currRoom &&
+      this.a.currRoom == this.a.getFocusedRoom()
+    ) {
+      msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+        station: this.perp.currStation,
+        npc: this.a.name,
+      })
+      // prettier-ignore
+      print('newnew',this.a.name,this.a.currStation, 'STATION MOVE VIA TASK question', this.perp.name, 'in', this.a.currRoom,this.perp.currRoom, this.perp.currStation)
+    }
   }
 
   run(): { (): void } {
+    this.perp = this.perp.getBehaviorProps('question') as QuestionProps
+    this.a = this.getProps('question') as QuestionProps
     //if (this.a.getApb().includes(target)) {
     // this.parent.returnNpc(this.target).fsm.setState('arrestee')
     // return
@@ -69,26 +76,23 @@ export default class QuestionAction extends Action {
           this.a.exitRoom == this.hero.currRoom))
     ) {
       this.hero.setConfrontation(this.a.name, 'questioning', 'clearance')
-      /**
-       * probably need to add some sort of
-       * new ConfrontSequence
-       * level shoudl load get all npcs in player currroom
-       * move them to their own array
-       * DONT RUN ACTIVE
-       * then add player to that array
-       * sort by turnpriority
-       * and run those ahead of player then stop.
-       * wait for player interaction.
-       */
       return () =>
         this.success(
           'QuestionAction::: HERO:: this should set novel for player confrontation.'
         )
     }
 
-    const currRoom = Object.values(
-      this.a.getOccupants(this.a.currRoom)
-    ).includes(this.perp.name)
+    const currRoom = this.a.currRoom == this.perp.currRoom
+
+    print(
+      'QuestionAction:: CurroomBOOLEAN: ',
+      currRoom,
+      this.a.name,
+      this.a.currRoom,
+      this.perp.name,
+      this.perp.currRoom
+    )
+
     const crossedPaths =
       currRoom === true
         ? currRoom
@@ -96,7 +100,7 @@ export default class QuestionAction extends Action {
             (s: string) =>
               s === this.perp.name && this.perp.exitRoom == this.a.currRoom
           ).length > 0
-
+    print('QuestionAction:: crossedBOOLEAN: ', crossedPaths, this.perp.exitRoom)
     if (crossedPaths === false)
       return () =>
         this.continue(
@@ -134,6 +138,17 @@ export default class QuestionAction extends Action {
     print('Consequence:', consequence)
     //}
     //print(tempcons)
+    if (
+      this.a.currRoom == this.perp.currRoom &&
+      this.a.currRoom == this.a.getFocusedRoom()
+    ) {
+      msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+        station: this.perp.currStation,
+        npc: this.a.name,
+      })
+      // prettier-ignore
+      print('runrun',this.a.name,this.a.currStation, 'STATION MOVE VIA TASK question', this.perp.name, 'in', this.a.currRoom,this.perp.currRoom, this.perp.currStation)
+    }
     return () => this.success()
     //need something that checks response
     //does response need EffectsAction, sequences, something else???

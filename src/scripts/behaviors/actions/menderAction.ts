@@ -9,17 +9,25 @@ export default class MenderAction extends Action {
     super(a)
     this.mendee = mendee
     this.a = a
+    if (this.a.currRoom == this.a.getFocusedRoom()) {
+      msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+        station: this.mendee.currStation,
+        npc: this.a.name,
+      })
+      // prettier-ignore
+      print('newnew',this.a.name, 'STATION MOVE VIA TASK mender', this.mendee.name, 'in', this.a.currRoom)
+    }
   }
   run(): { (): void } {
     const mendee = this.a.returnNpc(this.mendee.name)
     if (mendee.hp < 5) {
       if (this.a.currRoom == this.a.getFocusedRoom()) {
         msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
-            station: this.mendee.currStation,
-            npc: this.a.name,
-          })
+          station: this.mendee.currStation,
+          npc: this.a.name,
+        })
         // prettier-ignore
-        //print(ts[i].owner, 'STATION MOVE VIA TASK mending', ts[i].target, 'in', npcs.all[ts[i].owner].currRoom)
+        print('runrun',this.a.name, 'STATION MOVE VIA TASK mender', this.mendee.name, 'in', this.a.currRoom)
       }
       return () => this.continue('continue')
     } else {

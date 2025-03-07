@@ -1,8 +1,4 @@
-import {
-  ActionProps,
-  BehaviorKeys,
-  InfirmedProps,
-} from '../../../types/behaviors'
+import { GetProps, InfirmedProps } from '../../../types/behaviors'
 import Action from '../action'
 import JailedAction from '../actions/jailedAction'
 import Sequence from '../sequence'
@@ -12,9 +8,9 @@ import PlaceSequence from './placeSequence'
 export default class JailedSequence extends Sequence {
   a: InfirmedProps
   prevClearance: number
-  getProps: (behavior: BehaviorKeys) => ActionProps
+  getProps: GetProps
 
-  constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
+  constructor(getProps: GetProps) {
     const turnActions: Action[] = []
     const props = getProps('infirmed') as InfirmedProps
     turnActions.push(...[new JailedAction(props)])
