@@ -110,6 +110,7 @@ export interface Actor {
   inventory: string[]
   watcher?: string
   actions: string[]
+  updateInventory?(addDelete: 'add' | 'delete', item: string): void
 }
 
 export interface Roles {

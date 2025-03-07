@@ -128,6 +128,7 @@ export interface QuestionProps extends DefaultBehaviorProps {
   getBehaviorProps(behavior: string): ActionProps
   getOccupants(r: string): string[]
   getFocusedRoom(): string
+  updateInventory(addDelete: 'add' | 'delete', item: string): void
 }
 export interface HeroQuestionProps extends QuestionProps {
   setConfrontation(npc: string, action: string, reason: string): void

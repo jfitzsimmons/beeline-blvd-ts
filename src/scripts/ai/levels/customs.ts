@@ -25,13 +25,18 @@ function steal_stash_checks(this: RoomState) {
         name: attendant.name,
         traits: attendant.traits,
         clan: attendant.clan,
+        inventory: attendant.inventory,
       }
-      const confront = npcStealCheck(suspect, attendantProps, actor.inventory)
+      const confront = npcStealCheck(suspect, attendantProps, actor)
       if (confront == 'confront') {
         const perp = suspect.getBehaviorProps('question') as QuestionProps
         attendant.addToBehavior(
           'active',
-          new ConfrontSequence(attendant.getBehaviorProps.bind(attendant), perp)
+          new ConfrontSequence(
+            attendant.getBehaviorProps.bind(attendant),
+            perp,
+            actor
+          )
         )
       }
     } else if (actor.inventory.length > 0) {
@@ -50,8 +55,9 @@ function steal_stash_checks(this: RoomState) {
         name: victim.name,
         traits: victim.traits,
         clan: victim.clan,
+        inventory: victim.inventory,
       }
-      const confront = npcStealCheck(suspect, victimProps, victim.inventory)
+      const confront = npcStealCheck(suspect, victimProps)
       if (confront == 'confront') {
         const perp = suspect.getBehaviorProps('question') as QuestionProps
         victim.addToBehavior(

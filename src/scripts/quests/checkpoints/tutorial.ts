@@ -285,14 +285,19 @@ export function tutorialA(interval = 'turn') {
           name: guest2.name,
           traits: guest2.traits,
           clan: guest2.clan,
+          inventory: guest2.inventory,
           // taskBuilder: guest2.parent.taskBuilder.bind(guest2),
         }
-        const confront = npcStealCheck(worker2, guestProps, luggage.inventory)
+        const confront = npcStealCheck(worker2, guestProps, luggage)
         if (confront == 'confront') {
           const perp = worker2.getBehaviorProps('question') as QuestionProps
           guest2.addToBehavior(
             'active',
-            new ConfrontSequence(guest2.getBehaviorProps.bind(guest2), perp)
+            new ConfrontSequence(
+              guest2.getBehaviorProps.bind(guest2),
+              perp,
+              luggage
+            )
           )
         }
       }
@@ -304,13 +309,18 @@ export function tutorialA(interval = 'turn') {
           name: worker2.name,
           traits: worker2.traits,
           clan: worker2.clan,
+          inventory: worker2.inventory,
         }
-        const confront = npcStealCheck(guest2, workerProps, luggage.inventory)
+        const confront = npcStealCheck(guest2, workerProps, luggage)
         if (confront == 'confront') {
           const perp = guest2.getBehaviorProps('question') as QuestionProps
           worker2.addToBehavior(
             'active',
-            new ConfrontSequence(worker2.getBehaviorProps.bind(worker2), perp)
+            new ConfrontSequence(
+              worker2.getBehaviorProps.bind(worker2),
+              perp,
+              luggage
+            )
           )
         }
       }

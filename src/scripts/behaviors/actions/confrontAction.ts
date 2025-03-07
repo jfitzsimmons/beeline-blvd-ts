@@ -17,23 +17,26 @@ import {
 } from '../../states/inits/checksFuncs'
 import { shuffle } from '../../utils/utils'
 import {
-  removeRandom,
   removeValuable,
   removeAdvantageous,
 } from '../../systems/inventorysystem'
+import { Actor } from '../../../types/state'
 export default class ConfrontAction extends Action {
   a: QuestionProps
   perp: QuestionProps
   getProps: (behavior: BehaviorKeys) => ActionProps
+  storage?: Actor
   constructor(
     getProps: (behavior: BehaviorKeys) => ActionProps,
-    perp: QuestionProps
+    perp: QuestionProps,
+    storage?: Actor
   ) {
     const props = getProps('question') as QuestionProps
     super(props)
     this.a = props
     this.perp = perp
     this.getProps = getProps
+    this.storage = storage
     if (
       this.a.currRoom == this.perp.currRoom &&
       this.a.currRoom == this.a.getFocusedRoom()
@@ -79,6 +82,7 @@ export default class ConfrontAction extends Action {
     )
 
     if (consolation == 'neutral') {
+      const robbed = this.storage == undefined ? this.a : this.storage
       let chest_item = null
       /**
        * need sequence for snitch!!
@@ -91,20 +95,26 @@ export default class ConfrontAction extends Action {
        */
 
       if (math.random() < 0.4) {
-        chest_item = removeRandom(this.a.inventory, ['apple01'])
+        chest_item =
+          robbed.inventory[math.random(0, robbed.inventory.length - 1)]
+        //chest_item = removeRandom(this.a.inventory, ['apple01'])
       } else if (math.random() < 0.5) {
-        chest_item = removeValuable(this.a.inventory, ['apple01'])
+        chest_item = removeValuable(robbed.inventory)
       } else {
         chest_item = removeAdvantageous(
-          this.a.inventory,
-          ['apple01'],
-          this.a.traits.skills
+          robbed.inventory,
+          this.perp.traits.skills
         )
       }
 
-      this.a.addInvBonus(chest_item)
+      if (chest_item !== null) {
+        if (robbed.updateInventory !== undefined)
+          robbed.updateInventory('delete', chest_item)
+        this.perp.updateInventory('add', chest_item)
+        //this.perp.addInvBonus(chest_item)
+      }
       //if (victim == true ){ remove_chest_bonus(w, chest_item) }
-      this.a.cooldown = math.random(5, 15)
+      this.perp.cooldown = math.random(5, 15)
       return () =>
         this.fail(
           `ConfrontAction::: Failed:: ${this.a.name} had no effect on ${this.perp.name}`

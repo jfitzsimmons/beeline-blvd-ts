@@ -21,6 +21,7 @@ import {
   BehaviorSetters,
 } from '../../types/behaviors'
 import Selector from '../behaviors/selector'
+
 export default class NpcState extends ActorState {
   //prototype: any
   home: { x: number; y: number }
@@ -190,6 +191,7 @@ export default class NpcState extends ActorState {
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
             getOccupants: this.parent.getOccupants.bind(this),
+            updateInventory: this.updateInventory.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -438,6 +440,17 @@ export default class NpcState extends ActorState {
     for (bKey in item.binaries)
       this.traits.binaries[bKey] =
         this.traits.binaries[bKey] + item.binaries[bKey]
+  }
+  updateInventory(addDelete: 'add' | 'delete', item: string) {
+    // const inventory = this[storage].inventory
+
+    if (addDelete == 'add') {
+      this.inventory.push(item)
+      this.addInvBonus(item)
+    } else {
+      this.inventory.splice(1, this.inventory.indexOf(item))
+      this.removeInvBonus(item)
+    }
   }
   addOrExtendEffect(e: Effect) {
     //   let ek: keyof typeof this.effects

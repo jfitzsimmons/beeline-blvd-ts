@@ -3,9 +3,7 @@ import { Actor, Traits } from '../../../types/state'
 import { Effect, Consequence } from '../../../types/tasks'
 import {
   removeAdvantageous,
-  removeLast,
   removeOfValue,
-  removeRandom,
   removeValuable,
 } from '../../systems/inventorysystem'
 import { fx } from '../../utils/consts'
@@ -519,7 +517,10 @@ export function lConfrontPunchT(
   print('OUTCOMES:: LcT::', chkd.name, 'HITFOR::', hit)
 }
 
-export function getExtorted(chkr: QuestionProps, chkd: QuestionProps): string {
+export function getExtorted(
+  chkr: QuestionProps,
+  chkd: QuestionProps
+): string | null {
   // print('OUTCOMES:: ', t, 'GETSEXTORTED')
   return removeOfValue(chkr.inventory, chkd.inventory)
 }
@@ -678,13 +679,18 @@ export function take_check(
 
   let chest_item = null
   if (math.random() < 0.5) {
-    chest_item = removeValuable(taker.inventory, actor.inventory)
+    chest_item = removeValuable(actor.inventory)
   } else if (math.random() < 0.51) {
-    chest_item = removeAdvantageous(taker.inventory, actor.inventory, skills)
+    chest_item = removeAdvantageous(actor.inventory, skills)
   } else {
-    chest_item = removeRandom(taker.inventory, actor.inventory)
+    chest_item = actor.inventory[math.random(0, actor.inventory.length)]
   }
-  taker.addInvBonus(chest_item)
+
+  print('CHKFUNCS::: TAKECHECK::, checstitem:', chest_item)
+  if (chest_item !== null) {
+    taker.updateInventory('add', chest_item)
+    // taker.addInvBonus(chest_item)
+  }
 }
 
 export function stash_check(
@@ -703,17 +709,15 @@ export function stash_check(
 
   let chest_item: string | null = null
   if (math.random() < 0.5) {
-    chest_item = removeValuable(actor.inventory, stasher.inventory)
+    chest_item = removeValuable(stasher.inventory)
   } else if (math.random() < 0.51) {
-    chest_item = removeAdvantageous(
-      actor.inventory,
-      stasher.inventory,
-      stasher.traits.skills
-    )
+    chest_item = removeAdvantageous(stasher.inventory, stasher.traits.skills)
   } else {
-    chest_item = removeLast(actor.inventory, stasher.inventory)
+    chest_item = stasher.inventory[stasher.inventory.length - 1]
   }
-  stasher.removeInvBonus(chest_item)
+  print('CHKFUNCS::: stashCHECK::, checstitem:', chest_item)
+
+  if (chest_item !== null) stasher.removeInvBonus(chest_item)
   // if victim == true ){ add_chest_bonus(n, chest_item) }
 }
 export function take_or_stash(
@@ -735,7 +739,7 @@ export function npcStealCheck(
   // this: WorldTasks,
   target: ThiefVictimProps,
   watcher: AttendantProps,
-  loot: string[]
+  storage?: Actor
 ): null | string {
   // prettier-ignore
   // print('npcSTEALchkLOOT:::', target.name, target.currRoom, watcher.name, watcher.currRoom, loot[0])
@@ -768,17 +772,23 @@ export function npcStealCheck(
     return 'confront'
     //testjpf is this used??
     // target.loot = loot
+    //Could I return loot here too?
   }
   if (consequence.type == 'neutral') {
+    const loot = storage === undefined ? watcher.inventory : storage.inventory
     let chest_item = null
     if (math.random() < 0.4) {
-      chest_item = removeRandom(target.inventory, loot)
+      chest_item = loot[math.random(0, loot.length - 1)] // removeRandom(target.inventory, loot)
     } else if (math.random() < 0.5) {
-      chest_item = removeValuable(target.inventory, loot)
+      chest_item = removeValuable(loot)
     } else {
-      chest_item = removeAdvantageous(target.inventory, loot, ts)
+      chest_item = removeAdvantageous(loot, ts)
     }
-    target.addInvBonus(chest_item)
+
+    if (chest_item !== null) {
+      target.updateInventory('add', chest_item)
+      // target.addInvBonus(chest_item)
+    }
     target.cooldown = math.random(5, 15)
   }
 
@@ -1126,15 +1136,11 @@ export function given_gift(
   chkd: QuestionProps
 ): Consequence {
   //testjpf check if inventory full?!
-  let gift = removeAdvantageous(
-    chkd.inventory,
-    chkr.inventory,
-    chkd.traits.skills
-  )
+  let gift = removeAdvantageous(chkr.inventory, chkd.traits.skills)
 
   if (gift == null) gift = math.random() < 0.5 ? 'berry02' : 'coingold'
-  chkd.inventory.push(gift)
-  chkd.addInvBonus(gift)
+  chkd.updateInventory('add', gift)
+  //chkd.addInvBonus(gift)
 
   return { pass: true, type: 'gift' }
 }
