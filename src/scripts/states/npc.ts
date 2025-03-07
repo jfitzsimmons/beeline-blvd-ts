@@ -443,7 +443,15 @@ export default class NpcState extends ActorState {
   }
   updateInventory(addDelete: 'add' | 'delete', item: string) {
     // const inventory = this[storage].inventory
-
+    print(
+      addDelete,
+      'npcupdateinv::: Item ...traits::speed, charisma,evil,authority:',
+      item,
+      this.traits.skills.speed,
+      this.traits.skills.charisma,
+      this.traits.binaries.evil_good,
+      this.traits.binaries.anti_authority
+    )
     if (addDelete == 'add') {
       this.inventory.push(item)
       this.addInvBonus(item)
@@ -451,6 +459,15 @@ export default class NpcState extends ActorState {
       this.inventory.splice(1, this.inventory.indexOf(item))
       this.removeInvBonus(item)
     }
+    print(
+      addDelete,
+      'npcupdateinv::: Item ...traits::speed, charisma,evil,authority:',
+      item,
+      this.traits.skills.speed,
+      this.traits.skills.charisma,
+      this.traits.binaries.evil_good,
+      this.traits.binaries.anti_authority
+    )
   }
   addOrExtendEffect(e: Effect) {
     //   let ek: keyof typeof this.effects

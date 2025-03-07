@@ -20,16 +20,16 @@ import {
   removeValuable,
   removeAdvantageous,
 } from '../../systems/inventorysystem'
-import { Actor } from '../../../types/state'
+import Storage from '../../states/storage'
 export default class ConfrontAction extends Action {
   a: QuestionProps
   perp: QuestionProps
   getProps: (behavior: BehaviorKeys) => ActionProps
-  storage?: Actor
+  storage?: Storage
   constructor(
     getProps: (behavior: BehaviorKeys) => ActionProps,
     perp: QuestionProps,
-    storage?: Actor
+    storage?: Storage
   ) {
     const props = getProps('question') as QuestionProps
     super(props)

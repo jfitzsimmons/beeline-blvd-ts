@@ -1,6 +1,5 @@
 import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
 import { QuestionProps } from '../../../types/behaviors'
-import { Actor } from '../../../types/state'
 import ConfrontSequence from '../../behaviors/sequences/confrontSequence'
 import {
   take_check,
@@ -8,12 +7,13 @@ import {
   take_or_stash,
 } from '../../states/inits/checksFuncs'
 import RoomState from '../../states/room'
+import Storage from '../../states/storage'
 import { cicadaModulus } from '../../utils/utils'
 
 function steal_stash_checks(this: RoomState) {
   let thiefVictim = null
   let thief = null
-  let actor: Actor
+  let actor: Storage
   let loot: string[] = []
   let attendant =
     this.stations.desk === '' ? null : this.parent.returnNpc(this.stations.desk)
@@ -42,7 +42,7 @@ function steal_stash_checks(this: RoomState) {
         traits: attendant.traits,
         clan: attendant.clan,
         inventory: attendant.inventory,
-        // taskBuilder: attendant.parent.taskBuilder.bind(attendant),
+        updateInventory: attendant.updateInventory.bind(attendant),
       }
       const confront: string | null = npcStealCheck(
         thiefVictimProps,
@@ -80,6 +80,8 @@ function steal_stash_checks(this: RoomState) {
       traits: thiefVictim.traits,
       clan: thiefVictim.clan,
       inventory: thiefVictim.inventory,
+      updateInventory: thiefVictim.updateInventory.bind(thiefVictim),
+
       // taskBuilder: thiefVictim.parent.taskBuilder.bind(thiefVictim),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }

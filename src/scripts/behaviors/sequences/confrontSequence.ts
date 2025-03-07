@@ -3,7 +3,7 @@ import {
   BehaviorKeys,
   QuestionProps,
 } from '../../../types/behaviors'
-import { Actor } from '../../../types/state'
+import Storage from '../../states/storage'
 import Action from '../action'
 import ConfrontAction from '../actions/confrontAction'
 import Sequence from '../sequence'
@@ -12,11 +12,11 @@ export default class ConfrontSequence extends Sequence {
   a: QuestionProps
   perp: QuestionProps
   getProps: (behavior: BehaviorKeys) => ActionProps
-  storage?: Actor
+  storage?: Storage
   constructor(
     getProps: (behavior: BehaviorKeys) => ActionProps,
     perp: QuestionProps,
-    storage?: Actor
+    storage?: Storage
   ) {
     const props = getProps('question') as QuestionProps
     const turnActions: Action[] = []

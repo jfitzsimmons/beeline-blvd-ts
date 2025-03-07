@@ -1,21 +1,10 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { RoomsInitState } from './inits/roomsInitState'
 import StateMachine from './stateMachine'
-import { Actor, Actors, Swaps, Wards } from '../../types/state'
+import { Actors, Swaps, Wards } from '../../types/state'
 import { RoomProps } from '../../types/world'
 import { aiActions } from '../ai/ai_main'
 
-function updateInventory(
-  this: Actor,
-  addDelete: 'add' | 'delete',
-  item: string
-) {
-  const inventory = this.inventory
-
-  addDelete == 'add'
-    ? inventory.push(item)
-    : inventory.splice(1, inventory.indexOf(item))
-}
 export default class RoomState {
   fsm: StateMachine
   matrix: { x: number; y: number }
@@ -40,14 +29,6 @@ export default class RoomState {
     this.props = RoomsInitState[r].props || []
     this.wards = RoomsInitState[r].wards || {}
     this.parent = roomProps
-    //this.checks = {}
-    //this.outcomes = {}
-    this.actors
-    let ka: keyof typeof this.actors
-    for (ka in this.actors) {
-      this.actors[ka]['updateInventory'] = updateInventory
-    }
-
     this.fsm
       .addState('idle')
       .addState('turn', {

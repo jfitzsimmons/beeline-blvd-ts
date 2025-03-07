@@ -1,5 +1,5 @@
 import WorldTasks from '../tasks'
-import { Actor, Traits } from '../../../types/state'
+import { Traits } from '../../../types/state'
 import { Effect, Consequence } from '../../../types/tasks'
 import {
   removeAdvantageous,
@@ -13,6 +13,7 @@ import { shuffle, clamp } from '../../utils/utils'
 //impor from '../player'
 import { QuestionProps } from '../../../types/behaviors'
 import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
+import Storage from '../storage'
 
 export function confrontation_check(watcher: Traits, target: Traits): boolean {
   const { skills: ls, binaries: lb } = watcher
@@ -664,7 +665,7 @@ export function seen_check(
 }
 export function take_check(
   taker: ThiefVictimProps,
-  actor: ThiefVictimProps | Actor
+  actor: ThiefVictimProps | Storage
 ) {
   const { skills, binaries } = taker.traits
   const modifier = Math.round(
@@ -689,13 +690,14 @@ export function take_check(
   print('CHKFUNCS::: TAKECHECK::, checstitem:', chest_item)
   if (chest_item !== null) {
     taker.updateInventory('add', chest_item)
+    actor.updateInventory('delete', chest_item)
     // taker.addInvBonus(chest_item)
   }
 }
 
 export function stash_check(
   stasher: ThiefVictimProps,
-  actor: ThiefVictimProps | Actor
+  actor: ThiefVictimProps | Storage
 ) {
   const modifier = stasher.inventory.length - actor.inventory.length
 
@@ -717,12 +719,15 @@ export function stash_check(
   }
   print('CHKFUNCS::: stashCHECK::, checstitem:', chest_item)
 
-  if (chest_item !== null) stasher.removeInvBonus(chest_item)
+  if (chest_item !== null) {
+    stasher.updateInventory('delete', chest_item)
+    actor.updateInventory('add', chest_item)
+  }
   // if victim == true ){ add_chest_bonus(n, chest_item) }
 }
 export function take_or_stash(
   attendant: ThiefVictimProps,
-  actor: ThiefVictimProps | Actor
+  actor: ThiefVictimProps | Storage
 ) {
   if (
     actor.inventory.length > 0 &&
@@ -739,7 +744,7 @@ export function npcStealCheck(
   // this: WorldTasks,
   target: ThiefVictimProps,
   watcher: AttendantProps,
-  storage?: Actor
+  storage?: Storage
 ): null | string {
   // prettier-ignore
   // print('npcSTEALchkLOOT:::', target.name, target.currRoom, watcher.name, watcher.currRoom, loot[0])
@@ -775,18 +780,20 @@ export function npcStealCheck(
     //Could I return loot here too?
   }
   if (consequence.type == 'neutral') {
-    const loot = storage === undefined ? watcher.inventory : storage.inventory
+    const actor = storage === undefined ? watcher : storage
     let chest_item = null
     if (math.random() < 0.4) {
-      chest_item = loot[math.random(0, loot.length - 1)] // removeRandom(target.inventory, loot)
+      chest_item = actor.inventory[math.random(0, actor.inventory.length - 1)] // removeRandom(target.inventory, loot)
     } else if (math.random() < 0.5) {
-      chest_item = removeValuable(loot)
+      chest_item = removeValuable(actor.inventory)
     } else {
-      chest_item = removeAdvantageous(loot, ts)
+      chest_item = removeAdvantageous(actor.inventory, ts)
     }
 
     if (chest_item !== null) {
       target.updateInventory('add', chest_item)
+      actor.updateInventory('delete', chest_item)
+
       // target.addInvBonus(chest_item)
     }
     target.cooldown = math.random(5, 15)

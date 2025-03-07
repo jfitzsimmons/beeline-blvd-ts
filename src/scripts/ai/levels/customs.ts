@@ -1,9 +1,9 @@
 import { AttendantProps } from '../../../types/ai'
 import { QuestionProps } from '../../../types/behaviors'
-import { Actor } from '../../../types/state'
 import ConfrontSequence from '../../behaviors/sequences/confrontSequence'
 import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
 import RoomState from '../../states/room'
+import Storage from '../../states/storage'
 import { shuffle } from '../../utils/utils'
 
 //const { rooms, npcs } = globalThis.game.world
@@ -12,7 +12,7 @@ function steal_stash_checks(this: RoomState) {
   let suspect = null
   // let thief = null
   let victim = null
-  let actor: Actor
+  let actor: Storage
   let attendant =
     this.stations.desk === '' ? null : this.parent.returnNpc(this.stations.desk)
   if (this.stations.guest !== '') {
@@ -26,6 +26,7 @@ function steal_stash_checks(this: RoomState) {
         traits: attendant.traits,
         clan: attendant.clan,
         inventory: attendant.inventory,
+        updateInventory: attendant.updateInventory.bind(attendant),
       }
       const confront = npcStealCheck(suspect, attendantProps, actor)
       if (confront == 'confront') {
@@ -56,6 +57,7 @@ function steal_stash_checks(this: RoomState) {
         traits: victim.traits,
         clan: victim.clan,
         inventory: victim.inventory,
+        updateInventory: victim.updateInventory.bind(victim),
       }
       const confront = npcStealCheck(suspect, victimProps)
       if (confront == 'confront') {

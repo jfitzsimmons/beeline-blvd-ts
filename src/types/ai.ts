@@ -25,4 +25,5 @@ export interface AttendantProps {
   traits: Traits
   clan: string
   inventory: string[]
+  updateInventory: (addDelete: 'add' | 'delete', item: string) => void
 }

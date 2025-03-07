@@ -1,4 +1,5 @@
 import { Room } from '../../../types/state'
+import Storage from '../storage'
 
 export const RoomsInitState: { [key: string]: Room } = {
   security: {
@@ -36,16 +37,19 @@ export const RoomsInitState: { [key: string]: Room } = {
       bench: '',
     },
     actors: {
-      luggage_1: {
+      luggage_1: new Storage({
+        name: 'luggage_1',
         inventory: ['tomato', 'mushroom03', 'orange'],
         watcher: 'browse',
         actions: ['open'],
-      },
-      luggage_2: {
+      }),
+
+      luggage_2: new Storage({
+        name: 'luggage_2',
         inventory: ['mushroom02', 'banana', 'vial01'],
         watcher: 'guard',
         actions: ['open'],
-      },
+      }),
     },
   },
   viplobby: {
@@ -319,14 +323,16 @@ export const RoomsInitState: { [key: string]: Room } = {
       desk: '',
     },
     actors: {
-      desks: {
+      desks: new Storage({
+        name: 'desks',
         inventory: ['fish01', 'steak02', 'egg01'],
         actions: ['pickup', 'use'],
-      },
-      locker: {
+      }),
+      locker: new Storage({
+        name: 'locker',
         inventory: ['avacado', 'berry02', 'shrimp02'],
         actions: ['use', 'open'],
-      },
+      }),
     },
   },
   customs: {
@@ -348,19 +354,22 @@ export const RoomsInitState: { [key: string]: Room } = {
       guest: '',
     },
     actors: {
-      desks: {
+      desks: new Storage({
+        name: 'desks',
         inventory: ['deskbook01', 'globegold', 'fish02'],
         actions: ['pickup', 'use'],
-      },
-      locker: {
+      }),
+      locker: new Storage({
+        name: 'locker',
         inventory: ['silver', 'mushroom01', 'potion'],
         actions: ['use', 'open'],
-      },
-      vase3: {
+      }),
+      vase3: new Storage({
+        name: 'vase3',
         inventory: ['steak02', 'leaf03', 'daisy', 'mushroom02'],
         actions: ['open'],
         watcher: 'patrol',
-      },
+      }),
     },
   },
   reception: {
@@ -383,26 +392,30 @@ export const RoomsInitState: { [key: string]: Room } = {
       guest2: '',
     },
     actors: {
-      drawer: {
+      drawer: new Storage({
+        name: 'drawer',
         inventory: ['cheese', 'shrimp01', 'drumstick01'],
         actions: ['open'],
         watcher: 'desk',
-      },
-      computer: {
+      }),
+      computer: new Storage({
+        name: 'computer',
         inventory: [],
         actions: ['use'],
         watcher: 'desk',
-      },
-      vase: {
+      }),
+      vase: new Storage({
+        name: 'vase',
         inventory: ['pillow', 'book', 'tomato'],
         actions: ['open'],
         watcher: 'loiter2',
-      },
-      vase2: {
+      }),
+      vase2: new Storage({
+        name: 'vase2',
         inventory: ['steak01', 'leaf03', 'daisy', 'mushroom03'],
         actions: ['open'],
         watcher: 'patrol',
-      },
+      }),
     },
   },
   grounds: {
@@ -424,16 +437,18 @@ export const RoomsInitState: { [key: string]: Room } = {
       guest2: '',
     },
     actors: {
-      player_luggage: {
+      player_luggage: new Storage({
+        name: 'player_luggage',
         inventory: ['berry01', 'feather01', 'magica1', 'orange'],
         watcher: 'worker2',
         actions: ['open'],
-      },
-      other_luggage: {
+      }),
+      other_luggage: new Storage({
+        name: 'other_luggage',
         inventory: ['eyeball03', 'feather02', 'magicb1', 'mushroom02'],
         watcher: 'worker2',
         actions: ['open'],
-      },
+      }),
     },
   },
   dorms: {
@@ -502,16 +517,18 @@ export const RoomsInitState: { [key: string]: Room } = {
     },
     wards: { patient1: '', patient2: '', patient3: '', patient4: '' },
     actors: {
-      drawer: {
+      drawer: new Storage({
+        name: 'drawer',
         inventory: ['vial02', 'banana', 'vial01'],
         actions: ['open'],
         watcher: 'assistant',
-      },
-      computer: {
+      }),
+      computer: new Storage({
+        name: 'computer',
         inventory: [],
         actions: ['use'],
         watcher: 'assistant',
-      },
+      }),
     },
   },
 }

@@ -286,7 +286,7 @@ export function tutorialA(interval = 'turn') {
           traits: guest2.traits,
           clan: guest2.clan,
           inventory: guest2.inventory,
-          // taskBuilder: guest2.parent.taskBuilder.bind(guest2),
+          updateInventory: guest2.updateInventory.bind(guest2),
         }
         const confront = npcStealCheck(worker2, guestProps, luggage)
         if (confront == 'confront') {
@@ -310,6 +310,7 @@ export function tutorialA(interval = 'turn') {
           traits: worker2.traits,
           clan: worker2.clan,
           inventory: worker2.inventory,
+          updateInventory: worker2.updateInventory.bind(worker2),
         }
         const confront = npcStealCheck(guest2, workerProps, luggage)
         if (confront == 'confront') {

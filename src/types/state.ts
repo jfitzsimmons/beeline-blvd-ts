@@ -1,6 +1,7 @@
 import Selector from '../scripts/behaviors/selector'
 import NpcState from '../scripts/states/npc'
 import RoomState from '../scripts/states/room'
+import Storage from '../scripts/states/storage'
 import { BehaviorProps, BehaviorSetters, HeroBehaviorProps } from './behaviors'
 import { Effect } from './tasks'
 
@@ -104,15 +105,14 @@ export interface Fallbacks {
   stations: { [key: string]: string }
 }
 export interface Actors {
-  [key: string]: Actor
+  [key: string]: Storage
 }
-export interface Actor {
+export interface ActorProps {
+  name: string
   inventory: string[]
   watcher?: string
   actions: string[]
-  updateInventory?(addDelete: 'add' | 'delete', item: string): void
 }
-
 export interface Roles {
   [key: string]: string[]
 }

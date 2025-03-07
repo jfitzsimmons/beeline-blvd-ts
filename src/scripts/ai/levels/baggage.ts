@@ -30,6 +30,7 @@ function steal_stash_checks(_this: RoomState) {
       traits: victim.traits,
       clan: victim.clan,
       inventory: victim.inventory,
+      updateInventory: victim.updateInventory.bind(victim),
     }
     const confront = npcStealCheck(suspect, victimProps, loot)
     if (confront == 'confront') {
