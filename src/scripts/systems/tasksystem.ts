@@ -1,34 +1,31 @@
-import { confrontation_check } from '../states/inits/checksFuncs'
+//import { AttendantProps, ThiefVictimProps } from '../../types/ai'
+//import { QuestionProps } from '../../types/behaviors'
+//import {
+//confrontation_check,
+//  build_consequence,
+//} from '../states/inits/checksFuncs'
 
-const { tasks, npcs, player } = globalThis.game.world
-
+//const { player, npcs } = globalThis.game.world
+/**
 function testjpfplayerconfrontationConsequence(
-  // s: string,
-  // w: string,
+  w: string,
   confrontDecided = false
 ): string {
-  /**
-  const caution: Task = {
-    owner: w,
-    turns: 1,
-    label: 'confront',
-    scope: 'clan',
-    authority: 'security',
-    target: 'player',
-    cause: 'theft',
-  }
- 
-  const consequence = tasks.checks.build_consequence(
-    caution,
-    w,
-    [],
-    confrontDecided
-  )
-*/
-  return confrontDecided == true ? 'concern' : 'testjpf'
-
-  // return confrontDecided == true ? 'concern' : consequence
+  const checker = npcs.all[w].getBehaviorProps('question') as QuestionProps
+  const checked = player.getBehaviorProps('question') as QuestionProps
+  //testjpf
+  //i could probably add checkfncs to empty array
+  //must not require novel interruption
+  //will get thief consolations
+  const consequence = build_consequence(checker, checked, [], confrontDecided)
+  //  could return reckless which would need to add
+  // recklessSeq to NPC
+  //merits/demerits seq??
+  //and snitch
+  //others would require novel interruption!!??
+  return confrontDecided == true ? 'concern' : consequence
 }
+
 function testjpfplayerthief_consequences(
   t: string,
   w: string,
@@ -39,7 +36,16 @@ function testjpfplayerthief_consequences(
     const wTraits = tasks.parent.returnNpc(w).traits
 
     c.confront = c.confront == true || confrontation_check(tTraits, wTraits)
-    c.type = testjpfplayerconfrontationConsequence()
+    //so i would need a ConfrontSeq
+    //it may only be for player because
+    //npc might jsut be arbitrary
+    //ACTUALLY could be a way to separate the npcs who move to npc?
+    //how? by random? what for?
+    // optin of going up to one at a time
+    // vs in the middle of a confront
+    //so additional mechanic
+    //complicated for no reason?
+    c.type = testjpfplayerconfrontationConsequence(w, c.confront)
   }
 
   if (c.confront == false && c.type != 'neutral')
@@ -47,42 +53,4 @@ function testjpfplayerthief_consequences(
 
   return c
 }
-
-export function witness_player(w: string): { confront: boolean; type: string } {
-  let consequence = {
-    confront: false,
-    type: 'neutral',
-  }
-  //USED TODO CHFUNCS SEEN_CHECK()
-  consequence = testjpfplayerthief_consequences('player', w, {
-    confront: false,
-    type: 'neutral',
-  })
-
-  return consequence
-}
-
-export function address_busy_tasks() {
-  const ts = tasks.all.filter((t) => t.label == 'mender')
-  for (let i = ts.length - 1; i >= 0; i--) {
-    if (ts[i].cause == 'injury' && ts[i].label == 'mender') {
-      const hurt = npcs.all[ts[i].target].hp < 5
-      if (npcs.all[ts[i].owner].currRoom == player.currRoom && hurt == true) {
-        msg.post(
-          `/${npcs.all[ts[i].owner].currStation}#npc_loader`,
-          hash('move_npc'),
-          {
-            station: npcs.all[ts[i].target].currStation,
-            npc: ts[i].owner,
-          }
-        )
-        // prettier-ignore
-        //print(ts[i].owner, 'STATION MOVE VIA TASK mending', ts[i].target, 'in', npcs.all[ts[i].owner].currRoom)
-      }
-      if (hurt == false) {
-        ts[i].turns = 0
-        npcs.all[ts[i].owner].fsm.setState('turn')
-      }
-    }
-  }
-}
+*/

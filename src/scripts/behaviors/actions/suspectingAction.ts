@@ -1,6 +1,7 @@
 import {
   ActionProps,
   BehaviorKeys,
+  HeroQuestionProps,
   QuestionProps,
 } from '../../../types/behaviors'
 import Action from '../action'
@@ -11,35 +12,43 @@ import {
   unlucky_check,
   angel_check,
   becomeASnitchCheck,
-  suspicious_check,
+  // suspicious_check,
   vanity_check,
   watcher_punched_check,
+  suspicious_check,
 } from '../../states/inits/checksFuncs'
 import { shuffle } from '../../utils/utils'
-import {
-  removeValuable,
-  removeAdvantageous,
-} from '../../systems/inventorysystem'
+import { removeValuable, removeAdvantageous } from '../../utils/inventory'
 import Storage from '../../states/storage'
-export default class ConfrontAction extends Action {
+export default class SuspectingAction extends Action {
   a: QuestionProps
-  perp: QuestionProps
+  perp: QuestionProps | HeroQuestionProps
   getProps: (behavior: BehaviorKeys) => ActionProps
+  cause: string //'theft | 'pockets'
+  isHero: boolean
   storage?: Storage
+  ///testjpf ii thinki can get by with isHero
   constructor(
     getProps: (behavior: BehaviorKeys) => ActionProps,
-    perp: QuestionProps,
+    perp: QuestionProps | HeroQuestionProps,
+    cause: string,
     storage?: Storage
   ) {
     const props = getProps('question') as QuestionProps
     super(props)
     this.a = props
-    this.perp = perp
+    this.perp =
+      perp.name === 'player'
+        ? (perp as HeroQuestionProps)
+        : (perp as QuestionProps)
     this.getProps = getProps
     this.storage = storage
+    this.cause = cause
+    this.isHero = this.perp.name === 'player' ? true : false
     if (
       this.a.currRoom == this.perp.currRoom &&
-      this.a.currRoom == this.a.getFocusedRoom()
+      this.a.currRoom == this.a.getFocusedRoom() &&
+      this.isHero == false
     ) {
       msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
         station: this.perp.currStation,
@@ -55,16 +64,19 @@ export default class ConfrontAction extends Action {
         chkr: QuestionProps,
         chkd: QuestionProps
       ) => { pass: boolean; type: string }
-    > = shuffle([
-      suspicious_check,
-      becomeASnitchCheck,
-      targetPunchedCheck,
-      angel_check,
-      vanity_check,
-      prejudice_check,
-      unlucky_check,
-      watcher_punched_check,
-    ])
+    > =
+      this.isHero == true
+        ? [suspicious_check]
+        : shuffle([
+            // suspicious_check,
+            becomeASnitchCheck,
+            targetPunchedCheck,
+            angel_check,
+            vanity_check,
+            prejudice_check,
+            unlucky_check,
+            watcher_punched_check,
+          ])
 
     const consolation = build_consequence(this.a, this.perp, tempcons, false)
     print(
@@ -80,18 +92,46 @@ export default class ConfrontAction extends Action {
       '||| PLAYERROOM:',
       this.a.getFocusedRoom()
     )
+    /***
+     * testjpf seems here i need conditions that create new
+     * sequences for different types of consolations
+     * snitch, reckless, jailed (similar to questionAct!!!)
+     */
+    if (this.isHero == true && consolation == 'suspicious') {
+      //testjpf return () => alternate(new ConfrontSequence?)
+      //maybe also do this with others, some at random?
+      const perp = this.perp as HeroQuestionProps
+      perp.setConfrontation(this.a.name, consolation, this.cause)
+      msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
 
-    if (consolation == 'neutral') {
+      return () =>
+        this.fail('can i just close player suspicion and have novel load?')
+    } else if (
+      this.a.currRoom == this.perp.currRoom &&
+      this.a.currRoom == this.a.getFocusedRoom()
+    ) {
+      msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+        station: this.perp.currStation,
+        npc: this.a.name,
+      })
+      // prettier-ignore
+      print("runrun",this.a.name, 'STATION MOVE VIA TASK confront', this.perp.name, 'in', this.a.currRoom)
+    }
+    if (consolation == 'neutral' && this.isHero == false) {
       const robbed = this.storage == undefined ? this.a : this.storage
       let chest_item = null
       /**
        * need sequence for snitch!!
        * need returns for chkfuncs call_security
-       *
-       
-       * testjpf NEW
-       * this is why you had that loot STATE prop
-       * confront sequence needs loot.
+       * differentiate between stealing, taking and stashing? no just...
+       * have some sort of severiity on the actors?
+       * luggage bad, reception desk bad, customs desk very bad,  vase not so bad
+       * needs to be part of npcstealcheck and witnessplayer
+       * maybe local function in chkfuncs that bases it on actor naem
+       * and room name and npc clan etc...
+       * that in turn decides the TEMPCONS / checks
+       * ALso this alway has some sort of inventory part currently
+       * probably will need to abstract at some point
        */
 
       if (math.random() < 0.4) {
@@ -117,22 +157,12 @@ export default class ConfrontAction extends Action {
       this.perp.cooldown = math.random(5, 15)
       return () =>
         this.fail(
-          `ConfrontAction::: Failed:: ${this.a.name} had no effect on ${this.perp.name}`
+          `SuspectingAction::: Failed:: ${this.a.name} had no effect on ${this.perp.name}`
         )
     }
 
     this.a.cooldown = this.a.cooldown + 5
-    if (
-      this.a.currRoom == this.perp.currRoom &&
-      this.a.currRoom == this.a.getFocusedRoom()
-    ) {
-      msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
-        station: this.perp.currStation,
-        npc: this.a.name,
-      })
-      // prettier-ignore
-      print("runrun",this.a.name, 'STATION MOVE VIA TASK confront', this.perp.name, 'in', this.a.currRoom)
-    }
+
     return () => this.success()
     //need something that checks response
     //does response need EffectsAction, sequences, something else???

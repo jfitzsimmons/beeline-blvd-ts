@@ -5,43 +5,32 @@ import {
 } from '../../../types/behaviors'
 import Storage from '../../states/storage'
 import Action from '../action'
-import ConfrontAction from '../actions/confrontAction'
+import SuspectingAction from '../actions/suspectingAction'
 import Sequence from '../sequence'
 
-export default class ConfrontSequence extends Sequence {
+export default class SuspectingSequence extends Sequence {
   a: QuestionProps
   perp: QuestionProps
   getProps: (behavior: BehaviorKeys) => ActionProps
+  cause: string
   storage?: Storage
   constructor(
     getProps: (behavior: BehaviorKeys) => ActionProps,
     perp: QuestionProps,
+    cause: string,
     storage?: Storage
   ) {
     const props = getProps('question') as QuestionProps
     const turnActions: Action[] = []
-    /**
-     * testjpf
-     * for clearance/trespass this fires immediately
-     * look to see if target is in room
-     * do they then have a securityplaceaction
-     * What determines how severe to target this person?
-     * do like mendee? docplace
-     * npc.wantedLevel?????
-     * creates a new Sequence APB
-     * if a security officer meets another secofficer with and apb
-     * all security gets and arrest sequence
-     *
-     * similar to has task, should we have has Sequence?!!!
-     * so remove hastask and mendee logic from Task.
-     * Move to NPCS!!!
-     */
-    turnActions.push(...[new ConfrontAction(getProps, perp, storage)])
+    turnActions.push(...[new SuspectingAction(getProps, perp, cause, storage)])
+
     super(turnActions)
     this.a = props
     this.perp = perp
     this.getProps = getProps
     this.storage = storage
+    this.cause = cause
+
     print(
       'CONFRONTSEQ::: CREATED FOR::',
       this.a.name,

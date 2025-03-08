@@ -1,6 +1,6 @@
 import { AttendantProps } from '../../../types/ai'
 import { QuestionProps } from '../../../types/behaviors'
-import ConfrontSequence from '../../behaviors/sequences/confrontSequence'
+import SuspectingSequence from '../../behaviors/sequences/suspectingSequence'
 import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
 import RoomState from '../../states/room'
 import Storage from '../../states/storage'
@@ -28,14 +28,15 @@ function steal_stash_checks(this: RoomState) {
         inventory: attendant.inventory,
         updateInventory: attendant.updateInventory.bind(attendant),
       }
-      const confront = npcStealCheck(suspect, attendantProps, actor)
-      if (confront == 'confront') {
+      const witness = npcStealCheck(suspect, attendantProps, actor)
+      if (witness == 'witness') {
         const perp = suspect.getBehaviorProps('question') as QuestionProps
         attendant.addToBehavior(
           'active',
-          new ConfrontSequence(
+          new SuspectingSequence(
             attendant.getBehaviorProps.bind(attendant),
             perp,
+            'theft',
             actor
           )
         )
@@ -59,12 +60,16 @@ function steal_stash_checks(this: RoomState) {
         inventory: victim.inventory,
         updateInventory: victim.updateInventory.bind(victim),
       }
-      const confront = npcStealCheck(suspect, victimProps)
-      if (confront == 'confront') {
+      const witness = npcStealCheck(suspect, victimProps)
+      if (witness == 'witness') {
         const perp = suspect.getBehaviorProps('question') as QuestionProps
         victim.addToBehavior(
           'active',
-          new ConfrontSequence(victim.getBehaviorProps.bind(victim), perp)
+          new SuspectingSequence(
+            victim.getBehaviorProps.bind(victim),
+            perp,
+            'pockets'
+          )
         )
       }
     }

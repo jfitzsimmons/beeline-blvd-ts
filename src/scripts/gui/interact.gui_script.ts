@@ -2,7 +2,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
-import { witness_player } from '../systems/tasksystem'
+import { ThiefVictimProps, AttendantProps } from '../../types/ai'
+import { QuestionProps } from '../../types/behaviors'
+import { Consequence } from '../../types/tasks'
+import SuspectingSequence from '../behaviors/sequences/suspectingSequence'
+import { witnessPlayer } from '../states/inits/checksFuncs'
 
 const { npcs, rooms, tasks, player, novel } = globalThis.game.world
 
@@ -17,10 +21,7 @@ interface props {
   clones: cloneparent[]
   watcher: string
   station: string
-  consequence: {
-    confront: boolean
-    type: string
-  }
+  consequence: Consequence
   isNpc: boolean
 }
 
@@ -30,7 +31,7 @@ export function init(this: props): void {
   this.watcher = ''
   this.station = ''
   this.consequence = {
-    confront: false,
+    pass: false,
     type: 'neutral',
   }
 }
@@ -39,14 +40,17 @@ function show_ai_screen() {
   msg.post('ai_screen#ai_screen', 'show_screen')
   msg.post('#', 'release_input_focus')
 }
+
 function open_novel(_this: props) {
   npcs.all[_this.npcname].convos = npcs.all[_this.npcname].convos + 1
   novel.npc = npcs.all[_this.npcname]
   novel.reason = _this.consequence.type
+  novel.forced = true
 
   msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
   msg.post('#', 'release_input_focus')
 }
+
 function open_inventory(_this: props, actor: string, action: string) {
   const room = rooms.all[player.currRoom]
   if (action == 'open') {
@@ -64,20 +68,66 @@ function open_inventory(_this: props, actor: string, action: string) {
     const prev_caution = tasks.npcHasTask([_this.watcher], ['player'])
 
     if (prev_caution != null) {
-      _this.consequence = { confront: true, type: 'offender' }
+      _this.consequence = { pass: true, type: 'offender' }
     } else if (action == 'pockets' || action == 'open') {
-      _this.consequence = witness_player(_this.watcher)
+      //witnessplayer could be a checkfunc
+      //what is returned creates new SuspicionSeq
+      //USED TODO CHFUNCS SEEN_CHECK()
+      const thiefprops: ThiefVictimProps = {
+        name: player.name,
+        addInvBonus: player.addInvBonus.bind(player),
+        removeInvBonus: player.removeInvBonus.bind(player),
+        updateInventory: player.updateInventory.bind(player),
+        traits: player.traits,
+        inventory: player.inventory,
+        cooldown: player.cooldown,
+        clan: player.clan,
+      }
+      const watcher = npcs.all[_this.watcher]
+      const watcherProps: AttendantProps = {
+        name: watcher.name,
+        traits: watcher.traits,
+        clan: watcher.clan,
+        inventory: watcher.inventory,
+        updateInventory: watcher.updateInventory.bind(watcher),
+      }
+      _this.consequence = witnessPlayer(thiefprops, watcherProps)
     } else if (action == 'trade') {
-      _this.consequence = { confront: true, type: 'trade' }
+      _this.consequence = { pass: true, type: 'trade' }
     } else {
-      _this.consequence = { confront: false, type: 'neutral' }
+      _this.consequence = { pass: false, type: 'neutral' }
     }
   }
-  if (_this.consequence.confront == true) {
+  if (_this.consequence.pass == true) {
     if (_this.isNpc == false) _this.npcname = _this.watcher
-    player.fsm.setState('confronted')
+    // player.fsm.setState('confronted')
+    //TESTJPF NEW
+    //should create confrontSeq?confronted?
+    //should do something where it picks a random person on screen
+    // and runs their acions
+    // each interaction, player loses an option
+    /**
+     * could unshift a SuspiciousSeq
+     * trigger that npc's active.run
+     * postpone or delete any of that npcs other active behaviors?
+     * burning that opportunity
+     * you could use that as a favor for othe npcs they may have
+     * messed wiht durin that turn!!!
+     */
+    const watcher = npcs.all[_this.watcher]
 
-    open_novel(_this)
+    watcher.addToBehavior(
+      'active',
+      new SuspectingSequence(
+        watcher.getBehaviorProps.bind(watcher),
+        player.getBehaviorProps('question') as QuestionProps,
+        action == 'open' ? 'concern' : action
+      ),
+      true
+    )
+    watcher.behavior.active.run()
+
+    // open_novel(_this)
   } else {
     const params = {
       actorname: actor,
@@ -93,7 +143,8 @@ function check_nodes(
   _this: props,
   action: { released: boolean; x: number; y: number }
 ) {
-  _this.consequence = { confront: false, type: 'neutral' }
+  novel.forced = false
+  _this.consequence = { pass: false, type: 'neutral' }
   for (const c of _this.clones) {
     if (
       gui.get_layer(c.clone) != hash('unclickable') &&
