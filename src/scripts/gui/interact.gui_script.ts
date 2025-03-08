@@ -2,7 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
-import { witness_player } from '../systems/tasksystem'
+import { ThiefVictimProps, AttendantProps } from '../../types/ai'
+import { Consequence } from '../../types/tasks'
+import { witnessPlayer } from '../states/inits/checksFuncs'
 
 const { npcs, rooms, tasks, player, novel } = globalThis.game.world
 
@@ -17,10 +19,7 @@ interface props {
   clones: cloneparent[]
   watcher: string
   station: string
-  consequence: {
-    confront: boolean
-    type: string
-  }
+  consequence: Consequence
   isNpc: boolean
 }
 
@@ -30,7 +29,7 @@ export function init(this: props): void {
   this.watcher = ''
   this.station = ''
   this.consequence = {
-    confront: false,
+    pass: false,
     type: 'neutral',
   }
 }
@@ -65,16 +64,42 @@ function open_inventory(_this: props, actor: string, action: string) {
     const prev_caution = tasks.npcHasTask([_this.watcher], ['player'])
 
     if (prev_caution != null) {
-      _this.consequence = { confront: true, type: 'offender' }
+      _this.consequence = { pass: true, type: 'offender' }
     } else if (action == 'pockets' || action == 'open') {
-      _this.consequence = witness_player(_this.watcher)
+      //witnessplayer could be a checkfunc
+      //what is returned creates new SuspicionSeq
+      //USED TODO CHFUNCS SEEN_CHECK()
+      const thiefprops: ThiefVictimProps = {
+        name: player.name,
+        addInvBonus: player.addInvBonus.bind(player),
+        removeInvBonus: player.removeInvBonus.bind(player),
+        updateInventory: player.updateInventory.bind(player),
+        traits: player.traits,
+        inventory: player.inventory,
+        cooldown: player.cooldown,
+        clan: player.clan,
+      }
+      const watcherProps: AttendantProps = {
+        name: npcs.all[_this.watcher].name,
+        traits: npcs.all[_this.watcher].traits,
+        clan: npcs.all[_this.watcher].clan,
+        inventory: npcs.all[_this.watcher].inventory,
+        updateInventory: npcs.all[_this.watcher].updateInventory.bind(
+          npcs.all[_this.watcher]
+        ),
+      }
+      _this.consequence = witnessPlayer(
+        thiefprops,
+        watcherProps
+        //action == 'open' ? room.actors[actor] : undefined
+      )
     } else if (action == 'trade') {
-      _this.consequence = { confront: true, type: 'trade' }
+      _this.consequence = { pass: true, type: 'trade' }
     } else {
-      _this.consequence = { confront: false, type: 'neutral' }
+      _this.consequence = { pass: false, type: 'neutral' }
     }
   }
-  if (_this.consequence.confront == true) {
+  if (_this.consequence.pass == true) {
     if (_this.isNpc == false) _this.npcname = _this.watcher
     // player.fsm.setState('confronted')
     //TESTJPF NEW
@@ -82,6 +107,14 @@ function open_inventory(_this: props, actor: string, action: string) {
     //should do something where it picks a random person on screen
     // and runs their acions
     // each interaction, player loses an option
+    /**
+     * could unshift a SuspiciousSeq
+     * trigger that npc's active.run
+     * postpone or delete any of that npcs other active behaviors?
+     * burning that opportunity
+     * you could use that as a favor for othe npcs they may have
+     * messed wiht durin that turn!!!
+     */
     open_novel(_this)
   } else {
     const params = {
@@ -99,7 +132,7 @@ function check_nodes(
   action: { released: boolean; x: number; y: number }
 ) {
   novel.forced = false
-  _this.consequence = { confront: false, type: 'neutral' }
+  _this.consequence = { pass: false, type: 'neutral' }
   for (const c of _this.clones) {
     if (
       gui.get_layer(c.clone) != hash('unclickable') &&

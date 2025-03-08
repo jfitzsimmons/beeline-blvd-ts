@@ -1,25 +1,31 @@
-import { AttendantProps, ThiefVictimProps } from '../../types/ai'
-import { QuestionProps } from '../../types/behaviors'
-import {
-  confrontation_check,
-  seen_check,
-  build_consequence,
-} from '../states/inits/checksFuncs'
+//import { AttendantProps, ThiefVictimProps } from '../../types/ai'
+//import { QuestionProps } from '../../types/behaviors'
+//import {
+//confrontation_check,
+//  build_consequence,
+//} from '../states/inits/checksFuncs'
 
-const { tasks, player, npcs } = globalThis.game.world
-
+//const { player, npcs } = globalThis.game.world
+/**
 function testjpfplayerconfrontationConsequence(
   w: string,
   confrontDecided = false
 ): string {
   const checker = npcs.all[w].getBehaviorProps('question') as QuestionProps
   const checked = player.getBehaviorProps('question') as QuestionProps
+  //testjpf
+  //i could probably add checkfncs to empty array
+  //must not require novel interruption
+  //will get thief consolations
   const consequence = build_consequence(checker, checked, [], confrontDecided)
-
+  //  could return reckless which would need to add
+  // recklessSeq to NPC
+  //merits/demerits seq??
+  //and snitch
+  //others would require novel interruption!!??
   return confrontDecided == true ? 'concern' : consequence
-
-  // return confrontDecided == true ? 'concern' : consequence
 }
+
 function testjpfplayerthief_consequences(
   t: string,
   w: string,
@@ -38,40 +44,4 @@ function testjpfplayerthief_consequences(
 
   return c
 }
-
-export function witness_player(w: string): { confront: boolean; type: string } {
-  print('witness_player')
-  let consequence = {
-    confront: false,
-    type: 'neutral',
-  }
-
-  //USED TODO CHFUNCS SEEN_CHECK()
-  const thiefprops: ThiefVictimProps = {
-    name: player.name,
-    addInvBonus: player.addInvBonus.bind(player),
-    removeInvBonus: player.removeInvBonus.bind(player),
-    updateInventory: player.updateInventory.bind(player),
-    traits: player.traits,
-    inventory: player.inventory,
-    cooldown: player.cooldown,
-    clan: player.clan,
-  }
-  const attendantProps: AttendantProps = {
-    name: npcs.all[w].name,
-    traits: npcs.all[w].traits,
-    clan: npcs.all[w].clan,
-    inventory: npcs.all[w].inventory,
-    updateInventory: npcs.all[w].updateInventory.bind(npcs.all[w]),
-  }
-  const seen = seen_check(thiefprops, attendantProps)
-  consequence = testjpfplayerthief_consequences('player', w, seen)
-  print(
-    'witness_player:: w,confront,type::',
-    w,
-    consequence.confront,
-    consequence.type
-  )
-
-  return consequence
-}
+**/

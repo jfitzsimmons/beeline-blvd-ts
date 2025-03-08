@@ -1,6 +1,6 @@
 import { AttendantProps } from '../../../types/ai'
 import { QuestionProps } from '../../../types/behaviors'
-import ConfrontSequence from '../../behaviors/sequences/confrontSequence'
+import SuspicionSequence from '../../behaviors/sequences/confrontSequence'
 import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
 import QuestStep from '../../states/questStep'
 import { doctors } from '../../utils/consts'
@@ -288,12 +288,12 @@ export function tutorialA(interval = 'turn') {
           inventory: guest2.inventory,
           updateInventory: guest2.updateInventory.bind(guest2),
         }
-        const confront = npcStealCheck(worker2, guestProps, luggage)
-        if (confront == 'confront') {
+        const witness = npcStealCheck(worker2, guestProps, luggage)
+        if (witness == 'witness') {
           const perp = worker2.getBehaviorProps('question') as QuestionProps
           guest2.addToBehavior(
             'active',
-            new ConfrontSequence(
+            new SuspicionSequence(
               guest2.getBehaviorProps.bind(guest2),
               perp,
               luggage
@@ -312,12 +312,12 @@ export function tutorialA(interval = 'turn') {
           inventory: worker2.inventory,
           updateInventory: worker2.updateInventory.bind(worker2),
         }
-        const confront = npcStealCheck(guest2, workerProps, luggage)
-        if (confront == 'confront') {
+        const witness = npcStealCheck(guest2, workerProps, luggage)
+        if (witness == 'witness') {
           const perp = guest2.getBehaviorProps('question') as QuestionProps
           worker2.addToBehavior(
             'active',
-            new ConfrontSequence(
+            new SuspicionSequence(
               worker2.getBehaviorProps.bind(worker2),
               perp,
               luggage

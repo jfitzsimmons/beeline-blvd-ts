@@ -23,6 +23,7 @@ export default class ConfrontAction extends Action {
   perp: QuestionProps
   getProps: (behavior: BehaviorKeys) => ActionProps
   storage?: Storage
+  ///testjpf ii thinki can get by with isHero
   constructor(
     getProps: (behavior: BehaviorKeys) => ActionProps,
     perp: QuestionProps,
@@ -77,6 +78,11 @@ export default class ConfrontAction extends Action {
       '||| PLAYERROOM:',
       this.a.getFocusedRoom()
     )
+    /***
+     * testjpf seems here i need conditions that create new
+     * sequences for different types of consolations
+     * snitch, reckless, jailed (similar to questionAct!!!)
+     */
 
     if (consolation == 'neutral') {
       const robbed = this.storage == undefined ? this.a : this.storage

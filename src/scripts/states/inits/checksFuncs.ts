@@ -242,7 +242,7 @@ export function ignorant_check(
 function thief_consolation_checks(chkr: QuestionProps, chkd: QuestionProps) {
   const tempcons: Array<
     (chkd: QuestionProps, chkr: QuestionProps) => Consequence
-  > = shuffle([decideToSnitchCheck, meritsDemerits, recklessCheck])
+  > = shuffle([becomeASnitchCheck, meritsDemerits, recklessCheck])
   //    shuffle(thief_consolations)
 
   for (const check of tempcons) {
@@ -295,37 +295,7 @@ export function build_consequence(
   // print('BUILD CONEQUENCE return type::', consolation.type)
   return consolation.type
 }
-export function decideToSnitchCheck(
-  chkr: QuestionProps,
-  chkd: QuestionProps
-): Consequence {
-  const { skills: ls, binaries: lb } = chkr.traits
-  const { binaries: tb, skills: ts } = chkd.traits
 
-  const modifier = Math.round(
-    lb.anti_authority * 5 + (ls.constitution - ts.charisma) / 2
-  )
-  const advantage =
-    ls.perception + Math.abs(lb.passiveAggressive * 5) >
-    ts.stealth + +Math.abs(tb.passiveAggressive * 5)
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
-  // print('CHECKS RESULT:::', t, ' is going to snitch on ', l, '::???', result)
-
-  if (result > 5 && result <= 10) {
-    return { pass: true, type: 'snitch' }
-  }
-
-  if (result > 10) {
-    // print('SPECIAL snitch')
-    return { pass: true, type: 'special' }
-  }
-  if (result <= 1) {
-    // print('NEVER snitch')
-    return { pass: true, type: 'critical' }
-  }
-
-  return { pass: false, type: 'neutral' }
-}
 function meritsDemerits(chkr: QuestionProps, chkd: QuestionProps): Consequence {
   const { skills: ls, binaries: lb } = chkr.traits
   const { binaries: tb } = chkd.traits
@@ -598,8 +568,8 @@ export function targetPunchedCheck(
 }
 // Misc. Checks
 export function suspicious_check(
-  chkr: QuestionProps,
-  chkd: QuestionProps
+  chkr: QuestionProps | AttendantProps,
+  chkd: QuestionProps | ThiefVictimProps
 ): Consequence {
   const target = chkd
   const listener = chkr
@@ -738,6 +708,35 @@ export function take_or_stash(
     stash_check(attendant, actor)
   }
 }
+export function witnessPlayer(
+  player: ThiefVictimProps,
+  watcher: AttendantProps
+  //storage?: Storage
+): Consequence {
+  print('witness_player')
+
+  const consequence =
+    seen_check(player, watcher).type == 'seen'
+      ? suspicious_check(watcher, player)
+      : {
+          pass: false,
+          type: 'neutral',
+        }
+
+  return consequence
+
+  /**
+   * consequence = testjpfplayerthief_consequences('player', w, seen)
+  print(
+    'witness_player:: w,confront,type::',
+    w,
+    consequence.confront,
+    consequence.type
+  )
+
+  return consequence
+  **/
+}
 // only being used between npcs (just tutorial luggage)
 //this.npcs.checks.stealCheck
 export function npcStealCheck(
@@ -774,7 +773,7 @@ export function npcStealCheck(
     //   print('CHECKSCHECKS!!!::: CONFRONT!!! SEENCHECK::', consequence.type)
 
     //watcher.taskBuilder(watcher.name, 'confront', target.name, 'theft')
-    return 'confront'
+    return 'witness'
     //testjpf is this used??
     // target.loot = loot
     //Could I return loot here too?
