@@ -717,7 +717,10 @@ export function witnessPlayer(
 
   const consequence =
     seen_check(player, watcher).type == 'seen'
-      ? suspicious_check(watcher, player)
+      ? {
+          pass: true,
+          type: 'seen',
+        } //suspicious_check(watcher, player)
       : {
           pass: false,
           type: 'neutral',

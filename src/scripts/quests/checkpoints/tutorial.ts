@@ -1,6 +1,6 @@
 import { AttendantProps } from '../../../types/ai'
 import { QuestionProps } from '../../../types/behaviors'
-import SuspicionSequence from '../../behaviors/sequences/confrontSequence'
+import SuspectingSequence from '../../behaviors/sequences/suspectingSequence'
 import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
 import QuestStep from '../../states/questStep'
 import { doctors } from '../../utils/consts'
@@ -293,9 +293,10 @@ export function tutorialA(interval = 'turn') {
           const perp = worker2.getBehaviorProps('question') as QuestionProps
           guest2.addToBehavior(
             'active',
-            new SuspicionSequence(
+            new SuspectingSequence(
               guest2.getBehaviorProps.bind(guest2),
               perp,
+              'theft',
               luggage
             )
           )
@@ -317,9 +318,10 @@ export function tutorialA(interval = 'turn') {
           const perp = guest2.getBehaviorProps('question') as QuestionProps
           worker2.addToBehavior(
             'active',
-            new SuspicionSequence(
+            new SuspectingSequence(
               worker2.getBehaviorProps.bind(worker2),
               perp,
+              'theft',
               luggage
             )
           )

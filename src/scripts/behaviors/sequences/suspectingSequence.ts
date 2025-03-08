@@ -5,28 +5,32 @@ import {
 } from '../../../types/behaviors'
 import Storage from '../../states/storage'
 import Action from '../action'
-import ConfrontAction from '../actions/confrontAction'
+import SuspectingAction from '../actions/suspectingAction'
 import Sequence from '../sequence'
 
-export default class SuspicionSequence extends Sequence {
+export default class SuspectingSequence extends Sequence {
   a: QuestionProps
   perp: QuestionProps
   getProps: (behavior: BehaviorKeys) => ActionProps
+  cause: string
   storage?: Storage
   constructor(
     getProps: (behavior: BehaviorKeys) => ActionProps,
     perp: QuestionProps,
+    cause: string,
     storage?: Storage
   ) {
     const props = getProps('question') as QuestionProps
     const turnActions: Action[] = []
-    turnActions.push(...[new ConfrontAction(getProps, perp, storage)])
+    turnActions.push(...[new SuspectingAction(getProps, perp, cause, storage)])
 
     super(turnActions)
     this.a = props
     this.perp = perp
     this.getProps = getProps
     this.storage = storage
+    this.cause = cause
+
     print(
       'CONFRONTSEQ::: CREATED FOR::',
       this.a.name,

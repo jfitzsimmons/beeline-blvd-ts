@@ -1,6 +1,6 @@
 import { AttendantProps } from '../../../types/ai'
 import { QuestionProps } from '../../../types/behaviors'
-import SuspicionSequence from '../../behaviors/sequences/confrontSequence'
+import SuspectingSequence from '../../behaviors/sequences/suspectingSequence'
 import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
 import RoomState from '../../states/room'
 import Storage from '../../states/storage'
@@ -33,9 +33,10 @@ function steal_stash_checks(this: RoomState) {
         const perp = suspect.getBehaviorProps('question') as QuestionProps
         attendant.addToBehavior(
           'active',
-          new SuspicionSequence(
+          new SuspectingSequence(
             attendant.getBehaviorProps.bind(attendant),
             perp,
+            'theft',
             actor
           )
         )
@@ -64,7 +65,11 @@ function steal_stash_checks(this: RoomState) {
         const perp = suspect.getBehaviorProps('question') as QuestionProps
         victim.addToBehavior(
           'active',
-          new SuspicionSequence(victim.getBehaviorProps.bind(victim), perp)
+          new SuspectingSequence(
+            victim.getBehaviorProps.bind(victim),
+            perp,
+            'pockets'
+          )
         )
       }
     }

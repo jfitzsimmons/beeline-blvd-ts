@@ -3,7 +3,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
 import { ThiefVictimProps, AttendantProps } from '../../types/ai'
+import { QuestionProps } from '../../types/behaviors'
 import { Consequence } from '../../types/tasks'
+import SuspectingSequence from '../behaviors/sequences/suspectingSequence'
 import { witnessPlayer } from '../states/inits/checksFuncs'
 
 const { npcs, rooms, tasks, player, novel } = globalThis.game.world
@@ -38,6 +40,7 @@ function show_ai_screen() {
   msg.post('ai_screen#ai_screen', 'show_screen')
   msg.post('#', 'release_input_focus')
 }
+
 function open_novel(_this: props) {
   npcs.all[_this.npcname].convos = npcs.all[_this.npcname].convos + 1
   novel.npc = npcs.all[_this.npcname]
@@ -47,6 +50,7 @@ function open_novel(_this: props) {
   msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
   msg.post('#', 'release_input_focus')
 }
+
 function open_inventory(_this: props, actor: string, action: string) {
   const room = rooms.all[player.currRoom]
   if (action == 'open') {
@@ -79,20 +83,15 @@ function open_inventory(_this: props, actor: string, action: string) {
         cooldown: player.cooldown,
         clan: player.clan,
       }
+      const watcher = npcs.all[_this.watcher]
       const watcherProps: AttendantProps = {
-        name: npcs.all[_this.watcher].name,
-        traits: npcs.all[_this.watcher].traits,
-        clan: npcs.all[_this.watcher].clan,
-        inventory: npcs.all[_this.watcher].inventory,
-        updateInventory: npcs.all[_this.watcher].updateInventory.bind(
-          npcs.all[_this.watcher]
-        ),
+        name: watcher.name,
+        traits: watcher.traits,
+        clan: watcher.clan,
+        inventory: watcher.inventory,
+        updateInventory: watcher.updateInventory.bind(watcher),
       }
-      _this.consequence = witnessPlayer(
-        thiefprops,
-        watcherProps
-        //action == 'open' ? room.actors[actor] : undefined
-      )
+      _this.consequence = witnessPlayer(thiefprops, watcherProps)
     } else if (action == 'trade') {
       _this.consequence = { pass: true, type: 'trade' }
     } else {
@@ -115,7 +114,20 @@ function open_inventory(_this: props, actor: string, action: string) {
      * you could use that as a favor for othe npcs they may have
      * messed wiht durin that turn!!!
      */
-    open_novel(_this)
+    const watcher = npcs.all[_this.watcher]
+
+    watcher.addToBehavior(
+      'active',
+      new SuspectingSequence(
+        watcher.getBehaviorProps.bind(watcher),
+        player.getBehaviorProps('question') as QuestionProps,
+        action == 'open' ? 'concern' : action
+      ),
+      true
+    )
+    watcher.behavior.active.run()
+
+    // open_novel(_this)
   } else {
     const params = {
       actorname: actor,

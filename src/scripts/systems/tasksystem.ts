@@ -36,6 +36,15 @@ function testjpfplayerthief_consequences(
     const wTraits = tasks.parent.returnNpc(w).traits
 
     c.confront = c.confront == true || confrontation_check(tTraits, wTraits)
+    //so i would need a ConfrontSeq
+    //it may only be for player because
+    //npc might jsut be arbitrary
+    //ACTUALLY could be a way to separate the npcs who move to npc?
+    //how? by random? what for?
+    // optin of going up to one at a time
+    // vs in the middle of a confront
+    //so additional mechanic
+    //complicated for no reason?
     c.type = testjpfplayerconfrontationConsequence(w, c.confront)
   }
 
@@ -44,4 +53,4 @@ function testjpfplayerthief_consequences(
 
   return c
 }
-**/
+*/
