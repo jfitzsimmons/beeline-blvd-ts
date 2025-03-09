@@ -47,6 +47,13 @@ n: default start
 jump defaultstart
 
 label prioritystart
+n: reason is {reason} caution is {caution}
+if reason == "merits"
+  jump meritsstart
+if reason == "concern"
+  jump concernstart
+if reason == "pockets"
+  jump pocketsstart
 if caution == "questioning"
   jump questioningstart
 if caution == "arrest"

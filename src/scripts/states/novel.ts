@@ -151,7 +151,7 @@ export default class WorldNovel {
     this.npc = this.parent.returnNpc(npc)
     this.reason = reason
     this._task.label = action
-    this.forced = true
+    this._forced = true
   }
   addScript(s: string) {
     this._scripts.push(s)

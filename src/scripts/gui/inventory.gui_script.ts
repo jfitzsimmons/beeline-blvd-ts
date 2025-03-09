@@ -114,12 +114,10 @@ function load_inventory_sprites(
 }
 
 function choose_inventory(actorname: string) {
-  //
   if (npcs.all[actorname] !== null) {
-    //
-
     return npcs.all[actorname].inventory
   } else {
+    print('chooseinv:: ', player.currRoom, actorname)
     return rooms.all[player.currRoom].actors[actorname].inventory
   }
 }

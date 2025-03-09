@@ -1,0 +1,49 @@
+
+
+label merits1x
+n: Good for you!
+jump quickclose
+
+label merits2x
+n: I'd do the same.
+jump quickclose
+
+label merits3x
+n: I've done it too.
+jump quickclose
+
+label genericmerits
+n: generic merits 
+dice = math.random(0,100)
+n: dice {dice}
+if dice > 75
+    jump merits1x
+if dice > 50
+    jump merits2x
+if dice > 25
+    jump merits3x
+n: I'm cool with it.
+jump quickclose
+
+label meritsstart
+n: meritsstart called
+if npc.b.good < -.5
+    jump canthelpselves
+if npc.s.speed > 6
+    jump sleightofhand
+if npc.b.wealth < -.5
+    jump gottagetby
+jump genericmerits
+
+label canthelpselves
+n: We take what we want. Go ahead.
+jump quickclose
+
+label sleightofhand
+n: We both move quick. 
+n: You could learn a thing or two.
+jump quickclose
+
+label gottagetby
+n: I understand. Times are rough.
+jump quickclose

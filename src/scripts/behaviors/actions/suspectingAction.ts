@@ -16,6 +16,8 @@ import {
   vanity_check,
   watcher_punched_check,
   suspicious_check,
+  meritsDemerits,
+  recklessCheck,
 } from '../../states/inits/checksFuncs'
 import { shuffle } from '../../utils/utils'
 import { removeValuable, removeAdvantageous } from '../../utils/inventory'
@@ -59,14 +61,19 @@ export default class SuspectingAction extends Action {
     }
   }
   run(): { (): void } {
-    const tempcons: Array<
+    const resultChecks: Array<
       (
         chkr: QuestionProps,
         chkd: QuestionProps
       ) => { pass: boolean; type: string }
     > =
       this.isHero == true
-        ? [suspicious_check]
+        ? shuffle([
+            suspicious_check,
+            becomeASnitchCheck,
+            meritsDemerits,
+            recklessCheck,
+          ])
         : shuffle([
             // suspicious_check,
             becomeASnitchCheck,
@@ -76,36 +83,74 @@ export default class SuspectingAction extends Action {
             prejudice_check,
             unlucky_check,
             watcher_punched_check,
+            becomeASnitchCheck,
+            meritsDemerits,
+            recklessCheck,
           ])
 
-    const consolation = build_consequence(this.a, this.perp, tempcons, false)
-    print(
-      'CONFRONTaction::: consolation after consequence:::',
-      consolation,
-      'confronter:',
-      this.a.name,
-      'perp:',
-      this.perp.name,
-      'inroom:',
-      this.a.currRoom,
-      this.perp.currRoom,
-      '||| PLAYERROOM:',
-      this.a.getFocusedRoom()
+    const consolation = build_consequence(
+      this.a,
+      this.perp,
+      resultChecks,
+      false
     )
+    // prettier-ignore
+    print('Suspectingaction::: consolation after consequence/cause:::',consolation,this.cause,'confronter:',this.a.name,'perp:',this.perp.name,'inroom:',this.a.currRoom,this.perp.currRoom,'||| PLAYERROOM:',this.a.getFocusedRoom())
     /***
      * testjpf seems here i need conditions that create new
      * sequences for different types of consolations
      * snitch, reckless, jailed (similar to questionAct!!!)
+     *
+     *
+     * what to do with merits/demerits
+     *
+     * need to open inventory on
+     * exiting novel
      */
-    if (this.isHero == true && consolation == 'suspicious') {
-      //testjpf return () => alternate(new ConfrontSequence?)
-      //maybe also do this with others, some at random?
+    if (this.isHero == true) {
       const perp = this.perp as HeroQuestionProps
-      perp.setConfrontation(this.a.name, consolation, this.cause)
-      msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
+      if (this.cause == 'pockets') {
+        perp.setConfrontation(this.a.name, consolation, this.cause)
 
-      return () =>
-        this.fail('can i just close player suspicion and have novel load?')
+        msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
+
+        return () =>
+          this.success(
+            `SuspectingACtion::: success: ishero: cause concolation:${this.cause} | ${consolation}`
+          )
+      }
+      if (consolation == 'merits') {
+        perp.setConfrontation(this.a.name, this.cause, consolation)
+
+        msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
+
+        const params = {
+          actorname: this.storage?.name,
+          //isNpc: _this.isNpc,
+          watcher: this.a.name,
+          action: this.cause,
+        }
+        print('neutralsuspecting:: ', this.storage?.name)
+
+        msg.post('/shared/guis#inventory', 'opened_chest', params)
+        msg.post('#', 'release_input_focus')
+
+        return () =>
+          this.success(
+            `SuspectingACtion::: Fail: ishero: cause concolation:${this.cause} | ${consolation}`
+          )
+      }
+      if (consolation == 'suspicious') {
+        perp.setConfrontation(this.a.name, consolation, this.cause)
+        //testjpf return () => alternate(new ConfrontSequence?)
+        //maybe also do this with others, some at random?
+        msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
+
+        return () =>
+          this.success(
+            `SuspectingACtion::: Fail: ishero: cause concolation:${this.cause} | ${consolation}`
+          )
+      }
     } else if (
       this.a.currRoom == this.perp.currRoom &&
       this.a.currRoom == this.a.getFocusedRoom()
@@ -129,7 +174,7 @@ export default class SuspectingAction extends Action {
        * needs to be part of npcstealcheck and witnessplayer
        * maybe local function in chkfuncs that bases it on actor naem
        * and room name and npc clan etc...
-       * that in turn decides the TEMPCONS / checks
+       * that in turn decides the resultChecks / checks
        * ALso this alway has some sort of inventory part currently
        * probably will need to abstract at some point
        */
@@ -157,15 +202,31 @@ export default class SuspectingAction extends Action {
       this.perp.cooldown = math.random(5, 15)
       return () =>
         this.fail(
-          `SuspectingAction::: Failed:: ${this.a.name} had no effect on ${this.perp.name}`
+          `SuspectingAction::: Failed:: ${this.a.name} was neutral and had no effect on ${this.perp.name}`
         )
+    } else if (consolation == 'neutral' && this.isHero == true) {
+      const params = {
+        actorname: this.storage?.name,
+        //isNpc: _this.isNpc,
+        watcher: this.a.name,
+        action: this.cause,
+      }
+      print('neutralsuspecting:: ', this.storage?.name)
+      msg.post('/shared/guis#inventory', 'opened_chest', params)
+      msg.post('#', 'release_input_focus')
+      this.fail(
+        `SuspectingAction::: Failed:: ${this.a.name} was neutral and had no effect on ${this.perp.name}`
+      )
     }
 
-    this.a.cooldown = this.a.cooldown + 5
+    //this.a.cooldown = this.a.cooldown + 5
 
     return () => this.success()
     //need something that checks response
     //does response need EffectsAction, sequences, something else???
     //testjpf
+  }
+  success(s?: string) {
+    print('SuspectingAction:: Success::', s)
   }
 }

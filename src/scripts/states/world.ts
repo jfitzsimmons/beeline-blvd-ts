@@ -43,7 +43,6 @@ export default class World {
     const tasksProps: WorldTasksArgs = {
       didCrossPaths: this.didCrossPaths.bind(this),
       getOccupants: this.rooms.getOccupants.bind(this),
-      setConfrontation: this.novel.setConfrontation.bind(this),
       ...novelProps,
     }
     this.tasks = new WorldTasks(tasksProps)

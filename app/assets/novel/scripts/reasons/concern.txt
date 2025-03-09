@@ -1,46 +1,48 @@
 
 
-label church1x
-n: I'll pray for youx
+label concern1x
+n: Please stop doing that.
 jump quickclose
 
-label church2x
-n: Peace be with you.x
+label concern2x
+n: Curiosity killed the cat.
 jump quickclose
 
-label church3x
-n: Merx bless us all.x
+label concern3x
+n: Don't start trouble. We're all busy.
 jump quickclose
 
-label genericchurchx
+label genericconcern
+n: generic concern 
 dice = math.random(0,100)
 n: dice {dice}
 if dice > 75
-    jump church1x
+    jump concern1x
 if dice > 50
-    jump church2x
+    jump concern2x
 if dice > 25
-    jump church3x
-n: Holy. Holy.x
+    jump concern3x
+n: Wait until I'm not around.
 jump quickclose
 
-label reasonsrandom1
-if npc.b.good < -0.3
-    jump smiteyoux
-if npc.s.wisdom > 5
-    jump wisechurchx
-if npc.s.strength > 4
-    jump strongchurch
-jump genericchurchx
+label concernstart
+if npc.s.stealth > 6
+    jump curiouscat
+if npc.b.aggressive > .5
+    jump leaveitalone
+if npc.b.educated < -.5
+    jump loudclutz
+jump genericconcern
 
-label smiteyoux
-n: The lord will smite you.x
+label curiouscat
+n: You'll need to be stealthier than that.
 jump quickclose
 
-label wisechurchx
-n: Everyone is a worthy person.x
+label leaveitalone
+n: Just leave it alone!
 jump quickclose
 
-label strongchurchx
-n: The lord has imbued me with great strength!x
+label loudclutz
+n: What's going on? I wanna join in.
+p: You're too loud!
 jump quickclose

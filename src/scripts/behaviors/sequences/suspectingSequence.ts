@@ -7,7 +7,8 @@ import Storage from '../../states/storage'
 import Action from '../action'
 import SuspectingAction from '../actions/suspectingAction'
 import Sequence from '../sequence'
-
+// TESTJPF
+//TODO NEED SuspectingPlayerAction
 export default class SuspectingSequence extends Sequence {
   a: QuestionProps
   perp: QuestionProps
