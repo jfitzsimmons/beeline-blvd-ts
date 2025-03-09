@@ -94,23 +94,35 @@ export default class SuspectingAction extends Action {
      *
      * what to do with merits/demerits
      */
-    if (this.isHero == true && this.cause == 'pockets') {
+    if (this.isHero == true) {
       const perp = this.perp as HeroQuestionProps
       perp.setConfrontation(this.a.name, consolation, this.cause)
-      msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
+      if (this.cause == 'pockets') {
+        msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
 
-      return () =>
-        this.fail('can i just close player suspicion and have novel load?')
-    }
-    if (this.isHero == true && consolation == 'suspicious') {
-      //testjpf return () => alternate(new ConfrontSequence?)
-      //maybe also do this with others, some at random?
-      const perp = this.perp as HeroQuestionProps
-      perp.setConfrontation(this.a.name, consolation, this.cause)
-      msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
+        return () =>
+          this.fail(
+            `SuspectingACtion::: Fail: ishero: cause concolation:${this.cause} | ${consolation}`
+          )
+      }
+      if (this.cause == 'merits') {
+        msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
 
-      return () =>
-        this.fail('can i just close player suspicion and have novel load?')
+        return () =>
+          this.fail(
+            `SuspectingACtion::: Fail: ishero: cause concolation:${this.cause} | ${consolation}`
+          )
+      }
+      if (consolation == 'suspicious') {
+        //testjpf return () => alternate(new ConfrontSequence?)
+        //maybe also do this with others, some at random?
+        msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
+
+        return () =>
+          this.fail(
+            `SuspectingACtion::: Fail: ishero: cause concolation:${this.cause} | ${consolation}`
+          )
+      }
     } else if (
       this.a.currRoom == this.perp.currRoom &&
       this.a.currRoom == this.a.getFocusedRoom()
