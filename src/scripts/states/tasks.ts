@@ -51,7 +51,7 @@ export default class WorldTasks {
       returnPlayer: this.parent.returnPlayer.bind(this),
       taskBuilder: this.taskBuilder.bind(this),
       getOccupants: this.parent.getOccupants.bind(this),
-      setConfrontation: this.parent.setConfrontation.bind(this),
+      //setConfrontation: this.parent.setConfrontation.bind(this),
     }
     this.quests = {
       num_of_injuries: this.num_of_injuries.bind(this),

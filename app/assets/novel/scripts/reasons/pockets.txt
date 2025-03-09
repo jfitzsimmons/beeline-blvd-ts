@@ -1,0 +1,96 @@
+label pocketsstart
+n: LOVE {npc.love}
+if convos == 0
+  n: Haven't you been warned!
+if npc.love < -2
+  n: This jerk again. Hey!
+if convos > 0
+  n: HEY! What do you think you're doing?!?!
+> I tripped.
+  jump liestealing
+> Won't happen again.
+  jump pledgenever
+
+label pledgenever
+if convos > 0 
+  n: I'm sure.
+  jump quickclose
+n: Listen asshole, go AWAY!
+npc.love = npc.love -1
+jump quickclose
+
+label liestealing
+if convos > 0
+  n: Knock it off. You're not clever
+  jump quickclose
+if convos == 0 and npc.love < -2
+  n: I'm kicking your ass.
+  npc.love = npc.love - 1
+  n: punchlogic?
+  jump quickclose
+n: You're bothering me.  Do you wnat me to call security???
+> ...
+  jump quickclose
+> What? I'm clumsy.
+  npc.love = npc.love -1
+  jump committobit
+> You think you can take me??!
+  jump threateningvictm
+
+label threateningvictm
+if p.s.charisma > 7
+  npc.love = npc.love + 5
+  n: You crack me up, but sreiously, go away.
+  jump quickclose
+if p.b.aggressive > .7 and npc.b.aggressive < .4
+  npc.love = npc.love - 2
+  if npc.b.authority < -.4
+    npc.love = npc.love - 3
+  n: I'm sorry.
+  jump quickclose
+n: I'm not convinced
+jump lastchance
+
+label lastchance
+npc.love = npc.love-2
+n: My finger is on the button.
+n: Do you want to spend the night in a cell?
+> ...
+  n: Have a good day.
+  jump quickclose
+> Bring it on
+  npc.love = npc.love - 5
+  if npc.b.aggressive > 0.5 and npc.s.constitution > 7
+    npc.love = npc.love + 10
+    n: I like you.
+    jump repeatannoyed
+  jump callsecurity
+
+label callsecurity
+n: SECURITY!
+alert= alert+ 1
+jump quickclose
+
+label committobit
+n: You're definitly a clown.
+> huh
+  npc.love = npc.love -1
+  jump repeatannoyed
+> ...
+  n: hmmph
+  jump quickclose
+> what's with the attitude
+  if convos <= 0 and npc.love < -2
+    n: SECURITY!
+    alert = alert + 1
+    jump quickclose
+  if convos <= 4 and p.s.speed < 4 and npc.b.good > 0.3 and npc.b.educated < -0.3
+    npc.love = npc.love + 3
+    n: You're not too quick, are you?
+    jump quickclose
+  n: We have the slowest fucking security in the world.
+  jump quickclose
+
+label repeatannoyed
+n: and you suck.
+jump quickclose

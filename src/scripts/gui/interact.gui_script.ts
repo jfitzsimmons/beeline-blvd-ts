@@ -45,7 +45,7 @@ function open_novel(_this: props) {
   npcs.all[_this.npcname].convos = npcs.all[_this.npcname].convos + 1
   novel.npc = npcs.all[_this.npcname]
   novel.reason = _this.consequence.type
-  novel.forced = true
+  novel.forced = false
 
   msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
   msg.post('#', 'release_input_focus')
@@ -159,6 +159,7 @@ function check_nodes(
         print('pre npcname inv', _this.npcname)
         open_inventory(_this, c.actor, c.action)
       } else if (c.action == 'talk') {
+        print("talkprint('intnovelpriority', novel.forced)", novel.forced)
         open_novel(_this)
       } else if (c.action == 'use') {
         show_ai_screen()

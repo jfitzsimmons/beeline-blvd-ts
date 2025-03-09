@@ -59,7 +59,7 @@ export default class SuspectingAction extends Action {
     }
   }
   run(): { (): void } {
-    const tempcons: Array<
+    const resultChecks: Array<
       (
         chkr: QuestionProps,
         chkd: QuestionProps
@@ -78,25 +78,30 @@ export default class SuspectingAction extends Action {
             watcher_punched_check,
           ])
 
-    const consolation = build_consequence(this.a, this.perp, tempcons, false)
-    print(
-      'CONFRONTaction::: consolation after consequence:::',
-      consolation,
-      'confronter:',
-      this.a.name,
-      'perp:',
-      this.perp.name,
-      'inroom:',
-      this.a.currRoom,
-      this.perp.currRoom,
-      '||| PLAYERROOM:',
-      this.a.getFocusedRoom()
+    const consolation = build_consequence(
+      this.a,
+      this.perp,
+      resultChecks,
+      false
     )
+    // prettier-ignore
+    print('Suspectingaction::: consolation after consequence/cause:::',consolation,this.cause,'confronter:',this.a.name,'perp:',this.perp.name,'inroom:',this.a.currRoom,this.perp.currRoom,'||| PLAYERROOM:',this.a.getFocusedRoom())
     /***
      * testjpf seems here i need conditions that create new
      * sequences for different types of consolations
      * snitch, reckless, jailed (similar to questionAct!!!)
+     *
+     *
+     * what to do with merits/demerits
      */
+    if (this.isHero == true && this.cause == 'pockets') {
+      const perp = this.perp as HeroQuestionProps
+      perp.setConfrontation(this.a.name, consolation, this.cause)
+      msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
+
+      return () =>
+        this.fail('can i just close player suspicion and have novel load?')
+    }
     if (this.isHero == true && consolation == 'suspicious') {
       //testjpf return () => alternate(new ConfrontSequence?)
       //maybe also do this with others, some at random?
@@ -129,7 +134,7 @@ export default class SuspectingAction extends Action {
        * needs to be part of npcstealcheck and witnessplayer
        * maybe local function in chkfuncs that bases it on actor naem
        * and room name and npc clan etc...
-       * that in turn decides the TEMPCONS / checks
+       * that in turn decides the resultChecks / checks
        * ALso this alway has some sort of inventory part currently
        * probably will need to abstract at some point
        */

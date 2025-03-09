@@ -47,6 +47,8 @@ n: default start
 jump defaultstart
 
 label prioritystart
+if reason == "pockets"
+  jump pocketsstart
 if caution == "questioning"
   jump questioningstart
 if caution == "arrest"
