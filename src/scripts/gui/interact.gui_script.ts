@@ -57,7 +57,18 @@ function open_inventory(_this: props, actor: string, action: string) {
     // station where the watcher will be located
     const station: string | undefined = room.actors[actor].watcher
     // the actual npc assigned to that station
-    if (station != undefined) _this.watcher = room.stations[station]
+    if (station != undefined) {
+      _this.watcher = room.stations[station]
+    } else {
+      const params = {
+        actorname: actor,
+        //isNpc: _this.isNpc,
+        watcher: _this.watcher,
+        action: action,
+      }
+      msg.post('/shared/guis#inventory', 'opened_chest', params)
+      msg.post('#', 'release_input_focus')
+    }
   } else if (action == 'trade' || action == 'give' || action == 'pockets') {
     // testjpf trade will need "acceptanace"????
     _this.watcher = actor
@@ -92,8 +103,16 @@ function open_inventory(_this: props, actor: string, action: string) {
         updateInventory: watcher.updateInventory.bind(watcher),
       }
       _this.consequence = witnessPlayer(thiefprops, watcherProps)
-    } else if (action == 'trade') {
-      _this.consequence = { pass: true, type: 'trade' }
+    } else if (action == 'give' || action == 'trade') {
+      const params = {
+        actorname: actor,
+        //isNpc: _this.isNpc,
+        watcher: _this.watcher,
+        action: action,
+      }
+      msg.post('/shared/guis#inventory', 'opened_chest', params)
+      msg.post('#', 'release_input_focus')
+      _this.consequence = { pass: false, type: 'neutral' }
     } else {
       _this.consequence = { pass: false, type: 'neutral' }
     }
@@ -121,22 +140,14 @@ function open_inventory(_this: props, actor: string, action: string) {
       new SuspectingSequence(
         watcher.getBehaviorProps.bind(watcher),
         player.getBehaviorProps('question') as QuestionProps,
-        action == 'open' ? 'concern' : action
+        action == 'open' ? 'concern' : action,
+        _this.isNpc == false ? room.actors[actor] : undefined
       ),
       true
     )
     watcher.behavior.active.run()
 
     // open_novel(_this)
-  } else {
-    const params = {
-      actorname: actor,
-      isNpc: _this.isNpc,
-      watcher: _this.watcher,
-      action: action,
-    }
-    msg.post('/shared/guis#inventory', 'opened_chest', params)
-    msg.post('#', 'release_input_focus')
   }
 }
 function check_nodes(

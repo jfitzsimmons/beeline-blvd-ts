@@ -60,11 +60,11 @@ export function pledgeCheck(
     // print('SPECIAL pledge')
     addPledge(chkd)
     addPledge(chkd)
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'pledgespecial' }
   }
   if (result <= 1) {
     // print('NEVER pledge')
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'pledgecritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -186,11 +186,11 @@ export function dumb_crook_check(
 
   if (result > 10) {
     // print('SPECIAL dumbcrook')
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'dumbcrookspecial' }
   }
   if (result <= 1) {
     // print('NEVER dumbcrook')
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'dumbcrookcritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -229,16 +229,17 @@ export function ignorant_check(
 
   if (result > 10) {
     // print('SPECIAL ignorant')
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'ignorantspecial' }
   }
   if (result <= 1) {
     // print('NEVER ignorant')
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'ignorantcritical' }
   }
 
   return { pass: false, type: 'neutral' }
 }
 //Confrontation /security
+/**
 function thief_consolation_checks(chkr: QuestionProps, chkd: QuestionProps) {
   const tempcons: Array<
     (chkd: QuestionProps, chkr: QuestionProps) => Consequence
@@ -255,7 +256,7 @@ function thief_consolation_checks(chkr: QuestionProps, chkd: QuestionProps) {
   // print('did nothing after witnessing a theft attempt')
   return 'neutral'
 }
-
+*/
 export function build_consequence(
   // this: WorldTasks,
   //t: Task,
@@ -277,7 +278,7 @@ export function build_consequence(
     //if (checked != 'player') {
     // print('buildconsequence::: prethief::', consolation.pass, consolation.type)
 
-    consolation.type = thief_consolation_checks(checked, checker)
+    //consolation.type = thief_consolation_checks(checked, checker)
     // print('buildconsequence::: postthief::', consolation.pass, consolation.type)
 
     if (consolation.type != 'neutral') {
@@ -296,7 +297,10 @@ export function build_consequence(
   return consolation.type
 }
 
-function meritsDemerits(chkr: QuestionProps, chkd: QuestionProps): Consequence {
+export function meritsDemerits(
+  chkr: QuestionProps,
+  chkd: QuestionProps
+): Consequence {
   const { skills: ls, binaries: lb } = chkr.traits
   const { binaries: tb } = chkd.traits
   const modifier = Math.round((lb.evil_good + lb.lawlessLawful) * -2.5)
@@ -339,11 +343,11 @@ export function recklessCheck(
 
   if (result > 10) {
     // print('SPECIAL reckless')
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'recklessspecial' }
   }
   if (result <= 1) {
     // print('NEVER reckless')
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'recklesscritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -384,11 +388,11 @@ export function predator_check(
 
   if (result > 10) {
     // print('SPECIAL predator')
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'predatorspecial' }
   }
   if (result <= 1) {
     // print('NEVER predator')
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'predatorcritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -430,11 +434,11 @@ export function classy_check(
 
   if (result > 10) {
     // print('SPECIAL classy')
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'classyspecial' }
   }
   if (result <= 1) {
     // print('NEVER classy')
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'classycritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -469,11 +473,11 @@ export function jailtime_check(
 
     chkd.hp = chkd.hp - 1
     print('SPECIAL jailed', chkd.name)
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'jailedspecial' }
   }
   if (result <= 1) {
     // print('NEVER jailed')
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'jailedcritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -519,11 +523,11 @@ export function bribeCheck(
     // print('SPECIAL bribe')
     getExtorted(chkd, chkr)
     lConfrontPunchT(chkd)
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'bribespecial' }
   }
   if (result <= 1) {
     given_gift(chkd, chkr)
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'bribecritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -556,12 +560,12 @@ export function targetPunchedCheck(
   if (result > 10) {
     // print('SPECIAL wPunchS')
     lConfrontPunchT(chkd, 3)
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'wPunchSspecial' }
   }
   if (result <= 1) {
     // print('NEVER wPunchS')
     tConfrontPunchL(chkr, 2)
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'wPunchScritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -592,12 +596,12 @@ export function suspicious_check(
   if (result > 10) {
     // print('SPECIAL suspicious')
     //  go_to_jail(suspect)
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'suspiciousspecial' }
   }
   if (result <= 1) {
     // print('NEVER suspicious')
     //shuffle(pos_consolations)[0](suspect)
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'suspiciouscritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -626,7 +630,7 @@ export function seen_check(
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
 
   if (result > 10) return { confront: false, type: 'seenspecial' }
-  if (result < 0) return { confront: true, type: 'critcal' }
+  if (result < 0) return { confront: true, type: 'seencritcal' }
   const bossResult = rollSpecialDice(7, true, 3, 2)
   const seen = result <= bossResult
   return seen === true
@@ -831,11 +835,11 @@ export function angel_check(
 
   if (result > 10) {
     // print('SPECIAL angel')
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'angelspecial' }
   }
   if (result <= 1) {
     // print('NEVER angel')
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'angelcritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -868,11 +872,11 @@ export function vanity_check(
 
   if (result > 10) {
     // print('SPECIAL VANITY')
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'vanityspecial' }
   }
   if (result <= 1) {
     // print('NEVER VANITY')
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'vanitycritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -910,11 +914,11 @@ export function admirer_check(
 
   if (result > 10) {
     // print('SPECIAL ADMIRERER')
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'admirerspecial' }
   }
   if (result <= 1) {
     // print('NEVER ADMIRERER')
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'admirercritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -950,11 +954,11 @@ export function prejudice_check(
 
   if (result > 10) {
     // print('SPECIAL prejudice')
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'prejudicespecial' }
   }
   if (result <= 1) {
     // print('NEVER prejudice')
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'prejudicecritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -985,12 +989,12 @@ export function watcher_punched_check(
     // print('SPECIAL sPunchW')
     //this.outcomes.tConfrontPunchL(listener.name, 3)
 
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'ssPunchWpecial' }
   }
   if (result <= 1) {
     // print('NEVER sPunchW')
     //this.outcomes.lConfrontPunchT(target.name, 2)
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'sPunchWcritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -1031,11 +1035,11 @@ export function unlucky_check(
 
   if (result > 10) {
     call_security(chkd, chkr)
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'unluckyspecial' }
   }
   if (result <= 1) {
     shuffle([charmed_merits, ap_boost, given_gift, love_boost])[0](chkd, chkr)
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'unluckycritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -1063,10 +1067,10 @@ export function becomeASnitchCheck(
   }
 
   if (result > 10) {
-    return { pass: true, type: 'special' }
+    return { pass: true, type: 'snitchspecial' }
   }
   if (result <= 1) {
-    return { pass: true, type: 'critical' }
+    return { pass: true, type: 'snitchcritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -1092,7 +1096,7 @@ export function love_boost(
 
   if (result > 5 && result <= 10) return { pass: true, type: 'loveboost' }
 
-  if (result > 10) return { pass: true, type: 'special' }
+  if (result > 10) return { pass: true, type: 'loveboostspecial' }
   return { pass: false, type: 'neutral' }
 }
 export function ap_boost(
@@ -1115,7 +1119,7 @@ export function ap_boost(
 
   if (result > 5 && result <= 10) return { pass: true, type: 'apboost' }
 
-  if (result > 10) return { pass: true, type: 'special' }
+  if (result > 10) return { pass: true, type: 'apboostspecial' }
   return { pass: false, type: 'neutral' }
 }
 export function charmed_merits(
@@ -1136,7 +1140,7 @@ export function charmed_merits(
 
   if (result > 5 && result <= 10) return { pass: true, type: 'merits' }
 
-  if (result > 10) return { pass: true, type: 'special' }
+  if (result > 10) return { pass: true, type: 'meritsspecial' }
 
   return { pass: false, type: 'neutral' }
 }

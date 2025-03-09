@@ -26,7 +26,7 @@ n: Wait until I'm not around.
 jump quickclose
 
 label concernstart
-if npc.s.stealth >6
+if npc.s.stealth > 6
     jump curiouscat
 if npc.b.aggressive > .5
     jump leaveitalone
@@ -44,4 +44,5 @@ jump quickclose
 
 label loudclutz
 n: What's going on? I wanna join in.
+p: You're too loud!
 jump quickclose
