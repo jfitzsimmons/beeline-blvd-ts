@@ -67,7 +67,7 @@ export default class TrespassAction extends Action {
         //const perp = this.getProps('question') as QuestionProps
         enforcer.addToBehavior(
           'active',
-          new QuestionSequence(this.enforcer, this.getProps)
+          new QuestionSequence(this.enforcer, this.getProps, 'clearance')
         )
         return () =>
           this.continue(

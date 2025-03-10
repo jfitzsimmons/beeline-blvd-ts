@@ -1,5 +1,5 @@
-label defaultstart
-n: someone says you've be {reason} them.
+label questioningstart
+n: someone says you've been {caution}ing them.
 npc.love = npc.love -1 
 > Promise
   if npc.love > -2 and npc.b.aggressive < 0.8 and math.random() < .5

@@ -59,13 +59,19 @@ function open_inventory(_this: props, actor: string, action: string) {
     // the actual npc assigned to that station
     if (station != undefined) {
       _this.watcher = room.stations[station]
-    } else {
+    }
+
+    if (_this.watcher === '') {
       const params = {
         actorname: actor,
         //isNpc: _this.isNpc,
         watcher: _this.watcher,
         action: action,
       }
+      // prettier-ignore
+      print('INTERACTGUI:::: OPENINVENTORY333::: Params',_this.npcname,_this.watcher,params.actorname,params.action,params.watcher,player.currRoom
+      )
+
       msg.post('/shared/guis#inventory', 'opened_chest', params)
       msg.post('#', 'release_input_focus')
     }
@@ -167,7 +173,6 @@ function check_nodes(
         c.action == 'give' ||
         c.action == 'pockets'
       ) {
-        print('pre npcname inv', _this.npcname)
         open_inventory(_this, c.actor, c.action)
       } else if (c.action == 'talk') {
         print("talkprint('intnovelpriority', novel.forced)", novel.forced)

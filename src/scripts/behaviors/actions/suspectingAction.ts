@@ -1,6 +1,7 @@
 import {
   ActionProps,
   BehaviorKeys,
+  HelperProps,
   HeroQuestionProps,
   QuestionProps,
 } from '../../../types/behaviors'
@@ -22,6 +23,7 @@ import {
 import { shuffle } from '../../utils/utils'
 import { removeValuable, removeAdvantageous } from '../../utils/inventory'
 import Storage from '../../states/storage'
+import SnitchSequence from '../sequences/snitchSequence'
 export default class SuspectingAction extends Action {
   a: QuestionProps
   perp: QuestionProps | HeroQuestionProps
@@ -101,14 +103,42 @@ export default class SuspectingAction extends Action {
      * sequences for different types of consolations
      * snitch, reckless, jailed (similar to questionAct!!!)
      *
-     *
+     
      * what to do with merits/demerits
      *
      * need to open inventory on
      * exiting novel
      */
     if (this.isHero == true) {
-      const perp = this.perp as HeroQuestionProps
+      const perp = this.perp.getBehaviorProps('question') as HeroQuestionProps
+      if (consolation == 'snitch') {
+        //testjpf::
+        //new SnitchSequence()
+        //snitch sequence should weight concern lower than theft.
+
+        this.a.addToBehavior(
+          'active',
+          new SnitchSequence(
+            this.getProps,
+            this.perp.getBehaviorProps('helper') as HelperProps,
+            this.cause
+          )
+        )
+        const params = {
+          actorname: this.storage?.name,
+          //isNpc: _this.isNpc,
+          watcher: this.a.name,
+          action: this.cause,
+        }
+        print('SNITCH:: ', this.storage?.name)
+
+        msg.post('/shared/guis#inventory', 'opened_chest', params)
+        msg.post('#', 'release_input_focus')
+        return () =>
+          this.success(
+            `SuspectingACtion::: success: ishero: cause concolation:${this.cause} | ${consolation}`
+          )
+      }
       if (this.cause == 'pockets') {
         perp.setConfrontation(this.a.name, consolation, this.cause)
 

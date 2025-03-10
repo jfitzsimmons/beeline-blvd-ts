@@ -13,7 +13,7 @@ function prepare_novel_txts(
   room: boolean | true = true,
   extend: boolean | false = false
 ) {
-  print('PNT::: ', novel.forced, novel.reason, novel.npc.name)
+  print('PNT::: frcn', novel.forced, novel.reason, novel.cause, novel.npc.name)
   //TESTJPF could move some logic to novelcontroller
   const paths: string[] = []
 
@@ -54,7 +54,7 @@ function prepare_novel_txts(
   print('posttaskchk', novel.reason)
   // if (
   //  !['questioning', 'arrest'].includes(novel.reason) &&
-  //  ['questioning', 'arrest'].includes(novel.task.label)
+  //  ['questioning', 'arrest'].includes(novel.cause)
   // ) {
   //  novel.reason = novel.task.cause
   // }
@@ -69,8 +69,10 @@ function prepare_novel_txts(
     paths.unshift(player.currRoom + '/' + novel.npc.currStation)
   }
   print('NOVELVOVEL4 LAST reaso:', novel.reason)
-
-  paths.push(`reasons/${novel.reason}`)
+  const causeOrReason = ['clearance'].includes(novel.cause)
+    ? novel.cause
+    : novel.reason
+  paths.push(`reasons/${causeOrReason}`)
   paths.unshift('clans/' + novel.npc.clan)
   paths.unshift(checkpoint + '/default')
 

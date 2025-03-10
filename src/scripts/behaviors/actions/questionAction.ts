@@ -20,14 +20,19 @@ import ArrestSequence from '../sequences/arrestSequence'
 export default class QuestionAction extends Action {
   a: QuestionProps
   perp: QuestionProps
+  reason: string
   hero: HeroQuestionProps | null
   getProps: GetProps
-  constructor(getProps: GetProps, perp: QuestionProps | HeroQuestionProps) {
+  constructor(
+    getProps: GetProps,
+    perp: QuestionProps | HeroQuestionProps,
+    reason: string
+  ) {
     const props = getProps('question') as QuestionProps
     super(props)
     this.a = props
     this.hero = perp.name == 'player' ? (perp as HeroQuestionProps) : null
-
+    this.reason = reason
     this.perp = this.hero == null ? (perp as QuestionProps) : this.hero
     this.getProps = getProps
     if (
@@ -69,19 +74,6 @@ export default class QuestionAction extends Action {
      * use a different set of tempcons?
      * ex watcherpunch instead of other way around
      */
-    if (
-      this.hero !== null &&
-      (this.hero.currRoom == this.a.currRoom ||
-        (this.a.currRoom == this.hero.exitRoom &&
-          this.a.exitRoom == this.hero.currRoom))
-    ) {
-      this.hero.setConfrontation(this.a.name, 'questioning', 'clearance')
-      return () =>
-        this.success(
-          'QuestionAction::: HERO:: this should set novel for player confrontation.'
-        )
-    }
-
     const currRoom = this.a.currRoom == this.perp.currRoom
 
     print(
@@ -106,6 +98,13 @@ export default class QuestionAction extends Action {
         this.continue(
           `QuestionAction::: ${this.a.name} did not cross paths with ${this.perp.name}`
         )
+    if (this.hero !== null && crossedPaths === true) {
+      this.hero.setConfrontation(this.a.name, this.reason, 'questioning')
+      return () =>
+        this.success(
+          'QuestionAction::: HERO:: this should set novel for player confrontation.'
+        )
+    }
 
     const tempcons: Array<
       (

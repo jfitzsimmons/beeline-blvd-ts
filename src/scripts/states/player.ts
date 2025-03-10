@@ -127,6 +127,7 @@ export default class WorldPlayer extends ActorState {
             returnNpc: this.parent.returnNpc.bind(this),
             getOccupants: this.parent.getOccupants.bind(this),
             exitRoom: this.exitRoom,
+            ...behaviorDefaults(),
           }
         },
         infirm: () => {
