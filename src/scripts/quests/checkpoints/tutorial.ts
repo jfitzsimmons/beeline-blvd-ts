@@ -133,8 +133,8 @@ function doctor_checks() {
     from_same_room(npcs.returnSecurity(), player.currRoom) != null
   ) {
     // print('thebigelseif@!@!@!')
-    novel.task.label = 'questioning'
-    novel.task.cause = 'tutsclearance'
+    novel.cause = 'questioning'
+    novel.reason = 'tutsclearance'
     novel.forced = true
     novel.npc = from_same_room(npcs.returnSecurity(), player.currRoom)!
     // print('tutsclearances', novel.reason, novel.npc.name)

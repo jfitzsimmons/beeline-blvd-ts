@@ -28,7 +28,7 @@ p.clearance = _G.game.world.player.clearance
 alert = _G.game.world.player.alert_level
 hp = _G.game.world.player.hp
 reason = _G.game.world.novel.reason
-caution = _G.game.world.novel.task.label
+caution = _G.game.world.novel.cause
 convos =  _G.game.world.novel.npc.sincePlayerConvo
 activeq = _G.game.world.novel.active_quest
 priority = _G.game.world.novel.forced
@@ -47,15 +47,16 @@ n: default start
 jump defaultstart
 
 label prioritystart
-n: reason is {reason} caution is {caution}
+n: reason is {reason} 
+n: caution is {caution}
 if reason == "merits"
   jump meritsstart
+if reason == "questioning"
+  jump questioningstart
 if reason == "concern"
   jump concernstart
 if reason == "pockets"
   jump pocketsstart
-if caution == "questioning"
-  jump questioningstart
 if caution == "arrest"
   jump arreststart
 if reason == "quest"

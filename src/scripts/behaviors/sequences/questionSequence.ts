@@ -11,7 +11,8 @@ export default class QuestionSequence extends Sequence {
   a: QuestionProps
   perp: GetProps
   getProps: GetProps
-  constructor(getProps: GetProps, perp: GetProps) {
+  reason: string
+  constructor(getProps: GetProps, perp: GetProps, reason: string) {
     const props = getProps('question') as QuestionProps
     const turnActions: Action[] = []
     /**
@@ -33,12 +34,15 @@ export default class QuestionSequence extends Sequence {
      * need to make sure the timeout after so many TURNS
      */
     turnActions.push(
-      ...[new QuestionAction(getProps, perp('question') as QuestionProps)]
+      ...[
+        new QuestionAction(getProps, perp('question') as QuestionProps, reason),
+      ]
     )
     super(turnActions)
     this.a = props
     this.perp = perp
     this.getProps = getProps
+    this.reason = reason
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
@@ -47,7 +51,7 @@ export default class QuestionSequence extends Sequence {
       if (proceed === 'continue') {
         this.a.addToBehavior(
           'active',
-          new QuestionSequence(this.getProps, this.perp),
+          new QuestionSequence(this.getProps, this.perp, this.reason),
           true
         )
       } else if (proceed == 'jailed') {

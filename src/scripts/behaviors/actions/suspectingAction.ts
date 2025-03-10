@@ -120,7 +120,8 @@ export default class SuspectingAction extends Action {
           'active',
           new SnitchSequence(
             this.getProps,
-            this.perp.getBehaviorProps('helper') as HelperProps
+            this.perp.getBehaviorProps('helper') as HelperProps,
+            this.cause
           )
         )
         const params = {

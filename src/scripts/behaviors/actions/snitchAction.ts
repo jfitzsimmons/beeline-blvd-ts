@@ -9,16 +9,20 @@ import QuestionSequence from '../sequences/questionSequence'
 export default class SnitchAction extends Action {
   a: HelperProps
   perp: HelperProps
+  reason: string
+
   getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(
     getProps: (behavior: BehaviorKeys) => ActionProps,
-    perp: HelperProps
+    perp: HelperProps,
+    reason: string
   ) {
     const props = getProps('helper') as HelperProps
     super(props)
     this.a = props
     this.getProps = getProps
     this.perp = perp
+    this.reason = reason
   }
   run(): { (): void } {
     print(
@@ -58,7 +62,8 @@ export default class SnitchAction extends Action {
           'active',
           new QuestionSequence(
             cop.getBehaviorProps.bind(cop),
-            perp.getBehaviorProps.bind(perp)
+            perp.getBehaviorProps.bind(perp),
+            this.reason
           )
         )
         return () => this.success()

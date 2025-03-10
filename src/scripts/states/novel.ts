@@ -1,24 +1,15 @@
 import { NovelNpc } from '../../types/novel'
-import { Task, QuestMethods } from '../../types/tasks'
+import { QuestMethods } from '../../types/tasks'
 import { WorldArgs } from '../../types/world'
 import { NpcsInitState } from './inits/npcsInitState'
 import NpcState from './npc'
 
-const nullTask: Task = {
-  scope: '',
-  label: 'none',
-  turns: 0,
-  authority: '',
-  target: '',
-  owner: '',
-  cause: '',
-}
 export default class WorldNovel {
   //private background: string
   //private sprites: { [key: string]: string }
   private _reason: string
-  private _task: Task
   private _item: string
+  cause: string
   private _active_quest: boolean
   private _forced: boolean
   private _npcsWithQuest: string[]
@@ -35,8 +26,8 @@ export default class WorldNovel {
     this._active_quest = false
     this._forced = false
     this._reason = 'none'
-    this._task = nullTask
     this._item = 'none'
+    this.cause = 'none'
     this._npcsWithQuest = []
     this._scripts = []
     // this._alertChange = 0
@@ -93,13 +84,7 @@ export default class WorldNovel {
     this.forced = false
     this.reason = 'none'
     this.item = 'none'
-    this._task = { ...nullTask }
-  }
-  public get task(): Task {
-    return this._task
-  }
-  public set task(c: Task) {
-    this._task = { ...c }
+    this.cause = 'none'
   }
   get_novel_item = () => {
     print(this._item, 'GETNOVELITEM!!!')
@@ -150,7 +135,7 @@ export default class WorldNovel {
   setConfrontation(npc: string, action: string, reason: string) {
     this.npc = this.parent.returnNpc(npc)
     this.reason = reason
-    this._task.label = action
+    this.cause = action
     this._forced = true
   }
   addScript(s: string) {
