@@ -192,6 +192,28 @@ export default class SuspectingAction extends Action {
       // prettier-ignore
       print("runrun",this.a.name, 'STATION MOVE VIA TASK confront', this.perp.name, 'in', this.a.currRoom)
     }
+    if (this.isHero === false) {
+      if (consolation == 'snitch') {
+        //testjpf::
+        //new SnitchSequence()
+        //snitch sequence should weight concern lower than theft.
+
+        this.a.addToBehavior(
+          'active',
+          new SnitchSequence(
+            this.getProps,
+            this.perp.getBehaviorProps('helper') as HelperProps,
+            this.cause
+          )
+        )
+        //print('SNITCH:: ', this.storage?.name)
+        return () =>
+          this.success(
+            `SuspectingACtion::: success: NPC:SNITCH: cause concolation:${this.cause} | ${consolation} || ${this.a.name} | ${this.perp.name}`
+          )
+      }
+    }
+
     if (consolation == 'neutral' && this.isHero == false) {
       const robbed = this.storage == undefined ? this.a : this.storage
       let chest_item = null
