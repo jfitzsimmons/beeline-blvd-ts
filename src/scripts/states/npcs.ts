@@ -313,33 +313,7 @@ export default class WorldNpcs {
   removeIgnore(n: string): void {
     this.ignore.splice(this.ignore.indexOf(n), 1)
   }
-  /** 
-  addInfirmed(n: string, vacancy: string): void {
-    this.parent.clearStation(this._all[n].currRoom, this._all[n].currStation, n)
-    this.infirmed.push(n)
-    this._all[n].matrix = RoomsInitState.infirmary.matrix
-    this._all[n].cooldown = 8
-    this._all[n].exitRoom = this._all[n].currRoom
-    this._all[n].currRoom = 'infirmary'
-    this._all[n].currStation = vacancy
-  }
 
-  removeInfirmed(n: string): void {
-    this.infirmed.splice(this.infirmed.indexOf(n), 1)
-    print('removeInfirmed', this._all[n].currRoom, this._all[n].currStation)
-    this.parent.clearStation(this._all[n].currRoom, this._all[n].currStation, n)
-  }
-   
-  addInjured(n: string): void {
-    this.injured.push(n)
-    this.parent.pruneStationMap(this._all[n].currRoom, this._all[n].currStation)
-  }
-  getInjured(): string[] {
-    return this.injured
-  }
-  removeInjured(n: string): void {
-    this.injured.splice(this.injured.indexOf(n), 1)
-  } **/
   returnDoctors(): NpcState[] {
     return [this.all.doc01, this.all.doc02, this.all.doc03]
   }

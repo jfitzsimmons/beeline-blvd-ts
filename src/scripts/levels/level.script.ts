@@ -1,7 +1,4 @@
-import { address_busy_tasks } from '../systems/tasksystem'
 import { quest_checker } from '../quests/quests_main'
-//import { aidCheck } from '../ai/ai_checks'
-//import { aiActions } from '../ai/ai_main'
 
 const dt = math.randomseed(os.time())
 const { world } = globalThis.game
@@ -75,7 +72,7 @@ export function on_message(
     if (message.loadType !== 'new game') game_turn()
     //testjpf it wopuld be cool to talk to npcs about their problem.
     //snitch, security issues etc.., effects
-    address_busy_tasks()
+    // address_busy_tasks()
     // calculate_heat(this.roomName)
     quickLoad(this, message.roomName)
     if (novel.forced === true) {

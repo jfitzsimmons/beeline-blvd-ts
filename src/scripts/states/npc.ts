@@ -255,7 +255,7 @@ export default class NpcState extends ActorState {
       binaries: { ...novelUpdates.traits.binaries },
       opinion: { ...novelUpdates.traits.opinion },
     }
-    this.sincePlayerConvo = novelUpdates.sincePlayerConvo
+    //  this.sincePlayerConvo = novelUpdates.sincePlayerConvo
     this.love = novelUpdates.love
   }
   private onTrespassEnter(): void {

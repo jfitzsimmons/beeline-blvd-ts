@@ -1,5 +1,5 @@
 import { novel_init, novel_start } from './matchanovel'
-const { tasks, player, novel } = globalThis.game.world
+const { npcs, tasks, player, novel } = globalThis.game.world
 
 import { prepareQuestTxts } from '../quests/quests_main'
 import { impressed_checks, unimpressed_checks } from '../systems/chaossystem'
@@ -13,7 +13,7 @@ function prepare_novel_txts(
   room: boolean | true = true,
   extend: boolean | false = false
 ) {
-  print('PNT::: ', novel.reason, novel.npc.name)
+  print('PNT::: frcn', novel.forced, novel.reason, novel.cause, novel.npc.name)
   //TESTJPF could move some logic to novelcontroller
   const paths: string[] = []
 
@@ -54,7 +54,7 @@ function prepare_novel_txts(
   print('posttaskchk', novel.reason)
   // if (
   //  !['questioning', 'arrest'].includes(novel.reason) &&
-  //  ['questioning', 'arrest'].includes(novel.task.label)
+  //  ['questioning', 'arrest'].includes(novel.cause)
   // ) {
   //  novel.reason = novel.task.cause
   // }
@@ -69,8 +69,10 @@ function prepare_novel_txts(
     paths.unshift(player.currRoom + '/' + novel.npc.currStation)
   }
   print('NOVELVOVEL4 LAST reaso:', novel.reason)
-
-  paths.push(`reasons/${novel.reason}`)
+  const causeOrReason = ['clearance'].includes(novel.cause)
+    ? novel.cause
+    : novel.reason
+  paths.push(`reasons/${causeOrReason}`)
   paths.unshift('clans/' + novel.npc.clan)
   paths.unshift(checkpoint + '/default')
 
@@ -157,13 +159,17 @@ export function on_message(
   _sender: url
 ): void {
   if (messageId == hash('wake_up')) {
+    print('novelpriority', novel.forced)
     prepare_novel_txts()
+    print('novelpriority', novel.forced)
+
     // novel.alertChange = player.alert_level
     novel_init(novel.scripts)
     novel_start()
   } else if (messageId == hash('sleep')) {
     player.hp = message.hp
     novel.npc.sincePlayerConvo = 0
+    npcs.all[novel.npc.name].sincePlayerConvo = 0
 
     novel_outcomes(message.reason)
     if (player.alert_level != message.alert) {

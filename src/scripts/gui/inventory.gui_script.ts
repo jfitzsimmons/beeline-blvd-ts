@@ -1,17 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-//const world = require "main.states.worldstate"
-//const utils = require "main.utils.utils"
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-import { inventoryLookup } from '../systems/inventorysystem'
+import { inventoryLookup } from '../utils/inventory'
 
 const { player, npcs, rooms, novel } = globalThis.game.world
 interface props {
   actorinventory: string[]
   watcher: string
-  //character: boolean
-  //room: string
   actorname: string
   timer: any
 }
@@ -122,12 +114,10 @@ function load_inventory_sprites(
 }
 
 function choose_inventory(actorname: string) {
-  //
   if (npcs.all[actorname] !== null) {
-    //
-
     return npcs.all[actorname].inventory
   } else {
+    print('chooseinv:: ', player.currRoom, actorname)
     return rooms.all[player.currRoom].actors[actorname].inventory
   }
 }

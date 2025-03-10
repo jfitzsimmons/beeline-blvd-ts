@@ -1,6 +1,6 @@
 import { AttendantProps } from '../../../types/ai'
 import { QuestionProps } from '../../../types/behaviors'
-import ConfrontSequence from '../../behaviors/sequences/confrontSequence'
+import SuspectingSequence from '../../behaviors/sequences/suspectingSequence'
 import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
 import QuestStep from '../../states/questStep'
 import { doctors } from '../../utils/consts'
@@ -133,8 +133,8 @@ function doctor_checks() {
     from_same_room(npcs.returnSecurity(), player.currRoom) != null
   ) {
     // print('thebigelseif@!@!@!')
-    novel.task.label = 'questioning'
-    novel.task.cause = 'tutsclearance'
+    novel.cause = 'questioning'
+    novel.reason = 'tutsclearance'
     novel.forced = true
     novel.npc = from_same_room(npcs.returnSecurity(), player.currRoom)!
     // print('tutsclearances', novel.reason, novel.npc.name)
@@ -288,14 +288,15 @@ export function tutorialA(interval = 'turn') {
           inventory: guest2.inventory,
           updateInventory: guest2.updateInventory.bind(guest2),
         }
-        const confront = npcStealCheck(worker2, guestProps, luggage)
-        if (confront == 'confront') {
+        const witness = npcStealCheck(worker2, guestProps, luggage)
+        if (witness == 'witness') {
           const perp = worker2.getBehaviorProps('question') as QuestionProps
           guest2.addToBehavior(
             'active',
-            new ConfrontSequence(
+            new SuspectingSequence(
               guest2.getBehaviorProps.bind(guest2),
               perp,
+              'theft',
               luggage
             )
           )
@@ -312,14 +313,15 @@ export function tutorialA(interval = 'turn') {
           inventory: worker2.inventory,
           updateInventory: worker2.updateInventory.bind(worker2),
         }
-        const confront = npcStealCheck(guest2, workerProps, luggage)
-        if (confront == 'confront') {
+        const witness = npcStealCheck(guest2, workerProps, luggage)
+        if (witness == 'witness') {
           const perp = guest2.getBehaviorProps('question') as QuestionProps
           worker2.addToBehavior(
             'active',
-            new ConfrontSequence(
+            new SuspectingSequence(
               worker2.getBehaviorProps.bind(worker2),
               perp,
+              'theft',
               luggage
             )
           )

@@ -47,7 +47,7 @@ export default class WorldPlayer extends ActorState {
   quests: QuestMethods
   parent: WorldPlayerArgs
   behavior: Behavior
-
+  clan: string
   constructor(p: string, playerProps: WorldPlayerArgs) {
     super(p, playerProps) // call super() here
     this.currRoom = 'grounds'
@@ -56,6 +56,7 @@ export default class WorldPlayer extends ActorState {
     this.apMax = 30
     this.clearance = 0
     this.name = 'player'
+    this.clan = 'hero'
     this.exitRoom = 'grounds'
     const behaviorDefaults = () => {
       return {
@@ -126,6 +127,7 @@ export default class WorldPlayer extends ActorState {
             returnNpc: this.parent.returnNpc.bind(this),
             getOccupants: this.parent.getOccupants.bind(this),
             exitRoom: this.exitRoom,
+            ...behaviorDefaults(),
           }
         },
         infirm: () => {
@@ -201,6 +203,7 @@ export default class WorldPlayer extends ActorState {
     this.addToBehavior = this.addToBehavior.bind(this)
     this.getBehaviorProps = this.getBehaviorProps.bind(this)
     this.updateFromBehavior = this.updateFromBehavior.bind(this)
+    this.updateInventory = this.updateInventory.bind(this)
   }
   private onPlaceEnter(): void {
     //todo
@@ -323,7 +326,33 @@ export default class WorldPlayer extends ActorState {
       this.traits.binaries[bKey] =
         this.traits.binaries[bKey] + item.binaries[bKey]
   }
-
+  updateInventory(addDelete: 'add' | 'delete', item: string) {
+    print(
+      addDelete,
+      'Playerupdateinv::: Item ...traits::speed, charisma,evil,authority:',
+      item,
+      this.traits.skills.speed,
+      this.traits.skills.charisma,
+      this.traits.binaries.evil_good,
+      this.traits.binaries.anti_authority
+    )
+    if (addDelete == 'add') {
+      this.inventory.push(item)
+      this.addInvBonus(item)
+    } else {
+      this.inventory.splice(1, this.inventory.indexOf(item))
+      this.removeInvBonus(item)
+    }
+    print(
+      addDelete,
+      'Playerupdateinv::: Item ...traits::speed, charisma,evil,authority:',
+      item,
+      this.traits.skills.speed,
+      this.traits.skills.charisma,
+      this.traits.binaries.evil_good,
+      this.traits.binaries.anti_authority
+    )
+  }
   add_inventory(i: string) {
     this.inventory.push(i)
   }
