@@ -173,9 +173,13 @@ export function on_message(
 
     novel_outcomes(message.reason)
     if (player.alert_level != message.alert) {
+      /**
+       * the should creat new SnitchSEq
+       * testjpf
+       */
       player.alert_level = message.alert
       if (tasks.plan_on_snitching(novel.npc.name, 'player') == false) {
-        tasks.taskBuilder(novel.npc.name, 'snitch', 'player', 'harassing')
+        // tasks.taskBuilder(novel.npc.name, 'snitch', 'player', 'harassing')
       }
       msg.post(player.currRoom + ':/shared/scripts#level', 'update_alert', {})
     } else {

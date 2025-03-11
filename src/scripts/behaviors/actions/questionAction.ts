@@ -4,17 +4,7 @@ import {
   QuestionProps,
 } from '../../../types/behaviors'
 import Action from '../action'
-import {
-  build_consequence,
-  jailtime_check,
-  pledgeCheck,
-  bribeCheck,
-  targetPunchedCheck,
-  prejudice_check,
-  admirer_check,
-  unlucky_check,
-} from '../../states/inits/checksFuncs'
-import { shuffle } from '../../utils/utils'
+import { crimeChecks } from '../../states/inits/checksFuncs'
 import ArrestSequence from '../sequences/arrestSequence'
 
 export default class QuestionAction extends Action {
@@ -74,7 +64,27 @@ export default class QuestionAction extends Action {
      * use a different set of tempcons?
      * ex watcherpunch instead of other way around
      */
-    const currRoom = this.a.currRoom == this.perp.currRoom
+
+    if (
+      this.hero == null &&
+      ['utside', '_passe', 'isoner', 'atient'].includes(
+        this.a.currStation.slice(-7, -1)
+      )
+    )
+      return () =>
+        this.fail(
+          `TrespassAction:: ${this.a.name} gets 1 turn clearance for ${this.a.currStation}`
+        )
+
+    const currRoom =
+      (this.hero === null &&
+        this.a.currRoom == this.perp.currRoom &&
+        ['isoner', 'atient'].includes(this.perp.currStation.slice(-7, -1))) ||
+      (this.hero !== null && this.a.currRoom == this.perp.currRoom)
+
+    // const currRoom = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
+    //   (s) => s != '' && s != this.a.name && s.slice(0, 4) === 'secu'
+    // )
 
     print(
       'QuestionAction:: CurroomBOOLEAN: ',
@@ -105,28 +115,23 @@ export default class QuestionAction extends Action {
           'QuestionAction::: HERO:: this should set novel for player confrontation.'
         )
     }
-
-    const tempcons: Array<
+    print(this.reason)
+    const resultChecks: Array<
       (
         chkr: QuestionProps,
         chkd: QuestionProps
       ) => { pass: boolean; type: string }
-    > = shuffle([
-      pledgeCheck,
-      bribeCheck,
-      targetPunchedCheck,
-      jailtime_check,
-      admirer_check,
-      prejudice_check,
-      unlucky_check,
-    ])
-    const consequence: string = build_consequence(
-      this.a,
-      this.perp,
-      tempcons,
-      false
-    )
-    if (consequence === 'jailed') {
+    > = crimeChecks[this.reason]!
+
+    let consequence = { pass: false, type: 'neutral' }
+
+    for (let i = 0; i < resultChecks.length - 1; i++) {
+      consequence = resultChecks[i](this.a, this.perp)
+      // prettier-ignore
+      // print(i, '-- buildconsequence::: ARGCHECKS::', consolation.pass, consolation.type, checked, checker)
+      if (consequence.pass == true) i = resultChecks.length
+    }
+    if (consequence.type === 'jailed') {
       this.perp.updateFromBehavior('turnPriority', 97)
       print('QuestionAction::', this.a.name, 'has Arrested::', this.perp.name)
       this.perp.addToBehavior(

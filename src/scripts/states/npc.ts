@@ -151,6 +151,7 @@ export default class NpcState extends ActorState {
             findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
             makePriorityRoomList: this.makePriorityRoomList.bind(this),
             getMendingQueue: this.parent.getMendingQueue.bind(this),
+            getFocusedRoom: this.parent.getFocusedRoom.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -210,11 +211,6 @@ export default class NpcState extends ActorState {
         onUpdate: this.onConfrontPlayerUpdate.bind(this),
         onExit: this.onConfrontPlayerExit.bind(this),
       })
-      .addState('trespass', {
-        onEnter: this.onTrespassEnter.bind(this),
-        onUpdate: this.onTrespassUpdate.bind(this),
-        onExit: this.onTrespassExit.bind(this),
-      })
       .addState('arrestee', {
         onEnter: this.onArresteeEnter.bind(this),
         onUpdate: this.onArresteeUpdate.bind(this),
@@ -258,7 +254,8 @@ export default class NpcState extends ActorState {
     //  this.sincePlayerConvo = novelUpdates.sincePlayerConvo
     this.love = novelUpdates.love
   }
-  private onTrespassEnter(): void {
+  //private onTrespassEnter(): void {
+  /**
     const hallpass = this.parent.hasHallpass(this.name)
     if (
       hallpass != null &&
@@ -280,7 +277,9 @@ export default class NpcState extends ActorState {
 
     this.findRoomPlaceStation()
   }
-  private onTrespassExit(): void {}
+  private onTrespassExit(): void {
+  */
+  //}
   private onArresteeEnter(): void {}
   private onArresteeUpdate(): void {
     //this.cooldown--
@@ -382,16 +381,7 @@ export default class NpcState extends ActorState {
     this.matrix = RoomsInitState[chosenRoom].matrix
     this.parent.setStation(chosenRoom, chosenStation, this.name)
     //this.parent.pruneStationMap(chosenRoom, chosenStation)
-    /**testjpf clearance needs complete overhaul
-     * make ClearanceSequence
-     * !!!
-    
-    if (
-      RoomsInitState[chosenRoom].clearance >
-      this.clearance + math.random(1, 5)
-    )
-      this.fsm.setState('trespass')
-       */
+
     if (chosenRoom != this.parent.getPlayerRoom()) {
       this.turnPriority = this.turnPriority + 1
     } else {

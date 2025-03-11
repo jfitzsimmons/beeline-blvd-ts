@@ -101,6 +101,8 @@ function doctor_checks() {
 
     player.add_inventory('note')
     quest.sideQuests.hallpass.fsm.setState('active')
+    /*
+    need hallpass seq?? testjpf
     tasks.append_task({
       label: 'hallpass',
       turns: 8,
@@ -110,6 +112,7 @@ function doctor_checks() {
       target: 'infirmary',
       authority: 'security',
     })
+      */
     tasks.taskBuilder(doctor.name, 'quest', injured.name, 'waitingformeds')
     novel.append_npc_quest(doctor.name)
     info.add_interaction(`${doctor.name}'s gave you clearance for 8 turns`)

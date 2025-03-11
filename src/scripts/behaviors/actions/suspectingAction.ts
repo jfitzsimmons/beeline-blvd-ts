@@ -7,13 +7,11 @@ import {
 } from '../../../types/behaviors'
 import Action from '../action'
 import {
-  build_consequence,
   targetPunchedCheck,
   prejudice_check,
   unlucky_check,
   angel_check,
   becomeASnitchCheck,
-  // suspicious_check,
   vanity_check,
   watcher_punched_check,
   suspicious_check,
@@ -24,6 +22,8 @@ import { shuffle } from '../../utils/utils'
 import { removeValuable, removeAdvantageous } from '../../utils/inventory'
 import Storage from '../../states/storage'
 import SnitchSequence from '../sequences/snitchSequence'
+import ArrestSequence from '../sequences/arrestSequence'
+import PhoneSequence from '../sequences/phoneSequence'
 export default class SuspectingAction extends Action {
   a: QuestionProps
   perp: QuestionProps | HeroQuestionProps
@@ -63,6 +63,7 @@ export default class SuspectingAction extends Action {
     }
   }
   run(): { (): void } {
+    //testjpf have conditions fro severity?!?!?
     const resultChecks: Array<
       (
         chkr: QuestionProps,
@@ -70,14 +71,11 @@ export default class SuspectingAction extends Action {
       ) => { pass: boolean; type: string }
     > =
       this.isHero == true
-        ? shuffle([
+        ? [
             suspicious_check,
-            becomeASnitchCheck,
-            meritsDemerits,
-            recklessCheck,
-          ])
+            ...shuffle([becomeASnitchCheck, meritsDemerits, recklessCheck]),
+          ]
         : shuffle([
-            // suspicious_check,
             becomeASnitchCheck,
             targetPunchedCheck,
             angel_check,
@@ -90,20 +88,22 @@ export default class SuspectingAction extends Action {
             recklessCheck,
           ])
 
-    const consolation = build_consequence(
-      this.a,
-      this.perp,
-      resultChecks,
-      false
-    )
+    let consequence = { pass: false, type: 'neutral' }
+
+    for (let i = resultChecks.length; i-- !== 0; ) {
+      consequence = resultChecks[i](this.a, this.perp)
+      // prettier-ignore
+      // print(i, '-- buildconsequence::: ARGCHECKS::', consequence.pass, consequence.type, checked, checker)
+      if (consequence.pass == true) i = 0
+    }
+
     // prettier-ignore
-    print('Suspectingaction::: consolation after consequence/cause:::',consolation,this.cause,'confronter:',this.a.name,'perp:',this.perp.name,'inroom:',this.a.currRoom,this.perp.currRoom,'||| PLAYERROOM:',this.a.getFocusedRoom())
+    print('Suspectingaction::: consequence after consequence/cause:::',consequence.type,this.cause,'confronter:',this.a.name,'perp:',this.perp.name,'inroom:',this.a.currRoom,this.perp.currRoom,'||| PLAYERROOM:',this.a.getFocusedRoom())
     /***
      * testjpf seems here i need conditions that create new
-     * sequences for different types of consolations
+     * sequences for different types of consequences
      * snitch, reckless, jailed (similar to questionAct!!!)
      *
-     
      * what to do with merits/demerits
      *
      * need to open inventory on
@@ -111,7 +111,7 @@ export default class SuspectingAction extends Action {
      */
     if (this.isHero == true) {
       const perp = this.perp.getBehaviorProps('question') as HeroQuestionProps
-      if (consolation == 'snitch') {
+      if (consequence.type == 'snitch') {
         //testjpf::
         //new SnitchSequence()
         //snitch sequence should weight concern lower than theft.
@@ -136,21 +136,21 @@ export default class SuspectingAction extends Action {
         msg.post('#', 'release_input_focus')
         return () =>
           this.success(
-            `SuspectingACtion::: success: ishero: cause concolation:${this.cause} | ${consolation}`
+            `SuspectingACtion::: success: ishero: cause concolation:${this.cause} | ${consequence.type}`
           )
       }
       if (this.cause == 'pockets') {
-        perp.setConfrontation(this.a.name, consolation, this.cause)
+        perp.setConfrontation(this.a.name, consequence.type, this.cause)
 
         msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
 
         return () =>
           this.success(
-            `SuspectingACtion::: success: ishero: cause concolation:${this.cause} | ${consolation}`
+            `SuspectingACtion::: success: ishero: cause concolation:${this.cause} | ${consequence.type}`
           )
       }
-      if (consolation == 'merits') {
-        perp.setConfrontation(this.a.name, this.cause, consolation)
+      if (consequence.type == 'merits') {
+        perp.setConfrontation(this.a.name, this.cause, consequence.type)
 
         msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
 
@@ -167,18 +167,18 @@ export default class SuspectingAction extends Action {
 
         return () =>
           this.success(
-            `SuspectingACtion::: Fail: ishero: cause concolation:${this.cause} | ${consolation}`
+            `SuspectingACtion::: Fail: ishero: cause concolation:${this.cause} | ${consequence.type}`
           )
       }
-      if (consolation == 'suspicious') {
-        perp.setConfrontation(this.a.name, consolation, this.cause)
+      if (consequence.type == 'suspicious') {
+        perp.setConfrontation(this.a.name, consequence.type, this.cause)
         //testjpf return () => alternate(new ConfrontSequence?)
         //maybe also do this with others, some at random?
         msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
 
         return () =>
           this.success(
-            `SuspectingACtion::: Fail: ishero: cause concolation:${this.cause} | ${consolation}`
+            `SuspectingACtion::: Fail: ishero: cause concolation:${this.cause} | ${consequence.type}`
           )
       }
     } else if (
@@ -193,7 +193,7 @@ export default class SuspectingAction extends Action {
       print("runrun",this.a.name, 'STATION MOVE VIA TASK confront', this.perp.name, 'in', this.a.currRoom)
     }
     if (this.isHero === false) {
-      if (consolation == 'snitch') {
+      if (consequence.type == 'snitch') {
         //testjpf::
         //new SnitchSequence()
         //snitch sequence should weight concern lower than theft.
@@ -209,12 +209,40 @@ export default class SuspectingAction extends Action {
         //print('SNITCH:: ', this.storage?.name)
         return () =>
           this.success(
-            `SuspectingACtion::: success: NPC:SNITCH: cause concolation:${this.cause} | ${consolation} || ${this.a.name} | ${this.perp.name}`
+            `SuspectingACtion::: success: NPC:SNITCH: cause concolation:${this.cause} | ${consequence.type} || ${this.a.name} | ${this.perp.name}`
           )
+      } else if (consequence.type === 'phonesecurity') {
+        // this.perp.updateFromBehavior('turnPriority', 97)
+        print(
+          'SuspectingAction::',
+          this.a.name,
+          'has phone-ing on::',
+          this.perp.name
+        )
+        this.a.addToBehavior(
+          'active',
+          new PhoneSequence(
+            this.a.getBehaviorProps.bind(this.a),
+            this.perp.getBehaviorProps('helper') as HelperProps,
+            this.cause
+          )
+        )
+      } else if (consequence.type == 'jailed') {
+        this.perp.updateFromBehavior('turnPriority', 97)
+        print(
+          'SsupectingAction::',
+          this.a.name,
+          'has Arrested::',
+          this.perp.name
+        )
+        this.perp.addToBehavior(
+          'place',
+          new ArrestSequence(this.perp.getBehaviorProps.bind(this.perp))
+        )
       }
     }
 
-    if (consolation == 'neutral' && this.isHero == false) {
+    if (consequence.type == 'neutral' && this.isHero == false) {
       const robbed = this.storage == undefined ? this.a : this.storage
       let chest_item = null
       /**
@@ -256,7 +284,7 @@ export default class SuspectingAction extends Action {
         this.fail(
           `SuspectingAction::: Failed:: ${this.a.name} was neutral and had no effect on ${this.perp.name}`
         )
-    } else if (consolation == 'neutral' && this.isHero == true) {
+    } else if (consequence.type == 'neutral' && this.isHero == true) {
       const params = {
         actorname: this.storage?.name,
         //isNpc: _this.isNpc,
