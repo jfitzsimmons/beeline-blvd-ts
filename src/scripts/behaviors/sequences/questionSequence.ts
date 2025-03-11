@@ -1,11 +1,8 @@
 import { GetProps, QuestionProps } from '../../../types/behaviors'
 import Action from '../action'
-//import InjuredAction from '../actions/injuredAction'
 import QuestionAction from '../actions/questionAction'
 import Sequence from '../sequence'
 import ArrestSequence from './arrestSequence'
-//import ImmobileSequence from './immobileSequence'
-//import MendeeSequence from './mendeeSequence'
 
 export default class QuestionSequence extends Sequence {
   a: QuestionProps

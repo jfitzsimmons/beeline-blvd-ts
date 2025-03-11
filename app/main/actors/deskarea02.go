@@ -266,3 +266,31 @@ embedded_components {
     w: 1.0
   }
 }
+embedded_components {
+  id: "phone"
+  type: "sprite"
+  data: "default_animation: \"banana\"\n"
+  "material: \"/builtins/materials/sprite.material\"\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  "textures {\n"
+  "  sampler: \"texture_sampler\"\n"
+  "  texture: \"/main/gui/information/inventories/chestitems.atlas\"\n"
+  "}\n"
+  ""
+  position {
+    x: 117.0
+    y: 9.0
+    z: 0.5
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale {
+    x: 2.0
+    y: 2.0
+    z: 1.0
+  }
+}

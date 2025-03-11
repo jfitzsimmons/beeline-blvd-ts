@@ -18,7 +18,7 @@ function steal_stash_checks(this: RoomState) {
   if (this.stations.guest !== '') {
     suspect = this.parent.returnNpc(this.stations.guest)
     //print("victim.name",victim.name)
-    actor = this.actors.desks
+    actor = this.actors.drawer
     //loot = actor.inventory
     if (actor.inventory.length > 0 && attendant !== null) {
       const attendantProps: AttendantProps = {

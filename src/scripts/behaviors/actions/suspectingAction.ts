@@ -22,6 +22,8 @@ import { shuffle } from '../../utils/utils'
 import { removeValuable, removeAdvantageous } from '../../utils/inventory'
 import Storage from '../../states/storage'
 import SnitchSequence from '../sequences/snitchSequence'
+import ArrestSequence from '../sequences/arrestSequence'
+import PhoneSequence from '../sequences/phoneSequence'
 export default class SuspectingAction extends Action {
   a: QuestionProps
   perp: QuestionProps | HeroQuestionProps
@@ -96,7 +98,7 @@ export default class SuspectingAction extends Action {
     }
 
     // prettier-ignore
-    print('Suspectingaction::: consequence after consequence/cause:::',consequence,this.cause,'confronter:',this.a.name,'perp:',this.perp.name,'inroom:',this.a.currRoom,this.perp.currRoom,'||| PLAYERROOM:',this.a.getFocusedRoom())
+    print('Suspectingaction::: consequence after consequence/cause:::',consequence.type,this.cause,'confronter:',this.a.name,'perp:',this.perp.name,'inroom:',this.a.currRoom,this.perp.currRoom,'||| PLAYERROOM:',this.a.getFocusedRoom())
     /***
      * testjpf seems here i need conditions that create new
      * sequences for different types of consequences
@@ -209,6 +211,34 @@ export default class SuspectingAction extends Action {
           this.success(
             `SuspectingACtion::: success: NPC:SNITCH: cause concolation:${this.cause} | ${consequence.type} || ${this.a.name} | ${this.perp.name}`
           )
+      } else if (consequence.type === 'phonesecurity') {
+        // this.perp.updateFromBehavior('turnPriority', 97)
+        print(
+          'SuspectingAction::',
+          this.a.name,
+          'has phone-ing on::',
+          this.perp.name
+        )
+        this.a.addToBehavior(
+          'active',
+          new PhoneSequence(
+            this.a.getBehaviorProps.bind(this.a),
+            this.perp.getBehaviorProps('helper') as HelperProps,
+            this.cause
+          )
+        )
+      } else if (consequence.type == 'jailed') {
+        this.perp.updateFromBehavior('turnPriority', 97)
+        print(
+          'SsupectingAction::',
+          this.a.name,
+          'has Arrested::',
+          this.perp.name
+        )
+        this.perp.addToBehavior(
+          'place',
+          new ArrestSequence(this.perp.getBehaviorProps.bind(this.perp))
+        )
       }
     }
 

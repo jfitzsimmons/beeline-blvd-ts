@@ -66,5 +66,10 @@ export function on_message(
     this.roomName = message.roomName
     prep_interaction(this) // combine actor actions
     msg.post('/npc_loader#npc_loader', 'show_npc', { npc: this.npc })
+  } else if (messageId == hash('loadActor')) {
+    this.npc = '' //this.url = rooms.all[message.roomName].stationurl
+    this.roomName = message.roomName
+    prep_interaction(this) // combine actor actions
+    //msg.post('/npc_loader#npc_loader', 'show_npc', { npc: this.npc })
   }
 }

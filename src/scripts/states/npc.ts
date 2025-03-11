@@ -151,6 +151,7 @@ export default class NpcState extends ActorState {
             findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
             makePriorityRoomList: this.makePriorityRoomList.bind(this),
             getMendingQueue: this.parent.getMendingQueue.bind(this),
+            getFocusedRoom: this.parent.getFocusedRoom.bind(this),
             ...behaviorDefaults(),
           }
         },

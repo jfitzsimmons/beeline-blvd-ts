@@ -59,6 +59,15 @@ export default class SnitchAction extends Action {
             this.reason
           )
         )
+
+        if (this.a.currRoom == this.a.getFocusedRoom()) {
+          msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+            station: cop.currStation,
+            npc: this.a.name,
+          })
+          // prettier-ignore
+          print(this.a.name, 'STATION MOVE VIA snitchaction', cop.name, 'in', this.a.currRoom)
+        }
         return () => this.success()
       }
     }

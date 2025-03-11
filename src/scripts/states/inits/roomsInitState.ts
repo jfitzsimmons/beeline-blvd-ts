@@ -16,9 +16,24 @@ export const RoomsInitState: { [key: string]: Room } = {
       assistant: '',
       guest: '',
       servants2: '',
+      desk: '',
     },
     wards: { prisoner1: '', prisoner2: '', prisoner3: '', prisoner4: '' },
-    actors: {},
+    props: ['phone', 'locker'],
+    actors: {
+      phone: new Storage({
+        name: 'phone',
+        inventory: [],
+        actions: ['use'],
+        watcher: 'desk',
+      }),
+      locker: new Storage({
+        name: 'locker',
+        inventory: ['silver', 'cape', 'magic5'],
+        actions: ['use', 'open'],
+        watcher: 'desk',
+      }),
+    },
   },
   baggage: {
     matrix: { x: 0, y: 4 },
@@ -309,7 +324,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 2, y: 4 },
     roomName: 'admin1',
     clearance: 2,
-    props: ['desks', 'locker'],
+    props: ['phone', 'locker'],
     swaps: {
       boss: ['servants2', ''],
       patrol: ['guest', ''],
@@ -323,15 +338,17 @@ export const RoomsInitState: { [key: string]: Room } = {
       desk: '',
     },
     actors: {
-      desks: new Storage({
-        name: 'desks',
-        inventory: ['fish01', 'steak02', 'egg01'],
-        actions: ['pickup', 'use'],
+      phone: new Storage({
+        name: 'phone',
+        inventory: [],
+        actions: ['use'],
+        watcher: 'desk',
       }),
       locker: new Storage({
         name: 'locker',
         inventory: ['avacado', 'berry02', 'shrimp02'],
         actions: ['use', 'open'],
+        watcher: 'desk',
       }),
     },
   },
@@ -339,7 +356,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 1, y: 3 },
     roomName: 'customs',
     clearance: 0,
-    props: ['desks', 'locker'],
+    props: ['phone', 'locker', 'drawer'],
     swaps: {
       loiter1: ['loiter2', ''],
       patrol: ['gang', ''],
@@ -354,15 +371,23 @@ export const RoomsInitState: { [key: string]: Room } = {
       guest: '',
     },
     actors: {
-      desks: new Storage({
+      drawer: new Storage({
         name: 'desks',
         inventory: ['deskbook01', 'globegold', 'fish02'],
-        actions: ['pickup', 'use'],
+        actions: ['open'],
+        watcher: 'desk',
+      }),
+      phone: new Storage({
+        name: 'phone',
+        inventory: [],
+        actions: ['use'],
+        watcher: 'desk',
       }),
       locker: new Storage({
         name: 'locker',
         inventory: ['silver', 'mushroom01', 'potion'],
         actions: ['use', 'open'],
+        watcher: 'desk',
       }),
       vase3: new Storage({
         name: 'vase3',
@@ -376,7 +401,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 1, y: 4 },
     roomName: 'reception',
     clearance: 0,
-    props: ['drawer', 'computer'],
+    props: ['drawer', 'computer', 'phone'],
     swaps: {
       loiter4: ['loiter3', ''],
       guest2: ['lounge', ''],
@@ -400,6 +425,12 @@ export const RoomsInitState: { [key: string]: Room } = {
       }),
       computer: new Storage({
         name: 'computer',
+        inventory: [],
+        actions: ['use'],
+        watcher: 'desk',
+      }),
+      phone: new Storage({
+        name: 'phone',
         inventory: [],
         actions: ['use'],
         watcher: 'desk',
@@ -436,6 +467,7 @@ export const RoomsInitState: { [key: string]: Room } = {
       loiter1: '',
       guest2: '',
     },
+    props: ['phone', 'drawer'],
     actors: {
       player_luggage: new Storage({
         name: 'player_luggage',
@@ -447,6 +479,18 @@ export const RoomsInitState: { [key: string]: Room } = {
         name: 'other_luggage',
         inventory: ['eyeball03', 'feather02', 'magicb1', 'mushroom02'],
         watcher: 'worker2',
+        actions: ['open'],
+      }),
+      phone: new Storage({
+        name: 'phone',
+        inventory: [],
+        watcher: 'loiter1',
+        actions: ['use'],
+      }),
+      drawer: new Storage({
+        name: 'drawer',
+        inventory: ['book'],
+        watcher: 'loiter1',
         actions: ['open'],
       }),
     },
@@ -502,7 +546,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 3, y: 5 },
     roomName: 'infirmary',
     clearance: 3,
-    props: ['drawer', 'computer'],
+    props: ['drawer', 'computer', 'phone'],
     swaps: {
       servants2: ['servants1', ''],
       loiter2: ['worker1', ''],
@@ -528,6 +572,12 @@ export const RoomsInitState: { [key: string]: Room } = {
         inventory: [],
         actions: ['use'],
         watcher: 'assistant',
+      }),
+      phone: new Storage({
+        name: 'phone',
+        inventory: [],
+        watcher: 'assistant',
+        actions: ['use'],
       }),
     },
   },

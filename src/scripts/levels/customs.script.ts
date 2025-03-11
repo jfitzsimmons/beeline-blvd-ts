@@ -30,6 +30,8 @@ function load_storage() {
   }
   msg.post('/vase3#storage', 'load_storage_inventory', params)
   sprite.play_flipbook('/vase3#sprite', params.ani)
+
+  msg.post('/locker#storage', 'load_storage_inventory', params)
 }
 
 export function on_message(messageId: hash, _sender: url): void {

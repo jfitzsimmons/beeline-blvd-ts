@@ -77,10 +77,10 @@ export default class QuestionAction extends Action {
         )
 
     const currRoom =
-      (this.hero == null && this.a.currRoom == this.perp.currRoom) ||
-      (this.hero !== null &&
+      (this.hero === null &&
         this.a.currRoom == this.perp.currRoom &&
-        ['isoner', 'atient'].includes(this.perp.currStation.slice(-7, -1)))
+        ['isoner', 'atient'].includes(this.perp.currStation.slice(-7, -1))) ||
+      (this.hero !== null && this.a.currRoom == this.perp.currRoom)
 
     // const currRoom = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
     //   (s) => s != '' && s != this.a.name && s.slice(0, 4) === 'secu'

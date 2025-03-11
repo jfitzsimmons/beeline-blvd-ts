@@ -159,6 +159,7 @@ export interface HelperProps extends PlaceProps {
   addAdjustMendingQueue(patient: string): void
   makePriorityRoomList(target: { x: number; y: number }): string[]
   getMendingQueue(): string[]
+  getFocusedRoom(): string
 }
 export interface MendeeProps extends DefaultBehaviorProps {
   returnNpc(n: string): NpcState
