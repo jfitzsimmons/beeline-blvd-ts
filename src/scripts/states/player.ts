@@ -184,11 +184,6 @@ export default class WorldPlayer extends ActorState {
         onUpdate: this.onActiveUpdate.bind(this),
         onExit: this.onActiveExit.bind(this),
       })
-      .addState('trespass', {
-        onEnter: this.onTrespassEnter.bind(this),
-        onUpdate: this.onTrespassUpdate.bind(this),
-        onExit: this.onTrespassExit.bind(this),
-      })
       .addState('confronted', {
         onEnter: this.onConfrontedEnter.bind(this),
         onUpdate: this.onConfrontedUpdate.bind(this),
@@ -216,16 +211,6 @@ export default class WorldPlayer extends ActorState {
   private onPlaceUpdate(): void {
     this.behavior.place.run()
     //this.setRoomInfo()
-    /** if (this.clearance < RoomsInitState[this.currRoom].clearance) {
-      print(
-        'PLAYER::: NEWQUESTIONED!!!',
-        this.clearance,
-        RoomsInitState[this.currRoom].clearance,
-        this.currRoom
-      )
-      this.fsm.setState('trespass')
-    }
-      **/
   }
   private onPlaceExit(): void {
     if (
@@ -243,35 +228,6 @@ export default class WorldPlayer extends ActorState {
   private onActiveEnter(): void {}
   private onActiveUpdate(): void {}
   private onActiveExit(): void {}
-  private onTrespassEnter(): void {
-    const hallpass = this.parent.hasHallpass('player')
-    print('HALLPASS::', hallpass, this.currRoom, this.clearance)
-    if (
-      hallpass != null &&
-      tonumber(hallpass.scope.charAt(hallpass.scope.length - 1))! >=
-        RoomsInitState[this.currRoom].clearance
-    ) {
-      print(
-        'HALLPASS2::',
-        hallpass.scope,
-        tonumber(hallpass.scope.charAt(hallpass.scope.length - 1))!,
-        this.currRoom,
-        this.clearance
-      )
-
-      this.fsm.setState('turn')
-    }
-  }
-  private onTrespassUpdate(): void {
-    this.ap = this.ap - 1
-    this.turns = this.turns + 1
-    this.setRoomInfo()
-    if (this.clearance >= RoomsInitState[this.currRoom].clearance)
-      this.fsm.setState('turn')
-  }
-  private onTrespassExit(): void {
-    this.parent.removeTaskByCause('player', 'clearance')
-  }
   private onConfrontedEnter(): void {}
   private onConfrontedUpdate(): void {}
   private onConfrontedExit(): void {}

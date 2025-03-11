@@ -49,7 +49,7 @@ export default class World {
     const playerProps: WorldPlayerArgs = {
       returnNpc: this.returnNpc.bind(this),
       getFocusedRoom: this.rooms.get_focused.bind(this),
-      hasHallpass: this.tasks.has_clearance.bind(this),
+      //  hasHallpass: this.tasks.has_clearance.bind(this),
       removeTaskByCause: this.tasks.removeTaskByCause.bind(this),
       getOccupants: this.rooms.getOccupants.bind(this),
       setConfrontation: this.novel.setConfrontation.bind(this),

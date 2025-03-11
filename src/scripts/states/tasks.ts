@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
 import {
-  playerSnitchCheck,
-  npcCommitSnitchCheck,
+  //playerSnitchCheck,
+  // npcCommitSnitchCheck,
   chaotic_good_check,
   dumb_crook_check,
   ignorant_check,
@@ -57,8 +57,8 @@ export default class WorldTasks {
       num_of_injuries: this.num_of_injuries.bind(this),
     }
     this.checks = {
-      playerSnitchCheck: playerSnitchCheck.bind(this),
-      npcCommitSnitchCheck: npcCommitSnitchCheck.bind(this),
+      //  playerSnitchCheck: playerSnitchCheck.bind(this),
+      //npcCommitSnitchCheck: npcCommitSnitchCheck.bind(this),
       ignorant_check: ignorant_check.bind(this),
       dumb_crook_check: dumb_crook_check.bind(this),
       chaotic_good_check: chaotic_good_check.bind(this),

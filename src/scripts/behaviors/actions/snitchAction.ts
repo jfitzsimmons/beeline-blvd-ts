@@ -25,13 +25,6 @@ export default class SnitchAction extends Action {
     this.reason = reason
   }
   run(): { (): void } {
-    print(
-      'INCASE THERES AN EXIT ROOM CRASH:::',
-      this.a.exitRoom,
-      this.a.name,
-      this.a.currRoom,
-      this.a.currStation
-    )
     const prevRoom = Object.values(this.a.getOccupants(this.a.exitRoom)).filter(
       (s: string) =>
         s.slice(0, 4) === 'secu' &&
@@ -49,7 +42,7 @@ export default class SnitchAction extends Action {
         print(
           'SnitchACTION',
           cop.name,
-          'was told to get help by',
+          'was asked for help by',
           this.a.name,
           'for questioning:',
           this.perp.name
@@ -72,7 +65,7 @@ export default class SnitchAction extends Action {
 
     return () =>
       this.continue(
-        'Snitchaction:: Default - Add Another HelperSequence for:' + this.a.name
+        'Snitchaction:: Default - Add Another SNITCHSequence for:' + this.a.name
       )
   }
   continue(s: string): string {
