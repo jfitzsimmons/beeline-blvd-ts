@@ -32,12 +32,7 @@ export default class SuspectingSequence extends Sequence {
     this.storage = storage
     this.cause = cause
 
-    print(
-      'CONFRONTSEQ::: CREATED FOR::',
-      this.a.name,
-      'CONFRONTING:',
-      this.perp.name
-    )
+    print('NEW: SuspectingSeq::', this.a.name, 'Suspecting:', this.perp.name)
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {

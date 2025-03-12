@@ -14,7 +14,14 @@ import { shuffle, clamp } from '../../utils/utils'
 import { QuestionProps } from '../../../types/behaviors'
 import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
 import Storage from '../storage'
-
+const crimeSeverity: { [key: string]: number } = {
+  clearance: 0,
+  concern: 0,
+  harass: 1,
+  theft: 2,
+  pockets: 3,
+  assault: 4,
+}
 export const crimeChecks: {
   [key: string]: Array<
     (
@@ -620,22 +627,44 @@ export function seen_check(
   const target = t
   const { binaries: wb, skills: ws } = watcher.traits
   const { skills: ts, binaries: tb } = target.traits
-
   // const heat = 'heat' in target ? target.heat * 10 : wb.poor_wealthy * -4
 
-  const modifier = Math.round(
-    ts.stealth + tb.lawlessLawful * -4 - ws.stealth - ws.perception //- heat
+  const watcherXp = clamp(
+    Math.round((ws.speed + ws.constitution) / 2 + wb.passiveAggressive * 5),
+    4,
+    12
   )
+  const targetXp = clamp(
+    Math.round(
+      ts.stealth + tb.lawlessLawful * -5 - crimeSeverity[target.crime]
+    ),
+    4,
+    12
+  )
+
   const advantage =
-    ts.speed - wb.lawlessLawful * 5 >
-    ws.speed + ws.constitution + wb.passiveAggressive * 5
+    ts.speed - wb.lawlessLawful * 10 > ws.stealth + ws.perception
 
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
-
-  if (result > 10) return { confront: false, type: 'seenspecial' }
-  if (result < 0) return { confront: true, type: 'seencritcal' }
-  const bossResult = rollSpecialDice(7, true, 3, 2)
-  const seen = result <= bossResult
+  //const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  const result = rollSpecialDice(targetXp, advantage)
+  const seen = result < rollSpecialDice(watcherXp)
+  print(
+    target.name,
+    watcher.name,
+    'SeenCheck::: advantage:',
+    advantage,
+    '|WatcherXP:',
+    watcherXp,
+    '|TargetXP:',
+    targetXp,
+    'RESULT,SEEN:',
+    result,
+    seen
+  )
+  if (result > 11) return { confront: false, type: 'seenspecial' }
+  if (result < 2) return { confront: true, type: 'seen' }
+  //const bossResult = rollSpecialDice(7, true, 3, 2)
+  //const seen = result <= bossResult
   return seen === true
     ? { confront: false, type: 'seen' }
     : { confront: false, type: 'neutral' }
@@ -732,6 +761,7 @@ export function witnessPlayer(
           pass: false,
           type: 'neutral',
         }
+  print('witness_player::: consequence:', consequence.pass, consequence.type)
 
   return consequence
 
@@ -761,21 +791,64 @@ export function npcStealCheck(
   const { binaries: wb, opinion: wo } = watcher.traits
   const { skills: ts, binaries: tb, opinion: to } = target.traits
 
+  /**
+   * testjpf
+   * use this to test legit dice roll
+   * so watcher needs an xp to exceed
+   * clamp good + lawful x 10  4,12       
+   * - clan opinion     /2
+   * target
+   * speed+ stealth/2
+   *  - crimeseverity - clan
+   * advantage?::: 
+   * target lawfulness - wealthy < 0!!!
+  
   //if (target.cooldown > 0) return
 
   const modifier = Math.round(
-    ts.speed +
+    ts.speed + //target is fast and stealthy 
       ts.stealth -
-      target.cooldown +
-      wo[target.clan] -
-      to[watcher.clan] * 3
+      target.cooldown + // has commited crime recetly
+      wo[target.clan] - // if they like hate 
+      to[watcher.clan] * 3 //if they like hate x 3
   )
-  const advantage =
-    tb.lawlessLawful + tb.evil_good - tb.poor_wealthy <
-    wb.evil_good + wb.lawlessLawful
-  const result =
-    rollSpecialDice(5, advantage, 3, 2) + (modifier > -3 ? modifier : -3)
-  if (result < 5) return 'unseen'
+       */
+  const watcherXp = clamp(
+    Math.round(((wb.evil_good + wb.lawlessLawful) * 10 - wo[target.clan]) / 2),
+    4,
+    12
+  )
+  const targetXp = clamp(
+    Math.round(
+      (ts.speed + ts.stealth) / 2 -
+        to[watcher.clan] -
+        crimeSeverity[target.crime]
+    ),
+    4,
+    12
+  )
+  const advantage = tb.lawlessLawful - tb.poor_wealthy < 0
+  const tr = rollSpecialDice(targetXp, advantage)
+  const wr = rollSpecialDice(watcherXp)
+
+  const result = tr > wr
+
+  print(
+    target.name,
+    watcher.name,
+    'npcstealCheck::: advantage:',
+    advantage,
+    '|WatcherXP:',
+    watcherXp,
+    wr,
+    '|TargetXP:',
+    targetXp,
+    tr,
+    'RESULT:',
+    result
+  )
+  if (result === false) return 'failed'
+
   const consequence = seen_check(target, watcher)
   // print('CHECKSCHECKS!!!::: SEENCHECK::', consequence.type)
 
@@ -1061,26 +1134,37 @@ export function becomeASnitchCheck(
   const { skills: ls, binaries: lb } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
 
-  const modifier = Math.round(
-    lb.anti_authority * 5 + (ls.constitution - ts.charisma) / 2
-  )
   const advantage =
-    ls.perception + Math.abs(lb.passiveAggressive * 5) >
-    ts.stealth + +Math.abs(tb.passiveAggressive * 5)
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
+    ts.stealth + ts.charisma >
+    ls.constitution + Math.abs(lb.passiveAggressive * 10)
 
-  if (result > 5 && result <= 10) {
-    return { pass: true, type: 'snitch' }
-  }
+  const watcherXp = clamp(
+    Math.round(lb.anti_authority * 5 + Math.abs(lb.poor_wealthy * 10)),
+    4,
+    12
+  )
+  const targetXp = clamp(
+    Math.round(tb.poor_wealthy * 5 + Math.abs(tb.passiveAggressive * 10)),
+    4,
+    12
+  )
+  const result = rollSpecialDice(targetXp, advantage)
+  const snitch = result < rollSpecialDice(watcherXp)
+  //const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
-  if (result > 10) {
+  //const bossResult = rollSpecialDice(7, true, 3, 2)
+  //const seen = result <= bossResult
+
+  if (result > 11) {
     return { pass: true, type: 'snitchspecial' }
   }
   if (result <= 1) {
-    return { pass: true, type: 'snitchcritical' }
+    return { pass: true, type: 'snitch' }
   }
 
-  return { pass: false, type: 'neutral' }
+  return snitch === true
+    ? { pass: false, type: 'snitch' }
+    : { pass: false, type: 'neutral' }
 }
 
 export function love_boost(

@@ -30,13 +30,7 @@ export default class HelperAction extends Action {
           `HELPERACTION:: injured:${this.victim} has already been helped. AdjustedQueue. Job Done.`
         )
     }
-    print(
-      'INCASE THERES AN EXIT ROOM CRASH:::',
-      this.a.exitRoom,
-      this.a.name,
-      this.a.currRoom,
-      this.a.currStation
-    )
+
     const prevRoom = Object.values(this.a.getOccupants(this.a.exitRoom)).filter(
       (s: string) =>
         s.slice(0, 3) === 'doc' &&

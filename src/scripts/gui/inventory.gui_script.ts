@@ -219,7 +219,8 @@ export function on_message(
     const inventory_node = gui.get_node('btm')
     const name_node = gui.get_node('propname')
     this.watcher = message.watcher
-    this.actorname = message.actorname //npc or prop name
+    this.actorname =
+      message.actorname === null ? message.watcher : message.actorname //npc or prop name
     this.actorinventory = choose_inventory(this.actorname)
 
     load_inventory_sprites(this.actorinventory)

@@ -38,7 +38,7 @@ export const RoomsInitState: { [key: string]: Room } = {
   baggage: {
     matrix: { x: 0, y: 4 },
     roomName: 'baggage',
-    clearance: 2,
+    clearance: 1,
     swaps: {
       worker1: ['worker2', ''],
       guard: ['patrol', ''],
@@ -287,7 +287,7 @@ export const RoomsInitState: { [key: string]: Room } = {
   alley2: {
     matrix: { x: 1, y: 0 },
     roomName: 'alley2',
-    clearance: 2,
+    clearance: 1,
     swaps: {},
     stations: {
       worker1: '',
@@ -545,7 +545,7 @@ export const RoomsInitState: { [key: string]: Room } = {
   infirmary: {
     matrix: { x: 3, y: 5 },
     roomName: 'infirmary',
-    clearance: 3,
+    clearance: 2,
     props: ['drawer', 'computer', 'phone'],
     swaps: {
       servants2: ['servants1', ''],

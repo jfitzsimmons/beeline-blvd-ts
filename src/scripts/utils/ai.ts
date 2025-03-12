@@ -119,7 +119,11 @@ export function fillStationAttempt(
  */
 export function set_room_priority(
   target: { x: number; y: number },
-  npc: { matrix: { x: number; y: number }; home: { x: number; y: number } }
+  npc: {
+    matrix: { x: number; y: number }
+    home: { x: number; y: number }
+    clearance: number
+  }
 ): string[] {
   const room_list: (string | null)[] = []
   //get list of possible rooms NPC could go to next in order to get to target
@@ -166,9 +170,22 @@ export function set_room_priority(
   }
 
   room_list.push(RoomsInitLayout[npc.home.y][npc.home.x])
-  const filteredArray: string[] = room_list.filter(
-    (s): s is string => s != null
-  )
+  const filteredArray: string[] = room_list
+    .filter((s): s is string => s != null)
+    .sort(function (a, b) {
+      if (
+        RoomsInitState[a].clearance > npc.clearance &&
+        RoomsInitState[b].clearance <= npc.clearance
+      )
+        return 1
+      if (
+        RoomsInitState[b].clearance > npc.clearance &&
+        RoomsInitState[a].clearance <= npc.clearance
+      )
+        return -1
+      return 0
+    })
+
   return filteredArray
 }
 export function set_npc_target(

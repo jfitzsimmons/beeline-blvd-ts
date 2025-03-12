@@ -1,4 +1,4 @@
-import { AttendantProps } from '../../../types/ai'
+import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
 import { QuestionProps } from '../../../types/behaviors'
 import SuspectingSequence from '../../behaviors/sequences/suspectingSequence'
 import { npcStealCheck, take_or_stash } from '../../states/inits/checksFuncs'
@@ -32,7 +32,19 @@ function steal_stash_checks(_this: RoomState) {
       inventory: victim.inventory,
       updateInventory: victim.updateInventory.bind(victim),
     }
-    const witness = npcStealCheck(suspect, victimProps, loot)
+    const suspectProps: ThiefVictimProps = {
+      name: suspect.name,
+      traits: suspect.traits,
+      inventory: suspect.inventory,
+      clan: suspect.clan,
+      cooldown: suspect.cooldown,
+      crime: 'theft',
+      removeInvBonus: suspect.removeInvBonus.bind(suspect),
+      addInvBonus: suspect.addInvBonus.bind(suspect),
+      updateInventory: suspect.updateInventory.bind(suspect),
+      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+    }
+    const witness = npcStealCheck(suspectProps, victimProps, loot)
     if (witness == 'witness') {
       const perp = suspect.getBehaviorProps('question') as QuestionProps
       victim.addToBehavior(
@@ -46,7 +58,19 @@ function steal_stash_checks(_this: RoomState) {
       )
     }
   } else if (suspect != null) {
-    take_or_stash(suspect, loot)
+    const suspectProps: ThiefVictimProps = {
+      name: suspect.name,
+      traits: suspect.traits,
+      inventory: suspect.inventory,
+      clan: suspect.clan,
+      cooldown: suspect.cooldown,
+      crime: 'theft',
+      removeInvBonus: suspect.removeInvBonus.bind(suspect),
+      addInvBonus: suspect.addInvBonus.bind(suspect),
+      updateInventory: suspect.updateInventory.bind(suspect),
+      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+    }
+    take_or_stash(suspectProps, loot)
   }
 }
 

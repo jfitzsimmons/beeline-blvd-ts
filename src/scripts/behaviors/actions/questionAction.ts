@@ -73,7 +73,7 @@ export default class QuestionAction extends Action {
     )
       return () =>
         this.fail(
-          `TrespassAction:: ${this.a.name} gets 1 turn clearance for ${this.a.currStation}`
+          `QuestionAction:: ${this.a.name} gets 1 turn clearance for ${this.a.currStation}`
         )
 
     const currRoom =
@@ -86,15 +86,6 @@ export default class QuestionAction extends Action {
     //   (s) => s != '' && s != this.a.name && s.slice(0, 4) === 'secu'
     // )
 
-    print(
-      'QuestionAction:: CurroomBOOLEAN: ',
-      currRoom,
-      this.a.name,
-      this.a.currRoom,
-      this.perp.name,
-      this.perp.currRoom
-    )
-
     const crossedPaths =
       currRoom === true
         ? currRoom
@@ -102,7 +93,7 @@ export default class QuestionAction extends Action {
             (s: string) =>
               s === this.perp.name && this.perp.exitRoom == this.a.currRoom
           ).length > 0
-    print('QuestionAction:: crossedBOOLEAN: ', crossedPaths, this.perp.exitRoom)
+    // print('QuestionAction:: crossedBOOLEAN: ', crossedPaths, this.perp.exitRoom)
     if (crossedPaths === false)
       return () =>
         this.continue(
