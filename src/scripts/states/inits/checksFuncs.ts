@@ -507,8 +507,9 @@ export function lConfrontPunchT(
   hit = 1
 ) {
   //const target = this.parent.returnNpc(t)
-  chkd.hp = chkd.hp - hit
-  print('OUTCOMES:: LcT::', chkd.name, 'HITFOR::', hit)
+  chkd.updateFromBehavior('hp', chkd.hp - hit)
+  // chkd.hp = chkd.hp - hit
+  print('OUTCOMES:: LcT::', chkd.name, 'HITFOR::', hit, 'chkdhp', chkd.hp)
 }
 
 export function getExtorted(
@@ -535,14 +536,14 @@ export function bribeCheck(
   // print('CHECKS:: BRIBECHECK::', t, 'asked for bribe by', l, 'ROLL:', result)
   if (result > 5 && result <= 10) {
     if (getExtorted(chkd, chkr) == null) lConfrontPunchT(chkd)
-    return { pass: true, type: 'bribe' }
+    return { pass: true, type: 'wPunchribe' }
   }
 
   if (result > 10) {
     // print('SPECIAL bribe')
     getExtorted(chkd, chkr)
     lConfrontPunchT(chkd, 2)
-    return { pass: true, type: 'bribespecial' }
+    return { pass: true, type: 'wPunchribespecial' }
   }
   if (result <= 1) {
     given_gift(chkd, chkr)
@@ -553,8 +554,9 @@ export function bribeCheck(
 }
 
 export function tConfrontPunchL(chkr: QuestionProps, hit = 1) {
-  chkr.hp = chkr.hp - hit
-  print('OUTCOMES:: TcL::', chkr.name, 'HITFOR::', hit)
+  // chkr.hp = chkr.hp - hit
+  chkr.updateFromBehavior('hp', chkr.hp - hit)
+  print('OUTCOMES:: TcL::', chkr.name, 'HITFOR::', hit, 'chkrhp', chkr.hp)
 }
 export function targetPunchedCheck(
   chkr: QuestionProps,
@@ -584,7 +586,7 @@ export function targetPunchedCheck(
   if (result <= 1) {
     // print('NEVER wPunchS')
     tConfrontPunchL(chkr, 2)
-    return { pass: true, type: 'wPunchScritical' }
+    return { pass: true, type: 'sPunchScritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -1073,20 +1075,20 @@ export function watcher_punched_check(
   // print('CHECKS:: Listenerpunched::', t, 'hits::', l, 'ROLL:', result)
 
   if (result > 5 && result <= 10) {
-    tConfrontPunchL(chkd, 1)
+    tConfrontPunchL(chkr, 1)
     return { pass: true, type: 'sPunchW' }
   }
 
   if (result > 10) {
     // print('SPECIAL sPunchW')
-    tConfrontPunchL(chkd, 3)
+    tConfrontPunchL(chkr, 3)
 
     return { pass: true, type: 'sPunchWspecial' }
   }
   if (result <= 1) {
     // print('NEVER sPunchW')
     lConfrontPunchT(chkd, 2)
-    return { pass: true, type: 'sPunchWcritical' }
+    return { pass: true, type: 'wPunchWcritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -1115,6 +1117,7 @@ export function unlucky_check(
       getExtorted(chkd, chkr)
     } else if (random == 1) {
       lConfrontPunchT(chkd)
+      return { pass: true, type: 'wPunchnlucky' }
     } else if (random == 2) {
       addPledge(chkd)
     } else if (random == 3) {

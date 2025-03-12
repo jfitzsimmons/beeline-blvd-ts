@@ -11,6 +11,8 @@ import { crimeChecks } from '../../states/inits/checksFuncs'
 import ArrestSequence from '../sequences/arrestSequence'
 import AnnouncerSequence from '../sequences/announcerSequence'
 import RecklessSequence from '../sequences/recklessSequence'
+import InjuredSequence from '../sequences/injuredSequence'
+import ImmobileSequence from '../sequences/immobileSequence'
 
 export default class QuestionAction extends Action {
   a: QuestionProps
@@ -163,6 +165,45 @@ export default class QuestionAction extends Action {
           this.perp.getBehaviorProps('announcer') as AnnouncerProps,
           consequence.type
         )
+      )
+    } else if (
+      consequence.type.slice(0, 6) === 'wPunch' &&
+      (this.perp.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
+    ) {
+      print(
+        this.perp.hp,
+        'QuestioningAction::PUNCH perp got punched',
+        this.perp.name,
+        'by',
+        this.a.name
+      )
+      this.perp.addToBehavior(
+        'active',
+        new InjuredSequence(this.perp.getBehaviorProps.bind(this.perp))
+      )
+      this.perp.addToBehavior(
+        'place',
+        new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
+      )
+    } else if (
+      consequence.type.slice(0, 6) === 'sPunch' &&
+      (this.a.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
+    ) {
+      print(
+        this.a.hp,
+        'QuestioningAction::PUNCH WATCHER got punched',
+        this.a.name,
+        'by',
+        this.perp.name
+      )
+
+      this.a.addToBehavior(
+        'active',
+        new InjuredSequence(this.a.getBehaviorProps.bind(this.a))
+      )
+      this.a.addToBehavior(
+        'place',
+        new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
       )
     }
     print('Consequence:', consequence)

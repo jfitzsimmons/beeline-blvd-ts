@@ -27,6 +27,8 @@ import ArrestSequence from '../sequences/arrestSequence'
 import PhoneSequence from '../sequences/phoneSequence'
 import AnnouncerSequence from '../sequences/announcerSequence'
 import RecklessSequence from '../sequences/recklessSequence'
+import InjuredSequence from '../sequences/injuredSequence'
+import ImmobileSequence from '../sequences/immobileSequence'
 export default class SuspectingAction extends Action {
   a: QuestionProps
   perp: QuestionProps | HeroQuestionProps
@@ -101,7 +103,7 @@ export default class SuspectingAction extends Action {
     }
 
     // prettier-ignore
-    print('Suspectingaction::: consequence after consequence/cause:::',consequence.type,this.cause,'confronter:',this.a.name,'perp:',this.perp.name,'inroom:',this.a.currRoom,this.perp.currRoom,'||| PLAYERROOM:',this.a.getFocusedRoom())
+    print(consequence.type.slice(0, 6),'Suspectingaction::: consequence after consequence/cause:::',consequence.type,this.cause,'confronter:',this.a.name,(this.a.getBehaviorProps('announcer')as AnnouncerProps).hp,'perp:',this.perp.name,(this.perp.getBehaviorProps('announcer')as AnnouncerProps).hp,'inroom:',this.a.currRoom,this.perp.currRoom,'||| PLAYERROOM:',this.a.getFocusedRoom())
     /***
      * testjpf seems here i need conditions that create new
      * sequences for different types of consequences
@@ -275,6 +277,45 @@ export default class SuspectingAction extends Action {
             this.perp.getBehaviorProps('announcer') as AnnouncerProps,
             consequence.type
           )
+        )
+      } else if (
+        consequence.type.slice(0, 6) === 'wPunch' &&
+        (this.perp.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
+      ) {
+        print(
+          this.perp.hp,
+          'SuspectingAction::PUNCH perp got punched',
+          this.perp.name,
+          'by',
+          this.a.name
+        )
+        this.perp.addToBehavior(
+          'active',
+          new InjuredSequence(this.perp.getBehaviorProps.bind(this.perp))
+        )
+        this.perp.addToBehavior(
+          'place',
+          new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
+        )
+      } else if (
+        consequence.type.slice(0, 6) === 'sPunch' &&
+        (this.a.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
+      ) {
+        print(
+          this.a.hp,
+          'SuspectingAction::PUNCH WATCHER got punched',
+          this.a.name,
+          'by',
+          this.perp.name
+        )
+
+        this.a.addToBehavior(
+          'active',
+          new InjuredSequence(this.a.getBehaviorProps.bind(this.a))
+        )
+        this.a.addToBehavior(
+          'place',
+          new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
         )
       }
     }
