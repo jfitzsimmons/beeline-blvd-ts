@@ -29,7 +29,6 @@ export default class TrespassAction extends Action {
     this.enforcer = null
   }
   run(): { (): void } {
-    print(this.isHero, this.a.name)
     if (
       this.isHero == false &&
       ['utside', '_passe', 'isoner', 'atient'].includes(

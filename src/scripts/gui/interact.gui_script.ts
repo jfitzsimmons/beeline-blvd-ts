@@ -99,6 +99,7 @@ function open_inventory(_this: props, actor: string, action: string) {
         inventory: player.inventory,
         cooldown: player.cooldown,
         clan: player.clan,
+        crime: action === 'open' ? 'concern' : action,
       }
       const watcher = npcs.all[_this.watcher]
       const watcherProps: AttendantProps = {
@@ -154,6 +155,14 @@ function open_inventory(_this: props, actor: string, action: string) {
     watcher.behavior.active.run()
 
     // open_novel(_this)
+  } else {
+    const params = {
+      actorname: actor,
+      watcher: _this.watcher,
+      action: action,
+    }
+    msg.post('/shared/guis#inventory', 'opened_chest', params)
+    msg.post('#', 'release_input_focus')
   }
 }
 function check_nodes(

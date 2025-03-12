@@ -151,6 +151,7 @@ export default class NpcState extends ActorState {
             findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
             makePriorityRoomList: this.makePriorityRoomList.bind(this),
             getMendingQueue: this.parent.getMendingQueue.bind(this),
+            getFocusedRoom: this.parent.getFocusedRoom.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -210,11 +211,6 @@ export default class NpcState extends ActorState {
         onUpdate: this.onConfrontPlayerUpdate.bind(this),
         onExit: this.onConfrontPlayerExit.bind(this),
       })
-      .addState('trespass', {
-        onEnter: this.onTrespassEnter.bind(this),
-        onUpdate: this.onTrespassUpdate.bind(this),
-        onExit: this.onTrespassExit.bind(this),
-      })
       .addState('arrestee', {
         onEnter: this.onArresteeEnter.bind(this),
         onUpdate: this.onArresteeUpdate.bind(this),
@@ -258,7 +254,8 @@ export default class NpcState extends ActorState {
     //  this.sincePlayerConvo = novelUpdates.sincePlayerConvo
     this.love = novelUpdates.love
   }
-  private onTrespassEnter(): void {
+  //private onTrespassEnter(): void {
+  /**
     const hallpass = this.parent.hasHallpass(this.name)
     if (
       hallpass != null &&
@@ -280,7 +277,9 @@ export default class NpcState extends ActorState {
 
     this.findRoomPlaceStation()
   }
-  private onTrespassExit(): void {}
+  private onTrespassExit(): void {
+  */
+  //}
   private onArresteeEnter(): void {}
   private onArresteeUpdate(): void {
     //this.cooldown--
@@ -296,10 +295,9 @@ export default class NpcState extends ActorState {
     )
   }
   private onNewExit(): void {
-    print('npc:', this.name, 'activebehaviorRUN!!!')
     this.behavior.active.run()
     print(
-      '::: onNew-EXIT-() ::: 1st b.active.run():: length:',
+      'FINISHED:::::: onNew-EXIT-() ::: 1st b.active.run():: length:',
       this.behavior.active.children.length
     )
     // prettier-ignore
@@ -340,6 +338,7 @@ export default class NpcState extends ActorState {
     const npcPriorityProps = {
       matrix: this.matrix,
       home: this.home,
+      clearance: this.clearance,
     }
     const npcTurnProps = {
       turnPriority: this.turnPriority,
@@ -382,16 +381,7 @@ export default class NpcState extends ActorState {
     this.matrix = RoomsInitState[chosenRoom].matrix
     this.parent.setStation(chosenRoom, chosenStation, this.name)
     //this.parent.pruneStationMap(chosenRoom, chosenStation)
-    /**testjpf clearance needs complete overhaul
-     * make ClearanceSequence
-     * !!!
-    
-    if (
-      RoomsInitState[chosenRoom].clearance >
-      this.clearance + math.random(1, 5)
-    )
-      this.fsm.setState('trespass')
-       */
+
     if (chosenRoom != this.parent.getPlayerRoom()) {
       this.turnPriority = this.turnPriority + 1
     } else {
@@ -431,7 +421,7 @@ export default class NpcState extends ActorState {
   }
   addInvBonus(i: string) {
     const item: InventoryTableItem = { ...itemStateInit[i] }
-    print('NPCADDinvONUS: Item', i)
+    //print('NPCADDinvONUS: Item', i)
     let sKey: keyof typeof item.skills
     for (sKey in item.skills)
       this.traits.skills[sKey] = this.traits.skills[sKey] + item.skills[sKey]
@@ -443,15 +433,7 @@ export default class NpcState extends ActorState {
   }
   updateInventory(addDelete: 'add' | 'delete', item: string) {
     // const inventory = this[storage].inventory
-    print(
-      addDelete,
-      'npcupdateinv::: Item ...traits::speed, charisma,evil,authority:',
-      item,
-      this.traits.skills.speed,
-      this.traits.skills.charisma,
-      this.traits.binaries.evil_good,
-      this.traits.binaries.anti_authority
-    )
+
     if (addDelete == 'add') {
       this.inventory.push(item)
       this.addInvBonus(item)
@@ -459,15 +441,6 @@ export default class NpcState extends ActorState {
       this.inventory.splice(1, this.inventory.indexOf(item))
       this.removeInvBonus(item)
     }
-    print(
-      addDelete,
-      'npcupdateinv::: Item ...traits::speed, charisma,evil,authority:',
-      item,
-      this.traits.skills.speed,
-      this.traits.skills.charisma,
-      this.traits.binaries.evil_good,
-      this.traits.binaries.anti_authority
-    )
   }
   addOrExtendEffect(e: Effect) {
     //   let ek: keyof typeof this.effects

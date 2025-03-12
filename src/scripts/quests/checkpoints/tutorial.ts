@@ -1,4 +1,4 @@
-import { AttendantProps } from '../../../types/ai'
+import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
 import { QuestionProps } from '../../../types/behaviors'
 import SuspectingSequence from '../../behaviors/sequences/suspectingSequence'
 import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
@@ -101,6 +101,8 @@ function doctor_checks() {
 
     player.add_inventory('note')
     quest.sideQuests.hallpass.fsm.setState('active')
+    /*
+    need hallpass seq?? testjpf
     tasks.append_task({
       label: 'hallpass',
       turns: 8,
@@ -110,6 +112,7 @@ function doctor_checks() {
       target: 'infirmary',
       authority: 'security',
     })
+      */
     tasks.taskBuilder(doctor.name, 'quest', injured.name, 'waitingformeds')
     novel.append_npc_quest(doctor.name)
     info.add_interaction(`${doctor.name}'s gave you clearance for 8 turns`)
@@ -278,8 +281,20 @@ export function tutorialA(interval = 'turn') {
     const worker2 = npcs.all[rooms.all['grounds'].stations.worker2]
 
     if (worker2 != null && worker2.cooldown <= 0) {
+      const worker2Props: ThiefVictimProps = {
+        name: worker2.name,
+        traits: worker2.traits,
+        inventory: worker2.inventory,
+        clan: worker2.clan,
+        cooldown: worker2.cooldown,
+        crime: 'theft',
+        removeInvBonus: worker2.removeInvBonus.bind(worker2),
+        addInvBonus: worker2.addInvBonus.bind(worker2),
+        updateInventory: worker2.updateInventory.bind(worker2),
+        //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+      }
       if (guest2 == null) {
-        take_or_stash(worker2, rooms.all.grounds.actors.player_luggage)
+        take_or_stash(worker2Props, rooms.all.grounds.actors.player_luggage)
       } else {
         const guestProps: AttendantProps = {
           name: guest2.name,
@@ -288,7 +303,7 @@ export function tutorialA(interval = 'turn') {
           inventory: guest2.inventory,
           updateInventory: guest2.updateInventory.bind(guest2),
         }
-        const witness = npcStealCheck(worker2, guestProps, luggage)
+        const witness = npcStealCheck(worker2Props, guestProps, luggage)
         if (witness == 'witness') {
           const perp = worker2.getBehaviorProps('question') as QuestionProps
           guest2.addToBehavior(
@@ -303,8 +318,20 @@ export function tutorialA(interval = 'turn') {
         }
       }
     } else if (guest2 != null && guest2.cooldown <= 0) {
+      const guest2Props: ThiefVictimProps = {
+        name: guest2.name,
+        traits: guest2.traits,
+        inventory: guest2.inventory,
+        clan: guest2.clan,
+        cooldown: guest2.cooldown,
+        crime: 'theft',
+        removeInvBonus: guest2.removeInvBonus.bind(guest2),
+        addInvBonus: guest2.addInvBonus.bind(guest2),
+        updateInventory: guest2.updateInventory.bind(guest2),
+        //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+      }
       if (worker2 == null) {
-        take_or_stash(guest2, rooms.all.grounds.actors.player_luggage)
+        take_or_stash(guest2Props, rooms.all.grounds.actors.player_luggage)
       } else {
         const workerProps: AttendantProps = {
           name: worker2.name,
@@ -313,7 +340,7 @@ export function tutorialA(interval = 'turn') {
           inventory: worker2.inventory,
           updateInventory: worker2.updateInventory.bind(worker2),
         }
-        const witness = npcStealCheck(guest2, workerProps, luggage)
+        const witness = npcStealCheck(guest2Props, workerProps, luggage)
         if (witness == 'witness') {
           const perp = guest2.getBehaviorProps('question') as QuestionProps
           worker2.addToBehavior(
@@ -427,10 +454,6 @@ function doctorsScripts() {
   } else if (delivery.fsm.getState() == 'active') {
     novel.forced = true
     novel.reason = 'quest'
-    //testjpf could add conditional if encounters == 0 ) {
-    // "I'm going as fast as i can" -doc
-    //testjpf future naming files may be better:
-    //docAsksForFavor, docActiveFavor
     return tasks.taskHasOwner('waitingformeds') == null
       ? 'tutorial/askDocAfavor'
       : 'tutorial/medAssistComplete'

@@ -1,4 +1,4 @@
-import { AttendantProps } from '../../../types/ai'
+import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
 import { QuestionProps } from '../../../types/behaviors'
 import SuspectingSequence from '../../behaviors/sequences/suspectingSequence'
 import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
@@ -18,8 +18,21 @@ function steal_stash_checks(this: RoomState) {
   if (this.stations.guest !== '') {
     suspect = this.parent.returnNpc(this.stations.guest)
     //print("victim.name",victim.name)
-    actor = this.actors.desks
+    actor = this.actors.drawer
     //loot = actor.inventory
+    const suspectProps: ThiefVictimProps = {
+      name: suspect.name,
+      traits: suspect.traits,
+      inventory: suspect.inventory,
+      clan: suspect.clan,
+      cooldown: suspect.cooldown,
+      crime: 'theft',
+      removeInvBonus: suspect.removeInvBonus.bind(suspect),
+      addInvBonus: suspect.addInvBonus.bind(suspect),
+      updateInventory: suspect.updateInventory.bind(suspect),
+      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+    }
+
     if (actor.inventory.length > 0 && attendant !== null) {
       const attendantProps: AttendantProps = {
         name: attendant.name,
@@ -28,7 +41,7 @@ function steal_stash_checks(this: RoomState) {
         inventory: attendant.inventory,
         updateInventory: attendant.updateInventory.bind(attendant),
       }
-      const witness = npcStealCheck(suspect, attendantProps, actor)
+      const witness = npcStealCheck(suspectProps, attendantProps, actor)
       if (witness == 'witness') {
         const perp = suspect.getBehaviorProps('question') as QuestionProps
         attendant.addToBehavior(
@@ -42,7 +55,7 @@ function steal_stash_checks(this: RoomState) {
         )
       }
     } else if (actor.inventory.length > 0) {
-      take_or_stash(suspect, actor)
+      take_or_stash(suspectProps, actor)
     }
   }
 
@@ -60,7 +73,19 @@ function steal_stash_checks(this: RoomState) {
         inventory: victim.inventory,
         updateInventory: victim.updateInventory.bind(victim),
       }
-      const witness = npcStealCheck(suspect, victimProps)
+      const suspectProps: ThiefVictimProps = {
+        name: suspect.name,
+        traits: suspect.traits,
+        inventory: suspect.inventory,
+        clan: suspect.clan,
+        cooldown: suspect.cooldown,
+        crime: 'pockets',
+        removeInvBonus: suspect.removeInvBonus.bind(suspect),
+        addInvBonus: suspect.addInvBonus.bind(suspect),
+        updateInventory: suspect.updateInventory.bind(suspect),
+        //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+      }
+      const witness = npcStealCheck(suspectProps, victimProps)
       if (witness == 'witness') {
         const perp = suspect.getBehaviorProps('question') as QuestionProps
         victim.addToBehavior(
@@ -76,13 +101,37 @@ function steal_stash_checks(this: RoomState) {
   }
 
   if (attendant !== null) {
+    const attendantProps: ThiefVictimProps = {
+      name: attendant.name,
+      traits: attendant.traits,
+      inventory: attendant.inventory,
+      clan: attendant.clan,
+      cooldown: attendant.cooldown,
+      crime: 'theft',
+      removeInvBonus: attendant.removeInvBonus.bind(attendant),
+      addInvBonus: attendant.addInvBonus.bind(attendant),
+      updateInventory: attendant.updateInventory.bind(attendant),
+      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+    }
     actor = this.actors.locker
-    take_or_stash(attendant, actor)
+    take_or_stash(attendantProps, actor)
   }
   if (this.stations.loiter3 != '') {
     attendant = this.parent.returnNpc(this.stations.loiter3)
+    const attendantProps: ThiefVictimProps = {
+      name: attendant.name,
+      traits: attendant.traits,
+      inventory: attendant.inventory,
+      clan: attendant.clan,
+      cooldown: attendant.cooldown,
+      crime: 'theft',
+      removeInvBonus: attendant.removeInvBonus.bind(attendant),
+      addInvBonus: attendant.addInvBonus.bind(attendant),
+      updateInventory: attendant.updateInventory.bind(attendant),
+      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+    }
     actor = this.actors.vase3
-    take_or_stash(attendant, actor)
+    take_or_stash(attendantProps, actor)
   }
 }
 

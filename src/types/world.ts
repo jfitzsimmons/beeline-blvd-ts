@@ -30,7 +30,7 @@ export interface TaskProps extends WorldTasksArgs {
 export interface WorldPlayerArgs {
   returnNpc(n: string): NpcState
   getFocusedRoom(): string
-  hasHallpass(owner: string): TaskState | null
+  // hasHallpass(owner: string): TaskState | null
   removeTaskByCause(target: string, cause: string): void
   getOccupants(r: string): string[]
   setConfrontation(npc: string, action: string, reason: string): void
@@ -49,7 +49,6 @@ export interface WorldNpcsArgs extends TaskProps {
     currStation: string
   ): string | null
   getWards(room: string): string[]
-  hasHallpass(owner: string): TaskState | null
   getFocusedRoom(): string
   removeTaskByCause(target: string, cause: string): void
   getNovelUpdates(): NovelNpc

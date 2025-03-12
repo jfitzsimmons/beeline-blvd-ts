@@ -21,21 +21,9 @@ export default class Storage {
 
   updateInventory(addDelete: 'add' | 'delete', item: string) {
     const inventory = this.inventory
-    print(
-      addDelete,
-      'roomupdateinv::: Item: lastinv,',
-      item,
-      this.inventory[this.inventory.length - 1]
-    )
+
     addDelete == 'add'
       ? inventory.push(item)
       : inventory.splice(1, inventory.indexOf(item))
-
-    print(
-      addDelete,
-      'roomupdateinv::: Item: lastinv,',
-      item,
-      this.inventory[this.inventory.length - 1]
-    )
   }
 }

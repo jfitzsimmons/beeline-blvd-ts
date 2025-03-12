@@ -13,7 +13,7 @@ export interface ThiefVictimProps {
   addInvBonus: (chest_item: string) => void
   removeInvBonus: (chest_item: string) => void
   updateInventory: (addDelete: 'add' | 'delete', item: string) => void
-
+  crime: string
   traits: Traits
   inventory: string[]
   cooldown: number
