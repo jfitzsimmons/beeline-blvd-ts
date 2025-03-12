@@ -1,5 +1,6 @@
 import {
   ActionProps,
+  AnnouncerProps,
   BehaviorKeys,
   HelperProps,
   HeroQuestionProps,
@@ -24,6 +25,7 @@ import Storage from '../../states/storage'
 import SnitchSequence from '../sequences/snitchSequence'
 import ArrestSequence from '../sequences/arrestSequence'
 import PhoneSequence from '../sequences/phoneSequence'
+import AnnouncerSequence from '../sequences/announcerSequence'
 export default class SuspectingAction extends Action {
   a: QuestionProps
   perp: QuestionProps | HeroQuestionProps
@@ -192,6 +194,7 @@ export default class SuspectingAction extends Action {
       // prettier-ignore
       print("runrun",this.a.name, 'STATION MOVE VIA TASK confront', this.perp.name, 'in', this.a.currRoom)
     }
+
     if (this.isHero === false) {
       if (consequence.type == 'snitch') {
         //testjpf::
@@ -230,7 +233,7 @@ export default class SuspectingAction extends Action {
       } else if (consequence.type == 'jailed') {
         this.perp.updateFromBehavior('turnPriority', 97)
         print(
-          'SsupectingAction::',
+          'SupectingAction::',
           this.a.name,
           'has Arrested::',
           this.perp.name
@@ -238,6 +241,24 @@ export default class SuspectingAction extends Action {
         this.perp.addToBehavior(
           'place',
           new ArrestSequence(this.perp.getBehaviorProps.bind(this.perp))
+        )
+      } else if (
+        consequence.type == 'merits' ||
+        consequence.type == 'demerits'
+      ) {
+        print(
+          'SupectingAction::',
+          this.a.name,
+          'will make announcements about::',
+          this.perp.name
+        )
+        this.perp.addToBehavior(
+          'active',
+          new AnnouncerSequence(
+            this.getProps,
+            this.perp.getBehaviorProps('announcer') as AnnouncerProps,
+            consequence.type
+          )
         )
       }
     }

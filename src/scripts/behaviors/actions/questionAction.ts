@@ -1,4 +1,7 @@
 import {
+  ActionProps,
+  AnnouncerProps,
+  BehaviorKeys,
   GetProps,
   HeroQuestionProps,
   QuestionProps,
@@ -6,6 +9,7 @@ import {
 import Action from '../action'
 import { crimeChecks } from '../../states/inits/checksFuncs'
 import ArrestSequence from '../sequences/arrestSequence'
+import AnnouncerSequence from '../sequences/announcerSequence'
 
 export default class QuestionAction extends Action {
   a: QuestionProps
@@ -129,10 +133,23 @@ export default class QuestionAction extends Action {
         'place',
         new ArrestSequence(this.perp.getBehaviorProps.bind(this.perp))
       )
+    } else if (consequence.type == 'merits' || consequence.type == 'demerits') {
+      print(
+        'QuestionAction::',
+        this.a.name,
+        'will make announcements about::',
+        this.perp.name
+      )
+      this.perp.addToBehavior(
+        'active',
+        new AnnouncerSequence(
+          this.getProps as (behavior: BehaviorKeys) => ActionProps,
+          this.perp.getBehaviorProps('announcer') as AnnouncerProps,
+          consequence.type
+        )
+      )
     }
     print('Consequence:', consequence)
-    //}
-    //print(tempcons)
     if (
       this.a.currRoom == this.perp.currRoom &&
       this.a.currRoom == this.a.getFocusedRoom()

@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { NpcsInitState } from './inits/npcsInitState'
 import NpcState from './npc'
 import WorldPlayer from './player'
 import StateMachine from './stateMachine'
-import { Effect, Task, TasksChecks } from '../../types/tasks'
+import { Task, TasksChecks } from '../../types/tasks'
 import { TaskProps } from '../../types/world'
-import { fxLookup, fx } from '../utils/consts'
-import { shuffle } from '../utils/utils'
 
 export default class TaskState {
   fsm: StateMachine
@@ -44,11 +41,6 @@ export default class TaskState {
       onEnter: this.onInjuryEnter.bind(this),
       onUpdate: this.onInjuryUpdate.bind(this),
       onExit: this.onInjuryExit.bind(this),
-    })
-    this.fsm.addState('merit', {
-      onEnter: this.onMeritEnter.bind(this),
-      onUpdate: this.onMeritUpdate.bind(this),
-      onExit: this.onMeritExit.bind(this),
     })
     this.fsm.addState('reckless', {
       onEnter: this.onRecklessEnter.bind(this),
@@ -130,6 +122,7 @@ export default class TaskState {
     this.handleConfrontation()
   }
   private onConfrontExit(): void {}
+  /**
   private onMeritEnter(): void {}
   private onMeritUpdate(): void {
     const owner = this.parent.returnNpc(this.owner)
@@ -156,6 +149,7 @@ export default class TaskState {
     }
   }
   private onMeritExit(): void {}
+  */
   private onRecklessEnter(): void {}
   private onRecklessUpdate(): void {
     /**
@@ -333,6 +327,5 @@ function setInitFSMstate(t: Task): string {
   else if (t.label == 'mender') state = 'medical'
   else if (t.label == 'snitch') state = 'snitch'
   else if (t.label == 'reckless') state = 'reckless'
-  else if (['merits', 'demerits'].includes(t.label)) state = 'merit'
   return state
 }

@@ -749,8 +749,6 @@ export function witnessPlayer(
   watcher: AttendantProps
   //storage?: Storage
 ): Consequence {
-  print('witness_player')
-
   const consequence =
     seen_check(player, watcher).type == 'seen'
       ? {
