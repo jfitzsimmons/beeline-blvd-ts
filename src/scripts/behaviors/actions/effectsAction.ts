@@ -16,6 +16,7 @@ export default class EffectsAction extends Action {
     for (let i = effects.length; i-- !== 0; ) {
       const e = effects[i]
       if (e.turns < 0) {
+        print('EFFECTaction:: removed:', e.label)
         traits[e.fx.type]![e.fx.stat] =
           traits[e.fx.type]![e.fx.stat] - e.fx.adjustment
         effects.splice(i, 1)

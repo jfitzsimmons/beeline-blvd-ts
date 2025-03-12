@@ -25,7 +25,7 @@ export function flip_coin() {
   return math.random() > 0.5
 }
 
-export function roll_dice(num_dice = 1, num_sides = 6, modifier = 0) {
+export function roll_dice(num_sides = 6, num_dice = 1, modifier = 0) {
   // num_dice = num_dice | 1
   //num_sides = num_sides | 6
   //modifier = modifier | 0

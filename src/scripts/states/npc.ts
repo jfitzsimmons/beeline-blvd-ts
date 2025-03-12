@@ -200,6 +200,7 @@ export default class NpcState extends ActorState {
           return {
             clan: this.clan,
             love: this.love,
+            traits: this.traits,
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
             getOccupants: this.parent.getOccupants.bind(this),
             returnNpc: this.parent.returnNpc.bind(this),

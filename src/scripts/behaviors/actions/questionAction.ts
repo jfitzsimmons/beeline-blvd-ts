@@ -10,6 +10,7 @@ import Action from '../action'
 import { crimeChecks } from '../../states/inits/checksFuncs'
 import ArrestSequence from '../sequences/arrestSequence'
 import AnnouncerSequence from '../sequences/announcerSequence'
+import RecklessSequence from '../sequences/recklessSequence'
 
 export default class QuestionAction extends Action {
   a: QuestionProps
@@ -132,6 +133,21 @@ export default class QuestionAction extends Action {
       this.perp.addToBehavior(
         'place',
         new ArrestSequence(this.perp.getBehaviorProps.bind(this.perp))
+      )
+    } else if (consequence.type == 'reckless') {
+      print(
+        'SupectingAction::',
+        this.a.name,
+        'will become reckless about::',
+        this.perp.name
+      )
+      this.perp.addToBehavior(
+        'active',
+        new RecklessSequence(
+          this.getProps as (behavior: BehaviorKeys) => ActionProps,
+          this.perp.getBehaviorProps('announcer') as AnnouncerProps,
+          this.reason
+        )
       )
     } else if (consequence.type == 'merits' || consequence.type == 'demerits') {
       print(

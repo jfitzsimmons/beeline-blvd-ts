@@ -26,6 +26,7 @@ import SnitchSequence from '../sequences/snitchSequence'
 import ArrestSequence from '../sequences/arrestSequence'
 import PhoneSequence from '../sequences/phoneSequence'
 import AnnouncerSequence from '../sequences/announcerSequence'
+import RecklessSequence from '../sequences/recklessSequence'
 export default class SuspectingAction extends Action {
   a: QuestionProps
   perp: QuestionProps | HeroQuestionProps
@@ -241,6 +242,21 @@ export default class SuspectingAction extends Action {
         this.perp.addToBehavior(
           'place',
           new ArrestSequence(this.perp.getBehaviorProps.bind(this.perp))
+        )
+      } else if (consequence.type == 'reckless') {
+        print(
+          'SupectingAction::',
+          this.a.name,
+          'will become reckless about::',
+          this.perp.name
+        )
+        this.perp.addToBehavior(
+          'active',
+          new RecklessSequence(
+            this.getProps,
+            this.perp.getBehaviorProps('announcer') as AnnouncerProps,
+            this.cause
+          )
         )
       } else if (
         consequence.type == 'merits' ||

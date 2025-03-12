@@ -133,6 +133,7 @@ export interface QuestionProps extends DefaultBehaviorProps {
   updateInventory(addDelete: 'add' | 'delete', item: string): void
 }
 export interface AnnouncerProps extends DefaultBehaviorProps {
+  traits: Traits
   clan: string
   love: number
   returnNpc(n: string): NpcState
