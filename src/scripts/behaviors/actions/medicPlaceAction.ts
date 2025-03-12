@@ -19,7 +19,6 @@ export default class MedicPlaceAction extends Action {
     if (mobile === true && infirmed > 1) {
       if (math.random() + infirmed * 0.2 > 1) {
         const filled = this.a.checkSetStation('infirmary', 'aid', this.a.name)
-        print('ERfull 1st', this.a.name)
         if (filled == true) {
           this.a.currRoom = 'infirmary'
           return () => this.success()
@@ -32,10 +31,8 @@ export default class MedicPlaceAction extends Action {
         //   this.a.parent.pruneStationMap('infirmary', 'aid')
       } else if (infirmed > 2) {
         const target = RoomsInitState.infirmary.matrix
-        print('findRoomPlaceStation MEDICPLACEACTION', this.a.name)
         this.a.findRoomPlaceStation(target)
         //  rooms = this.a.makePriorityRoomList(target)
-        print('ERfull help')
         return () => this.success()
       }
     } else if (
@@ -44,14 +41,12 @@ export default class MedicPlaceAction extends Action {
       this.a.getMendingQueue().length > 1
     ) {
       const target = RoomsInitState[this.a.returnMendeeLocation()!].matrix
-      print('findRoomPlaceStation MEDICPLACEACTION2', this.a.name)
 
       this.a.findRoomPlaceStation(target)
       //rooms = this.a.makePriorityRoomList(target)
       print('Paramedic!', this.a.name)
       return () => this.success()
     }
-    print('findRoomPlaceStation MEDICPLACEACTION3', this.a.name)
 
     this.a.findRoomPlaceStation()
 

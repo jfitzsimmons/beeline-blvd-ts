@@ -84,10 +84,10 @@
   resolved "https://registry.yarnpkg.com/@ts-defold/tstl-userdata-sugar/-/tstl-userdata-sugar-1.0.1.tgz#a22a696b1bdfe9dc99155894ed53f3d8fbdecc1a"
   integrity sha512-iEBt+EpMOvBnpr1/fwUMirVGUqUAE9yFIuzi4ir7BOJvQEEtqAgTvyco2RIms9D7OzEL2jqBSzt3NjoD7zdKpQ==
 
-"@ts-defold/types@^1.2.63":
-  version "1.2.63"
-  resolved "https://registry.yarnpkg.com/@ts-defold/types/-/types-1.2.63.tgz#9105a2b0c8c118bb7929af7950e9f8ccbbe70ff2"
-  integrity sha512-MOeu+jOr1xYs8b5n99jIodXq9dUEwUAw6gNl2yzUc/qVEMiiKkOf9nfZCNCs0dpKTq2E9roxTowHtzm6/nSSaQ==
+"@ts-defold/types@^1.2.64":
+  version "1.2.65"
+  resolved "https://registry.yarnpkg.com/@ts-defold/types/-/types-1.2.65.tgz#6754aedf89bfd54d77ff9ebe946a022117171528"
+  integrity sha512-Wy8kaBRxpgGlVsdLxniwuBielmQJahOktA6HKHBJQGMnsESbmsj9W8W0OuKlgVTtC6KnsJCjtXolkHVgQ/KOlQ==
   dependencies:
     lua-types "^2.10.1"
 

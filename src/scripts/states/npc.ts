@@ -295,10 +295,9 @@ export default class NpcState extends ActorState {
     )
   }
   private onNewExit(): void {
-    print('npc:', this.name, 'activebehaviorRUN!!!')
     this.behavior.active.run()
     print(
-      '::: onNew-EXIT-() ::: 1st b.active.run():: length:',
+      'FINISHED:::::: onNew-EXIT-() ::: 1st b.active.run():: length:',
       this.behavior.active.children.length
     )
     // prettier-ignore
@@ -339,6 +338,7 @@ export default class NpcState extends ActorState {
     const npcPriorityProps = {
       matrix: this.matrix,
       home: this.home,
+      clearance: this.clearance,
     }
     const npcTurnProps = {
       turnPriority: this.turnPriority,
@@ -421,7 +421,7 @@ export default class NpcState extends ActorState {
   }
   addInvBonus(i: string) {
     const item: InventoryTableItem = { ...itemStateInit[i] }
-    print('NPCADDinvONUS: Item', i)
+    //print('NPCADDinvONUS: Item', i)
     let sKey: keyof typeof item.skills
     for (sKey in item.skills)
       this.traits.skills[sKey] = this.traits.skills[sKey] + item.skills[sKey]
@@ -433,15 +433,7 @@ export default class NpcState extends ActorState {
   }
   updateInventory(addDelete: 'add' | 'delete', item: string) {
     // const inventory = this[storage].inventory
-    print(
-      addDelete,
-      'npcupdateinv::: Item ...traits::speed, charisma,evil,authority:',
-      item,
-      this.traits.skills.speed,
-      this.traits.skills.charisma,
-      this.traits.binaries.evil_good,
-      this.traits.binaries.anti_authority
-    )
+
     if (addDelete == 'add') {
       this.inventory.push(item)
       this.addInvBonus(item)
@@ -449,15 +441,6 @@ export default class NpcState extends ActorState {
       this.inventory.splice(1, this.inventory.indexOf(item))
       this.removeInvBonus(item)
     }
-    print(
-      addDelete,
-      'npcupdateinv::: Item ...traits::speed, charisma,evil,authority:',
-      item,
-      this.traits.skills.speed,
-      this.traits.skills.charisma,
-      this.traits.binaries.evil_good,
-      this.traits.binaries.anti_authority
-    )
   }
   addOrExtendEffect(e: Effect) {
     //   let ek: keyof typeof this.effects
