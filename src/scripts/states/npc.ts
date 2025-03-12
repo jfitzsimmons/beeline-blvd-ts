@@ -196,6 +196,17 @@ export default class NpcState extends ActorState {
             ...behaviorDefaults(),
           }
         },
+        announcer: () => {
+          return {
+            clan: this.clan,
+            love: this.love,
+            traits: this.traits,
+            addOrExtendEffect: this.addOrExtendEffect.bind(this),
+            getOccupants: this.parent.getOccupants.bind(this),
+            returnNpc: this.parent.returnNpc.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
       } as BehaviorProps,
     }
 
@@ -444,6 +455,7 @@ export default class NpcState extends ActorState {
   }
   addOrExtendEffect(e: Effect) {
     //   let ek: keyof typeof this.effects
+    print('EffectAddExtend: ', e.label)
     for (const fx of this.effects) {
       if (e.label === fx.label) {
         fx.turns += 5

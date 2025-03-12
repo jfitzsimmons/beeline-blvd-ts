@@ -1,4 +1,3 @@
-import WorldTasks from '../tasks'
 import { Traits } from '../../../types/state'
 import { Effect, Consequence } from '../../../types/tasks'
 import {
@@ -7,21 +6,15 @@ import {
   removeValuable,
 } from '../../utils/inventory'
 import { fx } from '../../utils/consts'
-import { rollSpecialDice } from '../../utils/dice'
+import { roll_dice, rollSpecialDice } from '../../utils/dice'
 import { shuffle, clamp } from '../../utils/utils'
 //import NpcState from '../npc'
 //impor from '../player'
 import { QuestionProps } from '../../../types/behaviors'
 import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
 import Storage from '../storage'
-const crimeSeverity: { [key: string]: number } = {
-  clearance: 0,
-  concern: 0,
-  harass: 1,
-  theft: 2,
-  pockets: 3,
-  assault: 4,
-}
+import { crimeSeverity } from '../../utils/ai'
+
 export const crimeChecks: {
   [key: string]: Array<
     (
@@ -35,6 +28,7 @@ export const crimeChecks: {
     ...shuffle([bribeCheck, targetPunchedCheck, prejudice_check]),
     unlucky_check,
     admirer_check,
+    recklessCheck,
     jailtime_check,
   ],
   concern: [
@@ -45,6 +39,7 @@ export const crimeChecks: {
       admirer_check,
       prejudice_check,
       unlucky_check,
+      recklessCheck,
     ]),
     jailtime_check,
   ],
@@ -56,6 +51,7 @@ export const crimeChecks: {
       admirer_check,
       prejudice_check,
       unlucky_check,
+      recklessCheck,
     ]),
     jailtime_check,
   ],
@@ -68,16 +64,17 @@ export const crimeChecks: {
       prejudice_check,
       unlucky_check,
       jailtime_check,
+      recklessCheck,
     ]),
   ],
   pockets: [
     ...shuffle([bribeCheck, targetPunchedCheck, unlucky_check, jailtime_check]),
-    ...shuffle([pledgeCheck, admirer_check, prejudice_check]),
+    ...shuffle([recklessCheck, pledgeCheck, admirer_check, prejudice_check]),
   ],
   assault: [
     jailtime_check,
     ...shuffle([bribeCheck, targetPunchedCheck, unlucky_check]),
-    ...shuffle([admirer_check, prejudice_check]),
+    ...shuffle([admirer_check, prejudice_check, recklessCheck]),
     pledgeCheck,
   ],
 }
@@ -104,7 +101,6 @@ export function addPledge(checked: QuestionProps) {
 }
 
 export function pledgeCheck(
-  // this: WorldTasks,
   chkr: QuestionProps,
   chkd: QuestionProps
 ): Consequence {
@@ -175,10 +171,10 @@ export function npcCommitSnitchCheck(
   */
 //Checks and Helpers
 //effects
-function add_chaotic_good(_this: WorldTasks, t: string, l: string) {
-  const listener = _this.parent.returnNpc(l)
-  if (t != 'player') {
-    const target = _this.parent.returnNpc(t)
+function add_chaotic_good(chkr: QuestionProps, chkd: QuestionProps) {
+  const listener = chkr
+  if (chkd.name != 'player') {
+    const target = chkd
     const effects_list = ['crimewave', 'inspired', 'eagleeye', 'modesty']
     const effect: Effect = fx[effects_list[math.random(0, 3)]]
     if (effect.fx.type == 'opinion') effect.fx.stat = target.clan
@@ -189,26 +185,24 @@ function add_chaotic_good(_this: WorldTasks, t: string, l: string) {
   // print('OUTCOMES:: addchaoticgood::', t, 'inspired::', l, 'to be chaoticgood.')
 }
 export function chaotic_good_check(
-  this: WorldTasks,
-  t: string,
-  l: string
+  chkr: QuestionProps,
+  chkd: QuestionProps
 ): Consequence {
-  const { skills: ls, binaries: lb } = this.parent.returnNpc(l).traits
-  const { binaries: tb } =
-    t === 'player'
-      ? this.parent.returnPlayer().traits
-      : this.parent.returnNpc(t).traits
+  const { skills: ls, binaries: lb } = chkr.traits
+  const { binaries: tb } = chkd.traits
   const modifier = Math.round(ls.wisdom / 2 + lb.evil_good * 5)
   const advantage = tb.anti_authority > lb.anti_authority
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
   // print('CHECKS RESULT::: chaoticgood::', result)
   if (result > 5 && result <= 10) {
-    add_chaotic_good(this, t, l)
+    add_chaotic_good(chkr, chkd)
     return { pass: true, type: 'chaoticgood' }
   }
 
   if (result > 10) {
+    add_chaotic_good(chkr, chkd)
+
     // print('SPECIAL chaoticgood')
     return { pass: true, type: 'special' }
   }
@@ -219,11 +213,11 @@ export function chaotic_good_check(
 
   return { pass: false, type: 'neutral' }
 }
-function add_dumb_crook(_this: WorldTasks, t: string, l: string) {
+function add_dumb_crook(chkr: QuestionProps, chkd: QuestionProps) {
   // print('OUTCOMES:: addumbcrook::', t, 'inspired::', l, 'to be dumbcrook.')
-  const listener = _this.parent.returnNpc(l)
-  if (t != 'player') {
-    const target = _this.parent.returnNpc(t)
+  const listener = chkr
+  if (chkd.name != 'player') {
+    const target = chkd
     const effects_list = ['admirer', 'opportunist', 'inspired', 'amped']
     const effect: Effect = fx[shuffle(effects_list)[0]]
     if (effect.fx.type == 'opinion') effect.fx.stat = target.clan
@@ -233,74 +227,83 @@ function add_dumb_crook(_this: WorldTasks, t: string, l: string) {
   }
 }
 export function dumb_crook_check(
-  this: WorldTasks,
-  t: string,
-  l: string
+  chkr: QuestionProps,
+  chkd: QuestionProps
 ): Consequence {
-  const { skills: ls, binaries: lb } = this.parent.returnNpc(l).traits
-  const { binaries: tb } =
-    t === 'player'
-      ? this.parent.returnPlayer().traits
-      : this.parent.returnNpc(t).traits
+  const { skills: ls, binaries: lb } = chkr.traits
+  const { binaries: tb } = chkd.traits
   const modifier = Math.round(lb.lawlessLawful * -5)
   const advantage = tb.un_educated * -5 > ls.intelligence / 2
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
   // print('CHECKS RESULT::: DUMBCROOK::', result)
   if (result > 5 && result <= 10) {
-    add_dumb_crook(this, t, l)
+    add_dumb_crook(chkr, chkd)
     return { pass: true, type: 'dumbcrook' }
   }
 
   if (result > 10) {
     // print('SPECIAL dumbcrook')
+    add_dumb_crook(chkr, chkd)
+
     return { pass: true, type: 'dumbcrookspecial' }
   }
   if (result <= 1) {
-    // print('NEVER dumbcrook')
-    return { pass: true, type: 'dumbcrookcritical' }
+    print('NEVER dumbcrook')
+    //might not work
+    //might need to handle this in recklessseq
+    //testjpf
+    return { pass: true, type: 'phonesecurity' }
   }
 
   return { pass: false, type: 'neutral' }
 }
-function add_ignorant(this: WorldTasks, t: string, l: string) {
+function add_smartness(chkr: QuestionProps, chkd: QuestionProps) {
   // print('OUTCOMES:: ignorant::', t, 'inspired', l, 'to be ignorant')
-  const listener = this.parent.returnNpc(l)
-  if (t != 'player') {
+  const listener = chkr
+  if (chkd.name != 'player') {
+    const effects_list = ['readup', 'eagleeye', 'yogi', 'crimewave']
+    const effect: Effect = fx[shuffle(effects_list)[0]]
+    if (effect.fx.type == 'opinion') effect.fx.stat = chkd.clan
+    listener.addOrExtendEffect(effect)
+  } else {
+    listener.love = listener.love + 2
+  }
+}
+function add_ignorant(chkr: QuestionProps, chkd: QuestionProps) {
+  // print('OUTCOMES:: ignorant::', t, 'inspired', l, 'to be ignorant')
+  const listener = chkr
+  if (chkd.name != 'player') {
     const effects_list = ['prejudice', 'incharge', 'boring', 'loudmouth']
     const effect: Effect = fx[shuffle(effects_list)[0]]
-    if (effect.fx.type == 'opinion')
-      effect.fx.stat = this.parent.returnNpc(t).clan
+    if (effect.fx.type == 'opinion') effect.fx.stat = chkd.clan
     listener.addOrExtendEffect(effect)
   } else {
     listener.love = listener.love + 2
   }
 }
 export function ignorant_check(
-  this: WorldTasks,
-  t: string,
-  l: string
+  chkr: QuestionProps,
+  chkd: QuestionProps
 ): Consequence {
-  const { skills: ls, binaries: lb } = this.parent.returnNpc(l).traits
-  const { skills: ts } =
-    t === 'player'
-      ? this.parent.returnPlayer().traits
-      : this.parent.returnNpc(t).traits
+  const { skills: ls, binaries: lb } = chkr.traits
+  const { skills: ts } = chkd.traits
   const modifier = Math.round(lb.un_educated * -5)
   const advantage = ts.intelligence > ls.perception
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
   // print('CHECKS RESULT::: Ignorant::', result)
   if (result > 5 && result <= 10) {
-    add_ignorant
+    add_ignorant(chkr, chkd)
     return { pass: true, type: 'ignorant' }
   }
-
   if (result > 10) {
     // print('SPECIAL ignorant')
+    add_ignorant(chkr, chkd)
     return { pass: true, type: 'ignorantspecial' }
   }
   if (result <= 1) {
     // print('NEVER ignorant')
+    add_smartness(chkr, chkd)
     return { pass: true, type: 'ignorantcritical' }
   }
 
@@ -336,38 +339,49 @@ export function recklessCheck(
   const { skills: ls, binaries: lb } = chkr.traits
   const { binaries: tb, skills: ts } = chkd.traits
 
-  const modifier = Math.round(
-    lb.evil_good * -5 -
-      ls.wisdom -
-      ts.stealth +
-      Math.abs(tb.passiveAggressive) * 5
+  const watcherXp = clamp(Math.round(ls.wisdom + lb.lawlessLawful * 10), 4, 12)
+  const targetXp = clamp(
+    Math.round(ts.stealth + tb.mystical_logical * -10),
+    4,
+    12
   )
-  const advantage = ls.intelligence < 5 || lb.lawlessLawful < -0.1
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  const advantage = Math.abs(tb.passiveAggressive) * 5 > lb.evil_good * 10
+  const tr = rollSpecialDice(targetXp, advantage)
+  const wr = roll_dice(watcherXp)
 
-  // print('CHECKS RESULT:::', t, 'made,', l, ' RECKLESS::??', result)
+  const reckless = tr > wr
 
-  if (result > 5 && result <= 10) {
+  print(
+    'CHECKS RESULT:::',
+    tr,
+    targetXp,
+    'made,',
+    wr,
+    watcherXp,
+    ' RECKLESS::??',
+    reckless
+  )
+
+  if (tr > 11) {
+    // print('SPECIAL reckless')
     return { pass: true, type: 'reckless' }
   }
-
-  if (result > 10) {
-    // print('SPECIAL reckless')
-    return { pass: true, type: 'recklessspecial' }
-  }
-  if (result <= 1) {
+  if (tr < 2) {
     // print('NEVER reckless')
+    add_classy(chkr, chkd)
     return { pass: true, type: 'recklesscritical' }
   }
 
-  return { pass: false, type: 'neutral' }
+  return reckless === true
+    ? { pass: true, type: 'reckless' }
+    : { pass: false, type: 'neutral' }
 }
-function add_predator(this: WorldTasks, t: string, l: string) {
-  const listener = this.parent.returnNpc(l)
+function add_predator(chkr: QuestionProps, chkd: QuestionProps) {
+  const listener = chkr
   // print('OUTCOMES:: Predator::', t, 'inspired', l, 'to be PREdATOR')
 
-  if (t != 'player') {
-    const target = this.parent.returnNpc(t)
+  if (chkd.name != 'player') {
+    const target = chkd
     const effects_list = ['inspired', 'opportunist', 'vanity', 'inhiding']
     const effect: Effect = fx[shuffle(effects_list)[0]]
     if (effect.fx.type == 'opinion') effect.fx.stat = target.clan
@@ -377,27 +391,24 @@ function add_predator(this: WorldTasks, t: string, l: string) {
   }
 }
 export function predator_check(
-  this: WorldTasks,
-  t: string,
-  l: string
+  chkr: QuestionProps,
+  chkd: QuestionProps
 ): Consequence {
-  const { binaries: lb } = this.parent.returnNpc(l).traits
-  const { binaries: tb } =
-    t === 'player'
-      ? this.parent.returnPlayer().traits
-      : this.parent.returnNpc(t).traits
+  const { binaries: lb } = chkr.traits
+  const { binaries: tb } = chkd.traits
   const modifier = Math.round(lb.evil_good * -5)
   const advantage = tb.anti_authority > lb.passiveAggressive
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
   // print('CHECKS RESULT::: ', t, 'made', l, 'PREDATOR::??', result)
   if (result > 5 && result <= 10) {
-    add_predator
+    add_predator(chkr, chkd)
     return { pass: true, type: 'predator' }
   }
 
   if (result > 10) {
     // print('SPECIAL predator')
+    add_predator(chkr, chkd)
     return { pass: true, type: 'predatorspecial' }
   }
   if (result <= 1) {
@@ -407,12 +418,12 @@ export function predator_check(
 
   return { pass: false, type: 'neutral' }
 }
-function add_classy(_this: WorldTasks, t: string, l: string): void {
-  const listener = _this.parent.returnNpc(l)
+function add_classy(chkr: QuestionProps, chkd: QuestionProps): void {
+  const listener = chkr
   // print('OUTCOMES:: classy::', t, 'inspired', l, 'to be classy')
 
-  if (t != 'player') {
-    const target = _this.parent.returnNpc(t)
+  if (chkd.name != 'player') {
+    const target = chkd
     const effects_list = ['crimewave', 'inshape', 'readup', 'modesty']
     const effect: Effect = fx[shuffle(effects_list)[0]]
     if (effect.fx.type == 'opinion') effect.fx.stat = target.clan
@@ -424,30 +435,28 @@ function add_classy(_this: WorldTasks, t: string, l: string): void {
   }
 }
 export function classy_check(
-  this: WorldTasks,
-  t: string,
-  l: string
+  chkr: QuestionProps,
+  chkd: QuestionProps
 ): Consequence {
-  const { binaries: lb, skills: ls } = this.parent.returnNpc(l).traits
-  const { skills: ts } =
-    t === 'player'
-      ? this.parent.returnPlayer().traits
-      : this.parent.returnNpc(t).traits
+  const { binaries: lb, skills: ls } = chkr.traits
+  const { skills: ts } = chkd.traits
   const modifier = Math.round(lb.un_educated * 5)
   const advantage = ls.perception > ts.strength
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
   if (result > 5 && result <= 10) {
-    add_classy(this, t, l)
+    add_classy(chkr, chkd)
     return { pass: true, type: 'classy' }
   }
 
   if (result > 10) {
     // print('SPECIAL classy')
+    add_classy(chkr, chkd)
     return { pass: true, type: 'classyspecial' }
   }
   if (result <= 1) {
     // print('NEVER classy')
+    add_ignorant(chkr, chkd)
     return { pass: true, type: 'classycritical' }
   }
 
@@ -483,7 +492,7 @@ export function jailtime_check(
 
     chkd.hp = chkd.hp - 1
     print('SPECIAL jailed', chkd.name)
-    return { pass: true, type: 'jailedspecial' }
+    return { pass: true, type: 'jailed' }
   }
   if (result <= 1) {
     // print('NEVER jailed')
@@ -498,8 +507,9 @@ export function lConfrontPunchT(
   hit = 1
 ) {
   //const target = this.parent.returnNpc(t)
-  chkd.hp = chkd.hp - hit
-  print('OUTCOMES:: LcT::', chkd.name, 'HITFOR::', hit)
+  chkd.updateFromBehavior('hp', chkd.hp - hit)
+  // chkd.hp = chkd.hp - hit
+  print('OUTCOMES:: LcT::', chkd.name, 'HITFOR::', hit, 'chkdhp', chkd.hp)
 }
 
 export function getExtorted(
@@ -526,14 +536,14 @@ export function bribeCheck(
   // print('CHECKS:: BRIBECHECK::', t, 'asked for bribe by', l, 'ROLL:', result)
   if (result > 5 && result <= 10) {
     if (getExtorted(chkd, chkr) == null) lConfrontPunchT(chkd)
-    return { pass: true, type: 'bribe' }
+    return { pass: true, type: 'wPunchribe' }
   }
 
   if (result > 10) {
     // print('SPECIAL bribe')
     getExtorted(chkd, chkr)
     lConfrontPunchT(chkd, 2)
-    return { pass: true, type: 'bribespecial' }
+    return { pass: true, type: 'wPunchribespecial' }
   }
   if (result <= 1) {
     given_gift(chkd, chkr)
@@ -544,8 +554,9 @@ export function bribeCheck(
 }
 
 export function tConfrontPunchL(chkr: QuestionProps, hit = 1) {
-  chkr.hp = chkr.hp - hit
-  print('OUTCOMES:: TcL::', chkr.name, 'HITFOR::', hit)
+  // chkr.hp = chkr.hp - hit
+  chkr.updateFromBehavior('hp', chkr.hp - hit)
+  print('OUTCOMES:: TcL::', chkr.name, 'HITFOR::', hit, 'chkrhp', chkr.hp)
 }
 export function targetPunchedCheck(
   chkr: QuestionProps,
@@ -575,7 +586,7 @@ export function targetPunchedCheck(
   if (result <= 1) {
     // print('NEVER wPunchS')
     tConfrontPunchL(chkr, 2)
-    return { pass: true, type: 'wPunchScritical' }
+    return { pass: true, type: 'sPunchScritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -647,7 +658,7 @@ export function seen_check(
 
   //const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
   const result = rollSpecialDice(targetXp, advantage)
-  const seen = result < rollSpecialDice(watcherXp)
+  const seen = result < roll_dice(watcherXp)
   print(
     target.name,
     watcher.name,
@@ -749,8 +760,6 @@ export function witnessPlayer(
   watcher: AttendantProps
   //storage?: Storage
 ): Consequence {
-  print('witness_player')
-
   const consequence =
     seen_check(player, watcher).type == 'seen'
       ? {
@@ -829,7 +838,7 @@ export function npcStealCheck(
   )
   const advantage = tb.lawlessLawful - tb.poor_wealthy < 0
   const tr = rollSpecialDice(targetXp, advantage)
-  const wr = rollSpecialDice(watcherXp)
+  const wr = roll_dice(watcherXp)
 
   const result = tr > wr
 
@@ -934,28 +943,37 @@ export function vanity_check(
   const { skills: ls, binaries: lb } = listener.traits
   const { skills: ts, binaries: tb } = target.traits
 
-  const modifier = Math.round(ts.charisma - ls.intelligence + lb.evil_good * -5)
-  const advantage =
-    ts.strength + tb.un_educated * 5 > ls.strength + lb.un_educated * 5
-  const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 2)
+  const watcherXp = clamp(
+    Math.round(ls.intelligence + lb.un_educated * -10 + ls.wisdom),
+    4,
+    12
+  )
+  const targetXp = clamp(
+    Math.round(ts.charisma + tb.un_educated * 10 + ts.strength),
+    4,
+    12
+  )
+  const advantage = lb.evil_good < tb.evil_good
+  const result = rollSpecialDice(targetXp, advantage)
+  const vain = result > roll_dice(watcherXp)
 
   // print('CHECKS:: ANCGELCHK::', t, 'has made vane::', l, 'ROLL:', result)
 
-  if (result > 5 && result <= 10) {
-    add_vanity(listener.addOrExtendEffect.bind(listener))
-    return { pass: true, type: 'vanity' }
-  }
-
-  if (result > 10) {
+  if (result > 11) {
     // print('SPECIAL VANITY')
+    add_vanity(listener.addOrExtendEffect.bind(listener))
     return { pass: true, type: 'vanityspecial' }
   }
-  if (result <= 1) {
+  if (result < 2) {
     // print('NEVER VANITY')
+    add_angel(listener.addOrExtendEffect.bind(listener))
     return { pass: true, type: 'vanitycritical' }
   }
+  add_vanity(listener.addOrExtendEffect.bind(listener))
 
-  return { pass: false, type: 'neutral' }
+  return vain === true
+    ? { pass: true, type: 'vanity' }
+    : { pass: false, type: 'neutral' }
 }
 function add_admirer(tClan: string, listener: QuestionProps) {
   // print('OUTCOMESADMIRE::', listener.name, 'has admiration for:', tClan)
@@ -1057,20 +1075,20 @@ export function watcher_punched_check(
   // print('CHECKS:: Listenerpunched::', t, 'hits::', l, 'ROLL:', result)
 
   if (result > 5 && result <= 10) {
-    tConfrontPunchL(chkd, 1)
+    tConfrontPunchL(chkr, 1)
     return { pass: true, type: 'sPunchW' }
   }
 
   if (result > 10) {
     // print('SPECIAL sPunchW')
-    tConfrontPunchL(chkd, 3)
+    tConfrontPunchL(chkr, 3)
 
     return { pass: true, type: 'sPunchWspecial' }
   }
   if (result <= 1) {
     // print('NEVER sPunchW')
     lConfrontPunchT(chkd, 2)
-    return { pass: true, type: 'sPunchWcritical' }
+    return { pass: true, type: 'wPunchWcritical' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -1099,6 +1117,7 @@ export function unlucky_check(
       getExtorted(chkd, chkr)
     } else if (random == 1) {
       lConfrontPunchT(chkd)
+      return { pass: true, type: 'wPunchnlucky' }
     } else if (random == 2) {
       addPledge(chkd)
     } else if (random == 3) {
@@ -1149,7 +1168,7 @@ export function becomeASnitchCheck(
     12
   )
   const result = rollSpecialDice(targetXp, advantage)
-  const snitch = result < rollSpecialDice(watcherXp)
+  const snitch = result < roll_dice(watcherXp)
   //const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
 
   //const bossResult = rollSpecialDice(7, true, 3, 2)

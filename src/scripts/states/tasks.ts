@@ -1,25 +1,23 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
+import //playerSnitchCheck,
+// npcCommitSnitchCheck,
+//chaotic_good_check,
+//dumb_crook_check,
+//ignorant_check,
+//classy_check,
+//predator_check,
+// suspicious_check,
+// vanity_check,
+// angel_check,
+// add_prejudice,
+//becomeASnitchCheck,
+// watcher_punched_check,
+'./inits/checksFuncs'
 import {
-  //playerSnitchCheck,
-  // npcCommitSnitchCheck,
-  chaotic_good_check,
-  dumb_crook_check,
-  ignorant_check,
-  classy_check,
-  predator_check,
-  // suspicious_check,
-  // vanity_check,
-  // angel_check,
-  add_prejudice,
-  //becomeASnitchCheck,
-  // watcher_punched_check,
-} from './inits/checksFuncs'
-import {
-  TasksOutcomes,
   QuestMethods,
   Task,
-  TasksChecks,
+  //TasksChecks,
 } from '../../types/tasks'
 import TaskState from './task'
 //import { arraymove } from '../utils/utils'
@@ -35,8 +33,8 @@ export default class WorldTasks {
   // mendingQueue: string[]
   methods: TaskProps
   parent: WorldTasksArgs
-  checks: TasksChecks
-  outcomes: TasksOutcomes
+  // checks: TasksChecks
+  //outcomes: TasksOutcomes
   constructor(worldProps: WorldTasksArgs) {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
@@ -56,18 +54,18 @@ export default class WorldTasks {
     this.quests = {
       num_of_injuries: this.num_of_injuries.bind(this),
     }
-    this.checks = {
-      //  playerSnitchCheck: playerSnitchCheck.bind(this),
-      //npcCommitSnitchCheck: npcCommitSnitchCheck.bind(this),
-      ignorant_check: ignorant_check.bind(this),
-      dumb_crook_check: dumb_crook_check.bind(this),
-      chaotic_good_check: chaotic_good_check.bind(this),
-      classy_check: classy_check.bind(this),
-      predator_check: predator_check.bind(this),
-    }
-    this.outcomes = {
-      add_prejudice: add_prejudice.bind(this),
-    }
+    // this.checks = {
+    //  playerSnitchCheck: playerSnitchCheck.bind(this),
+    //npcCommitSnitchCheck: npcCommitSnitchCheck.bind(this),
+    //  ignorant_check: ignorant_check.bind(this),
+    //  dumb_crook_check: dumb_crook_check.bind(this),
+    //  chaotic_good_check: chaotic_good_check.bind(this),
+    //  classy_check: classy_check.bind(this),
+    //  predator_check: predator_check.bind(this),
+    //}
+    //    this.outcomes = {
+    //  add_prejudice: add_prejudice.bind(this),
+    // }
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
       onEnter: this.onTurnEnter.bind(this),
@@ -301,7 +299,7 @@ export default class WorldTasks {
     this.append_task(append)
   }
   append_task(task: Task) {
-    this.all.push(new TaskState(task, this.methods, this.checks))
+    this.all.push(new TaskState(task, this.methods))
   }
   get_field_docs(): string[] {
     const docs = this.all.filter((c) => c.cause == 'field').map((c) => c.owner)

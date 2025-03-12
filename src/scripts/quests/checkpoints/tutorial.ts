@@ -184,6 +184,9 @@ function doctor_checks() {
       // testjpf this is overwriting my scriptsdialog functions
       novel.npc = doctor
       //novel.forced = true
+      /**
+       * TODO TESTJPF
+       * funcitonality has been replaced by behavior trees
       tasks.append_task({
         label: 'favor',
         turns: 15,
@@ -193,6 +196,7 @@ function doctor_checks() {
         target: npcs.all[waiting!].name,
         authority: 'player',
       })
+        **/
       novel.reason = 'askdocafavor'
     }
     novel.forced = true

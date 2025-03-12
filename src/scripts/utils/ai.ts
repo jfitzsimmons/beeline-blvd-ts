@@ -14,6 +14,14 @@ export function isNpc(a: ActorState | ActionProps): a is NpcState {
   return a.name !== 'player'
 }
   */
+export const crimeSeverity: { [key: string]: number } = {
+  clearance: 0,
+  concern: 0,
+  harass: 1,
+  theft: 2,
+  pockets: 3,
+  assault: 4,
+}
 
 const count: { [key: string]: number } = {}
 const unplacedcount: { [key: string]: number } = {}
