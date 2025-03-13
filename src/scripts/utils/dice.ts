@@ -8,11 +8,95 @@ interface bag {
   full_fail: number
   reset_on_success: boolean
 }
+//const dt = math.randomseed(os.time())
 export const bags: bags = {}
 export const tables = {}
+export const ROLLODDS: { [key: string]: number } = {
+  '44': 38,
+  '45': 32,
+  '46': 25,
+  '47': 22,
+  '48': 19,
+  '49': 17,
+  '410': 15,
+  '411': 14,
+  '412': 13,
+  '54': 48,
+  '55': 39,
+  '56': 34,
+  '57': 30,
+  '58': 25,
+  '59': 23,
+  '510': 20,
+  '511': 19,
+  '512': 17,
+  '64': 58,
+  '65': 50,
+  '66': 42,
+  '67': 37,
+  '68': 31,
+  '69': 28,
+  '610': 25,
+  '611': 23,
+  '612': 21,
+  '74': 64,
+  '75': 57,
+  '76': 48,
+  '77': 44,
+  '78': 38,
+  '79': 34,
+  '710': 30,
+  '711': 28,
+  '712': 25,
+  '84': 69,
+  '85': 63,
+  '86': 56,
+  '87': 50,
+  '88': 44,
+  '89': 40,
+  '810': 35,
+  '811': 32,
+  '812': 29,
+  '94': 72,
+  '95': 67,
+  '96': 61,
+  '97': 55,
+  '98': 50,
+  '99': 45,
+  '910': 40,
+  '911': 37,
+  '912': 34,
+  '104': 75,
+  '105': 70,
+  '106': 65,
+  '107': 60,
+  '108': 55,
+  '109': 50,
+  '1010': 45,
+  '1011': 42,
+  '1012': 38,
+  '114': 77,
+  '115': 73,
+  '116': 68,
+  '117': 63,
+  '118': 59,
+  '119': 55,
+  '1110': 50,
+  '1111': 46,
+  '1112': 42,
+  '124': 79,
+  '125': 75,
+  '126': 71,
+  '127': 67,
+  '128': 63,
+  '129': 59,
+  '1210': 54,
+  '1211': 50,
+  '1212': 46,
+}
 
-export function set_up_rng() {
-  const seed = 100000000000000 * (socket.gettime() % 1)
+export function set_up_rng(s?: number) {
+  const seed = s != null ? s : 100000000000000 * (socket.gettime() % 1)
   math.randomseed(seed)
   for (let i = 20; i-- !== 0; ) {
     math.random()
@@ -26,10 +110,6 @@ export function flip_coin() {
 }
 
 export function roll_dice(num_sides = 6, num_dice = 1, modifier = 0) {
-  // num_dice = num_dice | 1
-  //num_sides = num_sides | 6
-  //modifier = modifier | 0
-
   let result = modifier
 
   for (let i = num_dice; i-- !== 0; ) {
@@ -57,12 +137,12 @@ export function rollSpecialDice(
   let replace_id = null
 
   for (let i = num_dice; i-- !== 0; ) {
-    roll = roll_dice(1, num_sides)
+    roll = roll_dice(num_sides, 1)
 
     num_rolls = rolls.length
 
     if (num_rolls < num_results) {
-      table.insert(rolls, roll)
+      rolls.push(roll)
     } else if (advantage) {
       replace_value = num_sides
       replace_id = null

@@ -46,7 +46,7 @@ function load_storage() {
   params.ani = 'luggage02'
   msg.post('/luggageother#storage', 'load_storage_inventory', params)
 
-  msg.post('phonebooth#station', 'loadActor', { roomName: 'grounds' })
+  msg.post('/phone#station', 'loadActor', { roomName: 'grounds' })
 }
 
 export function on_message(

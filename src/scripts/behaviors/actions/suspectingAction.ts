@@ -225,14 +225,25 @@ export default class SuspectingAction extends Action {
           'has phone-ing on::',
           this.perp.name
         )
-        this.a.addToBehavior(
-          'active',
-          new PhoneSequence(
-            this.a.getBehaviorProps.bind(this.a),
-            this.perp.getBehaviorProps('helper') as HelperProps,
-            this.cause
+        if (this.a.currRoom == 'security') {
+          this.a.addToBehavior(
+            'active',
+            new SnitchSequence(
+              this.a.getBehaviorProps.bind(this.a),
+              this.perp.getBehaviorProps('helper') as HelperProps,
+              this.cause
+            )
           )
-        )
+        } else {
+          this.a.addToBehavior(
+            'active',
+            new PhoneSequence(
+              this.a.getBehaviorProps.bind(this.a),
+              this.perp.getBehaviorProps('helper') as HelperProps,
+              this.cause
+            )
+          )
+        }
       } else if (consequence.type == 'jailed') {
         this.perp.updateFromBehavior('turnPriority', 97)
         print(

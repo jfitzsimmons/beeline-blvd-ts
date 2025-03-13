@@ -25,6 +25,7 @@ export default class HelperSequence extends Sequence {
     this.a = props
     this.getProps = getProps
     this.victim = victim
+    print('helperSEQUENCE::: NEWNEWNEW::', this.a.name, ':', this.victim)
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
@@ -33,7 +34,8 @@ export default class HelperSequence extends Sequence {
       if (proceed === 'continue') {
         this.a.addToBehavior(
           'active',
-          new HelperSequence(this.getProps, this.victim)
+          new HelperSequence(this.getProps, this.victim),
+          true
         )
         this.a.addToBehavior(
           'place',
