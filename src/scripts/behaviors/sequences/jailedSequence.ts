@@ -8,6 +8,7 @@ import PlaceSequence from './placeSequence'
 export default class JailedSequence extends Sequence {
   a: InfirmedProps
   prevClearance: number
+  incidents: number
   getProps: GetProps
 
   constructor(getProps: GetProps) {
@@ -21,6 +22,17 @@ export default class JailedSequence extends Sequence {
     this.prevClearance = this.a.clearance
     this.a.updateFromBehavior('clearance', 4)
     this.a.updateFromBehavior('turnPriority', 98)
+    this.incidents = 0
+  }
+  update() {
+    print(
+      'Jailed Sequence:: Update: Sentence extended for: name, cooldown, incidents:',
+      this.a.name,
+      this.a.cooldown,
+      this.incidents
+    )
+    this.a.cooldown = this.a.cooldown + 8
+    this.incidents++
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {

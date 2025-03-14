@@ -6,7 +6,8 @@ import Sequence from '../sequence'
 
 export default class ArrestSequence extends Sequence {
   a: InfirmProps
-  constructor(getProps: GetProps) {
+  pauseTurns: number
+  constructor(getProps: GetProps, pauseTurns = 0) {
     const placeActions: Action[] = []
 
     placeActions.push(
@@ -16,8 +17,10 @@ export default class ArrestSequence extends Sequence {
     super(placeActions)
     this.a = getProps('infirm') as InfirmProps
     this.a.updateFromBehavior('turnPriority', 97)
+    this.pauseTurns = pauseTurns
   }
   run(): 'REMOVE' | '' {
+    if (this.pauseTurns > 0) return ''
     for (const child of this.children) {
       child.run()()
     }

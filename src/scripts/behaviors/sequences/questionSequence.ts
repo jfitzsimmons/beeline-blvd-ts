@@ -1,15 +1,8 @@
-import {
-  // ActionProps,
-  //  AnnouncerProps,
-  //  BehaviorKeys,
-  GetProps,
-  QuestionProps,
-} from '../../../types/behaviors'
+import { GetProps, QuestionProps } from '../../../types/behaviors'
 import Action from '../action'
 import QuestionAction from '../actions/questionAction'
 import Sequence from '../sequence'
 import ArrestSequence from './arrestSequence'
-//import RecklessSequence from './recklessSequence'
 
 export default class QuestionSequence extends Sequence {
   a: QuestionProps
@@ -21,12 +14,6 @@ export default class QuestionSequence extends Sequence {
     const turnActions: Action[] = []
     /**
      * testjpf
-     * for clearance/trespass this fires immediately
-     * look to see if target is in room
-     * do they then have a securityplaceaction
-     * What determines how severe to target this person?
-     * do like mendee? docplace
-     * npc.wantedLevel?????
      * creates a new Sequence APB
      * if a security officer meets another secofficer with and apb
      * all security gets and arrest sequence
@@ -64,24 +51,7 @@ export default class QuestionSequence extends Sequence {
       } else if (proceed == 'jailed') {
         const perp = this.perp('question') as QuestionProps
         perp.addToBehavior('place', new ArrestSequence(this.perp))
-      } /**
-      else if (proceed == 'reckless') {
-        const perp = this.perp('announcer') as AnnouncerProps
-        print(
-          'SupectingAction::',
-          this.a.name,
-          'will become reckless about::',
-          perp.name
-        )
-        perp.addToBehavior(
-          'active',
-          new RecklessSequence(
-            this.getProps as (behavior: BehaviorKeys) => ActionProps,
-            perp.getBehaviorProps('announcer') as AnnouncerProps,
-            this.reason
-          )
-        )
-      }**/
+      }
     }
     return 'REMOVE'
   }

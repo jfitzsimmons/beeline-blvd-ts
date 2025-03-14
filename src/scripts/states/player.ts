@@ -153,6 +153,7 @@ export default class WorldPlayer extends ActorState {
             clan: 'hero',
             // love: this.love,
             exitRoom: this.exitRoom,
+            behavior: this.behavior,
             addInvBonus: this.addInvBonus.bind(this),
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
@@ -223,7 +224,7 @@ export default class WorldPlayer extends ActorState {
   }
   private onPlaceExit(): void {
     if (
-      this.clearance + math.random(0, 2) <
+      this.clearance + math.random(0, 1) <
       RoomsInitState[this.currRoom].clearance
     )
       //TESTJPF I think i need to remove player and

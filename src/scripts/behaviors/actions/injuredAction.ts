@@ -10,6 +10,7 @@ import Sequence from '../sequence'
 import HelperSequence from '../sequences/helperSequence'
 import ImmobileSequence from '../sequences/immobileSequence'
 import MenderSequence from '../sequences/menderSequence'
+import ScoutSequence from '../sequences/scoutSequence'
 import MendeeAction from './mendeeAction'
 
 export default class InjuredAction extends Action {
@@ -57,15 +58,17 @@ export default class InjuredAction extends Action {
           // this.a.parent.npcHasTask([helper], [this.a.name]) === null &&
           NpcsInitState[helper].clan !== 'doctors'
         ) {
-          //if not a doctor, create injury caution if haven't already
-          //testjpf probably an ACTION::
-          //TODO NEXT START HERE!!!
-          //   this.a.parent.taskBuilder(helper, 'injury', this.a.name, 'injury')
           const scout = this.a.returnNpc(helper)
-
           scout.addToBehavior(
             'active',
-            new HelperSequence(scout.getBehaviorProps.bind(this), this.a.name)
+            new HelperSequence(scout.getBehaviorProps.bind(scout), this.a.name)
+          )
+          scout.addToBehavior(
+            'place',
+            new ScoutSequence(
+              scout.getBehaviorProps.bind(scout),
+              this.a.currRoom
+            )
           )
           return () =>
             this.continue(

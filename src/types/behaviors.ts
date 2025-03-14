@@ -1,6 +1,6 @@
 import Sequence from '../scripts/behaviors/sequence'
 import NpcState from '../scripts/states/npc'
-import { Traits } from './state'
+import { Behavior, Traits } from './state'
 import { Effect } from './tasks'
 
 export type ActionProps =
@@ -127,6 +127,7 @@ export interface QuestionProps extends DefaultBehaviorProps {
   clan: string
   love: number
   exitRoom: string
+  behavior: Behavior
   addInvBonus(item: string): void
   addOrExtendEffect(effect: Effect): void
   getBehaviorProps(behavior: string): ActionProps

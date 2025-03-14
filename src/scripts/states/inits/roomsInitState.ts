@@ -268,6 +268,38 @@ export const RoomsInitState: { [key: string]: Room } = {
     },
     actors: {},
   },
+  alley5: {
+    matrix: { x: 4, y: 0 },
+    roomName: 'alley5',
+    clearance: 2,
+    swaps: {},
+    stations: {
+      worker1: '',
+      servants1: '',
+      gang: '',
+      loiter2: '',
+      loiter4: '',
+      servants2: '',
+      patrol: '',
+    },
+    actors: {},
+  },
+  alley4: {
+    matrix: { x: 3, y: 0 },
+    roomName: 'alley4',
+    clearance: 2,
+    swaps: {},
+    stations: {
+      worker2: '',
+      servants1: '',
+      gang: '',
+      loiter1: '',
+      loiter3: '',
+      servants2: '',
+      guard: '',
+    },
+    actors: {},
+  },
   alley3: {
     matrix: { x: 2, y: 0 },
     roomName: 'alley3',
@@ -584,7 +616,7 @@ export const RoomsInitState: { [key: string]: Room } = {
 }
 
 export const RoomsInitLayout = [
-  ['alley1', 'alley2', 'alley3', null, null],
+  ['alley1', 'alley2', 'alley3', 'alley4', 'alley5'],
   ['unloading', 'warehouse', 'commonsext', 'storage', 'maintenance'],
   // put a hallway here testjpf!!!
   ['loading', 'lockers', 'commonsint', 'chapel', 'inn1'],
@@ -776,4 +808,6 @@ export const RoomsInitPriority = [
   'dorms',
   'inn1',
   'maintenance',
+  'alley4',
+  'alley5',
 ]

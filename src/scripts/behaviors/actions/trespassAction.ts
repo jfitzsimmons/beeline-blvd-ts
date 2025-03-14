@@ -28,10 +28,9 @@ export default class TrespassAction extends Action {
   }
   run(): { (): void } {
     if (
-      this.isHero == false &&
-      ['utside', '_passe', 'isoner', 'atient'].includes(
-        this.a.currStation.slice(-7, -1)
-      )
+      this.a.turnPriority > 96 ||
+      (this.isHero == false &&
+        ['side', 'asse'].includes(this.a.currStation.slice(-5, -1)))
     )
       return () =>
         this.fail(

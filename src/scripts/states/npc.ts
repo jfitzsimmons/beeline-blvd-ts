@@ -187,6 +187,7 @@ export default class NpcState extends ActorState {
             clan: this.clan,
             love: this.love,
             exitRoom: this.exitRoom,
+            behavior: this.behavior,
             getFocusedRoom: this.parent.getFocusedRoom.bind(this),
             addInvBonus: this.addInvBonus.bind(this),
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
@@ -313,7 +314,7 @@ export default class NpcState extends ActorState {
   }
   private onTurnEnter(): void {
     //  print('NPCCLASS::: onTurnEnter()')
-    this.behavior.active.run()
+    //this.behavior.active.run()
     print(
       'FINISHED:::::: onTurn-ENTER-() ::: b.active.run():: length:',
       this.behavior.active.children.length
@@ -373,10 +374,14 @@ export default class NpcState extends ActorState {
       npcPriorityProps
     )
   }
-  findRoomPlaceStation(t?: { x: number; y: number }, r?: string[]): void {
+  findRoomPlaceStation(
+    t: { x: number; y: number } | undefined = undefined,
+    r: string[] | undefined = undefined
+  ): void {
     const target =
       t !== undefined ? t : RoomsInitState[this.parent.getPlayerRoom()].matrix
     const rooms = r !== undefined ? r : this.makePriorityRoomList(target)
+
     this.exitRoom = this.currRoom
     this.parent.clearStation(this.currRoom, this.currStation, this.name)
     const { chosenRoom, chosenStation } = fillStationAttempt(
