@@ -196,6 +196,18 @@ export default class NpcState extends ActorState {
             ...behaviorDefaults(),
           }
         },
+        announcer: () => {
+          return {
+            clan: this.clan,
+            love: this.love,
+            traits: this.traits,
+            addOrExtendEffect: this.addOrExtendEffect.bind(this),
+            getOccupants: this.parent.getOccupants.bind(this),
+            returnNpc: this.parent.returnNpc.bind(this),
+            getBehaviorProps: this.getBehaviorProps.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
       } as BehaviorProps,
     }
 
@@ -295,16 +307,17 @@ export default class NpcState extends ActorState {
     )
   }
   private onNewExit(): void {
-    this.behavior.active.run()
-    print(
-      'FINISHED:::::: onNew-EXIT-() ::: 1st b.active.run():: length:',
-      this.behavior.active.children.length
-    )
+ 
     // prettier-ignore
     // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', this.currRoom, '| exit:', this.exitRoom, '| name: ', this.name )
   }
   private onTurnEnter(): void {
     //  print('NPCCLASS::: onTurnEnter()')
+    this.behavior.active.run()
+    print(
+      'FINISHED:::::: onTurn-ENTER-() ::: b.active.run():: length:',
+      this.behavior.active.children.length
+    )
   }
   private onTurnUpdate(): void {
     print('NPCSTATE:: FOR::', this.name, 'onTurnUpdate PLACErun')
@@ -314,8 +327,13 @@ export default class NpcState extends ActorState {
     //  print('TURNEXIT ACTIVErun')
   }
   private onActiveEnter(): void {
-    print('NPCSTATE:: FOR::', this.name, 'onActiveEnter ACTIVErun')
     this.behavior.active.run()
+    print(
+      'NPCSTATE:: FOR::',
+      this.name,
+      'onActiveEnter ACTIVErun: length:',
+      this.behavior.active.children.length
+    )
   }
   private onActiveUpdate(): void {}
   private onActiveExit(): void {}
@@ -369,7 +387,8 @@ export default class NpcState extends ActorState {
       this.parent.getStationMap()
     )
     print(
-      'findrooomplacestation:: STATION:::',
+      this.name,
+      '::: findrooomplacestation:: STATION:::',
       chosenRoom,
       chosenStation,
       'exit room:',
@@ -444,6 +463,7 @@ export default class NpcState extends ActorState {
   }
   addOrExtendEffect(e: Effect) {
     //   let ek: keyof typeof this.effects
+    print('EffectAddExtend: ', e.label)
     for (const fx of this.effects) {
       if (e.label === fx.label) {
         fx.turns += 5

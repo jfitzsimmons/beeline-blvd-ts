@@ -138,7 +138,7 @@ export default class World {
   }
   private onFaintExit(): void {}
   private onNewExit(): void {
-    print('WORLDNEWEXIT()!!! set npc-S ACTIVE')
+    //print('WORLDNEWEXIT()!!! set npc-S ACTIVE')
     this.npcs.fsm.setState('active') //each npc gets set to 'active' which runs active behavior from newExit
   }
   private onTurnEnter(): void {

@@ -17,6 +17,7 @@ export type ActionProps =
   | HelperProps
   | QuestionProps
   | DefaultBehaviorProps
+  | AnnouncerProps
 
 export type HeroBehaviorKeys =
   | 'place'
@@ -27,6 +28,7 @@ export type HeroBehaviorKeys =
   | 'infirmed'
   | 'helper'
   | 'question'
+  | 'announcer'
 
 export type BehaviorKeys =
   | 'place'
@@ -41,6 +43,7 @@ export type BehaviorKeys =
   | 'infirmed'
   | 'helper'
   | 'question'
+  | 'announcer'
 
 export interface BehaviorSetters {
   cooldown: (value: number | [string, string]) => void
@@ -62,6 +65,7 @@ export interface HeroBehaviorProps {
   infirmed: () => InfirmedProps
   helper: () => HelperProps
   question: () => QuestionProps | HeroQuestionProps
+  announcer: () => AnnouncerProps
 }
 
 export interface BehaviorProps extends HeroBehaviorProps {
@@ -129,6 +133,15 @@ export interface QuestionProps extends DefaultBehaviorProps {
   getOccupants(r: string): string[]
   getFocusedRoom(): string
   updateInventory(addDelete: 'add' | 'delete', item: string): void
+}
+export interface AnnouncerProps extends DefaultBehaviorProps {
+  traits: Traits
+  clan: string
+  love: number
+  returnNpc(n: string): NpcState
+  addOrExtendEffect(effect: Effect): void
+  getOccupants(r: string): string[]
+  getBehaviorProps(behavior: string): ActionProps
 }
 export interface HeroQuestionProps extends QuestionProps {
   setConfrontation(npc: string, action: string, reason: string): void

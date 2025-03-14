@@ -1,5 +1,6 @@
 import {
   ActionProps,
+  AnnouncerProps,
   BehaviorKeys,
   HelperProps,
   HeroQuestionProps,
@@ -24,6 +25,12 @@ import Storage from '../../states/storage'
 import SnitchSequence from '../sequences/snitchSequence'
 import ArrestSequence from '../sequences/arrestSequence'
 import PhoneSequence from '../sequences/phoneSequence'
+import AnnouncerSequence from '../sequences/announcerSequence'
+//import RecklessSequence from '../sequences/recklessSequence'
+import InjuredSequence from '../sequences/injuredSequence'
+import ImmobileSequence from '../sequences/immobileSequence'
+import ScoutSequence from '../sequences/scoutSequence'
+import QuestionSequence from '../sequences/questionSequence'
 export default class SuspectingAction extends Action {
   a: QuestionProps
   perp: QuestionProps | HeroQuestionProps
@@ -98,7 +105,7 @@ export default class SuspectingAction extends Action {
     }
 
     // prettier-ignore
-    print('Suspectingaction::: consequence after consequence/cause:::',consequence.type,this.cause,'confronter:',this.a.name,'perp:',this.perp.name,'inroom:',this.a.currRoom,this.perp.currRoom,'||| PLAYERROOM:',this.a.getFocusedRoom())
+    print(consequence.type.slice(0, 6),'Suspectingaction::: consequence after consequence/cause:::',consequence.type,this.cause,'confronter:',this.a.name,(this.a.getBehaviorProps('announcer')as AnnouncerProps).hp,'perp:',this.perp.name,(this.perp.getBehaviorProps('announcer')as AnnouncerProps).hp,'inroom:',this.a.currRoom,this.perp.currRoom,'||| PLAYERROOM:',this.a.getFocusedRoom())
     /***
      * testjpf seems here i need conditions that create new
      * sequences for different types of consequences
@@ -112,18 +119,25 @@ export default class SuspectingAction extends Action {
     if (this.isHero == true) {
       const perp = this.perp.getBehaviorProps('question') as HeroQuestionProps
       if (consequence.type == 'snitch') {
-        //testjpf::
-        //new SnitchSequence()
-        //snitch sequence should weight concern lower than theft.
-
-        this.a.addToBehavior(
-          'active',
-          new SnitchSequence(
-            this.getProps,
-            this.perp.getBehaviorProps('helper') as HelperProps,
-            this.cause
+        if (this.a.clan == 'security') {
+          this.a.addToBehavior(
+            'active',
+            new QuestionSequence(
+              this.a.getBehaviorProps.bind(this.a),
+              this.perp.getBehaviorProps.bind(this.perp),
+              this.cause
+            )
           )
-        )
+        } else {
+          this.a.addToBehavior(
+            'active',
+            new SnitchSequence(
+              this.getProps,
+              this.perp.getBehaviorProps('helper') as HelperProps,
+              this.cause
+            )
+          )
+        }
         const params = {
           actorname: this.storage?.name,
           //isNpc: _this.isNpc,
@@ -192,20 +206,35 @@ export default class SuspectingAction extends Action {
       // prettier-ignore
       print("runrun",this.a.name, 'STATION MOVE VIA TASK confront', this.perp.name, 'in', this.a.currRoom)
     }
+
     if (this.isHero === false) {
       if (consequence.type == 'snitch') {
         //testjpf::
         //new SnitchSequence()
         //snitch sequence should weight concern lower than theft.
-
-        this.a.addToBehavior(
-          'active',
-          new SnitchSequence(
-            this.getProps,
-            this.perp.getBehaviorProps('helper') as HelperProps,
-            this.cause
+        if (this.a.clan == 'security') {
+          this.a.addToBehavior(
+            'active',
+            new QuestionSequence(
+              this.getProps,
+              this.perp.getBehaviorProps.bind(this.perp),
+              this.cause
+            )
           )
-        )
+        } else {
+          this.a.addToBehavior(
+            'active',
+            new SnitchSequence(
+              this.getProps,
+              this.perp.getBehaviorProps('helper') as HelperProps,
+              this.cause
+            )
+          )
+          this.a.addToBehavior(
+            'place',
+            new ScoutSequence(this.getProps, this.a.currRoom)
+          )
+        }
         //print('SNITCH:: ', this.storage?.name)
         return () =>
           this.success(
@@ -219,6 +248,7 @@ export default class SuspectingAction extends Action {
           'has phone-ing on::',
           this.perp.name
         )
+
         this.a.addToBehavior(
           'active',
           new PhoneSequence(
@@ -230,7 +260,7 @@ export default class SuspectingAction extends Action {
       } else if (consequence.type == 'jailed') {
         this.perp.updateFromBehavior('turnPriority', 97)
         print(
-          'SsupectingAction::',
+          'SupectingAction::',
           this.a.name,
           'has Arrested::',
           this.perp.name
@@ -238,6 +268,65 @@ export default class SuspectingAction extends Action {
         this.perp.addToBehavior(
           'place',
           new ArrestSequence(this.perp.getBehaviorProps.bind(this.perp))
+        )
+      } else if (consequence.type == 'reckless') {
+        return () => this.continue('reckless')
+      } else if (
+        consequence.type == 'merits' ||
+        consequence.type == 'demerits'
+      ) {
+        print(
+          'SupectingAction::',
+          this.a.name,
+          'will make announcements about::',
+          this.perp.name
+        )
+        this.perp.addToBehavior(
+          'active',
+          new AnnouncerSequence(
+            this.getProps,
+            this.perp.getBehaviorProps('announcer') as AnnouncerProps,
+            consequence.type
+          )
+        )
+      } else if (
+        consequence.type.slice(0, 6) === 'wPunch' &&
+        (this.perp.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
+      ) {
+        print(
+          this.perp.hp,
+          'SuspectingAction::PUNCH perp got punched',
+          this.perp.name,
+          'by',
+          this.a.name
+        )
+        this.perp.addToBehavior(
+          'active',
+          new InjuredSequence(this.perp.getBehaviorProps.bind(this.perp))
+        )
+        this.perp.addToBehavior(
+          'place',
+          new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
+        )
+      } else if (
+        consequence.type.slice(0, 6) === 'sPunch' &&
+        (this.a.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
+      ) {
+        print(
+          this.a.hp,
+          'SuspectingAction::PUNCH WATCHER got punched',
+          this.a.name,
+          'by',
+          this.perp.name
+        )
+
+        this.a.addToBehavior(
+          'active',
+          new InjuredSequence(this.a.getBehaviorProps.bind(this.a))
+        )
+        this.a.addToBehavior(
+          'place',
+          new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
         )
       }
     }
@@ -301,7 +390,7 @@ export default class SuspectingAction extends Action {
 
     //this.a.cooldown = this.a.cooldown + 5
 
-    return () => this.success()
+    return () => this.success('Default')
     //need something that checks response
     //does response need EffectsAction, sequences, something else???
     //testjpf
