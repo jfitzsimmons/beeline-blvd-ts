@@ -52,7 +52,7 @@ export default class SuspectingSequence extends Sequence {
         this.perp.addToBehavior(
           'active',
           new RecklessSequence(
-            this.getProps,
+            this.a.getBehaviorProps.bind(this.a),
             this.perp.getBehaviorProps('announcer') as AnnouncerProps,
             this.cause
           )

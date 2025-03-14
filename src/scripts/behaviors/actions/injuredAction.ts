@@ -116,7 +116,6 @@ export default class InjuredAction extends Action {
         this.a.name
       )
     }
-    // new MenderSequence(this.a.parent.returnNpc(this.doc), this.a.name).run()
     return as instanceof Action ? as.run()() : as.run()
   }
 }

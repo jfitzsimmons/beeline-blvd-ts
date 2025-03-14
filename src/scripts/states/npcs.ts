@@ -201,10 +201,10 @@ export default class WorldNpcs {
           actions.length
         )
       }
-      if (actor.turnPriority == 99) {
-        print('NPCS::: onplaceExit:: InjuredPriority!!! ONSCREEN:', actor.name)
-        actor.behavior.active.run()
-      }
+      //if (actor.turnPriority == 99) {
+      // print('NPCS::: onplaceExit:: InjuredPriority!!! ONSCREEN:', actor.name)
+      //  actor.behavior.active.run()
+      // }
       if (actor.name !== 'player') actor.fsm.setState('onscreen')
 
       /**
