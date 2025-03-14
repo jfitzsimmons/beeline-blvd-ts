@@ -1,8 +1,15 @@
-import { GetProps, QuestionProps } from '../../../types/behaviors'
+import {
+  // ActionProps,
+  //  AnnouncerProps,
+  //  BehaviorKeys,
+  GetProps,
+  QuestionProps,
+} from '../../../types/behaviors'
 import Action from '../action'
 import QuestionAction from '../actions/questionAction'
 import Sequence from '../sequence'
 import ArrestSequence from './arrestSequence'
+//import RecklessSequence from './recklessSequence'
 
 export default class QuestionSequence extends Sequence {
   a: QuestionProps
@@ -54,7 +61,24 @@ export default class QuestionSequence extends Sequence {
       } else if (proceed == 'jailed') {
         const perp = this.perp('question') as QuestionProps
         perp.addToBehavior('place', new ArrestSequence(this.perp))
-      }
+      } /**
+      else if (proceed == 'reckless') {
+        const perp = this.perp('announcer') as AnnouncerProps
+        print(
+          'SupectingAction::',
+          this.a.name,
+          'will become reckless about::',
+          perp.name
+        )
+        perp.addToBehavior(
+          'active',
+          new RecklessSequence(
+            this.getProps as (behavior: BehaviorKeys) => ActionProps,
+            perp.getBehaviorProps('announcer') as AnnouncerProps,
+            this.reason
+          )
+        )
+      }**/
     }
     return 'REMOVE'
   }

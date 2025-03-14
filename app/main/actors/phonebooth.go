@@ -63,7 +63,7 @@ embedded_components {
   }
 }
 embedded_components {
-  id: "screensprite"
+  id: "phone"
   type: "sprite"
   data: "default_animation: \"phonebooth\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"

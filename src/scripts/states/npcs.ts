@@ -11,7 +11,7 @@ import { QuestMethods } from '../../types/tasks'
 import { NpcProps, WorldNpcsArgs } from '../../types/world'
 import { arraymove, shuffle } from '../utils/utils'
 import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
-import { confrontation_check } from './inits/checksFuncs'
+//import { confrontation_check } from './inits/checksFuncs'
 import PlaceSequence from '../behaviors/sequences/placeSequence'
 import Selector from '../behaviors/selector'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
@@ -94,7 +94,6 @@ export default class WorldNpcs {
     return this._all
   }
   private onNewEnter(): void {
-    print('npcsNewEnter')
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
 
@@ -120,8 +119,12 @@ export default class WorldNpcs {
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
       if (npc.hp < 1) {
+        print('newexit injseq', npc.name)
         npc.behavior.active.children.push(
           new InjuredSequence(npc.getBehaviorProps.bind(npc))
+        )
+        npc.behavior.active.children.push(
+          new ImmobileSequence(npc.getBehaviorProps.bind(npc))
         )
       } else if (
         npc.clearance + math.random(0, 1) <
@@ -165,6 +168,8 @@ export default class WorldNpcs {
       const npc = this.all[this.order[i]]
 
       if (npc.hp < 1 && npc.behavior.active.children.length < 1) {
+        print('placeexit injseq', npc.name)
+
         npc.behavior.active.children.push(
           new InjuredSequence(npc.getBehaviorProps.bind(npc))
         )
@@ -196,10 +201,10 @@ export default class WorldNpcs {
           actions.length
         )
       }
-      if (actor.turnPriority == 99) {
-        print('NPCS::: onplaceExit:: InjuredPriority!!! ONSCREEN:', actor.name)
-        actor.behavior.active.run()
-      }
+      //if (actor.turnPriority == 99) {
+      // print('NPCS::: onplaceExit:: InjuredPriority!!! ONSCREEN:', actor.name)
+      //  actor.behavior.active.run()
+      // }
       if (actor.name !== 'player') actor.fsm.setState('onscreen')
 
       /**
@@ -212,8 +217,8 @@ export default class WorldNpcs {
   }
   private onActiveEnter(): void {
     //  this.sort_npcs_by_encounter()
-    print('npcsActiveEnter')
-    this.security()
+    print('ALL NPCS Active')
+    // this.security()
   }
   private onActiveUpdate(): void {
     /**
@@ -269,12 +274,12 @@ export default class WorldNpcs {
     return injured === null ? null : this.all[injured].currRoom
   }
   security() {
-    const cops = this.returnSecurity()
-    for (const cop of cops) {
-      // const stations = RoomsInitState[cop.currRoom].stations
-      //let sKey: keyof typeof stations
-      const target = 'player'
-      /**
+    //const cops = this.returnSecurity()
+    //for (const cop of cops) {
+    // const stations = RoomsInitState[cop.currRoom].stations
+    //let sKey: keyof typeof stations
+    //const target = cop
+    /**
        * for (sKey in stations) {
         target = stations[sKey]
         if (
@@ -288,7 +293,7 @@ export default class WorldNpcs {
           break
         }
         target = 'player'
-      }*/
+      }
       // testjpf need to push trespassSeq to player behavior
       if (
         target == 'player' &&
@@ -298,7 +303,7 @@ export default class WorldNpcs {
       ) {
         this.parent.taskBuilder(cop.name, 'questioning', 'player', 'clearance')
       }
-    }
+    }*/
   }
   getMendingQueue(): string[] {
     return this.mendingQueue

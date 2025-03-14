@@ -380,7 +380,7 @@ instances {
   }
 }
 instances {
-  id: "phonebooth"
+  id: "phone"
   prototype: "/main/actors/phonebooth.go"
   position {
     x: 1350.0

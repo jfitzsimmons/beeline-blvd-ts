@@ -161,6 +161,18 @@ export default class WorldPlayer extends ActorState {
             ...behaviorDefaults(),
           }
         },
+        announcer: () => {
+          return {
+            clan: this.clan,
+            //love: this.love,
+            traits: this.traits,
+            addOrExtendEffect: this.addOrExtendEffect.bind(this),
+            getOccupants: this.parent.getOccupants.bind(this),
+            returnNpc: this.parent.returnNpc.bind(this),
+            getBehaviorProps: this.getBehaviorProps.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
       } as HeroBehaviorProps,
     }
     randomTrait(this.traits.skills, this.traits.binaries)
@@ -201,8 +213,6 @@ export default class WorldPlayer extends ActorState {
     this.updateInventory = this.updateInventory.bind(this)
   }
   private onPlaceEnter(): void {
-    //todo
-    print('<< :: PLAYER-UPDATE-FSM :: >>')
     if (this.behavior.place.children.length < 1)
       this.behavior.place.children.push(
         new PlaceSequence(this.getBehaviorProps.bind(this))
@@ -210,7 +220,6 @@ export default class WorldPlayer extends ActorState {
   }
   private onPlaceUpdate(): void {
     this.behavior.place.run()
-    //this.setRoomInfo()
   }
   private onPlaceExit(): void {
     if (
@@ -326,7 +335,6 @@ export default class WorldPlayer extends ActorState {
   }
   private inventory_init() {
     for (const item of this.inventory) {
-      print('item:::', item)
       this.addInvBonus(item)
     }
   }

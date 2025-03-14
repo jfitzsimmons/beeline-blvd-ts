@@ -55,6 +55,15 @@ function open_inventory(_this: props, actor: string, action: string) {
   const room = rooms.all[player.currRoom]
   if (action == 'open') {
     // station where the watcher will be located
+    print(
+      '111INTERACTGUI:::: OPENINVENTORY333::: Params',
+      _this.npcname,
+      _this.watcher,
+      actor,
+      action,
+      player.currRoom
+    )
+
     const station: string | undefined = room.actors[actor].watcher
     // the actual npc assigned to that station
     if (station != undefined) {

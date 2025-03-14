@@ -17,6 +17,7 @@ export type ActionProps =
   | HelperProps
   | QuestionProps
   | DefaultBehaviorProps
+  | AnnouncerProps
 
 export type HeroBehaviorKeys =
   | 'place'
@@ -27,6 +28,7 @@ export type HeroBehaviorKeys =
   | 'infirmed'
   | 'helper'
   | 'question'
+  | 'announcer'
 
 export type BehaviorKeys =
   | 'place'
@@ -139,6 +141,7 @@ export interface AnnouncerProps extends DefaultBehaviorProps {
   returnNpc(n: string): NpcState
   addOrExtendEffect(effect: Effect): void
   getOccupants(r: string): string[]
+  getBehaviorProps(behavior: string): ActionProps
 }
 export interface HeroQuestionProps extends QuestionProps {
   setConfrontation(npc: string, action: string, reason: string): void

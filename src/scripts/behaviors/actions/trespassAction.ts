@@ -54,6 +54,8 @@ export default class TrespassAction extends Action {
         s.slice(0, 4) === 'secu' &&
         this.a.returnNpc(s).exitRoom == this.a.currRoom
     )
+    //testjpf have other npcs suspect??
+    //confront??
     for (const e of [...new Set([...prevRoom, ...currRoom])]) {
       if (this.isHero === true) print('ISHERO ENFORCERS::', e)
       this.enforcer = this.a.returnNpc(e).getBehaviorProps.bind(this)

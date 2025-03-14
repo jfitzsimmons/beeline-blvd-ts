@@ -67,14 +67,15 @@ export default class InjuredAction extends Action {
             'active',
             new HelperSequence(scout.getBehaviorProps.bind(this), this.a.name)
           )
-          this.continue(
-            'Injur-ED-action:: GoodSamrtian - Add HELPERSequence for:' +
-              scout.name +
-              '| VICTIM:' +
-              this.a.name +
-              ':' +
-              this.a.turnPriority
-          )
+          return () =>
+            this.continue(
+              'Injur-ED-action:: GoodSamrtian - Add HELPERSequence for:' +
+                scout.name +
+                '| VICTIM:' +
+                this.a.name +
+                ':' +
+                this.a.turnPriority
+            )
         } else if (
           NpcsInitState[helper].clan == 'doctors' &&
           math.random() > 0.5
@@ -115,7 +116,6 @@ export default class InjuredAction extends Action {
         this.a.name
       )
     }
-    // new MenderSequence(this.a.parent.returnNpc(this.doc), this.a.name).run()
     return as instanceof Action ? as.run()() : as.run()
   }
 }

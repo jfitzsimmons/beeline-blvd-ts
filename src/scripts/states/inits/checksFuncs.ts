@@ -6,7 +6,7 @@ import {
   removeValuable,
 } from '../../utils/inventory'
 import { fx } from '../../utils/consts'
-import { roll_dice, rollSpecialDice } from '../../utils/dice'
+import { roll_dice, ROLLODDS, rollSpecialDice } from '../../utils/dice'
 import { shuffle, clamp } from '../../utils/utils'
 //import NpcState from '../npc'
 //impor from '../player'
@@ -14,6 +14,7 @@ import { QuestionProps } from '../../../types/behaviors'
 import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
 import Storage from '../storage'
 import { crimeSeverity } from '../../utils/ai'
+//const dt = math.randomseed(os.time())
 
 export const crimeChecks: {
   [key: string]: Array<
@@ -28,7 +29,7 @@ export const crimeChecks: {
     ...shuffle([bribeCheck, targetPunchedCheck, prejudice_check]),
     unlucky_check,
     admirer_check,
-    recklessCheck,
+    // recklessCheck,
     jailtime_check,
   ],
   concern: [
@@ -39,7 +40,7 @@ export const crimeChecks: {
       admirer_check,
       prejudice_check,
       unlucky_check,
-      recklessCheck,
+      //     recklessCheck,
     ]),
     jailtime_check,
   ],
@@ -51,7 +52,7 @@ export const crimeChecks: {
       admirer_check,
       prejudice_check,
       unlucky_check,
-      recklessCheck,
+      //   recklessCheck,
     ]),
     jailtime_check,
   ],
@@ -64,17 +65,17 @@ export const crimeChecks: {
       prejudice_check,
       unlucky_check,
       jailtime_check,
-      recklessCheck,
+      //   recklessCheck,
     ]),
   ],
   pockets: [
     ...shuffle([bribeCheck, targetPunchedCheck, unlucky_check, jailtime_check]),
-    ...shuffle([recklessCheck, pledgeCheck, admirer_check, prejudice_check]),
+    ...shuffle([pledgeCheck, admirer_check, prejudice_check]),
   ],
   assault: [
     jailtime_check,
     ...shuffle([bribeCheck, targetPunchedCheck, unlucky_check]),
-    ...shuffle([admirer_check, prejudice_check, recklessCheck]),
+    ...shuffle([admirer_check, prejudice_check]),
     pledgeCheck,
   ],
 }
@@ -171,6 +172,19 @@ export function npcCommitSnitchCheck(
   */
 //Checks and Helpers
 //effects
+function add_lawful_evil(chkr: QuestionProps, chkd: QuestionProps) {
+  const listener = chkr
+  if (chkd.name != 'player') {
+    const target = chkd
+    const effects_list = ['crimewave', 'devil', 'amped', 'ignorant']
+    const effect: Effect = fx[effects_list[math.random(0, 3)]]
+    if (effect.fx.type == 'opinion') effect.fx.stat = target.clan
+    listener.addOrExtendEffect(effect)
+  } else {
+    listener.love = listener.love - 2
+  }
+  // print('OUTCOMES:: addchaoticgood::', t, 'inspired::', l, 'to be chaoticgood.')
+}
 function add_chaotic_good(chkr: QuestionProps, chkd: QuestionProps) {
   const listener = chkr
   if (chkd.name != 'player') {
@@ -208,6 +222,8 @@ export function chaotic_good_check(
   }
   if (result <= 1) {
     // print('NEVER chaoticgood')
+    add_lawful_evil(chkr, chkd)
+
     return { pass: true, type: 'critical' }
   }
 
@@ -413,7 +429,7 @@ export function predator_check(
   }
   if (result <= 1) {
     // print('NEVER predator')
-    return { pass: true, type: 'predatorcritical' }
+    return { pass: true, type: 'phonesecurity' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -615,9 +631,11 @@ export function suspicious_check(
   }
 
   if (result > 10) {
-    // print('SPECIAL suspicious')
+    print('SPECIAL suspicious')
     //  go_to_jail(suspect)
-    return { pass: true, type: 'suspiciousspecial' }
+    return chkr.clan == 'security'
+      ? { pass: true, type: 'jailed' }
+      : { pass: true, type: 'phonesecurity' }
   }
   if (result <= 1) {
     // print('NEVER suspicious')
@@ -640,12 +658,12 @@ export function seen_check(
   const { skills: ts, binaries: tb } = target.traits
   // const heat = 'heat' in target ? target.heat * 10 : wb.poor_wealthy * -4
 
-  const watcherXp = clamp(
+  const watcherXp: number = clamp(
     Math.round((ws.speed + ws.constitution) / 2 + wb.passiveAggressive * 5),
     4,
     12
   )
-  const targetXp = clamp(
+  const targetXp: number = clamp(
     Math.round(
       ts.stealth + tb.lawlessLawful * -5 - crimeSeverity[target.crime]
     ),
@@ -657,8 +675,11 @@ export function seen_check(
     ts.speed - wb.lawlessLawful * 10 > ws.stealth + ws.perception
 
   //const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
+  //set_up_rng()
   const result = rollSpecialDice(targetXp, advantage)
-  const seen = result < roll_dice(watcherXp)
+  const wres = roll_dice(watcherXp)
+  const seen = result <= wres
+
   print(
     target.name,
     watcher.name,
@@ -670,7 +691,19 @@ export function seen_check(
     targetXp,
     'RESULT,SEEN:',
     result,
+    wres,
     seen
+  )
+  print(
+    'SEENCHECK PROBABILITY:::!!!:::',
+    ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`]
+  )
+  print(
+    'SEENCHECK wtih dvantagg:::',
+    advantage === true
+      ? ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] +
+          ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2
+      : ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2
   )
   if (result > 11) return { confront: false, type: 'seenspecial' }
   if (result < 2) return { confront: true, type: 'seen' }
@@ -855,6 +888,17 @@ export function npcStealCheck(
     tr,
     'RESULT:',
     result
+  )
+  print(
+    'StealCHECK PROBABILITY:::!!!:::',
+    ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`]
+  )
+  print(
+    'StealCHECK wtih dvantagg:::',
+    advantage === true
+      ? ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] +
+          ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2
+      : ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2
   )
   if (result === false) return 'failed'
 
