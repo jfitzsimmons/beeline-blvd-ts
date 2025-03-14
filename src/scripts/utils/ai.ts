@@ -75,6 +75,7 @@ export function fillStationAttempt(
           break
         }
       }
+      //print('CHOSENROOM AI:: ', room, npc)
       if (placed == true) break
     }
 

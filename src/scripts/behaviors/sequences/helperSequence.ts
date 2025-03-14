@@ -40,13 +40,14 @@ export default class HelperSequence extends Sequence {
           new HelperSequence(this.getProps, this.victim),
           true
         )
-        this.a.addToBehavior(
-          'place',
-          new ScoutSequence(
-            this.getProps,
-            this.a.returnNpc(this.victim).currRoom
+        if (this.a.behavior.place.children.length < 1)
+          this.a.addToBehavior(
+            'place',
+            new ScoutSequence(
+              this.getProps,
+              this.a.returnNpc(this.victim).currRoom
+            )
           )
-        )
       }
     }
     // print('INJUREDSEQUENCE::: COMPLETE:: Remove?')

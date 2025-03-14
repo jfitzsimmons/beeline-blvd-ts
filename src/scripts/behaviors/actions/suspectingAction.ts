@@ -230,13 +230,14 @@ export default class SuspectingAction extends Action {
               this.cause
             )
           )
-          this.a.addToBehavior(
-            'place',
-            new ScoutSequence(
-              this.a.getBehaviorProps.bind(this.a),
-              this.a.currRoom
+          if (this.a.behavior.place.children.length < 1)
+            this.a.addToBehavior(
+              'place',
+              new ScoutSequence(
+                this.a.getBehaviorProps.bind(this.a),
+                this.a.currRoom
+              )
             )
-          )
         }
         //print('SNITCH:: ', this.storage?.name)
         return () =>

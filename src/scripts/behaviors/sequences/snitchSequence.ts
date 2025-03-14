@@ -53,10 +53,11 @@ export default class SnitchSequence extends Sequence {
           'active',
           new SnitchSequence(this.getProps, this.perp, this.reason)
         )
-        this.a.addToBehavior(
-          'place',
-          new ScoutSequence(this.getProps, this.crimeScene)
-        )
+        if (this.a.behavior.place.children.length < 1)
+          this.a.addToBehavior(
+            'place',
+            new ScoutSequence(this.getProps, this.crimeScene)
+          )
       }
     }
     // print('INJUREDSEQUENCE::: COMPLETE:: Remove?')

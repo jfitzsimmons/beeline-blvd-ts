@@ -124,6 +124,7 @@ export default class WorldPlayer extends ActorState {
           return {
             clearance: this.clearance,
             clan: 'hero',
+            behavior: this.behavior,
             returnNpc: this.parent.returnNpc.bind(this),
             getOccupants: this.parent.getOccupants.bind(this),
             exitRoom: this.exitRoom,

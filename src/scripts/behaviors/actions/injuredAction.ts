@@ -63,13 +63,14 @@ export default class InjuredAction extends Action {
             'active',
             new HelperSequence(scout.getBehaviorProps.bind(scout), this.a.name)
           )
-          scout.addToBehavior(
-            'place',
-            new ScoutSequence(
-              scout.getBehaviorProps.bind(scout),
-              this.a.currRoom
+          if (scout.behavior.place.children.length < 1)
+            scout.addToBehavior(
+              'place',
+              new ScoutSequence(
+                scout.getBehaviorProps.bind(scout),
+                this.a.currRoom
+              )
             )
-          )
           return () =>
             this.continue(
               'Injur-ED-action:: GoodSamrtian - Add HELPERSequence for:' +

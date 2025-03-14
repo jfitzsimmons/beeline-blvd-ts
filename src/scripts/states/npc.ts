@@ -144,6 +144,7 @@ export default class NpcState extends ActorState {
           return {
             clearance: this.clearance,
             clan: this.clan,
+            behavior: this.behavior,
             returnNpc: this.parent.returnNpc.bind(this),
             getOccupants: this.parent.getOccupants.bind(this),
             addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),

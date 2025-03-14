@@ -168,6 +168,7 @@ export interface InjuredProps extends HeroInjuredProps {
   addAdjustMendingQueue(patient: string): void
 }
 export interface HelperProps extends PlaceProps {
+  behavior: Behavior
   returnNpc(n: string): NpcState
   getOccupants(r: string): string[]
   addAdjustMendingQueue(patient: string): void
