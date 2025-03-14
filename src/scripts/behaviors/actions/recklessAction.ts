@@ -3,6 +3,8 @@ import {
   BehaviorKeys,
   AnnouncerProps,
   QuestionProps,
+  HelperProps,
+  //HelperProps,
 } from '../../../types/behaviors'
 import {
   ignorant_check,
@@ -14,6 +16,9 @@ import {
 
 import { shuffle } from '../../utils/utils'
 import Action from '../action'
+import PhoneSequence from '../sequences/phoneSequence'
+import QuestionSequence from '../sequences/questionSequence'
+import SnitchSequence from '../sequences/snitchSequence'
 
 export default class RecklessAction extends Action {
   a: AnnouncerProps
@@ -62,8 +67,45 @@ export default class RecklessAction extends Action {
           listener.getBehaviorProps('announcer') as QuestionProps
         )
         // prettier-ignore
-        // print(i, '-- buildconsequence::: ARGCHECKS::', consolation.pass, consolation.type, checked, checker)
-        if (consequence.pass == true) return () => this.continue(`RecklessACtion:: found for: ${this.a.name} against ${listener.name} inspired by ${this.inspirer.name}::: ${consequence.type}`)
+        // // print(i, '-- buildconsequence::: ARGCHECKS::', consolation.pass, consolation.type, checked, checker)
+        if (consequence.type == 'phonesecurity') {
+          if (this.a.clan == 'security') {
+            this.a.addToBehavior(
+              'active',
+              new QuestionSequence(
+                this.a.getBehaviorProps.bind(this.a),
+                this.inspirer.getBehaviorProps.bind(this.inspirer),
+                this.cause
+              )
+            )
+          }
+          else if (this.a.currRoom == 'security') {
+            this.a.addToBehavior(
+              'active',
+              new SnitchSequence(
+                this.a.getBehaviorProps.bind(this.a),
+                this.inspirer.getBehaviorProps('helper') as HelperProps,
+                this.cause
+              )
+            )
+          } else {
+            this.a.addToBehavior(
+              'active',
+              new PhoneSequence(
+                this.a.getBehaviorProps.bind(this.a),
+                this.inspirer.getBehaviorProps('helper') as HelperProps,
+                this.cause
+              )
+            )
+          }
+        }
+
+        if (consequence.pass == true) {
+          return () =>
+            this.continue(
+              `RecklessACtion:: found for: ${this.a.name} against ${listener.name} inspired by ${this.inspirer.name}::: ${consequence.type}`
+            )
+        }
       }
     }
 
@@ -79,7 +121,7 @@ export default class RecklessAction extends Action {
       )
   }
   continue(s: string): string {
-    print('AnnouncerAction:: Continue:', s)
+    print('RecklessAction:: Continue:', s)
     return 'continue'
   }
 }

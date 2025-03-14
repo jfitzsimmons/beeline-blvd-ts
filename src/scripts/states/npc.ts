@@ -204,6 +204,7 @@ export default class NpcState extends ActorState {
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
             getOccupants: this.parent.getOccupants.bind(this),
             returnNpc: this.parent.returnNpc.bind(this),
+            getBehaviorProps: this.getBehaviorProps.bind(this),
             ...behaviorDefaults(),
           }
         },

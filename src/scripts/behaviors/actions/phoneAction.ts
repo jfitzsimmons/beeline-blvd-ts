@@ -5,6 +5,7 @@ import {
 } from '../../../types/behaviors'
 import { security } from '../../utils/consts'
 import Action from '../action'
+import QuestionSequence from '../sequences/questionSequence'
 //testjpf need busy check to
 // see if someone is at the phone
 export default class PhoneAction extends Action {
@@ -27,6 +28,7 @@ export default class PhoneAction extends Action {
     this.a.updateFromBehavior('turnPriority', 96)
   }
   run(): { (): void } {
+    if (this.a.currRoom == 'security') return () => this.continue('busy')
     if (this.a.currRoom == this.a.getFocusedRoom()) {
       msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
         station: 'phone',
@@ -36,19 +38,39 @@ export default class PhoneAction extends Action {
       print(this.a.name, 'STATION MOVE VIA  PHONeACTION in', this.a.currRoom)
     }
 
-    const callConnected = Object.values(this.a.getOccupants('security')).some(
+    const callConnected = Object.values(this.a.getOccupants('security')).filter(
       (o) => security.includes(o)
     )
 
-    return callConnected === true && math.random() > 0.5
-      ? () =>
-          this.success(
-            `${this.a.name} Call connected PHONeACTION in ${this.a.currRoom}`
+    if (callConnected.length > 0 && math.random() > 0.5) {
+      for (const c of callConnected) {
+        const cop = this.a.returnNpc(c)
+        if (cop.turnPriority < 96) {
+          //const perp = this.getProps('question') as QuestionProps
+          cop.addToBehavior(
+            'active',
+            new QuestionSequence(
+              cop.getBehaviorProps.bind(cop),
+              this.getProps,
+              this.reason
+            )
           )
-      : () =>
-          this.continue(
-            `${this.a.name} PHONeACTION still waiting for security to pick up ${this.a.currRoom}`
-          )
+          return () =>
+            this.success(
+              `${this.a.name} Call connected PHONeACTION in ${this.a.currRoom}`
+            )
+        }
+      }
+    } else {
+      return () =>
+        this.continue(
+          `${this.a.name} PHONeACTION still waiting for security to pick up ${this.a.currRoom}`
+        )
+    }
+    return () =>
+      this.continue(
+        `${this.a.name} PHONeACTION no suitable Security to pick up ${this.a.currRoom}`
+      )
   }
   continue(s: string): string {
     print('PhoneAction:: Continue:', s)

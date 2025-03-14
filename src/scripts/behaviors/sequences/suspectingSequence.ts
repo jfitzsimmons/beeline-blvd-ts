@@ -1,5 +1,6 @@
 import {
   ActionProps,
+  AnnouncerProps,
   BehaviorKeys,
   QuestionProps,
 } from '../../../types/behaviors'
@@ -7,6 +8,8 @@ import Storage from '../../states/storage'
 import Action from '../action'
 import SuspectingAction from '../actions/suspectingAction'
 import Sequence from '../sequence'
+import RecklessSequence from './recklessSequence'
+
 // TESTJPF
 //TODO NEED SuspectingPlayerAction
 export default class SuspectingSequence extends Sequence {
@@ -14,6 +17,7 @@ export default class SuspectingSequence extends Sequence {
   perp: QuestionProps
   getProps: (behavior: BehaviorKeys) => ActionProps
   cause: string
+  isHero: boolean
   storage?: Storage
   constructor(
     getProps: (behavior: BehaviorKeys) => ActionProps,
@@ -31,12 +35,29 @@ export default class SuspectingSequence extends Sequence {
     this.getProps = getProps
     this.storage = storage
     this.cause = cause
+    this.isHero = this.perp.name === 'player' ? true : false
 
     print('NEW: SuspectingSeq::', this.a.name, 'Suspecting:', this.perp.name)
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
-      child.run()()
+      const proceed = child.run()()
+      if (proceed === 'reckless') {
+        print(
+          'SupectingAction::',
+          this.a.name,
+          'will become reckless about::',
+          this.perp.name
+        )
+        this.perp.addToBehavior(
+          'active',
+          new RecklessSequence(
+            this.getProps,
+            this.perp.getBehaviorProps('announcer') as AnnouncerProps,
+            this.cause
+          )
+        )
+      }
     }
     return 'REMOVE'
   }

@@ -29,7 +29,7 @@ export const crimeChecks: {
     ...shuffle([bribeCheck, targetPunchedCheck, prejudice_check]),
     unlucky_check,
     admirer_check,
-    recklessCheck,
+    // recklessCheck,
     jailtime_check,
   ],
   concern: [
@@ -40,7 +40,7 @@ export const crimeChecks: {
       admirer_check,
       prejudice_check,
       unlucky_check,
-      recklessCheck,
+      //     recklessCheck,
     ]),
     jailtime_check,
   ],
@@ -52,7 +52,7 @@ export const crimeChecks: {
       admirer_check,
       prejudice_check,
       unlucky_check,
-      recklessCheck,
+      //   recklessCheck,
     ]),
     jailtime_check,
   ],
@@ -65,17 +65,17 @@ export const crimeChecks: {
       prejudice_check,
       unlucky_check,
       jailtime_check,
-      recklessCheck,
+      //   recklessCheck,
     ]),
   ],
   pockets: [
     ...shuffle([bribeCheck, targetPunchedCheck, unlucky_check, jailtime_check]),
-    ...shuffle([recklessCheck, pledgeCheck, admirer_check, prejudice_check]),
+    ...shuffle([pledgeCheck, admirer_check, prejudice_check]),
   ],
   assault: [
     jailtime_check,
     ...shuffle([bribeCheck, targetPunchedCheck, unlucky_check]),
-    ...shuffle([admirer_check, prejudice_check, recklessCheck]),
+    ...shuffle([admirer_check, prejudice_check]),
     pledgeCheck,
   ],
 }
@@ -172,6 +172,19 @@ export function npcCommitSnitchCheck(
   */
 //Checks and Helpers
 //effects
+function add_lawful_evil(chkr: QuestionProps, chkd: QuestionProps) {
+  const listener = chkr
+  if (chkd.name != 'player') {
+    const target = chkd
+    const effects_list = ['crimewave', 'devil', 'amped', 'ignorant']
+    const effect: Effect = fx[effects_list[math.random(0, 3)]]
+    if (effect.fx.type == 'opinion') effect.fx.stat = target.clan
+    listener.addOrExtendEffect(effect)
+  } else {
+    listener.love = listener.love - 2
+  }
+  // print('OUTCOMES:: addchaoticgood::', t, 'inspired::', l, 'to be chaoticgood.')
+}
 function add_chaotic_good(chkr: QuestionProps, chkd: QuestionProps) {
   const listener = chkr
   if (chkd.name != 'player') {
@@ -209,6 +222,8 @@ export function chaotic_good_check(
   }
   if (result <= 1) {
     // print('NEVER chaoticgood')
+    add_lawful_evil(chkr, chkd)
+
     return { pass: true, type: 'critical' }
   }
 
@@ -414,7 +429,7 @@ export function predator_check(
   }
   if (result <= 1) {
     // print('NEVER predator')
-    return { pass: true, type: 'predatorcritical' }
+    return { pass: true, type: 'phonesecurity' }
   }
 
   return { pass: false, type: 'neutral' }
