@@ -9,13 +9,11 @@ import {
 import { confrontation_check } from '../../states/inits/checksFuncs'
 import Action from '../action'
 import QuestionSequence from '../sequences/questionSequence'
-//import QuestionSequence from '../sequences/questionSequence'
 
 export default class TrespassAction extends Action {
   a: InjuredProps | HeroInjuredProps
   isHero: boolean
   enforcer: null | { (behavior: BehaviorKeys): ActionProps }
-
   getProps: GetProps
   constructor(getProps: GetProps) {
     const props = getProps('injured')

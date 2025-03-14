@@ -241,7 +241,6 @@ export default class SuspectingAction extends Action {
             `SuspectingACtion::: success: NPC:SNITCH: cause concolation:${this.cause} | ${consequence.type} || ${this.a.name} | ${this.perp.name}`
           )
       } else if (consequence.type === 'phonesecurity') {
-        // this.perp.updateFromBehavior('turnPriority', 97)
         print(
           'SuspectingAction::',
           this.a.name,

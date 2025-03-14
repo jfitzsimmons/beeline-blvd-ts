@@ -36,7 +36,7 @@ export default class SnitchAction extends Action {
 
     for (const c of [...new Set([...prevRoom, ...currRoom])]) {
       const cop = this.a.returnNpc(c)
-      if (cop.turnPriority < 96 && math.random() > 0.1) {
+      if (cop.turnPriority < 97 && math.random() > 0.1) {
         //available doctor found
         // this.a.addAdjustMendingQueue(this.perp.name)
         print(

@@ -20,7 +20,7 @@ export default class JailedSequence extends Sequence {
     this.a = props
     this.prevClearance = this.a.clearance
     this.a.updateFromBehavior('clearance', 4)
-    this.a.updateFromBehavior('turnPriority', 97)
+    this.a.updateFromBehavior('turnPriority', 98)
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {

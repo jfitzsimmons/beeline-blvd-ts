@@ -400,7 +400,7 @@ export default class NpcState extends ActorState {
     this.matrix = RoomsInitState[chosenRoom].matrix
     this.parent.setStation(chosenRoom, chosenStation, this.name)
     //this.parent.pruneStationMap(chosenRoom, chosenStation)
-
+    if (this.turnPriority > 93) return
     if (chosenRoom != this.parent.getPlayerRoom()) {
       this.turnPriority = this.turnPriority + 1
     } else {

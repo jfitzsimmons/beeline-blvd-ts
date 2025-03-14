@@ -206,13 +206,6 @@ export default class WorldNpcs {
       //  actor.behavior.active.run()
       // }
       if (actor.name !== 'player') actor.fsm.setState('onscreen')
-
-      /**
-       * I', leaning on a fsm state onscreen
-       * that way ican move active run on npc
-       * from turn exit to active enter
-       * and i can add it to onscreen exit
-       */
     }
   }
   private onActiveEnter(): void {

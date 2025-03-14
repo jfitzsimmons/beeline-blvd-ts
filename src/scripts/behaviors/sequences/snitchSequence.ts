@@ -40,8 +40,11 @@ export default class SnitchSequence extends Sequence {
       'in',
       this.crimeScene
     )
+    this.a.updateFromBehavior('turnPriority', 94)
   }
   run(): 'REMOVE' | '' {
+    this.a.updateFromBehavior('turnPriority', 94)
+
     for (const child of this.children) {
       const proceed = child.run()()
       print('SnitchSEQUENCE::: Proceed::', this.a.name, ':', proceed)

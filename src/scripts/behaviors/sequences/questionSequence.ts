@@ -47,8 +47,11 @@ export default class QuestionSequence extends Sequence {
     this.perp = perp
     this.getProps = getProps
     this.reason = reason
+    this.a.updateFromBehavior('turnPriority', 95)
   }
   run(): 'REMOVE' | '' {
+    this.a.updateFromBehavior('turnPriority', 95)
+
     for (const child of this.children) {
       const proceed = child.run()()
       print('QuestionSEQUENCE::: Proceed::', this.a.name, ':', proceed)

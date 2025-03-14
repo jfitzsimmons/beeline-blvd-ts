@@ -10,7 +10,7 @@ export default class MedicPlaceAction extends Action {
     this.a = props as MedicPlaceProps
   }
   run(): { (): void } {
-    const mobile = this.a.turnPriority < 90
+    const mobile = this.a.turnPriority < 96
     const infirmed = this.a.getWards('infirmary').length
 
     if (this.a.cooldown > 0) this.a.cooldown = this.a.cooldown - 1

@@ -14,6 +14,15 @@ export function isNpc(a: ActorState | ActionProps): a is NpcState {
   return a.name !== 'player'
 }
   */
+export const turnPriorityLookup = {
+  99: [],
+  98: ['infirmed', 'injured', 'mendee', 'jailed'], // :: IMMOBILE
+  97: ['mender', 'infirm', 'arrest'], //:: Emergency Response?
+  96: ['phone'],
+  95: ['question'],
+  94: ['announcer', 'reckless', 'snitch', 'helper', 'suspecting'],
+  93: ['trespass'],
+}
 export const crimeSeverity: { [key: string]: number } = {
   clearance: 0,
   concern: 0,

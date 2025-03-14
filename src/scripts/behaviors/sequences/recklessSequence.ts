@@ -29,7 +29,7 @@ export default class RecklessSequence extends Sequence {
     this.inspirer.cooldown = 3
     this.purpose = purpose
     this.getProps = getProps
-    this.a.updateFromBehavior('turnPriority', 93)
+    this.a.updateFromBehavior('turnPriority', 94)
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {

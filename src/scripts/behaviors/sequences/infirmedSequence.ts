@@ -25,11 +25,8 @@ export default class InfirmedSequence extends Sequence {
     this.prevClearance = this.a.clearance
     this.a.updateFromBehavior('turnPriority', 98)
     this.a.updateFromBehavior('clearance', 4)
-    // this.a.clearance = 4
   }
   run(): 'REMOVE' | '' {
-    // this.a.updateFromBehavior('turnPriority', 98)
-
     for (const child of this.children) {
       const proceed = child.run()()
       if (proceed === 'continue') {

@@ -20,7 +20,7 @@ export default class MendeeSequence extends Sequence {
     super(turnActions)
     this.a = props
     this.getProps = getProps
-    this.a.updateFromBehavior('turnPriority', 99)
+    this.a.updateFromBehavior('turnPriority', 98)
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {

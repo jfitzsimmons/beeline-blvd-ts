@@ -107,7 +107,7 @@ export default class InjuredAction extends Action {
   alternate(as: Action | Sequence): string | void {
     if (this.doc != null) {
       const doc = this.doc('mender') as MenderProps
-      doc.updateFromBehavior('turnPriority', 98)
+      doc.updateFromBehavior('turnPriority', 97)
       doc.addToBehavior('active', new MenderSequence(this.doc, this.a))
       doc.addToBehavior('place', new ImmobileSequence(this.doc))
       print(
