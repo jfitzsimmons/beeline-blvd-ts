@@ -143,7 +143,7 @@ export function set_room_priority(
     clearance: number
   }
 ): string[] {
-  const room_list: (string | null)[] = []
+  const room_list: string[] = []
   //get list of possible rooms NPC could go to next in order to get to target
   if (target.y > npc.matrix.y) {
     room_list.push(RoomsInitLayout[npc.matrix.y + 1][npc.matrix.x])
@@ -188,21 +188,19 @@ export function set_room_priority(
   }
 
   room_list.push(RoomsInitLayout[npc.home.y][npc.home.x])
-  const filteredArray: string[] = room_list
-    .filter((s): s is string => s != null)
-    .sort(function (a, b) {
-      if (
-        RoomsInitState[a].clearance > npc.clearance &&
-        RoomsInitState[b].clearance <= npc.clearance
-      )
-        return 1
-      if (
-        RoomsInitState[b].clearance > npc.clearance &&
-        RoomsInitState[a].clearance <= npc.clearance
-      )
-        return -1
-      return 0
-    })
+  const filteredArray: string[] = [...new Set(room_list)].sort(function (a, b) {
+    if (
+      RoomsInitState[a].clearance > npc.clearance &&
+      RoomsInitState[b].clearance <= npc.clearance
+    )
+      return 1
+    if (
+      RoomsInitState[b].clearance > npc.clearance &&
+      RoomsInitState[a].clearance <= npc.clearance
+    )
+      return -1
+    return 0
+  })
 
   return filteredArray
 }

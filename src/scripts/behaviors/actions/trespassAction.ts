@@ -62,7 +62,21 @@ export default class TrespassAction extends Action {
         math.random() > 0.2 &&
         confrontation_check(enforcer.traits, this.a.traits) == true
       ) {
-        //const perp = this.getProps('question') as QuestionProps
+        for (const behavior of enforcer.behavior.active.children) {
+          if (behavior instanceof QuestionSequence) {
+            behavior.update('clearance')
+            print(
+              'trespassAction::: QuestionSequence extended for:: ',
+              enforcer.name,
+              'by:',
+              this.a.name
+            )
+            return () =>
+              this.continue(
+                `${this.a.name} extend questionUpdate trespassACTION in ${this.a.currRoom}`
+              )
+          }
+        }
         enforcer.addToBehavior(
           'active',
           new QuestionSequence(this.enforcer, this.getProps, 'clearance')

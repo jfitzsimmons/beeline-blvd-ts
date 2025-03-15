@@ -198,11 +198,7 @@ export default class WorldPlayer extends ActorState {
         onUpdate: this.onActiveUpdate.bind(this),
         onExit: this.onActiveExit.bind(this),
       })
-      .addState('confronted', {
-        onEnter: this.onConfrontedEnter.bind(this),
-        onUpdate: this.onConfrontedUpdate.bind(this),
-        onExit: this.onConfrontedExit.bind(this),
-      })
+
     this.addToAlertLevel = this.addToAlertLevel.bind(this)
     this.getPlayerRoom = this.getPlayerRoom.bind(this)
     this.setRoomInfo = this.setRoomInfo.bind(this)
@@ -239,9 +235,7 @@ export default class WorldPlayer extends ActorState {
   private onActiveEnter(): void {}
   private onActiveUpdate(): void {}
   private onActiveExit(): void {}
-  private onConfrontedEnter(): void {}
-  private onConfrontedUpdate(): void {}
-  private onConfrontedExit(): void {}
+
   setRoomInfo() {
     this.ap = this.ap - 1
     this.turns = this.turns + 1

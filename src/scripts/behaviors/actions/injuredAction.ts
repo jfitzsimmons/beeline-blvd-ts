@@ -59,27 +59,36 @@ export default class InjuredAction extends Action {
           NpcsInitState[helper].clan !== 'doctors'
         ) {
           const scout = this.a.returnNpc(helper)
-          scout.addToBehavior(
-            'active',
-            new HelperSequence(scout.getBehaviorProps.bind(scout), this.a.name)
-          )
-          if (scout.behavior.place.children.length < 1)
+          if (
+            !scout.behavior.active.children.some(
+              (c) => c instanceof HelperSequence
+            )
+          ) {
             scout.addToBehavior(
-              'place',
-              new ScoutSequence(
+              'active',
+              new HelperSequence(
                 scout.getBehaviorProps.bind(scout),
-                this.a.currRoom
+                this.a.name
               )
             )
-          return () =>
-            this.continue(
-              'Injur-ED-action:: GoodSamrtian - Add HELPERSequence for:' +
-                scout.name +
-                '| VICTIM:' +
-                this.a.name +
-                ':' +
-                this.a.turnPriority
-            )
+            if (scout.behavior.place.children.length < 1)
+              scout.addToBehavior(
+                'place',
+                new ScoutSequence(
+                  scout.getBehaviorProps.bind(scout),
+                  this.a.currRoom
+                )
+              )
+            return () =>
+              this.continue(
+                'Injur-ED-action:: GoodSamrtian - Add HELPERSequence for:' +
+                  scout.name +
+                  '| VICTIM:' +
+                  this.a.name +
+                  ':' +
+                  this.a.turnPriority
+              )
+          }
         } else if (
           NpcsInitState[helper].clan == 'doctors' &&
           math.random() > 0.5

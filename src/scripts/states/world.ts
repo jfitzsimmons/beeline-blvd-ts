@@ -111,6 +111,7 @@ export default class World {
     this.quests.fsm.setState('new')
 
     //debug defaults
+    /**
     this.tasks.taskBuilder(
       'security004',
       'questioning',
@@ -118,7 +119,7 @@ export default class World {
         ? this.rooms.all.grounds.swaps.guest[1]
         : this.rooms.all.grounds.stations.guest,
       'testing'
-    )
+    )**/
     this.npcs.addIgnore(this.rooms.all.grounds.stations.worker1)
   }
   private onNewUpdate(): void {}
@@ -129,6 +130,9 @@ export default class World {
     this.player.hp = this.player.hpMax - 1
   }
   private onFaintUpdate(): void {
+    //testjpf could probably remove
+    // use placebehavior instead?
+    this.player.setRoomInfo()
     this.player.fsm.update(dt)
     this.rooms.fsm.update(dt)
     this.npcs.fsm.update(dt)

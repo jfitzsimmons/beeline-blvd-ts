@@ -1,5 +1,3 @@
-//const world = require "main.states.worldstate"
-//const utils = require "main.utils.utils"
 const { rooms, npcs } = globalThis.game.world
 interface props {
   actions: { [key: string]: string[] }
@@ -62,12 +60,12 @@ export function on_message(
       msg.post('/shared/adam#interact', 'hidenode', params)
     }
   } else if (messageId == hash('loadStation')) {
-    this.npc = message.npc //this.url = rooms.all[message.roomName].stationurl
+    this.npc = message.npc
     this.roomName = message.roomName
     prep_interaction(this) // combine actor actions
     msg.post('/npc_loader#npc_loader', 'show_npc', { npc: this.npc })
   } else if (messageId == hash('loadActor')) {
-    this.npc = '' //this.url = rooms.all[message.roomName].stationurl
+    this.npc = ''
     this.roomName = message.roomName
     prep_interaction(this) // combine actor actions
     //msg.post('/npc_loader#npc_loader', 'show_npc', { npc: this.npc })

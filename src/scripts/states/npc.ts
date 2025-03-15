@@ -268,32 +268,6 @@ export default class NpcState extends ActorState {
     //  this.sincePlayerConvo = novelUpdates.sincePlayerConvo
     this.love = novelUpdates.love
   }
-  //private onTrespassEnter(): void {
-  /**
-    const hallpass = this.parent.hasHallpass(this.name)
-    if (
-      hallpass != null &&
-      tonumber(hallpass.scope.charAt(hallpass.scope.length - 1))! >=
-        RoomsInitState[this.currRoom].clearance
-    )
-      this.fsm.setState('turn')
-  }
-  private onTrespassUpdate(): void {
-    if (
-      this.clearance + math.random(1, 5) >=
-      RoomsInitState[this.currRoom].clearance
-    )
-      this.fsm.setState('turn')
-    this.parent.clearStation(this.currRoom, this.currStation, this.name)
-    // const target = RoomsInitState[this.parent.getPlayerRoom()].matrix
-    // const rooms = this.makePriorityRoomList(target)
-    print('findRoomPlaceStation TRESPASS')
-
-    this.findRoomPlaceStation()
-  }
-  private onTrespassExit(): void {
-  */
-  //}
   private onArresteeEnter(): void {}
   private onArresteeUpdate(): void {
     //this.cooldown--
@@ -393,6 +367,8 @@ export default class NpcState extends ActorState {
       this.parent.getStationMap()
     )
     print(
+      'ROOMS.LENGTH:!:',
+      rooms.length,
       this.name,
       '::: findrooomplacestation:: STATION:::',
       chosenRoom,

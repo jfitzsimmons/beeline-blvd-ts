@@ -120,6 +120,21 @@ export default class SuspectingAction extends Action {
       const perp = this.perp.getBehaviorProps('question') as HeroQuestionProps
       if (consequence.type == 'snitch') {
         if (this.a.clan == 'security') {
+          for (const behavior of this.a.behavior.active.children) {
+            if (behavior instanceof QuestionSequence) {
+              behavior.update(this.cause)
+              print(
+                'suspectingAction::: QuestionSequence extended for:: ',
+                this.a.name,
+                'about:',
+                this.perp.name
+              )
+              return () =>
+                this.success(
+                  `${this.a.name} extend questionUpdate suspectingsACTION in ${this.a.currRoom}`
+                )
+            }
+          }
           this.a.addToBehavior(
             'active',
             new QuestionSequence(
@@ -129,6 +144,21 @@ export default class SuspectingAction extends Action {
             )
           )
         } else {
+          for (const behavior of this.a.behavior.active.children) {
+            if (behavior instanceof SnitchSequence) {
+              behavior.update(this.cause)
+              print(
+                'suspectingAction::: SnitchSequence extended for:: ',
+                this.a.name,
+                'about:',
+                this.perp.name
+              )
+              return () =>
+                this.success(
+                  `${this.a.name} extend snitchUpdate suspectingsACTION in ${this.a.currRoom}`
+                )
+            }
+          }
           this.a.addToBehavior(
             'active',
             new SnitchSequence(
@@ -390,8 +420,6 @@ export default class SuspectingAction extends Action {
         `SuspectingAction::: Failed:: ${this.a.name} was neutral and had no effect on ${this.perp.name}`
       )
     }
-
-    //this.a.cooldown = this.a.cooldown + 5
 
     return () => this.success('Default')
     //need something that checks response

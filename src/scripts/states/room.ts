@@ -41,11 +41,6 @@ export default class RoomState {
         onUpdate: this.onFocusUpdate.bind(this),
         onExit: this.onFocusEnd.bind(this),
       })
-      .addState('blur', {
-        onEnter: this.onBlurEnter.bind(this),
-        onUpdate: this.onBlurUpdate.bind(this),
-        onExit: this.onBlurExit.bind(this),
-      })
     this.fsm.setState('turn')
   }
   private onFocusStart(): void {
@@ -57,8 +52,10 @@ export default class RoomState {
     this.roomName as keyof typeof aiActions
     if (this.roomName in aiActions)
       aiActions[this.roomName as keyof typeof aiActions].bind(this)()
+    this.fsm.setState('turn')
   }
   private onFocusEnd(): void {}
+  /**
   private onBlurEnter(): void {}
   private onBlurUpdate(): void {
     this.roomName as keyof typeof aiActions
@@ -67,6 +64,7 @@ export default class RoomState {
     this.fsm.setState('turn')
   }
   private onBlurExit(): void {}
+  **/
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {
     this.roomName as keyof typeof aiActions

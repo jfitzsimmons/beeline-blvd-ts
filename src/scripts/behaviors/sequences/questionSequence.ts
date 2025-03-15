@@ -1,4 +1,5 @@
 import { GetProps, QuestionProps } from '../../../types/behaviors'
+import { crimeSeverity } from '../../utils/ai'
 import Action from '../action'
 import QuestionAction from '../actions/questionAction'
 import Sequence from '../sequence'
@@ -9,6 +10,7 @@ export default class QuestionSequence extends Sequence {
   perp: GetProps
   getProps: GetProps
   reason: string
+  incidents = 0
   constructor(getProps: GetProps, perp: GetProps, reason: string) {
     const props = getProps('question') as QuestionProps
     const turnActions: Action[] = []
@@ -35,6 +37,18 @@ export default class QuestionSequence extends Sequence {
     this.getProps = getProps
     this.reason = reason
     this.a.updateFromBehavior('turnPriority', 95)
+    this.a.cooldown = 10
+  }
+  update(reason: string) {
+    print(
+      'QuestionSequence:: Update: Crime Spree for: name, incidents:',
+      this.a.name,
+      this.incidents,
+      this.a.cooldown
+    )
+    if (crimeSeverity[reason] > crimeSeverity[this.reason]) this.reason = reason
+    this.incidents++
+    this.a.cooldown = this.a.cooldown + 12
   }
   run(): 'REMOVE' | '' {
     this.a.updateFromBehavior('turnPriority', 95)
@@ -43,16 +57,19 @@ export default class QuestionSequence extends Sequence {
       const proceed = child.run()()
       print('QuestionSEQUENCE::: Proceed::', this.a.name, ':', proceed)
       if (proceed === 'continue') {
-        this.a.addToBehavior(
-          'active',
-          new QuestionSequence(this.getProps, this.perp, this.reason),
-          true
-        )
+        this.a.cooldown--
       } else if (proceed == 'jailed') {
         const perp = this.perp('question') as QuestionProps
         perp.addToBehavior('place', new ArrestSequence(this.perp))
+        this.a.cooldown = 0
+      } else {
+        this.a.cooldown = 0
       }
     }
-    return 'REMOVE'
+    if (this.a.cooldown < 1) {
+      print('QuestionSequence:: should remove seq for', this.a.name)
+      return 'REMOVE'
+    }
+    return ''
   }
 }

@@ -2,7 +2,7 @@ import { url } from '../types/utils'
 
 const game = globalThis.game
 const { world } = game
-const { rooms, player } = world
+const { rooms } = world
 
 interface props {
   inGame: boolean
@@ -59,7 +59,8 @@ export function on_message(
     print(
       '000 --- === ::: NEW ROOM LOADING ::: === --- 000',
       this.isPaused,
-      this.loadType
+      this.loadType,
+      this.roomName
     )
     show(this.currentProxy, '#' + this.roomName)
     msg.post('#', 'acquire_input_focus')
@@ -72,7 +73,7 @@ export function on_message(
         roomName: this.roomName,
         loadType: this.loadType,
       }
-      rooms.all[player.currRoom].fsm.setState('blur')
+      //rooms.all[player.currRoom].fsm.setState('blur')
       rooms.all[this.roomName].fsm.setState('focus')
 
       msg.post(

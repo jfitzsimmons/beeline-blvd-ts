@@ -216,7 +216,8 @@ export default class QuestionAction extends Action {
     print('QuestionAction:: Continue:', s)
     return 'continue'
   }
-  success(s?: string) {
+  success(s?: string): string {
     print('QuestionAction:: Success:', s)
+    return 'success'
   }
 }
