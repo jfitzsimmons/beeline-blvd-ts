@@ -59,6 +59,7 @@ export default class NpcState extends ActorState {
         turnPriority: this.turnPriority,
         currRoom: this.currRoom,
         currStation: this.currStation,
+        behavior: this.behavior,
         addToBehavior: this.addToBehavior.bind(this),
         hp: this.hp,
         updateFromBehavior: this.updateFromBehavior.bind(this),
@@ -144,7 +145,6 @@ export default class NpcState extends ActorState {
           return {
             clearance: this.clearance,
             clan: this.clan,
-            behavior: this.behavior,
             returnNpc: this.parent.returnNpc.bind(this),
             getOccupants: this.parent.getOccupants.bind(this),
             addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),
@@ -188,7 +188,6 @@ export default class NpcState extends ActorState {
             clan: this.clan,
             love: this.love,
             exitRoom: this.exitRoom,
-            behavior: this.behavior,
             getFocusedRoom: this.parent.getFocusedRoom.bind(this),
             addInvBonus: this.addInvBonus.bind(this),
             addOrExtendEffect: this.addOrExtendEffect.bind(this),

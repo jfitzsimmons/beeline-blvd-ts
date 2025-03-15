@@ -35,7 +35,12 @@ export default class InfirmedSequence extends Sequence {
           new InfirmedSequence(this.getProps),
           true
         )
-        this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
+        if (
+          !this.a.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
+        )
+          this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
       } else {
         this.a.updateFromBehavior('clearance', this.prevClearance)
         this.a.updateFromBehavior('turnPriority', math.random(15, 40))

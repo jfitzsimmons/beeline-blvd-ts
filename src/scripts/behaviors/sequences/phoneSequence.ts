@@ -77,11 +77,16 @@ export default class PhoneSequence extends Sequence {
       print('PhoneSEQUENCE::: Proceed::', this.a.name, ':', proceed)
       if (proceed === 'phone') {
         this.a.cooldown--
-        this.a.addToBehavior(
-          'active',
-          new PhoneSequence(this.getProps, this.perp, this.reason)
+        // this.a.addToBehavior(
+        //   'active',
+        //   new PhoneSequence(this.getProps, this.perp, this.reason)
+        // )
+        if (
+          !this.a.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
         )
-        this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
+          this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
       } else if (proceed === 'busy') {
         this.a.updateFromBehavior('turnPriority', math.random(10, 30))
         this.a.addToBehavior(

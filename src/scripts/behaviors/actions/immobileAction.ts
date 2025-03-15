@@ -7,12 +7,19 @@ export default class ImmobileAction extends Action {
     super(a)
     this.a = a
     this.fail = this.fail.bind(this)
+    print(
+      'NEW:IMMOBILEACT::: name,priority,curroom,station::',
+      this.a.name,
+      this.a.turnPriority,
+      this.a.currRoom,
+      this.a.currStation
+    )
     // if (isNpc(this.a))
     // print('NEWIMMOBILEACT::: FOR::', this.a.name, 'SPR:::', this.a.turnPriority)
   }
   run(): { (): void } {
     print(
-      'IMMOBILEACT::: SPR::',
+      'IMMOBILEACT::: 4::',
       this.a.name,
       this.a.turnPriority,
       this.a.currRoom,

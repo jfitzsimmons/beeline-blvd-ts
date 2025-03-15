@@ -281,7 +281,21 @@ export default class SuspectingAction extends Action {
           'has phone-ing on::',
           this.perp.name
         )
-
+        for (const behavior of this.a.behavior.active.children) {
+          if (behavior instanceof PhoneSequence) {
+            behavior.update(this.cause)
+            print(
+              'suspectingAction::: phoneSequence extended for:: ',
+              this.a.name,
+              'by:',
+              this.perp.name
+            )
+            return () =>
+              this.continue(
+                `${this.a.name} already has phone. phoneUpdate PHONeACTION in ${this.a.currRoom}`
+              )
+          }
+        }
         this.a.addToBehavior(
           'active',
           new PhoneSequence(
@@ -337,10 +351,16 @@ export default class SuspectingAction extends Action {
           'active',
           new InjuredSequence(this.perp.getBehaviorProps.bind(this.perp))
         )
-        this.perp.addToBehavior(
-          'place',
-          new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
+
+        if (
+          !this.perp.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
         )
+          this.perp.addToBehavior(
+            'place',
+            new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
+          )
       } else if (
         consequence.type.slice(0, 6) === 'sPunch' &&
         (this.a.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
@@ -357,10 +377,16 @@ export default class SuspectingAction extends Action {
           'active',
           new InjuredSequence(this.a.getBehaviorProps.bind(this.a))
         )
-        this.a.addToBehavior(
-          'place',
-          new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
+
+        if (
+          !this.a.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
         )
+          this.a.addToBehavior(
+            'place',
+            new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
+          )
       }
     }
 
@@ -428,5 +454,9 @@ export default class SuspectingAction extends Action {
   }
   success(s?: string) {
     print('SuspectingAction:: Success::', s)
+  }
+  continue(s: string): string {
+    print('SuspectingAction:: Continue:', s)
+    return 'continue'
   }
 }

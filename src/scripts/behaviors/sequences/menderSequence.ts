@@ -48,7 +48,12 @@ export default class MenderSequence extends Sequence {
           'active',
           new MenderSequence(this.getProps, this.mendee)
         )
-        this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
+        if (
+          !this.a.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
+        )
+          this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
       } else {
         this.a.updateFromBehavior('turnPriority', math.random(10, 30))
         this.a.addToBehavior('place', new PlaceSequence(this.getProps))

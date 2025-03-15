@@ -33,10 +33,22 @@ export default class InjuredSequence extends Sequence {
       print('INJUREDSEQUENCE::: Proceed::', this.a.name, ':', proceed)
       if (proceed === 'continue') {
         this.a.addToBehavior('active', new InjuredSequence(this.getProps))
-        this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
+
+        if (
+          !this.a.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
+        )
+          this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
       } else if (proceed == 'mend') {
         this.a.addToBehavior('active', new MendeeSequence(this.getProps))
-        this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
+
+        if (
+          !this.a.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
+        )
+          this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
       }
     }
     return 'REMOVE'

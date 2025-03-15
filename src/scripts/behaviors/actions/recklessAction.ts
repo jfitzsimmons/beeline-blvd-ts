@@ -130,7 +130,7 @@ export default class RecklessAction extends Action {
                 )
                 return () =>
                   this.continue(
-                    `${this.a.name} Call connected phoneUpdate PHONeACTION in ${this.a.currRoom}`
+                    `${this.a.name} already has phone. phoneUpdate PHONeACTION in ${this.a.currRoom}`
                   )
               }
             }

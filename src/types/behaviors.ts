@@ -83,6 +83,7 @@ export interface DefaultBehaviorProps {
   hp: number
   matrix: { x: number; y: number }
   cooldown: number
+  behavior: Behavior
   addToBehavior(
     selector: 'place' | 'active',
     s: Sequence,
@@ -149,6 +150,7 @@ export interface HeroQuestionProps extends QuestionProps {
 }
 
 export interface MenderProps extends DefaultBehaviorProps {
+  behavior: Behavior
   returnNpc(n: string): NpcState
   getFocusedRoom(): string
 }

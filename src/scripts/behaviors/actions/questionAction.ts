@@ -163,16 +163,23 @@ export default class QuestionAction extends Action {
         'QuestioningAction::PUNCH perp got punched',
         this.perp.name,
         'by',
-        this.a.name
+        this.a.name,
+        'in',
+        this.a.currRoom
       )
       this.perp.addToBehavior(
         'active',
         new InjuredSequence(this.perp.getBehaviorProps.bind(this.perp))
       )
-      this.perp.addToBehavior(
-        'place',
-        new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
+      if (
+        !this.perp.behavior.place.children.some(
+          (c) => c instanceof ImmobileSequence
+        )
       )
+        this.perp.addToBehavior(
+          'place',
+          new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
+        )
     } else if (
       consequence.type.slice(0, 6) === 'sPunch' &&
       (this.a.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
@@ -184,15 +191,22 @@ export default class QuestionAction extends Action {
         'by',
         this.perp.name
       )
-
+      // testjpf probably need an update()
+      //for injuredsequencetoo!
       this.a.addToBehavior(
         'active',
         new InjuredSequence(this.a.getBehaviorProps.bind(this.a))
       )
-      this.a.addToBehavior(
-        'place',
-        new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
+
+      if (
+        !this.perp.behavior.place.children.some(
+          (c) => c instanceof ImmobileSequence
+        )
       )
+        this.a.addToBehavior(
+          'place',
+          new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
+        )
     }
     print(
       'QUESTION ACTION:: Consequence pass,type:',

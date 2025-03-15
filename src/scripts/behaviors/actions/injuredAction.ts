@@ -122,7 +122,11 @@ export default class InjuredAction extends Action {
       const doc = this.doc('mender') as MenderProps
       doc.updateFromBehavior('turnPriority', 97)
       doc.addToBehavior('active', new MenderSequence(this.doc, this.a))
-      doc.addToBehavior('place', new ImmobileSequence(this.doc))
+      if (
+        !doc.behavior.place.children.some((c) => c instanceof ImmobileSequence)
+      )
+        doc.addToBehavior('place', new ImmobileSequence(this.doc))
+
       print(
         'injuredAction:: alternate doc mender sequence:: doc,a:',
         this.doc,

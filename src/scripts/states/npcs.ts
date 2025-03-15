@@ -123,9 +123,14 @@ export default class WorldNpcs {
         npc.behavior.active.children.push(
           new InjuredSequence(npc.getBehaviorProps.bind(npc))
         )
-        npc.behavior.active.children.push(
-          new ImmobileSequence(npc.getBehaviorProps.bind(npc))
+        if (
+          !npc.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
         )
+          npc.behavior.active.children.push(
+            new ImmobileSequence(npc.getBehaviorProps.bind(npc))
+          )
       } else if (
         npc.clearance + math.random(0, 1) <
         RoomsInitState[npc.currRoom].clearance
@@ -173,9 +178,14 @@ export default class WorldNpcs {
         npc.behavior.active.children.push(
           new InjuredSequence(npc.getBehaviorProps.bind(npc))
         )
-        npc.behavior.place.children.push(
-          new ImmobileSequence(npc.getBehaviorProps.bind(npc))
+        if (
+          !npc.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
         )
+          npc.behavior.place.children.push(
+            new ImmobileSequence(npc.getBehaviorProps.bind(npc))
+          )
       }
 
       // npc.fsm.setState('active')
