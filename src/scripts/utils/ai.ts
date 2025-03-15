@@ -123,6 +123,11 @@ export function fillStationAttempt(
           unplacedcount[RoomsInitLayout[matrix.y][matrix.x]!] = 1
         }
       }
+      if (placed == false)
+        print(
+          'COMPLETELY UNPLACED.  NEed passers for unloading, alley 1...',
+          npc
+        )
       placed = true
     }
   }

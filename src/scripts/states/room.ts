@@ -50,8 +50,15 @@ export default class RoomState {
   }
   private onFocusUpdate(): void {
     this.roomName as keyof typeof aiActions
-    if (this.roomName in aiActions)
+    if (this.roomName in aiActions) {
+      print(
+        '##### FOCUSEDRoom::::: >>',
+        this.roomName,
+        'AIACTIONS:: Running...'
+      )
       aiActions[this.roomName as keyof typeof aiActions].bind(this)()
+      print('#### FOCUSEDRoom:::: >>', this.roomName, 'AIACTIONS:: Finished.')
+    }
     this.fsm.setState('turn')
   }
   private onFocusEnd(): void {}
@@ -68,8 +75,11 @@ export default class RoomState {
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {
     this.roomName as keyof typeof aiActions
-    if (this.roomName in aiActions)
+    if (this.roomName in aiActions) {
+      print('##### Room::::: >>', this.roomName, 'AIACTIONS:: Running...')
       aiActions[this.roomName as keyof typeof aiActions].bind(this)()
+      print('#### Room:::: >>', this.roomName, 'AIACTIONS:: Finished.')
+    }
   }
   private onTurnExit(): void {}
 }

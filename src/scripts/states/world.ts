@@ -160,11 +160,16 @@ export default class World {
     if (this.clock > 23) this.clock = this.clock - 24
     this.player.fsm.update(dt)
     this.rooms.fsm.update(dt)
-    this.quests.fsm.update(dt)
+
     this.tasks.fsm.update(dt)
+    print('!!!!! :::: PPPPP: Placing NPCS: Running...')
     this.npcs.fsm.update(dt)
+    print('!!!! ::: PPPP: Placing NPCS: Finished.')
     this.player.fsm.setState('active')
     this.npcs.fsm.setState('active')
+    print('????? :::: QQQQQ: Quest Related Status checks: Running...')
+    this.quests.fsm.update(dt)
+    print('???? ::: QQQQ: Quest Related Status checks: Finished.')
   }
   private onTurnExit(): void {}
   private didCrossPaths(o: string, t: string): boolean {

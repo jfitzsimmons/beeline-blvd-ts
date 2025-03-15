@@ -277,8 +277,10 @@ export default class NpcState extends ActorState {
   private onNewUpdate(): void {
     this.behavior.place.run()
     print(
-      '::: onNewUpdate() ::: 1st b.place.run():: length:',
-      this.behavior.place.children.length
+      '==>> NEWPLACED::: NPCSTATE:: FOR::',
+      this.name,
+      this.currRoom,
+      this.currStation
     )
   }
   private onNewExit(): void {
@@ -289,38 +291,46 @@ export default class NpcState extends ActorState {
   private onTurnEnter(): void {
     //  print('NPCCLASS::: onTurnEnter()')
     //this.behavior.active.run()
-    print(
-      'FINISHED:::::: onTurn-ENTER-() ::: b.active.run():: length:',
-      this.behavior.active.children.length
-    )
+    if (this.behavior.active.children.length > 0)
+      print(
+        '==>> SET ::: NextTurn: Active Behaviors::',
+        this.behavior.active.children[0].constructor.name,
+        this.behavior.active.children.length
+      )
   }
   private onTurnUpdate(): void {
-    print('NPCSTATE:: FOR::', this.name, 'onTurnUpdate PLACErun')
+    //print('===>>> PLACING::: NPCSTATE:: FOR::', this.name)
     this.behavior.place.run()
+    print(
+      '==>> PLACED::: NPCSTATE:: FOR::',
+      this.name,
+      this.currRoom,
+      this.currStation
+    )
   }
   private onTurnExit(): void {
     //  print('TURNEXIT ACTIVErun')
   }
   private onActiveEnter(): void {
     this.behavior.active.run()
-    print(
-      'NPCSTATE:: FOR::',
-      this.name,
-      'onActiveEnter ACTIVErun: length:',
-      this.behavior.active.children.length
-    )
+    if (this.behavior.active.children.length > 0)
+      print(
+        '==>> SET ::: ENDTurn: Active Behaviors::',
+        this.behavior.active.children[0].constructor.name,
+        this.behavior.active.children.length
+      )
   }
   private onActiveUpdate(): void {}
   private onActiveExit(): void {}
   private onOnScreenEnter(): void {
-    print(
-      'NPCSTATE:: FOR::',
-      this.name,
-      'onOnScreenEnter NO-RUN: this.behavior.active:',
-      this.behavior.active.children.length
-    )
     //testjpf remove ideal would be onscreen exit.??
     this.behavior.active.run()
+    if (this.behavior.active.children.length > 0)
+      print(
+        '==>> SET ::: ENDTurn: ONSCREEN Behaviors::',
+        this.behavior.active.children[0].constructor.name,
+        this.behavior.active.children.length
+      )
   }
   private onOnScreenUpdate(): void {}
   private onOnScreenExit(): void {
