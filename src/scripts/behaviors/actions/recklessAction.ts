@@ -68,8 +68,24 @@ export default class RecklessAction extends Action {
         )
         // prettier-ignore
         // // print(i, '-- buildconsequence::: ARGCHECKS::', consolation.pass, consolation.type, checked, checker)
+
         if (consequence.type == 'phonesecurity') {
           if (this.a.clan == 'security') {
+            for (const behavior of listener.behavior.active.children) {
+              if (behavior instanceof QuestionSequence) {
+                behavior.update(this.cause)
+                print(
+                  'recklessAction::: QuestionSequence extended for:: ',
+                  this.inspirer.name,
+                  'by:',
+                  this.a.name
+                )
+                return () =>
+                  this.continue(
+                    `${this.a.name} Call connected questionUpdate recklessACTION in ${this.a.currRoom}`
+                  )
+              }
+            }
             this.a.addToBehavior(
               'active',
               new QuestionSequence(
@@ -78,8 +94,22 @@ export default class RecklessAction extends Action {
                 this.cause
               )
             )
-          }
-          else if (this.a.currRoom == 'security') {
+          } else if (this.a.currRoom == 'security') {
+            for (const behavior of listener.behavior.active.children) {
+              if (behavior instanceof SnitchSequence) {
+                behavior.update(this.cause)
+                print(
+                  'recklessAction::: SnitchSequence extended for:: ',
+                  this.inspirer.name,
+                  'by:',
+                  this.a.name
+                )
+                return () =>
+                  this.continue(
+                    `${this.a.name} Call connected snitchUpdate PHONeACTION in ${this.a.currRoom}`
+                  )
+              }
+            }
             this.a.addToBehavior(
               'active',
               new SnitchSequence(
@@ -89,6 +119,21 @@ export default class RecklessAction extends Action {
               )
             )
           } else {
+            for (const behavior of listener.behavior.active.children) {
+              if (behavior instanceof PhoneSequence) {
+                behavior.update(this.cause)
+                print(
+                  'recklessAction::: phoneSequence extended for:: ',
+                  this.inspirer.name,
+                  'by:',
+                  this.a.name
+                )
+                return () =>
+                  this.continue(
+                    `${this.a.name} already has phone. phoneUpdate PHONeACTION in ${this.a.currRoom}`
+                  )
+              }
+            }
             this.a.addToBehavior(
               'active',
               new PhoneSequence(

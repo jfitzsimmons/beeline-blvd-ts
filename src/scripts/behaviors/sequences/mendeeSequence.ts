@@ -20,13 +20,18 @@ export default class MendeeSequence extends Sequence {
     super(turnActions)
     this.a = props
     this.getProps = getProps
-    this.a.updateFromBehavior('turnPriority', 99)
+    this.a.updateFromBehavior('turnPriority', 98)
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
       const proceed = child.run()()
       if (proceed === 'mend') {
-        this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
+        if (
+          !this.a.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
+        )
+          this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
         this.a.addToBehavior('active', new MendeeSequence(this.getProps), true)
       }
     }

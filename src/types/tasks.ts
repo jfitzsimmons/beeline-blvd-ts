@@ -2,7 +2,6 @@ import NpcState from '../scripts/states/npc'
 import QuestState from '../scripts/states/quest'
 import QuestStep from '../scripts/states/questStep'
 import SideQuest from '../scripts/states/sideQuest'
-import { QuestionProps } from './behaviors'
 //import WorldTasks from '../scripts/states/tasks'
 import { Npcs, Trait } from './state'
 import { NoOptionals } from './utils'
@@ -16,18 +15,7 @@ export interface Task {
   target: string
   cause: string
 }
-export interface TasksChecks {
-  //playerSnitchCheck(priors: boolean, cop: string, cause: string): Consequence
-  //npcCommitSnitchCheck(c: string, t: string): Consequence
-  ignorant_check(target: string, listener: string): Consequence
-  dumb_crook_check(target: string, listener: string): Consequence
-  chaotic_good_check(target: string, listener: string): Consequence
-  classy_check(t: string, l: string): Consequence
-  predator_check(t: string, l: string): Consequence
-}
-export interface TasksOutcomes {
-  add_prejudice(tClan: string, listener: QuestionProps): void
-}
+
 export interface QuestConditions {
   [key: string | number]: QuestStep
 }

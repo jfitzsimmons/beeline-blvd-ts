@@ -120,6 +120,21 @@ export default class SuspectingAction extends Action {
       const perp = this.perp.getBehaviorProps('question') as HeroQuestionProps
       if (consequence.type == 'snitch') {
         if (this.a.clan == 'security') {
+          for (const behavior of this.a.behavior.active.children) {
+            if (behavior instanceof QuestionSequence) {
+              behavior.update(this.cause)
+              print(
+                'suspectingAction::: QuestionSequence extended for:: ',
+                this.a.name,
+                'about:',
+                this.perp.name
+              )
+              return () =>
+                this.success(
+                  `${this.a.name} extend questionUpdate suspectingsACTION in ${this.a.currRoom}`
+                )
+            }
+          }
           this.a.addToBehavior(
             'active',
             new QuestionSequence(
@@ -129,6 +144,21 @@ export default class SuspectingAction extends Action {
             )
           )
         } else {
+          for (const behavior of this.a.behavior.active.children) {
+            if (behavior instanceof SnitchSequence) {
+              behavior.update(this.cause)
+              print(
+                'suspectingAction::: SnitchSequence extended for:: ',
+                this.a.name,
+                'about:',
+                this.perp.name
+              )
+              return () =>
+                this.success(
+                  `${this.a.name} extend snitchUpdate suspectingsACTION in ${this.a.currRoom}`
+                )
+            }
+          }
           this.a.addToBehavior(
             'active',
             new SnitchSequence(
@@ -230,10 +260,14 @@ export default class SuspectingAction extends Action {
               this.cause
             )
           )
-          this.a.addToBehavior(
-            'place',
-            new ScoutSequence(this.getProps, this.a.currRoom)
-          )
+          if (this.a.behavior.place.children.length < 1)
+            this.a.addToBehavior(
+              'place',
+              new ScoutSequence(
+                this.a.getBehaviorProps.bind(this.a),
+                this.a.currRoom
+              )
+            )
         }
         //print('SNITCH:: ', this.storage?.name)
         return () =>
@@ -241,14 +275,27 @@ export default class SuspectingAction extends Action {
             `SuspectingACtion::: success: NPC:SNITCH: cause concolation:${this.cause} | ${consequence.type} || ${this.a.name} | ${this.perp.name}`
           )
       } else if (consequence.type === 'phonesecurity') {
-        // this.perp.updateFromBehavior('turnPriority', 97)
         print(
           'SuspectingAction::',
           this.a.name,
           'has phone-ing on::',
           this.perp.name
         )
-
+        for (const behavior of this.a.behavior.active.children) {
+          if (behavior instanceof PhoneSequence) {
+            behavior.update(this.cause)
+            print(
+              'suspectingAction::: phoneSequence extended for:: ',
+              this.a.name,
+              'by:',
+              this.perp.name
+            )
+            return () =>
+              this.continue(
+                `${this.a.name} already has phone. phoneUpdate PHONeACTION in ${this.a.currRoom}`
+              )
+          }
+        }
         this.a.addToBehavior(
           'active',
           new PhoneSequence(
@@ -304,10 +351,16 @@ export default class SuspectingAction extends Action {
           'active',
           new InjuredSequence(this.perp.getBehaviorProps.bind(this.perp))
         )
-        this.perp.addToBehavior(
-          'place',
-          new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
+
+        if (
+          !this.perp.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
         )
+          this.perp.addToBehavior(
+            'place',
+            new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
+          )
       } else if (
         consequence.type.slice(0, 6) === 'sPunch' &&
         (this.a.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
@@ -324,10 +377,16 @@ export default class SuspectingAction extends Action {
           'active',
           new InjuredSequence(this.a.getBehaviorProps.bind(this.a))
         )
-        this.a.addToBehavior(
-          'place',
-          new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
+
+        if (
+          !this.a.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
         )
+          this.a.addToBehavior(
+            'place',
+            new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
+          )
       }
     }
 
@@ -388,8 +447,6 @@ export default class SuspectingAction extends Action {
       )
     }
 
-    //this.a.cooldown = this.a.cooldown + 5
-
     return () => this.success('Default')
     //need something that checks response
     //does response need EffectsAction, sequences, something else???
@@ -397,5 +454,9 @@ export default class SuspectingAction extends Action {
   }
   success(s?: string) {
     print('SuspectingAction:: Success::', s)
+  }
+  continue(s: string): string {
+    print('SuspectingAction:: Continue:', s)
+    return 'continue'
   }
 }

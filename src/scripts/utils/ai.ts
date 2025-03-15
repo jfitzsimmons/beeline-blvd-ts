@@ -14,6 +14,15 @@ export function isNpc(a: ActorState | ActionProps): a is NpcState {
   return a.name !== 'player'
 }
   */
+export const turnPriorityLookup = {
+  99: [],
+  98: ['infirmed', 'injured', 'mendee', 'jailed'], // :: IMMOBILE
+  97: ['mender', 'infirm', 'arrest'], //:: Emergency Response?
+  96: ['phone'],
+  95: ['question'],
+  94: ['announcer', 'reckless', 'snitch', 'helper', 'suspecting'],
+  93: ['trespass'],
+}
 export const crimeSeverity: { [key: string]: number } = {
   clearance: 0,
   concern: 0,
@@ -66,6 +75,7 @@ export function fillStationAttempt(
           break
         }
       }
+      //print('CHOSENROOM AI:: ', room, npc)
       if (placed == true) break
     }
 
@@ -113,6 +123,11 @@ export function fillStationAttempt(
           unplacedcount[RoomsInitLayout[matrix.y][matrix.x]!] = 1
         }
       }
+      if (placed == false)
+        print(
+          'COMPLETELY UNPLACED.  NEed passers for unloading, alley 1...',
+          npc
+        )
       placed = true
     }
   }
@@ -133,7 +148,7 @@ export function set_room_priority(
     clearance: number
   }
 ): string[] {
-  const room_list: (string | null)[] = []
+  const room_list: string[] = []
   //get list of possible rooms NPC could go to next in order to get to target
   if (target.y > npc.matrix.y) {
     room_list.push(RoomsInitLayout[npc.matrix.y + 1][npc.matrix.x])
@@ -178,21 +193,19 @@ export function set_room_priority(
   }
 
   room_list.push(RoomsInitLayout[npc.home.y][npc.home.x])
-  const filteredArray: string[] = room_list
-    .filter((s): s is string => s != null)
-    .sort(function (a, b) {
-      if (
-        RoomsInitState[a].clearance > npc.clearance &&
-        RoomsInitState[b].clearance <= npc.clearance
-      )
-        return 1
-      if (
-        RoomsInitState[b].clearance > npc.clearance &&
-        RoomsInitState[a].clearance <= npc.clearance
-      )
-        return -1
-      return 0
-    })
+  const filteredArray: string[] = [...new Set(room_list)].sort(function (a, b) {
+    if (
+      RoomsInitState[a].clearance > npc.clearance &&
+      RoomsInitState[b].clearance <= npc.clearance
+    )
+      return 1
+    if (
+      RoomsInitState[b].clearance > npc.clearance &&
+      RoomsInitState[a].clearance <= npc.clearance
+    )
+      return -1
+    return 0
+  })
 
   return filteredArray
 }

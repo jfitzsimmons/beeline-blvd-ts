@@ -29,18 +29,26 @@ export default class RecklessSequence extends Sequence {
     this.inspirer.cooldown = 3
     this.purpose = purpose
     this.getProps = getProps
-    this.a.updateFromBehavior('turnPriority', 93)
+    this.a.updateFromBehavior('turnPriority', 94)
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
       const proceed = child.run()()
-      print('RecklessSEQUENCE::: Proceed::', this.a.name, ':', proceed)
+      print(
+        '$$$ => Behavior: RecklessSEQUENCE::: Proceed::',
+        this.a.name,
+        ':',
+        proceed
+      )
       if (proceed === 'continue') this.inspirer.cooldown--
-      if (this.inspirer.cooldown < 1) {
-        this.a.updateFromBehavior('turnPriority', math.random(15, 35))
-        print('RecklessSequence:: should remove seq for', this.a.name)
-        return 'REMOVE'
-      }
+    }
+    if (this.inspirer.cooldown < 1) {
+      this.a.updateFromBehavior('turnPriority', math.random(15, 35))
+      print(
+        'XXX => Behavior: RecklessSequence:: Remove remove seq for',
+        this.a.name
+      )
+      return 'REMOVE'
     }
     return ''
   }

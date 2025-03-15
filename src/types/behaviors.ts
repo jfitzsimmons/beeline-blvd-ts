@@ -1,6 +1,6 @@
 import Sequence from '../scripts/behaviors/sequence'
 import NpcState from '../scripts/states/npc'
-import { Traits } from './state'
+import { Behavior, Traits } from './state'
 import { Effect } from './tasks'
 
 export type ActionProps =
@@ -83,6 +83,7 @@ export interface DefaultBehaviorProps {
   hp: number
   matrix: { x: number; y: number }
   cooldown: number
+  behavior: Behavior
   addToBehavior(
     selector: 'place' | 'active',
     s: Sequence,
@@ -127,6 +128,7 @@ export interface QuestionProps extends DefaultBehaviorProps {
   clan: string
   love: number
   exitRoom: string
+  behavior: Behavior
   addInvBonus(item: string): void
   addOrExtendEffect(effect: Effect): void
   getBehaviorProps(behavior: string): ActionProps
@@ -148,6 +150,7 @@ export interface HeroQuestionProps extends QuestionProps {
 }
 
 export interface MenderProps extends DefaultBehaviorProps {
+  behavior: Behavior
   returnNpc(n: string): NpcState
   getFocusedRoom(): string
 }
@@ -167,6 +170,7 @@ export interface InjuredProps extends HeroInjuredProps {
   addAdjustMendingQueue(patient: string): void
 }
 export interface HelperProps extends PlaceProps {
+  behavior: Behavior
   returnNpc(n: string): NpcState
   getOccupants(r: string): string[]
   addAdjustMendingQueue(patient: string): void

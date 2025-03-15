@@ -22,12 +22,20 @@ export default class ScoutAction extends Action {
     if (victimMatirix.x < 3) target.x = 4
     if (victimMatirix.y < 3) target.y = 5
     const rooms = this.a.makePriorityRoomList(target)
-    print('findRoomPlaceStation scoutACTION:', this.a.name)
+    // prettier-ignore
+    //for (const r of rooms) { print('SCOUTACTIO::: makePriorityRoomList:: THISISR:',r,'is it empty?:',r == ''  ) }
+    const index = rooms.indexOf(this.room)
 
-    this.a.findRoomPlaceStation(
-      undefined,
-      rooms.splice(1, rooms.indexOf(this.room))
+    if (index !== -1) {
+      rooms.splice(index, 1)
+    }
+    print(
+      '||>> Behavior: scoutAction: findRoomPlaceStation:',
+      this.a.name,
+      this.room,
+      rooms.includes(this.room)
     )
+    this.a.findRoomPlaceStation({ x: 9, y: 9 }, [...rooms])
 
     return () => this.success()
   }

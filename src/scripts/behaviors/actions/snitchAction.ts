@@ -36,7 +36,7 @@ export default class SnitchAction extends Action {
 
     for (const c of [...new Set([...prevRoom, ...currRoom])]) {
       const cop = this.a.returnNpc(c)
-      if (cop.turnPriority < 96 && math.random() > 0.1) {
+      if (cop.turnPriority < 97 && math.random() > 0.1) {
         //available doctor found
         // this.a.addAdjustMendingQueue(this.perp.name)
         print(
@@ -51,6 +51,24 @@ export default class SnitchAction extends Action {
           this.perp.name === 'player'
             ? cop.parent.returnPlayer()
             : cop.parent.returnNpc(this.perp.name)
+
+        for (const behavior of cop.behavior.active.children) {
+          if (behavior instanceof QuestionSequence) {
+            behavior.update(this.reason)
+            print(
+              'snitchAction::: QuestionSequence extended for:: ',
+              cop.name,
+              'by:',
+              this.a.name,
+              'for',
+              perp.name
+            )
+            return () =>
+              this.success(
+                `${this.a.name} extended snitchUpdate PHONeACTION in ${this.a.currRoom}`
+              )
+          }
+        }
         cop.addToBehavior(
           'active',
           new QuestionSequence(
@@ -80,5 +98,8 @@ export default class SnitchAction extends Action {
   continue(s: string): string {
     print('SnitchAction:: Continue:', s)
     return 'continue'
+  }
+  success(s?: string) {
+    print('SnitchAction:: Success:', s)
   }
 }

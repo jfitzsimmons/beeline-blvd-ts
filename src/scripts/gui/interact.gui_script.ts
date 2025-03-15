@@ -64,7 +64,8 @@ function open_inventory(_this: props, actor: string, action: string) {
       player.currRoom
     )
 
-    const station: string | undefined = room.actors[actor].watcher
+    const station: string | undefined =
+      actor === '' ? undefined : room.actors[actor].watcher
     // the actual npc assigned to that station
     if (station != undefined) {
       _this.watcher = room.stations[station]

@@ -46,7 +46,21 @@ export default class PhoneAction extends Action {
       for (const c of callConnected) {
         const cop = this.a.returnNpc(c)
         if (cop.turnPriority < 96) {
-          //const perp = this.getProps('question') as QuestionProps
+          for (const behavior of this.perp.behavior.active.children) {
+            if (behavior instanceof QuestionSequence) {
+              behavior.update(this.reason)
+              print(
+                'phoneAction::: QuestionSequence extended for:: ',
+                this.perp.name,
+                'by:',
+                this.a.name
+              )
+              return () =>
+                this.success(
+                  `${this.a.name} Call connected QuestionUpdate PHONeACTION in ${this.a.currRoom}`
+                )
+            }
+          }
           cop.addToBehavior(
             'active',
             new QuestionSequence(
@@ -57,7 +71,7 @@ export default class PhoneAction extends Action {
           )
           return () =>
             this.success(
-              `${this.a.name} Call connected PHONeACTION in ${this.a.currRoom}`
+              `${this.a.name} Call connected Default PHONeACTION in ${this.a.currRoom}`
             )
         }
       }

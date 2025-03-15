@@ -25,25 +25,39 @@ export default class HelperSequence extends Sequence {
     this.a = props
     this.getProps = getProps
     this.victim = victim
-    print('helperSEQUENCE::: NEWNEWNEW::', this.a.name, ':', this.victim)
+    print(
+      '___ => Behavior: helperSEQUENCE::: NEWNEWNEW::',
+      this.a.name,
+      ':',
+      this.victim
+    )
+    this.a.updateFromBehavior('turnPriority', 94)
   }
   run(): 'REMOVE' | '' {
+    this.a.updateFromBehavior('turnPriority', 94)
+
     for (const child of this.children) {
       const proceed = child.run()()
-      print('helperSEQUENCE::: Proceed::', this.a.name, ':', proceed)
+      print(
+        '$$$ => Behavior: helperSEQUENCE::: Proceed::',
+        this.a.name,
+        ':',
+        proceed
+      )
       if (proceed === 'continue') {
         this.a.addToBehavior(
           'active',
           new HelperSequence(this.getProps, this.victim),
           true
         )
-        this.a.addToBehavior(
-          'place',
-          new ScoutSequence(
-            this.getProps,
-            this.a.returnNpc(this.victim).currRoom
+        if (this.a.behavior.place.children.length < 1)
+          this.a.addToBehavior(
+            'place',
+            new ScoutSequence(
+              this.getProps,
+              this.a.returnNpc(this.victim).currRoom
+            )
           )
-        )
       }
     }
     // print('INJUREDSEQUENCE::: COMPLETE:: Remove?')

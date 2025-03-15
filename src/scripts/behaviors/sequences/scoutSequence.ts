@@ -21,7 +21,7 @@ export default class ScoutSequence extends Sequence {
     this.getProps = getProps
     this.a = props
     this.room = room
-    print('SCOUTSEQUENCE:: toom to avoid: ', this.room)
+    print('____ => Behavior: SCOUTSEQUENCE:: New:  Room-to-avoid: ', this.room)
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {

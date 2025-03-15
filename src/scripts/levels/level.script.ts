@@ -45,7 +45,9 @@ function update_hud() {
 function game_turn() {
   novel.reset_novel()
   world.fsm.update(dt)
+  print('????* *::: qQqQq: Quest Related AI checks: Running...')
   quest_checker('turn')
+  print('????* *::: qQqQq: Quest Related AI checks: Finished.')
 }
 function quickLoad(_this: props, rn: string) {
   _this.roomName = rn

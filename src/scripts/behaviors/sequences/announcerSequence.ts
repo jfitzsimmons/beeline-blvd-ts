@@ -34,11 +34,19 @@ export default class AnnouncerSequence extends Sequence {
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
       const proceed = child.run()()
-      print('announcerSEQUENCE::: Proceed::', this.a.name, ':', proceed)
+      print(
+        '$$$ => Behavior: announcerSEQUENCE::: Proceed::',
+        this.a.name,
+        ':',
+        proceed
+      )
       if (proceed === 'continue') this.announcee.cooldown--
       if (this.announcee.cooldown < 1) {
         this.a.updateFromBehavior('turnPriority', math.random(15, 35))
-        print('AnouncerSequence:: should remove seq for', this.a.name)
+        print(
+          'xxx=> Behavior: AnouncerSequence:: should remove seq for',
+          this.a.name
+        )
         return 'REMOVE'
       }
     }

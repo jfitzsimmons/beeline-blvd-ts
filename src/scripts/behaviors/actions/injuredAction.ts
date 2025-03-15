@@ -10,6 +10,7 @@ import Sequence from '../sequence'
 import HelperSequence from '../sequences/helperSequence'
 import ImmobileSequence from '../sequences/immobileSequence'
 import MenderSequence from '../sequences/menderSequence'
+import ScoutSequence from '../sequences/scoutSequence'
 import MendeeAction from './mendeeAction'
 
 export default class InjuredAction extends Action {
@@ -27,7 +28,7 @@ export default class InjuredAction extends Action {
     if (this.a.getIgnore().includes(this.a.name))
       return () =>
         this.continue(
-          'Injur-ED-action:: IGNORE - Quest related NPC:' +
+          '||>> Behavior: Injur-ED-action:: IGNORE - Quest related NPC:' +
             this.a.name +
             ':' +
             this.a.turnPriority
@@ -57,31 +58,43 @@ export default class InjuredAction extends Action {
           // this.a.parent.npcHasTask([helper], [this.a.name]) === null &&
           NpcsInitState[helper].clan !== 'doctors'
         ) {
-          //if not a doctor, create injury caution if haven't already
-          //testjpf probably an ACTION::
-          //TODO NEXT START HERE!!!
-          //   this.a.parent.taskBuilder(helper, 'injury', this.a.name, 'injury')
           const scout = this.a.returnNpc(helper)
-
-          scout.addToBehavior(
-            'active',
-            new HelperSequence(scout.getBehaviorProps.bind(this), this.a.name)
-          )
-          return () =>
-            this.continue(
-              'Injur-ED-action:: GoodSamrtian - Add HELPERSequence for:' +
-                scout.name +
-                '| VICTIM:' +
-                this.a.name +
-                ':' +
-                this.a.turnPriority
+          if (
+            !scout.behavior.active.children.some(
+              (c) => c instanceof HelperSequence
             )
+          ) {
+            scout.addToBehavior(
+              'active',
+              new HelperSequence(
+                scout.getBehaviorProps.bind(scout),
+                this.a.name
+              )
+            )
+            if (scout.behavior.place.children.length < 1)
+              scout.addToBehavior(
+                'place',
+                new ScoutSequence(
+                  scout.getBehaviorProps.bind(scout),
+                  this.a.currRoom
+                )
+              )
+            return () =>
+              this.continue(
+                '||>> Behavior: injur-ED-action:: GoodSamrtian - Add HELPERSequence for:' +
+                  scout.name +
+                  '| VICTIM:' +
+                  this.a.name +
+                  ':' +
+                  this.a.turnPriority
+              )
+          }
         } else if (
           NpcsInitState[helper].clan == 'doctors' &&
           math.random() > 0.5
         ) {
           print(
-            'INJUREDACTION::: Doc:',
+            '||>> Behavior: INJUREDACTION::: Doc:',
             helper,
             'added',
             this.a.name,
@@ -94,24 +107,28 @@ export default class InjuredAction extends Action {
 
     return () =>
       this.continue(
-        'Injur-ED-action:: Default - Add Another InjuredSequence for:' +
+        '||>> Behavior: Injur-ED-action:: Default - Add Another InjuredSequence for:' +
           this.a.name +
           ':' +
           this.a.turnPriority
       )
   }
   continue(s: string): string {
-    print('Injur-ed-Action:: Continue:', s)
+    print('|||>>> Behavior:Injur-ed-Action:: Continue:', s)
     return 'continue'
   }
   alternate(as: Action | Sequence): string | void {
     if (this.doc != null) {
       const doc = this.doc('mender') as MenderProps
-      doc.updateFromBehavior('turnPriority', 98)
+      doc.updateFromBehavior('turnPriority', 97)
       doc.addToBehavior('active', new MenderSequence(this.doc, this.a))
-      doc.addToBehavior('place', new ImmobileSequence(this.doc))
+      if (
+        !doc.behavior.place.children.some((c) => c instanceof ImmobileSequence)
+      )
+        doc.addToBehavior('place', new ImmobileSequence(this.doc))
+
       print(
-        'injuredAction:: alternate doc mender sequence:: doc,a:',
+        '||>> Behavior: injuredAction:: alternate doc mender sequence:: doc,a:',
         this.doc,
         this.a.name
       )

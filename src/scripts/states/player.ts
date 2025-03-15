@@ -65,7 +65,7 @@ export default class WorldPlayer extends ActorState {
         cooldown: this.cooldown,
         turnPriority: this.turnPriority,
         currRoom: this.currRoom,
-        //currStation: this.currStation,
+        behavior: this.behavior,
         addToBehavior: this.addToBehavior.bind(this),
         hp: this.hp,
         updateFromBehavior: this.updateFromBehavior.bind(this),
@@ -196,11 +196,7 @@ export default class WorldPlayer extends ActorState {
         onUpdate: this.onActiveUpdate.bind(this),
         onExit: this.onActiveExit.bind(this),
       })
-      .addState('confronted', {
-        onEnter: this.onConfrontedEnter.bind(this),
-        onUpdate: this.onConfrontedUpdate.bind(this),
-        onExit: this.onConfrontedExit.bind(this),
-      })
+
     this.addToAlertLevel = this.addToAlertLevel.bind(this)
     this.getPlayerRoom = this.getPlayerRoom.bind(this)
     this.setRoomInfo = this.setRoomInfo.bind(this)
@@ -223,7 +219,7 @@ export default class WorldPlayer extends ActorState {
   }
   private onPlaceExit(): void {
     if (
-      this.clearance + math.random(0, 2) <
+      this.clearance + math.random(0, 1) <
       RoomsInitState[this.currRoom].clearance
     )
       //TESTJPF I think i need to remove player and
@@ -237,9 +233,7 @@ export default class WorldPlayer extends ActorState {
   private onActiveEnter(): void {}
   private onActiveUpdate(): void {}
   private onActiveExit(): void {}
-  private onConfrontedEnter(): void {}
-  private onConfrontedUpdate(): void {}
-  private onConfrontedExit(): void {}
+
   setRoomInfo() {
     this.ap = this.ap - 1
     this.turns = this.turns + 1
