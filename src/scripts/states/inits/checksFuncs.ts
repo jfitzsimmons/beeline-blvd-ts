@@ -114,7 +114,7 @@ export function pledgeCheck(
   const advantage = ls.wisdom > ts.constitution + 2
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -4, 3)
   // prettier-ignore
-  print('CHECKS:: PLEDGECHECK::', chkd.name, 'pledged to do good by', chkr.name, 'ROLL:', result)
+  // print('CHECKS:: PLEDGECHECK::', chkd.name, 'pledged to do good by', chkr.name, 'ROLL:', result)
   if (result > 5 && result <= 10) {
     addPledge(chkd)
     return { pass: true, type: 'pledge' }
@@ -1092,10 +1092,12 @@ export function prejudice_check(
 
   if (result > 10) {
     // print('SPECIAL prejudice')
+    add_prejudice(target.name == 'player' ? target.name : target.clan, listener)
     return { pass: true, type: 'prejudicespecial' }
   }
   if (result <= 1) {
     // print('NEVER prejudice')
+    add_admirer(chkd.clan, chkr)
     return { pass: true, type: 'prejudicecritical' }
   }
 

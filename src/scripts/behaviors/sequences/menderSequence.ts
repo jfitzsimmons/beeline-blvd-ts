@@ -31,6 +31,7 @@ export default class MenderSequence extends Sequence {
     this.getProps = getProps
     this.a.updateFromBehavior('turnPriority', 97)
     print(
+      '___ => Behavior: ',
       this.a.name,
       'NEWMENDERSEQ CREATED!!!:: ',
       this.a.turnPriority,

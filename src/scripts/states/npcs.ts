@@ -257,10 +257,6 @@ export default class WorldNpcs {
         this.all[a].turnPriority - this.all[b].turnPriority
     )
     for (let i = this.onScreen.length; i-- !== 0; ) {
-      print(
-        'NPCS:: onActiveExit:: update actor state:: ONCREENONCREEN:::',
-        this.onScreen[i]
-      )
       if (this.onScreen[i] !== 'player') {
         print('===>>> SETTING ONSCREEN::', this.onScreen[i], 'TO.TURN')
         this.all[this.onScreen[i]].fsm.setState('turn')

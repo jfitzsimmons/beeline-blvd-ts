@@ -27,7 +27,7 @@ export default class JailedSequence extends Sequence {
   }
   update() {
     print(
-      'Jailed Sequence:: Update: Sentence extended for: name, cooldown, incidents:',
+      '^^^ => Behavior: JailedSequence:: Update: Sentence extended for: name, cooldown, incidents:',
       this.a.name,
       this.a.cooldown,
       this.incidents
@@ -56,7 +56,10 @@ export default class JailedSequence extends Sequence {
         this.a.addToBehavior('place', new PlaceSequence(this.getProps), false)
       }
       if (this.a.cooldown < 1) {
-        print('JailedSequence:: should remove seq for', this.a.name)
+        print(
+          'xxx => Behavior: JailedSequence:: should remove seq for',
+          this.a.name
+        )
         return 'REMOVE'
       }
     }

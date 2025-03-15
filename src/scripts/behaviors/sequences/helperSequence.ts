@@ -25,7 +25,12 @@ export default class HelperSequence extends Sequence {
     this.a = props
     this.getProps = getProps
     this.victim = victim
-    print('helperSEQUENCE::: NEWNEWNEW::', this.a.name, ':', this.victim)
+    print(
+      '___ => Behavior: helperSEQUENCE::: NEWNEWNEW::',
+      this.a.name,
+      ':',
+      this.victim
+    )
     this.a.updateFromBehavior('turnPriority', 94)
   }
   run(): 'REMOVE' | '' {
@@ -33,7 +38,12 @@ export default class HelperSequence extends Sequence {
 
     for (const child of this.children) {
       const proceed = child.run()()
-      print('helperSEQUENCE::: Proceed::', this.a.name, ':', proceed)
+      print(
+        '$$$ => Behavior: helperSEQUENCE::: Proceed::',
+        this.a.name,
+        ':',
+        proceed
+      )
       if (proceed === 'continue') {
         this.a.addToBehavior(
           'active',

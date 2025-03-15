@@ -23,14 +23,19 @@ export default class InjuredSequence extends Sequence {
     this.a = props
     this.getProps = getProps
     this.a.updateFromBehavior('turnPriority', 98)
-    print('NEWINJUREDSEQ FOR', this.a.name)
+    print('___ => Behavior: NEWINJUREDSEQ FOR', this.a.name)
   }
   run(): 'REMOVE' | '' {
     this.a.updateFromBehavior('turnPriority', 98)
 
     for (const child of this.children) {
       const proceed = child.run()()
-      print('INJUREDSEQUENCE::: Proceed::', this.a.name, ':', proceed)
+      print(
+        '$$$=> Behavior: INJUREDSEQUENCE::: Proceed::',
+        this.a.name,
+        ':',
+        proceed
+      )
       if (proceed === 'continue') {
         this.a.addToBehavior('active', new InjuredSequence(this.getProps))
 

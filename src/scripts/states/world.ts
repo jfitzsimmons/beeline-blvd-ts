@@ -107,6 +107,7 @@ export default class World {
     this.rooms.fsm.setState('turn')
     this.player.fsm.setState('place')
     this.npcs.fsm.setState('new') //Adds a PlaceSeq and runs it //also test defaults
+    this.rooms.fsm.update(dt)
     this.tasks.fsm.setState('turn')
     this.quests.fsm.setState('new')
 
@@ -134,10 +135,11 @@ export default class World {
     // use placebehavior instead?
     this.player.setRoomInfo()
     this.player.fsm.update(dt)
-    this.rooms.fsm.update(dt)
     this.quests.fsm.update(dt)
     this.tasks.fsm.update(dt)
     this.npcs.fsm.update(dt)
+    this.rooms.fsm.update(dt)
+
     this.fsm.setState('turn')
   }
   private onFaintExit(): void {}
@@ -159,12 +161,12 @@ export default class World {
     this.clock = this.clock + 1
     if (this.clock > 23) this.clock = this.clock - 24
     this.player.fsm.update(dt)
-    this.rooms.fsm.update(dt)
 
     this.tasks.fsm.update(dt)
     print('!!!!! :::: PPPPP: Placing NPCS: Running...')
     this.npcs.fsm.update(dt)
     print('!!!! ::: PPPP: Placing NPCS: Finished.')
+    this.rooms.fsm.update(dt)
     this.player.fsm.setState('active')
     this.npcs.fsm.setState('active')
     print('????? :::: QQQQQ: Quest Related Status checks: Running...')

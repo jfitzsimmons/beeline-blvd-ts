@@ -34,7 +34,7 @@ export default class SnitchSequence extends Sequence {
     this.reason = reason
     this.crimeScene = perp.currRoom
     print(
-      'SnitchSEQUENCE::: Created For::',
+      '___=> Behavior: SnitchSEQUENCE: New: Created For::',
       this.a.name,
       'against:',
       this.perp.name,
@@ -46,7 +46,7 @@ export default class SnitchSequence extends Sequence {
   }
   update(reason: string) {
     print(
-      'SnitchSequence:: Update: extended for: name, cooldown, incidents:',
+      '^^^ => Behavior: SnitchSequence:: Update: extended for: name, cooldown, incidents:',
       this.a.name,
       this.a.cooldown,
       this.incidents
@@ -60,7 +60,12 @@ export default class SnitchSequence extends Sequence {
 
     for (const child of this.children) {
       const proceed = child.run()()
-      print('SnitchSEQUENCE::: Proceed::', this.a.name, ':', proceed)
+      print(
+        '$$$ => Behavior: SnitchSEQUENCE::: Proceed::',
+        this.a.name,
+        ':',
+        proceed
+      )
       if (proceed === 'continue') {
         this.a.cooldown--
         // this.a.addToBehavior(
@@ -78,7 +83,10 @@ export default class SnitchSequence extends Sequence {
     }
     // print('INJUREDSEQUENCE::: COMPLETE:: Remove?')
     if (this.a.cooldown < 1) {
-      print('SnitchSequence:: should remove seq for', this.a.name)
+      print(
+        'XXX => Behavior: SnitchSequence:: Remove: should remove seq for',
+        this.a.name
+      )
       return 'REMOVE'
     }
     return ''

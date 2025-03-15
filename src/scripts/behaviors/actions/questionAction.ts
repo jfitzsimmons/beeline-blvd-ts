@@ -209,7 +209,7 @@ export default class QuestionAction extends Action {
         )
     }
     print(
-      'QUESTION ACTION:: Consequence pass,type:',
+      '||>> Behavior: QUESTIONACTION:: Consequence pass,type:',
       consequence.pass,
       consequence.type
     )
@@ -224,7 +224,10 @@ export default class QuestionAction extends Action {
       // prettier-ignore
       print('runrun',this.a.name,this.a.currStation, 'STATION MOVE VIA TASK question', this.perp.name, 'in', this.a.currRoom,this.perp.currRoom, this.perp.currStation)
     }
-    return () => this.success('QUESTIONACTION::: DEFAULT::')
+    return () =>
+      this.success(
+        '||>> Behavior: QUESTIONACTION::: DEFAULT::' + consequence.type
+      )
   }
   continue(s: string): string {
     print('QuestionAction:: Continue:', s)

@@ -41,7 +41,7 @@ export default class QuestionSequence extends Sequence {
   }
   update(reason: string) {
     print(
-      'QuestionSequence:: Update: Crime Spree for: name, incidents:',
+      '^^^ => Behavior: QuestionSequence:: Update: Crime Spree for: name, incidents:',
       this.a.name,
       this.incidents,
       this.a.cooldown
@@ -55,7 +55,12 @@ export default class QuestionSequence extends Sequence {
 
     for (const child of this.children) {
       const proceed = child.run()()
-      print('QuestionSEQUENCE::: Proceed::', this.a.name, ':', proceed)
+      print(
+        '$$$ => Behavior: QuestionSEQUENCE::: Proceed::',
+        this.a.name,
+        ':',
+        proceed
+      )
       if (proceed === 'continue') {
         this.a.cooldown--
       } else if (proceed == 'jailed') {
@@ -67,7 +72,10 @@ export default class QuestionSequence extends Sequence {
       }
     }
     if (this.a.cooldown < 1) {
-      print('QuestionSequence:: should remove seq for', this.a.name)
+      print(
+        'xxx => Behavior: QuestionSequence:: should remove seq for',
+        this.a.name
+      )
       return 'REMOVE'
     }
     return ''

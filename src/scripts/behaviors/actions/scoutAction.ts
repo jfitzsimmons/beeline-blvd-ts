@@ -30,7 +30,7 @@ export default class ScoutAction extends Action {
       rooms.splice(index, 1)
     }
     print(
-      'findRoomPlaceStation scoutACTION:',
+      '||>> Behavior: scoutAction: findRoomPlaceStation:',
       this.a.name,
       this.room,
       rooms.includes(this.room)

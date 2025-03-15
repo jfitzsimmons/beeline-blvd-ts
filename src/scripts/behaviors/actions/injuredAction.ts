@@ -28,7 +28,7 @@ export default class InjuredAction extends Action {
     if (this.a.getIgnore().includes(this.a.name))
       return () =>
         this.continue(
-          'Injur-ED-action:: IGNORE - Quest related NPC:' +
+          '||>> Behavior: Injur-ED-action:: IGNORE - Quest related NPC:' +
             this.a.name +
             ':' +
             this.a.turnPriority
@@ -81,7 +81,7 @@ export default class InjuredAction extends Action {
               )
             return () =>
               this.continue(
-                'Injur-ED-action:: GoodSamrtian - Add HELPERSequence for:' +
+                '||>> Behavior: injur-ED-action:: GoodSamrtian - Add HELPERSequence for:' +
                   scout.name +
                   '| VICTIM:' +
                   this.a.name +
@@ -94,7 +94,7 @@ export default class InjuredAction extends Action {
           math.random() > 0.5
         ) {
           print(
-            'INJUREDACTION::: Doc:',
+            '||>> Behavior: INJUREDACTION::: Doc:',
             helper,
             'added',
             this.a.name,
@@ -107,14 +107,14 @@ export default class InjuredAction extends Action {
 
     return () =>
       this.continue(
-        'Injur-ED-action:: Default - Add Another InjuredSequence for:' +
+        '||>> Behavior: Injur-ED-action:: Default - Add Another InjuredSequence for:' +
           this.a.name +
           ':' +
           this.a.turnPriority
       )
   }
   continue(s: string): string {
-    print('Injur-ed-Action:: Continue:', s)
+    print('|||>>> Behavior:Injur-ed-Action:: Continue:', s)
     return 'continue'
   }
   alternate(as: Action | Sequence): string | void {
@@ -128,7 +128,7 @@ export default class InjuredAction extends Action {
         doc.addToBehavior('place', new ImmobileSequence(this.doc))
 
       print(
-        'injuredAction:: alternate doc mender sequence:: doc,a:',
+        '||>> Behavior: injuredAction:: alternate doc mender sequence:: doc,a:',
         this.doc,
         this.a.name
       )

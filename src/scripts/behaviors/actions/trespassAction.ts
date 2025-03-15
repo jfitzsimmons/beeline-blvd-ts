@@ -34,7 +34,7 @@ export default class TrespassAction extends Action {
     )
       return () =>
         this.fail(
-          `TrespassAction:: ${this.a.name} gets 1 turn clearance for ${this.a.currStation}`
+          `||>> Behavior: TrespassAction:: ${this.a.name} gets 1 turn clearance for ${this.a.currStation}`
         )
 
     this.a.updateFromBehavior('turnPriority', 96) // so can add QuestionSeq to available security
@@ -59,14 +59,14 @@ export default class TrespassAction extends Action {
       const enforcer = this.enforcer('question') as QuestionProps
       if (
         enforcer.turnPriority < 96 &&
-        math.random() > 0.2 &&
         confrontation_check(enforcer.traits, this.a.traits) == true
+        //math.random() > 0.2 &&
       ) {
         for (const behavior of enforcer.behavior.active.children) {
           if (behavior instanceof QuestionSequence) {
             behavior.update('clearance')
             print(
-              'trespassAction::: QuestionSequence extended for:: ',
+              '||>> Behavior: trespassAction::: QuestionSequence extended for:: ',
               enforcer.name,
               'by:',
               this.a.name
@@ -83,53 +83,24 @@ export default class TrespassAction extends Action {
         )
         return () =>
           this.continue(
-            'trespassAction:: Enforcer:' +
+            '||>> Behavior: trespassAction:: Enforcer:' +
               enforcer.name +
               'is going to question:' +
               this.a.name
           )
-        /**
-           * testjpf
-           * needs to do:::
-  npc_confront_consequence() {
-    if (this.label == 'arrest') {
-      this.parent.returnNpc(this.target).fsm.setState('arrestee')
-      return
-    } else if (this.label == 'questioning') {
-      //testjpf convert rest!!!:::
-      const tempcons: Array<
-        (s: string, w: string) => { pass: boolean; type: string }
-      > = shuffle([
-        this.checks.pledgeCheck!.bind(this),
-        this.checks.bribeCheck!.bind(this),
-        this.checks.targetPunchedCheck!.bind(this),
-        this.checks.jailtime_check!.bind(this),
-        this.checks.admirer_check!.bind(this),
-        this.checks.prejudice_check!.bind(this),
-        this.checks.unlucky_check!.bind(this),
-      ])
-      this.checks.build_consequence!(this, this.owner, tempcons, false)
-            
-          so I think these will all return either a new Seq/Action
-          or an effect.
-          It's a weird setup where these checks are integrated with the Task class. These are all TASK class things that are initialized
-          I think I can import directly into the sequence
-          need to pass it traits, which I can do like EffectsAction
-          This'll be huge
-
-
-           */
       }
     }
 
     return () =>
-      this.continue('Default - trespass succecful for:' + this.a.name)
+      this.continue(
+        '||>> Behavior: Default - trespass succecful for:' + this.a.name
+      )
   }
   success(s?: string): void {
-    print('TrespassAction:: Success:', s)
+    print('|||>>> Behavior: TrespassAction:: Success:', s)
   }
   continue(s: string): string {
-    print('TrespassAction:: Continue:', s)
+    print('|||>>> Behavior: TrespassAction:: Continue:', s)
     return 'continue'
   }
 }

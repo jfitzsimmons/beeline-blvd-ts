@@ -43,7 +43,7 @@ export default class PhoneSequence extends Sequence {
     this.a.cooldown = 8
 
     print(
-      'PhoneSEQUENCE::: Created For::',
+      '___ => Behavior: PhoneSEQUENCE::: Created For::',
       this.a.name,
       'against:',
       this.perp.name,
@@ -62,7 +62,7 @@ export default class PhoneSequence extends Sequence {
   }
   update(reason: string) {
     print(
-      'phoneSequence:: Update: extended for: name, cooldown, incidents:',
+      '^^^ => Behavior: phoneSequence:: Update: extended for: name, cooldown, incidents:',
       this.a.name,
       this.a.cooldown,
       this.incidents
@@ -74,7 +74,12 @@ export default class PhoneSequence extends Sequence {
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
       const proceed = child.run()()
-      print('PhoneSEQUENCE::: Proceed::', this.a.name, ':', proceed)
+      print(
+        '$$$ => Behavior: PhoneSEQUENCE::: Proceed::',
+        this.a.name,
+        ':',
+        proceed
+      )
       if (proceed === 'phone') {
         this.a.cooldown--
         // this.a.addToBehavior(
@@ -99,7 +104,10 @@ export default class PhoneSequence extends Sequence {
       }
     }
     if (this.a.cooldown < 1) {
-      print('QuestionSequence:: should remove seq for', this.a.name)
+      print(
+        'xxx => Behavior: QuestionSequence:: should remove seq for',
+        this.a.name
+      )
       return 'REMOVE'
     }
     return ''

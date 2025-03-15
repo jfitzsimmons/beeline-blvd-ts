@@ -39,7 +39,12 @@ export default class SuspectingSequence extends Sequence {
     this.isHero = this.perp.name === 'player' ? true : false
     this.prevSpr = this.a.turnPriority
 
-    print('NEW: SuspectingSeq::', this.a.name, 'Suspecting:', this.perp.name)
+    print(
+      '=> Behavior: NEW: SuspectingSeq::',
+      this.a.name,
+      'Suspecting:',
+      this.perp.name
+    )
     this.a.updateFromBehavior('turnPriority', 94)
   }
   run(): 'REMOVE' | '' {
@@ -47,7 +52,7 @@ export default class SuspectingSequence extends Sequence {
       const proceed = child.run()()
       if (proceed === 'reckless') {
         print(
-          'SupectingAction::',
+          '>>> => Behavior: Run: SupectingAction::',
           this.a.name,
           'will become reckless about::',
           this.perp.name

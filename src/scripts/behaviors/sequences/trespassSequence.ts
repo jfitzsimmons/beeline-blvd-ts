@@ -24,7 +24,7 @@ export default class TrespassSequence extends Sequence {
         : (props as InjuredProps)
     this.getProps = getProps
     this.prevSpr = this.a.turnPriority
-    print('TrespassSeq:: new for', this.a.name, 'in', this.a.currRoom)
+    print('___ TrespassSeq:: new for', this.a.name, 'in', this.a.currRoom)
 
     this.a.updateFromBehavior('turnPriority', 93)
   }

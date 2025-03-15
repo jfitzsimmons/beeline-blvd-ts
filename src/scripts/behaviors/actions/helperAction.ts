@@ -27,7 +27,7 @@ export default class HelperAction extends Action {
       this.a.addAdjustMendingQueue(this.victim)
       return () =>
         this.fail(
-          `HELPERACTION:: injured:${this.victim} has already been helped. AdjustedQueue. Job Done.`
+          `||>> Behavior: HELPERACTION:: injured:${this.victim} has already been helped. AdjustedQueue. Job Done.`
         )
     }
 
@@ -45,7 +45,7 @@ export default class HelperAction extends Action {
         //available doctor found
         this.a.addAdjustMendingQueue(this.victim)
         print(
-          'HELPERACTION',
+          '||>> Behavior: HELPERACTION',
           helper,
           'was told to get help by',
           this.a.name,
@@ -58,11 +58,12 @@ export default class HelperAction extends Action {
 
     return () =>
       this.continue(
-        'HELPERaction:: Default - Add Another HelperSequence for:' + this.a.name
+        '||>> Behavior: HELPERaction:: Default - Add Another HelperSequence for:' +
+          this.a.name
       )
   }
   continue(s: string): string {
-    print('HELPERAction:: Continue:', s)
+    print('|||>>> Behavior: HELPERAction:: Continue:', s)
     return 'continue'
   }
 }
