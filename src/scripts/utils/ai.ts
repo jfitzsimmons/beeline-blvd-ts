@@ -1,6 +1,4 @@
 import { Direction } from '../../types/ai'
-//import { Traits } from '../../types/state'
-//import { Effect } from '../../types/tasks'
 import {
   RoomsInitRoles,
   RoomsInitLayout,
@@ -8,12 +6,6 @@ import {
 } from '../states/inits/roomsInitState'
 import { shuffle } from './utils'
 
-// user defined type guard
-/**
-export function isNpc(a: ActorState | ActionProps): a is NpcState {
-  return a.name !== 'player'
-}
-  */
 export const turnPriorityLookup = {
   99: [],
   98: ['infirmed', 'injured', 'mendee', 'jailed'], // :: IMMOBILE
@@ -33,7 +25,22 @@ export const crimeSeverity: { [key: string]: number } = {
 }
 
 const count: { [key: string]: number } = {}
-const unplacedcount: { [key: string]: number } = {}
+//const unplacedcount: { [key: string]: number } = {}
+const fallbackTable: { [key: string]: string[] } = {
+  loading: ['loading_outside1'],
+  grounds: ['grounds_unplaced'],
+  viplobby: ['viplobby_passer', 'viplobby_outside1'],
+  reception: ['reception_unplaced'],
+  infirmary: ['infirmary_outside1'],
+  dorms: ['dorms_outside1', 'dorms_unplaced'],
+  security: ['security_passer', 'security_outside1'],
+  baggage: ['baggage_passer'],
+  alley2: ['alley2_passer'],
+  alley4: ['alley4_passer'],
+  admin1: ['admin1_passer'],
+  customs: ['customs_unplaced'],
+  store: ['store_unplaced'],
+}
 export function fillStationAttempt(
   room_list: string[],
   npc: string,
@@ -81,6 +88,34 @@ export function fillStationAttempt(
 
     // fallback stations
     if (placed == false) {
+      for (const room of room_list) {
+        //just make a kvp like {loading: ['loading_outside1', 'loading_passer']}
+        print('AIROOM:::', room, npc)
+        if (fallbackTable[room] !== null)
+          for (const station of fallbackTable[room]) {
+            print(
+              'AREFALLBACKSWORKING?',
+              station.slice(-6),
+              RoomsInitLayout[matrix.y][matrix.x],
+              stationMap.fallbacks[station]
+            )
+            if (
+              (station.slice(-6) == 'passer' &&
+                RoomsInitLayout[matrix.y][matrix.x] != room &&
+                stationMap.fallbacks[station] !== null) ||
+              (station.slice(-6) !== 'passer' &&
+                stationMap.fallbacks[station] !== null)
+            ) {
+              chosenStation = station
+              chosenRoom = room
+              placed = true
+              break
+            }
+            if (placed == true) break
+          }
+      }
+
+      /** 
       if (
         room_list.includes('loading') &&
         stationMap.fallbacks['loading_outside1'] !== null
@@ -177,6 +212,7 @@ export function fillStationAttempt(
           unplacedcount[RoomsInitLayout[matrix.y][matrix.x]!] = 1
         }
       }
+    **/
       if (chosenRoom == '')
         print(
           'COMPLETELY UNPLACED.  NEed passers for unloading, alley 1...',
@@ -217,7 +253,7 @@ export function set_room_priority(
     room_list.push(RoomsInitLayout[npc.matrix.y][npc.matrix.x + 1])
   }
 
-  room_list.push(RoomsInitLayout[npc.matrix.y][npc.matrix.x])
+  shuffle(room_list).push(RoomsInitLayout[npc.matrix.y][npc.matrix.x])
 
   if (
     target.y > npc.matrix.y &&
@@ -246,7 +282,6 @@ export function set_room_priority(
     room_list.push(RoomsInitLayout[npc.matrix.y][npc.matrix.x + 1])
   }
 
-  room_list.push(RoomsInitLayout[npc.home.y][npc.home.x])
   const filteredArray: string[] = [...new Set(room_list)].sort(function (a, b) {
     if (
       RoomsInitState[a].clearance > npc.clearance &&
@@ -260,6 +295,7 @@ export function set_room_priority(
       return -1
     return 0
   })
+  filteredArray.push(RoomsInitLayout[npc.home.y][npc.home.x])
 
   return filteredArray
 }

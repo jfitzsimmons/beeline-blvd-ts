@@ -6,6 +6,7 @@ function load_npcs() {
   let station: keyof typeof stations
   for (station in stations) {
     const npc = stations[station]
+    print('RECEPTIONLEVEL::: npc,station', npc, station)
     station == 'desk'
       ? msg.post('deskarea#station', 'loadStation', { npc, roomName })
       : msg.post(`/${station}#npc_loader`, 'load_npc', { npc })

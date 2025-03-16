@@ -268,10 +268,7 @@ export default class NpcState extends ActorState {
     this.love = novelUpdates.love
   }
   private onArresteeEnter(): void {}
-  private onArresteeUpdate(): void {
-    //this.cooldown--
-    //if (this.cooldown < 1) this.fsm.setState('turn')
-  }
+  private onArresteeUpdate(): void {}
   private onArresteeExit(): void {}
   private onNewEnter(): void {}
   private onNewUpdate(): void {
