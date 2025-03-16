@@ -1139,14 +1139,6 @@ export function watcher_punched_check(
 
   return { pass: false, type: 'neutral' }
 }
-/** 
-function call_security(chkr: QuestionProps, chkd: QuestionProps) {
-  const watcher = chkr
-  watcher.clan == 'security'
-    ? print('need ArrestSequence for:', chkd.name, 'ENFORCER:::', chkr.name) //chkd.addToBehavior('place', new ArrestSequence())
-    : print('need PhoneSequence for:', chkd.name, 'ENFORCER:::', chkr.name) //chkr.addToBehavior('active', new PhoneSequence())
-}
-*/
 export function unlucky_check(
   chkr: QuestionProps,
   chkd: QuestionProps
@@ -1154,9 +1146,6 @@ export function unlucky_check(
   const modifier = math.random(-1, 1)
   const advantage = math.random() > 0.5
   const result = rollSpecialDice(5, advantage, 3, 2) + modifier
-
-  // print('CHECKS:: UNLUCKEY::', t, 'is unlucky with::', l, 'ROLL:', result)
-
   if (result > 5 && result <= 10) {
     const random = math.random(0, 4)
     if (random == 0) {
@@ -1170,7 +1159,6 @@ export function unlucky_check(
       return chkr.clan == 'security'
         ? { pass: true, type: 'jailed' }
         : { pass: true, type: 'phonesecurity' }
-      //call_security(chkr, chkd)
     } else if (random == 4) {
       add_prejudice(chkd.name == 'player' ? chkd.name : chkd.clan, chkr)
     }

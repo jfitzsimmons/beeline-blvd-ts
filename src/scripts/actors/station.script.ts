@@ -62,8 +62,9 @@ export function on_message(
   } else if (messageId == hash('loadStation')) {
     this.npc = message.npc
     this.roomName = message.roomName
+    print('loadstation!!!:::', message.npc, this.npc, this.roomName)
     prep_interaction(this) // combine actor actions
-    msg.post('/npc_loader#npc_loader', 'show_npc', { npc: this.npc })
+    msg.post('/desk#npc_loader', 'show_npc', { npc: this.npc })
   } else if (messageId == hash('loadActor')) {
     this.npc = ''
     this.roomName = message.roomName

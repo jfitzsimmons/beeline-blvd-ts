@@ -17,29 +17,25 @@ export default class ScoutAction extends Action {
 
     const victimMatirix: { x: number; y: number } =
       RoomsInitState[this.room].matrix
-    const target = { x: 0, y: 1 }
+    const target = { x: 0, y: 0 }
 
-    if (victimMatirix.x < 3) target.x = 4
-    if (victimMatirix.y < 3) target.y = 5
+    if (victimMatirix.x < 3 && this.a.matrix.x != 4) target.x = 4
+    if (victimMatirix.y < 3 && this.a.matrix.y != 5) target.y = 5
     const rooms = this.a.makePriorityRoomList(target)
     // prettier-ignore
     //for (const r of rooms) { print('SCOUTACTIO::: makePriorityRoomList:: THISISR:',r,'is it empty?:',r == ''  ) }
-    const index = rooms.indexOf(this.room)
+    rooms.splice(rooms.indexOf(this.room), 1)
 
-    if (index !== -1) {
-      rooms.splice(index, 1)
-    }
-    print(
-      '||>> Behavior: scoutAction: findRoomPlaceStation:',
-      this.a.name,
-      this.room,
-      rooms.includes(this.room)
-    )
     this.a.findRoomPlaceStation({ x: 9, y: 9 }, [...rooms])
 
     return () => this.success()
   }
   success() {
+    print(
+      '||>> Behavior: scoutAction: Succuess: findRoomPlaceStation:',
+      this.a.name,
+      this.room,
+    )
     // if (isNpc(this.a))
     // prettier-ignore
     //print('PlaceAction:: Success::', this.a.name, 'placedin:', this.a.currRoom, this.a.currStation, '||| from:',   this.a.exitRoom ) //testjpf

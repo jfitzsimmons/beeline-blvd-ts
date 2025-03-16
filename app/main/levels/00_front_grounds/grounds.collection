@@ -260,7 +260,7 @@ instances {
   }
 }
 instances {
-  id: "unplaced"
+  id: "grounds_unplaced"
   prototype: "/main/characters/npc_loader.go"
   position {
     x: 901.0
@@ -516,12 +516,12 @@ embedded_instances {
   children: "aid"
   children: "assistant"
   children: "bench"
+  children: "grounds_unplaced"
   children: "guard"
   children: "guest"
   children: "guest2"
   children: "loiter1"
   children: "loiter2"
-  children: "unplaced"
   children: "worker1"
   children: "worker2"
   data: ""

@@ -80,7 +80,7 @@ instances {
   }
 }
 instances {
-  id: "passer"
+  id: "security_passer"
   prototype: "/main/characters/npc_loader.go"
   position {
     x: 650.0
@@ -200,7 +200,7 @@ instances {
   }
 }
 instances {
-  id: "outside1"
+  id: "security_outside1"
   prototype: "/main/characters/npc_loader.go"
   position {
     x: 269.0
@@ -300,9 +300,9 @@ instances {
   }
 }
 instances {
-  id: "desk"
+  id: "deskarea"
   prototype: "/main/actors/deskarea02.go"
-  children: "npc_loader"
+  children: "desk"
   position {
     x: 308.0
     y: 164.0
@@ -321,7 +321,7 @@ instances {
   }
 }
 instances {
-  id: "npc_loader"
+  id: "desk"
   prototype: "/main/characters/npc_loader.go"
   position {
     x: 131.0
@@ -592,12 +592,12 @@ embedded_instances {
   children: "guard"
   children: "guest"
   children: "guest2"
-  children: "outside1"
-  children: "passer"
   children: "prisoner1"
   children: "prisoner2"
   children: "prisoner3"
   children: "prisoner4"
+  children: "security_outside1"
+  children: "security_passer"
   children: "servants2"
   data: ""
   position {

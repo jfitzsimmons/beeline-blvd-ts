@@ -49,8 +49,7 @@ function game_turn() {
   quest_checker('turn')
   print('????* *::: qQqQq: Quest Related AI checks: Finished.')
 }
-function quickLoad(_this: props, rn: string) {
-  _this.roomName = rn
+function quickLoad(_this: props) {
   msg.post(_this.roomName + ':/level#' + _this.roomName, 'room_load')
   msg.post('/shared/adam#adam', 'wake_up')
   print('111 --- === ::: NEW ROOM LOADED ::: === --- 111')
@@ -76,7 +75,7 @@ export function on_message(
     //snitch, security issues etc.., effects
     // address_busy_tasks()
     // calculate_heat(this.roomName)
-    quickLoad(this, message.roomName)
+    quickLoad(this)
     if (novel.forced === true) {
       calculate_heat(this.roomName)
       msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
@@ -84,7 +83,7 @@ export function on_message(
       //  player.fsm.setState('turn')
     }
   } else if (messageId == hash('quick_load')) {
-    quickLoad(this, message.roomName)
+    quickLoad(this)
   } else if (messageId == hash('exit_gui')) {
     //quests.update_quests_progress('interact')
     quests.fsm.update(dt)

@@ -82,35 +82,89 @@ export function fillStationAttempt(
     // fallback stations
     if (placed == false) {
       if (
+        room_list.includes('loading') &&
+        stationMap.fallbacks['loading_outside1'] !== null
+      ) {
+        chosenStation = 'loading_outside1'
+        chosenRoom = 'loading'
+      } else if (
+        room_list.includes('grounds') &&
+        stationMap.fallbacks['grounds_unplaced'] !== null
+      ) {
+        chosenStation = 'grounds_unplaced'
+        chosenRoom = 'grounds'
+      } else if (
+        room_list.includes('viplobby') &&
+        stationMap.fallbacks['viplobby_outside1'] !== null
+      ) {
+        chosenStation = 'viplobby_outside1'
+        chosenRoom = 'viplobby'
+      } else if (
+        room_list.includes('reception') &&
+        stationMap.fallbacks['reception_unplaced'] !== null
+      ) {
+        chosenStation = 'reception_unplaced'
+        chosenRoom = 'reception'
+      } else if (
+        room_list.includes('infirmary') &&
+        stationMap.fallbacks['infirmary_outside1'] !== null
+      ) {
+        chosenStation = 'infirmary_outside1'
+        chosenRoom = 'infirmary'
+      } else if (
+        room_list.includes('dorms') &&
+        stationMap.fallbacks['dorms_outside1'] !== null
+      ) {
+        chosenStation = 'dorms_outside1'
+        chosenRoom = 'dorms'
+      } else if (
+        room_list.includes('security') &&
+        RoomsInitLayout[matrix.y][matrix.x] != 'security' &&
+        stationMap.fallbacks['security_passer'] !== null
+      ) {
+        chosenStation = 'security_passer'
+        chosenRoom = 'security'
+      } else if (
+        room_list.includes('baggage') &&
+        RoomsInitLayout[matrix.y][matrix.x] != 'baggage' &&
+        stationMap.fallbacks['baggage_passer'] !== null
+      ) {
+        chosenStation = 'baggage_passer'
+        chosenRoom = 'baggage'
+      } else if (
+        room_list.includes('alley2') &&
+        RoomsInitLayout[matrix.y][matrix.x] != 'alley2' &&
+        stationMap.fallbacks['alley2_passer'] !== null
+      ) {
+        chosenStation = 'alley2_passer'
+        chosenRoom = 'alley2'
+      } else if (
+        room_list.includes('alley4') &&
+        RoomsInitLayout[matrix.y][matrix.x] != 'alley4' &&
+        stationMap.fallbacks['alley4_passer'] !== null
+      ) {
+        chosenStation = 'alley4_passer'
+        chosenRoom = 'alley4'
+      } else if (
+        room_list.includes('viplobby') &&
+        RoomsInitLayout[matrix.y][matrix.x] != 'viplobby' &&
+        stationMap.fallbacks['viplobby_passer'] !== null
+      ) {
+        chosenStation = 'viplobby_passer'
+        chosenRoom = 'viplobby'
+      } else if (
         room_list.includes('admin1') &&
-        RoomsInitLayout[matrix.y][matrix.x] != 'admin1'
+        RoomsInitLayout[matrix.y][matrix.x] != 'admin1' &&
+        stationMap.fallbacks['admin1_passer'] !== null
       ) {
         chosenStation = 'admin1_passer'
         chosenRoom = 'admin1'
       } else if (
         room_list.includes('security') &&
-        RoomsInitLayout[matrix.y][matrix.x] != 'security'
+        stationMap.fallbacks['security_outside1'] !== null
       ) {
-        chosenStation = 'security_passer'
-        chosenRoom = 'security'
-      } else if (room_list.includes('security')) {
         chosenStation = 'security_outside1'
         chosenRoom = 'security'
-      } else if (room_list.includes('grounds')) {
-        chosenStation = 'grounds_unplaced'
-        chosenRoom = 'grounds'
-      } else if (room_list.includes('viplobby')) {
-        chosenStation = 'viplobby_outside1'
-        chosenRoom = 'viplobby'
-      } else if (room_list.includes('reception')) {
-        chosenStation = 'reception_unplaced'
-        chosenRoom = 'reception'
-      } else if (room_list.includes('infirmary')) {
-        chosenStation = 'infirmary_outside1'
-        chosenRoom = 'infirmary'
-      } else if (room_list.includes('dorms')) {
-        chosenStation = 'dorms_outside1'
-        chosenRoom = 'dorms'
       } else {
         if (unplacedcount[npc] != null) {
           unplacedcount[npc] += 1
@@ -123,7 +177,7 @@ export function fillStationAttempt(
           unplacedcount[RoomsInitLayout[matrix.y][matrix.x]!] = 1
         }
       }
-      if (placed == false)
+      if (chosenRoom == '')
         print(
           'COMPLETELY UNPLACED.  NEed passers for unloading, alley 1...',
           npc
@@ -264,8 +318,8 @@ export function set_npc_target(
   //limit target to map layout grid
   if (target.x < 0) {
     target.x = 0
-  } else if (target.x > 5) {
-    target.x = 5
+  } else if (target.x > 4) {
+    target.x = 4
   }
 
   if (target.y < 0) {

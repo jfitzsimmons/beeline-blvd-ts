@@ -66,30 +66,21 @@ export default class RecklessAction extends Action {
           this.getProps('question') as QuestionProps,
           listener.getBehaviorProps('announcer') as QuestionProps
         )
-        // prettier-ignore
-        // // print(i, '-- buildconsequence::: ARGCHECKS::', consolation.pass, consolation.type, checked, checker)
-
         if (consequence.type == 'phonesecurity') {
-          if (this.a.clan == 'security') {
+          if (listener.clan == 'security') {
             for (const behavior of listener.behavior.active.children) {
               if (behavior instanceof QuestionSequence) {
                 behavior.update(this.cause)
-                print(
-                  'recklessAction::: QuestionSequence extended for:: ',
-                  this.inspirer.name,
-                  'by:',
-                  this.a.name
-                )
                 return () =>
                   this.continue(
-                    `${this.a.name} Call connected questionUpdate recklessACTION in ${this.a.currRoom}`
+                    `||>> Behavior: RecklessAction: QuestionSequence extended for ${listener.name}by ${this.a.name} in ${listener.currRoom} for ${this.inspirer.name}`
                   )
               }
             }
-            this.a.addToBehavior(
+            listener.addToBehavior(
               'active',
               new QuestionSequence(
-                this.a.getBehaviorProps.bind(this.a),
+                listener.getBehaviorProps.bind(listener),
                 this.inspirer.getBehaviorProps.bind(this.inspirer),
                 this.cause
               )
@@ -102,18 +93,18 @@ export default class RecklessAction extends Action {
                   'recklessAction::: SnitchSequence extended for:: ',
                   this.inspirer.name,
                   'by:',
-                  this.a.name
+                  listener.name
                 )
                 return () =>
                   this.continue(
-                    `${this.a.name} Call connected snitchUpdate PHONeACTION in ${this.a.currRoom}`
+                    `||>> Behavior: RecklessAction: ${listener.name} Call snitching in ${listener.currRoom} on ${this.inspirer.name}`
                   )
               }
             }
-            this.a.addToBehavior(
+            listener.addToBehavior(
               'active',
               new SnitchSequence(
-                this.a.getBehaviorProps.bind(this.a),
+                listener.getBehaviorProps.bind(listener),
                 this.inspirer.getBehaviorProps('helper') as HelperProps,
                 this.cause
               )
@@ -122,33 +113,29 @@ export default class RecklessAction extends Action {
             for (const behavior of listener.behavior.active.children) {
               if (behavior instanceof PhoneSequence) {
                 behavior.update(this.cause)
-                print(
-                  'recklessAction::: phoneSequence extended for:: ',
-                  this.inspirer.name,
-                  'by:',
-                  this.a.name
-                )
                 return () =>
                   this.continue(
-                    `${this.a.name} already has phone. phoneUpdate PHONeACTION in ${this.a.currRoom}`
+                    this.continue(
+                      `||>> Behavior: RecklessAction: PhoneSequence extended for ${listener.name}by ${this.a.name} in ${listener.currRoom} for ${this.inspirer.name}`
+                    )
                   )
               }
             }
-            this.a.addToBehavior(
-              'active',
-              new PhoneSequence(
-                this.a.getBehaviorProps.bind(this.a),
-                this.inspirer.getBehaviorProps('helper') as HelperProps,
-                this.cause
+            return () =>
+              this.alternate(
+                new PhoneSequence(
+                  listener.getBehaviorProps.bind(listener),
+                  this.inspirer.getBehaviorProps('helper') as HelperProps,
+                  this.cause
+                )
               )
-            )
           }
         }
 
         if (consequence.pass == true) {
           return () =>
             this.continue(
-              `RecklessACtion:: found for: ${this.a.name} against ${listener.name} inspired by ${this.inspirer.name}::: ${consequence.type}`
+              `RecklessACtion:: found for: ${this.a.name} talking to ${listener.name} inspired by ${this.inspirer.name}::: ${consequence.type}`
             )
         }
       }

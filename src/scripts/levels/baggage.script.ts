@@ -7,7 +7,7 @@ function load_npcs() {
   for (station in stations) {
     const npc = stations[station]
     station == 'desk'
-      ? msg.post('desk#station', 'loadStation', { npc, roomName })
+      ? msg.post('deskarea#station', 'loadStation', { npc, roomName })
       : msg.post(`/${station}#npc_loader`, 'load_npc', { npc })
   }
 
@@ -20,6 +20,8 @@ function load_npcs() {
     }
     msg.post(`/${swaps[swap][0]}#npc_loader`, 'load_npc', params)
   }
+  const npc = rooms.fallbacks.stations.baggage_passer
+  msg.post('/baggage_passer#npc_loader', 'load_npc', { npc })
 }
 
 function load_storage() {

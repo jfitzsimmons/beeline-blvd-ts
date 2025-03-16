@@ -7,7 +7,7 @@ function load_npcs() {
   for (station in stations) {
     const npc = stations[station]
     station == 'desk'
-      ? msg.post('desk#station', 'loadStation', { npc, roomName })
+      ? msg.post('deskarea#station', 'loadStation', { npc, roomName })
       : msg.post(`/${station}#npc_loader`, 'load_npc', { npc })
   }
 
@@ -25,7 +25,7 @@ function load_npcs() {
   //see how much you can move to main level.ts
 
   const npc = rooms.fallbacks.stations.admin1_passer
-  msg.post('/passer#npc_loader', 'load_npc', { npc })
+  msg.post('/admin1_passer#npc_loader', 'load_npc', { npc })
 }
 
 export function on_message(messageId: hash, _sender: url): void {
