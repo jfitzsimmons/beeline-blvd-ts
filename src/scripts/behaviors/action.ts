@@ -15,7 +15,7 @@ export default class Action {
     return () => print('ACTIONclass run()default::: ')
   }
   fail(str: string) {
-    print('ACTIONfailed', str)
+    print('|||>>> Behavior: ACTIONfailed', str)
   }
   success() {
     print('ACTIONsuccess')

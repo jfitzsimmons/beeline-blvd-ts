@@ -59,6 +59,7 @@ export default class NpcState extends ActorState {
         turnPriority: this.turnPriority,
         currRoom: this.currRoom,
         currStation: this.currStation,
+        behavior: this.behavior,
         addToBehavior: this.addToBehavior.bind(this),
         hp: this.hp,
         updateFromBehavior: this.updateFromBehavior.bind(this),
@@ -266,32 +267,6 @@ export default class NpcState extends ActorState {
     //  this.sincePlayerConvo = novelUpdates.sincePlayerConvo
     this.love = novelUpdates.love
   }
-  //private onTrespassEnter(): void {
-  /**
-    const hallpass = this.parent.hasHallpass(this.name)
-    if (
-      hallpass != null &&
-      tonumber(hallpass.scope.charAt(hallpass.scope.length - 1))! >=
-        RoomsInitState[this.currRoom].clearance
-    )
-      this.fsm.setState('turn')
-  }
-  private onTrespassUpdate(): void {
-    if (
-      this.clearance + math.random(1, 5) >=
-      RoomsInitState[this.currRoom].clearance
-    )
-      this.fsm.setState('turn')
-    this.parent.clearStation(this.currRoom, this.currStation, this.name)
-    // const target = RoomsInitState[this.parent.getPlayerRoom()].matrix
-    // const rooms = this.makePriorityRoomList(target)
-    print('findRoomPlaceStation TRESPASS')
-
-    this.findRoomPlaceStation()
-  }
-  private onTrespassExit(): void {
-  */
-  //}
   private onArresteeEnter(): void {}
   private onArresteeUpdate(): void {
     //this.cooldown--
@@ -302,8 +277,10 @@ export default class NpcState extends ActorState {
   private onNewUpdate(): void {
     this.behavior.place.run()
     print(
-      '::: onNewUpdate() ::: 1st b.place.run():: length:',
-      this.behavior.place.children.length
+      '==>> NEWPLACED::: NPCSTATE:: FOR::',
+      this.name,
+      this.currRoom,
+      this.currStation
     )
   }
   private onNewExit(): void {
@@ -313,39 +290,49 @@ export default class NpcState extends ActorState {
   }
   private onTurnEnter(): void {
     //  print('NPCCLASS::: onTurnEnter()')
-    this.behavior.active.run()
-    print(
-      'FINISHED:::::: onTurn-ENTER-() ::: b.active.run():: length:',
-      this.behavior.active.children.length
-    )
+    //this.behavior.active.run()
+    if (this.behavior.active.children.length > 0)
+      print(
+        '==>> SET ::: NextTurn: Active Behaviors::',
+        this.behavior.active.children[0].constructor.name,
+        this.behavior.active.children.length
+      )
   }
   private onTurnUpdate(): void {
-    print('NPCSTATE:: FOR::', this.name, 'onTurnUpdate PLACErun')
+    //print('===>>> PLACING::: NPCSTATE:: FOR::', this.name)
     this.behavior.place.run()
+    print(
+      '==>> PLACED::: NPCSTATE:: FOR::',
+      this.name,
+      this.currRoom,
+      this.currStation,
+      'from',
+      this.exitRoom
+    )
   }
   private onTurnExit(): void {
     //  print('TURNEXIT ACTIVErun')
   }
   private onActiveEnter(): void {
     this.behavior.active.run()
-    print(
-      'NPCSTATE:: FOR::',
-      this.name,
-      'onActiveEnter ACTIVErun: length:',
-      this.behavior.active.children.length
-    )
+    if (this.behavior.active.children.length > 0)
+      print(
+        '==>> SET ::: ENDTurn: Active Behaviors::',
+        this.behavior.active.children[0].constructor.name,
+        this.behavior.active.children.length
+      )
   }
   private onActiveUpdate(): void {}
   private onActiveExit(): void {}
   private onOnScreenEnter(): void {
-    print(
-      'NPCSTATE:: FOR::',
-      this.name,
-      'onOnScreenEnter NO-RUN: this.behavior.active:',
-      this.behavior.active.children.length
-    )
     //testjpf remove ideal would be onscreen exit.??
     this.behavior.active.run()
+    if (this.behavior.active.children.length > 0)
+      print(
+        '==>> SET ::: ENDTurn: ONSCREEN Behaviors::',
+        this.behavior.active.children[0].constructor.name,
+        this.behavior.active.children.length
+      )
   }
   private onOnScreenUpdate(): void {}
   private onOnScreenExit(): void {
@@ -373,10 +360,14 @@ export default class NpcState extends ActorState {
       npcPriorityProps
     )
   }
-  findRoomPlaceStation(t?: { x: number; y: number }, r?: string[]): void {
+  findRoomPlaceStation(
+    t: { x: number; y: number } | undefined = undefined,
+    r: string[] | undefined = undefined
+  ): void {
     const target =
       t !== undefined ? t : RoomsInitState[this.parent.getPlayerRoom()].matrix
     const rooms = r !== undefined ? r : this.makePriorityRoomList(target)
+
     this.exitRoom = this.currRoom
     this.parent.clearStation(this.currRoom, this.currStation, this.name)
     const { chosenRoom, chosenStation } = fillStationAttempt(
@@ -387,6 +378,8 @@ export default class NpcState extends ActorState {
       this.parent.getStationMap()
     )
     print(
+      'ROOMS.LENGTH:!:',
+      rooms.length,
       this.name,
       '::: findrooomplacestation:: STATION:::',
       chosenRoom,
@@ -400,7 +393,7 @@ export default class NpcState extends ActorState {
     this.matrix = RoomsInitState[chosenRoom].matrix
     this.parent.setStation(chosenRoom, chosenStation, this.name)
     //this.parent.pruneStationMap(chosenRoom, chosenStation)
-
+    if (this.turnPriority > 93) return
     if (chosenRoom != this.parent.getPlayerRoom()) {
       this.turnPriority = this.turnPriority + 1
     } else {

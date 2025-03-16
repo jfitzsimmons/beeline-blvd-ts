@@ -29,8 +29,9 @@ export default class MenderSequence extends Sequence {
     this.a = props
     this.mendee = mendee
     this.getProps = getProps
-    this.a.updateFromBehavior('turnPriority', 99)
+    this.a.updateFromBehavior('turnPriority', 97)
     print(
+      '___ => Behavior: ',
       this.a.name,
       'NEWMENDERSEQ CREATED!!!:: ',
       this.a.turnPriority,
@@ -48,7 +49,12 @@ export default class MenderSequence extends Sequence {
           'active',
           new MenderSequence(this.getProps, this.mendee)
         )
-        this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
+        if (
+          !this.a.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
+        )
+          this.a.addToBehavior('place', new ImmobileSequence(this.getProps))
       } else {
         this.a.updateFromBehavior('turnPriority', math.random(10, 30))
         this.a.addToBehavior('place', new PlaceSequence(this.getProps))

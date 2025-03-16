@@ -20,7 +20,7 @@ instances {
   }
 }
 instances {
-  id: "npc_loader"
+  id: "desk"
   prototype: "/main/characters/npc_loader.go"
   position {
     x: 0.0
@@ -220,7 +220,7 @@ instances {
   }
 }
 instances {
-  id: "outside1"
+  id: "infirmary_outside1"
   prototype: "/main/characters/npc_loader.go"
   position {
     x: 675.0
@@ -464,8 +464,8 @@ embedded_instances {
   }
 }
 embedded_instances {
-  id: "desk"
-  children: "npc_loader"
+  id: "deskarea"
+  children: "desk"
   children: "phone"
   data: "components {\n"
   "  id: \"station\"\n"
@@ -715,10 +715,10 @@ embedded_instances {
 embedded_instances {
   id: "potential_npcs"
   children: "aid"
+  children: "infirmary_outside1"
   children: "loiter1"
   children: "loiter2"
   children: "loiter4"
-  children: "outside1"
   children: "patient1"
   children: "patient2"
   children: "patient3"
@@ -776,8 +776,8 @@ embedded_instances {
   "}\n"
   ""
   position {
-    x: 13.0
-    y: 54.0
+    x: 48.0
+    y: 57.0
     z: 0.5
   }
   rotation {

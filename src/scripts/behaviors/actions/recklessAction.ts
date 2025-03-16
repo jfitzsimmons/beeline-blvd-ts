@@ -66,44 +66,76 @@ export default class RecklessAction extends Action {
           this.getProps('question') as QuestionProps,
           listener.getBehaviorProps('announcer') as QuestionProps
         )
-        // prettier-ignore
-        // // print(i, '-- buildconsequence::: ARGCHECKS::', consolation.pass, consolation.type, checked, checker)
         if (consequence.type == 'phonesecurity') {
-          if (this.a.clan == 'security') {
-            this.a.addToBehavior(
+          if (listener.clan == 'security') {
+            for (const behavior of listener.behavior.active.children) {
+              if (behavior instanceof QuestionSequence) {
+                behavior.update(this.cause)
+                return () =>
+                  this.continue(
+                    `||>> Behavior: RecklessAction: QuestionSequence extended for ${listener.name}by ${this.a.name} in ${listener.currRoom} for ${this.inspirer.name}`
+                  )
+              }
+            }
+            listener.addToBehavior(
               'active',
               new QuestionSequence(
-                this.a.getBehaviorProps.bind(this.a),
+                listener.getBehaviorProps.bind(listener),
                 this.inspirer.getBehaviorProps.bind(this.inspirer),
                 this.cause
               )
             )
-          }
-          else if (this.a.currRoom == 'security') {
-            this.a.addToBehavior(
+          } else if (this.a.currRoom == 'security') {
+            for (const behavior of listener.behavior.active.children) {
+              if (behavior instanceof SnitchSequence) {
+                behavior.update(this.cause)
+                print(
+                  'recklessAction::: SnitchSequence extended for:: ',
+                  this.inspirer.name,
+                  'by:',
+                  listener.name
+                )
+                return () =>
+                  this.continue(
+                    `||>> Behavior: RecklessAction: ${listener.name} Call snitching in ${listener.currRoom} on ${this.inspirer.name}`
+                  )
+              }
+            }
+            listener.addToBehavior(
               'active',
               new SnitchSequence(
-                this.a.getBehaviorProps.bind(this.a),
+                listener.getBehaviorProps.bind(listener),
                 this.inspirer.getBehaviorProps('helper') as HelperProps,
                 this.cause
               )
             )
           } else {
-            this.a.addToBehavior(
-              'active',
-              new PhoneSequence(
-                this.a.getBehaviorProps.bind(this.a),
-                this.inspirer.getBehaviorProps('helper') as HelperProps,
-                this.cause
+            for (const behavior of listener.behavior.active.children) {
+              if (behavior instanceof PhoneSequence) {
+                behavior.update(this.cause)
+                return () =>
+                  this.continue(
+                    this.continue(
+                      `||>> Behavior: RecklessAction: PhoneSequence extended for ${listener.name}by ${this.a.name} in ${listener.currRoom} for ${this.inspirer.name}`
+                    )
+                  )
+              }
+            }
+            return () =>
+              this.alternate(
+                new PhoneSequence(
+                  listener.getBehaviorProps.bind(listener),
+                  this.inspirer.getBehaviorProps('helper') as HelperProps,
+                  this.cause
+                )
               )
-            )
           }
         }
 
         if (consequence.pass == true) {
           return () =>
             this.continue(
-              `RecklessACtion:: found for: ${this.a.name} against ${listener.name} inspired by ${this.inspirer.name}::: ${consequence.type}`
+              `RecklessACtion:: found for: ${this.a.name} talking to ${listener.name} inspired by ${this.inspirer.name}::: ${consequence.type}`
             )
         }
       }

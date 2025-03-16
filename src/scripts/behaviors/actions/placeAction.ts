@@ -14,7 +14,10 @@ export default class PlaceAction extends Action {
   run(): { (): void } {
     if (this.a.cooldown > 0) this.a.cooldown = this.a.cooldown - 1
     this.a.exitRoom = this.a.currRoom
-    print('findRoomPlaceStation REGPLACEACTION:', this.a.name)
+    print(
+      '||>> Behavior: PlaceAction: findRoomPlaceStation REGPLACEACTION:',
+      this.a.name
+    )
 
     this.a.findRoomPlaceStation()
     /**

@@ -26,7 +26,7 @@ function load_npcs() {
   //see how much you can move to main level.ts
 
   let npc = rooms.fallbacks.stations.grounds_unplaced
-  msg.post('/unplaced#npc_loader', 'load_npc', { npc })
+  msg.post('/grounds_unplaced#npc_loader', 'load_npc', { npc })
 
   //load "AI" npc to screen prop
   npc = 'fredai'

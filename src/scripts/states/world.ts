@@ -107,10 +107,12 @@ export default class World {
     this.rooms.fsm.setState('turn')
     this.player.fsm.setState('place')
     this.npcs.fsm.setState('new') //Adds a PlaceSeq and runs it //also test defaults
+    this.rooms.fsm.update(dt)
     this.tasks.fsm.setState('turn')
     this.quests.fsm.setState('new')
 
     //debug defaults
+    /**
     this.tasks.taskBuilder(
       'security004',
       'questioning',
@@ -118,7 +120,7 @@ export default class World {
         ? this.rooms.all.grounds.swaps.guest[1]
         : this.rooms.all.grounds.stations.guest,
       'testing'
-    )
+    )**/
     this.npcs.addIgnore(this.rooms.all.grounds.stations.worker1)
   }
   private onNewUpdate(): void {}
@@ -129,11 +131,15 @@ export default class World {
     this.player.hp = this.player.hpMax - 1
   }
   private onFaintUpdate(): void {
+    //testjpf could probably remove
+    // use placebehavior instead?
+    this.player.setRoomInfo()
     this.player.fsm.update(dt)
-    this.rooms.fsm.update(dt)
-    this.npcs.fsm.update(dt)
     this.quests.fsm.update(dt)
     this.tasks.fsm.update(dt)
+    this.npcs.fsm.update(dt)
+    this.rooms.fsm.update(dt)
+
     this.fsm.setState('turn')
   }
   private onFaintExit(): void {}
@@ -155,12 +161,17 @@ export default class World {
     this.clock = this.clock + 1
     if (this.clock > 23) this.clock = this.clock - 24
     this.player.fsm.update(dt)
-    this.rooms.fsm.update(dt)
-    this.quests.fsm.update(dt)
+
     this.tasks.fsm.update(dt)
+    print('!!!!! :::: PPPPP: Placing NPCS: Running...')
     this.npcs.fsm.update(dt)
+    print('!!!! ::: PPPP: Placing NPCS: Finished.')
+    this.rooms.fsm.update(dt)
     this.player.fsm.setState('active')
     this.npcs.fsm.setState('active')
+    print('????? :::: QQQQQ: Quest Related Status checks: Running...')
+    this.quests.fsm.update(dt)
+    print('???? ::: QQQQ: Quest Related Status checks: Finished.')
   }
   private onTurnExit(): void {}
   private didCrossPaths(o: string, t: string): boolean {

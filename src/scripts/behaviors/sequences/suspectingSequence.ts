@@ -18,6 +18,7 @@ export default class SuspectingSequence extends Sequence {
   getProps: (behavior: BehaviorKeys) => ActionProps
   cause: string
   isHero: boolean
+  prevSpr: number
   storage?: Storage
   constructor(
     getProps: (behavior: BehaviorKeys) => ActionProps,
@@ -36,15 +37,22 @@ export default class SuspectingSequence extends Sequence {
     this.storage = storage
     this.cause = cause
     this.isHero = this.perp.name === 'player' ? true : false
+    this.prevSpr = this.a.turnPriority
 
-    print('NEW: SuspectingSeq::', this.a.name, 'Suspecting:', this.perp.name)
+    print(
+      '=> Behavior: NEW: SuspectingSeq::',
+      this.a.name,
+      'Suspecting:',
+      this.perp.name
+    )
+    this.a.updateFromBehavior('turnPriority', 94)
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
       const proceed = child.run()()
       if (proceed === 'reckless') {
         print(
-          'SupectingAction::',
+          '>>> => Behavior: Run: SupectingAction::',
           this.a.name,
           'will become reckless about::',
           this.perp.name
@@ -59,6 +67,7 @@ export default class SuspectingSequence extends Sequence {
         )
       }
     }
+    this.a.updateFromBehavior('turnPriority', this.prevSpr)
     return 'REMOVE'
   }
 }

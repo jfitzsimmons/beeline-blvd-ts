@@ -14,6 +14,15 @@ export function isNpc(a: ActorState | ActionProps): a is NpcState {
   return a.name !== 'player'
 }
   */
+export const turnPriorityLookup = {
+  99: [],
+  98: ['infirmed', 'injured', 'mendee', 'jailed'], // :: IMMOBILE
+  97: ['mender', 'infirm', 'arrest'], //:: Emergency Response?
+  96: ['phone'],
+  95: ['question'],
+  94: ['announcer', 'reckless', 'snitch', 'helper', 'suspecting'],
+  93: ['trespass'],
+}
 export const crimeSeverity: { [key: string]: number } = {
   clearance: 0,
   concern: 0,
@@ -66,41 +75,96 @@ export function fillStationAttempt(
           break
         }
       }
+      //print('CHOSENROOM AI:: ', room, npc)
       if (placed == true) break
     }
 
     // fallback stations
     if (placed == false) {
       if (
+        room_list.includes('loading') &&
+        stationMap.fallbacks['loading_outside1'] !== null
+      ) {
+        chosenStation = 'loading_outside1'
+        chosenRoom = 'loading'
+      } else if (
+        room_list.includes('grounds') &&
+        stationMap.fallbacks['grounds_unplaced'] !== null
+      ) {
+        chosenStation = 'grounds_unplaced'
+        chosenRoom = 'grounds'
+      } else if (
+        room_list.includes('viplobby') &&
+        stationMap.fallbacks['viplobby_outside1'] !== null
+      ) {
+        chosenStation = 'viplobby_outside1'
+        chosenRoom = 'viplobby'
+      } else if (
+        room_list.includes('reception') &&
+        stationMap.fallbacks['reception_unplaced'] !== null
+      ) {
+        chosenStation = 'reception_unplaced'
+        chosenRoom = 'reception'
+      } else if (
+        room_list.includes('infirmary') &&
+        stationMap.fallbacks['infirmary_outside1'] !== null
+      ) {
+        chosenStation = 'infirmary_outside1'
+        chosenRoom = 'infirmary'
+      } else if (
+        room_list.includes('dorms') &&
+        stationMap.fallbacks['dorms_outside1'] !== null
+      ) {
+        chosenStation = 'dorms_outside1'
+        chosenRoom = 'dorms'
+      } else if (
+        room_list.includes('security') &&
+        RoomsInitLayout[matrix.y][matrix.x] != 'security' &&
+        stationMap.fallbacks['security_passer'] !== null
+      ) {
+        chosenStation = 'security_passer'
+        chosenRoom = 'security'
+      } else if (
+        room_list.includes('baggage') &&
+        RoomsInitLayout[matrix.y][matrix.x] != 'baggage' &&
+        stationMap.fallbacks['baggage_passer'] !== null
+      ) {
+        chosenStation = 'baggage_passer'
+        chosenRoom = 'baggage'
+      } else if (
+        room_list.includes('alley2') &&
+        RoomsInitLayout[matrix.y][matrix.x] != 'alley2' &&
+        stationMap.fallbacks['alley2_passer'] !== null
+      ) {
+        chosenStation = 'alley2_passer'
+        chosenRoom = 'alley2'
+      } else if (
+        room_list.includes('alley4') &&
+        RoomsInitLayout[matrix.y][matrix.x] != 'alley4' &&
+        stationMap.fallbacks['alley4_passer'] !== null
+      ) {
+        chosenStation = 'alley4_passer'
+        chosenRoom = 'alley4'
+      } else if (
+        room_list.includes('viplobby') &&
+        RoomsInitLayout[matrix.y][matrix.x] != 'viplobby' &&
+        stationMap.fallbacks['viplobby_passer'] !== null
+      ) {
+        chosenStation = 'viplobby_passer'
+        chosenRoom = 'viplobby'
+      } else if (
         room_list.includes('admin1') &&
-        RoomsInitLayout[matrix.y][matrix.x] != 'admin1'
+        RoomsInitLayout[matrix.y][matrix.x] != 'admin1' &&
+        stationMap.fallbacks['admin1_passer'] !== null
       ) {
         chosenStation = 'admin1_passer'
         chosenRoom = 'admin1'
       } else if (
         room_list.includes('security') &&
-        RoomsInitLayout[matrix.y][matrix.x] != 'security'
+        stationMap.fallbacks['security_outside1'] !== null
       ) {
-        chosenStation = 'security_passer'
-        chosenRoom = 'security'
-      } else if (room_list.includes('security')) {
         chosenStation = 'security_outside1'
         chosenRoom = 'security'
-      } else if (room_list.includes('grounds')) {
-        chosenStation = 'grounds_unplaced'
-        chosenRoom = 'grounds'
-      } else if (room_list.includes('viplobby')) {
-        chosenStation = 'viplobby_outside1'
-        chosenRoom = 'viplobby'
-      } else if (room_list.includes('reception')) {
-        chosenStation = 'reception_unplaced'
-        chosenRoom = 'reception'
-      } else if (room_list.includes('infirmary')) {
-        chosenStation = 'infirmary_outside1'
-        chosenRoom = 'infirmary'
-      } else if (room_list.includes('dorms')) {
-        chosenStation = 'dorms_outside1'
-        chosenRoom = 'dorms'
       } else {
         if (unplacedcount[npc] != null) {
           unplacedcount[npc] += 1
@@ -113,6 +177,11 @@ export function fillStationAttempt(
           unplacedcount[RoomsInitLayout[matrix.y][matrix.x]!] = 1
         }
       }
+      if (chosenRoom == '')
+        print(
+          'COMPLETELY UNPLACED.  NEed passers for unloading, alley 1...',
+          npc
+        )
       placed = true
     }
   }
@@ -133,7 +202,7 @@ export function set_room_priority(
     clearance: number
   }
 ): string[] {
-  const room_list: (string | null)[] = []
+  const room_list: string[] = []
   //get list of possible rooms NPC could go to next in order to get to target
   if (target.y > npc.matrix.y) {
     room_list.push(RoomsInitLayout[npc.matrix.y + 1][npc.matrix.x])
@@ -178,21 +247,19 @@ export function set_room_priority(
   }
 
   room_list.push(RoomsInitLayout[npc.home.y][npc.home.x])
-  const filteredArray: string[] = room_list
-    .filter((s): s is string => s != null)
-    .sort(function (a, b) {
-      if (
-        RoomsInitState[a].clearance > npc.clearance &&
-        RoomsInitState[b].clearance <= npc.clearance
-      )
-        return 1
-      if (
-        RoomsInitState[b].clearance > npc.clearance &&
-        RoomsInitState[a].clearance <= npc.clearance
-      )
-        return -1
-      return 0
-    })
+  const filteredArray: string[] = [...new Set(room_list)].sort(function (a, b) {
+    if (
+      RoomsInitState[a].clearance > npc.clearance &&
+      RoomsInitState[b].clearance <= npc.clearance
+    )
+      return 1
+    if (
+      RoomsInitState[b].clearance > npc.clearance &&
+      RoomsInitState[a].clearance <= npc.clearance
+    )
+      return -1
+    return 0
+  })
 
   return filteredArray
 }
@@ -251,8 +318,8 @@ export function set_npc_target(
   //limit target to map layout grid
   if (target.x < 0) {
     target.x = 0
-  } else if (target.x > 5) {
-    target.x = 5
+  } else if (target.x > 4) {
+    target.x = 4
   }
 
   if (target.y < 0) {

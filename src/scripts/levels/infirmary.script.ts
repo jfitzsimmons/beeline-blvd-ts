@@ -7,7 +7,7 @@ function load_npcs() {
   for (station in stations) {
     const npc = stations[station]
     station == 'assistant'
-      ? msg.post('desk#station', 'loadStation', { npc, roomName })
+      ? msg.post('deskarea#station', 'loadStation', { npc, roomName })
       : msg.post(`/${station}#npc_loader`, 'load_npc', { npc })
   }
 
@@ -34,7 +34,7 @@ function load_npcs() {
     npc: rooms.all['infirmary'].wards!.patient4,
   })
 
-  msg.post('/outside1#npc_loader', 'load_npc', {
+  msg.post('/infirmary_outside1#npc_loader', 'load_npc', {
     npc: rooms.fallbacks.stations.infirmary_outside1,
   })
 }

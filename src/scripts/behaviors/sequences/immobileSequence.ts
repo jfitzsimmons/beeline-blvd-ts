@@ -17,6 +17,13 @@ export default class ImmobileSequence extends Sequence {
 
     super(placeActions)
     this.a = props
+    print(
+      '___ => Behavior: NEW:IMMOBILESequence::: name,priority,curroom,station::',
+      this.a.name,
+      this.a.turnPriority,
+      this.a.currRoom,
+      this.a.currStation
+    )
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {

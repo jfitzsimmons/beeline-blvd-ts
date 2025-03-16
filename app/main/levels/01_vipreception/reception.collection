@@ -80,7 +80,7 @@ instances {
   }
 }
 instances {
-  id: "npc_loader"
+  id: "desk"
   prototype: "/main/characters/npc_loader.go"
   position {
     x: 0.0
@@ -240,7 +240,7 @@ instances {
   }
 }
 instances {
-  id: "unplaced"
+  id: "reception_unplaced"
   prototype: "/main/characters/npc_loader.go"
   position {
     x: 1218.0
@@ -504,8 +504,8 @@ embedded_instances {
   }
 }
 embedded_instances {
-  id: "desk"
-  children: "npc_loader"
+  id: "deskarea"
+  children: "desk"
   children: "phone"
   data: "components {\n"
   "  id: \"station\"\n"
@@ -763,12 +763,12 @@ embedded_instances {
   children: "loiter4"
   children: "lounge"
   children: "patrol"
-  children: "unplaced"
+  children: "reception_unplaced"
   data: ""
   position {
     x: 0.0
     y: 0.0
-    z: 0.1
+    z: 0.3
   }
   rotation {
     x: 0.0

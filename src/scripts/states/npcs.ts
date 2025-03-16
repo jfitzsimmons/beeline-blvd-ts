@@ -96,10 +96,12 @@ export default class WorldNpcs {
   private onNewEnter(): void {
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
+      print('===>>> NEWPLACING::: NPCSSTATE:: FOR::', npc.name)
 
       npc.behavior.place = new Selector([])
       npc.behavior.active = new Selector([])
       npc.findRoomPlaceStation({ x: 0, y: 0 }, [...RoomsInitPriority])
+
       npc.fsm.update(dt)
       //TEST DEFAULTS
       //Simulating behaviors.Active
@@ -118,14 +120,21 @@ export default class WorldNpcs {
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
+      print('===>>> SETTING::', npc.name, 'TO.ACTIVE')
+
       if (npc.hp < 1) {
         print('newexit injseq', npc.name)
         npc.behavior.active.children.push(
           new InjuredSequence(npc.getBehaviorProps.bind(npc))
         )
-        npc.behavior.active.children.push(
-          new ImmobileSequence(npc.getBehaviorProps.bind(npc))
+        if (
+          !npc.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
         )
+          npc.behavior.active.children.push(
+            new ImmobileSequence(npc.getBehaviorProps.bind(npc))
+          )
       } else if (
         npc.clearance + math.random(0, 1) <
         RoomsInitState[npc.currRoom].clearance
@@ -148,6 +157,7 @@ export default class WorldNpcs {
     this.sort_npcs_by_encounter()
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
+      print('===>>> PLACING::: NPCSSTATE:: FOR::', npc.name)
 
       npc.fsm.update(dt)
       if (playerRoom == npc.currRoom) this.onScreen.push(npc.name)
@@ -173,46 +183,55 @@ export default class WorldNpcs {
         npc.behavior.active.children.push(
           new InjuredSequence(npc.getBehaviorProps.bind(npc))
         )
-        npc.behavior.place.children.push(
-          new ImmobileSequence(npc.getBehaviorProps.bind(npc))
+        if (
+          !npc.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
         )
+          npc.behavior.place.children.push(
+            new ImmobileSequence(npc.getBehaviorProps.bind(npc))
+          )
       }
-
-      // npc.fsm.setState('active')
     }
     this.sort_npcs_by_encounter()
     const offscreen = this.order.filter((npc) => !this.onScreen.includes(npc))
     for (let i = offscreen.length; i-- !== 0; ) {
+      print('===>>> SETTING OFFSCREEN::', offscreen[i], 'TO.ACTIVE')
+      if (this.all[offscreen[i]].behavior.active.children.length > 0)
+        print(
+          '===>>> SETTING ::: BeginTurn: Active Behaviors::',
+          this.all[offscreen[i]].behavior.active.children[0].constructor.name,
+          this.all[offscreen[i]].behavior.active.children.length
+        )
       this.all[offscreen[i]].fsm.setState('active')
     }
+    this.onScreen.sort(
+      (a: string, b: string) =>
+        this.all[a].turnPriority - this.all[b].turnPriority
+    )
     this.onScreen.push('player')
     const player = this.parent.returnPlayer()
     print('this.onScreen.length', this.onScreen.length)
+
     for (let i = this.onScreen.length; i-- !== 0; ) {
       const actor =
         this.onScreen[i] === 'player' ? player : this.all[this.onScreen[i]]
-      const actions = actor.behavior.active.children
-      for (let i = actions.length; i-- !== 0; ) {
-        print(
-          'onscreen::: ',
-          actor.name,
-          actions[i].constructor.name,
-          ' :::length::',
-          actions.length
-        )
-      }
+      // const actions = actor.behavior.active.children
+
       //if (actor.turnPriority == 99) {
       // print('NPCS::: onplaceExit:: InjuredPriority!!! ONSCREEN:', actor.name)
       //  actor.behavior.active.run()
       // }
-      if (actor.name !== 'player') actor.fsm.setState('onscreen')
-
-      /**
-       * I', leaning on a fsm state onscreen
-       * that way ican move active run on npc
-       * from turn exit to active enter
-       * and i can add it to onscreen exit
-       */
+      if (actor.name !== 'player') {
+        print('===>>> SETTING::', actor.name, 'TO.ONSCREEN')
+        if (this.all[actor.name].behavior.active.children.length > 0)
+          print(
+            '===>>> SETTING ::: BeginOnScreen: Active Behaviors::',
+            this.all[actor.name].behavior.active.children[0].constructor.name,
+            this.all[actor.name].behavior.active.children.length
+          )
+        actor.fsm.setState('onscreen')
+      }
     }
   }
   private onActiveEnter(): void {
@@ -238,12 +257,10 @@ export default class WorldNpcs {
         this.all[a].turnPriority - this.all[b].turnPriority
     )
     for (let i = this.onScreen.length; i-- !== 0; ) {
-      print(
-        'NPCS:: onActiveExit:: update actor state:: ONCREENONCREEN:::',
-        this.onScreen[i]
-      )
-      this.onScreen[i] !== 'player' &&
+      if (this.onScreen[i] !== 'player') {
+        print('===>>> SETTING ONSCREEN::', this.onScreen[i], 'TO.TURN')
         this.all[this.onScreen[i]].fsm.setState('turn')
+      }
     }
 
     for (let i = this.order.length; i-- !== 0; ) {
@@ -253,7 +270,7 @@ export default class WorldNpcs {
         npc.behavior.place.children.push(
           new PlaceSequence(npc.getBehaviorProps.bind(npc))
         )
-
+      print('===>>> SETTING OffSCREEN::', npc.name, 'TO.TURN')
       npc.fsm.setState('turn')
     }
   }

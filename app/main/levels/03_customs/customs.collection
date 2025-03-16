@@ -20,9 +20,9 @@ instances {
   }
 }
 instances {
-  id: "desk"
+  id: "deskarea"
   prototype: "/main/actors/deskarea02.go"
-  children: "npc_loader"
+  children: "desk"
   children: "phone"
   position {
     x: 975.0
@@ -42,7 +42,7 @@ instances {
   }
 }
 instances {
-  id: "npc_loader"
+  id: "desk"
   prototype: "/main/characters/npc_loader.go"
   position {
     x: 131.0

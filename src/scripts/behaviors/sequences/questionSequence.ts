@@ -1,32 +1,21 @@
-import {
-  // ActionProps,
-  //  AnnouncerProps,
-  //  BehaviorKeys,
-  GetProps,
-  QuestionProps,
-} from '../../../types/behaviors'
+import { GetProps, QuestionProps } from '../../../types/behaviors'
+import { crimeSeverity } from '../../utils/ai'
 import Action from '../action'
 import QuestionAction from '../actions/questionAction'
 import Sequence from '../sequence'
 import ArrestSequence from './arrestSequence'
-//import RecklessSequence from './recklessSequence'
 
 export default class QuestionSequence extends Sequence {
   a: QuestionProps
   perp: GetProps
   getProps: GetProps
   reason: string
+  incidents = 0
   constructor(getProps: GetProps, perp: GetProps, reason: string) {
     const props = getProps('question') as QuestionProps
     const turnActions: Action[] = []
     /**
      * testjpf
-     * for clearance/trespass this fires immediately
-     * look to see if target is in room
-     * do they then have a securityplaceaction
-     * What determines how severe to target this person?
-     * do like mendee? docplace
-     * npc.wantedLevel?????
      * creates a new Sequence APB
      * if a security officer meets another secofficer with and apb
      * all security gets and arrest sequence
@@ -47,39 +36,48 @@ export default class QuestionSequence extends Sequence {
     this.perp = perp
     this.getProps = getProps
     this.reason = reason
+    this.a.updateFromBehavior('turnPriority', 95)
+    this.a.cooldown = 10
+  }
+  update(reason: string) {
+    print(
+      '^^^ => Behavior: QuestionSequence:: Update: Crime Spree for: name, incidents:',
+      this.a.name,
+      this.incidents,
+      this.a.cooldown
+    )
+    if (crimeSeverity[reason] > crimeSeverity[this.reason]) this.reason = reason
+    this.incidents++
+    this.a.cooldown = this.a.cooldown + 12
   }
   run(): 'REMOVE' | '' {
+    this.a.updateFromBehavior('turnPriority', 95)
+
     for (const child of this.children) {
       const proceed = child.run()()
-      print('QuestionSEQUENCE::: Proceed::', this.a.name, ':', proceed)
+      print(
+        '$$$ => Behavior: QuestionSEQUENCE::: Proceed::',
+        this.a.name,
+        ':',
+        proceed
+      )
       if (proceed === 'continue') {
-        this.a.addToBehavior(
-          'active',
-          new QuestionSequence(this.getProps, this.perp, this.reason),
-          true
-        )
+        this.a.cooldown--
       } else if (proceed == 'jailed') {
         const perp = this.perp('question') as QuestionProps
         perp.addToBehavior('place', new ArrestSequence(this.perp))
-      } /**
-      else if (proceed == 'reckless') {
-        const perp = this.perp('announcer') as AnnouncerProps
-        print(
-          'SupectingAction::',
-          this.a.name,
-          'will become reckless about::',
-          perp.name
-        )
-        perp.addToBehavior(
-          'active',
-          new RecklessSequence(
-            this.getProps as (behavior: BehaviorKeys) => ActionProps,
-            perp.getBehaviorProps('announcer') as AnnouncerProps,
-            this.reason
-          )
-        )
-      }**/
+        this.a.cooldown = 0
+      } else {
+        this.a.cooldown = 0
+      }
     }
-    return 'REMOVE'
+    if (this.a.cooldown < 1) {
+      print(
+        'xxx => Behavior: QuestionSequence:: should remove seq for',
+        this.a.name
+      )
+      return 'REMOVE'
+    }
+    return ''
   }
 }

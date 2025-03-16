@@ -13,6 +13,7 @@ import AnnouncerSequence from '../sequences/announcerSequence'
 //import RecklessSequence from '../sequences/recklessSequence'
 import InjuredSequence from '../sequences/injuredSequence'
 import ImmobileSequence from '../sequences/immobileSequence'
+import JailedSequence from '../sequences/jailedSequence'
 
 export default class QuestionAction extends Action {
   a: QuestionProps
@@ -53,45 +54,9 @@ export default class QuestionAction extends Action {
     // return
     // } else if (this.label == 'questioning') {
     //testjpf convert rest!!!:::
-
-    /**
-     * testjpf
-     * going to have to think about what i want to do with player questioning.
-     * right now launches novel and relies on outcome???
-     * creates confront task
-     * sets player to confronted
-     * level checks player state
-     * launches novel
-     * novel was set by IN THEORY QuestionAction
-     * AKA::: Right here
-     * i like the idea of using check but with user interaction.
-     *  maybe traits also determine what choices you get.
-     * as well as if you pass.
-     *
-     * use a different set of tempcons?
-     * ex watcherpunch instead of other way around
-     */
-
-    if (
-      this.hero == null &&
-      ['utside', '_passe', 'isoner', 'atient'].includes(
-        this.a.currStation.slice(-7, -1)
-      )
-    )
-      return () =>
-        this.fail(
-          `QuestionAction:: ${this.a.name} gets 1 turn clearance for ${this.a.currStation}`
-        )
-
-    const currRoom =
-      (this.hero === null &&
-        this.a.currRoom == this.perp.currRoom &&
-        ['isoner', 'atient'].includes(this.perp.currStation.slice(-7, -1))) ||
-      (this.hero !== null && this.a.currRoom == this.perp.currRoom)
-
-    // const currRoom = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
-    //   (s) => s != '' && s != this.a.name && s.slice(0, 4) === 'secu'
-    // )
+    //testjpf insetad of removng patient and prisoners
+    //make it a condition?!?!?TODO NOW::
+    const currRoom = this.a.currRoom == this.perp.currRoom //&& ['isoner', 'atient'].includes(this.perp.currStation.slice(-7, -1))) ||//(this.hero !== null && this.a.currRoom == this.perp.currRoom)
 
     const crossedPaths =
       currRoom === true
@@ -113,7 +78,6 @@ export default class QuestionAction extends Action {
           'QuestionAction::: HERO:: this should set novel for player confrontation.'
         )
     }
-    print(this.reason)
     const resultChecks: Array<
       (
         chkr: QuestionProps,
@@ -130,17 +94,52 @@ export default class QuestionAction extends Action {
       if (consequence.pass == true) i = resultChecks.length
     }
     if (consequence.type === 'jailed') {
-      this.perp.updateFromBehavior('turnPriority', 97)
-      print('QuestionAction::', this.a.name, 'has Arrested::', this.perp.name)
-      this.perp.addToBehavior(
-        'place',
-        new ArrestSequence(this.perp.getBehaviorProps.bind(this.perp))
-      )
-    }
-    // } else if (consequence.type == 'reckless') {
-    //  return () => this.continue('reckless')
-    // }
-    else if (consequence.type == 'merits' || consequence.type == 'demerits') {
+      //hnadle logic here for currstation prisoner
+      // and currstation patient
+      //if already jailed update jailed sequence?
+      // have something that ranks severity of prisoner??
+      // if infirmed add arrestsequence that delays itself until uninfirmed
+      // maybe arrestseq has a skip bail FUGITIVE option?
+      if (this.perp.currStation.slice(0, 4) == 'patie') {
+        this.perp.addToBehavior(
+          'place',
+          new ArrestSequence(
+            this.perp.getBehaviorProps.bind(this.perp),
+            10 - this.a.hp
+          )
+        )
+        print(
+          this.a.name,
+          'QuestionAction::: ',
+          this.perp.name,
+          'delayed Arrest because is Patient'
+        )
+      } else if (this.perp.currStation.slice(0, 4) == 'priso') {
+        for (const behavior of this.perp.behavior.active.children) {
+          if (behavior instanceof JailedSequence) {
+            behavior.update()
+            print(
+              'QuestionAction::: JAil Sentence extended for:: ',
+              this.perp.name,
+              'by:',
+              this.a.name
+            )
+            break
+          }
+        }
+      } else {
+        this.perp.updateFromBehavior('turnPriority', 97)
+        print('QuestionAction::', this.a.name, 'has Arrested::', this.perp.name)
+        this.perp.addToBehavior(
+          'place',
+          new ArrestSequence(this.perp.getBehaviorProps.bind(this.perp))
+        )
+      }
+      return () =>
+        this.success(
+          `QuestionAction::: Success:: ARREST:: ${this.perp.name} by ${this.a.name} `
+        )
+    } else if (consequence.type == 'merits' || consequence.type == 'demerits') {
       print(
         'QuestionAction::',
         this.a.name,
@@ -164,16 +163,23 @@ export default class QuestionAction extends Action {
         'QuestioningAction::PUNCH perp got punched',
         this.perp.name,
         'by',
-        this.a.name
+        this.a.name,
+        'in',
+        this.a.currRoom
       )
       this.perp.addToBehavior(
         'active',
         new InjuredSequence(this.perp.getBehaviorProps.bind(this.perp))
       )
-      this.perp.addToBehavior(
-        'place',
-        new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
+      if (
+        !this.perp.behavior.place.children.some(
+          (c) => c instanceof ImmobileSequence
+        )
       )
+        this.perp.addToBehavior(
+          'place',
+          new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
+        )
     } else if (
       consequence.type.slice(0, 6) === 'sPunch' &&
       (this.a.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
@@ -185,17 +191,28 @@ export default class QuestionAction extends Action {
         'by',
         this.perp.name
       )
-
+      // testjpf probably need an update()
+      //for injuredsequencetoo!
       this.a.addToBehavior(
         'active',
         new InjuredSequence(this.a.getBehaviorProps.bind(this.a))
       )
-      this.a.addToBehavior(
-        'place',
-        new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
+
+      if (
+        !this.perp.behavior.place.children.some(
+          (c) => c instanceof ImmobileSequence
+        )
       )
+        this.a.addToBehavior(
+          'place',
+          new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
+        )
     }
-    print('Consequence:', consequence)
+    print(
+      '||>> Behavior: QUESTIONACTION:: Consequence pass,type:',
+      consequence.pass,
+      consequence.type
+    )
     if (
       this.a.currRoom == this.perp.currRoom &&
       this.a.currRoom == this.a.getFocusedRoom()
@@ -207,16 +224,17 @@ export default class QuestionAction extends Action {
       // prettier-ignore
       print('runrun',this.a.name,this.a.currStation, 'STATION MOVE VIA TASK question', this.perp.name, 'in', this.a.currRoom,this.perp.currRoom, this.perp.currStation)
     }
-    return () => this.success()
-    //need something that checks response
-    //does response need EffectsAction, sequences, something else???
-    //testjpf
+    return () =>
+      this.success(
+        '||>> Behavior: QUESTIONACTION::: DEFAULT::' + consequence.type
+      )
   }
   continue(s: string): string {
     print('QuestionAction:: Continue:', s)
     return 'continue'
   }
-  success(s?: string) {
+  success(s?: string): string {
     print('QuestionAction:: Success:', s)
+    return 'success'
   }
 }

@@ -64,6 +64,7 @@ export default class QuestState {
   private onNewExit(): void {}
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {
+    print('?:?:?: qqqq: Quest Related status: TURNchecks: Running...')
     if (this.passed == true) return
     let kc: keyof typeof this.conditions
     for (kc in this.conditions) {
@@ -73,10 +74,12 @@ export default class QuestState {
     for (ksq in this.sideQuests) {
       this.sideQuests[ksq].fsm.update(dt)
     }
+    print('?:?:?: qqqq: Quest Related status TURNchecks: Finished.')
   }
   private onTurnExit(): void {}
   private onActiveEnter(): void {}
   private onActiveUpdate(): void {
+    print('?:?:?: qqqq: Quest Related status ACTIVE: checks: Running...')
     if (this.passed == true) return
     let kc: keyof typeof this.conditions
     for (kc in this.conditions) {
@@ -86,6 +89,7 @@ export default class QuestState {
     for (ksq in this.sideQuests) {
       this.sideQuests[ksq].fsm.update(dt)
     }
+    print('?:?:?: qqqq: Quest Related status ACTIVE checks: Finished.')
   }
   private onActiveExit(): void {}
 }

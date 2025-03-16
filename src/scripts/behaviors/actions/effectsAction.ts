@@ -10,13 +10,15 @@ export default class EffectsAction extends Action {
   }
   run(): () => void {
     const { effects, traits } = this.actor as EffectsProps
-    if (effects.length < 1) return () => this.fail('No FX to remove')
+    if (effects.length < 1)
+      return () =>
+        this.fail('||>> Behavior: Action: EFFECTaction:: No FX to remove')
     //if (effects.length < 1) return () => this.fail()
 
     for (let i = effects.length; i-- !== 0; ) {
       const e = effects[i]
       if (e.turns < 0) {
-        print('EFFECTaction:: removed:', e.label)
+        print('> Behavior: Action: EFFECTaction:: removed:', e.label)
         traits[e.fx.type]![e.fx.stat] =
           traits[e.fx.type]![e.fx.stat] - e.fx.adjustment
         effects.splice(i, 1)
@@ -25,6 +27,14 @@ export default class EffectsAction extends Action {
       }
     }
 
-    return () => this.success()
+    return () =>
+      this.success(
+        `||>> Behavior: Success EffectAction: Next FX, length: ${
+          effects.length > 0 ? effects[0].label : 'empty'
+        } ${effects.length}`
+      )
+  }
+  success(s?: string): void {
+    print('|||>>> Behavior: TrespassAction:: Success:', s)
   }
 }
