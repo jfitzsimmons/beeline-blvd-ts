@@ -1,7 +1,6 @@
 import { InfirmedProps } from '../../../types/behaviors'
 import { doctors } from '../../utils/consts'
 import Action from '../action'
-//import PlaceSequence from '../sequences/placeSequence'
 
 export default class InfirmedAction extends Action {
   a: InfirmedProps

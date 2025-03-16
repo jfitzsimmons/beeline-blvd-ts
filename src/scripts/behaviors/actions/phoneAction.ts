@@ -28,7 +28,8 @@ export default class PhoneAction extends Action {
     this.a.updateFromBehavior('turnPriority', 96)
   }
   run(): { (): void } {
-    if (this.a.currRoom == 'security') return () => this.continue('busy')
+    if (this.a.currRoom == 'security' || this.a.turnPriority > 97)
+      return () => this.continue('busy')
     if (this.a.currRoom == this.a.getFocusedRoom()) {
       msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
         station: 'phone',

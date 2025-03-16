@@ -20,6 +20,9 @@ function load_npcs() {
     }
     msg.post(`/${swaps[swap][0]}#npc_loader`, 'load_npc', params)
   }
+
+  const npc = rooms.fallbacks.stations.customs_unplaced
+  msg.post('/customs_unplaced#npc_loader', 'load_npc', { npc })
 }
 
 function load_storage() {

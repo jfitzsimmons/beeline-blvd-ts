@@ -313,7 +313,10 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 0, y: 1 },
     roomName: 'unloading',
     clearance: 2,
-    swaps: {},
+    swaps: {
+      worker1: ['servants2', ''],
+      boss: ['browse', ''],
+    },
     stations: {
       worker1: '',
       worker2: '',
@@ -328,7 +331,10 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 4, y: 0 },
     roomName: 'alley5',
     clearance: 2,
-    swaps: {},
+    swaps: {
+      servants2: ['loiter1', ''],
+      loiter2: ['patrol', ''],
+    },
     stations: {
       worker1: '',
       servants1: '',
@@ -336,7 +342,7 @@ export const RoomsInitState: { [key: string]: Room } = {
       loiter2: '',
       loiter4: '',
       servants2: '',
-      patrol: '',
+      guard: '',
     },
     actors: {},
   },
@@ -344,7 +350,10 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 3, y: 0 },
     roomName: 'alley4',
     clearance: 2,
-    swaps: {},
+    swaps: {
+      gang: ['employee', ''],
+      servants1: ['vipguest', ''],
+    },
     stations: {
       worker2: '',
       servants1: '',
@@ -360,9 +369,12 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 2, y: 0 },
     roomName: 'alley3',
     clearance: 1,
-    swaps: {},
+    swaps: {
+      loiter1: ['guard', ''],
+      patrol: ['table', ''],
+    },
     stations: {
-      worker1: '',
+      worker2: '',
       servants1: '',
       gang: '',
       loiter2: '',
@@ -376,13 +388,17 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 1, y: 0 },
     roomName: 'alley2',
     clearance: 1,
-    swaps: {},
+    swaps: {
+      worker2: ['patrol', ''],
+      guard: ['monitor', ''],
+    },
     stations: {
       worker1: '',
       servants1: '',
       gang: '',
       loiter2: '',
       guard: '',
+      worker2: '',
     },
     actors: {},
   },
@@ -390,13 +406,17 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 0, y: 0 },
     roomName: 'alley1',
     clearance: 2,
-    swaps: {},
+    swaps: {
+      worker1: ['monitor', ''],
+      employee: ['authority', ''],
+    },
     stations: {
       worker1: '',
       worker2: '',
       servants1: '',
       gang: '',
       patrol: '',
+      employee: '',
     },
     actors: {},
   },
@@ -404,8 +424,18 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 0, y: 2 },
     roomName: 'loading',
     clearance: 2,
-    swaps: {},
-    stations: { worker1: '', worker2: '', boss: '', patrol: '', gang: '' },
+    swaps: {
+      bench: ['browse', ''],
+      gang: ['guard', ''],
+    },
+    stations: {
+      bench: '',
+      worker1: '',
+      worker2: '',
+      boss: '',
+      patrol: '',
+      gang: '',
+    },
     actors: {},
   },
   admin1: {
@@ -587,7 +617,10 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 4, y: 5 },
     roomName: 'dorms',
     clearance: 1,
-    swaps: {},
+    swaps: {
+      loiter2: ['loiter3', ''],
+      servants2: ['loiter4', ''],
+    },
     stations: {
       bench: '',
       servants1: '',
@@ -603,7 +636,10 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 3, y: 4 },
     roomName: 'gym',
     clearance: 1,
-    swaps: {},
+    swaps: {
+      loiter4: ['loiter1', ''],
+      servants1: ['vipguest', ''],
+    },
     stations: {
       guest: '',
       browse: '',
@@ -618,7 +654,10 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 4, y: 4 },
     roomName: 'store',
     clearance: 1,
-    swaps: {},
+    swaps: {
+      worker1: ['servants2', ''],
+      loiter3: ['worker2', ''],
+    },
     stations: {
       guest: '',
       servants1: '',
@@ -681,7 +720,7 @@ export const RoomsInitLayout = [
   ['entrance', 'viplobby', 'security', 'infirmary', 'dorms'],
 ]
 export const RoomsInitRoles: { [key: string]: string[] } = {
-  desk: ['staff', 'security'],
+  desk: ['staff', 'security', 'gang1', 'gang2', 'gang3', 'gang4'],
   host: ['staff', 'gang1', 'gang2'],
   tender: ['staff', 'gang3', 'gang4'],
   bar: [
@@ -833,6 +872,9 @@ export const RoomsInitFallbacks = {
     viplobby_passer: '',
     reception_unplaced: '',
     grounds_unplaced: '',
+    customs_unplaced: '',
+    store_unplaced: '',
+    dorms_unplaced: '',
     loading_outside1: '',
     viplobby_outside1: '',
     security_outside1: '',
