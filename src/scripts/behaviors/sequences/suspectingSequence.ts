@@ -45,7 +45,7 @@ export default class SuspectingSequence extends Sequence {
       'Suspecting:',
       this.perp.name
     )
-    this.a.updateFromBehavior('turnPriority', 94)
+    if (this.prevSpr < 94) this.a.updateFromBehavior('turnPriority', 94)
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {

@@ -286,7 +286,7 @@ export default class NpcState extends ActorState {
     // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', this.currRoom, '| exit:', this.exitRoom, '| name: ', this.name )
   }
   private onTurnEnter(): void {
-    //  print('NPCCLASS::: onTurnEnter()')
+    print('NPCCLASS::: onTurnEnter()')
     //this.behavior.active.run()
     if (this.behavior.active.children.length > 0)
       print(
@@ -447,7 +447,7 @@ export default class NpcState extends ActorState {
       this.inventory.push(item)
       this.addInvBonus(item)
     } else {
-      this.inventory.splice(1, this.inventory.indexOf(item))
+      this.inventory.splice(this.inventory.indexOf(item), 1)
       this.removeInvBonus(item)
     }
   }

@@ -24,6 +24,6 @@ export default class Storage {
 
     addDelete == 'add'
       ? inventory.push(item)
-      : inventory.splice(1, inventory.indexOf(item))
+      : inventory.splice(inventory.indexOf(item), 1)
   }
 }

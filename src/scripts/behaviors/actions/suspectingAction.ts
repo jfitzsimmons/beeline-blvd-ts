@@ -260,7 +260,10 @@ export default class SuspectingAction extends Action {
               this.cause
             )
           )
-          if (this.a.behavior.place.children.length < 1)
+          if (
+            this.a.behavior.place.children.length < 1 &&
+            this.a.turnPriority < 97
+          )
             this.a.addToBehavior(
               'place',
               new ScoutSequence(
