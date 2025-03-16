@@ -82,10 +82,6 @@ export default class PhoneSequence extends Sequence {
       )
       if (proceed === 'phone') {
         this.a.cooldown--
-        // this.a.addToBehavior(
-        //   'active',
-        //   new PhoneSequence(this.getProps, this.perp, this.reason)
-        // )
         if (
           !this.a.behavior.place.children.some(
             (c) => c instanceof ImmobileSequence

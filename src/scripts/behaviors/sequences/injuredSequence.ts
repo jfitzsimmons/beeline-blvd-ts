@@ -23,7 +23,7 @@ export default class InjuredSequence extends Sequence {
     this.a = props
     this.getProps = getProps
     this.a.updateFromBehavior('turnPriority', 98)
-    print('___ => Behavior: NEWINJUREDSEQ FOR', this.a.name)
+    print('___ => Behavior: NEWINJUREDSEQ FOR', this.a.name, this.a.currStation)
   }
   run(): 'REMOVE' | '' {
     this.a.updateFromBehavior('turnPriority', 98)

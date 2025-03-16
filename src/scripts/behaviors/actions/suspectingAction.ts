@@ -296,14 +296,14 @@ export default class SuspectingAction extends Action {
               )
           }
         }
-        this.a.addToBehavior(
-          'active',
-          new PhoneSequence(
-            this.a.getBehaviorProps.bind(this.a),
-            this.perp.getBehaviorProps('helper') as HelperProps,
-            this.cause
+        return () =>
+          this.alternate(
+            new PhoneSequence(
+              this.a.getBehaviorProps.bind(this.a),
+              this.perp.getBehaviorProps('helper') as HelperProps,
+              this.cause
+            )
           )
-        )
       } else if (consequence.type == 'jailed') {
         this.perp.updateFromBehavior('turnPriority', 97)
         print(
@@ -328,7 +328,7 @@ export default class SuspectingAction extends Action {
           'will make announcements about::',
           this.perp.name
         )
-        this.perp.addToBehavior(
+        this.a.addToBehavior(
           'active',
           new AnnouncerSequence(
             this.getProps,

@@ -20,9 +20,9 @@ instances {
   }
 }
 instances {
-  id: "desk"
+  id: "deskarea"
   prototype: "/main/actors/deskarea02.go"
-  children: "npc_loader"
+  children: "desk"
   children: "phone"
   position {
     x: 975.0
@@ -42,7 +42,7 @@ instances {
   }
 }
 instances {
-  id: "npc_loader"
+  id: "desk"
   prototype: "/main/characters/npc_loader.go"
   position {
     x: 131.0
@@ -182,7 +182,7 @@ instances {
   }
 }
 instances {
-  id: "passer"
+  id: "admin1_passer"
   prototype: "/main/characters/npc_loader.go"
   position {
     x: 665.0
@@ -427,12 +427,12 @@ embedded_instances {
 }
 embedded_instances {
   id: "potential_npcs"
+  children: "admin1_passer"
   children: "assistant"
   children: "boss"
   children: "guard"
   children: "guest"
   children: "monitor"
-  children: "passer"
   children: "patrol"
   children: "servants2"
   data: ""

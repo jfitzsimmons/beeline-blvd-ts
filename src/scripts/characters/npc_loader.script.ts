@@ -1,6 +1,4 @@
-//const world = require('main.states.worldstate')
 const { npcs, tasks } = globalThis.game.world
-//go.property('default_pos', go.get_position())
 
 function show_npc(name: string) {
   if (name != '') {
@@ -14,11 +12,11 @@ function show_npc(name: string) {
   }
 }
 
-function move_npc(station: string) {
-  print('STation to be moved:::', station)
+function move_npc(station: string, from = { x: 0, y: 0 }) {
+  print('STation to move to:::', station)
   const pos = go.get_position(station)
-  pos.y = pos.y - 64
-  pos.x = pos.x - 28
+  pos.y = pos.y - math.random(34, 94) + from.y
+  pos.x = pos.x - math.random(10, 50) + from.x
   go.set_position(pos)
 }
 
@@ -58,7 +56,26 @@ export function on_message(
     }
     show_npc(this.npc)
   } else if (messageId == hash('move_npc')) {
-    move_npc(message.station)
+    // print('MOVENPCmsg::', message.npc, _sender, _sender.fragment)
+    let deskarea = { x: 0, y: 0 }
+    if (npcs.all[message.npc].currStation == 'desk') {
+      let deskpos = deskarea
+      if (message.station == 'phone') {
+        deskpos = go.get_position('phone')
+      } else {
+        deskpos = go.get_position('deskarea')
+        deskpos.x = -deskpos.x
+        deskpos.y = -deskpos.y
+      }
+      deskarea = { x: deskpos.x, y: deskpos.y }
+    } else if (message.station == 'desk') {
+      const deskpos = go.get_position('deskarea')
+      deskarea = { x: deskpos.x, y: deskpos.y }
+    } else if (message.station == 'phone') {
+      const deskpos = go.get_position('deskarea')
+      deskarea = { x: deskpos.x + 50, y: deskpos.y + 50 }
+    }
+    move_npc(message.station, deskarea)
   } else if (messageId == hash('show_npc')) {
     show_npc(message.npc)
   } else if (messageId == hash('trigger_response')) {

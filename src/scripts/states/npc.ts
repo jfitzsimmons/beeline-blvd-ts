@@ -305,7 +305,9 @@ export default class NpcState extends ActorState {
       '==>> PLACED::: NPCSTATE:: FOR::',
       this.name,
       this.currRoom,
-      this.currStation
+      this.currStation,
+      'from',
+      this.exitRoom
     )
   }
   private onTurnExit(): void {

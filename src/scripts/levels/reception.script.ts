@@ -7,7 +7,7 @@ function load_npcs() {
   for (station in stations) {
     const npc = stations[station]
     station == 'desk'
-      ? msg.post('desk#station', 'loadStation', { npc, roomName })
+      ? msg.post('deskarea#station', 'loadStation', { npc, roomName })
       : msg.post(`/${station}#npc_loader`, 'load_npc', { npc })
   }
 
@@ -24,7 +24,7 @@ function load_npcs() {
   //TESTJPF do you need any of these sopecific level files?
   //see how much you can move to main level.ts
   const npc = rooms.fallbacks.stations.reception_unplaced
-  msg.post('/unplaced#npc_loader', 'load_npc', { npc })
+  msg.post('/reception_unplaced#npc_loader', 'load_npc', { npc })
 }
 
 function load_storage() {

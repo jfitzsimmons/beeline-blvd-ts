@@ -319,6 +319,26 @@ instances {
     z: 1.0
   }
 }
+instances {
+  id: "baggage_passer"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 723.0
+    y: 249.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
 collection_instances {
   id: "shared"
   collection: "/main/levels/shared.collection"
@@ -434,6 +454,7 @@ embedded_instances {
 embedded_instances {
   id: "potential_npcs"
   children: "assistant"
+  children: "baggage_passer"
   children: "bench"
   children: "browse"
   children: "guard"
