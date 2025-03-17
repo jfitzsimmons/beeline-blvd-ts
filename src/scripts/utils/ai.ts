@@ -23,8 +23,13 @@ export const crimeSeverity: { [key: string]: number } = {
   pockets: 3,
   assault: 4,
 }
-
-const count: { [key: string]: number } = {}
+//TESTJPF Export for DEBUG ONLY???!!!
+export let roomPlaceCount: {
+  [key: string]: { occupants: number; [key: string]: number }
+} = {}
+export const resetRoomPlaceCount = () => (roomPlaceCount = {})
+export const getRoomPlaceCount = () => roomPlaceCount
+const roomListCount: { [key: string]: number } = {}
 //const unplacedcount: { [key: string]: number } = {}
 const fallbackTable: { [key: string]: string[] } = {
   loading: ['loading_outside1'],
@@ -49,11 +54,11 @@ export function fillStationAttempt(
   stationMap: { [key: string]: { [key: string]: string } }
 ): { chosenRoom: string; chosenStation: string } {
   //testjpf debug number of roomlist occurences
-  room_list.forEach((element) => {
-    if (count[element] != null) {
-      count[element] += 1
+  room_list.forEach((room) => {
+    if (roomListCount[room] != null) {
+      roomListCount[room] += 1
     } else {
-      count[element] = 1
+      roomListCount[room] = 1
     }
   })
 
@@ -64,7 +69,7 @@ export function fillStationAttempt(
   while (placed == false) {
     for (const room of room_list) {
       const shuffledStations: [string, string][] = shuffle(
-        Object.entries(stationMap[room])
+        Object.entries(stationMap[room].stations)
       )
       for (const ks of shuffledStations) {
         chosenStation =
@@ -223,6 +228,18 @@ export function fillStationAttempt(
   }
   // prettier-ignore
   // print( 'fillStationAttempt::: ///utils/ai:: ||| chosenRoom:', chosenRoom, '| chosenStation:', chosenStation, '| npc: ', npc )
+  if (roomPlaceCount[chosenRoom] != null) {
+    roomPlaceCount[chosenRoom].occupants += 1
+  } else {
+    roomPlaceCount[chosenRoom] = {
+      occupants: 1,
+      clyde: 0,
+      pinky: 0,
+      blinky: 0,
+      inky: 0,
+    }
+  }
+
   return { chosenRoom, chosenStation }
 }
 /**
@@ -239,50 +256,91 @@ export function set_room_priority(
   }
 ): string[] {
   const room_list: string[] = []
+  const delayPriority: string[] = []
+  //Testjpf i suspect i'm not taking into rooms behing npc
+  //that have nothing to do with target?
   //get list of possible rooms NPC could go to next in order to get to target
+  //set a room map set similar to placeingstaion
+  //if nto exact same and get length of map set for room. if less than 5 push else unshift?
+  // if 5 or grater push into a delayList array???TESTJPF
   if (target.y > npc.matrix.y) {
-    room_list.push(RoomsInitLayout[npc.matrix.y + 1][npc.matrix.x])
+    //if target above go one room up/north
+    const room = RoomsInitLayout[npc.matrix.y + 1][npc.matrix.x]
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+      ? delayPriority.push(room)
+      : room_list.push(room)
   }
   if (target.x < npc.matrix.x) {
-    room_list.push(RoomsInitLayout[npc.matrix.y][npc.matrix.x - 1])
+    // one left/west
+    const room = RoomsInitLayout[npc.matrix.y][npc.matrix.x - 1]
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+      ? delayPriority.push(room)
+      : room_list.push(room)
   }
   if (target.y < npc.matrix.y) {
-    room_list.push(RoomsInitLayout[npc.matrix.y - 1][npc.matrix.x])
+    //one south
+    const room = RoomsInitLayout[npc.matrix.y - 1][npc.matrix.x]
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+      ? delayPriority.push(room)
+      : room_list.push(room)
   }
   if (target.x > npc.matrix.x) {
-    room_list.push(RoomsInitLayout[npc.matrix.y][npc.matrix.x + 1])
+    //one east
+    const room = RoomsInitLayout[npc.matrix.y][npc.matrix.x + 1]
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+      ? delayPriority.push(room)
+      : room_list.push(room)
   }
-
-  shuffle(room_list).push(RoomsInitLayout[npc.matrix.y][npc.matrix.x])
+  //what about EQUALS TO?
+  shuffle(room_list)
+  const room = RoomsInitLayout[npc.matrix.y][npc.matrix.x]
+  roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+    ? room_list.push(room)
+    : delayPriority.push(room) //could only have 2 options + room you are already in. her prioritize ahead of Player?
+  //should at least de prioritize going to player exit room.  assuming player wont go back to where they were?
 
   if (
     target.y > npc.matrix.y &&
     npc.matrix.y - 1 >= 0 &&
     RoomsInitLayout[npc.matrix.y - 1][npc.matrix.x] != null
   ) {
-    room_list.push(RoomsInitLayout[npc.matrix.y - 1][npc.matrix.x])
+    const room = RoomsInitLayout[npc.matrix.y - 1][npc.matrix.x]
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+      ? delayPriority.push(room)
+      : room_list.push(room)
   }
   if (
     target.x > npc.matrix.x &&
     RoomsInitLayout[npc.matrix.y][npc.matrix.x - 1] != null
   ) {
-    room_list.push(RoomsInitLayout[npc.matrix.y][npc.matrix.x - 1])
+    const room = RoomsInitLayout[npc.matrix.y][npc.matrix.x - 1]
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+      ? delayPriority.push(room)
+      : room_list.push(room)
   }
   if (
     target.y <= npc.matrix.y &&
     npc.matrix.y < 6 &&
     RoomsInitLayout[npc.matrix.y + 1] != null
   ) {
-    room_list.push(RoomsInitLayout[npc.matrix.y + 1][npc.matrix.x])
+    const room = RoomsInitLayout[npc.matrix.y + 1][npc.matrix.x]
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+      ? delayPriority.push(room)
+      : room_list.push(room)
   }
   if (
     target.x <= npc.matrix.x &&
     RoomsInitLayout[npc.matrix.y][npc.matrix.x + 1] != null
   ) {
-    room_list.push(RoomsInitLayout[npc.matrix.y][npc.matrix.x + 1])
+    const room = RoomsInitLayout[npc.matrix.y][npc.matrix.x + 1]
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+      ? delayPriority.push(room)
+      : room_list.push(room)
   }
 
-  const filteredArray: string[] = [...new Set(room_list)].sort(function (a, b) {
+  const filteredArray: string[] = [
+    ...new Set([...room_list, ...delayPriority]),
+  ].sort(function (a, b) {
     if (
       RoomsInitState[a].clearance > npc.clearance &&
       RoomsInitState[b].clearance <= npc.clearance
@@ -310,21 +368,21 @@ export function set_npc_target(
   }
 ) {
   let target = { x: 0, y: 0 }
-  if (n.turnPriority > 25) {
+  if (Math.random() < 0.2 || n.turnPriority > 25) {
     target = direction.center
   } else if (n.aiPath == 'pinky') {
-    //always targets 0 to 2 rooms infront of player
+    //always targets 0 to 2 rooms infront of player /33% +1 left or right?
     target = direction.front
   } else if (n.aiPath == 'blinky') {
     //always targets 1 room behind player unless too far
-    const distance = n.matrix.x - n.home.x + (n.matrix.y - n.home.y)
-    if (distance < -5 || distance > 5) {
+    const distance = math.abs(n.matrix.x - n.home.x + (n.matrix.y - n.home.y))
+    if (distance > 5) {
       target = n.home
     } else {
       target = direction.back
     }
   } else if (n.aiPath == 'inky') {
-    //1/3 check to see if you 1: too far from home or 2: 50/50 left/right
+    //1/3 check to see if you 1: too far from home or 2: 50/50 left/right 50/50 +1 front
     let distance = 0
     if (math.random() < 0.33) {
       distance =

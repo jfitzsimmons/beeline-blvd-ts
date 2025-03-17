@@ -119,7 +119,7 @@ function doctor_checks() {
 
     msg.post(`/${doctor.currStation}#npc_loader`, hash('move_npc'), {
       station: 'worker1',
-      owner: doctor.name,
+      npc: doctor.name,
     })
   } else if (novel.reason == 'rejectmeds') {
     apple.fsm.setState('complete')
@@ -128,7 +128,7 @@ function doctor_checks() {
 
     msg.post(`/${doctor.currStation}#npc_loader`, hash('move_npc'), {
       station: 'worker1',
-      owner: doctor.name,
+      npc: doctor.name,
     })
   } else if (
     quest.sideQuests.hallpass.fsm.getState() === 'active' &&
@@ -409,7 +409,7 @@ export function tutorialA(interval = 'turn') {
       player.inventory.push('note')
       const params = {
         path: 'grounds/tutorialmeds',
-        owner: rooms.all['grounds'].stations.aid,
+        npc: rooms.all['grounds'].stations.aid,
        cause: 'apple',
         roomName: 'grounds',
       }

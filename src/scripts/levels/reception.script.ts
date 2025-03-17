@@ -24,6 +24,7 @@ function load_npcs() {
     const params = {
       npc,
     }
+    print('RECEPTIONSWAPS::', swap, swaps[swap][0], swaps[swap][1])
     msg.post(`/${swaps[swap][0]}#npc_loader`, 'load_npc', params)
   }
 

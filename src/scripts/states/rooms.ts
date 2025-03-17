@@ -20,7 +20,9 @@ export default class WorldRooms {
   private _focused: string
   parent: RoomProps
   fallbacks: Fallbacks
-  stationsMap: { [key: string]: { [key: string]: string } }
+  stationsMap: {
+    [key: string]: { [key: string]: { [key: string]: string } }
+  }
   constructor(roomsProps: WorldArgs) {
     this.fsm = new StateMachine(this, 'rooms')
     this.fallbacks = { ...RoomsInitFallbacks }
@@ -108,25 +110,29 @@ export default class WorldRooms {
     let ksw: keyof typeof roomSwaps
     for (ksw in roomSwaps) {
       if (roomSwaps[ksw][0] === s) {
-        delete this.stationsMap[r][ksw]
+        delete this.stationsMap[r].swaps[ksw]
         return true
       }
     }
     return false
   }
   pruneStationMap(room: string, station: string) {
-    this.stationsMap[room][station] !== null
-      ? delete this.stationsMap[room][station]
+    this.stationsMap[room].stations[station] !== null
+      ? delete this.stationsMap[room].stations[station]
       : this.pruneSwapParent(room, station) === false &&
-        delete this.stationsMap.fallbacks[station]
+        delete this.stationsMap.backup.fallbacks[station]
   }
-  getStationMap(): { [key: string]: { [key: string]: string } } {
+  getStationMap(): {
+    [key: string]: { [key: string]: { [key: string]: string } }
+  } {
     return this.stationsMap
   }
   resetStationMap() {
     this.stationsMap = { ...this.createStationsMap() }
   }
   setSwapParent(r: string, s: string, npc: string): boolean {
+    //testjpf this should be setting
+    //the stationMapneeds to be set.
     const roomSwaps = this._all[r].swaps
     let ksw: keyof typeof roomSwaps
     for (ksw in roomSwaps) {
@@ -148,8 +154,7 @@ export default class WorldRooms {
   setStation(room: string, station: string, npc: string) {
     this.all[room].stations[station] !== null
       ? (this.all[room].stations[station] = npc)
-      : this.all[room].swaps !== undefined &&
-        this.setSwapParent(room, station, npc) === false &&
+      : this.setSwapParent(room, station, npc) === false &&
         (this.fallbacks.stations[station] = npc)
 
     this.pruneStationMap(room, station)
@@ -200,12 +205,26 @@ export default class WorldRooms {
     return Object.values(this.all[room].wards!).filter((s) => s !== '')
   }
   createStationsMap() {
-    const stationMap: { [key: string]: { [key: string]: string } } = {}
+    const stationMap: {
+      [key: string]: { [key: string]: { [key: string]: string } }
+    } = { backup: { fallbacks: {} } }
     let ki: keyof typeof RoomsInitState
     for (ki in RoomsInitState) {
-      stationMap[ki] = { ...RoomsInitState[ki].stations }
+      //TESTJPF!!! need to 'spread' swaps value[0]
+      print('KIKIKIKIKI:::', ki)
+      stationMap[ki] = {
+        stations: { ...RoomsInitState[ki].stations },
+        swaps: {},
+      }
+      const swaps = RoomsInitState[ki].swaps
+      let si: keyof typeof swaps
+      for (si in swaps) {
+        stationMap[ki].swaps[swaps[si][0]] = swaps[si][1]
+      }
     }
-    stationMap['fallbacks'] = { ...RoomsInitFallbacks.stations }
+
+    stationMap['backup']['fallbacks'] = { ...RoomsInitFallbacks.stations }
+    //TESTJPF there are no swaps!!!
     return stationMap
   }
 }
