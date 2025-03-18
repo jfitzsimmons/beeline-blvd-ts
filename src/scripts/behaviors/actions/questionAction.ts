@@ -116,7 +116,10 @@ export default class QuestionAction extends Action {
         )
       } else if (this.perp.currStation.slice(0, 4) == 'priso') {
         for (const behavior of this.perp.behavior.active.children) {
-          if (behavior instanceof JailedSequence) {
+          if (
+            behavior instanceof JailedSequence &&
+            behavior.a.name == this.perp.name
+          ) {
             behavior.update()
             print(
               'QuestionAction::: JAil Sentence extended for:: ',

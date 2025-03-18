@@ -1,7 +1,6 @@
 import { InfirmedProps } from '../../../types/behaviors'
 import { doctors } from '../../utils/consts'
 import Action from '../action'
-//import PlaceSequence from '../sequences/placeSequence'
 
 export default class InfirmedAction extends Action {
   a: InfirmedProps
@@ -14,9 +13,9 @@ export default class InfirmedAction extends Action {
 
     Object.values(this.a.getOccupants('infirmary')).some((o) =>
       doctors.includes(o)
-    ) && Math.random() > 0.3
+    ) && Math.random() > 0.4
       ? (this.a.hp = this.a.hp + 2)
-      : Math.random() > 0.3 && (this.a.hp = this.a.hp + 1)
+      : Math.random() > 0.4 && (this.a.hp = this.a.hp + 1)
     if (this.a.hp > 9) {
       // this.a.removeInfirmed(this.a.name)
       print('INFIRMEDaction::  reset. RE-PLACE npc??', this.a.name)

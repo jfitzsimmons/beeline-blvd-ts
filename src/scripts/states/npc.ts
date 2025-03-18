@@ -40,7 +40,7 @@ export default class NpcState extends ActorState {
   constructor(n: string, lists: NpcProps) {
     super(n, lists) // 👈️ call super() here
     //TESTJPFDEBUG HP
-    this.hp = 1
+    this.hp = math.random(1, 3)
     this.home = NpcsInitState[n].home
     this.name = NpcsInitState[n].name
     this.inventory = NpcsInitState[n].inventory
@@ -268,10 +268,7 @@ export default class NpcState extends ActorState {
     this.love = novelUpdates.love
   }
   private onArresteeEnter(): void {}
-  private onArresteeUpdate(): void {
-    //this.cooldown--
-    //if (this.cooldown < 1) this.fsm.setState('turn')
-  }
+  private onArresteeUpdate(): void {}
   private onArresteeExit(): void {}
   private onNewEnter(): void {}
   private onNewUpdate(): void {
@@ -289,7 +286,7 @@ export default class NpcState extends ActorState {
     // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', this.currRoom, '| exit:', this.exitRoom, '| name: ', this.name )
   }
   private onTurnEnter(): void {
-    //  print('NPCCLASS::: onTurnEnter()')
+    print('NPCCLASS::: onTurnEnter()')
     //this.behavior.active.run()
     if (this.behavior.active.children.length > 0)
       print(
@@ -385,7 +382,8 @@ export default class NpcState extends ActorState {
       chosenRoom,
       chosenStation,
       'exit room:',
-      this.exitRoom
+      this.exitRoom,
+      this.parent.getPlayerRoom()
     )
 
     this.currRoom = chosenRoom
@@ -450,7 +448,7 @@ export default class NpcState extends ActorState {
       this.inventory.push(item)
       this.addInvBonus(item)
     } else {
-      this.inventory.splice(1, this.inventory.indexOf(item))
+      this.inventory.splice(this.inventory.indexOf(item), 1)
       this.removeInvBonus(item)
     }
   }

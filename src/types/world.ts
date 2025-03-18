@@ -41,7 +41,9 @@ export interface WorldNpcsArgs extends TaskProps {
   checkSetStation(room: string, station: string, npc: string): boolean
   pruneStationMap(room: string, station: string): void
   setStation(room: string, station: string, npc: string): void
-  getStationMap(): { [key: string]: { [key: string]: string } }
+  getStationMap(): {
+    [key: string]: { [key: string]: { [key: string]: string } }
+  }
   sendToVacancy(
     room: string,
     npc: string,

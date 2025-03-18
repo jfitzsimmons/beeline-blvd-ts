@@ -41,8 +41,8 @@ export default class SnitchSequence extends Sequence {
       'in',
       this.crimeScene
     )
-    this.a.updateFromBehavior('turnPriority', 94)
-    this.a.cooldown = 8
+    if (this.a.turnPriority < 94) this.a.updateFromBehavior('turnPriority', 94)
+    this.a.cooldown = 9
   }
   update(reason: string) {
     print(
@@ -52,11 +52,11 @@ export default class SnitchSequence extends Sequence {
       this.incidents
     )
     if (crimeSeverity[reason] > crimeSeverity[this.reason]) this.reason = reason
-    this.a.cooldown = this.a.cooldown + 10
+    this.a.cooldown = this.a.cooldown + 12
     this.incidents++
   }
   run(): 'REMOVE' | '' {
-    this.a.updateFromBehavior('turnPriority', 94)
+    if (this.a.turnPriority < 94) this.a.updateFromBehavior('turnPriority', 94)
 
     for (const child of this.children) {
       const proceed = child.run()()
@@ -72,7 +72,10 @@ export default class SnitchSequence extends Sequence {
         //   'active',
         //   new SnitchSequence(this.getProps, this.perp, this.reason)
         // )
-        if (this.a.behavior.place.children.length < 1)
+        if (
+          this.a.behavior.place.children.length < 1 &&
+          this.a.turnPriority < 97
+        )
           this.a.addToBehavior(
             'place',
             new ScoutSequence(this.getProps, this.crimeScene)
@@ -83,6 +86,8 @@ export default class SnitchSequence extends Sequence {
     }
     // print('INJUREDSEQUENCE::: COMPLETE:: Remove?')
     if (this.a.cooldown < 1) {
+      if (this.a.turnPriority < 95)
+        this.a.updateFromBehavior('turnPriority', math.random(10, 33))
       print(
         'XXX => Behavior: SnitchSequence:: Remove: should remove seq for',
         this.a.name

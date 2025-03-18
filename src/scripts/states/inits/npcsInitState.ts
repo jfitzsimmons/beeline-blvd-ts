@@ -134,6 +134,15 @@ export const NpcsInitState: { [key: string]: Npc } = {
     body: 'labor04body',
     ...npc_defaults,
   },
+  labor07: {
+    home: { x: 2, y: 1 },
+    name: 'labor07',
+    inventory: ['mushroom01'],
+    clearance: 1,
+    clan: 'labor',
+    body: 'labor01body',
+    ...npc_defaults,
+  },
   doc03: {
     home: { x: 1, y: 5 },
     name: 'doc03',
@@ -161,6 +170,15 @@ export const NpcsInitState: { [key: string]: Npc } = {
     body: 'doctors02body',
     ...npc_defaults,
   },
+  contractor04: {
+    home: { x: 3, y: 2 },
+    name: 'contractor04',
+    inventory: ['steak01'],
+    clearance: 3,
+    clan: 'contractors',
+    body: 'contractors02body',
+    ...npc_defaults,
+  },
   contractor03: {
     home: { x: 3, y: 1 },
     name: 'contractor03',
@@ -186,6 +204,15 @@ export const NpcsInitState: { [key: string]: Npc } = {
     clearance: 2,
     clan: 'contractors',
     body: 'contractors02body',
+    ...npc_defaults,
+  },
+  visitor04: {
+    home: { x: 5, y: 4 }, //grounds
+    name: 'visitor04',
+    inventory: ['steak01', 'tomato'],
+    clearance: 2,
+    clan: 'visitors',
+    body: 'visitors02body',
     ...npc_defaults,
   },
   visitor03: {
@@ -332,6 +359,15 @@ export const NpcsInitState: { [key: string]: Npc } = {
     body: 'staff05body',
     ...npc_defaults,
   },
+  staff08: {
+    home: { x: 2, y: 1 }, //alley3
+    name: 'staff08',
+    inventory: ['mallot', 'fish02'],
+    clearance: 1,
+    clan: 'staff',
+    body: 'staff04body',
+    ...npc_defaults,
+  },
   bruiser: {
     home: { x: 4, y: 1 }, //maint
     name: 'bruiser',
@@ -462,6 +498,15 @@ export const NpcsInitState: { [key: string]: Npc } = {
     home: { x: 1, y: 5 }, //vip
     name: 'corps03',
     inventory: ['magica4', 'mushroom02'],
+    clearance: 3,
+    clan: 'corps',
+    body: 'corps03body',
+    ...npc_defaults,
+  },
+  corps04: {
+    home: { x: 2, y: 5 }, //vip
+    name: 'corps04',
+    inventory: ['magica4', 'potion'],
     clearance: 3,
     clan: 'corps',
     body: 'corps03body',

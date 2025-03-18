@@ -69,6 +69,5 @@ export function on_message(
     this.npc = ''
     this.roomName = message.roomName
     prep_interaction(this) // combine actor actions
-    //msg.post('/npc_loader#npc_loader', 'show_npc', { npc: this.npc })
   }
 }

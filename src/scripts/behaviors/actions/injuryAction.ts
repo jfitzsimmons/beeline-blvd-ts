@@ -14,13 +14,6 @@ export default class InjuryAction extends Action {
     this.a = props
   }
   run(): { (): void } {
-    //const { actor: a } = this
-    //this.a.addInjured(this.a.name)
-    // a.parent.pruneStationMap(a.currRoom, a.currStation)
-
-    //this.a.hp = 0
-
-    //testjpf returns to PlaceSequence
     return () => this.continue('injury')
   }
   continue(s: string): string {

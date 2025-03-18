@@ -299,7 +299,7 @@ export default class WorldPlayer extends ActorState {
       this.inventory.push(item)
       this.addInvBonus(item)
     } else {
-      this.inventory.splice(1, this.inventory.indexOf(item))
+      this.inventory.splice(this.inventory.indexOf(item), 1)
       this.removeInvBonus(item)
     }
     print(

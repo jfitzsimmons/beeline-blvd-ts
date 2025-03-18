@@ -29,7 +29,7 @@ export default class RecklessSequence extends Sequence {
     this.inspirer.cooldown = 3
     this.purpose = purpose
     this.getProps = getProps
-    this.a.updateFromBehavior('turnPriority', 94)
+    if (this.a.turnPriority < 94) this.a.updateFromBehavior('turnPriority', 94)
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {
@@ -43,7 +43,8 @@ export default class RecklessSequence extends Sequence {
       if (proceed === 'continue') this.inspirer.cooldown--
     }
     if (this.inspirer.cooldown < 1) {
-      this.a.updateFromBehavior('turnPriority', math.random(15, 35))
+      if (this.a.turnPriority < 95)
+        this.a.updateFromBehavior('turnPriority', math.random(15, 35))
       print(
         'XXX => Behavior: RecklessSequence:: Remove remove seq for',
         this.a.name

@@ -31,10 +31,10 @@ export default class HelperSequence extends Sequence {
       ':',
       this.victim
     )
-    this.a.updateFromBehavior('turnPriority', 94)
+    if (this.a.turnPriority < 94) this.a.updateFromBehavior('turnPriority', 94)
   }
   run(): 'REMOVE' | '' {
-    this.a.updateFromBehavior('turnPriority', 94)
+    if (this.a.turnPriority < 94) this.a.updateFromBehavior('turnPriority', 94)
 
     for (const child of this.children) {
       const proceed = child.run()()
@@ -50,7 +50,10 @@ export default class HelperSequence extends Sequence {
           new HelperSequence(this.getProps, this.victim),
           true
         )
-        if (this.a.behavior.place.children.length < 1)
+        if (
+          this.a.behavior.place.children.length < 1 &&
+          this.a.turnPriority < 97
+        )
           this.a.addToBehavior(
             'place',
             new ScoutSequence(

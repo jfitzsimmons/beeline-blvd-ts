@@ -36,7 +36,7 @@ export default class QuestionSequence extends Sequence {
     this.perp = perp
     this.getProps = getProps
     this.reason = reason
-    this.a.updateFromBehavior('turnPriority', 95)
+    if (this.a.turnPriority < 95) this.a.updateFromBehavior('turnPriority', 95)
     this.a.cooldown = 10
   }
   update(reason: string) {
@@ -51,7 +51,7 @@ export default class QuestionSequence extends Sequence {
     this.a.cooldown = this.a.cooldown + 12
   }
   run(): 'REMOVE' | '' {
-    this.a.updateFromBehavior('turnPriority', 95)
+    if (this.a.turnPriority < 95) this.a.updateFromBehavior('turnPriority', 95)
 
     for (const child of this.children) {
       const proceed = child.run()()
