@@ -17,6 +17,7 @@ import Selector from '../behaviors/selector'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
 import ImmobileSequence from '../behaviors/sequences/immobileSequence'
 import TrespassSequence from '../behaviors/sequences/trespassSequence'
+import { resetRoomPlaceCount } from '../utils/ai'
 
 const dt = math.randomseed(os.time())
 
@@ -122,6 +123,7 @@ export default class WorldNpcs {
         //new InjuryAction(npc.getBehaviorProps.bind(this)).run()
       }
     }
+    resetRoomPlaceCount()
   }
   private onNewExit(): void {
     this.sort_npcs_by_encounter()
@@ -156,17 +158,51 @@ export default class WorldNpcs {
   private onPlaceEnter(): void {
     //testjpf
   }
+
   private onPlaceUpdate(): void {
+    const rpctestjpc: {
+      [key: string]: {
+        npcs: string[]
+        occupants: number
+        ai: { [key: string]: number }
+      }
+    } = {}
     this.onScreen = []
     this.offScreen = []
     print('<< << :: NPCSplaceUpdate() :: >> >>')
     const playerRoom = this.parent.getPlayerRoom()
     this.sort_npcs_by_encounter()
+    // const rpc = getRoomPlaceCount()
+
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
-      print('===>>> PLACING::: NPCSSTATE:: FOR::', npc.name, npc.turnPriority)
-
+      print(
+        '===>>> PLACING::: NPCSSTATE:: FOR::',
+        npc.name,
+        npc.turnPriority,
+        npc.currRoom,
+        npc.aiPath
+      )
+      // print(rpc[npc.currRoom])
+      // print(rpc[npc.currRoom][npc.aiPath])
       npc.fsm.update(dt)
+
+      if (rpctestjpc[npc.currRoom] != null) {
+        rpctestjpc[npc.currRoom].occupants += 1
+      } else {
+        rpctestjpc[npc.currRoom] = {
+          occupants: 1,
+          ai: { clyde: 0, pinky: 0, blinky: 0, inky: 0 },
+          npcs: [],
+        }
+      }
+      rpctestjpc[npc.currRoom].npcs.push(npc.name)
+
+      if (rpctestjpc[npc.currRoom].ai[npc.aiPath] != null) {
+        rpctestjpc[npc.currRoom].ai[npc.aiPath] += 1
+      } else {
+        rpctestjpc[npc.currRoom].ai[npc.aiPath] = 1
+      }
 
       playerRoom == npc.currRoom
         ? this.onScreen.push(npc.name)
@@ -182,7 +218,21 @@ export default class WorldNpcs {
       // prettier-ignore
       // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
     }
+    let rk: keyof typeof rpctestjpc
+    for (rk in rpctestjpc) {
+      const room = rpctestjpc[rk]
+      print('NPCSrpc::: occs: ', rk, room.occupants)
+      let vk: keyof typeof room.ai
+      for (const n of room.npcs) {
+        print('NPCSrpc::: npcs: ', rk, n, this._all[n].currStation)
+      }
+      for (vk in room.ai) {
+        print('NPCSrpc::: key: ', rk, vk, room.ai[vk])
+      }
+    }
+    resetRoomPlaceCount()
   }
+
   private onPlaceExit(): void {
     //filter out onscreen testjpf
     for (let i = this.order.length; i-- !== 0; ) {
@@ -270,6 +320,12 @@ export default class WorldNpcs {
         this.all[a].turnPriority - this.all[b].turnPriority
     )
     for (let i = this.onScreen.length; i-- !== 0; ) {
+      const npc = this.all[this.onScreen[i]]
+      //testjpf Rethink??
+      if (npc.behavior.place.children.length < 1 && npc.turnPriority < 97)
+        npc.behavior.place.children.push(
+          new PlaceSequence(npc.getBehaviorProps.bind(npc))
+        )
       print('===>>> SETTING ONSCREEN::', this.onScreen[i], 'TO.TURN')
       this.all[this.onScreen[i]].fsm.setState('turn')
     }

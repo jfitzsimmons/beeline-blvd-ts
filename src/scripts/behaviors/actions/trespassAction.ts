@@ -63,7 +63,10 @@ export default class TrespassAction extends Action {
         //math.random() > 0.2 &&
       ) {
         for (const behavior of enforcer.behavior.active.children) {
-          if (behavior instanceof QuestionSequence) {
+          if (
+            behavior instanceof QuestionSequence &&
+            (behavior.perp('question') as QuestionProps).name == this.a.name
+          ) {
             behavior.update('clearance')
             print(
               '||>> Behavior: trespassAction::: QuestionSequence extended for:: ',

@@ -6,6 +6,12 @@ function load_npcs() {
   let station: keyof typeof stations
   for (station in stations) {
     const npc = stations[station]
+    print(
+      'groundsLEVEL::: npc,station',
+      npc,
+      station,
+      rooms.all[roomName].stations.desk
+    )
     const params = {
       npc,
     }
@@ -19,6 +25,8 @@ function load_npcs() {
     const params = {
       npc,
     }
+    print('groundsSWAPS::', swap, swaps[swap][0], swaps[swap][1])
+
     msg.post(`/${swaps[swap][0]}#npc_loader`, 'load_npc', params)
   }
 

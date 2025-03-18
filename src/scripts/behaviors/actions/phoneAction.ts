@@ -47,8 +47,11 @@ export default class PhoneAction extends Action {
       for (const c of callConnected) {
         const cop = this.a.returnNpc(c)
         if (cop.turnPriority < 96) {
-          for (const behavior of this.perp.behavior.active.children) {
-            if (behavior instanceof QuestionSequence) {
+          for (const behavior of cop.behavior.active.children) {
+            if (
+              behavior instanceof QuestionSequence &&
+              (behavior.perp('helper') as HelperProps).name == this.perp.name
+            ) {
               behavior.update(this.reason)
               print(
                 'phoneAction::: QuestionSequence extended for:: ',

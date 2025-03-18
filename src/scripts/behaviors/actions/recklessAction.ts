@@ -69,7 +69,11 @@ export default class RecklessAction extends Action {
         if (consequence.type == 'phonesecurity') {
           if (listener.clan == 'security') {
             for (const behavior of listener.behavior.active.children) {
-              if (behavior instanceof QuestionSequence) {
+              if (
+                behavior instanceof QuestionSequence &&
+                (behavior.perp('question') as QuestionProps).name ==
+                  this.inspirer.name
+              ) {
                 behavior.update(this.cause)
                 return () =>
                   this.continue(
@@ -87,7 +91,10 @@ export default class RecklessAction extends Action {
             )
           } else if (this.a.currRoom == 'security') {
             for (const behavior of listener.behavior.active.children) {
-              if (behavior instanceof SnitchSequence) {
+              if (
+                behavior instanceof SnitchSequence &&
+                behavior.perp.name == this.inspirer.name
+              ) {
                 behavior.update(this.cause)
                 print(
                   'recklessAction::: SnitchSequence extended for:: ',
@@ -111,7 +118,10 @@ export default class RecklessAction extends Action {
             )
           } else {
             for (const behavior of listener.behavior.active.children) {
-              if (behavior instanceof PhoneSequence) {
+              if (
+                behavior instanceof PhoneSequence &&
+                behavior.perp.name == this.inspirer.name
+              ) {
                 behavior.update(this.cause)
                 return () =>
                   this.continue(

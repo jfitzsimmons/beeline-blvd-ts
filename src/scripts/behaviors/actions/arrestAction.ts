@@ -24,11 +24,7 @@ export default class ArrestAction extends Action {
     )
     if (vacancy != null) {
       this.a.updateFromBehavior('station', ['security', vacancy])
-      // this.a.currStation = vacancy
-      // this.a.parent.addInfirmed(this.name)
-      // this.a.matrix = RoomsInitState.security.matrix
       this.a.updateFromBehavior('cooldown', 10)
-      // this.a.currRoom = 'security'
       return () => this.delay(new JailedSequence(this.getProps))
     }
     return () => this.fail('ArrestAction:: Need noVacancy logic')

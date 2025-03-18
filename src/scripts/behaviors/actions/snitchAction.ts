@@ -53,7 +53,10 @@ export default class SnitchAction extends Action {
             : cop.parent.returnNpc(this.perp.name)
 
         for (const behavior of cop.behavior.active.children) {
-          if (behavior instanceof QuestionSequence) {
+          if (
+            behavior instanceof QuestionSequence &&
+            (behavior.perp('helper') as HelperProps).name == this.perp.name
+          ) {
             behavior.update(this.reason)
             print(
               'snitchAction::: QuestionSequence extended for:: ',

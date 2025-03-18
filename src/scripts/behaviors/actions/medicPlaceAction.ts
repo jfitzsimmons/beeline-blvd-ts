@@ -30,7 +30,6 @@ export default class MedicPlaceAction extends Action {
         //!! I think this logic is badd anyway
         //this has no ELSE!!!
         //!!! RELY on () => success()  INSTEAD
-        //   this.a.parent.pruneStationMap('infirmary', 'aid')
       } else if (infirmed > 2) {
         const target = RoomsInitState.infirmary.matrix
         this.a.findRoomPlaceStation(target)

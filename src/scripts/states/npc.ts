@@ -40,7 +40,7 @@ export default class NpcState extends ActorState {
   constructor(n: string, lists: NpcProps) {
     super(n, lists) // 👈️ call super() here
     //TESTJPFDEBUG HP
-    this.hp = 1
+    this.hp = math.random(1, 3)
     this.home = NpcsInitState[n].home
     this.name = NpcsInitState[n].name
     this.inventory = NpcsInitState[n].inventory
@@ -382,7 +382,8 @@ export default class NpcState extends ActorState {
       chosenRoom,
       chosenStation,
       'exit room:',
-      this.exitRoom
+      this.exitRoom,
+      this.parent.getPlayerRoom()
     )
 
     this.currRoom = chosenRoom

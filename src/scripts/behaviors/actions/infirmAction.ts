@@ -28,12 +28,7 @@ export default class InfirmAction extends Action {
       this.a.currStation
     )
     if (vacancy != null) {
-      //testjpf make 1 update!!!
       this.a.updateFromBehavior('station', ['infirmary', vacancy])
-      // this.a.matrix = RoomsInitState.infirmary.matrix
-      //  this.a.exitRoom = this.a.currRoom
-      //  this.a.currRoom = 'infirmary'
-      // this.a.currStation = vacancy
 
       return () => this.delay(new InfirmedSequence(this.getProps))
     }

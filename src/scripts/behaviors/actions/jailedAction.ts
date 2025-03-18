@@ -5,9 +5,22 @@ import Action from '../action'
 
 export default class JailedAction extends Action {
   a: InfirmedProps
+  incidents: number
   constructor(a: InfirmedProps) {
     super(a)
     this.a = a
+    this.a.cooldown = 16
+    this.incidents = 0
+  }
+  update() {
+    this.a.cooldown = this.a.cooldown + 24
+    this.incidents++
+    print(
+      '^^^ => Behavior: JailedAction:: Update: Sentence extended for: name, cooldown, incidents:',
+      this.a.name,
+      this.a.cooldown,
+      this.incidents
+    )
   }
   run(): { (): void } {
     print('JailedAction for::', this.a.name)
