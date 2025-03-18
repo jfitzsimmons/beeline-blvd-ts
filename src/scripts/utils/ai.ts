@@ -29,10 +29,13 @@ let roomPlaceCount: {
 } = {}
 export const resetRoomPlaceCount = () => {
   roomPlaceCount = {}
+  roomListCount = {}
   print('RESETPLACECOUNT!!!!')
 }
-export const getRoomPlaceCount = () => roomPlaceCount
-const roomListCount: { [key: string]: number } = {}
+export const getRoomPlaceCount = (room: string) => {
+  print('ROOMLISTCOUNT:: ', room, roomListCount[room])
+}
+let roomListCount: { [key: string]: number } = {}
 //const unplacedcount: { [key: string]: number } = {}
 const fallbackTable: { [key: string]: string[] } = {
   loading: ['loading_outside1'],
@@ -73,6 +76,11 @@ export function fillStationAttempt(
 
   while (placed == false) {
     for (const room of room_list) {
+      if (roomPlaceCount[room] != null) {
+        roomPlaceCount[room].listed += 1
+      } else {
+        roomPlaceCount[room] = { listed: 1, occupants: 0 }
+      }
       const shuffledStations: [string, string][] = shuffle(
         Object.entries(stationMap[room].stations)
       )
@@ -273,28 +281,28 @@ export function set_room_priority(
     const room = RoomsInitLayout[npc.matrix.y + 1][npc.matrix.x]
     if (roomPlaceCount[room] != null)
       print('SETROOMPRIOTIY:::', roomPlaceCount[room].occupants, room)
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 6
       ? delayPriority.push(room)
       : room_list.push(room)
   }
   if (target.x < npc.matrix.x) {
     // one left/west
     const room = RoomsInitLayout[npc.matrix.y][npc.matrix.x - 1]
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 6
       ? delayPriority.push(room)
       : room_list.push(room)
   }
   if (target.y < npc.matrix.y) {
     //one south
     const room = RoomsInitLayout[npc.matrix.y - 1][npc.matrix.x]
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 6
       ? delayPriority.push(room)
       : room_list.push(room)
   }
   if (target.x > npc.matrix.x) {
     //one east
     const room = RoomsInitLayout[npc.matrix.y][npc.matrix.x + 1]
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 6
       ? delayPriority.push(room)
       : room_list.push(room)
   }
@@ -312,7 +320,7 @@ export function set_room_priority(
     RoomsInitLayout[npc.matrix.y - 1][npc.matrix.x] != null
   ) {
     const room = RoomsInitLayout[npc.matrix.y - 1][npc.matrix.x]
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 5
       ? delayPriority.push(room)
       : room_list.push(room)
   }
@@ -321,7 +329,7 @@ export function set_room_priority(
     RoomsInitLayout[npc.matrix.y][npc.matrix.x - 1] != null
   ) {
     const room = RoomsInitLayout[npc.matrix.y][npc.matrix.x - 1]
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 5
       ? delayPriority.push(room)
       : room_list.push(room)
   }
@@ -331,7 +339,7 @@ export function set_room_priority(
     RoomsInitLayout[npc.matrix.y + 1] != null
   ) {
     const room = RoomsInitLayout[npc.matrix.y + 1][npc.matrix.x]
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 5
       ? delayPriority.push(room)
       : room_list.push(room)
   }
@@ -340,7 +348,7 @@ export function set_room_priority(
     RoomsInitLayout[npc.matrix.y][npc.matrix.x + 1] != null
   ) {
     const room = RoomsInitLayout[npc.matrix.y][npc.matrix.x + 1]
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 5
       ? delayPriority.push(room)
       : room_list.push(room)
   }
@@ -379,25 +387,28 @@ export function set_npc_target(
     target = direction.center
   } else if (n.aiPath == 'pinky') {
     //always targets 0 to 2 rooms infront of player /33% +1 left or right?
-    target = Math.random() > 0.1 ? direction.front : direction.back
+    target = Math.random() > 0.2 ? direction.front : direction.back
   } else if (n.aiPath == 'blinky') {
     //always targets 1 room behind player unless too far
     const distance = math.abs(n.matrix.x - n.home.x + (n.matrix.y - n.home.y))
-    if (distance > 5) {
+    print('BLINKYDISTANCE:::', distance)
+    if (distance > 2) {
       target = n.home
     } else {
       target = direction.back
     }
   } else if (n.aiPath == 'inky') {
-    //1/3 check to see if you 1: too far from home or 2: 50/50 left/right 50/50 +1 front
+    //1/3 check to see if you 1: too close, go home or 2: 50/50 left/right 50/50 +1 front
     let distance = 0
-    if (math.random() < 0.33) {
-      distance =
+    if (math.random() < 0.3) {
+      distance = math.abs(
         n.matrix.x - direction.center.x + (n.matrix.y - direction.center.y)
+      )
+      print('IIIIIIINKYDISTANCE:::', distance)
     } else {
       distance = 9
     }
-    if (distance > -2 && distance < 2) {
+    if (distance < 1) {
       target = n.home
     } else if (math.random() < 0.5) {
       target = direction.right
@@ -407,26 +418,30 @@ export function set_npc_target(
   } else if (n.aiPath == 'clyde') {
     const distance = n.matrix.x - n.target.x + (n.matrix.y - direction.center.y)
     //random front, back, left, right unless too close and fail 50/50 check
+    print('CLYDEDISTANCE:::', distance)
+
     if (distance > -2 && distance < 2 && math.random() > 0.5) {
       target = n.home
     } else {
-      const dirsRO = ['center', 'front', 'back', 'left', 'right'] as const
+      const dirsRO = [
+        'center',
+        'front',
+        'back',
+        'left',
+        'right',
+        'back',
+      ] as const
       const dirs = shuffle([...dirsRO])
       const kd: keyof Direction = dirs[0]
       target = direction[kd]
     }
   }
   //limit target to map layout grid
-  if (target.x < 0) {
-    target.x = 0
-  } else if (target.x > 4) {
-    target.x = 4
+  if (target.x < 0 || target.x > 4) {
+    target.x = Math.random() < 0.5 ? 4 : 0
   }
-
-  if (target.y < 0) {
-    target.y = 0
-  } else if (target.y > 5) {
-    target.y = 5
+  if (target.y < 0 || target.y > 5) {
+    target.y = Math.random() < 0.5 ? 5 : 0
   }
 
   return target

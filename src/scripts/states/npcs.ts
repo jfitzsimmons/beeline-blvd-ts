@@ -17,7 +17,7 @@ import Selector from '../behaviors/selector'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
 import ImmobileSequence from '../behaviors/sequences/immobileSequence'
 import TrespassSequence from '../behaviors/sequences/trespassSequence'
-import { resetRoomPlaceCount } from '../utils/ai'
+import { getRoomPlaceCount, resetRoomPlaceCount } from '../utils/ai'
 
 const dt = math.randomseed(os.time())
 
@@ -172,7 +172,6 @@ export default class WorldNpcs {
     print('<< << :: NPCSplaceUpdate() :: >> >>')
     const playerRoom = this.parent.getPlayerRoom()
     this.sort_npcs_by_encounter()
-    // const rpc = getRoomPlaceCount()
 
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
@@ -221,7 +220,10 @@ export default class WorldNpcs {
     let rk: keyof typeof rpctestjpc
     for (rk in rpctestjpc) {
       const room = rpctestjpc[rk]
+      getRoomPlaceCount(rk)
+
       print('NPCSrpc::: occs: ', rk, room.occupants)
+      print('NPCSrpc::: listed: ', rk, getRoomPlaceCount(rk))
       let vk: keyof typeof room.ai
       for (const n of room.npcs) {
         print('NPCSrpc::: npcs: ', rk, n, this._all[n].currStation)
