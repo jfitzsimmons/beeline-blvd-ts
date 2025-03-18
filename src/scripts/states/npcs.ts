@@ -17,6 +17,7 @@ import Selector from '../behaviors/selector'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
 import ImmobileSequence from '../behaviors/sequences/immobileSequence'
 import TrespassSequence from '../behaviors/sequences/trespassSequence'
+import { resetRoomPlaceCount } from '../utils/ai'
 
 const dt = math.randomseed(os.time())
 
@@ -122,6 +123,7 @@ export default class WorldNpcs {
         //new InjuryAction(npc.getBehaviorProps.bind(this)).run()
       }
     }
+    resetRoomPlaceCount()
   }
   private onNewExit(): void {
     this.sort_npcs_by_encounter()
@@ -228,7 +230,7 @@ export default class WorldNpcs {
         print('NPCSrpc::: key: ', rk, vk, room.ai[vk])
       }
     }
-    //resetRoomPlaceCount()
+    resetRoomPlaceCount()
   }
 
   private onPlaceExit(): void {
@@ -318,6 +320,12 @@ export default class WorldNpcs {
         this.all[a].turnPriority - this.all[b].turnPriority
     )
     for (let i = this.onScreen.length; i-- !== 0; ) {
+      const npc = this.all[this.onScreen[i]]
+      //testjpf Rethink??
+      if (npc.behavior.place.children.length < 1 && npc.turnPriority < 97)
+        npc.behavior.place.children.push(
+          new PlaceSequence(npc.getBehaviorProps.bind(npc))
+        )
       print('===>>> SETTING ONSCREEN::', this.onScreen[i], 'TO.TURN')
       this.all[this.onScreen[i]].fsm.setState('turn')
     }

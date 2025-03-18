@@ -24,10 +24,13 @@ export const crimeSeverity: { [key: string]: number } = {
   assault: 4,
 }
 //TESTJPF Export for DEBUG ONLY???!!!
-export let roomPlaceCount: {
+let roomPlaceCount: {
   [key: string]: { occupants: number; [key: string]: number }
 } = {}
-export const resetRoomPlaceCount = () => (roomPlaceCount = {})
+export const resetRoomPlaceCount = () => {
+  roomPlaceCount = {}
+  print('RESETPLACECOUNT!!!!')
+}
 export const getRoomPlaceCount = () => roomPlaceCount
 const roomListCount: { [key: string]: number } = {}
 //const unplacedcount: { [key: string]: number } = {}
@@ -268,6 +271,8 @@ export function set_room_priority(
   if (target.y > npc.matrix.y) {
     //if target above go one room up/north
     const room = RoomsInitLayout[npc.matrix.y + 1][npc.matrix.x]
+    if (roomPlaceCount[room] != null)
+      print('SETROOMPRIOTIY:::', roomPlaceCount[room].occupants, room)
     roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
       ? delayPriority.push(room)
       : room_list.push(room)
@@ -370,11 +375,11 @@ export function set_npc_target(
   }
 ) {
   let target = { x: 0, y: 0 }
-  if (Math.random() < 0.2 || n.turnPriority > 25) {
+  if (Math.random() < 0.2 || (n.turnPriority > 25 && n.turnPriority < 90)) {
     target = direction.center
   } else if (n.aiPath == 'pinky') {
     //always targets 0 to 2 rooms infront of player /33% +1 left or right?
-    target = direction.front
+    target = Math.random() > 0.1 ? direction.front : direction.back
   } else if (n.aiPath == 'blinky') {
     //always targets 1 room behind player unless too far
     const distance = math.abs(n.matrix.x - n.home.x + (n.matrix.y - n.home.y))

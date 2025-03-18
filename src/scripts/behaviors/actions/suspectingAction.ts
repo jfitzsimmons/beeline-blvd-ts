@@ -121,7 +121,10 @@ export default class SuspectingAction extends Action {
       if (consequence.type == 'snitch') {
         if (this.a.clan == 'security') {
           for (const behavior of this.a.behavior.active.children) {
-            if (behavior instanceof QuestionSequence) {
+            if (
+              behavior instanceof QuestionSequence &&
+              (behavior.perp('helper') as HelperProps).name == this.perp.name
+            ) {
               behavior.update(this.cause)
               print(
                 'suspectingAction::: QuestionSequence extended for:: ',
@@ -145,7 +148,10 @@ export default class SuspectingAction extends Action {
           )
         } else {
           for (const behavior of this.a.behavior.active.children) {
-            if (behavior instanceof SnitchSequence) {
+            if (
+              behavior instanceof SnitchSequence &&
+              behavior.perp.name == this.perp.name
+            ) {
               behavior.update(this.cause)
               print(
                 'suspectingAction::: SnitchSequence extended for:: ',
@@ -285,7 +291,10 @@ export default class SuspectingAction extends Action {
           this.perp.name
         )
         for (const behavior of this.a.behavior.active.children) {
-          if (behavior instanceof PhoneSequence) {
+          if (
+            behavior instanceof PhoneSequence &&
+            behavior.perp.name == this.perp.name
+          ) {
             behavior.update(this.cause)
             print(
               'suspectingAction::: phoneSequence extended for:: ',

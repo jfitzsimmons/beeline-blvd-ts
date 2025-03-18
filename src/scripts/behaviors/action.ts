@@ -31,4 +31,7 @@ export default class Action {
     print('ActionContinue:::', s)
     return s
   }
+  update(): void {
+    print('ACTION updated')
+  }
 }
