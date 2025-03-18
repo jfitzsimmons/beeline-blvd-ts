@@ -1,7 +1,6 @@
 const { rooms } = globalThis.game.world
 function load_npcs() {
   const roomName = 'reception' // testjpf remove hardcode string!
-
   const stations: { [key: string]: string } = rooms.all[roomName].stations
   let station: keyof typeof stations
   for (station in stations) {
@@ -21,11 +20,8 @@ function load_npcs() {
   let swap: keyof typeof swaps
   for (swap in swaps) {
     const npc = swaps[swap][1]
-    const params = {
-      npc,
-    }
     print('RECEPTIONSWAPS::', swap, swaps[swap][0], swaps[swap][1])
-    msg.post(`/${swaps[swap][0]}#npc_loader`, 'load_npc', params)
+    msg.post(`/${swaps[swap][0]}#npc_loader`, 'load_npc', { npc })
   }
 
   //TESTJPF do you need any of these sopecific level files?

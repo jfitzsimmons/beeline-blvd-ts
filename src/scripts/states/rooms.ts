@@ -35,7 +35,7 @@ export default class WorldRooms {
 
     this._all = { ...seedRooms(this.parent) }
     this._focused = 'grounds'
-    this.stationsMap = this.createStationsMap()
+    this.stationsMap = { ...this.createStationsMap() }
     this.fsm
       .addState('idle')
       .addState('turn', {
@@ -79,7 +79,7 @@ export default class WorldRooms {
     this._focused = f
   }
   getOccupants(r: string): string[] {
-    return [...Object.values(this.all[r].stations).filter((s) => s != '')]
+    return [...Object.values(this._all[r].stations).filter((s) => s != '')]
   }
   setFocused(r: string) {
     this.focused = r
@@ -93,7 +93,7 @@ export default class WorldRooms {
     currRoom: string,
     currStation: string
   ): string | null {
-    const occs = this.all[room].wards!
+    const occs = this._all[room].wards!
     let ko: keyof typeof occs
     for (ko in occs) {
       if (occs[ko] == '') {
@@ -110,7 +110,8 @@ export default class WorldRooms {
     let ksw: keyof typeof roomSwaps
     for (ksw in roomSwaps) {
       if (roomSwaps[ksw][0] === s) {
-        delete this.stationsMap[r].swaps[ksw]
+        delete this.stationsMap[r].swaps[s]
+        delete this.stationsMap[r].stations[ksw]
         return true
       }
     }
@@ -131,13 +132,11 @@ export default class WorldRooms {
     this.stationsMap = { ...this.createStationsMap() }
   }
   setSwapParent(r: string, s: string, npc: string): boolean {
-    //testjpf this should be setting
-    //the stationMapneeds to be set.
     const roomSwaps = this._all[r].swaps
     let ksw: keyof typeof roomSwaps
     for (ksw in roomSwaps) {
       if (roomSwaps[ksw][0] == s) {
-        roomSwaps[ksw][1] = npc
+        this._all[r].swaps[ksw][1] = npc
         return true
       }
     }
@@ -152,37 +151,38 @@ export default class WorldRooms {
     return false
   }
   setStation(room: string, station: string, npc: string) {
-    this.all[room].stations[station] !== null
-      ? (this.all[room].stations[station] = npc)
+    this._all[room].stations[station] !== null
+      ? (this._all[room].stations[station] = npc)
       : this.setSwapParent(room, station, npc) === false &&
         (this.fallbacks.stations[station] = npc)
 
     this.pruneStationMap(room, station)
   }
-  clearSwapParent(r: string, s: string): boolean {
+  clearSwapParent(r: string, s: string, n: string): boolean {
     const roomSwaps = this._all[r].swaps
     let ksw: keyof typeof roomSwaps
     for (ksw in roomSwaps) {
-      if (roomSwaps[ksw][0] == s) {
-        roomSwaps[ksw][1] = ''
+      if (roomSwaps[ksw][0] == s && roomSwaps[ksw][1] == n) {
+        this._all[r].swaps[ksw][1] = ''
         return true
       }
     }
     return false
   }
   clearStation(room: string, station: string, npc: string) {
+    print('CLEARSTATION::', room, station, npc)
     if (room === '') return
-    if (npc == this.all[room].stations[station]) {
-      this.all[room].stations[station] = ''
-    } else if (this.clearSwapParent(room, station) === true) {
+    if (npc == this._all[room].stations[station]) {
+      this._all[room].stations[station] = ''
+    } else if (this.clearSwapParent(room, station, npc) === true) {
       return
     } else if (npc == this.fallbacks.stations[station]) {
       this.fallbacks.stations[station] = ''
     } else if (
-      this.all[room].wards !== undefined &&
-      npc == this.all[room].wards?.[station]
+      this._all[room].wards !== undefined &&
+      npc == this._all[room].wards?.[station]
     ) {
-      this.all[room].wards![station] = ''
+      this._all[room].wards![station] = ''
     }
   }
 
@@ -191,8 +191,8 @@ export default class WorldRooms {
   }
   private onTurnUpdate(): void {
     this.resetStationMap()
-    let kr: keyof typeof this.all
-    for (kr in this.all) this.all[kr].fsm.update(dt)
+    let kr: keyof typeof this._all
+    for (kr in this._all) this._all[kr].fsm.update(dt)
   }
   private onTurnExit(): void {}
   private onNewEnter(): void {}
@@ -202,7 +202,7 @@ export default class WorldRooms {
   private onTransitionUpdate(): void {}
   private onTransitionExit(): void {}
   getWards(room: string): string[] {
-    return Object.values(this.all[room].wards!).filter((s) => s !== '')
+    return Object.values(this._all[room].wards!).filter((s) => s !== '')
   }
   createStationsMap() {
     const stationMap: {
@@ -210,13 +210,11 @@ export default class WorldRooms {
     } = { backup: { fallbacks: {} } }
     let ki: keyof typeof RoomsInitState
     for (ki in RoomsInitState) {
-      //TESTJPF!!! need to 'spread' swaps value[0]
-      print('KIKIKIKIKI:::', ki)
       stationMap[ki] = {
         stations: { ...RoomsInitState[ki].stations },
         swaps: {},
       }
-      const swaps = RoomsInitState[ki].swaps
+      const swaps = { ...RoomsInitState[ki].swaps }
       let si: keyof typeof swaps
       for (si in swaps) {
         stationMap[ki].swaps[swaps[si][0]] = swaps[si][1]
@@ -224,7 +222,6 @@ export default class WorldRooms {
     }
 
     stationMap['backup']['fallbacks'] = { ...RoomsInitFallbacks.stations }
-    //TESTJPF there are no swaps!!!
     return stationMap
   }
 }

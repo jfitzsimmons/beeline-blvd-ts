@@ -885,11 +885,11 @@ export const RoomsInitFallbacks = {
 export const RoomsInitPriority = [
   'grounds',
   'reception',
+  'customs',
   'baggage',
   'entrance',
-  'customs',
-  'viplobby',
   'admin1',
+  'viplobby',
   'security',
   'lobby',
   'loading',

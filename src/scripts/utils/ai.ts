@@ -51,7 +51,9 @@ export function fillStationAttempt(
   npc: string,
   matrix: { x: number; y: number },
   clan: string,
-  stationMap: { [key: string]: { [key: string]: string } }
+  stationMap: {
+    [key: string]: { [key: string]: { [key: string]: string } }
+  }
 ): { chosenRoom: string; chosenStation: string } {
   //testjpf debug number of roomlist occurences
   room_list.forEach((room) => {
@@ -102,14 +104,14 @@ export function fillStationAttempt(
               'AREFALLBACKSWORKING?',
               station.slice(-6),
               RoomsInitLayout[matrix.y][matrix.x],
-              stationMap.fallbacks[station]
+              stationMap.backup.fallbacks[station]
             )
             if (
               (station.slice(-6) == 'passer' &&
                 RoomsInitLayout[matrix.y][matrix.x] != room &&
-                stationMap.fallbacks[station] !== null) ||
+                stationMap.backup.fallbacks[station] !== null) ||
               (station.slice(-6) !== 'passer' &&
-                stationMap.fallbacks[station] !== null)
+                stationMap.backup.fallbacks[station] !== null)
             ) {
               chosenStation = station
               chosenRoom = room

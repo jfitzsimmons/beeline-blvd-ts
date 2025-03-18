@@ -222,7 +222,7 @@ export default class WorldNpcs {
       print('NPCSrpc::: occs: ', rk, room.occupants)
       let vk: keyof typeof room.ai
       for (const n of room.npcs) {
-        print('NPCSrpc::: npcs: ', rk, n)
+        print('NPCSrpc::: npcs: ', rk, n, this._all[n].currStation)
       }
       for (vk in room.ai) {
         print('NPCSrpc::: key: ', rk, vk, room.ai[vk])
