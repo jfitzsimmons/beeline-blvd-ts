@@ -17,7 +17,6 @@ function steal_stash_checks(this: RoomState) {
   let loot: string[] = []
   let attendant =
     this.stations.desk === '' ? null : this.parent.returnNpc(this.stations.desk)
-  // print('this.stations.guest', this.stations.guest)
   if (cicadaModulus() && this.stations.guest != '') {
     thiefVictim = this.parent.returnNpc(this.stations.guest)
     const thiefVictimProps: ThiefVictimProps = {
@@ -30,11 +29,8 @@ function steal_stash_checks(this: RoomState) {
       removeInvBonus: thiefVictim.removeInvBonus.bind(thiefVictim),
       addInvBonus: thiefVictim.addInvBonus.bind(thiefVictim),
       updateInventory: thiefVictim.updateInventory.bind(thiefVictim),
-      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+      addOrExtendEffect: thiefVictim.addOrExtendEffect.bind(thiefVictim),
     }
-
-    //  print('victim.name', victim.name)
-
     loot = thiefVictim.inventory
     actor = this.actors.drawer
     if (actor.inventory.length > 0 && attendant !== null) {
@@ -44,6 +40,7 @@ function steal_stash_checks(this: RoomState) {
         clan: attendant.clan,
         inventory: attendant.inventory,
         updateInventory: attendant.updateInventory.bind(attendant),
+        addOrExtendEffect: attendant.addOrExtendEffect.bind(attendant),
       }
       const witness: string | null = npcStealCheck(
         thiefVictimProps,
@@ -83,9 +80,7 @@ function steal_stash_checks(this: RoomState) {
       clan: thiefVictim.clan,
       inventory: thiefVictim.inventory,
       updateInventory: thiefVictim.updateInventory.bind(thiefVictim),
-
-      // taskBuilder: thiefVictim.parent.taskBuilder.bind(thiefVictim),
-      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+      addOrExtendEffect: thiefVictim.addOrExtendEffect.bind(thiefVictim),
     }
     const thiefProps: ThiefVictimProps = {
       name: thief.name,
@@ -97,7 +92,7 @@ function steal_stash_checks(this: RoomState) {
       removeInvBonus: thief.removeInvBonus.bind(thief),
       addInvBonus: thief.addInvBonus.bind(thief),
       updateInventory: thief.updateInventory.bind(thief),
-      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+      addOrExtendEffect: thief.addOrExtendEffect.bind(thief),
     }
     const witness: string | null = npcStealCheck(thiefProps, victimProps)
     if (witness == 'witness') {
@@ -124,6 +119,7 @@ function steal_stash_checks(this: RoomState) {
       removeInvBonus: attendant.removeInvBonus.bind(attendant),
       addInvBonus: attendant.addInvBonus.bind(attendant),
       updateInventory: attendant.updateInventory.bind(attendant),
+      addOrExtendEffect: attendant.addOrExtendEffect.bind(attendant),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
     take_or_stash(attendantProps, actor)
@@ -140,6 +136,7 @@ function steal_stash_checks(this: RoomState) {
       removeInvBonus: attendant.removeInvBonus.bind(attendant),
       addInvBonus: attendant.addInvBonus.bind(attendant),
       updateInventory: attendant.updateInventory.bind(attendant),
+      addOrExtendEffect: attendant.addOrExtendEffect.bind(attendant),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
     actor = this.actors.vase2
@@ -157,6 +154,7 @@ function steal_stash_checks(this: RoomState) {
       removeInvBonus: attendant.removeInvBonus.bind(attendant),
       addInvBonus: attendant.addInvBonus.bind(attendant),
       updateInventory: attendant.updateInventory.bind(attendant),
+      addOrExtendEffect: attendant.addOrExtendEffect.bind(attendant),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
     actor = this.actors.vase

@@ -295,6 +295,7 @@ export function tutorialA(interval = 'turn') {
         removeInvBonus: worker2.removeInvBonus.bind(worker2),
         addInvBonus: worker2.addInvBonus.bind(worker2),
         updateInventory: worker2.updateInventory.bind(worker2),
+        addOrExtendEffect: worker2.addOrExtendEffect.bind(worker2),
         //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
       }
       if (guest2 == null) {
@@ -306,6 +307,7 @@ export function tutorialA(interval = 'turn') {
           clan: guest2.clan,
           inventory: guest2.inventory,
           updateInventory: guest2.updateInventory.bind(guest2),
+          addOrExtendEffect: guest2.addOrExtendEffect.bind(guest2),
         }
         const witness = npcStealCheck(worker2Props, guestProps, luggage)
         if (witness == 'witness') {
@@ -332,6 +334,7 @@ export function tutorialA(interval = 'turn') {
         removeInvBonus: guest2.removeInvBonus.bind(guest2),
         addInvBonus: guest2.addInvBonus.bind(guest2),
         updateInventory: guest2.updateInventory.bind(guest2),
+        addOrExtendEffect: guest2.addOrExtendEffect.bind(guest2),
         //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
       }
       if (worker2 == null) {
@@ -343,6 +346,7 @@ export function tutorialA(interval = 'turn') {
           clan: worker2.clan,
           inventory: worker2.inventory,
           updateInventory: worker2.updateInventory.bind(worker2),
+          addOrExtendEffect: worker2.addOrExtendEffect.bind(worker2),
         }
         const witness = npcStealCheck(guest2Props, workerProps, luggage)
         if (witness == 'witness') {

@@ -374,17 +374,9 @@ export default class NpcState extends ActorState {
       this.clan,
       this.parent.getStationMap()
     )
-    print(
-      'ROOMS.LENGTH:!:',
-      rooms.length,
-      this.name,
-      '::: findrooomplacestation:: STATION:::',
-      chosenRoom,
-      chosenStation,
-      'exit room:',
-      this.exitRoom,
-      this.parent.getPlayerRoom()
-    )
+
+    //prettier-ignore
+    print('length:!:',rooms.length,this.name,':: findRoomPlaceStation ::',chosenRoom,chosenStation,':EXIT:',this.exitRoom)
 
     this.currRoom = chosenRoom
     this.currStation = chosenStation

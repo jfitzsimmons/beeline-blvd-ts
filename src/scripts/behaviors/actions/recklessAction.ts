@@ -62,6 +62,7 @@ export default class RecklessAction extends Action {
       let consequence = { pass: false, type: 'neutral' }
 
       for (let i = 0; i < resultChecks.length - 1; i++) {
+        //testjpf should i be sending the inspirer'sinfo instead??
         consequence = resultChecks[i](
           this.getProps('question') as QuestionProps,
           listener.getBehaviorProps('announcer') as QuestionProps

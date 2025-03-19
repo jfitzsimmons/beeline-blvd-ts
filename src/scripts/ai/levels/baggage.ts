@@ -31,6 +31,7 @@ function steal_stash_checks(_this: RoomState) {
       clan: victim.clan,
       inventory: victim.inventory,
       updateInventory: victim.updateInventory.bind(victim),
+      addOrExtendEffect: victim.addOrExtendEffect.bind(victim),
     }
     const suspectProps: ThiefVictimProps = {
       name: suspect.name,
@@ -42,6 +43,7 @@ function steal_stash_checks(_this: RoomState) {
       removeInvBonus: suspect.removeInvBonus.bind(suspect),
       addInvBonus: suspect.addInvBonus.bind(suspect),
       updateInventory: suspect.updateInventory.bind(suspect),
+      addOrExtendEffect: suspect.addOrExtendEffect.bind(suspect),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
     const witness = npcStealCheck(suspectProps, victimProps, loot)
@@ -68,6 +70,7 @@ function steal_stash_checks(_this: RoomState) {
       removeInvBonus: suspect.removeInvBonus.bind(suspect),
       addInvBonus: suspect.addInvBonus.bind(suspect),
       updateInventory: suspect.updateInventory.bind(suspect),
+      addOrExtendEffect: suspect.addOrExtendEffect.bind(suspect),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
     take_or_stash(suspectProps, loot)

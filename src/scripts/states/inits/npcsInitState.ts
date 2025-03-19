@@ -138,7 +138,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     home: { x: 2, y: 1 },
     name: 'labor07',
     inventory: ['mushroom01'],
-    clearance: 1,
+    clearance: 2,
     clan: 'labor',
     body: 'labor01body',
     ...npc_defaults,
@@ -210,7 +210,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     home: { x: 0, y: 4 }, //grounds
     name: 'visitor04',
     inventory: ['steak01', 'tomato'],
-    clearance: 2,
+    clearance: 3,
     clan: 'visitors',
     body: 'visitors02body',
     ...npc_defaults,
@@ -363,7 +363,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     home: { x: 2, y: 1 }, //alley3
     name: 'staff08',
     inventory: ['mallot', 'fish02'],
-    clearance: 1,
+    clearance: 3,
     clan: 'staff',
     body: 'staff04body',
     ...npc_defaults,
