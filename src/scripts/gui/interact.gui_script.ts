@@ -105,6 +105,7 @@ function open_inventory(_this: props, actor: string, action: string) {
         addInvBonus: player.addInvBonus.bind(player),
         removeInvBonus: player.removeInvBonus.bind(player),
         updateInventory: player.updateInventory.bind(player),
+        addOrExtendEffect: player.addOrExtendEffect.bind(player),
         traits: player.traits,
         inventory: player.inventory,
         cooldown: player.cooldown,
@@ -118,6 +119,7 @@ function open_inventory(_this: props, actor: string, action: string) {
         clan: watcher.clan,
         inventory: watcher.inventory,
         updateInventory: watcher.updateInventory.bind(watcher),
+        addOrExtendEffect: watcher.addOrExtendEffect.bind(watcher),
       }
       _this.consequence = witnessPlayer(thiefprops, watcherProps)
     } else if (action == 'give' || action == 'trade') {

@@ -18,7 +18,7 @@ export const npc_defaults: NpcDefaults = {
 }
 export const NpcsInitState: { [key: string]: Npc } = {
   mailroom01: {
-    home: { x: 3, y: 1 }, //loading
+    home: { x: 3, y: 2 }, //loading
     name: 'mailroom01',
     inventory: ['tomato', 'banana'],
     clearance: 3,
@@ -54,7 +54,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   custodian02: {
-    home: { x: 1, y: 1 }, //warehouse
+    home: { x: 1, y: 3 }, //warehouse
     name: 'custodian02',
     inventory: ['magica4', 'drumstick01'],
     clearance: 2,
@@ -63,7 +63,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   maintenance01: {
-    home: { x: 4, y: 1 }, //loading
+    home: { x: 3, y: 1 }, //loading
     name: 'maintenance01',
     inventory: ['tomato', 'banana'],
     clearance: 3,
@@ -99,7 +99,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   labor03: {
-    home: { x: 4, y: 1 }, //maintenance
+    home: { x: 3, y: 2 }, //maintenance
     name: 'labor03',
     inventory: ['vial02'],
     clearance: 2,
@@ -138,7 +138,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     home: { x: 2, y: 1 },
     name: 'labor07',
     inventory: ['mushroom01'],
-    clearance: 1,
+    clearance: 2,
     clan: 'labor',
     body: 'labor01body',
     ...npc_defaults,
@@ -162,7 +162,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   doc01: {
-    home: { x: 4, y: 4 },
+    home: { x: 3, y: 4 },
     name: 'doc01',
     inventory: ['orange', 'berry01'],
     clearance: 3,
@@ -207,10 +207,10 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   visitor04: {
-    home: { x: 5, y: 4 }, //grounds
+    home: { x: 0, y: 4 }, //grounds
     name: 'visitor04',
     inventory: ['steak01', 'tomato'],
-    clearance: 2,
+    clearance: 3,
     clan: 'visitors',
     body: 'visitors02body',
     ...npc_defaults,
@@ -225,7 +225,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   visitor02: {
-    home: { x: 0, y: 4 }, //grounds
+    home: { x: 1, y: 4 }, //grounds
     name: 'visitor02',
     inventory: ['mushroom02', 'tomato'],
     clearance: 3,
@@ -252,7 +252,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   sexworker02: {
-    home: { x: 4, y: 2 }, //inn
+    home: { x: 2, y: 2 }, //inn
     name: 'sexworker02',
     inventory: ['leaf01', 'cheese'],
     clearance: 2,
@@ -279,7 +279,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   church02: {
-    home: { x: 4, y: 4 }, //store
+    home: { x: 3, y: 3 }, //store
     name: 'church02',
     inventory: ['string', 'mushroom01'],
     clearance: 2,
@@ -324,7 +324,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   staff04: {
-    home: { x: 4, y: 4 }, //store
+    home: { x: 3, y: 4 }, //store
     name: 'staff04',
     inventory: ['fish01', 'gold'],
     clearance: 2,
@@ -342,7 +342,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   staff06: {
-    home: { x: 4, y: 5 }, //store
+    home: { x: 2, y: 4 }, //store
     name: 'staff06',
     inventory: ['fish01', 'gold'],
     clearance: 3,
@@ -363,13 +363,13 @@ export const NpcsInitState: { [key: string]: Npc } = {
     home: { x: 2, y: 1 }, //alley3
     name: 'staff08',
     inventory: ['mallot', 'fish02'],
-    clearance: 1,
+    clearance: 3,
     clan: 'staff',
     body: 'staff04body',
     ...npc_defaults,
   },
   bruiser: {
-    home: { x: 4, y: 1 }, //maint
+    home: { x: 4, y: 0 }, //maint
     name: 'bruiser',
     inventory: ['egg01', 'mallot'],
     clearance: 1,
@@ -396,7 +396,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   spike: {
-    home: { x: 4, y: 3 },
+    home: { x: 3, y: 3 },
     name: 'spike',
     inventory: ['rose', 'berry02'],
     clearance: 3,
@@ -405,7 +405,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   curly: {
-    home: { x: 4, y: 5 },
+    home: { x: 3, y: 4 },
     name: 'curly',
     inventory: ['berry02', 'avacado'],
     clearance: 1,
@@ -414,7 +414,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   gang203: {
-    home: { x: 4, y: 1 }, //alley2
+    home: { x: 3, y: 1 }, //alley2
     name: 'gang203',
     inventory: ['avacado', 'shrimp02'],
     clearance: 2,
@@ -486,7 +486,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   corps01: {
-    home: { x: 3, y: 5 }, //admin2
+    home: { x: 3, y: 4 }, //admin2
     name: 'corps01',
     inventory: ['sack', 'banana'],
     clearance: 3,
@@ -504,7 +504,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   corps04: {
-    home: { x: 2, y: 5 }, //vip
+    home: { x: 2, y: 3 }, //vip
     name: 'corps04',
     inventory: ['magica4', 'potion'],
     clearance: 3,
@@ -541,7 +541,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   security004: {
-    home: { x: 4, y: 1 }, //maint
+    home: { x: 3, y: 1 }, //maint
     name: 'security004',
     inventory: ['coffeemug', 'orange'],
     clearance: 3,
@@ -550,7 +550,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     ...npc_defaults,
   },
   security005: {
-    home: { x: 4, y: 1 }, //maint
+    home: { x: 2, y: 2 }, //maint
     name: 'security005',
     inventory: ['coffeemug', 'orange'],
     clearance: 2,

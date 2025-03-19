@@ -1,26 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
-import //playerSnitchCheck,
-// npcCommitSnitchCheck,
-//chaotic_good_check,
-//dumb_crook_check,
-//ignorant_check,
-//classy_check,
-//predator_check,
-// suspicious_check,
-// vanity_check,
-// angel_check,
-// add_prejudice,
-//becomeASnitchCheck,
-// watcher_punched_check,
-'./inits/checksFuncs'
-import {
-  QuestMethods,
-  Task,
-  //TasksChecks,
-} from '../../types/tasks'
+import { QuestMethods, Task } from '../../types/tasks'
 import TaskState from './task'
-//import { arraymove } from '../utils/utils'
 import { TaskProps, WorldTasksArgs } from '../../types/world'
 
 const dt = math.randomseed(os.time())
@@ -30,42 +11,25 @@ export default class WorldTasks {
   private _spawn: string
   fsm: StateMachine
   quests: QuestMethods
-  // mendingQueue: string[]
   methods: TaskProps
   parent: WorldTasksArgs
-  // checks: TasksChecks
-  //outcomes: TasksOutcomes
+
   constructor(worldProps: WorldTasksArgs) {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
     this._spawn = 'grounds'
-    // this.mendingQueue = []
     this.parent = worldProps
     this.methods = {
       npcHasTask: this.npcHasTask.bind(this),
-      //addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
       didCrossPaths: this.parent.didCrossPaths.bind(this),
       returnNpc: this.parent.returnNpc.bind(this),
       returnPlayer: this.parent.returnPlayer.bind(this),
       taskBuilder: this.taskBuilder.bind(this),
       getOccupants: this.parent.getOccupants.bind(this),
-      //setConfrontation: this.parent.setConfrontation.bind(this),
     }
     this.quests = {
       num_of_injuries: this.num_of_injuries.bind(this),
     }
-    // this.checks = {
-    //  playerSnitchCheck: playerSnitchCheck.bind(this),
-    //npcCommitSnitchCheck: npcCommitSnitchCheck.bind(this),
-    //  ignorant_check: ignorant_check.bind(this),
-    //  dumb_crook_check: dumb_crook_check.bind(this),
-    //  chaotic_good_check: chaotic_good_check.bind(this),
-    //  classy_check: classy_check.bind(this),
-    //  predator_check: predator_check.bind(this),
-    //}
-    //    this.outcomes = {
-    //  add_prejudice: add_prejudice.bind(this),
-    // }
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
       onEnter: this.onTurnEnter.bind(this),

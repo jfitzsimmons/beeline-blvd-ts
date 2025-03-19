@@ -69,7 +69,7 @@ export default class TrespassAction extends Action {
           ) {
             behavior.update('clearance')
             print(
-              '||>> Behavior: trespassAction::: QuestionSequence extended for:: ',
+              '|>::: QuestionSequence extended for:: ',
               enforcer.name,
               'by:',
               this.a.name
@@ -86,7 +86,7 @@ export default class TrespassAction extends Action {
         )
         return () =>
           this.continue(
-            '||>> Behavior: trespassAction:: Enforcer:' +
+            '|>:: Enforcer:' +
               enforcer.name +
               'is going to question:' +
               this.a.name
@@ -95,9 +95,7 @@ export default class TrespassAction extends Action {
     }
 
     return () =>
-      this.continue(
-        '||>> Behavior: Default - trespass succecful for:' + this.a.name
-      )
+      this.continue('|>: Default - trespass successful for:' + this.a.name)
   }
   success(s?: string): void {
     print('|||>>> Behavior: TrespassAction:: Success:', s)

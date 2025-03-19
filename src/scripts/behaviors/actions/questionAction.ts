@@ -93,7 +93,7 @@ export default class QuestionAction extends Action {
       // print(i, '-- buildconsequence::: ARGCHECKS::', consolation.pass, consolation.type, checked, checker)
       if (consequence.pass == true) i = resultChecks.length
     }
-    if (consequence.type === 'jailed') {
+    if (consequence.type === 'jailed' || consequence.type === 'phonesecurity') {
       //hnadle logic here for currstation prisoner
       // and currstation patient
       //if already jailed update jailed sequence?

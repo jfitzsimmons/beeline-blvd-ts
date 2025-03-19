@@ -12,18 +12,16 @@ export default class ImmobileAction extends Action {
     // print('NEWIMMOBILEACT::: FOR::', this.a.name, 'SPR:::', this.a.turnPriority)
   }
   run(): { (): void } {
+    return () => this.success()
+  }
+  success() {
     print(
-      '>>> => Behavior: Run: IMMOBILEACT::: 4::',
+      '>>> => Behavior: success: IMMOBILEACT::: 4::',
       this.a.name,
       this.a.turnPriority,
       this.a.currRoom,
       this.a.currStation
     )
     this.a.pruneStationMap(this.a.currRoom, this.a.currStation)
-
-    return () => this.fail()
-  }
-  fail() {
-    print(`ImmobileAction:: ${this.a.name}: DidNotPlace.`)
   }
 }

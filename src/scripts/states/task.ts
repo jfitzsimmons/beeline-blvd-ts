@@ -42,11 +42,6 @@ export default class TaskState {
       onUpdate: this.onInjuryUpdate.bind(this),
       onExit: this.onInjuryExit.bind(this),
     })
-    this.fsm.addState('reckless', {
-      onEnter: this.onRecklessEnter.bind(this),
-      onUpdate: this.onRecklessUpdate.bind(this),
-      onExit: this.onRecklessExit.bind(this),
-    })
     this.fsm.setState(setInitFSMstate(t))
 
     this.handleConfrontation = this.handleConfrontation.bind(this)
@@ -61,31 +56,6 @@ export default class TaskState {
     this.handleConfrontation()
   }
   private onConfrontExit(): void {}
-  private onRecklessEnter(): void {}
-  private onRecklessUpdate(): void {
-    /**
-    const owner = this.parent.returnNpc(this.owner)
-    const others = this.parent
-      .getOccupants(owner.currRoom)
-      .filter(
-        (o) =>
-          o !== this.owner && this.parent.npcHasTask([o], [], immobile) === null
-      )
-    const checks: Array<(target: string, listener: string) => Consequence> =
-      this.cause == 'theft'
-        ? shuffle([
-            this.checks.ignorant_check!.bind(this),
-            this.checks.dumb_crook_check!.bind(this),
-            this.checks.chaotic_good_check!.bind(this),
-          ])
-        : shuffle([
-            this.checks.classy_check!.bind(this),
-            this.checks.predator_check!.bind(this),
-          ])
-**/
-    //  this.checks.build_consequence!(this, others[0], checks, false)
-  }
-  private onRecklessExit(): void {}
 
   handleConfrontation() {
     const target: NpcState | WorldPlayer =

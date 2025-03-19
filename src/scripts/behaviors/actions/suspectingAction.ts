@@ -18,6 +18,7 @@ import {
   suspicious_check,
   meritsDemerits,
   recklessCheck,
+  pledgeCheck,
 } from '../../states/inits/checksFuncs'
 import { shuffle } from '../../utils/utils'
 import { removeValuable, removeAdvantageous } from '../../utils/inventory'
@@ -93,6 +94,7 @@ export default class SuspectingAction extends Action {
             becomeASnitchCheck,
             meritsDemerits,
             recklessCheck,
+            pledgeCheck,
           ])
 
     let consequence = { pass: false, type: 'neutral' }
@@ -105,7 +107,7 @@ export default class SuspectingAction extends Action {
     }
 
     // prettier-ignore
-    print(consequence.type.slice(0, 6),'Suspectingaction::: consequence after consequence/cause:::',consequence.type,this.cause,'confronter:',this.a.name,(this.a.getBehaviorProps('announcer')as AnnouncerProps).hp,'perp:',this.perp.name,(this.perp.getBehaviorProps('announcer')as AnnouncerProps).hp,'inroom:',this.a.currRoom,this.perp.currRoom,'||| PLAYERROOM:',this.a.getFocusedRoom())
+    print('Suspectingaction::: consequence:::',consequence.type,this.cause,'| confronter:',this.a.name,(this.a.getBehaviorProps('announcer')as AnnouncerProps).hp,'perp:',this.perp.name,(this.perp.getBehaviorProps('announcer')as AnnouncerProps).hp,'inroom:',this.a.currRoom)
     /***
      * testjpf seems here i need conditions that create new
      * sequences for different types of consequences
@@ -401,10 +403,9 @@ export default class SuspectingAction extends Action {
           )
       }
     }
-
     if (consequence.type == 'neutral' && this.isHero == false) {
       const robbed = this.storage == undefined ? this.a : this.storage
-      let chest_item = null
+      let chest_item: string | null = null
       /**
        * need sequence for snitch!!
        * need returns for chkfuncs call_security
@@ -436,13 +437,16 @@ export default class SuspectingAction extends Action {
         if (robbed.updateInventory !== undefined)
           robbed.updateInventory('delete', chest_item)
         this.perp.updateInventory('add', chest_item)
-        //this.perp.addInvBonus(chest_item)
       }
       //if (victim == true ){ remove_chest_bonus(w, chest_item) }
       this.perp.cooldown = math.random(5, 15)
       return () =>
         this.fail(
-          `SuspectingAction::: Failed:: ${this.a.name} was neutral and had no effect on ${this.perp.name}`
+          `SuspectingAction::: Failed:: ${
+            this.a.name
+          } was neutral and had no effect on ${this.perp.name}. stole: ${
+            chest_item !== null ? chest_item : ''
+          }`
         )
     } else if (consequence.type == 'neutral' && this.isHero == true) {
       const params = {
@@ -459,7 +463,7 @@ export default class SuspectingAction extends Action {
       )
     }
 
-    return () => this.success('Default')
+    return () => this.success(`Default, ${consequence.type},`)
     //need something that checks response
     //does response need EffectsAction, sequences, something else???
     //testjpf

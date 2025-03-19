@@ -81,7 +81,7 @@ export default class InjuredAction extends Action {
               )
             return () =>
               this.continue(
-                '||>> Behavior: injur-ED-action:: GoodSamrtian - Add HELPERSequence for:' +
+                '|>:: GoodSamaritan - Add HELPERSequence for:' +
                   scout.name +
                   '| VICTIM:' +
                   this.a.name +
@@ -94,7 +94,7 @@ export default class InjuredAction extends Action {
           math.random() > 0.5
         ) {
           print(
-            '||>> Behavior: INJUREDACTION::: Doc:',
+            '|> ACTION::: Doc:',
             helper,
             'added',
             this.a.name,
@@ -107,7 +107,7 @@ export default class InjuredAction extends Action {
 
     return () =>
       this.continue(
-        '||>> Behavior: Injur-ED-action:: Default - Add Another InjuredSequence for:' +
+        '|>:: Default - Add Another InjuredSequence for:' +
           this.a.name +
           ':' +
           this.a.turnPriority

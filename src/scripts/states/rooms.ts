@@ -170,7 +170,6 @@ export default class WorldRooms {
     return false
   }
   clearStation(room: string, station: string, npc: string) {
-    print('CLEARSTATION::', room, station, npc)
     if (room === '') return
     if (npc == this._all[room].stations[station]) {
       this._all[room].stations[station] = ''

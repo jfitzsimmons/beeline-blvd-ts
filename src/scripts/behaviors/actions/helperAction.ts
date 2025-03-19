@@ -58,8 +58,7 @@ export default class HelperAction extends Action {
 
     return () =>
       this.continue(
-        '||>> Behavior: HELPERaction:: Default - Add Another HelperSequence for:' +
-          this.a.name
+        '|>:: Default - Add Another HelperSequence for:' + this.a.name
       )
   }
   continue(s: string): string {
