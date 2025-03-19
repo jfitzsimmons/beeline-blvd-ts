@@ -279,67 +279,62 @@ export function set_room_priority(
   if (target.y > npc.matrix.y) {
     //if target above go one room up/north
     const room = RoomsInitLayout[npc.matrix.y + 1][npc.matrix.x]
-    if (roomPlaceCount[room] != null)
-      print('SETROOMPRIOTIY:::', roomPlaceCount[room].occupants, room)
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 6
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 5
+      ? delayPriority.push(room)
+      : room_list.push(room)
+  } else if (target.y < npc.matrix.y) {
+    //one south
+    const room = RoomsInitLayout[npc.matrix.y - 1][npc.matrix.x]
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 5
       ? delayPriority.push(room)
       : room_list.push(room)
   }
   if (target.x < npc.matrix.x) {
     // one left/west
     const room = RoomsInitLayout[npc.matrix.y][npc.matrix.x - 1]
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 6
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 5
       ? delayPriority.push(room)
       : room_list.push(room)
-  }
-  if (target.y < npc.matrix.y) {
-    //one south
-    const room = RoomsInitLayout[npc.matrix.y - 1][npc.matrix.x]
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 6
-      ? delayPriority.push(room)
-      : room_list.push(room)
-  }
-  if (target.x > npc.matrix.x) {
+  } else if (target.x > npc.matrix.x) {
     //one east
     const room = RoomsInitLayout[npc.matrix.y][npc.matrix.x + 1]
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 6
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 5
       ? delayPriority.push(room)
       : room_list.push(room)
   }
   //what about EQUALS TO?
   shuffle(room_list)
   const room = RoomsInitLayout[npc.matrix.y][npc.matrix.x]
-  roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
-    ? room_list.push(room)
-    : delayPriority.push(room) //could only have 2 options + room you are already in. her prioritize ahead of Player?
-  //should at least de prioritize going to player exit room.  assuming player wont go back to where they were?
+  roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 3
+    ? delayPriority.push(room)
+    : room_list.push(room)
 
   if (
-    target.y > npc.matrix.y &&
+    target.y >= npc.matrix.y &&
     npc.matrix.y - 1 >= 0 &&
     RoomsInitLayout[npc.matrix.y - 1][npc.matrix.x] != null
   ) {
     const room = RoomsInitLayout[npc.matrix.y - 1][npc.matrix.x]
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 5
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
       ? delayPriority.push(room)
       : room_list.push(room)
   }
   if (
-    target.x > npc.matrix.x &&
+    target.x >= npc.matrix.x &&
     RoomsInitLayout[npc.matrix.y][npc.matrix.x - 1] != null
   ) {
     const room = RoomsInitLayout[npc.matrix.y][npc.matrix.x - 1]
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 5
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
       ? delayPriority.push(room)
       : room_list.push(room)
   }
   if (
     target.y <= npc.matrix.y &&
-    npc.matrix.y < 6 &&
+    //npc.matrix.y < 6 &&
     RoomsInitLayout[npc.matrix.y + 1] != null
   ) {
     const room = RoomsInitLayout[npc.matrix.y + 1][npc.matrix.x]
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 5
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
       ? delayPriority.push(room)
       : room_list.push(room)
   }
@@ -348,29 +343,34 @@ export function set_room_priority(
     RoomsInitLayout[npc.matrix.y][npc.matrix.x + 1] != null
   ) {
     const room = RoomsInitLayout[npc.matrix.y][npc.matrix.x + 1]
-    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 5
+    roomPlaceCount[room] != null && roomPlaceCount[room].occupants > 4
       ? delayPriority.push(room)
       : room_list.push(room)
   }
 
-  const filteredArray: string[] = [
-    ...new Set([...room_list, ...delayPriority]),
-  ].sort(function (a, b) {
-    if (
-      RoomsInitState[a].clearance > npc.clearance &&
-      RoomsInitState[b].clearance <= npc.clearance
-    )
-      return 1
-    if (
-      RoomsInitState[b].clearance > npc.clearance &&
-      RoomsInitState[a].clearance <= npc.clearance
-    )
-      return -1
-    return 0
-  })
-  filteredArray.push(RoomsInitLayout[npc.home.y][npc.home.x])
+  delayPriority.push(RoomsInitLayout[npc.home.y][npc.home.x])
 
-  return filteredArray
+  const flatArr: string[] = [...new Set([...room_list, ...delayPriority])]
+  const sortedArr = []
+
+  for (let i = flatArr.length; i-- !== 0; ) {
+    RoomsInitState[flatArr[i]].clearance > npc.clearance
+      ? sortedArr.push(flatArr[i])
+      : sortedArr.unshift(flatArr[i])
+  }
+
+  for (let i = 1; i <= sortedArr.length; i++) {
+    print(
+      i,
+      'filtered:',
+      sortedArr[i - 1],
+      'from: ',
+      RoomsInitLayout[npc.matrix.y][npc.matrix.x],
+      'target:',
+      RoomsInitLayout[target.y][target.x]
+    )
+  }
+  return sortedArr
 }
 export function set_npc_target(
   direction: Direction,

@@ -384,10 +384,10 @@ export default class NpcState extends ActorState {
     this.parent.setStation(chosenRoom, chosenStation, this.name)
     //this.parent.pruneStationMap(chosenRoom, chosenStation)
     if (this.turnPriority > 93) return
-    if (chosenRoom != this.parent.getPlayerRoom()) {
-      this.turnPriority = this.turnPriority + 1
-    } else {
+    if (math.random() > 0.4 && chosenRoom === this.parent.getPlayerRoom()) {
       this.turnPriority = 0
+    } else {
+      this.turnPriority = this.turnPriority + 1
     }
   }
   addToBehavior(selector: 'place' | 'active', s: Sequence, unshift = false) {

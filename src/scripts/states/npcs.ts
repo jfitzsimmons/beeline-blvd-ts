@@ -223,7 +223,6 @@ export default class WorldNpcs {
       getRoomPlaceCount(rk)
 
       print('NPCSrpc::: occs: ', rk, room.occupants)
-      print('NPCSrpc::: listed: ', rk, getRoomPlaceCount(rk))
       let vk: keyof typeof room.ai
       for (const n of room.npcs) {
         print('NPCSrpc::: npcs: ', rk, n, this._all[n].currStation)
