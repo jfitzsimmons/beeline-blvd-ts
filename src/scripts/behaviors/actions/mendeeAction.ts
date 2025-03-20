@@ -12,7 +12,7 @@ export default class MendeeAction extends Action {
   getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
     const props = getProps('mendee') as MendeeProps
-    super(props)
+    super()
     this.a = props
     this.getProps = getProps
     //this.a.addIgnore(this.a.name)

@@ -2,6 +2,7 @@ import {
   ActionProps,
   AnnouncerProps,
   BehaviorKeys,
+  BehaviorRunReturn,
   QuestionProps,
 } from '../../../types/behaviors'
 import Storage from '../../states/storage'
@@ -47,7 +48,7 @@ export default class SuspectingSequence extends Sequence {
     )
     if (this.prevSpr < 94) this.a.updateFromBehavior('turnPriority', 94)
   }
-  run(): 'REMOVE' | '' {
+  run(): BehaviorRunReturn {
     for (const child of this.children) {
       const proceed = child.run()()
       if (proceed === 'reckless') {
@@ -65,6 +66,13 @@ export default class SuspectingSequence extends Sequence {
             this.cause
           )
         )
+      } else if (Array.isArray(proceed)) {
+        print(
+          'SuspectingSequence:: Proceed is array',
+          Array.isArray(proceed),
+          proceed[2].name
+        )
+        return proceed
       }
     }
     this.a.updateFromBehavior('turnPriority', this.prevSpr)

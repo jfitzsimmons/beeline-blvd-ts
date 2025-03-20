@@ -14,7 +14,7 @@ export default class HelperAction extends Action {
     victim: string
   ) {
     const props = getProps('helper') as HelperProps
-    super(props)
+    super()
     this.a = props
     this.getProps = getProps
     this.victim = victim

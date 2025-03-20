@@ -14,7 +14,9 @@ import InjuredSequence from '../sequences/injuredSequence'
 import ImmobileSequence from '../sequences/immobileSequence'
 import JailedSequence from '../sequences/jailedSequence'
 //import SuspectingAction from './suspectingAction'
-//import AssaultedSequence from '../sequences/assaultedSequence'
+import AssaultedSequence from '../sequences/assaultedSequence'
+import EndAction from './endAction'
+//import RecklessSequence from '../sequences/recklessSequence'
 //import SuspectingSequence from '../sequences/suspectingSequence'
 
 export default class QuestionAction extends Action {
@@ -29,7 +31,7 @@ export default class QuestionAction extends Action {
     reason: string
   ) {
     const props = getProps('question') as QuestionProps
-    super(props)
+    super()
     this.a = props
     this.hero = perp.name == 'player' ? (perp as HeroQuestionProps) : null
     this.reason = reason
@@ -201,7 +203,7 @@ export default class QuestionAction extends Action {
       // and runs it?
       // this also leaves room for other actions other than suspecting!
       //TODO
-      /**
+
       return () =>
         this.alternate(
           new AssaultedSequence(
@@ -209,7 +211,6 @@ export default class QuestionAction extends Action {
             this.getProps('question') as QuestionProps
           )
         )
-          */
     } else if (
       consequence.type.slice(0, 6) === 'sPunch' &&
       (this.a.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
@@ -237,7 +238,7 @@ export default class QuestionAction extends Action {
           'place',
           new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
         )
-      /**
+
       return () =>
         this.alternate(
           new AssaultedSequence(
@@ -245,7 +246,17 @@ export default class QuestionAction extends Action {
             this.perp.getBehaviorProps('question') as QuestionProps
           )
         )
-             **/
+    } else if (consequence.type == 'reckless') {
+      return () =>
+        this.alternate(
+          new EndAction([
+            'reckless',
+            this.getProps as (behavior: BehaviorKeys) => ActionProps,
+            this.perp,
+            this.reason,
+          ])
+        )
+      // new RecklessSequence()
     }
 
     /**

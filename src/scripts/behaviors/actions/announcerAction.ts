@@ -21,7 +21,7 @@ export default class AnnouncerAction extends Action {
     purpose: string
   ) {
     const props = getProps('announcer') as AnnouncerProps
-    super(props)
+    super()
     this.a = props
     this.announcee = announcee
     this.purpose = purpose

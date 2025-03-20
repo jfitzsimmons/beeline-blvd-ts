@@ -7,7 +7,7 @@ export default class PlaceAction extends Action {
   getProps: GetProps
   constructor(getProps: GetProps) {
     const props = getProps('place') as PlaceProps
-    super(props)
+    super()
     this.a = props
     this.getProps = getProps
   }

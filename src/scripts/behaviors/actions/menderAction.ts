@@ -6,7 +6,7 @@ export default class MenderAction extends Action {
   mendee: InjuredProps
   a: MenderProps
   constructor(a: MenderProps, mendee: InjuredProps) {
-    super(a)
+    super()
     this.mendee = mendee
     this.a = a
     if (this.a.currRoom == this.a.getFocusedRoom()) {

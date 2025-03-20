@@ -6,7 +6,7 @@ export default class ScoutAction extends Action {
   a: HelperProps
   room: string
   constructor(props: HelperProps, room: string) {
-    super(props)
+    super()
     this.a = props
     this.room = room
   }

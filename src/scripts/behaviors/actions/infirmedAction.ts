@@ -5,7 +5,7 @@ import Action from '../action'
 export default class InfirmedAction extends Action {
   a: InfirmedProps
   constructor(a: InfirmedProps) {
-    super(a)
+    super()
     this.a = a
   }
   run(): { (): void } {

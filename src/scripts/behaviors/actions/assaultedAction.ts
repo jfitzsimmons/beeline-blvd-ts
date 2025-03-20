@@ -1,7 +1,7 @@
 import { ThiefVictimProps } from '../../../types/ai'
 import {
-  ActionProps,
-  BehaviorKeys,
+  //ActionProps,
+  //BehaviorKeys,
   GetProps,
   HelperProps,
   HeroInjuredProps,
@@ -11,7 +11,8 @@ import {
 import { npcAssaultCheck } from '../../states/inits/checksFuncs'
 //import { confrontation_check, seen_check } from '../../states/inits/checksFuncs'
 import Action from '../action'
-import PhoneSequence from '../sequences/phoneSequence'
+//import PhoneSequence from '../sequences/phoneSequence'
+import EndAction from './endAction'
 //import QuestionSequence from '../sequences/questionSequence'
 //import SuspectingSequence from '../sequences/suspectingSequence'
 
@@ -19,11 +20,10 @@ export default class AssaultedAction extends Action {
   a: InjuredProps | HeroInjuredProps
   isHero: boolean
   assaulter: QuestionProps
-  enforcer: null | { (behavior: BehaviorKeys): ActionProps }
   getProps: GetProps
   constructor(getProps: GetProps, assaulter: QuestionProps) {
     const props = getProps('injured')
-    super(props)
+    super()
     this.assaulter = assaulter
 
     this.a =
@@ -32,7 +32,6 @@ export default class AssaultedAction extends Action {
         : (props as InjuredProps)
     this.getProps = getProps
     this.isHero = this.a.name === 'player' ? true : false
-    this.enforcer = null
   }
   run(): { (): void } {
     this.a.updateFromBehavior('turnPriority', 96) // so can add QuestionSeq to available security
@@ -49,8 +48,8 @@ export default class AssaultedAction extends Action {
     //confront??
     for (const e of currRoom) {
       if (this.isHero === true) print('ISHERO ENFORCERS::', e)
-      this.enforcer = this.a.returnNpc(e).getBehaviorProps.bind(this)
-      const enforcer = this.enforcer('question') as QuestionProps
+      const enforcerprops = this.a.returnNpc(e).getBehaviorProps.bind(this)
+      const enforcer = enforcerprops('question') as QuestionProps
       /**
        * need to clean up thief victim props
        * or else make things worse
@@ -79,22 +78,46 @@ export default class AssaultedAction extends Action {
           ),
         }
         const consequence = npcAssaultCheck(assaulterProps, enforcer)
-        // if (consequence === 'assault') {
-        // enforcer.addToBehavior(
-        //'active',
-        // new SuspectingSequence(this.enforcer, this.assaulter, 'assault')
-        // )
-        // }
 
-        if (consequence === 'assaultcritfail') {
-          enforcer.addToBehavior(
-            'active',
-            new PhoneSequence(
-              this.enforcer,
-              this.assaulter.getBehaviorProps('helper') as HelperProps,
-              'assault'
+        //new EndSequence('suspecting')
+        if (consequence === 'assault') {
+          return () =>
+            this.alternate(
+              new EndAction([
+                'suspecting',
+                enforcerprops,
+                this.assaulter,
+                'assault',
+              ])
             )
-          )
+          // enforcer.addToBehavior(
+          //'active',
+          // new SuspectingSequence(this.enforcer, this.assaulter, 'assault')
+          // )
+          // }
+          /**
+           * () => this.alternate(EndAction!!!!(['suspecting',]))
+           */
+        }
+        if (consequence === 'assaultcritfail') {
+          return () =>
+            this.alternate(
+              new EndAction([
+                'phone',
+                enforcerprops,
+                this.assaulter.getBehaviorProps('helper') as HelperProps,
+                'assault',
+              ])
+            )
+
+          // enforcer.addToBehavior(
+          // 'active',
+          // new PhoneSequence(
+          //  enforcerprops,
+          // this.assaulter.getBehaviorProps('helper') as HelperProps,
+          // 'assault'
+          // )
+          //)
         }
 
         return () =>

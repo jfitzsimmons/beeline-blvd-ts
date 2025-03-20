@@ -1,4 +1,8 @@
-import { GetProps, QuestionProps } from '../../../types/behaviors'
+import {
+  BehaviorRunReturn,
+  GetProps,
+  QuestionProps,
+} from '../../../types/behaviors'
 import { crimeSeverity } from '../../utils/ai'
 import Action from '../action'
 import QuestionAction from '../actions/questionAction'
@@ -50,7 +54,7 @@ export default class QuestionSequence extends Sequence {
     this.incidents++
     this.a.cooldown = this.a.cooldown + 12
   }
-  run(): 'REMOVE' | '' {
+  run(): BehaviorRunReturn {
     if (this.a.turnPriority < 95) this.a.updateFromBehavior('turnPriority', 95)
 
     for (const child of this.children) {
@@ -67,6 +71,13 @@ export default class QuestionSequence extends Sequence {
         const perp = this.perp('question') as QuestionProps
         perp.addToBehavior('place', new ArrestSequence(this.perp))
         this.a.cooldown = 0
+      } else if (Array.isArray(proceed)) {
+        print(
+          'QuestionSequence:: Proceed is array',
+          Array.isArray(proceed),
+          proceed[2].name
+        )
+        return proceed
       } else {
         this.a.cooldown = 0
       }

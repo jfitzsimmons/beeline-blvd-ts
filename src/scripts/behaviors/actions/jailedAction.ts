@@ -7,7 +7,7 @@ export default class JailedAction extends Action {
   a: InfirmedProps
   incidents: number
   constructor(a: InfirmedProps) {
-    super(a)
+    super()
     this.a = a
     this.a.cooldown = 16
     this.incidents = 0

@@ -19,7 +19,7 @@ export default class InjuredAction extends Action {
   getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
     const props = getProps('injured') as InjuredProps
-    super(props)
+    super()
     this.a = props
     this.doc = null
     this.getProps = getProps
@@ -117,7 +117,7 @@ export default class InjuredAction extends Action {
     print('|||>>> Behavior:Injur-ed-Action:: Continue:', s)
     return 'continue'
   }
-  alternate(as: Action | Sequence): string | void {
+  alternate(as: Action | Sequence) {
     if (this.doc != null) {
       const doc = this.doc('mender') as MenderProps
       doc.updateFromBehavior('turnPriority', 97)

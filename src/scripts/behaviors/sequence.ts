@@ -1,3 +1,4 @@
+import { BehaviorRunReturn } from '../../types/behaviors'
 import Action from './action'
 
 export default class Sequence {
@@ -6,7 +7,7 @@ export default class Sequence {
     this.children = actions
     this.run = this.run.bind(this)
   }
-  run(): 'REMOVE' | '' {
+  run(): BehaviorRunReturn {
     print('SEQUENCE::: childrenlength: PRERUN:', this.children.length)
 
     for (const child of this.children) {

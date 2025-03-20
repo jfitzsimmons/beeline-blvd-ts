@@ -11,7 +11,7 @@ export default class HeroPlaceAction extends Action {
   getProps: (behavior: HeroBehaviorKeys) => ActionProps
   constructor(getProps: (behavior: HeroBehaviorKeys) => ActionProps) {
     const props = getProps('place') as HeroPlaceProps
-    super(props)
+    super()
     this.a = props
     this.getProps = getProps
   }

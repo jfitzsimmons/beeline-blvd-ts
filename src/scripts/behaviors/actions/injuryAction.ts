@@ -10,7 +10,7 @@ export default class InjuryAction extends Action {
   a: DefaultBehaviorProps
   constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
     const props = getProps('injury') as DefaultBehaviorProps
-    super(props)
+    super()
     this.a = props
   }
   run(): { (): void } {

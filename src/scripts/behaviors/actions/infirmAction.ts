@@ -14,7 +14,7 @@ export default class InfirmAction extends Action {
   getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
     const props = getProps('infirm') as InfirmProps
-    super(props)
+    super()
     this.a = props
     this.getProps = getProps
   }

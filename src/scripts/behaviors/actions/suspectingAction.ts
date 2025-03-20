@@ -47,7 +47,7 @@ export default class SuspectingAction extends Action {
     storage?: Storage
   ) {
     const props = getProps('question') as QuestionProps
-    super(props)
+    super()
     this.a = props
     this.perp =
       perp.name === 'player'
