@@ -15,37 +15,17 @@ export default class MendeeAction extends Action {
     super(props)
     this.a = props
     this.getProps = getProps
+    //this.a.addIgnore(this.a.name)
+    //this.a.addAdjustMendingQueue(this.a.name)
   }
   run(): { (): void } {
-    // const { actor: a } = this
-    // if (!isNpc(this.a)) return () => this.fail('NO MendeeAction for Player')
-    //testjpf os this needed?
-    //is it duping in the ignore array?
-    this.a.addIgnore(this.a.name)
-    this.a.addAdjustMendingQueue(this.a.name)
-
     if (math.random() > 0.4) this.a.hp = this.a.hp + 1
     print('MendeeAction for::', this.a.name, '| HP:', this.a.hp)
     if (this.a.hp > 4) {
-      /**
-       * testjpf
-       * update hp inside of removeMendee
-       * but FIRST move mendingQueue from Tasks to NPCS
-       */
-      // this.a.returnNpc(this.a.name).hp = 5
       this.a.updateFromBehavior('hp', 5)
-
-      this.a.removeMendee(this.a.name)
       print('MendeeAction::', this.a.name, 'IS BEING INFIRMED')
       return () => this.delay(new InfirmSequence(this.getProps))
-      //  }
     }
-    //a.parent.pruneStationMap(a.currRoom, a.currStation)
-
-    /**
-     * seems I could add another MendeeSeq to next-turns place.children?
-     *
-     */
     return () => this.continue('mend')
   }
   continue(s: string): string {

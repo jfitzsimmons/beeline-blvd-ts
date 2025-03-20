@@ -107,21 +107,14 @@ export function fillStationAttempt(
     // fallback stations
     if (placed == false) {
       for (const room of room_list) {
-        //just make a kvp like {loading: ['loading_outside1', 'loading_passer']}
-        print('AIROOM:::', room, npc)
         if (fallbackTable[room] !== null)
           for (const station of fallbackTable[room]) {
-            print(
-              'AREFALLBACKSWORKING?',
-              station.slice(-6),
-              RoomsInitLayout[matrix.y][matrix.x],
-              stationMap.backup.fallbacks[station]
-            )
+            const passer = station.slice(-6) == 'passer'
             if (
-              (station.slice(-6) == 'passer' &&
-                RoomsInitLayout[matrix.y][matrix.x] != room &&
+              (passer == false &&
                 stationMap.backup.fallbacks[station] !== null) ||
-              (station.slice(-6) !== 'passer' &&
+              (passer == true &&
+                RoomsInitLayout[matrix.y][matrix.x] != room &&
                 stationMap.backup.fallbacks[station] !== null)
             ) {
               chosenStation = station
@@ -129,108 +122,10 @@ export function fillStationAttempt(
               placed = true
               break
             }
-            if (placed == true) break
           }
+        if (placed == true) break
       }
 
-      /** 
-      if (
-        room_list.includes('loading') &&
-        stationMap.fallbacks['loading_outside1'] !== null
-      ) {
-        chosenStation = 'loading_outside1'
-        chosenRoom = 'loading'
-      } else if (
-        room_list.includes('grounds') &&
-        stationMap.fallbacks['grounds_unplaced'] !== null
-      ) {
-        chosenStation = 'grounds_unplaced'
-        chosenRoom = 'grounds'
-      } else if (
-        room_list.includes('viplobby') &&
-        stationMap.fallbacks['viplobby_outside1'] !== null
-      ) {
-        chosenStation = 'viplobby_outside1'
-        chosenRoom = 'viplobby'
-      } else if (
-        room_list.includes('reception') &&
-        stationMap.fallbacks['reception_unplaced'] !== null
-      ) {
-        chosenStation = 'reception_unplaced'
-        chosenRoom = 'reception'
-      } else if (
-        room_list.includes('infirmary') &&
-        stationMap.fallbacks['infirmary_outside1'] !== null
-      ) {
-        chosenStation = 'infirmary_outside1'
-        chosenRoom = 'infirmary'
-      } else if (
-        room_list.includes('dorms') &&
-        stationMap.fallbacks['dorms_outside1'] !== null
-      ) {
-        chosenStation = 'dorms_outside1'
-        chosenRoom = 'dorms'
-      } else if (
-        room_list.includes('security') &&
-        RoomsInitLayout[matrix.y][matrix.x] != 'security' &&
-        stationMap.fallbacks['security_passer'] !== null
-      ) {
-        chosenStation = 'security_passer'
-        chosenRoom = 'security'
-      } else if (
-        room_list.includes('baggage') &&
-        RoomsInitLayout[matrix.y][matrix.x] != 'baggage' &&
-        stationMap.fallbacks['baggage_passer'] !== null
-      ) {
-        chosenStation = 'baggage_passer'
-        chosenRoom = 'baggage'
-      } else if (
-        room_list.includes('alley2') &&
-        RoomsInitLayout[matrix.y][matrix.x] != 'alley2' &&
-        stationMap.fallbacks['alley2_passer'] !== null
-      ) {
-        chosenStation = 'alley2_passer'
-        chosenRoom = 'alley2'
-      } else if (
-        room_list.includes('alley4') &&
-        RoomsInitLayout[matrix.y][matrix.x] != 'alley4' &&
-        stationMap.fallbacks['alley4_passer'] !== null
-      ) {
-        chosenStation = 'alley4_passer'
-        chosenRoom = 'alley4'
-      } else if (
-        room_list.includes('viplobby') &&
-        RoomsInitLayout[matrix.y][matrix.x] != 'viplobby' &&
-        stationMap.fallbacks['viplobby_passer'] !== null
-      ) {
-        chosenStation = 'viplobby_passer'
-        chosenRoom = 'viplobby'
-      } else if (
-        room_list.includes('admin1') &&
-        RoomsInitLayout[matrix.y][matrix.x] != 'admin1' &&
-        stationMap.fallbacks['admin1_passer'] !== null
-      ) {
-        chosenStation = 'admin1_passer'
-        chosenRoom = 'admin1'
-      } else if (
-        room_list.includes('security') &&
-        stationMap.fallbacks['security_outside1'] !== null
-      ) {
-        chosenStation = 'security_outside1'
-        chosenRoom = 'security'
-      } else {
-        if (unplacedcount[npc] != null) {
-          unplacedcount[npc] += 1
-        } else {
-          unplacedcount[npc] = 1
-        }
-        if (unplacedcount[RoomsInitLayout[matrix.y][matrix.x]!] != null) {
-          unplacedcount[RoomsInitLayout[matrix.y][matrix.x]!] += 1
-        } else {
-          unplacedcount[RoomsInitLayout[matrix.y][matrix.x]!] = 1
-        }
-      }
-    **/
       if (chosenRoom == '')
         print(
           'COMPLETELY UNPLACED.  NEed passers for unloading, alley 1...',
@@ -270,12 +165,7 @@ export function set_room_priority(
 ): string[] {
   const room_list: string[] = []
   const delayPriority: string[] = []
-  //Testjpf i suspect i'm not taking into rooms behing npc
-  //that have nothing to do with target?
-  //get list of possible rooms NPC could go to next in order to get to target
-  //set a room map set similar to placeingstaion
-  //if nto exact same and get length of map set for room. if less than 5 push else unshift?
-  // if 5 or grater push into a delayList array???TESTJPF
+
   if (target.y > npc.matrix.y) {
     //if target above go one room up/north
     const room = RoomsInitLayout[npc.matrix.y + 1][npc.matrix.x]
@@ -383,11 +273,12 @@ export function set_npc_target(
   }
 ) {
   let target = { x: 0, y: 0 }
-  if (Math.random() < 0.2 || (n.turnPriority > 25 && n.turnPriority < 90)) {
+  const rndm = Math.random()
+  if (rndm < 0.2 || (n.turnPriority > 25 && n.turnPriority < 90)) {
     target = direction.center
   } else if (n.aiPath == 'pinky') {
     //always targets 0 to 2 rooms infront of player /33% +1 left or right?
-    target = Math.random() > 0.2 ? direction.front : direction.back
+    target = rndm > 0.2 ? direction.front : direction.back
   } else if (n.aiPath == 'blinky') {
     //always targets 1 room behind player unless too far
     const distance = math.abs(n.matrix.x - n.home.x + (n.matrix.y - n.home.y))
@@ -400,7 +291,7 @@ export function set_npc_target(
   } else if (n.aiPath == 'inky') {
     //1/3 check to see if you 1: too close, go home or 2: 50/50 left/right 50/50 +1 front
     let distance = 0
-    if (math.random() < 0.3) {
+    if (rndm < 0.3) {
       distance = math.abs(
         n.matrix.x - direction.center.x + (n.matrix.y - direction.center.y)
       )
@@ -410,7 +301,7 @@ export function set_npc_target(
     }
     if (distance < 1) {
       target = n.home
-    } else if (math.random() < 0.5) {
+    } else if (rndm < 0.5) {
       target = direction.right
     } else {
       target = direction.left
@@ -420,7 +311,7 @@ export function set_npc_target(
     //random front, back, left, right unless too close and fail 50/50 check
     print('CLYDEDISTANCE:::', distance)
 
-    if (distance > -2 && distance < 2 && math.random() > 0.5) {
+    if (distance > -2 && distance < 2 && rndm > 0.5) {
       target = n.home
     } else {
       const dirsRO = [
@@ -438,7 +329,7 @@ export function set_npc_target(
   }
   //limit target to map layout grid
   if (target.x < 0 || target.x > 4) {
-    target.x = Math.random() < 0.5 ? 4 : 0
+    target.x = rndm < 0.5 ? 4 : 0
   }
   if (target.y < 0 || target.y > 5) {
     target.y = Math.random() < 0.5 ? 5 : 0

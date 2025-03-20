@@ -50,7 +50,7 @@ export default class QuestionAction extends Action {
     this.perp = this.perp.getBehaviorProps('question') as QuestionProps
     this.a = this.getProps('question') as QuestionProps
     //if (this.a.getApb().includes(target)) {
-    // this.parent.returnNpc(this.target).fsm.setState('arrestee')
+    // this.p.world.returnNpc(this.target).fsm.setState('arrestee')
     // return
     // } else if (this.label == 'questioning') {
     //testjpf convert rest!!!:::

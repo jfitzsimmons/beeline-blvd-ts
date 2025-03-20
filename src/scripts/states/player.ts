@@ -45,11 +45,11 @@ export default class WorldPlayer extends ActorState {
   turns = 0
   checkpoint = 'tutorialA'
   quests: QuestMethods
-  parent: WorldPlayerArgs
+  p: WorldPlayerArgs
   behavior: Behavior
   clan: string
-  constructor(p: string, playerProps: WorldPlayerArgs) {
-    super(p, playerProps) // call super() here
+  constructor(name: string, playerProps: WorldPlayerArgs) {
+    super(name, playerProps)
     this.currRoom = 'grounds'
     this.matrix = { x: 0, y: 4 }
     this.ap = 30
@@ -104,7 +104,6 @@ export default class WorldPlayer extends ActorState {
         },
         immobile: () => {
           return {
-            //pruneStationMap: this.parent.pruneStationMap.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -112,11 +111,8 @@ export default class WorldPlayer extends ActorState {
           return {
             traits: this.traits,
             exitRoom: this.exitRoom,
-            returnNpc: this.parent.returnNpc.bind(this),
-            //getMendingQueue: this.parent.getMendingQueue.bind(this),
-            getOccupants: this.parent.getOccupants.bind(this),
-            //getIgnore: this.parent.getIgnore.bind(this),
-            //addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),
+            returnNpc: this.p.world.returnNpc.bind(this),
+            getOccupants: this.p.rooms.getOccupants.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -124,8 +120,8 @@ export default class WorldPlayer extends ActorState {
           return {
             clearance: this.clearance,
             clan: 'hero',
-            returnNpc: this.parent.returnNpc.bind(this),
-            getOccupants: this.parent.getOccupants.bind(this),
+            returnNpc: this.p.world.returnNpc.bind(this),
+            getOccupants: this.p.rooms.getOccupants.bind(this),
             exitRoom: this.exitRoom,
             ...behaviorDefaults(),
           }
@@ -133,16 +129,13 @@ export default class WorldPlayer extends ActorState {
         infirm: () => {
           return {
             exitRoom: this.exitRoom,
-            // sendToVacancy: this.parent.sendToVacancy.bind(this),
-            // addInfirmed: this.parent.addInfirmed.bind(this),
             ...behaviorDefaults(),
           }
         },
         infirmed: () => {
           return {
             clearance: this.clearance,
-            getOccupants: this.parent.getOccupants.bind(this),
-            // removeInfirmed: this.parent.removeInfirmed.bind(this),
+            getOccupants: this.p.rooms.getOccupants.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -156,8 +149,8 @@ export default class WorldPlayer extends ActorState {
             addInvBonus: this.addInvBonus.bind(this),
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
-            getOccupants: this.parent.getOccupants.bind(this),
-            setConfrontation: this.parent.setConfrontation.bind(this),
+            getOccupants: this.p.rooms.getOccupants.bind(this),
+            setConfrontation: this.p.novel.setConfrontation.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -167,8 +160,8 @@ export default class WorldPlayer extends ActorState {
             //love: this.love,
             traits: this.traits,
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
-            getOccupants: this.parent.getOccupants.bind(this),
-            returnNpc: this.parent.returnNpc.bind(this),
+            getOccupants: this.p.rooms.getOccupants.bind(this),
+            returnNpc: this.p.world.returnNpc.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
             ...behaviorDefaults(),
           }
@@ -177,12 +170,12 @@ export default class WorldPlayer extends ActorState {
     }
     randomTrait(this.traits.skills, this.traits.binaries)
     this.inventory = ['axe', 'apple01']
+    this.p = playerProps
     this.quests = {
       return_inventory: this.return_inventory.bind(this),
       return_skills: this.return_skills.bind(this),
-      return_playerroom: this.return_playerroom.bind(this),
+      return_playerroom: this.p.rooms.getFocusedRoom.bind(this),
     }
-    this.parent = playerProps
     this.inventory_init()
     this.fsm
       .addState('idle')
@@ -198,7 +191,7 @@ export default class WorldPlayer extends ActorState {
       })
 
     this.addToAlertLevel = this.addToAlertLevel.bind(this)
-    this.getPlayerRoom = this.getPlayerRoom.bind(this)
+    // this.getPlayerRoom = this.getPlayerRoom.bind(this)
     this.setRoomInfo = this.setRoomInfo.bind(this)
     this.addInvBonus = this.addInvBonus.bind(this)
     this.add_effects_bonus = this.add_effects_bonus.bind(this)
@@ -238,13 +231,15 @@ export default class WorldPlayer extends ActorState {
     this.ap = this.ap - 1
     this.turns = this.turns + 1
     this.exitRoom = this.currRoom
-    this.currRoom = this.parent.getFocusedRoom()
+    this.currRoom = this.p.rooms.getFocusedRoom()
     this.matrix = RoomsInitState[this.currRoom].matrix
     print('::: SETROOMINFO:::exit,enter::', this.exitRoom, this.currRoom)
   }
+  /**
   getPlayerRoom(): string {
     return this.currRoom
   }
+    **/
   updateFromBehavior(
     prop: keyof BehaviorSetters,
     value: number | [string, string]
@@ -320,9 +315,6 @@ export default class WorldPlayer extends ActorState {
   }
   return_skills(): Trait {
     return this.traits.skills
-  }
-  return_playerroom(): string {
-    return this.currRoom
   }
   addToAlertLevel(n: number) {
     this.alert_level += n

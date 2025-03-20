@@ -16,9 +16,9 @@ function steal_stash_checks(this: RoomState) {
   let actor: Storage
   let loot: string[] = []
   let attendant =
-    this.stations.desk === '' ? null : this.parent.returnNpc(this.stations.desk)
+    this.stations.desk === '' ? null : this.p.returnNpc(this.stations.desk)
   if (cicadaModulus() && this.stations.guest != '') {
-    thiefVictim = this.parent.returnNpc(this.stations.guest)
+    thiefVictim = this.p.returnNpc(this.stations.guest)
     const thiefVictimProps: ThiefVictimProps = {
       name: thiefVictim.name,
       traits: thiefVictim.traits,
@@ -65,7 +65,7 @@ function steal_stash_checks(this: RoomState) {
   }
 
   if (this.stations.loiter4 != '') {
-    thief = this.parent.returnNpc(this.stations.loiter4)
+    thief = this.p.returnNpc(this.stations.loiter4)
   }
   if (
     cicadaModulus() &&
@@ -125,7 +125,7 @@ function steal_stash_checks(this: RoomState) {
     take_or_stash(attendantProps, actor)
   }
   if (cicadaModulus() && this.stations.patrol != '') {
-    attendant = this.parent.returnNpc(this.stations.patrol)
+    attendant = this.p.returnNpc(this.stations.patrol)
     const attendantProps: ThiefVictimProps = {
       name: attendant.name,
       traits: attendant.traits,
@@ -143,7 +143,7 @@ function steal_stash_checks(this: RoomState) {
     take_or_stash(attendantProps, actor)
   }
   if (cicadaModulus() && this.stations.loiter2 != '') {
-    attendant = this.parent.returnNpc(this.stations.loiter2)
+    attendant = this.p.returnNpc(this.stations.loiter2)
     const attendantProps: ThiefVictimProps = {
       name: attendant.name,
       traits: attendant.traits,

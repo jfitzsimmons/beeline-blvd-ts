@@ -18,7 +18,7 @@ export default class WorldRooms {
   layout: Array<Array<string | null>>
   roles: Roles
   private _focused: string
-  parent: RoomProps
+  world: RoomProps
   fallbacks: Fallbacks
   stationsMap: {
     [key: string]: { [key: string]: { [key: string]: string } }
@@ -28,12 +28,12 @@ export default class WorldRooms {
     this.fallbacks = { ...RoomsInitFallbacks }
     this.layout = [...RoomsInitLayout]
     this.roles = { ...RoomsInitRoles }
-    this.parent = {
+    this.world = {
       setFocused: this.setFocused.bind(this),
       ...roomsProps,
     }
 
-    this._all = { ...seedRooms(this.parent) }
+    this._all = { ...seedRooms(this.world) }
     this._focused = 'grounds'
     this.stationsMap = { ...this.createStationsMap() }
     this.fsm
@@ -47,11 +47,6 @@ export default class WorldRooms {
         onEnter: this.onNewEnter.bind(this),
         onUpdate: this.onNewUpdate.bind(this),
         onExit: this.onNewExit.bind(this),
-      })
-      .addState('transition', {
-        onEnter: this.onTransitionEnter.bind(this),
-        onUpdate: this.onTransitionUpdate.bind(this),
-        onExit: this.onTransitionExit.bind(this),
       })
 
     this.clearStation = this.clearStation.bind(this)
@@ -170,7 +165,7 @@ export default class WorldRooms {
     return false
   }
   clearStation(room: string, station: string, npc: string) {
-    if (room === '') return
+    // if (room === '') return
     if (npc == this._all[room].stations[station]) {
       this._all[room].stations[station] = ''
     } else if (this.clearSwapParent(room, station, npc) === true) {
@@ -197,9 +192,6 @@ export default class WorldRooms {
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
   private onNewExit(): void {}
-  private onTransitionEnter(): void {}
-  private onTransitionUpdate(): void {}
-  private onTransitionExit(): void {}
   getWards(room: string): string[] {
     return Object.values(this._all[room].wards!).filter((s) => s !== '')
   }

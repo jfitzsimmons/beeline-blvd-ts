@@ -16,7 +16,7 @@ export default class WorldNovel {
   private _scripts: string[]
   //private _alertChange: number
   private _npc: NovelNpc
-  parent: WorldArgs
+  p: WorldArgs
   //private _quest: QuestCondition
   quests: QuestMethods
 
@@ -32,7 +32,7 @@ export default class WorldNovel {
     this._scripts = []
     // this._alertChange = 0
     this._npc = { ...NpcsInitState.labor01 }
-    this.parent = novelMethods
+    this.p = novelMethods
     /** 
     this._quest = {
       label: '',
@@ -133,7 +133,7 @@ export default class WorldNovel {
     return this.npc
   }
   setConfrontation(npc: string, action: string, reason: string) {
-    this.npc = this.parent.returnNpc(npc)
+    this.npc = this.p.returnNpc(npc)
     this.reason = reason
     this.cause = action
     this._forced = true
