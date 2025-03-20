@@ -51,6 +51,10 @@ export default class TrespassAction extends Action {
         s.slice(0, 4) === 'secu' &&
         this.a.returnNpc(s).exitRoom == this.a.currRoom
     )
+    if (prevRoom.length > 0)
+      print(
+        '|> TrespassAction: Trespasser and Cop are in Separate Rooms, but crossed Paths. TODO! testjpf'
+      )
     //testjpf have other npcs suspect??
     //confront??
     for (const e of [...new Set([...prevRoom, ...currRoom])]) {

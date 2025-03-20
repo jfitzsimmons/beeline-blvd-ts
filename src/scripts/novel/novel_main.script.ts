@@ -90,8 +90,9 @@ function consolation_outcomes(love: number) {
   //print(novel.npc.love, '| novel.npc.love = love |', love)
   if (love > novel.npc.love) {
     const consequence = impressed_checks('player', novel.npc.name)
-    if (consequence != 'neutral')
-      tasks.taskBuilder(novel.npc.name, consequence, 'player', 'impressed')
+    if (consequence != 'neutral') print('todotestjpf')
+    //testjpf make a sequence todo
+    // tasks.taskBuilder(novel.npc.name, consequence, 'player', 'impressed')
 
     novel.npc.love = love
     // they try to rob you?
@@ -108,7 +109,7 @@ function consolation_outcomes(love: number) {
     const consequence = unimpressed_checks('player', novel.npc.name)
 
     if (consequence != 'neutral')
-      tasks.taskBuilder(novel.npc.name, consequence, 'player', 'unimpressed')
+      tasks.taskBuilder(novel.npc.name, consequence, 'player', 'unimpressed') //todo
   }
 }
 

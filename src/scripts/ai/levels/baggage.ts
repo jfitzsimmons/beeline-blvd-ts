@@ -14,10 +14,10 @@ function steal_stash_checks(_this: RoomState) {
   const [suspect, victim] = shuffle([
     _this.stations.assistant == ''
       ? null
-      : _this.parent.returnNpc(_this.stations.assistant),
+      : _this.p.returnNpc(_this.stations.assistant),
     _this.stations.browse == ''
       ? null
-      : _this.parent.returnNpc(_this.stations.browse),
+      : _this.p.returnNpc(_this.stations.browse),
   ])
   if (
     suspect != null &&

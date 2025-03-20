@@ -21,6 +21,7 @@ export default class MendeeSequence extends Sequence {
     this.a = props
     this.getProps = getProps
     this.a.updateFromBehavior('turnPriority', 98)
+    this.a.removeMendee(this.a.name)
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {

@@ -28,7 +28,7 @@ export default class WorldNpcs {
   onScreen: string[]
   offScreen: string[]
   quests: QuestMethods
-  parent: NpcProps
+  p: NpcProps
   //infirmed: string[]
   //injured: string[]
   ignore: string[]
@@ -44,32 +44,28 @@ export default class WorldNpcs {
     this.offScreen = []
     this.quests = {
       returnDoctors: this.returnDoctors.bind(this),
-      returnSecurity: this.returnDoctors.bind(this),
-      returnAll: this.returnAll.bind(this),
+      returnSecurity: this.returnSecurity.bind(this),
+      // returnAll: this.returnAll.bind(this),
       returnOrderAll: this.returnOrderAll.bind(this),
     }
-    this.parent = {
-      onScreen: this.onScreen,
-      // addInfirmed: this.addInfirmed.bind(this),
-      //getWards: this.parent.getWards.bind(this),
-      //getInjured: this.getInjured.bind(this),
-      getIgnore: this.getIgnore.bind(this),
-      //  removeInfirmed: this.removeInfirmed.bind(this),
-      //addInjured: this.addInjured.bind(this),
-      // removeInjured: this.removeInjured.bind(this),
-      addIgnore: this.addIgnore.bind(this),
-      removeIgnore: this.removeIgnore.bind(this),
-      returnMendeeLocation: this.returnMendeeLocation.bind(this),
-      returnDoctors: this.returnDoctors.bind(this),
-      returnSecurity: this.returnDoctors.bind(this),
-      returnAll: this.returnAll.bind(this),
-      returnOrderAll: this.returnOrderAll.bind(this),
-      getMendingQueue: this.getMendingQueue.bind(this),
-      addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
-      removeMendee: this.removeMendee.bind(this),
+    this.p = {
+      npcs: {
+        // onScreen: this.onScreen,
+        getIgnore: this.getIgnore.bind(this),
+        addIgnore: this.addIgnore.bind(this),
+        removeIgnore: this.removeIgnore.bind(this),
+        returnMendeeLocation: this.returnMendeeLocation.bind(this),
+        // returnDoctors: this.returnDoctors.bind(this),
+        // returnSecurity: this.returnDoctors.bind(this),
+        // returnAll: this.returnAll.bind(this),
+        // returnOrderAll: this.returnOrderAll.bind(this),
+        getMendingQueue: this.getMendingQueue.bind(this),
+        addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
+        removeMendee: this.removeMendee.bind(this),
+      },
       ...npcsProps,
     }
-    this._all = seedNpcs(this.parent)
+    this._all = seedNpcs(this.p)
     random_attributes(this.all, this.order)
     this.inventory_init()
     this.fsm = new StateMachine(this, 'npcs')
@@ -108,7 +104,7 @@ export default class WorldNpcs {
       npc.fsm.update(dt)
       //TEST DEFAULTS
       //Simulating behaviors.Active
-      const playerRoom = this.parent.getPlayerRoom()
+      const playerRoom = this.p.rooms.getFocusedRoom()
 
       playerRoom == npc.currRoom
         ? this.onScreen.push(npc.name)
@@ -170,7 +166,7 @@ export default class WorldNpcs {
     this.onScreen = []
     this.offScreen = []
     print('<< << :: NPCSplaceUpdate() :: >> >>')
-    const playerRoom = this.parent.getPlayerRoom()
+    const playerRoom = this.p.rooms.getFocusedRoom()
     this.sort_npcs_by_encounter()
 
     for (let i = this.order.length; i-- !== 0; ) {
@@ -276,7 +272,7 @@ export default class WorldNpcs {
         this.all[a].turnPriority - this.all[b].turnPriority
     )
     this.onScreen.push('player')
-    const player = this.parent.returnPlayer()
+    const player = this.p.world.returnPlayer()
     print('this.onScreen.length', this.onScreen.length)
 
     for (let i = this.onScreen.length; i-- !== 0; ) {
@@ -362,43 +358,11 @@ export default class WorldNpcs {
     const injured = this.getMendingQueue()[0]
     return injured === null ? null : this.all[injured].currRoom
   }
-  security() {
-    //const cops = this.returnSecurity()
-    //for (const cop of cops) {
-    // const stations = RoomsInitState[cop.currRoom].stations
-    //let sKey: keyof typeof stations
-    //const target = cop
-    /**
-       * for (sKey in stations) {
-        target = stations[sKey]
-        if (
-          target !== '' &&
-          this.all[target].fsm.getState() === 'trespass' &&
-          target !== cop.name &&
-          confrontation_check(cop.traits, this._all[target].traits) == true
-        ) {
-          print('NEWQUESTIONEDNPC!!!', cop.name, target)
-          this.parent.taskBuilder(cop.name, 'questioning', target, 'clearance')
-          break
-        }
-        target = 'player'
-      }
-      // testjpf need to push trespassSeq to player behavior
-      if (
-        target == 'player' &&
-        cop.currRoom == this.parent.getPlayerRoom() &&
-        this.parent.playerFSM.getState() == 'trespass' &&
-        confrontation_check(cop.traits, this.parent.playerTraits) == true
-      ) {
-        this.parent.taskBuilder(cop.name, 'questioning', 'player', 'clearance')
-      }
-    }*/
-  }
   getMendingQueue(): string[] {
     return this.mendingQueue
   }
   addIgnore(n: string): void {
-    this.ignore.push(n)
+    if (this.ignore.includes(n) == false) this.ignore.push(n)
   }
   getIgnore(): string[] {
     return this.ignore

@@ -51,38 +51,39 @@ export function surrounding_room_matrix(
     right: { x: 0, y: 0 },
   }
   //get ds based on way exit is facing
+  const rands = [math.random(0, 2), math.random(-1, 1), math.random(0, 1)]
   if (exit.x > target.x) {
     d.front = {
-      x: target.x - math.random(0, 2),
-      y: target.y + math.random(-1, 1),
+      x: target.x - rands[0],
+      y: target.y + rands[1],
     } //west 2,1 no more center?
-    d.back = { x: target.x + 1, y: target.y + math.random(-1, 1) } // east
-    d.left = { x: target.x - math.random(0, 1), y: target.y + 1 }
-    d.right = { x: target.x - math.random(0, 1), y: target.y - 1 }
+    d.back = { x: target.x + 1, y: target.y + rands[1] } // east
+    d.left = { x: target.x - rands[2], y: target.y + 1 }
+    d.right = { x: target.x - rands[2], y: target.y - 1 }
   } else if (exit.y < target.y) {
     d.front = {
-      x: target.x + math.random(-1, 1),
-      y: target.y + math.random(0, 2),
+      x: target.x + rands[1],
+      y: target.y + rands[0],
     }
-    d.back = { x: target.x + math.random(-1, 1), y: target.y - 1 }
-    d.left = { x: target.x + 1, y: target.y + math.random(0, 1) }
-    d.right = { x: target.x - 1, y: target.y + math.random(0, 1) }
+    d.back = { x: target.x + rands[1], y: target.y - 1 }
+    d.left = { x: target.x + 1, y: target.y + rands[2] }
+    d.right = { x: target.x - 1, y: target.y + rands[2] }
   } else if (exit.y > target.y) {
     d.front = {
-      x: target.x + math.random(-1, 1),
-      y: target.y - math.random(0, 2),
+      x: target.x + rands[1],
+      y: target.y - rands[0],
     }
-    d.back = { x: target.x + math.random(-1, 1), y: target.y + 1 }
-    d.left = { x: target.x - 1, y: target.y - math.random(0, 1) }
-    d.right = { x: target.x + 1, y: target.y - math.random(0, 1) }
+    d.back = { x: target.x + rands[1], y: target.y + 1 }
+    d.left = { x: target.x - 1, y: target.y - rands[2] }
+    d.right = { x: target.x + 1, y: target.y - rands[2] }
   } else {
     d.front = {
-      x: target.x + math.random(0, 2),
-      y: target.y + math.random(-1, 1),
+      x: target.x + rands[0],
+      y: target.y + rands[1],
     }
-    d.back = { x: target.x - 1, y: target.y + math.random(-1, 1) }
-    d.left = { x: target.x + math.random(0, 1), y: target.y - 1 }
-    d.right = { x: target.x + math.random(0, 1), y: target.y + 1 }
+    d.back = { x: target.x - 1, y: target.y + rands[1] }
+    d.left = { x: target.x + rands[2], y: target.y - 1 }
+    d.right = { x: target.x + rands[2], y: target.y + 1 }
   }
   return d
 }

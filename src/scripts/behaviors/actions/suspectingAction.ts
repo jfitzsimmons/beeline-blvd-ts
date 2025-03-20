@@ -39,7 +39,6 @@ export default class SuspectingAction extends Action {
   cause: string //'theft | 'pockets'
   isHero: boolean
   storage?: Storage
-  ///testjpf ii thinki can get by with isHero
   constructor(
     getProps: (behavior: BehaviorKeys) => ActionProps,
     perp: QuestionProps | HeroQuestionProps,
@@ -224,8 +223,6 @@ export default class SuspectingAction extends Action {
       }
       if (consequence.type == 'suspicious') {
         perp.setConfrontation(this.a.name, consequence.type, this.cause)
-        //testjpf return () => alternate(new ConfrontSequence?)
-        //maybe also do this with others, some at random?
         msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
 
         return () =>

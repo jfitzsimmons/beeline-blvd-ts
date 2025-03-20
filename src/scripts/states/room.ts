@@ -15,7 +15,7 @@ export default class RoomState {
   actors: Actors
   props?: string[]
   wards?: Wards
-  parent: RoomProps
+  p: RoomProps
   //checks: RoomChecks
   //outcomes: RoomOutcomes
   constructor(r: string, roomProps: RoomProps) {
@@ -28,7 +28,7 @@ export default class RoomState {
     this.actors = RoomsInitState[r].actors
     this.props = RoomsInitState[r].props || []
     this.wards = RoomsInitState[r].wards || {}
-    this.parent = roomProps
+    this.p = roomProps
     this.fsm
       .addState('idle')
       .addState('turn', {
@@ -46,7 +46,7 @@ export default class RoomState {
   private onFocusStart(): void {
     //highlight room neighbors and directions
     //testjpf
-    this.parent.setFocused(this.roomName)
+    this.p.setFocused(this.roomName)
   }
   private onFocusUpdate(): void {
     this.roomName as keyof typeof aiActions

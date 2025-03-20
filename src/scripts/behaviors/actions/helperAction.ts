@@ -36,6 +36,10 @@ export default class HelperAction extends Action {
         s.slice(0, 3) === 'doc' &&
         this.a.returnNpc(s).exitRoom == this.a.currRoom
     )
+    if (prevRoom.length > 0)
+      print(
+        '|> HelperAction: Helper and Doc are in Separate Rooms, but crossed Paths. TODO! testjpf'
+      )
     const currRoom = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
       (s: string) => s.slice(0, 3) === 'doc'
     )

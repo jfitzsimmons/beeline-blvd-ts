@@ -92,7 +92,6 @@ export function confrontation_check(watcher: Traits, target: Traits): boolean {
 }
 
 export function addPledge(checked: QuestionProps) {
-  //const target = this.parent.returnNpc(t)
   checked.updateFromBehavior('cooldown',checked.cooldown + 8)
   // prettier-ignore
   // print('OUTCOMES:: PLEDGED::', target.name, 'pledged to be cool for::', target.cooldown)
@@ -158,8 +157,8 @@ export function npcCommitSnitchCheck(
   t: string
 ): Consequence {
   let caution_state = 'questioning'
-  const cop = this.parent.returnNpc(c)
-  const target = this.parent.returnNpc(t)
+  const cop = this.p.world.returnNpc(c)
+  const target = this.p.world.returnNpc(t)
   if (this.npcHasTask([c], [t], ['questioning', 'arrest'])) {
     cop.traits.opinion[target.clan] = cop.traits.opinion[target.clan] - 1
     // print('NPCSNITCHCHK')
@@ -497,11 +496,8 @@ export function jailtime_check(
   )
   const advantage = tb.passiveAggressive < 0.2
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -4, 2)
-  // print('CHECKS:: JAILTIMECHECK::', t, 'jailed by', l, 'ROLL:', result)
 
   if (result > 5 && result <= 10) {
-    // target.fsm.setState('arrestee')
-    print('need ArrestSequence for:', chkd.name, 'ENFORCER:::', chkr.name) //chkd.addToBehavior('place', new ArrestSequence())
     return { pass: true, type: 'jailed' }
   }
 
@@ -511,14 +507,13 @@ export function jailtime_check(
       chkd.name,
       'ENFORCER:::',
       chkr.name
-    ) //chkd.addToBehavior('place', new ArrestSequence())
+    )
 
     lConfrontPunchT(chkd, 1)
     print('SPECIAL jailed', chkd.name)
     return { pass: true, type: 'jailed' }
   }
   if (result <= 1) {
-    // print('NEVER jailed')
     tConfrontPunchL(chkr, 1)
     return { pass: true, type: 'jailedcritical' }
   }
@@ -530,7 +525,7 @@ export function lConfrontPunchT(
   //l: string,
   hit = 1
 ) {
-  //const target = this.parent.returnNpc(t)
+  //const target = this.p.world.returnNpc(t)
   chkd.updateFromBehavior('hp', chkd.hp - hit)
   // chkd.hp = chkd.hp - hit
   print('OUTCOMES:: PUNCH::', chkd.name, 'HITFOR::', hit, 'hp:', chkd.hp)
@@ -548,7 +543,6 @@ export function bribeCheck(
   chkr: QuestionProps,
   chkd: QuestionProps
 ): Consequence {
-  //const target = this.parent.returnNpc(t)
   const { binaries: lb, skills: ls } = chkr.traits
   const { binaries: tb, skills: ts } = chkd.traits
 

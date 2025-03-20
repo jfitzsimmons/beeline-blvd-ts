@@ -14,9 +14,9 @@ function steal_stash_checks(this: RoomState) {
   let victim = null
   let actor: Storage
   let attendant =
-    this.stations.desk === '' ? null : this.parent.returnNpc(this.stations.desk)
+    this.stations.desk === '' ? null : this.p.returnNpc(this.stations.desk)
   if (this.stations.guest !== '') {
-    suspect = this.parent.returnNpc(this.stations.guest)
+    suspect = this.p.returnNpc(this.stations.guest)
     //print("victim.name",victim.name)
     actor = this.actors.drawer
     //loot = actor.inventory
@@ -64,8 +64,8 @@ function steal_stash_checks(this: RoomState) {
   if (this.stations.loiter4 != '' && this.stations.guard != '') {
     // eslint-disable-next-line @typescript-eslint/no-extra-semi
     ;[suspect, victim] = shuffle([
-      this.parent.returnNpc(this.stations.loiter4),
-      this.parent.returnNpc(this.stations.guard),
+      this.p.returnNpc(this.stations.loiter4),
+      this.p.returnNpc(this.stations.guard),
     ])
     if (victim.inventory.length > 0 && suspect.cooldown <= 0) {
       const victimProps: AttendantProps = {
@@ -122,7 +122,7 @@ function steal_stash_checks(this: RoomState) {
     take_or_stash(attendantProps, actor)
   }
   if (this.stations.loiter3 != '') {
-    attendant = this.parent.returnNpc(this.stations.loiter3)
+    attendant = this.p.returnNpc(this.stations.loiter3)
     const attendantProps: ThiefVictimProps = {
       name: attendant.name,
       traits: attendant.traits,

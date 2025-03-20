@@ -1,6 +1,5 @@
 import { ActionProps, MedicPlaceProps } from '../../../types/behaviors'
 import { RoomsInitState } from '../../states/inits/roomsInitState'
-//import { isNpc } from '../../utils/ai'
 import Action from '../action'
 
 export default class MedicPlaceAction extends Action {
@@ -34,7 +33,6 @@ export default class MedicPlaceAction extends Action {
         const target = RoomsInitState.infirmary.matrix
         this.a.findRoomPlaceStation(target)
         print('||>> Behavior: MedicPlaceAction: CodeBlue!', this.a.name)
-        //  rooms = this.a.makePriorityRoomList(target)
         return () => this.success()
       }
     } else if (
@@ -45,14 +43,12 @@ export default class MedicPlaceAction extends Action {
       const target = RoomsInitState[this.a.returnMendeeLocation()!].matrix
 
       this.a.findRoomPlaceStation(target)
-      //rooms = this.a.makePriorityRoomList(target)
       print('||>> Behavior: MedicPlaceAction: Paramedic!', this.a.name)
       return () => this.success()
     }
 
     this.a.findRoomPlaceStation()
 
-    // this.a.findRoomPlaceStation(target)
     return () => this.success()
   }
   success() {
