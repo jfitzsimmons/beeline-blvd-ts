@@ -14,9 +14,9 @@ function steal_stash_checks(this: RoomState) {
   let victim = null
   let actor: Storage
   let attendant =
-    this.stations.desk === '' ? null : this.parent.returnNpc(this.stations.desk)
+    this.stations.desk === '' ? null : this.p.returnNpc(this.stations.desk)
   if (this.stations.guest !== '') {
-    suspect = this.parent.returnNpc(this.stations.guest)
+    suspect = this.p.returnNpc(this.stations.guest)
     //print("victim.name",victim.name)
     actor = this.actors.drawer
     //loot = actor.inventory
@@ -30,6 +30,7 @@ function steal_stash_checks(this: RoomState) {
       removeInvBonus: suspect.removeInvBonus.bind(suspect),
       addInvBonus: suspect.addInvBonus.bind(suspect),
       updateInventory: suspect.updateInventory.bind(suspect),
+      addOrExtendEffect: suspect.addOrExtendEffect.bind(suspect),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
 
@@ -40,6 +41,7 @@ function steal_stash_checks(this: RoomState) {
         clan: attendant.clan,
         inventory: attendant.inventory,
         updateInventory: attendant.updateInventory.bind(attendant),
+        addOrExtendEffect: attendant.addOrExtendEffect.bind(attendant),
       }
       const witness = npcStealCheck(suspectProps, attendantProps, actor)
       if (witness == 'witness') {
@@ -62,8 +64,8 @@ function steal_stash_checks(this: RoomState) {
   if (this.stations.loiter4 != '' && this.stations.guard != '') {
     // eslint-disable-next-line @typescript-eslint/no-extra-semi
     ;[suspect, victim] = shuffle([
-      this.parent.returnNpc(this.stations.loiter4),
-      this.parent.returnNpc(this.stations.guard),
+      this.p.returnNpc(this.stations.loiter4),
+      this.p.returnNpc(this.stations.guard),
     ])
     if (victim.inventory.length > 0 && suspect.cooldown <= 0) {
       const victimProps: AttendantProps = {
@@ -72,6 +74,7 @@ function steal_stash_checks(this: RoomState) {
         clan: victim.clan,
         inventory: victim.inventory,
         updateInventory: victim.updateInventory.bind(victim),
+        addOrExtendEffect: victim.addOrExtendEffect.bind(victim),
       }
       const suspectProps: ThiefVictimProps = {
         name: suspect.name,
@@ -83,6 +86,7 @@ function steal_stash_checks(this: RoomState) {
         removeInvBonus: suspect.removeInvBonus.bind(suspect),
         addInvBonus: suspect.addInvBonus.bind(suspect),
         updateInventory: suspect.updateInventory.bind(suspect),
+        addOrExtendEffect: suspect.addOrExtendEffect.bind(suspect),
         //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
       }
       const witness = npcStealCheck(suspectProps, victimProps)
@@ -111,13 +115,14 @@ function steal_stash_checks(this: RoomState) {
       removeInvBonus: attendant.removeInvBonus.bind(attendant),
       addInvBonus: attendant.addInvBonus.bind(attendant),
       updateInventory: attendant.updateInventory.bind(attendant),
+      addOrExtendEffect: attendant.addOrExtendEffect.bind(attendant),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
     actor = this.actors.locker
     take_or_stash(attendantProps, actor)
   }
   if (this.stations.loiter3 != '') {
-    attendant = this.parent.returnNpc(this.stations.loiter3)
+    attendant = this.p.returnNpc(this.stations.loiter3)
     const attendantProps: ThiefVictimProps = {
       name: attendant.name,
       traits: attendant.traits,
@@ -128,6 +133,7 @@ function steal_stash_checks(this: RoomState) {
       removeInvBonus: attendant.removeInvBonus.bind(attendant),
       addInvBonus: attendant.addInvBonus.bind(attendant),
       updateInventory: attendant.updateInventory.bind(attendant),
+      addOrExtendEffect: attendant.addOrExtendEffect.bind(attendant),
       //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
     actor = this.actors.vase3

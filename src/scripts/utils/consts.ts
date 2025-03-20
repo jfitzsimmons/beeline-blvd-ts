@@ -138,6 +138,15 @@ export const fx: { [key: string]: Effect } = {
       adjustment: 0.2,
     },
   },
+  rebel: {
+    label: 'rebel',
+    turns: 10,
+    fx: {
+      type: 'binaries',
+      stat: 'anti_authority',
+      adjustment: -0.2,
+    },
+  },
   boring: {
     label: 'boring',
     turns: 10,

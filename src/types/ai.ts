@@ -1,4 +1,5 @@
 import { Traits } from './state'
+import { Effect } from './tasks'
 
 export interface Direction {
   center: { x: number; y: number }
@@ -13,6 +14,7 @@ export interface ThiefVictimProps {
   addInvBonus: (chest_item: string) => void
   removeInvBonus: (chest_item: string) => void
   updateInventory: (addDelete: 'add' | 'delete', item: string) => void
+  addOrExtendEffect(e: Effect): void
   crime: string
   traits: Traits
   inventory: string[]
@@ -26,4 +28,5 @@ export interface AttendantProps {
   clan: string
   inventory: string[]
   updateInventory: (addDelete: 'add' | 'delete', item: string) => void
+  addOrExtendEffect(e: Effect): void
 }

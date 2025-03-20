@@ -30,6 +30,10 @@ export default class SnitchAction extends Action {
         s.slice(0, 4) === 'secu' &&
         this.a.returnNpc(s).exitRoom == this.a.currRoom
     )
+    if (prevRoom.length > 0)
+      print(
+        '|> SnitchAction: Snitch and Cop are in Separate Rooms, but crossed Paths. TODO! testjpf'
+      )
     const currRoom = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
       (s: string) => s.slice(0, 4) === 'secu'
     )
@@ -49,8 +53,8 @@ export default class SnitchAction extends Action {
         )
         const perp =
           this.perp.name === 'player'
-            ? cop.parent.returnPlayer()
-            : cop.parent.returnNpc(this.perp.name)
+            ? cop.p.world.returnPlayer()
+            : cop.p.world.returnNpc(this.perp.name)
 
         for (const behavior of cop.behavior.active.children) {
           if (

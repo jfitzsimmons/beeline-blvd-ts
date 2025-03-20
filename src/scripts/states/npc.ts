@@ -1,29 +1,27 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { NpcsInitState } from './inits/npcsInitState'
-import { RoomsInitState } from './inits/roomsInitState'
-import { itemStateInit } from './inits/inventoryInitState'
-import { Behavior, InventoryTableItem } from '../../types/state'
-import { Effect } from '../../types/tasks'
-import { NpcProps } from '../../types/world'
-import { NovelNpc } from '../../types/novel'
-import {
-  fillStationAttempt,
-  set_room_priority,
-  set_npc_target,
-} from '../utils/ai'
-import { surrounding_room_matrix } from '../utils/utils'
-import ActorState from './actor'
-import Sequence from '../behaviors/sequence'
 import {
   ActionProps,
   BehaviorKeys,
   BehaviorProps,
   BehaviorSetters,
 } from '../../types/behaviors'
+import { Behavior, InventoryTableItem } from '../../types/state'
+import { Effect } from '../../types/tasks'
+import { NpcProps } from '../../types/world'
+import { NpcsInitState } from './inits/npcsInitState'
+import { RoomsInitState } from './inits/roomsInitState'
+import { itemStateInit } from './inits/inventoryInitState'
+import ActorState from './actor'
+import Sequence from '../behaviors/sequence'
 import Selector from '../behaviors/selector'
+import {
+  fillStationAttempt,
+  set_room_priority,
+  set_npc_target,
+} from '../utils/ai'
+import { surrounding_room_matrix } from '../utils/utils'
 
 export default class NpcState extends ActorState {
-  //prototype: any
   home: { x: number; y: number }
   clan: string
   body: string
@@ -31,7 +29,7 @@ export default class NpcState extends ActorState {
   currStation = ''
   currRoom = 'grounds'
   exitRoom = 'grounds'
-  parent: NpcProps
+  p: NpcProps
   convos = 0
   actions: string[] = ['talk', 'give', 'trade', 'pockets']
   aiPath = ''
@@ -47,9 +45,8 @@ export default class NpcState extends ActorState {
     this.clearance = NpcsInitState[n].clearance
     this.clan = NpcsInitState[n].clan
     this.body = NpcsInitState[n].body
-    // this.fsm = new StateMachine(this, 'npc' + n)
     this.matrix = { x: 0, y: 0 }
-    this.parent = lists
+    this.p = lists
 
     const behaviorDefaults = () => {
       return {
@@ -66,7 +63,6 @@ export default class NpcState extends ActorState {
       }
     }
 
-    //    const behaviorProps:
     this.behavior = {
       place: new Selector([]),
       active: new Selector([]),
@@ -103,29 +99,29 @@ export default class NpcState extends ActorState {
             clan: this.clan,
             exitRoom: this.exitRoom,
             findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
-            checkSetStation: this.parent.checkSetStation.bind(this),
-            getWards: this.parent.getWards.bind(this),
-            getMendingQueue: this.parent.getMendingQueue.bind(this),
-            returnMendeeLocation: this.parent.returnMendeeLocation.bind(this),
+            checkSetStation: this.p.rooms.checkSetStation.bind(this),
+            getWards: this.p.rooms.getWards.bind(this),
+            getMendingQueue: this.p.npcs.getMendingQueue.bind(this),
+            returnMendeeLocation: this.p.npcs.returnMendeeLocation.bind(this),
             ...behaviorDefaults(),
           }
         },
         injury: () => {
           return {
-            //addInjured: this.parent.addInjured.bind(this),
+            //addInjured: this.p.addInjured.bind(this),
             ...behaviorDefaults(),
           }
         },
         mender: () => {
           return {
-            returnNpc: this.parent.returnNpc.bind(this),
-            getFocusedRoom: this.parent.getFocusedRoom.bind(this),
+            returnNpc: this.p.world.returnNpc.bind(this),
+            getFocusedRoom: this.p.rooms.getFocusedRoom.bind(this),
             ...behaviorDefaults(),
           }
         },
         immobile: () => {
           return {
-            pruneStationMap: this.parent.pruneStationMap.bind(this),
+            pruneStationMap: this.p.rooms.pruneStationMap.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -133,11 +129,11 @@ export default class NpcState extends ActorState {
           return {
             traits: this.traits,
             exitRoom: this.exitRoom,
-            returnNpc: this.parent.returnNpc.bind(this),
-            getMendingQueue: this.parent.getMendingQueue.bind(this),
-            getOccupants: this.parent.getOccupants.bind(this),
-            getIgnore: this.parent.getIgnore.bind(this),
-            addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),
+            returnNpc: this.p.world.returnNpc.bind(this),
+            getMendingQueue: this.p.npcs.getMendingQueue.bind(this),
+            getOccupants: this.p.rooms.getOccupants.bind(this),
+            getIgnore: this.p.npcs.getIgnore.bind(this),
+            addAdjustMendingQueue: this.p.npcs.addAdjustMendingQueue.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -145,39 +141,39 @@ export default class NpcState extends ActorState {
           return {
             clearance: this.clearance,
             clan: this.clan,
-            returnNpc: this.parent.returnNpc.bind(this),
-            getOccupants: this.parent.getOccupants.bind(this),
-            addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),
+            returnNpc: this.p.world.returnNpc.bind(this),
+            getOccupants: this.p.rooms.getOccupants.bind(this),
+            addAdjustMendingQueue: this.p.npcs.addAdjustMendingQueue.bind(this),
             exitRoom: this.exitRoom,
             findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
             makePriorityRoomList: this.makePriorityRoomList.bind(this),
-            getMendingQueue: this.parent.getMendingQueue.bind(this),
-            getFocusedRoom: this.parent.getFocusedRoom.bind(this),
+            getMendingQueue: this.p.npcs.getMendingQueue.bind(this),
+            getFocusedRoom: this.p.rooms.getFocusedRoom.bind(this),
             ...behaviorDefaults(),
           }
         },
         mendee: () => {
           return {
-            returnNpc: this.parent.returnNpc.bind(this),
-            addIgnore: this.parent.addIgnore.bind(this),
-            removeMendee: this.parent.removeMendee.bind(this),
-            addAdjustMendingQueue: this.parent.addAdjustMendingQueue.bind(this),
+            returnNpc: this.p.world.returnNpc.bind(this),
+            addIgnore: this.p.npcs.addIgnore.bind(this),
+            removeMendee: this.p.npcs.removeMendee.bind(this),
+            addAdjustMendingQueue: this.p.npcs.addAdjustMendingQueue.bind(this),
             ...behaviorDefaults(),
           }
         },
         infirm: () => {
           return {
             exitRoom: this.exitRoom,
-            sendToVacancy: this.parent.sendToVacancy.bind(this),
-            // addInfirmed: this.parent.addInfirmed.bind(this),
+            sendToVacancy: this.p.rooms.sendToVacancy.bind(this),
+            // addInfirmed: this.p.addInfirmed.bind(this),
             ...behaviorDefaults(),
           }
         },
         infirmed: () => {
           return {
             clearance: this.clearance,
-            getOccupants: this.parent.getOccupants.bind(this),
-            // removeInfirmed: this.parent.removeInfirmed.bind(this),
+            getOccupants: this.p.rooms.getOccupants.bind(this),
+            // removeInfirmed: this.p.removeInfirmed.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -188,11 +184,11 @@ export default class NpcState extends ActorState {
             clan: this.clan,
             love: this.love,
             exitRoom: this.exitRoom,
-            getFocusedRoom: this.parent.getFocusedRoom.bind(this),
+            getFocusedRoom: this.p.rooms.getFocusedRoom.bind(this),
             addInvBonus: this.addInvBonus.bind(this),
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
-            getOccupants: this.parent.getOccupants.bind(this),
+            getOccupants: this.p.rooms.getOccupants.bind(this),
             updateInventory: this.updateInventory.bind(this),
             ...behaviorDefaults(),
           }
@@ -203,31 +199,20 @@ export default class NpcState extends ActorState {
             love: this.love,
             traits: this.traits,
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
-            getOccupants: this.parent.getOccupants.bind(this),
-            returnNpc: this.parent.returnNpc.bind(this),
+            getOccupants: this.p.rooms.getOccupants.bind(this),
+            returnNpc: this.p.world.returnNpc.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
             ...behaviorDefaults(),
           }
         },
       } as BehaviorProps,
     }
-
     this.fsm
       .addState('idle')
       .addState('active', {
         onEnter: this.onActiveEnter.bind(this),
         onUpdate: this.onActiveUpdate.bind(this),
         onExit: this.onActiveExit.bind(this),
-      })
-      .addState('confront', {
-        onEnter: this.onConfrontPlayerEnter.bind(this),
-        onUpdate: this.onConfrontPlayerUpdate.bind(this),
-        onExit: this.onConfrontPlayerExit.bind(this),
-      })
-      .addState('arrestee', {
-        onEnter: this.onArresteeEnter.bind(this),
-        onUpdate: this.onArresteeUpdate.bind(this),
-        onExit: this.onArresteeExit.bind(this),
       })
       .addState('onscreen', {
         onEnter: this.onOnScreenEnter.bind(this),
@@ -252,24 +237,6 @@ export default class NpcState extends ActorState {
     this.getBehaviorProps = this.getBehaviorProps.bind(this)
     this.updateFromBehavior = this.updateFromBehavior.bind(this)
   }
-  private onConfrontPlayerEnter(): void {
-    this.convos++
-  }
-  private onConfrontPlayerUpdate(): void {}
-  private onConfrontPlayerExit(): void {
-    const novelUpdates: NovelNpc = this.parent.getNovelUpdates()
-    this.convos = novelUpdates.convos
-    this.traits = {
-      skills: { ...novelUpdates.traits.skills },
-      binaries: { ...novelUpdates.traits.binaries },
-      opinion: { ...novelUpdates.traits.opinion },
-    }
-    //  this.sincePlayerConvo = novelUpdates.sincePlayerConvo
-    this.love = novelUpdates.love
-  }
-  private onArresteeEnter(): void {}
-  private onArresteeUpdate(): void {}
-  private onArresteeExit(): void {}
   private onNewEnter(): void {}
   private onNewUpdate(): void {
     this.behavior.place.run()
@@ -287,7 +254,6 @@ export default class NpcState extends ActorState {
   }
   private onTurnEnter(): void {
     print('NPCCLASS::: onTurnEnter()')
-    //this.behavior.active.run()
     if (this.behavior.active.children.length > 0)
       print(
         '==>> SET ::: NextTurn: Active Behaviors::',
@@ -296,7 +262,6 @@ export default class NpcState extends ActorState {
       )
   }
   private onTurnUpdate(): void {
-    //print('===>>> PLACING::: NPCSTATE:: FOR::', this.name)
     this.behavior.place.run()
     print(
       '==>> PLACED::: NPCSTATE:: FOR::',
@@ -361,41 +326,33 @@ export default class NpcState extends ActorState {
     t: { x: number; y: number } | undefined = undefined,
     r: string[] | undefined = undefined
   ): void {
-    const target =
-      t !== undefined ? t : RoomsInitState[this.parent.getPlayerRoom()].matrix
-    const rooms = r !== undefined ? r : this.makePriorityRoomList(target)
+    const playerRoom = this.p.rooms.getFocusedRoom()
+    const roomTarget = t !== undefined ? t : RoomsInitState[playerRoom].matrix
+    const rooms = r !== undefined ? r : this.makePriorityRoomList(roomTarget)
 
     this.exitRoom = this.currRoom
-    this.parent.clearStation(this.currRoom, this.currStation, this.name)
+
     const { chosenRoom, chosenStation } = fillStationAttempt(
       rooms,
       this.name,
       this.matrix,
       this.clan,
-      this.parent.getStationMap()
+      this.p.rooms.getStationMap()
     )
-    print(
-      'ROOMS.LENGTH:!:',
-      rooms.length,
-      this.name,
-      '::: findrooomplacestation:: STATION:::',
-      chosenRoom,
-      chosenStation,
-      'exit room:',
-      this.exitRoom,
-      this.parent.getPlayerRoom()
-    )
+    this.p.rooms.clearStation(this.currRoom, this.currStation, this.name)
+    this.p.rooms.setStation(chosenRoom, chosenStation, this.name)
+
+    //prettier-ignore
+    print('length:!:',rooms.length,this.name,':: findRoomPlaceStation ::',chosenRoom,chosenStation,':EXIT:',this.exitRoom)
 
     this.currRoom = chosenRoom
     this.currStation = chosenStation
     this.matrix = RoomsInitState[chosenRoom].matrix
-    this.parent.setStation(chosenRoom, chosenStation, this.name)
-    //this.parent.pruneStationMap(chosenRoom, chosenStation)
     if (this.turnPriority > 93) return
-    if (chosenRoom != this.parent.getPlayerRoom()) {
-      this.turnPriority = this.turnPriority + 1
-    } else {
+    if (math.random() > 0.4 && chosenRoom === playerRoom) {
       this.turnPriority = 0
+    } else {
+      this.turnPriority = this.turnPriority + 1
     }
   }
   addToBehavior(selector: 'place' | 'active', s: Sequence, unshift = false) {
@@ -412,12 +369,7 @@ export default class NpcState extends ActorState {
     value: number | [string, string]
   ): void {
     this.behavior.update[prop](value)
-
-    //this.behavior.props[behavior]()
   }
-  //updateBehaviorProps(behavior: NpcKeys, value: NpcValues) {
-  // this[behavior] = value
-  //}
   removeInvBonus(i: string) {
     const item: InventoryTableItem = { ...itemStateInit[i] }
     let sKey: keyof typeof item.skills
@@ -431,7 +383,6 @@ export default class NpcState extends ActorState {
   }
   addInvBonus(i: string) {
     const item: InventoryTableItem = { ...itemStateInit[i] }
-    //print('NPCADDinvONUS: Item', i)
     let sKey: keyof typeof item.skills
     for (sKey in item.skills)
       this.traits.skills[sKey] = this.traits.skills[sKey] + item.skills[sKey]
@@ -442,8 +393,6 @@ export default class NpcState extends ActorState {
         this.traits.binaries[bKey] + item.binaries[bKey]
   }
   updateInventory(addDelete: 'add' | 'delete', item: string) {
-    // const inventory = this[storage].inventory
-
     if (addDelete == 'add') {
       this.inventory.push(item)
       this.addInvBonus(item)
@@ -453,7 +402,6 @@ export default class NpcState extends ActorState {
     }
   }
   addOrExtendEffect(e: Effect) {
-    //   let ek: keyof typeof this.effects
     print('EffectAddExtend: ', e.label)
     for (const fx of this.effects) {
       if (e.label === fx.label) {

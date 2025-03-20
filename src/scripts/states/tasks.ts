@@ -1,71 +1,32 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
-import //playerSnitchCheck,
-// npcCommitSnitchCheck,
-//chaotic_good_check,
-//dumb_crook_check,
-//ignorant_check,
-//classy_check,
-//predator_check,
-// suspicious_check,
-// vanity_check,
-// angel_check,
-// add_prejudice,
-//becomeASnitchCheck,
-// watcher_punched_check,
-'./inits/checksFuncs'
-import {
-  QuestMethods,
-  Task,
-  //TasksChecks,
-} from '../../types/tasks'
+import { QuestMethods, Task } from '../../types/tasks'
 import TaskState from './task'
-//import { arraymove } from '../utils/utils'
-import { TaskProps, WorldTasksArgs } from '../../types/world'
-
-const dt = math.randomseed(os.time())
-
+import { TaskProps, WorldArgs } from '../../types/world'
 export default class WorldTasks {
   private _all: TaskState[]
   private _spawn: string
   fsm: StateMachine
   quests: QuestMethods
-  // mendingQueue: string[]
   methods: TaskProps
-  parent: WorldTasksArgs
-  // checks: TasksChecks
-  //outcomes: TasksOutcomes
-  constructor(worldProps: WorldTasksArgs) {
+  p: WorldArgs
+
+  constructor(worldProps: WorldArgs) {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
     this._spawn = 'grounds'
-    // this.mendingQueue = []
-    this.parent = worldProps
+    this.p = worldProps
     this.methods = {
       npcHasTask: this.npcHasTask.bind(this),
-      //addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
-      didCrossPaths: this.parent.didCrossPaths.bind(this),
-      returnNpc: this.parent.returnNpc.bind(this),
-      returnPlayer: this.parent.returnPlayer.bind(this),
+      // didCrossPaths: this.p.didCrossPaths.bind(this),
+      returnNpc: this.p.returnNpc.bind(this),
+      returnPlayer: this.p.returnPlayer.bind(this),
       taskBuilder: this.taskBuilder.bind(this),
-      getOccupants: this.parent.getOccupants.bind(this),
-      //setConfrontation: this.parent.setConfrontation.bind(this),
+      //getOccupants: this.p.getOccupants.bind(this),
     }
     this.quests = {
       num_of_injuries: this.num_of_injuries.bind(this),
     }
-    // this.checks = {
-    //  playerSnitchCheck: playerSnitchCheck.bind(this),
-    //npcCommitSnitchCheck: npcCommitSnitchCheck.bind(this),
-    //  ignorant_check: ignorant_check.bind(this),
-    //  dumb_crook_check: dumb_crook_check.bind(this),
-    //  chaotic_good_check: chaotic_good_check.bind(this),
-    //  classy_check: classy_check.bind(this),
-    //  predator_check: predator_check.bind(this),
-    //}
-    //    this.outcomes = {
-    //  add_prejudice: add_prejudice.bind(this),
-    // }
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
       onEnter: this.onTurnEnter.bind(this),
@@ -82,11 +43,8 @@ export default class WorldTasks {
     this.removeTaskByCause = this.removeTaskByCause.bind(this)
     this.removeTaskByLabel = this.removeTaskByLabel.bind(this)
     this.has_clearance = this.has_clearance.bind(this)
-    // this.getMendingQueue = this.getMendingQueue.bind(this)
     this.npcHasTask = this.npcHasTask.bind(this)
     this.taskBuilder = this.taskBuilder.bind(this)
-    //this.addAdjustMendingQueue = this.addAdjustMendingQueue.bind(this)
-    // this.removeMendee = this.removeMendee.bind(this)
   }
   private onNewEnter(): void {}
   private onNewUpdate(): void {}
@@ -96,13 +54,10 @@ export default class WorldTasks {
     let i = this.all.length
     while (i-- !== 0) {
       const task = this.all[i]
-      // prettier-ignore
-      // print('TURNUPDATE::: task::', task.label, task.owner, task.target, task.cause, task.turns)
       if (task.turns < 1) {
         this.all.splice(i, 1)
       } else {
         task.turns = task.turns - 1
-        task.fsm.update(dt)
       }
     }
   }
@@ -116,10 +71,6 @@ export default class WorldTasks {
   public get all() {
     return this._all
   }
-  //getMendingQueue(): string[] {
-  //return this.mendingQueue
-  //}
-
   taskHasOwner(cause: string): string | null {
     for (let i = this.all.length - 1; i >= 0; i--) {
       const c = this.all[i]
@@ -243,10 +194,7 @@ export default class WorldTasks {
   }
 
   taskBuilder(o: string, label: string, target: string, cause = 'theft') {
-    const owner = this.parent.returnNpc(o)
-    //explain why you need this testjpf
-    //no nested ifs
-    //cna this be done somewhere else?
+    const owner = this.p.returnNpc(o)
     const append: Task = {
       owner: owner.name,
       turns: 15,
@@ -256,13 +204,9 @@ export default class WorldTasks {
       target,
       cause,
     }
-    //testjpf this is getting bad.  cleanup code
     if (label == 'snitch') {
       append.authority = 'security'
       append.scope = 'clan'
-      if (target == 'player') {
-        //this.questmethods.pq.increase_alert_level()
-      }
     } else if (label == 'merits') {
       if (target == 'player') {
         owner.love = owner.love + 1
@@ -290,12 +234,7 @@ export default class WorldTasks {
       append.authority = 'player'
     } else if (label == 'mender') {
       append.turns = 99
-    } else if (label == 'confront') {
-      append.turns = 1
     }
-    // prettier-ignore
-    // print(append.owner, 'know that', append.target, 'did', append.cause, 'so created task:', append.label, 'for turns:', append.turns)
-
     this.append_task(append)
   }
   append_task(task: Task) {

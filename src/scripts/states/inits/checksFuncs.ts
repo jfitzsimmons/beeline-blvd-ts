@@ -8,13 +8,10 @@ import {
 import { fx } from '../../utils/consts'
 import { roll_dice, ROLLODDS, rollSpecialDice } from '../../utils/dice'
 import { shuffle, clamp } from '../../utils/utils'
-//import NpcState from '../npc'
-//impor from '../player'
 import { QuestionProps } from '../../../types/behaviors'
 import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
 import Storage from '../storage'
 import { crimeSeverity } from '../../utils/ai'
-//const dt = math.randomseed(os.time())
 
 export const crimeChecks: {
   [key: string]: Array<
@@ -95,7 +92,6 @@ export function confrontation_check(watcher: Traits, target: Traits): boolean {
 }
 
 export function addPledge(checked: QuestionProps) {
-  //const target = this.parent.returnNpc(t)
   checked.updateFromBehavior('cooldown',checked.cooldown + 8)
   // prettier-ignore
   // print('OUTCOMES:: PLEDGED::', target.name, 'pledged to be cool for::', target.cooldown)
@@ -128,7 +124,8 @@ export function pledgeCheck(
   }
   if (result <= 1) {
     // print('NEVER pledge')
-    return { pass: true, type: 'pledgecritical' }
+    //add_prejudice(chkd.clan, chkr)
+    return { pass: true, type: 'phonesecurity' }
   }
 
   return { pass: false, type: 'neutral' }
@@ -160,8 +157,8 @@ export function npcCommitSnitchCheck(
   t: string
 ): Consequence {
   let caution_state = 'questioning'
-  const cop = this.parent.returnNpc(c)
-  const target = this.parent.returnNpc(t)
+  const cop = this.p.world.returnNpc(c)
+  const target = this.p.world.returnNpc(t)
   if (this.npcHasTask([c], [t], ['questioning', 'arrest'])) {
     cop.traits.opinion[target.clan] = cop.traits.opinion[target.clan] - 1
     // print('NPCSNITCHCHK')
@@ -172,6 +169,20 @@ export function npcCommitSnitchCheck(
   */
 //Checks and Helpers
 //effects
+function addMasterCriminal(
+  a: QuestionProps | ThiefVictimProps,
+  c: QuestionProps | AttendantProps
+) {
+  const affected = a
+  // if (chkd.name != 'player') {
+  const cause = c
+  const effects_list = ['inhiding', 'readup', 'eagleeye', 'rebel']
+  const effect: Effect = fx[effects_list[math.random(0, 3)]]
+  if (effect.fx.type == 'opinion') effect.fx.stat = cause.clan
+  affected.addOrExtendEffect(effect)
+
+  // print('OUTCOMES:: addchaoticgood::', t, 'inspired::', l, 'to be chaoticgood.')
+}
 function add_lawful_evil(chkr: QuestionProps, chkd: QuestionProps) {
   const listener = chkr
   if (chkd.name != 'player') {
@@ -367,19 +378,12 @@ export function recklessCheck(
 
   const reckless = tr > wr
 
-  print(
-    'CHECKS RESULT:::',
-    tr,
-    targetXp,
-    'made,',
-    wr,
-    watcherXp,
-    ' RECKLESS::??',
-    reckless
-  )
+  //prettier-ignore
+  print('RECKLESSCHECKS RESULT:::', chkd.name, "targetdX:",targetXp, tr,'made,',chkr.name, 'dx:', watcherXp,wr,'RECKLESS:?',reckless)
 
   if (tr > 11) {
     // print('SPECIAL reckless')
+    add_chaotic_good(chkr, chkd)
     return { pass: true, type: 'reckless' }
   }
   if (tr < 2) {
@@ -425,6 +429,7 @@ export function predator_check(
   if (result > 10) {
     // print('SPECIAL predator')
     add_predator(chkr, chkd)
+    add_admirer(chkd.clan, chkr)
     return { pass: true, type: 'predatorspecial' }
   }
   if (result <= 1) {
@@ -468,6 +473,7 @@ export function classy_check(
   if (result > 10) {
     // print('SPECIAL classy')
     add_classy(chkr, chkd)
+    add_smartness(chkr, chkd)
     return { pass: true, type: 'classyspecial' }
   }
   if (result <= 1) {
@@ -490,11 +496,8 @@ export function jailtime_check(
   )
   const advantage = tb.passiveAggressive < 0.2
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -4, 2)
-  // print('CHECKS:: JAILTIMECHECK::', t, 'jailed by', l, 'ROLL:', result)
 
   if (result > 5 && result <= 10) {
-    // target.fsm.setState('arrestee')
-    print('need ArrestSequence for:', chkd.name, 'ENFORCER:::', chkr.name) //chkd.addToBehavior('place', new ArrestSequence())
     return { pass: true, type: 'jailed' }
   }
 
@@ -504,14 +507,14 @@ export function jailtime_check(
       chkd.name,
       'ENFORCER:::',
       chkr.name
-    ) //chkd.addToBehavior('place', new ArrestSequence())
+    )
 
-    chkd.hp = chkd.hp - 1
+    lConfrontPunchT(chkd, 1)
     print('SPECIAL jailed', chkd.name)
     return { pass: true, type: 'jailed' }
   }
   if (result <= 1) {
-    // print('NEVER jailed')
+    tConfrontPunchL(chkr, 1)
     return { pass: true, type: 'jailedcritical' }
   }
 
@@ -522,10 +525,10 @@ export function lConfrontPunchT(
   //l: string,
   hit = 1
 ) {
-  //const target = this.parent.returnNpc(t)
+  //const target = this.p.world.returnNpc(t)
   chkd.updateFromBehavior('hp', chkd.hp - hit)
   // chkd.hp = chkd.hp - hit
-  print('OUTCOMES:: LcT::', chkd.name, 'HITFOR::', hit, 'chkdhp', chkd.hp)
+  print('OUTCOMES:: PUNCH::', chkd.name, 'HITFOR::', hit, 'hp:', chkd.hp)
 }
 
 export function getExtorted(
@@ -540,7 +543,6 @@ export function bribeCheck(
   chkr: QuestionProps,
   chkd: QuestionProps
 ): Consequence {
-  //const target = this.parent.returnNpc(t)
   const { binaries: lb, skills: ls } = chkr.traits
   const { binaries: tb, skills: ts } = chkd.traits
 
@@ -640,6 +642,7 @@ export function suspicious_check(
   if (result <= 1) {
     // print('NEVER suspicious')
     //shuffle(pos_consolations)[0](suspect)
+    add_admirer(chkd.clan, chkr as QuestionProps)
     return { pass: true, type: 'suspiciouscritical' }
   }
 
@@ -674,38 +677,18 @@ export function seen_check(
   const advantage =
     ts.speed - wb.lawlessLawful * 10 > ws.stealth + ws.perception
 
-  //const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -3, 3)
-  //set_up_rng()
   const result = rollSpecialDice(targetXp, advantage)
   const wres = roll_dice(watcherXp)
   const seen = result <= wres
 
-  print(
-    target.name,
-    watcher.name,
-    'SeenCheck::: advantage:',
-    advantage,
-    '|WatcherXP:',
-    watcherXp,
-    '|TargetXP:',
-    targetXp,
-    'RESULT,SEEN:',
-    result,
-    wres,
-    seen
-  )
-  print(
-    'SEENCHECK PROBABILITY:::!!!:::',
-    ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`]
-  )
-  print(
-    'SEENCHECK wtih dvantagg:::',
-    advantage === true
-      ? ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] +
-          ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2
-      : ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2
-  )
-  if (result > 11) return { confront: false, type: 'seenspecial' }
+  //prettier-ignore
+  print(target.name,'|perpDX:',targetXp,watcher.name,'|WatcherDX:',watcherXp,'adv:',advantage,'pRESULT:',result,'wResult',wres,seen)
+  //prettier-ignore
+  print('SEENCHECK PROBABILITY:::',ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`],'w/ advantage:::',advantage === true  ? ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] + ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2  : ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2)
+  if (result > 11) {
+    addMasterCriminal(t, watcher)
+    return { confront: false, type: 'seenspecial' }
+  }
   if (result < 2) return { confront: true, type: 'seen' }
   //const bossResult = rollSpecialDice(7, true, 3, 2)
   //const seen = result <= bossResult
@@ -721,9 +704,6 @@ export function take_check(
   const modifier = Math.round(
     skills.stealth - skills.charisma + binaries.passiveAggressive * -5
   )
-  //if (taker.parent.npcHasTask([], [taker.name]) != null) {
-  //  modifier = modifier - 1
-  // }
   const advantage = binaries.poor_wealthy + binaries.anti_authority * -1 > 0
   const result = rollSpecialDice(5, advantage, 3, 2) + clamp(modifier, -2, 2)
   if (result < 5) return false
@@ -736,8 +716,8 @@ export function take_check(
   } else {
     chest_item = actor.inventory[math.random(0, actor.inventory.length)]
   }
-
-  print('CHKFUNCS::: TAKECHECK::, checstitem:', chest_item)
+  //prettier-ignore
+  print('CHKFUNCS::: TAKECHECK::', chest_item,'stolenFrom:',actor.name,'by',taker.name)
   if (chest_item !== null) {
     taker.updateInventory('add', chest_item)
     actor.updateInventory('delete', chest_item)
@@ -750,11 +730,6 @@ export function stash_check(
   actor: ThiefVictimProps | Storage
 ) {
   const modifier = stasher.inventory.length - actor.inventory.length
-
-  //if (stasher.parent.npcHasTask([], [stasher.name]) != null) {
-  //  modifier = modifier + 1
-  //}
-
   const advantage = actor.inventory.length < 2 || stasher.inventory.length > 5
   const result = rollSpecialDice(5, advantage, 3, 2) + modifier
   if (result < 5) return false
@@ -767,7 +742,9 @@ export function stash_check(
   } else {
     chest_item = stasher.inventory[stasher.inventory.length - 1]
   }
-  print('CHKFUNCS::: stashCHECK::, checstitem:', chest_item)
+
+  //prettier-ignore
+  print('CHKFUNCS::: stashCHECK::', chest_item,'stolenFrom:',actor.name,'by',stasher.name)
 
   if (chest_item !== null) {
     stasher.updateInventory('delete', chest_item)
@@ -875,50 +852,21 @@ export function npcStealCheck(
 
   const result = tr > wr
 
-  print(
-    target.name,
-    watcher.name,
-    'npcstealCheck::: advantage:',
-    advantage,
-    '|WatcherXP:',
-    watcherXp,
-    wr,
-    '|TargetXP:',
-    targetXp,
-    tr,
-    'RESULT:',
-    result
-  )
-  print(
-    'StealCHECK PROBABILITY:::!!!:::',
-    ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`]
-  )
-  print(
-    'StealCHECK wtih dvantagg:::',
-    advantage === true
-      ? ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] +
-          ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2
-      : ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2
-  )
+  //prettier-ignore
+  print(target.name,'|PerpDX:',targetXp,tr,watcher.name,'|WatcherDX:',watcherXp,wr,':: advantage:',advantage,'RESULT:',result)
+  //prettier-ignore
+  print('StealCHECK PROBABILITY::',ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`]  ,'w/ Advantage:::',advantage === true  ? ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] +  ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2  : ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2)
+
   if (result === false) return 'failed'
-
   const consequence = seen_check(target, watcher)
-  // print('CHECKSCHECKS!!!::: SEENCHECK::', consequence.type)
-
   if (consequence.type == 'seen') {
-    //   print('CHECKSCHECKS!!!::: CONFRONT!!! SEENCHECK::', consequence.type)
-
-    //watcher.taskBuilder(watcher.name, 'confront', target.name, 'theft')
     return 'witness'
-    //testjpf is this used??
-    // target.loot = loot
-    //Could I return loot here too?
   }
   if (consequence.type == 'neutral') {
     const actor = storage === undefined ? watcher : storage
     let chest_item = null
     if (math.random() < 0.4) {
-      chest_item = actor.inventory[math.random(0, actor.inventory.length - 1)] // removeRandom(target.inventory, loot)
+      chest_item = actor.inventory[math.random(0, actor.inventory.length - 1)]
     } else if (math.random() < 0.5) {
       chest_item = removeValuable(actor.inventory)
     } else {
@@ -928,18 +876,14 @@ export function npcStealCheck(
     if (chest_item !== null) {
       target.updateInventory('add', chest_item)
       actor.updateInventory('delete', chest_item)
-
-      // target.addInvBonus(chest_item)
     }
     target.cooldown = math.random(5, 15)
   }
 
   target.cooldown = target.cooldown + 5
-  // print('SEENCHECK END::', consequence.type, target.cooldown)
   return null
 }
 function add_angel(add: (effect: Effect) => void): void {
-  // print('CCOUTCOME:: angel', listener)
   const effect: Effect = { ...fx.angel }
   add(effect)
 }
@@ -1063,7 +1007,7 @@ export function admirer_check(
 }
 export function add_prejudice(tClan: string, listener: QuestionProps) {
   // print('OUTCOME:: is prejudiced', listener)
-  if (tClan === 'player') {
+  if (tClan === 'hero') {
     listener.love--
     return
   }

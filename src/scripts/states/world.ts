@@ -12,7 +12,7 @@ import NpcState from './npc'
 import {
   WorldNpcsArgs,
   WorldPlayerArgs,
-  WorldTasksArgs,
+  //WorldTasksArgs,
   WorldQuestsMethods,
   WorldArgs,
 } from '../../types/world'
@@ -36,44 +36,49 @@ export default class World {
       returnPlayer: this.returnPlayer.bind(this),
     }
     this.rooms = new WorldRooms(roomsProps)
-    const novelProps: WorldArgs = {
-      ...roomsProps,
-    }
-    this.novel = new WorldNovel(novelProps)
-    const tasksProps: WorldTasksArgs = {
-      didCrossPaths: this.didCrossPaths.bind(this),
-      getOccupants: this.rooms.getOccupants.bind(this),
-      ...novelProps,
-    }
-    this.tasks = new WorldTasks(tasksProps)
+    this.novel = new WorldNovel(roomsProps)
+    this.tasks = new WorldTasks(roomsProps)
     const playerProps: WorldPlayerArgs = {
-      returnNpc: this.returnNpc.bind(this),
-      getFocusedRoom: this.rooms.get_focused.bind(this),
-      //  hasHallpass: this.tasks.has_clearance.bind(this),
-      removeTaskByCause: this.tasks.removeTaskByCause.bind(this),
-      getOccupants: this.rooms.getOccupants.bind(this),
-      setConfrontation: this.novel.setConfrontation.bind(this),
+      world: {
+        returnNpc: this.returnNpc.bind(this),
+        // didCrossPaths: this.didCrossPaths.bind(this),
+      },
+      rooms: {
+        getFocusedRoom: this.rooms.get_focused.bind(this),
+        getOccupants: this.rooms.getOccupants.bind(this),
+      },
+      novel: {
+        setConfrontation: this.novel.setConfrontation.bind(this),
+      },
     }
     this.player = new WorldPlayer('hero', playerProps)
     const npcsProps: WorldNpcsArgs = {
-      clearStation: this.rooms.clearStation.bind(this),
-      setStation: this.rooms.setStation.bind(this),
-      checkSetStation: this.rooms.checkSetStation.bind(this),
-      pruneStationMap: this.rooms.pruneStationMap.bind(this),
-      getStationMap: this.rooms.getStationMap.bind(this),
-      sendToVacancy: this.rooms.sendToVacancy.bind(this),
-      getWards: this.rooms.getWards.bind(this),
-      getPlayerRoom: this.player.getPlayerRoom.bind(this),
+      world: {
+        returnPlayer: this.returnPlayer.bind(this),
+        ...playerProps.world,
+      },
+      rooms: {
+        clearStation: this.rooms.clearStation.bind(this),
+        setStation: this.rooms.setStation.bind(this),
+        checkSetStation: this.rooms.checkSetStation.bind(this),
+        pruneStationMap: this.rooms.pruneStationMap.bind(this),
+        getStationMap: this.rooms.getStationMap.bind(this),
+        sendToVacancy: this.rooms.sendToVacancy.bind(this),
+        getWards: this.rooms.getWards.bind(this),
+        ...playerProps.rooms,
+      },
+
+      //getPlayerRoom: this.player.getPlayerRoom.bind(this),
       //getMendingQueue: this.tasks.getMendingQueue.bind(this),
       // removeMendee: this.tasks.removeMendee.bind(this),
-      taskBuilder: this.tasks.taskBuilder.bind(this),
-      npcHasTask: this.tasks.npcHasTask.bind(this),
+      // taskBuilder: this.tasks.taskBuilder.bind(this),
+      // npcHasTask: this.tasks.npcHasTask.bind(this),
       // addAdjustMendingQueue: this.tasks.addAdjustMendingQueue.bind(this),
-      getNovelUpdates: this.novel.getNovelUpdates.bind(this),
-      playerFSM: this.player.fsm,
-      playerTraits: this.player.traits,
-      ...playerProps,
-      ...tasksProps,
+      //getNovelUpdates: this.novel.getNovelUpdates.bind(this),
+      //playerFSM: this.player.fsm,
+      //playerTraits: this.player.traits,
+      //  ...playerProps,
+      //  ...roomsProps,
     }
     this.npcs = new WorldNpcs(npcsProps)
     const allquestmethods: WorldQuestsMethods = {
@@ -174,6 +179,7 @@ export default class World {
     print('???? ::: QQQQ: Quest Related Status checks: Finished.')
   }
   private onTurnExit(): void {}
+  /**
   private didCrossPaths(o: string, t: string): boolean {
     const owner = this.npcs.all[o]
     const target = this.npcs.all[t]
@@ -183,7 +189,7 @@ export default class World {
       owner.currRoom == target.currRoom ||
       (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
     )
-  }
+  }*/
   returnNpc(n: string): NpcState {
     return this.npcs.all[n]
   }

@@ -19,24 +19,8 @@ export default class HeroPlaceAction extends Action {
     if (this.a.cooldown > 0) this.a.cooldown = this.a.cooldown - 1
 
     this.a.setRoomInfo()
-    print('setRoomInfo HEROPLACEACTION:', this.a.name)
-
-    //this.a.findRoomPlaceStation()
-    /**
-     * testjpf
-     * if this.a.clearance < than currroom.clearance
-     * return alternate(TrespassSeq)!!!??
-     */
-
-    //if (this.a.clearance < RoomsInitState[this.a.currRoom].clearance) {
-    // return () => this.continue('trespass')
-    //// }
+    print('||>> PLACEsequence:: setRoomInfo HEROPLACEACTION:', this.a.name)
 
     return () => this.success()
-  }
-  success() {
-    // if (isNpc(this.a))
-    // prettier-ignore
-    //print('PlaceAction:: Success::', this.a.name, 'placedin:', this.a.currRoom, this.a.currStation, '||| from:',   this.a.exitRoom ) //testjpf
   }
 }
