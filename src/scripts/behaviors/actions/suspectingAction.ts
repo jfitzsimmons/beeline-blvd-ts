@@ -32,6 +32,7 @@ import InjuredSequence from '../sequences/injuredSequence'
 import ImmobileSequence from '../sequences/immobileSequence'
 import ScoutSequence from '../sequences/scoutSequence'
 import QuestionSequence from '../sequences/questionSequence'
+import AssaultedSequence from '../sequences/assaultedSequence'
 export default class SuspectingAction extends Action {
   a: QuestionProps
   perp: QuestionProps | HeroQuestionProps
@@ -372,6 +373,14 @@ export default class SuspectingAction extends Action {
             'place',
             new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
           )
+
+        return () =>
+          this.alternate(
+            new AssaultedSequence(
+              this.perp.getBehaviorProps.bind(this.perp),
+              this.getProps('question') as QuestionProps
+            )
+          )
       } else if (
         consequence.type.slice(0, 6) === 'sPunch' &&
         (this.a.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
@@ -397,6 +406,14 @@ export default class SuspectingAction extends Action {
           this.a.addToBehavior(
             'place',
             new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
+          )
+
+        return () =>
+          this.alternate(
+            new AssaultedSequence(
+              this.getProps as (behavior: BehaviorKeys) => ActionProps,
+              this.perp.getBehaviorProps('question') as QuestionProps
+            )
           )
       }
     }

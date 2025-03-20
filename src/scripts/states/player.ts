@@ -147,6 +147,7 @@ export default class WorldPlayer extends ActorState {
             // love: this.love,
             exitRoom: this.exitRoom,
             addInvBonus: this.addInvBonus.bind(this),
+            removeInvBonus: this.removeInvBonus.bind(this),
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
             getOccupants: this.p.rooms.getOccupants.bind(this),

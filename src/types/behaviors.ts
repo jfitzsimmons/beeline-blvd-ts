@@ -129,6 +129,7 @@ export interface QuestionProps extends DefaultBehaviorProps {
   love: number
   exitRoom: string
   behavior: Behavior
+  removeInvBonus: (chest_item: string) => void
   addInvBonus(item: string): void
   addOrExtendEffect(effect: Effect): void
   getBehaviorProps(behavior: string): ActionProps

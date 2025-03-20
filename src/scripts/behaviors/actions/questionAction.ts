@@ -10,10 +10,12 @@ import Action from '../action'
 import { crimeChecks } from '../../states/inits/checksFuncs'
 import ArrestSequence from '../sequences/arrestSequence'
 import AnnouncerSequence from '../sequences/announcerSequence'
-//import RecklessSequence from '../sequences/recklessSequence'
 import InjuredSequence from '../sequences/injuredSequence'
 import ImmobileSequence from '../sequences/immobileSequence'
 import JailedSequence from '../sequences/jailedSequence'
+//import SuspectingAction from './suspectingAction'
+//import AssaultedSequence from '../sequences/assaultedSequence'
+//import SuspectingSequence from '../sequences/suspectingSequence'
 
 export default class QuestionAction extends Action {
   a: QuestionProps
@@ -183,6 +185,31 @@ export default class QuestionAction extends Action {
           'place',
           new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
         )
+      /**
+      this.perp.addToBehavior(
+        'place',
+        new SuspectingSequence(
+          this.perp.getBehaviorProps.bind(this.perp),
+          this.perp.getBehaviorProps('question') as QuestionProps,
+          this.reason
+        )
+      )
+ */
+      //testjpf Do intermediate AssaultedAction that then
+      //  searches room like trespassing
+      // and create supecting seq
+      // and runs it?
+      // this also leaves room for other actions other than suspecting!
+      //TODO
+      /**
+      return () =>
+        this.alternate(
+          new AssaultedSequence(
+            this.perp.getBehaviorProps.bind(this.perp),
+            this.getProps('question') as QuestionProps
+          )
+        )
+          */
     } else if (
       consequence.type.slice(0, 6) === 'sPunch' &&
       (this.a.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
@@ -210,7 +237,22 @@ export default class QuestionAction extends Action {
           'place',
           new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
         )
+      /**
+      return () =>
+        this.alternate(
+          new AssaultedSequence(
+            this.getProps as (behavior: BehaviorKeys) => ActionProps,
+            this.perp.getBehaviorProps('question') as QuestionProps
+          )
+        )
+             **/
     }
+
+    /**
+     * cant ref SUSPECTINSEQ so not on the file Questionseq at all???!!!
+     * !!! TESTED ABOVE AND it WORKS!!!
+     * testjpf if slice 16 punch alternate(new AssaultedAction())
+     */
     print(
       '||>> Behavior: QUESTIONACTION:: Consequence pass,type:',
       consequence.pass,

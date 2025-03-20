@@ -855,7 +855,7 @@ export function npcStealCheck(
   //prettier-ignore
   print(target.name,'|PerpDX:',targetXp,tr,watcher.name,'|WatcherDX:',watcherXp,wr,':: advantage:',advantage,'RESULT:',result)
   //prettier-ignore
-  print('StealCHECK PROBABILITY::',ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`]  ,'w/ Advantage:::',advantage === true  ? ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] +  ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2  : ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2)
+  print('StealCHECK PROBABILITY::',ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`],'w/ Advantage:::',advantage === true  ? ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] +  ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2  : ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2)
 
   if (result === false) return 'failed'
   const consequence = seen_check(target, watcher)
@@ -882,6 +882,60 @@ export function npcStealCheck(
 
   target.cooldown = target.cooldown + 5
   return null
+}
+
+export function npcAssaultCheck(
+  // this: WorldTasks,
+  target: ThiefVictimProps,
+  watcher: AttendantProps
+): null | string {
+  // prettier-ignore
+  // print('npcSTEALchkLOOT:::', target.name, target.currRoom, watcher.name, watcher.currRoom, loot[0])
+  const consequence = seen_check(target, watcher)
+  if (consequence.type !== 'seen') return 'failed'
+
+  const { binaries: wb, opinion: wo } = watcher.traits
+  const { skills: ts, binaries: tb, opinion: to } = target.traits
+
+  const watcherXp = clamp(
+    Math.round(((wb.evil_good + wb.lawlessLawful) * 10 - wo[target.clan]) / 2),
+    4,
+    12
+  )
+  const targetXp = clamp(
+    Math.round(
+      (ts.speed + ts.stealth) / 2 -
+        to[watcher.clan] -
+        crimeSeverity[target.crime]
+    ),
+    4,
+    12
+  )
+  const advantage = tb.lawlessLawful - tb.poor_wealthy < 0
+  const tr = rollSpecialDice(targetXp, advantage)
+  const wr = roll_dice(watcherXp)
+
+  const result = tr > wr
+
+  //prettier-ignore
+  print(target.name,'|PerpDX:',targetXp,tr,watcher.name,'|WatcherDX:',watcherXp,wr,':: advantage:',advantage,'RESULT:',result)
+  //prettier-ignore
+  print('StealCHECK PROBABILITY::',ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`],'w/ Advantage:::',advantage === true  ? ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] +  ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2  : ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2)
+
+  if (result === true) return 'neutral'
+  /**
+   * if below '5' do nothing above '10' confront
+   * other = suspecting?
+   * critical 1 == ??? add cowardiceor somethin
+   */
+
+  if (tr < 2) {
+    // print('NEVER angel')
+    //add_cowardice
+    return 'assaultcritfail'
+  }
+
+  return 'assault'
 }
 function add_angel(add: (effect: Effect) => void): void {
   const effect: Effect = { ...fx.angel }

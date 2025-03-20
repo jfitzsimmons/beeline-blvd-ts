@@ -185,6 +185,7 @@ export default class NpcState extends ActorState {
             love: this.love,
             exitRoom: this.exitRoom,
             getFocusedRoom: this.p.rooms.getFocusedRoom.bind(this),
+            removeInvBonus: this.removeInvBonus.bind(this),
             addInvBonus: this.addInvBonus.bind(this),
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
