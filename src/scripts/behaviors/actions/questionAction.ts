@@ -302,7 +302,7 @@ export default class QuestionAction extends Action {
       */
     return () =>
       this.success(
-        `||>> Behavior: QUESTIONACTION::: DEFAULT:: ${consequence.type} for ${this.reason}`
+        `||>> Behavior: QUESTIONACTION::: DEFAULT:: ${consequence.type}`
       )
   }
   continue(s: string): string {
@@ -310,7 +310,7 @@ export default class QuestionAction extends Action {
     return 'continue'
   }
   success(s?: string): string {
-    print('QuestionAction:: Success:', s)
+    print('QuestionAction:: Success:', s, `for ${this.reason}`)
     return 'success'
   }
 }
