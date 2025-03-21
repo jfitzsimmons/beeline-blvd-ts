@@ -248,18 +248,8 @@ export function set_room_priority(
       ? sortedArr.push(flatArr[i])
       : sortedArr.unshift(flatArr[i])
   }
-
-  for (let i = 1; i <= sortedArr.length; i++) {
-    print(
-      i,
-      'filtered:',
-      sortedArr[i - 1],
-      'from: ',
-      RoomsInitLayout[npc.matrix.y][npc.matrix.x],
-      'target:',
-      RoomsInitLayout[target.y][target.x]
-    )
-  }
+  //prettier-ignore
+  //for (let i = 1; i <= sortedArr.length; i++) {print(i,'filtered:',sortedArr[i - 1],'from: ',RoomsInitLayout[npc.matrix.y][npc.matrix.x],'target:',RoomsInitLayout[target.y][target.x])}
   return sortedArr
 }
 export function set_npc_target(

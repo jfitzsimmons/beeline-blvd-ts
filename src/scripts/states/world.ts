@@ -67,18 +67,9 @@ export default class World {
         getWards: this.rooms.getWards.bind(this),
         ...playerProps.rooms,
       },
-
-      //getPlayerRoom: this.player.getPlayerRoom.bind(this),
-      //getMendingQueue: this.tasks.getMendingQueue.bind(this),
-      // removeMendee: this.tasks.removeMendee.bind(this),
-      // taskBuilder: this.tasks.taskBuilder.bind(this),
-      // npcHasTask: this.tasks.npcHasTask.bind(this),
-      // addAdjustMendingQueue: this.tasks.addAdjustMendingQueue.bind(this),
-      //getNovelUpdates: this.novel.getNovelUpdates.bind(this),
-      //playerFSM: this.player.fsm,
-      //playerTraits: this.player.traits,
-      //  ...playerProps,
-      //  ...roomsProps,
+      novel: {
+        setConfrontation: this.novel.setConfrontation.bind(this),
+      },
     }
     this.npcs = new WorldNpcs(npcsProps)
     const allquestmethods: WorldQuestsMethods = {
@@ -112,7 +103,7 @@ export default class World {
     this.rooms.fsm.setState('turn')
     this.player.fsm.setState('place')
     this.npcs.fsm.setState('new') //Adds a PlaceSeq and runs it //also test defaults
-    this.rooms.fsm.update(dt)
+    this.rooms.fsm.update(dt) // runs room based AI Behavior
     this.tasks.fsm.setState('turn')
     this.quests.fsm.setState('new')
 
@@ -129,25 +120,6 @@ export default class World {
     this.npcs.addIgnore(this.rooms.all.grounds.stations.worker1)
   }
   private onNewUpdate(): void {}
-
-  private onFaintEnter(): void {
-    this.clock = this.clock + 6
-    this.player.ap = this.player.apMax - 6
-    this.player.hp = this.player.hpMax - 1
-  }
-  private onFaintUpdate(): void {
-    //testjpf could probably remove
-    // use placebehavior instead?
-    this.player.setRoomInfo()
-    this.player.fsm.update(dt)
-    this.quests.fsm.update(dt)
-    this.tasks.fsm.update(dt)
-    this.npcs.fsm.update(dt)
-    this.rooms.fsm.update(dt)
-
-    this.fsm.setState('turn')
-  }
-  private onFaintExit(): void {}
   private onNewExit(): void {
     //print('WORLDNEWEXIT()!!! set npc-S ACTIVE')
     this.npcs.fsm.setState('active') //each npc gets set to 'active' which runs active behavior from newExit
@@ -171,25 +143,52 @@ export default class World {
     print('!!!!! :::: PPPPP: Placing NPCS: Running...')
     this.npcs.fsm.update(dt)
     print('!!!! ::: PPPP: Placing NPCS: Finished.')
-    this.rooms.fsm.update(dt)
+    this.rooms.fsm.update(dt) // runs room based AI Behavior
     this.player.fsm.setState('active')
-    this.npcs.fsm.setState('active')
+    this.npcs.fsm.setState('active') // runs each NPC active Behavior
+    // starting with Offscreen
+    //then onScreen WHICH NEEDS TODO!!!
+    // maybe checks onscreen and adds a
+    // ResolveAction??
+    // ex: suspectingSeq
+    // WAIT do i need to do anyhting?
+    // // i think each npc should have seq they need
+    // maybe a few need to make sure they dont get delted 'REMOVE' if ONSCREE
+    //So check ONSCREEN and Delay remove?
+    //Add a removeAct?
+    //in fsm for onscreen
+    //could loop through behavior and
+    // //determine which to delay or remove or add new seq?
+    // ex: suspecting, respass...
+    //things that just run once...??
+    /**
+     * TESTJPF I THINK this is it::
+     * EX trespass: on sequence PROCEED
+     * if Onscreen new OnScreenAction('trespass', this.getprops)
+     */
     print('????? :::: QQQQQ: Quest Related Status checks: Running...')
     this.quests.fsm.update(dt)
     print('???? ::: QQQQ: Quest Related Status checks: Finished.')
   }
   private onTurnExit(): void {}
-  /**
-  private didCrossPaths(o: string, t: string): boolean {
-    const owner = this.npcs.all[o]
-    const target = this.npcs.all[t]
-    // prettier-ignore
-    // print('didcross:::', owner.name, target.name, owner.currRoom == target.currRoom, owner.currRoom == target.exitRoom, owner.exitRoom == target.currRoom)
-    return (
-      owner.currRoom == target.currRoom ||
-      (owner.currRoom == target.exitRoom && owner.exitRoom == target.currRoom)
-    )
-  }*/
+  private onFaintEnter(): void {
+    this.clock = this.clock + 6
+    this.player.ap = this.player.apMax - 6
+    this.player.hp = this.player.hpMax - 1
+  }
+  private onFaintUpdate(): void {
+    //testjpf could probably remove
+    // use placebehavior instead?
+    this.player.setRoomInfo()
+    this.player.fsm.update(dt)
+    this.quests.fsm.update(dt)
+    this.tasks.fsm.update(dt)
+    this.npcs.fsm.update(dt)
+    this.rooms.fsm.update(dt)
+
+    this.fsm.setState('turn')
+  }
+  private onFaintExit(): void {}
   returnNpc(n: string): NpcState {
     return this.npcs.all[n]
   }

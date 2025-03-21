@@ -9,7 +9,15 @@ import {
 import RoomState from '../../states/room'
 import Storage from '../../states/storage'
 import { cicadaModulus } from '../../utils/utils'
-
+/**
+ *
+ * testjpf
+ * i think these shoudl create Steal / Stash / Take seqs for characters
+ * that might take care of these props. should be behavior props.
+ * then i can deal with them with all other behavior.
+ * run behavior ewheneve i need instead of forced through FSM!!!!!
+ * //maybe not!! see if it pans out later
+ */
 function steal_stash_checks(this: RoomState) {
   let thiefVictim = null
   let thief = null

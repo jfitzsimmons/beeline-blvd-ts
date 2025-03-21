@@ -33,12 +33,7 @@ export default class WorldTasks {
       onUpdate: this.onTurnUpdate.bind(this),
       onExit: this.onTurnExit.bind(this),
     })
-    this.fsm.addState('new', {
-      onEnter: this.onNewEnter.bind(this),
-      onUpdate: this.onNewUpdate.bind(this),
-      onExit: this.onNewExit.bind(this),
-    })
-    this.fsm.setState('new')
+    this.fsm.setState('idle')
 
     this.removeTaskByCause = this.removeTaskByCause.bind(this)
     this.removeTaskByLabel = this.removeTaskByLabel.bind(this)
@@ -46,9 +41,7 @@ export default class WorldTasks {
     this.npcHasTask = this.npcHasTask.bind(this)
     this.taskBuilder = this.taskBuilder.bind(this)
   }
-  private onNewEnter(): void {}
-  private onNewUpdate(): void {}
-  private onNewExit(): void {}
+
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {
     let i = this.all.length

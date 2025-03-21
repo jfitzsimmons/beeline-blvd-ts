@@ -106,6 +106,13 @@ export default class NpcState extends ActorState {
             ...behaviorDefaults(),
           }
         },
+        onScreen: () => {
+          return {
+            returnPlayer: this.p.world.returnPlayer.bind(this),
+            setConfrontation: this.p.novel.setConfrontation.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
         injury: () => {
           return {
             //addInjured: this.p.addInjured.bind(this),
@@ -134,6 +141,7 @@ export default class NpcState extends ActorState {
             getOccupants: this.p.rooms.getOccupants.bind(this),
             getIgnore: this.p.npcs.getIgnore.bind(this),
             addAdjustMendingQueue: this.p.npcs.addAdjustMendingQueue.bind(this),
+            getFocusedRoom: this.p.rooms.getFocusedRoom.bind(this),
             ...behaviorDefaults(),
           }
         },
