@@ -32,7 +32,7 @@ export default class RecklessAction extends Action {
     cause: string
   ) {
     const props = getProps('announcer') as AnnouncerProps
-    super(props)
+    super()
     this.a = props
     this.inspirer = inspirer
     this.cause = cause

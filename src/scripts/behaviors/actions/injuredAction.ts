@@ -19,7 +19,7 @@ export default class InjuredAction extends Action {
   getProps: (behavior: BehaviorKeys) => ActionProps
   constructor(getProps: (behavior: BehaviorKeys) => ActionProps) {
     const props = getProps('injured') as InjuredProps
-    super(props)
+    super()
     this.a = props
     this.doc = null
     this.getProps = getProps
@@ -79,6 +79,15 @@ export default class InjuredAction extends Action {
                   this.a.currRoom
                 )
               )
+
+            if (this.a.currRoom == scout.p.rooms.getFocusedRoom()) {
+              msg.post(`/${scout.currStation}#npc_loader`, hash('move_npc'), {
+                station: this.a.currStation,
+                npc: scout.name,
+              })
+              // prettier-ignore
+              print("runrun",scout.name, 'STATION MOVE VIA injuredaction Helper', this.a.name, 'in', this.a.currRoom)
+            }
             return () =>
               this.continue(
                 '|>:: GoodSamaritan - Add HELPERSequence for:' +
@@ -117,7 +126,7 @@ export default class InjuredAction extends Action {
     print('|||>>> Behavior:Injur-ed-Action:: Continue:', s)
     return 'continue'
   }
-  alternate(as: Action | Sequence): string | void {
+  alternate(as: Action | Sequence) {
     if (this.doc != null) {
       const doc = this.doc('mender') as MenderProps
       doc.updateFromBehavior('turnPriority', 97)

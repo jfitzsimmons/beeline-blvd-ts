@@ -1,17 +1,18 @@
-import { ActionProps } from '../../types/behaviors'
+//import { ActionProps } from '../../types/behaviors'
+import { BehaviorRunReturn } from '../../types/behaviors'
 import Sequence from './sequence'
 
 export default class Action {
-  actor: ActionProps
-  constructor(actorProps: ActionProps) {
-    this.actor = actorProps
+  //actor: ActionProps
+  constructor() {
+    // this.actor = actorProps
     this.run = this.run.bind(this)
     this.fail = this.fail.bind(this)
     this.success = this.success.bind(this)
     this.alternate = this.alternate.bind(this)
     this.continue = this.continue.bind(this)
   }
-  run(): () => void | string {
+  run(): () => void | string | BehaviorRunReturn {
     return () => print('ACTIONclass run()default::: ')
   }
   fail(str: string) {

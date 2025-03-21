@@ -14,7 +14,7 @@ export default class HelperAction extends Action {
     victim: string
   ) {
     const props = getProps('helper') as HelperProps
-    super(props)
+    super()
     this.a = props
     this.getProps = getProps
     this.victim = victim
@@ -44,17 +44,20 @@ export default class HelperAction extends Action {
       (s: string) => s.slice(0, 3) === 'doc'
     )
 
-    for (const helper of [...new Set([...prevRoom, ...currRoom])]) {
-      if (this.a.returnNpc(helper).turnPriority < 97 && math.random() > 0.4) {
+    for (const h of [...new Set([...prevRoom, ...currRoom])]) {
+      const helper = this.a.returnNpc(h)
+      if (helper.turnPriority < 97 && math.random() > 0.3) {
         //available doctor found
         this.a.addAdjustMendingQueue(this.victim)
         print(
           '||>> Behavior: HELPERACTION',
-          helper,
+          helper.name,
           'was told to get help by',
           this.a.name,
           'for:',
-          this.victim
+          this.victim,
+          'in',
+          helper.currRoom
         )
         return () => this.success()
       }

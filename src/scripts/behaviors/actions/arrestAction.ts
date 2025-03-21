@@ -9,7 +9,7 @@ export default class ArrestAction extends Action {
   getProps: GetProps
   constructor(getProps: GetProps) {
     const props = getProps('infirm') as InfirmProps
-    super(props)
+    super()
     this.a = props
     this.getProps = getProps
   }
@@ -29,7 +29,7 @@ export default class ArrestAction extends Action {
     }
     return () => this.fail('ArrestAction:: Need noVacancy logic')
 
-    return () => this.success()
+    //return () => this.success()
   }
   delay(s: Sequence): void {
     this.a.addToBehavior('active', s)

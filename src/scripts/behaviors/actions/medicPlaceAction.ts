@@ -5,7 +5,7 @@ import Action from '../action'
 export default class MedicPlaceAction extends Action {
   a: MedicPlaceProps
   constructor(props: ActionProps) {
-    super(props)
+    super()
     this.a = props as MedicPlaceProps
   }
   run(): { (): void } {

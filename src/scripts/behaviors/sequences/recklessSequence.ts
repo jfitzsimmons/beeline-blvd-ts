@@ -30,6 +30,14 @@ export default class RecklessSequence extends Sequence {
     this.purpose = purpose
     this.getProps = getProps
     if (this.a.turnPriority < 94) this.a.updateFromBehavior('turnPriority', 94)
+
+    print(
+      '=> Behavior: NEW: RecklessSeq::',
+      this.a.name,
+      'inpired by:',
+      this.inspirer.name,
+      this.purpose
+    )
   }
   run(): 'REMOVE' | '' {
     for (const child of this.children) {

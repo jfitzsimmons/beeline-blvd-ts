@@ -18,7 +18,7 @@ export default class SnitchAction extends Action {
     reason: string
   ) {
     const props = getProps('helper') as HelperProps
-    super(props)
+    super()
     this.a = props
     this.getProps = getProps
     this.perp = perp

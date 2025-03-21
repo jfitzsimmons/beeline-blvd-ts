@@ -17,7 +17,7 @@ export default class TrespassAction extends Action {
   getProps: GetProps
   constructor(getProps: GetProps) {
     const props = getProps('injured')
-    super(props)
+    super()
     this.a =
       props.name === 'player'
         ? (props as HeroInjuredProps)

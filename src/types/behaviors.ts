@@ -1,5 +1,6 @@
 import Sequence from '../scripts/behaviors/sequence'
 import NpcState from '../scripts/states/npc'
+import Storage from '../scripts/states/storage'
 import { Behavior, Traits } from './state'
 import { Effect } from './tasks'
 
@@ -56,6 +57,17 @@ export interface BehaviorSetters {
 export type GetProps =
   | { (behavior: BehaviorKeys): ActionProps }
   | { (behavior: HeroBehaviorKeys): ActionProps }
+
+export type BehaviorRunReturn =
+  | 'REMOVE'
+  | ''
+  | [
+      string,
+      (behavior: BehaviorKeys) => ActionProps,
+      ActionProps,
+      string,
+      Storage?
+    ]
 export interface HeroBehaviorProps {
   effects: () => EffectsProps
   place: () => PlaceProps | HeroPlaceProps
@@ -129,6 +141,7 @@ export interface QuestionProps extends DefaultBehaviorProps {
   love: number
   exitRoom: string
   behavior: Behavior
+  removeInvBonus: (chest_item: string) => void
   addInvBonus(item: string): void
   addOrExtendEffect(effect: Effect): void
   getBehaviorProps(behavior: string): ActionProps
