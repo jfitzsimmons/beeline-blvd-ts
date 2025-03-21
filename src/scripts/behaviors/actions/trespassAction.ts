@@ -37,7 +37,7 @@ export default class TrespassAction extends Action {
           `||>> Behavior: TrespassAction:: ${this.a.name} gets 1 turn clearance for ${this.a.currStation}`
         )
 
-    this.a.updateFromBehavior('turnPriority', 96) // so can add QuestionSeq to available security
+    if (this.a.turnPriority < 93) this.a.updateFromBehavior('turnPriority', 93) // so can add QuestionSeq to available security
 
     //if (this.a.getIgnore().includes(this.a.name))
     // return () =>

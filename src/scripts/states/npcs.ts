@@ -17,7 +17,7 @@ import Selector from '../behaviors/selector'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
 import ImmobileSequence from '../behaviors/sequences/immobileSequence'
 import TrespassSequence from '../behaviors/sequences/trespassSequence'
-import { getRoomPlaceCount, resetRoomPlaceCount } from '../utils/ai'
+import { resetRoomPlaceCount } from '../utils/ai'
 
 const dt = math.randomseed(os.time())
 
@@ -213,21 +213,25 @@ export default class WorldNpcs {
       // prettier-ignore
       // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
     }
+    /**
     let rk: keyof typeof rpctestjpc
     for (rk in rpctestjpc) {
-      const room = rpctestjpc[rk]
+     // const room = rpctestjpc[rk]
       getRoomPlaceCount(rk)
 
-      print('NPCSrpc::: occs: ', rk, room.occupants)
-      let vk: keyof typeof room.ai
+     // print('NPCSrpc::: occs: ', rk, room.occupants)
+     // let vk: keyof typeof room.ai
+    
       for (const n of room.npcs) {
         print('NPCSrpc::: npcs: ', rk, n, this._all[n].currStation)
       }
       for (vk in room.ai) {
         print('NPCSrpc::: key: ', rk, vk, room.ai[vk])
       }
+        
     }
     resetRoomPlaceCount()
+    */
   }
 
   private onPlaceExit(): void {
@@ -285,7 +289,7 @@ export default class WorldNpcs {
       //  actor.behavior.active.run()
       // }
       if (actor.name !== 'player') {
-        print('===>>> SETTING::', actor.name, 'TO.ONSCREEN')
+        print('===>>> SETTING::', actor.name, 'TO.ONSCREEN', actor.turnPriority)
         if (this.all[actor.name].behavior.active.children.length > 0)
           print(
             '===>>> SETTING ::: BeginOnScreen: Active Behaviors::',

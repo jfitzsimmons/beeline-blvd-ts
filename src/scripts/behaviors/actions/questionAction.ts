@@ -13,11 +13,8 @@ import AnnouncerSequence from '../sequences/announcerSequence'
 import InjuredSequence from '../sequences/injuredSequence'
 import ImmobileSequence from '../sequences/immobileSequence'
 import JailedSequence from '../sequences/jailedSequence'
-//import SuspectingAction from './suspectingAction'
 import AssaultedSequence from '../sequences/assaultedSequence'
 import EndAction from './endAction'
-//import RecklessSequence from '../sequences/recklessSequence'
-//import SuspectingSequence from '../sequences/suspectingSequence'
 
 export default class QuestionAction extends Action {
   a: QuestionProps
@@ -49,7 +46,7 @@ export default class QuestionAction extends Action {
     //testjpf convert rest!!!:::
     //testjpf insetad of removng patient and prisoners
     //make it a condition?!?!?TODO NOW::
-    const currRoom = this.a.currRoom == this.perp.currRoom //&& ['isoner', 'atient'].includes(this.perp.currStation.slice(-7, -1))) ||//(this.hero !== null && this.a.currRoom == this.perp.currRoom)
+    const currRoom = this.a.currRoom == this.perp.currRoom
 
     const crossedPaths =
       currRoom === true
@@ -58,7 +55,6 @@ export default class QuestionAction extends Action {
             (s: string) =>
               s === this.perp.name && this.perp.exitRoom == this.a.currRoom
           ).length > 0
-    // print('QuestionAction:: crossedBOOLEAN: ', crossedPaths, this.perp.exitRoom)
     if (crossedPaths === false)
       return () =>
         this.continue(
