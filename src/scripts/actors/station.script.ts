@@ -24,6 +24,17 @@ function prep_interaction(_this: props) {
     actions[_this.npc] = npcs.all[_this.npc].actions
   }
 
+  if (
+    npcs.all[_this.npc] != null &&
+    npcs.all[_this.npc].behavior.active.children.length > 0
+  ) {
+    const behaviors = []
+    for (const behavior of npcs.all[_this.npc].behavior.active.children) {
+      behaviors.push(behavior.constructor.name)
+    }
+    actions.behaviorss = behaviors
+  }
+
   _this.actions = actions
 }
 
@@ -64,7 +75,10 @@ export function on_message(
     this.roomName = message.roomName
     print('loadstation!!!:::', message.npc, this.npc, this.roomName)
     prep_interaction(this) // combine actor actions
-    msg.post('/desk#npc_loader', 'show_npc', { npc: this.npc })
+    msg.post('/desk#npc_loader', 'show_npc', {
+      npc: this.npc,
+      behavior: this.actions.behaviors,
+    })
   } else if (messageId == hash('loadActor')) {
     this.npc = ''
     this.roomName = message.roomName

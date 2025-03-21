@@ -204,6 +204,17 @@ function check_nodes(
     }
   }
 }
+//TESTJPF
+//I need one clickable node that i clone and change the text of.??
+//JUST LIKE you do with label!!
+//let node: node = gui.get_node('_text_label')
+//gui.set_text(node, actorKey)
+//node = gui.get_node('label')
+// what does click look for? action prop that I added!!! array sent from actor
+//really could just be one link. or highligh TALK.  or somethig new like a label Urgent, with actions underneath.?
+// would be cool to have a tiny interact that show preview icons of these URGENT actions.
+// urgent isn't the best word for it.
+//if i get this working need to overhaul dialog system
 function set_interactions(
   actorsActions: {
     [key: string]: string[]
@@ -224,11 +235,18 @@ function set_interactions(
     for (const action of actorsActions[actorKey]) {
       nodepos.y = nodepos.y + spacing
       nodepos = vmath.vector3(nodepos)
-      const node = gui.get_node(action)
-      const clonetree = gui.clone_tree(node)
+      print(action)
+      const parent = gui.clone(gui.get_node('generic'))
+      gui.set_id(parent, action)
+      //  let node: node = gui.get_node('_text_generic')
+      const bg = gui.clone(gui.get_node('_bg_generic'))
+      gui.set_parent(bg, parent)
+      const child = gui.clone(gui.get_node('_text_generic'))
+      gui.set_text(child, action)
+      gui.set_parent(child, parent)
+      const clonetree = gui.clone_tree(parent)
 
       let clonedNode: keyof typeof clonetree
-
       for (clonedNode in clonetree) {
         const clone = gui.clone(clonetree[clonedNode])
         gui.set_position(clone, nodepos)

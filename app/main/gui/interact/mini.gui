@@ -1,4 +1,4 @@
-script: "/scripts/gui/interact.gui_script"
+script: "/scripts/gui/mini.gui_script"
 fonts {
   name: "GillSans"
   font: "/assets/fonts/GillSans.font"

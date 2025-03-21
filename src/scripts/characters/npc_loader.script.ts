@@ -1,6 +1,6 @@
 const { npcs } = globalThis.game.world
 
-function show_npc(name: string) {
+function show_npc(name: string, behaviors: string[]) {
   if (name != '') {
     const npc = npcs.all[name]
     if (
@@ -9,9 +9,34 @@ function show_npc(name: string) {
           b.constructor.name == 'InjuredSequence' ||
           b.constructor.name == 'MendeeSequence'
       )
-    )
+    ) {
+      print('000PREMSGMSGMSGMSGMSGMSGMSG')
+      const params = {
+        pos: go.get_position(npcs.all[name].currStation), //must come from .script
+        actions: behaviors, //generated from actors
+        //script:this.script,
+        //collision:"enter",
+        npcname: npc.name,
+        //parenturl:this.url,
+        //room:this.roomName
+      }
+      msg.post('#mini', 'showmini', params)
       particlefx.play('#injury')
-    else if (npc.behavior.active.children.length > 0) particlefx.play('#wanted')
+    } else if (npc.behavior.active.children.length > 0) {
+      particlefx.play('#wanted')
+
+      const params = {
+        pos: go.get_position(npcs.all[name].currStation), //must come from .script
+        actions: behaviors, //generated from actors
+        //script:this.script,
+        //collision:"enter",
+        npcname: npc.name,
+        //parenturl:this.url,
+        //room:this.roomName
+      }
+      print('PREMSGMSGMSGMSGMSGMSGMSG')
+      msg.post('#mini', 'showmini', params)
+    }
     sprite.play_flipbook('#npcspritebody', npcs.all[name].body)
     sprite.play_flipbook('#npcsprite', npcs.all[name].race)
   } else {
@@ -40,7 +65,13 @@ interface props {
 export function on_message(
   this: props,
   messageId: hash,
-  message: { npc: string; room: string; enter: boolean; station: string },
+  message: {
+    npc: string
+    room: string
+    enter: boolean
+    station: string
+    behaviors: string[]
+  },
   _sender: url
 ): void {
   //const senderId = go.get_id()
@@ -52,8 +83,19 @@ export function on_message(
       p.z = 0
       go.set_position(p)
       this.npc = message.npc
-      //giving diff characters different sets of actions might be fun
+      //giving diff characters different sets of actions might be funn
       this.actions[this.npc] = npcs.all[this.npc].actions
+
+      if (
+        npcs.all[this.npc] != null &&
+        npcs.all[this.npc].behavior.active.children.length > 0
+      ) {
+        const behaviors = []
+        for (const behavior of npcs.all[this.npc].behavior.active.children) {
+          behaviors.push(behavior.constructor.name)
+        }
+        this.actions.behaviors = behaviors
+      }
       this.room = message.room
       //this.script = message.script
     } else {
@@ -62,7 +104,7 @@ export function on_message(
       msg.post('#fluid', 'disable')
       msg.post('#solid', 'disable')
     }
-    show_npc(this.npc)
+    show_npc(this.npc, this.actions.behaviors)
   } else if (messageId == hash('move_npc')) {
     // print('MOVENPCmsg::', message.npc, _sender, _sender.fragment)
     let deskarea = { x: 0, y: 0 }
@@ -85,7 +127,7 @@ export function on_message(
     }
     move_npc(message.station, deskarea)
   } else if (messageId == hash('show_npc')) {
-    show_npc(message.npc)
+    show_npc(message.npc, message.behaviors)
   } else if (messageId == hash('trigger_response')) {
     if (message.enter) {
       const params = {
