@@ -6,12 +6,6 @@ function load_npcs() {
   let station: keyof typeof stations
   for (station in stations) {
     const npc = stations[station]
-    print(
-      'groundsLEVEL::: npc,station',
-      npc,
-      station,
-      rooms.all[roomName].stations.desk
-    )
     const params = {
       npc,
     }

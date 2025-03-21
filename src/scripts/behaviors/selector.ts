@@ -42,17 +42,14 @@ export default class Selector {
             new PhoneSequence(proceed[1], proceed[2] as HelperProps, proceed[3])
           )
         } else if (proceed[0] === 'suspecting') {
-          const props = proceed[1]('question') as QuestionProps
+          // const props = proceed[1]('question') as QuestionProps
 
-          props.addToBehavior(
-            'active',
-            new SuspectingSequence(
-              proceed[1],
-              proceed[2] as QuestionProps,
-              proceed[3],
-              proceed[4] !== null ? proceed[4] : undefined
-            )
-          )
+          new SuspectingSequence(
+            proceed[1],
+            proceed[2] as QuestionProps,
+            proceed[3],
+            proceed[4] !== null ? proceed[4] : undefined
+          ).run()
         } else if (proceed[0] === 'reckless') {
           const props = proceed[1]('question') as QuestionProps
 

@@ -90,14 +90,6 @@ export default class AssaultedAction extends Action {
                 'assault',
               ])
             )
-          // enforcer.addToBehavior(
-          //'active',
-          // new SuspectingSequence(this.enforcer, this.assaulter, 'assault')
-          // )
-          // }
-          /**
-           * () => this.alternate(EndAction!!!!(['suspecting',]))
-           */
         }
         if (consequence === 'assaultcritfail') {
           return () =>
@@ -109,15 +101,6 @@ export default class AssaultedAction extends Action {
                 'assault',
               ])
             )
-
-          // enforcer.addToBehavior(
-          // 'active',
-          // new PhoneSequence(
-          //  enforcerprops,
-          // this.assaulter.getBehaviorProps('helper') as HelperProps,
-          // 'assault'
-          // )
-          //)
         }
 
         return () =>

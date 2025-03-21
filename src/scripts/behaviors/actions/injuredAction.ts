@@ -79,6 +79,15 @@ export default class InjuredAction extends Action {
                   this.a.currRoom
                 )
               )
+
+            if (this.a.currRoom == scout.p.rooms.getFocusedRoom()) {
+              msg.post(`/${scout.currStation}#npc_loader`, hash('move_npc'), {
+                station: this.a.currStation,
+                npc: scout.name,
+              })
+              // prettier-ignore
+              print("runrun",scout.name, 'STATION MOVE VIA injuredaction Helper', this.a.name, 'in', this.a.currRoom)
+            }
             return () =>
               this.continue(
                 '|>:: GoodSamaritan - Add HELPERSequence for:' +

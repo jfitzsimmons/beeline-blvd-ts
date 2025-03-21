@@ -1,9 +1,17 @@
-const { npcs, tasks } = globalThis.game.world
+const { npcs } = globalThis.game.world
 
 function show_npc(name: string) {
   if (name != '') {
-    if (npcs.all[name].hp <= 0) particlefx.play('#injury')
-    else if (tasks.npc_is_wanted(name) == true) particlefx.play('#wanted')
+    const npc = npcs.all[name]
+    if (
+      npc.behavior.active.children.some(
+        (b) =>
+          b.constructor.name == 'InjuredSequence' ||
+          b.constructor.name == 'MendeeSequence'
+      )
+    )
+      particlefx.play('#injury')
+    else if (npc.behavior.active.children.length > 0) particlefx.play('#wanted')
     sprite.play_flipbook('#npcspritebody', npcs.all[name].body)
     sprite.play_flipbook('#npcsprite', npcs.all[name].race)
   } else {

@@ -15,7 +15,7 @@ export default class MenderAction extends Action {
         npc: this.a.name,
       })
       // prettier-ignore
-      print('newnew',this.a.name, 'STATION MOVE VIA TASK mender', this.mendee.name, 'in', this.a.currRoom)
+      print('newnew',this.a.name,this.a.currStation, 'STATION MOVE VIA TASK mender', this.mendee.name,this.mendee.currStation, 'in', this.a.currRoom)
     }
   }
   run(): { (): void } {
@@ -27,7 +27,7 @@ export default class MenderAction extends Action {
           npc: this.a.name,
         })
         // prettier-ignore
-        print('runrun',this.a.name, 'STATION MOVE VIA TASK mender', this.mendee.name, 'in', this.a.currRoom)
+        print('runrun',this.a.name,this.a.currStation, 'STATION MOVE VIA TASK mender', this.mendee.name, 'in', this.a.currRoom)
       }
       return () => this.continue('continue')
     } else {
