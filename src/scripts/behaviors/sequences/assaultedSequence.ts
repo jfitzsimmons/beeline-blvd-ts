@@ -1,6 +1,7 @@
 import {
   ActionProps,
   BehaviorKeys,
+  BehaviorRunReturn,
   QuestionProps,
 } from '../../../types/behaviors'
 import Action from '../action'
@@ -40,10 +41,19 @@ export default class AssaultedSequence extends Sequence {
     )
     // if (this.prevSpr < 94) this.a.updateFromBehavior('turnPriority', 94)
   }
-  run(): 'REMOVE' | '' {
+  run(): BehaviorRunReturn {
     for (const child of this.children) {
-      child.run()()
-      // if (proceed == 'continue')
+      const proceed = child.run()()
+      print('000AssaultedSequence:: Proceed is array', Array.isArray(proceed))
+
+      if (Array.isArray(proceed)) {
+        print(
+          'AssaultedSequence:: Proceed is array',
+          Array.isArray(proceed),
+          proceed[2].name
+        )
+        return proceed
+      }
       // this.a.updateFromBehavior('turnPriority', this.prevSpr)
     }
 

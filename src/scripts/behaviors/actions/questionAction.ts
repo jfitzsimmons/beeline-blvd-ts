@@ -14,7 +14,9 @@ import InjuredSequence from '../sequences/injuredSequence'
 import ImmobileSequence from '../sequences/immobileSequence'
 import JailedSequence from '../sequences/jailedSequence'
 //import SuspectingAction from './suspectingAction'
-//import AssaultedSequence from '../sequences/assaultedSequence'
+import AssaultedSequence from '../sequences/assaultedSequence'
+import EndAction from './endAction'
+//import RecklessSequence from '../sequences/recklessSequence'
 //import SuspectingSequence from '../sequences/suspectingSequence'
 
 export default class QuestionAction extends Action {
@@ -29,23 +31,12 @@ export default class QuestionAction extends Action {
     reason: string
   ) {
     const props = getProps('question') as QuestionProps
-    super(props)
+    super()
     this.a = props
     this.hero = perp.name == 'player' ? (perp as HeroQuestionProps) : null
     this.reason = reason
     this.perp = this.hero == null ? (perp as QuestionProps) : this.hero
     this.getProps = getProps
-    if (
-      this.a.currRoom == this.perp.currRoom &&
-      this.a.currRoom == this.a.getFocusedRoom()
-    ) {
-      msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
-        station: this.perp.currStation,
-        npc: this.a.name,
-      })
-      // prettier-ignore
-      print('newnew',this.a.name,this.a.currStation, 'STATION MOVE VIA TASK question', this.perp.name, 'in', this.a.currRoom,this.perp.currRoom, this.perp.currStation)
-    }
   }
 
   run(): { (): void } {
@@ -71,7 +62,7 @@ export default class QuestionAction extends Action {
     if (crossedPaths === false)
       return () =>
         this.continue(
-          `QuestionAction::: ${this.a.name} did not cross paths with ${this.perp.name}`
+          `QuestionAction::: ${this.a.name} did not cross paths with ${this.perp.name} for ${this.reason}`
         )
     if (this.hero !== null && crossedPaths === true) {
       this.hero.setConfrontation(this.a.name, this.reason, 'questioning')
@@ -91,10 +82,11 @@ export default class QuestionAction extends Action {
 
     for (let i = 0; i < resultChecks.length - 1; i++) {
       consequence = resultChecks[i](this.a, this.perp)
-      // prettier-ignore
-      // print(i, '-- buildconsequence::: ARGCHECKS::', consolation.pass, consolation.type, checked, checker)
       if (consequence.pass == true) i = resultChecks.length
     }
+    //For abstraction could have a
+    //consequenceAction tha build these
+    //testjpf
     if (consequence.type === 'jailed' || consequence.type === 'phonesecurity') {
       //hnadle logic here for currstation prisoner
       // and currstation patient
@@ -140,6 +132,17 @@ export default class QuestionAction extends Action {
           new ArrestSequence(this.perp.getBehaviorProps.bind(this.perp))
         )
       }
+      if (
+        this.a.currRoom == this.perp.currRoom &&
+        this.a.currRoom == this.a.getFocusedRoom()
+      ) {
+        msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+          station: this.perp.currStation,
+          npc: this.a.name,
+        })
+        // prettier-ignore
+        print('runrun',this.a.name,this.a.currStation, 'STATION MOVE VIA  question',consequence.type, this.perp.name, 'in', this.a.currRoom,this.perp.currRoom, this.perp.currStation)
+      }
       return () =>
         this.success(
           `QuestionAction::: Success:: ARREST:: ${this.perp.name} by ${this.a.name} `
@@ -159,10 +162,18 @@ export default class QuestionAction extends Action {
           consequence.type
         )
       )
-    } else if (
-      consequence.type.slice(0, 6) === 'wPunch' &&
-      (this.perp.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
-    ) {
+      if (
+        this.a.currRoom == this.perp.currRoom &&
+        this.a.currRoom == this.a.getFocusedRoom()
+      ) {
+        msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+          station: this.perp.currStation,
+          npc: this.a.name,
+        })
+        // prettier-ignore
+        print('runrun',this.a.name,this.a.currStation, 'STATION MOVE VIA  question',consequence.type, this.perp.name, 'in', this.a.currRoom,this.perp.currRoom, this.perp.currStation)
+      }
+    } else if (consequence.type.slice(0, 6) === 'wPunch') {
       print(
         this.perp.hp,
         'QuestioningAction::PUNCH perp got punched',
@@ -172,36 +183,34 @@ export default class QuestionAction extends Action {
         'in',
         this.a.currRoom
       )
-      this.perp.addToBehavior(
-        'active',
-        new InjuredSequence(this.perp.getBehaviorProps.bind(this.perp))
-      )
-      if (
-        !this.perp.behavior.place.children.some(
-          (c) => c instanceof ImmobileSequence
-        )
-      )
+      if ((this.perp.getBehaviorProps('announcer') as AnnouncerProps).hp < 1) {
         this.perp.addToBehavior(
-          'place',
-          new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
+          'active',
+          new InjuredSequence(this.perp.getBehaviorProps.bind(this.perp))
         )
-      /**
-      this.perp.addToBehavior(
-        'place',
-        new SuspectingSequence(
-          this.perp.getBehaviorProps.bind(this.perp),
-          this.perp.getBehaviorProps('question') as QuestionProps,
-          this.reason
+        if (
+          !this.perp.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
         )
-      )
- */
-      //testjpf Do intermediate AssaultedAction that then
-      //  searches room like trespassing
-      // and create supecting seq
-      // and runs it?
-      // this also leaves room for other actions other than suspecting!
-      //TODO
-      /**
+          this.perp.addToBehavior(
+            'place',
+            new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
+          )
+      }
+
+      if (
+        this.a.currRoom == this.perp.currRoom &&
+        this.a.currRoom == this.a.getFocusedRoom()
+      ) {
+        msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+          station: this.perp.currStation,
+          npc: this.a.name,
+        })
+        // prettier-ignore
+        print('runrun',this.a.name,this.a.currStation, 'STATION MOVE VIA  question',consequence.type, this.perp.name, 'in', this.a.currRoom,this.perp.currRoom, this.perp.currStation)
+      }
+
       return () =>
         this.alternate(
           new AssaultedSequence(
@@ -209,11 +218,7 @@ export default class QuestionAction extends Action {
             this.getProps('question') as QuestionProps
           )
         )
-          */
-    } else if (
-      consequence.type.slice(0, 6) === 'sPunch' &&
-      (this.a.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
-    ) {
+    } else if (consequence.type.slice(0, 6) === 'sPunch') {
       print(
         this.a.hp,
         'QuestioningAction::PUNCH WATCHER got punched',
@@ -221,23 +226,37 @@ export default class QuestionAction extends Action {
         'by',
         this.perp.name
       )
-      // testjpf probably need an update()
-      //for injuredsequencetoo!
-      this.a.addToBehavior(
-        'active',
-        new InjuredSequence(this.a.getBehaviorProps.bind(this.a))
-      )
+      if ((this.a.getBehaviorProps('announcer') as AnnouncerProps).hp < 1) {
+        // testjpf probably need an update()
+        //for injuredsequencetoo!
+        this.a.addToBehavior(
+          'active',
+          new InjuredSequence(this.a.getBehaviorProps.bind(this.a))
+        )
+
+        if (
+          !this.perp.behavior.place.children.some(
+            (c) => c instanceof ImmobileSequence
+          )
+        )
+          this.a.addToBehavior(
+            'place',
+            new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
+          )
+      }
 
       if (
-        !this.perp.behavior.place.children.some(
-          (c) => c instanceof ImmobileSequence
-        )
-      )
-        this.a.addToBehavior(
-          'place',
-          new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
-        )
-      /**
+        this.a.currRoom == this.perp.currRoom &&
+        this.a.currRoom == this.a.getFocusedRoom()
+      ) {
+        msg.post(`/${this.perp.currStation}#npc_loader`, hash('move_npc'), {
+          station: this.a.currStation,
+          npc: this.perp.name,
+        })
+        // prettier-ignore
+        print('runrun',this.perp.name,this.a.currStation, 'STATION MOVE VIA  question',consequence.type, this.a.name, 'in', this.a.currRoom,this.perp.currRoom, this.perp.currStation)
+      }
+
       return () =>
         this.alternate(
           new AssaultedSequence(
@@ -245,19 +264,30 @@ export default class QuestionAction extends Action {
             this.perp.getBehaviorProps('question') as QuestionProps
           )
         )
-             **/
+    } else if (consequence.type == 'reckless') {
+      if (
+        this.a.currRoom == this.perp.currRoom &&
+        this.a.currRoom == this.a.getFocusedRoom()
+      ) {
+        msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+          station: this.perp.currStation,
+          npc: this.a.name,
+        })
+        // prettier-ignore
+        print('runrun',this.a.name,this.a.currStation, 'STATION MOVE VIA  question',consequence.type, this.perp.name, 'in', this.a.currRoom,this.perp.currRoom, this.perp.currStation)
+      }
+      return () =>
+        this.alternate(
+          new EndAction([
+            'reckless',
+            this.getProps as (behavior: BehaviorKeys) => ActionProps,
+            this.perp,
+            this.reason,
+          ])
+        )
+      // new RecklessSequence()
     }
-
     /**
-     * cant ref SUSPECTINSEQ so not on the file Questionseq at all???!!!
-     * !!! TESTED ABOVE AND it WORKS!!!
-     * testjpf if slice 16 punch alternate(new AssaultedAction())
-     */
-    print(
-      '||>> Behavior: QUESTIONACTION:: Consequence pass,type:',
-      consequence.pass,
-      consequence.type
-    )
     if (
       this.a.currRoom == this.perp.currRoom &&
       this.a.currRoom == this.a.getFocusedRoom()
@@ -269,9 +299,10 @@ export default class QuestionAction extends Action {
       // prettier-ignore
       print('runrun',this.a.name,this.a.currStation, 'STATION MOVE VIA TASK question', this.perp.name, 'in', this.a.currRoom,this.perp.currRoom, this.perp.currStation)
     }
+      */
     return () =>
       this.success(
-        '||>> Behavior: QUESTIONACTION::: DEFAULT::' + consequence.type
+        `||>> Behavior: QUESTIONACTION::: DEFAULT:: ${consequence.type}`
       )
   }
   continue(s: string): string {
@@ -279,7 +310,7 @@ export default class QuestionAction extends Action {
     return 'continue'
   }
   success(s?: string): string {
-    print('QuestionAction:: Success:', s)
+    print('QuestionAction:: Success:', s, `for ${this.reason}`)
     return 'success'
   }
 }

@@ -5,11 +5,11 @@ export default class EffectsAction extends Action {
   a: EffectsProps
   constructor(getProps: GetProps) {
     const props = getProps('effects') as EffectsProps
-    super(props)
+    super()
     this.a = props
   }
   run(): () => void {
-    const { effects, traits } = this.actor as EffectsProps
+    const { effects, traits } = this.a
     if (effects.length < 1)
       return () =>
         this.fail('||>> Behavior: Action: EFFECTaction:: No FX to remove')

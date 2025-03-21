@@ -47,7 +47,7 @@ export default class SuspectingAction extends Action {
     storage?: Storage
   ) {
     const props = getProps('question') as QuestionProps
-    super(props)
+    super()
     this.a = props
     this.perp =
       perp.name === 'player'
@@ -57,6 +57,7 @@ export default class SuspectingAction extends Action {
     this.storage = storage
     this.cause = cause
     this.isHero = this.perp.name === 'player' ? true : false
+    /**
     if (
       this.a.currRoom == this.perp.currRoom &&
       this.a.currRoom == this.a.getFocusedRoom() &&
@@ -69,6 +70,7 @@ export default class SuspectingAction extends Action {
       // prettier-ignore
       print("NEWNEW",this.a.name, 'STATION MOVE VIA TASK confront', this.perp.name, 'in', this.a.currRoom)
     }
+      **/
   }
   run(): { (): void } {
     //testjpf have conditions fro severity?!?!?
@@ -101,20 +103,13 @@ export default class SuspectingAction extends Action {
 
     for (let i = resultChecks.length; i-- !== 0; ) {
       consequence = resultChecks[i](this.a, this.perp)
-      // prettier-ignore
-      // print(i, '-- buildconsequence::: ARGCHECKS::', consequence.pass, consequence.type, checked, checker)
       if (consequence.pass == true) i = 0
     }
 
     // prettier-ignore
     print('Suspectingaction::: consequence:::',consequence.type,this.cause,'| confronter:',this.a.name,(this.a.getBehaviorProps('announcer')as AnnouncerProps).hp,'perp:',this.perp.name,(this.perp.getBehaviorProps('announcer')as AnnouncerProps).hp,'inroom:',this.a.currRoom)
     /***
-     * testjpf seems here i need conditions that create new
-     * sequences for different types of consequences
-     * snitch, reckless, jailed (similar to questionAct!!!)
-     *
-     * what to do with merits/demerits
-     *
+     * testjpf
      * need to open inventory on
      * exiting novel
      */
@@ -228,21 +223,13 @@ export default class SuspectingAction extends Action {
 
         return () =>
           this.success(
-            `SuspectingACtion::: Fail: ishero: cause concolation:${this.cause} | ${consequence.type}`
+            `SuspectingACtion::: Suspicious Confront: ishero: cause concolation:${this.cause} | ${consequence.type}`
           )
       }
-    } else if (
-      this.a.currRoom == this.perp.currRoom &&
-      this.a.currRoom == this.a.getFocusedRoom()
-    ) {
-      msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
-        station: this.perp.currStation,
-        npc: this.a.name,
-      })
-      // prettier-ignore
-      print("runrun",this.a.name, 'STATION MOVE VIA TASK confront', this.perp.name, 'in', this.a.currRoom)
     }
-
+    //For abstraction could have a
+    //consequenceAction tha build these
+    //testjpf
     if (this.isHero === false) {
       if (consequence.type == 'snitch') {
         //testjpf::
@@ -328,7 +315,29 @@ export default class SuspectingAction extends Action {
           'place',
           new ArrestSequence(this.perp.getBehaviorProps.bind(this.perp))
         )
+        if (
+          this.a.currRoom == this.perp.currRoom &&
+          this.a.currRoom == this.a.getFocusedRoom()
+        ) {
+          msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+            station: this.perp.currStation,
+            npc: this.a.name,
+          })
+          // prettier-ignore
+          print("runrun",this.a.name, 'STATION MOVE VIA suspecting jailed', this.perp.name, 'in', this.a.currRoom)
+        }
       } else if (consequence.type == 'reckless') {
+        if (
+          this.a.currRoom == this.perp.currRoom &&
+          this.a.currRoom == this.a.getFocusedRoom()
+        ) {
+          msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+            station: this.perp.currStation,
+            npc: this.a.name,
+          })
+          // prettier-ignore
+          print("runrun",this.a.name, 'STATION MOVE VIA suspecting jailed', this.perp.name, 'in', this.a.currRoom)
+        }
         return () => this.continue('reckless')
       } else if (
         consequence.type == 'merits' ||
@@ -348,10 +357,18 @@ export default class SuspectingAction extends Action {
             consequence.type
           )
         )
-      } else if (
-        consequence.type.slice(0, 6) === 'wPunch' &&
-        (this.perp.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
-      ) {
+        if (
+          this.a.currRoom == this.perp.currRoom &&
+          this.a.currRoom == this.a.getFocusedRoom()
+        ) {
+          msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+            station: this.perp.currStation,
+            npc: this.a.name,
+          })
+          // prettier-ignore
+          print("runrun",this.a.name, 'STATION MOVE VIA suspecting',consequence.type, this.perp.name, 'in', this.a.currRoom)
+        }
+      } else if (consequence.type.slice(0, 6) === 'wPunch') {
         print(
           this.perp.hp,
           'SuspectingAction::PUNCH perp got punched',
@@ -359,21 +376,34 @@ export default class SuspectingAction extends Action {
           'by',
           this.a.name
         )
-        this.perp.addToBehavior(
-          'active',
-          new InjuredSequence(this.perp.getBehaviorProps.bind(this.perp))
-        )
-
-        if (
-          !this.perp.behavior.place.children.some(
-            (c) => c instanceof ImmobileSequence
-          )
-        )
+        //testjpf need update for injury,mendee. pause mendee if mender gets distracted.
+        if ((this.a.getBehaviorProps('announcer') as AnnouncerProps).hp < 1) {
           this.perp.addToBehavior(
-            'place',
-            new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
+            'active',
+            new InjuredSequence(this.perp.getBehaviorProps.bind(this.perp))
           )
 
+          if (
+            !this.perp.behavior.place.children.some(
+              (c) => c instanceof ImmobileSequence
+            )
+          )
+            this.perp.addToBehavior(
+              'place',
+              new ImmobileSequence(this.perp.getBehaviorProps.bind(this.perp))
+            )
+        }
+        if (
+          this.a.currRoom == this.perp.currRoom &&
+          this.a.currRoom == this.a.getFocusedRoom()
+        ) {
+          msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
+            station: this.perp.currStation,
+            npc: this.a.name,
+          })
+          // prettier-ignore
+          print("runrun",this.a.name, 'STATION MOVE VIA suspecting',consequence.type, this.perp.name, 'in', this.a.currRoom)
+        }
         return () =>
           this.alternate(
             new AssaultedSequence(
@@ -381,10 +411,7 @@ export default class SuspectingAction extends Action {
               this.getProps('question') as QuestionProps
             )
           )
-      } else if (
-        consequence.type.slice(0, 6) === 'sPunch' &&
-        (this.a.getBehaviorProps('announcer') as AnnouncerProps).hp < 1
-      ) {
+      } else if (consequence.type.slice(0, 6) === 'sPunch') {
         print(
           this.a.hp,
           'SuspectingAction::PUNCH WATCHER got punched',
@@ -392,53 +419,52 @@ export default class SuspectingAction extends Action {
           'by',
           this.perp.name
         )
-
-        this.a.addToBehavior(
-          'active',
-          new InjuredSequence(this.a.getBehaviorProps.bind(this.a))
-        )
-
-        if (
-          !this.a.behavior.place.children.some(
-            (c) => c instanceof ImmobileSequence
-          )
-        )
+        if ((this.a.getBehaviorProps('announcer') as AnnouncerProps).hp < 1) {
           this.a.addToBehavior(
-            'place',
-            new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
+            'active',
+            new InjuredSequence(this.a.getBehaviorProps.bind(this.a))
           )
 
-        return () =>
-          this.alternate(
-            new AssaultedSequence(
-              this.getProps as (behavior: BehaviorKeys) => ActionProps,
-              this.perp.getBehaviorProps('question') as QuestionProps
+          if (
+            !this.a.behavior.place.children.some(
+              (c) => c instanceof ImmobileSequence
             )
           )
+            this.a.addToBehavior(
+              'place',
+              new ImmobileSequence(this.a.getBehaviorProps.bind(this.a))
+            )
+          if (
+            this.a.currRoom == this.perp.currRoom &&
+            this.a.currRoom == this.a.getFocusedRoom()
+          ) {
+            msg.post(`/${this.perp.currStation}#npc_loader`, hash('move_npc'), {
+              station: this.a.currStation,
+              npc: this.perp.name,
+            })
+            // prettier-ignore
+            print("runrun",this.perp.name, 'STATION MOVE VIA suspecting',consequence.type, this.a.name, 'in', this.a.currRoom)
+          }
+          return () =>
+            this.alternate(
+              new AssaultedSequence(
+                this.getProps as (behavior: BehaviorKeys) => ActionProps,
+                this.perp.getBehaviorProps('question') as QuestionProps
+              )
+            )
+        }
       }
     }
     if (consequence.type == 'neutral' && this.isHero == false) {
       const robbed = this.storage == undefined ? this.a : this.storage
       let chest_item: string | null = null
-      /**
-       * need sequence for snitch!!
-       * need returns for chkfuncs call_security
-       * differentiate between stealing, taking and stashing? no just...
-       * have some sort of severiity on the actors?
-       * luggage bad, reception desk bad, customs desk very bad,  vase not so bad
-       * needs to be part of npcstealcheck and witnessplayer
-       * maybe local function in chkfuncs that bases it on actor naem
-       * and room name and npc clan etc...
-       * that in turn decides the resultChecks / checks
-       * ALso this alway has some sort of inventory part currently
-       * probably will need to abstract at some point
-       */
+      const rand = math.random()
 
-      if (math.random() < 0.4) {
+      if (rand < 0.4) {
         chest_item =
           robbed.inventory[math.random(0, robbed.inventory.length - 1)]
         //chest_item = removeRandom(this.a.inventory, ['apple01'])
-      } else if (math.random() < 0.5) {
+      } else if (rand < 0.7) {
         chest_item = removeValuable(robbed.inventory)
       } else {
         chest_item = removeAdvantageous(
@@ -448,8 +474,8 @@ export default class SuspectingAction extends Action {
       }
 
       if (chest_item !== null) {
-        if (robbed.updateInventory !== undefined)
-          robbed.updateInventory('delete', chest_item)
+        //if (robbed.updateInventory !== undefined)
+        robbed.updateInventory('delete', chest_item)
         this.perp.updateInventory('add', chest_item)
       }
       //if (victim == true ){ remove_chest_bonus(w, chest_item) }
@@ -465,7 +491,6 @@ export default class SuspectingAction extends Action {
     } else if (consequence.type == 'neutral' && this.isHero == true) {
       const params = {
         actorname: this.storage?.name,
-        //isNpc: _this.isNpc,
         watcher: this.a.name,
         action: this.cause,
       }
@@ -478,9 +503,6 @@ export default class SuspectingAction extends Action {
     }
 
     return () => this.success(`Default, ${consequence.type},`)
-    //need something that checks response
-    //does response need EffectsAction, sequences, something else???
-    //testjpf
   }
   success(s?: string) {
     print('SuspectingAction:: Success::', s)

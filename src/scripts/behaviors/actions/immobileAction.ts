@@ -4,7 +4,7 @@ import Action from '../action'
 export default class ImmobileAction extends Action {
   a: ImmobileProps
   constructor(a: ImmobileProps) {
-    super(a)
+    super()
     this.a = a
     this.fail = this.fail.bind(this)
   }
