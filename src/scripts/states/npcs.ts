@@ -7,17 +7,19 @@ import {
 import NpcState from './npc'
 import StateMachine from './stateMachine'
 import { Npcs } from '../../types/state'
+import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
 import { QuestMethods } from '../../types/tasks'
 import { NpcProps, WorldNpcsArgs } from '../../types/world'
+import { QuestionProps } from '../../types/behaviors'
+import { SECURITY } from '../utils/consts'
+import { resetRoomPlaceCount } from '../utils/ai'
 import { arraymove, shuffle } from '../utils/utils'
-import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
-//import { confrontation_check } from './inits/checksFuncs'
-import PlaceSequence from '../behaviors/sequences/placeSequence'
 import Selector from '../behaviors/selector'
+import PlaceSequence from '../behaviors/sequences/placeSequence'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
 import ImmobileSequence from '../behaviors/sequences/immobileSequence'
 import TrespassSequence from '../behaviors/sequences/trespassSequence'
-import { resetRoomPlaceCount } from '../utils/ai'
+import QuestionSequence from '../behaviors/sequences/questionSequence'
 
 const dt = math.randomseed(os.time())
 
@@ -33,11 +35,13 @@ export default class WorldNpcs {
   //injured: string[]
   ignore: string[]
   mendingQueue: string[]
+  wantedQueue: Array<[string, string]>
 
   constructor(npcsProps: WorldNpcsArgs) {
     // this.infirmed = [] // move to room? infrimed action?
     //this.injured = [] // room? injured action?
     this.mendingQueue = []
+    this.wantedQueue = []
     this.ignore = []
     this.order = []
     this.onScreen = []
@@ -59,6 +63,8 @@ export default class WorldNpcs {
         // returnSecurity: this.returnDoctors.bind(this),
         // returnAll: this.returnAll.bind(this),
         // returnOrderAll: this.returnOrderAll.bind(this),
+        getWantedQueue: this.getWantedQueue.bind(this),
+        addAdjustWantedQueue: this.addAdjustWantedQueue.bind(this),
         getMendingQueue: this.getMendingQueue.bind(this),
         addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
         removeMendee: this.removeMendee.bind(this),
@@ -148,6 +154,32 @@ export default class WorldNpcs {
           new TrespassSequence(npc.getBehaviorProps.bind(npc))
         )
       }
+
+      // TEST DATA DEFAULTS
+      this.all.security001.behavior.active.children.push(
+        new QuestionSequence(
+          this.all.security001.getBehaviorProps.bind(this),
+          this.all.mailroom01.getBehaviorProps.bind(this),
+          'assault'
+        )
+      )
+
+      this.all.security004.behavior.active.children.push(
+        new QuestionSequence(
+          this.all.security004.getBehaviorProps.bind(this),
+          this.all.mailroom01.getBehaviorProps.bind(this),
+          'assault'
+        )
+      )
+
+      this.all.security005.behavior.active.children.push(
+        new QuestionSequence(
+          this.all.security005.getBehaviorProps.bind(this),
+          this.all.mailroom01.getBehaviorProps.bind(this),
+          'assault'
+        )
+      )
+
       npc.fsm.setState('active')
     }
   }
@@ -344,6 +376,53 @@ export default class WorldNpcs {
         )
       print('===>>> SETTING OffSCREEN::', npc.name, 'TO.TURN')
       npc.fsm.setState('turn')
+    }
+  }
+  getWantedQueue(): [string, string][] {
+    return this.wantedQueue
+  }
+  removeWanted(x: string) {
+    this.wantedQueue.splice(
+      this.wantedQueue.findIndex((f) => f[0] == x),
+      1
+    )
+  }
+  addAdjustWantedQueue(fugitive: string, room: string) {
+    const wantedI = this.wantedQueue.findIndex((f) => f[0] == fugitive)
+
+    if (wantedI != -1) {
+      this.wantedQueue[wantedI][1] = room
+
+      if (wantedI > 1) arraymove(this.wantedQueue, wantedI, 0)
+    } else {
+      // print('cautions caused fugitive:', fugitive, 'to be added to meningQueue')
+      //TESTJPF add a QuestioningSeq to all security / update()
+      //maybe everytime they are included they push a new
+      // /QuestionSeq to a random security!!
+      this.wantedQueue.push([fugitive, room])
+      const cop = SECURITY[math.random(0, 4)]
+      for (const behavior of this.all[cop].behavior.active.children) {
+        if (
+          behavior instanceof QuestionSequence &&
+          (behavior.perp('question') as QuestionProps).name == fugitive
+        ) {
+          print('UPDATEUPDATE APBAPBAPBAPB')
+
+          behavior.update(behavior.reason)
+          break
+        } else {
+          print('APBAPBAPBAPB')
+          this.all[cop].addToBehavior(
+            'active',
+            new QuestionSequence(
+              this.all[cop].getBehaviorProps.bind(this.all[cop]),
+              this.all[fugitive].getBehaviorProps.bind(this.all[fugitive]),
+              'apb'
+            )
+          )
+          break
+        }
+      }
     }
   }
   removeMendee(m: string) {

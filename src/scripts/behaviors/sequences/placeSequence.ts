@@ -6,6 +6,7 @@ import {
   PlaceProps,
 } from '../../../types/behaviors'
 import Action from '../action'
+import CopPlaceAction from '../actions/copPlaceAction'
 import EffectsAction from '../actions/effectsAction'
 import HeroPlaceAction from '../actions/heroPlaceAction'
 import MedicPlaceAction from '../actions/medicPlaceAction'
@@ -16,8 +17,13 @@ const lookup: {
 } = {
   doctors: doctorActions,
   hero: playerActions,
+  security: securityActions,
 }
-
+function securityActions(getProps: GetProps) {
+  const gp = getProps as (behavior: BehaviorKeys) => ActionProps
+  const props = gp('cops')
+  return new CopPlaceAction(props)
+}
 function doctorActions(getProps: GetProps) {
   const gp = getProps as (behavior: BehaviorKeys) => ActionProps
   const props = gp('medplace')

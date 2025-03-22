@@ -79,7 +79,6 @@ function show_npc(name: string) {
     }
 
     for (let i = 4; i > count; i--) {
-      print(`count: ${count} | disable ${i} | i $`)
       msg.post(`#emote${i}`, 'disable')
     }
     // }

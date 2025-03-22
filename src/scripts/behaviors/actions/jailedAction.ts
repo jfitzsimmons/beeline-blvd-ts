@@ -1,5 +1,5 @@
 import { InfirmedProps } from '../../../types/behaviors'
-import { security } from '../../utils/consts'
+import { SECURITY } from '../../utils/consts'
 import Action from '../action'
 //import PlaceSequence from '../sequences/placeSequence'
 
@@ -26,7 +26,7 @@ export default class JailedAction extends Action {
     print('JailedAction for::', this.a.name)
     this.a.cooldown--
     Object.values(this.a.getOccupants('security')).some((o) =>
-      security.includes(o)
+      SECURITY.includes(o)
     ) && Math.random() > 0.3
       ? (this.a.cooldown = this.a.cooldown - 2)
       : Math.random() > 0.3 && this.a.cooldown--

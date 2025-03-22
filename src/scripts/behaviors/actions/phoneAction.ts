@@ -3,7 +3,7 @@ import {
   BehaviorKeys,
   HelperProps,
 } from '../../../types/behaviors'
-import { security } from '../../utils/consts'
+import { SECURITY } from '../../utils/consts'
 import Action from '../action'
 import QuestionSequence from '../sequences/questionSequence'
 //testjpf need busy check to
@@ -40,7 +40,7 @@ export default class PhoneAction extends Action {
     }
 
     const callConnected = Object.values(this.a.getOccupants('security')).filter(
-      (o) => security.includes(o)
+      (o) => SECURITY.includes(o)
     )
 
     if (callConnected.length > 0 && math.random() > 0.5) {

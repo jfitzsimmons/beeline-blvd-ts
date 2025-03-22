@@ -15,6 +15,7 @@ import ImmobileSequence from '../sequences/immobileSequence'
 import JailedSequence from '../sequences/jailedSequence'
 import AssaultedSequence from '../sequences/assaultedSequence'
 import EndAction from './endAction'
+import QuestionSequence from '../sequences/questionSequence'
 
 export default class QuestionAction extends Action {
   a: QuestionProps
@@ -55,11 +56,47 @@ export default class QuestionAction extends Action {
             (s: string) =>
               s === this.perp.name && this.perp.exitRoom == this.a.currRoom
           ).length > 0
-    if (crossedPaths === false)
+    if (crossedPaths === false) {
+      const cops = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
+        (s: string) => s !== this.a.name && s.substring(0, 3) == 'sec'
+      )
+      for (const c of cops) {
+        //  print('CINQUESTUON:::', c, 'from:', this.a.name)
+        const chatter = this.a.returnNpc(c)
+        for (const b of chatter.behavior.active.children) {
+          /** * print(
+            'CINQUESTUON:::behaviors::',
+            b.constructor.name,
+            'from:',
+            this.a.name,
+            (b as QuestionSequence).perp('question').name
+          )
+*/
+          if (
+            b.constructor.name == 'QuestionSequence' &&
+            (b as QuestionSequence).perp('question').name == this.perp.name
+          ) {
+            print(
+              'CINQUESTUON:::ADDADJUST!!!!',
+              c,
+              'from:',
+              this.a.name,
+              'PERP:',
+              this.perp.name,
+              this.perp.currRoom
+            )
+
+            this.a.addAdjustWantedQueue(this.perp.name, this.perp.currRoom)
+            break
+          }
+        }
+      }
+
       return () =>
         this.continue(
           `QuestionAction::: ${this.a.name} did not cross paths with ${this.perp.name} for ${this.reason}`
         )
+    }
     if (this.hero !== null && crossedPaths === true) {
       this.hero.setConfrontation(this.a.name, this.reason, 'questioning')
       return () =>
@@ -295,10 +332,25 @@ export default class QuestionAction extends Action {
       // prettier-ignore
       print('runrun',this.a.name,this.a.currStation, 'STATION MOVE VIA TASK question', this.perp.name, 'in', this.a.currRoom,this.perp.currRoom, this.perp.currStation)
     }
-      */
+     
+    const cops = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
+      (s: string) => s !== this.a.name && s.substring(0, 3) == 'sec'
+    )
+    for (const c of cops) {
+      const chatter = this.a.returnNpc(c)
+      for (const b of chatter.behavior.active.children) {
+        if (
+          b.constructor.name == 'QuestionSequence' &&
+          (b as QuestionSequence).perp('question').name == this.perp.name
+        ) {
+          this.a.addAdjustWantedQueue(this.perp.name, this.perp.currRoom)
+          break
+        }
+      }
+    } */
     return () =>
-      this.success(
-        `||>> Behavior: QUESTIONACTION::: DEFAULT:: ${consequence.type}`
+      this.fail(
+        `||>> Behavior: QUESTIONACTION::: Default Fail:: ${consequence.type}`
       )
   }
   continue(s: string): string {

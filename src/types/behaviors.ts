@@ -21,6 +21,7 @@ export type ActionProps =
   | DefaultBehaviorProps
   | AnnouncerProps
   | OnScreenProps
+  | CopPlaceProps
 
 export type HeroBehaviorKeys =
   | 'place'
@@ -48,6 +49,7 @@ export type BehaviorKeys =
   | 'question'
   | 'announcer'
   | 'onScreen'
+  | 'cops'
 
 export interface BehaviorSetters {
   cooldown: (value: number | [string, string]) => void
@@ -89,6 +91,7 @@ export interface BehaviorProps extends HeroBehaviorProps {
   mender: () => MenderProps
   mendee: () => MendeeProps
   onScreen: () => OnScreenProps
+  cops: () => CopPlaceProps
 }
 
 export interface DefaultBehaviorProps {
@@ -132,6 +135,14 @@ export interface MedicPlaceProps extends PlaceProps {
   returnMendeeLocation(): string | null
 }
 
+export interface CopPlaceProps extends PlaceProps {
+  checkSetStation(room: string, station: string, npc: string): boolean
+  getWards(room: string): string[]
+  getWantedQueue(): [string, string][]
+  addAdjustWantedQueue(fugitive: string, room: string): void
+  getBehaviorProps(behavior: string): ActionProps
+}
+
 export interface EffectsProps {
   name: string
   effects: Effect[]
@@ -145,6 +156,7 @@ export interface QuestionProps extends DefaultBehaviorProps {
   love: number
   exitRoom: string
   behavior: Behavior
+  addAdjustWantedQueue(fugitive: string, room: string): void
   removeInvBonus: (chest_item: string) => void
   addInvBonus(item: string): void
   addOrExtendEffect(effect: Effect): void
@@ -152,6 +164,7 @@ export interface QuestionProps extends DefaultBehaviorProps {
   getOccupants(r: string): string[]
   getFocusedRoom(): string
   updateInventory(addDelete: 'add' | 'delete', item: string): void
+  returnNpc(n: string): NpcState
 }
 export interface AnnouncerProps extends DefaultBehaviorProps {
   traits: Traits

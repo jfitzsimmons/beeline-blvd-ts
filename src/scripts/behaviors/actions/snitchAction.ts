@@ -28,14 +28,15 @@ export default class SnitchAction extends Action {
     const prevRoom = Object.values(this.a.getOccupants(this.a.exitRoom)).filter(
       (s: string) =>
         s.slice(0, 4) === 'secu' &&
-        this.a.returnNpc(s).exitRoom == this.a.currRoom
+        this.a.returnNpc(s).exitRoom == this.a.currRoom &&
+        s !== this.perp.name
     )
     if (prevRoom.length > 0)
       print(
         '|> SnitchAction: Snitch and Cop are in Separate Rooms, but crossed Paths. TODO! testjpf'
       )
     const currRoom = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
-      (s: string) => s.slice(0, 4) === 'secu'
+      (s: string) => s.slice(0, 4) === 'secu' && s !== this.perp.name
     )
 
     for (const c of [...new Set([...prevRoom, ...currRoom])]) {

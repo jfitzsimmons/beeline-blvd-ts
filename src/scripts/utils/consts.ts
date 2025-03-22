@@ -1,7 +1,7 @@
 import { Effect } from '../../types/tasks'
 
 export const doctors = ['doc03', 'doc02', 'doc01']
-export const security = [
+export const SECURITY = [
   'security001',
   'security002',
   'security003',
