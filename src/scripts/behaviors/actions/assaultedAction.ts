@@ -21,6 +21,7 @@ export default class AssaultedAction extends Action {
   isHero: boolean
   assaulter: QuestionProps
   getProps: GetProps
+  prevPriority: number
   constructor(getProps: GetProps, assaulter: QuestionProps) {
     const props = getProps('injured')
     super()
@@ -32,9 +33,10 @@ export default class AssaultedAction extends Action {
         : (props as InjuredProps)
     this.getProps = getProps
     this.isHero = this.a.name === 'player' ? true : false
+    this.prevPriority = this.a.turnPriority
   }
   run(): { (): void } {
-    this.a.updateFromBehavior('turnPriority', 96) // so can add QuestionSeq to available security
+    if (this.a.turnPriority < 93) this.a.updateFromBehavior('turnPriority', 93) // so can add QuestionSeq to available security
 
     //if (this.a.getIgnore().includes(this.a.name))
     // return () =>
@@ -102,27 +104,34 @@ export default class AssaultedAction extends Action {
               ])
             )
         }
-
+        /**
         return () =>
           this.continue(
-            '|>:: Witness:' +
-              enforcer.name +
-              'is suspecting/phoning:' +
-              this.assaulter.name +
-              'for' +
-              this.a.name
+           
           )
+              **/
       }
     }
-
+    if (this.a.turnPriority < 94)
+      this.a.updateFromBehavior('turnPriority', this.prevPriority)
     return () =>
-      this.continue('|>: Default - trespass successful for:' + this.a.name)
+      this.success(
+        '|>: Default - Assault was condoned against:' +
+          this.a.name +
+          ' by: ' +
+          this.assaulter.name
+      )
+  }
+  alternate(as: Action) {
+    print(
+      '|>:: ALTERNATE:  Witness is suspecting/phoning:' +
+        this.assaulter.name +
+        'for' +
+        this.a.name
+    )
+    return as.run()()
   }
   success(s?: string): void {
-    print('|||>>> Behavior: TrespassAction:: Success:', s)
-  }
-  continue(s: string): string {
-    print('|||>>> Behavior: TrespassAction:: Continue:', s)
-    return 'continue'
+    print('|||>>> Behavior: AssaultAction:: Success:', s)
   }
 }

@@ -833,7 +833,7 @@ export function npcStealCheck(
   )
        */
   const watcherXp = clamp(
-    Math.round(((wb.evil_good + wb.lawlessLawful) * 10 - wo[target.clan]) / 2),
+    Math.round((wb.evil_good + wb.lawlessLawful) * 5 - wo[target.clan]),
     4,
     12
   )
@@ -898,15 +898,13 @@ export function npcAssaultCheck(
   const { skills: ts, binaries: tb, opinion: to } = target.traits
 
   const watcherXp = clamp(
-    Math.round(((wb.evil_good + wb.lawlessLawful) * 10 - wo[target.clan]) / 2),
+    Math.round((wb.evil_good + wb.lawlessLawful) * 5 - wo[target.clan]),
     4,
     12
   )
   const targetXp = clamp(
     Math.round(
-      (ts.speed + ts.stealth) / 2 -
-        to[watcher.clan] -
-        crimeSeverity[target.crime]
+      (ts.speed + ts.stealth) / 2 - to[watcher.clan] - crimeSeverity['assault']
     ),
     4,
     12
@@ -920,7 +918,7 @@ export function npcAssaultCheck(
   //prettier-ignore
   print(target.name,'|PerpDX:',targetXp,tr,watcher.name,'|WatcherDX:',watcherXp,wr,':: advantage:',advantage,'RESULT:',result)
   //prettier-ignore
-  print('StealCHECK PROBABILITY::',ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`],'w/ Advantage:::',advantage === true  ? ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] +  ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2  : ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2)
+  print('AssaultHECK PROBABILITY::',ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`],'w/ Advantage:::',advantage === true  ? ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] +  ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2  : ROLLODDS[`${tostring(targetXp)}${tostring(watcherXp)}`] / 2)
 
   if (result === true) return 'neutral'
   /**
