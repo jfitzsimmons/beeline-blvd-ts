@@ -87,6 +87,7 @@ export default class QuestionSequence extends Sequence {
         'xxx => Behavior: QuestionSequence:: should remove seq for',
         this.a.name
       )
+      this.a.updateFromBehavior('turnPriority', math.random(11, 31))
       return 'REMOVE'
     }
     return ''

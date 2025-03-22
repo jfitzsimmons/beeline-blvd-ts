@@ -13,7 +13,7 @@ export const turnPriorityLookup = {
   96: ['phone'],
   95: ['question'],
   94: ['announcer', 'reckless', 'snitch', 'helper', 'suspecting'],
-  93: ['trespass'],
+  93: ['trespass', 'assaulted'],
 }
 export const crimeSeverity: { [key: string]: number } = {
   clearance: 0,
