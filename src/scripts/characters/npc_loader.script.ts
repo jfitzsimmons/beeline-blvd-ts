@@ -3,20 +3,95 @@ const { npcs } = globalThis.game.world
 function show_npc(name: string) {
   if (name != '') {
     const npc = npcs.all[name]
+    // if (npc.behavior.active.children.length > 0) {
     if (
       npc.behavior.active.children.some(
         (b) =>
           b.constructor.name == 'InjuredSequence' ||
           b.constructor.name == 'MendeeSequence'
       )
-    )
+    ) {
       particlefx.play('#injury')
-    else if (npc.behavior.active.children.length > 0) particlefx.play('#wanted')
+    } else if (npc.behavior.active.children.length > 0) {
+      particlefx.play('#wanted')
+    }
+
+    const emoteLookup: { [key: string]: string } = {
+      InjuredSequence: 'injured',
+      MenderSequence: 'mender',
+      MendeeSequence: 'mendee',
+      AnnouncerSequence: 'announcer',
+      AssaultedSequence: 'assaulted',
+      HelperSequence: 'helper',
+      QuestionSequence: 'questioning',
+      RecklessSequence: 'reckless',
+      SnitchSequence: 'snitch',
+      PhoneSequence: 'snitch',
+      SuspectingSequence: 'suspecting',
+      TrespassSequence: 'trespass',
+      admirer: 'admirer',
+      amped: 'amped',
+      angel: 'angel',
+      crimewave: 'crimewave',
+      devil: 'devil',
+      incharge: 'incharge',
+      inhiding: 'inhiding',
+      inspired: 'inspired',
+      loudmouth: 'loudmouth',
+      modesty: 'modesty',
+      opportunist: 'opportunist',
+      prejudice: 'prejudice',
+      rebel: 'rebel',
+      vanity: 'vanity',
+      yogi: 'yogi',
+      distracted: 'distracted',
+      readup: 'readup',
+    }
+    let count = 0
+    //const disable = npc.behavior.active.children.length > 3 ? 4 : 0
+    for (const b of npc.behavior.active.children) {
+      if (emoteLookup[b.constructor.name] !== null) {
+        count++
+        sprite.play_flipbook(`#emote${count}`, emoteLookup[b.constructor.name])
+        msg.post(`#emote${count}`, 'enable')
+      }
+      if (count == 3) {
+        sprite.play_flipbook(`#emote${count + 1}`, 'more')
+        msg.post(`#emote${count + 1}`, 'enable')
+        count++
+        break
+      }
+    }
+    if (count < 4) {
+      for (const e of npc.effects) {
+        if (emoteLookup[e.label] !== null) {
+          count++
+          sprite.play_flipbook(`#emote${count}`, emoteLookup[e.label])
+          msg.post(`#emote${count}`, 'enable')
+        }
+        if (count == 3) {
+          sprite.play_flipbook(`#emote${count + 1}`, 'more')
+          msg.post(`#emote${count + 1}`, 'enable')
+          count++
+          break
+        }
+      }
+    }
+
+    for (let i = 4; i > count; i--) {
+      print(`count: ${count} | disable ${i} | i $`)
+      msg.post(`#emote${i}`, 'disable')
+    }
+    // }
     sprite.play_flipbook('#npcspritebody', npcs.all[name].body)
     sprite.play_flipbook('#npcsprite', npcs.all[name].race)
   } else {
     msg.post('#npcsprite', 'disable')
     msg.post('#npcspritebody', 'disable')
+
+    for (let i = 4; i > 0; i--) {
+      msg.post(`#emote${i}`, 'disable')
+    }
   }
 }
 
@@ -40,7 +115,13 @@ interface props {
 export function on_message(
   this: props,
   messageId: hash,
-  message: { npc: string; room: string; enter: boolean; station: string },
+  message: {
+    npc: string
+    room: string
+    enter: boolean
+    station: string
+    behaviors: string[]
+  },
   _sender: url
 ): void {
   //const senderId = go.get_id()
@@ -52,8 +133,19 @@ export function on_message(
       p.z = 0
       go.set_position(p)
       this.npc = message.npc
-      //giving diff characters different sets of actions might be fun
+      //giving diff characters different sets of actions might be funn
       this.actions[this.npc] = npcs.all[this.npc].actions
+
+      if (
+        npcs.all[this.npc] != null &&
+        npcs.all[this.npc].behavior.active.children.length > 0
+      ) {
+        const behaviors = []
+        for (const behavior of npcs.all[this.npc].behavior.active.children) {
+          behaviors.push(behavior.constructor.name)
+        }
+        this.actions.behaviors = behaviors
+      }
       this.room = message.room
       //this.script = message.script
     } else {
