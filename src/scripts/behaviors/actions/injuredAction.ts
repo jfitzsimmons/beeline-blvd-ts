@@ -54,7 +54,7 @@ export default class InjuredAction extends Action {
           //const props = this.getProps('mendee')
           return () => this.alternate(new MendeeAction(this.getProps))
         } else if (
-          math.random() > 0.8 &&
+          math.random() > 0.9 &&
           // this.a.parent.npcHasTask([helper], [this.a.name]) === null &&
           NpcsInitState[helper].clan !== 'doctors'
         ) {

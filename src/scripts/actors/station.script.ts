@@ -77,7 +77,7 @@ export function on_message(
     prep_interaction(this) // combine actor actions
     msg.post('/desk#npc_loader', 'show_npc', {
       npc: this.npc,
-      behavior: this.actions.behaviors,
+      // behavior: this.actions.behaviors,
     })
   } else if (messageId == hash('loadActor')) {
     this.npc = ''

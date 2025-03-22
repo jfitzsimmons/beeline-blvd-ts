@@ -1,8 +1,9 @@
 const { npcs } = globalThis.game.world
 
-function show_npc(name: string, behaviors: string[]) {
+function show_npc(name: string) {
   if (name != '') {
     const npc = npcs.all[name]
+    // if (npc.behavior.active.children.length > 0) {
     if (
       npc.behavior.active.children.some(
         (b) =>
@@ -10,38 +11,87 @@ function show_npc(name: string, behaviors: string[]) {
           b.constructor.name == 'MendeeSequence'
       )
     ) {
-      print('000PREMSGMSGMSGMSGMSGMSGMSG')
-      const params = {
-        pos: go.get_position(npcs.all[name].currStation), //must come from .script
-        actions: behaviors, //generated from actors
-        //script:this.script,
-        //collision:"enter",
-        npcname: npc.name,
-        //parenturl:this.url,
-        //room:this.roomName
-      }
-      msg.post('#mini', 'showmini', params)
       particlefx.play('#injury')
     } else if (npc.behavior.active.children.length > 0) {
       particlefx.play('#wanted')
-
-      const params = {
-        pos: go.get_position(npcs.all[name].currStation), //must come from .script
-        actions: behaviors, //generated from actors
-        //script:this.script,
-        //collision:"enter",
-        npcname: npc.name,
-        //parenturl:this.url,
-        //room:this.roomName
-      }
-      print('PREMSGMSGMSGMSGMSGMSGMSG')
-      msg.post('#mini', 'showmini', params)
     }
+
+    const emoteLookup: { [key: string]: string } = {
+      InjuredSequence: 'injured',
+      MenderSequence: 'mender',
+      MendeeSequence: 'mendee',
+      AnnouncerSequence: 'announcer',
+      AssaultedSequence: 'assaulted',
+      HelperSequence: 'helper',
+      QuestionSequence: 'questioning',
+      RecklessSequence: 'reckless',
+      SnitchSequence: 'snitch',
+      PhoneSequence: 'snitch',
+      SuspectingSequence: 'suspecting',
+      TrespassSequence: 'trespass',
+      admirer: 'admirer',
+      amped: 'amped',
+      angel: 'angel',
+      crimewave: 'crimewave',
+      devil: 'devil',
+      incharge: 'incharge',
+      inhiding: 'inhiding',
+      inspired: 'inspired',
+      loudmouth: 'loudmouth',
+      modesty: 'modesty',
+      opportunist: 'opportunist',
+      prejudice: 'prejudice',
+      rebel: 'rebel',
+      vanity: 'vanity',
+      yogi: 'yogi',
+      distracted: 'distracted',
+      readup: 'readup',
+    }
+    let count = 0
+    //const disable = npc.behavior.active.children.length > 3 ? 4 : 0
+    for (const b of npc.behavior.active.children) {
+      if (emoteLookup[b.constructor.name] !== null) {
+        count++
+        sprite.play_flipbook(`#emote${count}`, emoteLookup[b.constructor.name])
+        msg.post(`#emote${count}`, 'enable')
+      }
+      if (count == 3) {
+        sprite.play_flipbook(`#emote${count + 1}`, 'more')
+        msg.post(`#emote${count + 1}`, 'enable')
+        count++
+        break
+      }
+    }
+    if (count < 4) {
+      for (const e of npc.effects) {
+        if (emoteLookup[e.label] !== null) {
+          count++
+          sprite.play_flipbook(`#emote${count}`, emoteLookup[e.label])
+          msg.post(`#emote${count}`, 'enable')
+        }
+        if (count == 3) {
+          sprite.play_flipbook(`#emote${count + 1}`, 'more')
+          msg.post(`#emote${count + 1}`, 'enable')
+          count++
+          break
+        }
+      }
+    }
+
+    for (let i = 4; i > count; i--) {
+      print(`count: ${count} | disable ${i} | i $`)
+      msg.post(`#emote${i}`, 'disable')
+    }
+    // }
     sprite.play_flipbook('#npcspritebody', npcs.all[name].body)
     sprite.play_flipbook('#npcsprite', npcs.all[name].race)
   } else {
     msg.post('#npcsprite', 'disable')
     msg.post('#npcspritebody', 'disable')
+
+    for (let i = 4; i > 0; i--) {
+      msg.post(`#emote${i}`, 'disable')
+    }
   }
 }
 
@@ -104,7 +154,7 @@ export function on_message(
       msg.post('#fluid', 'disable')
       msg.post('#solid', 'disable')
     }
-    show_npc(this.npc, this.actions.behaviors)
+    show_npc(this.npc)
   } else if (messageId == hash('move_npc')) {
     // print('MOVENPCmsg::', message.npc, _sender, _sender.fragment)
     let deskarea = { x: 0, y: 0 }
@@ -127,7 +177,7 @@ export function on_message(
     }
     move_npc(message.station, deskarea)
   } else if (messageId == hash('show_npc')) {
-    show_npc(message.npc, message.behaviors)
+    show_npc(message.npc)
   } else if (messageId == hash('trigger_response')) {
     if (message.enter) {
       const params = {
