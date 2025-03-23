@@ -239,59 +239,80 @@ function set_interactions(m: {
     for (const action of m.actions[actorKey]) {
       nodepos.y = nodepos.y + spacing
       nodepos = vmath.vector3(nodepos)
-      print(action)
-      const parent = gui.clone(gui.get_node('generic'))
-      print('actorKey + action', actorKey + action)
-      gui.set_id(parent, actorKey + action)
-      //  let node: node = gui.get_node('_text_generic')
+      //gui.set_id(gui.get_node('generic'), actorKey + action)
+
+      //const parent = gui.clone_tree(gui.get_node('generic'))
+
+      const node = gui.clone(gui.get_node('generic'))
+      const text = gui.clone(gui.get_node('_text_generic'))
       const bg = gui.clone(gui.get_node('_bg_generic'))
-      gui.set_parent(bg, parent)
-      const child = gui.clone(gui.get_node('_text_generic'))
-      gui.set_text(child, action)
-      gui.set_parent(child, parent)
-      const clonetree = gui.clone_tree(parent)
-      gui.delete_node(parent)
+      gui.set_id(node, actorKey + action)
+      gui.set_parent(bg, node)
+      gui.set_text(text, action)
+      gui.set_parent(text, node)
+      gui.set_visible(bg, true)
+      gui.set_visible(text, true)
+      gui.set_visible(node, true)
+      gui.set_position(node, nodepos)
+      //const parentTree = gui.get_tree(parent)
 
-      let clonedNode: keyof typeof clonetree
-      for (clonedNode in clonetree) {
-        const clone = gui.clone(clonetree[clonedNode])
-        gui.set_position(clone, nodepos)
-        gui.set_visible(clone, true)
+      // let farttestjpf: keyof typeof parent
 
-        const cloneparent: cloneparent = {
-          clone: clone,
-          actor: m.npcname,
-          action,
-        }
-        clones.push(cloneparent)
-        // gui.delete_node(clone)
+      // for (farttestjpf in parent) {
+      //const clone = gui.clone(parent[farttestjpf])
+      //gui.set_position(clone, nodepos)
+      //  print(farttestjpf, 'farttestjpf')
+      //  gui.set_visible(parent[farttestjpf], true)
+      //  gui.set_position(parent[farttestjpf], nodepos)
+      // }
+      const cloneparent: cloneparent = {
+        clone: node,
+        actor: m.npcname,
+        action,
       }
+      clones.push(cloneparent)
+
+      //const parent = gui.clone(gui.get_node('generic'))
+      print('actorKey + action', actorKey + action)
+      //gui.set_id(parent, actorKey + action)
+      //  let node: node = gui.get_node('_text_generic')
+      //const bg = gui.clone(gui.get_node('_bg_generic'))
+      //gui.set_parent(bg, parent)
+      //const child = gui.clone(gui.get_node('_text_generic'))
+      // gui.set_text(child, action)
+      //gui.set_parent(child, parent)
+
+      //gui.delete_node(node)
     }
     nodepos.y = nodepos.y + spacing * 1.3
     nodepos.x = nodepos.x - 25
-    let node: node = gui.get_node('_text_label')
-    gui.set_text(node, actorKey)
-    node = gui.get_node('label')
+
+    const node = gui.clone(gui.get_node('label'))
+    const text = gui.clone(gui.get_node('_text_label'))
+    const bg = gui.clone(gui.get_node('_bg_label'))
+    gui.set_id(node, actorKey + m.npcname)
+    gui.set_parent(bg, node)
+    gui.set_text(text, actorKey)
+    gui.set_parent(text, node)
+    gui.set_visible(bg, true)
+    gui.set_visible(text, true)
+    gui.set_visible(node, true)
+    gui.set_position(node, nodepos)
+
+    //let node: node = gui.get_node('_text_label')
+    // gui.set_text(node, actorKey)
+    // node = gui.get_node('label')
 
     //TS-DEFOLD - lint ERROR
     //export function clone_tree(node: node): any
-    const clonetree: any = gui.clone_tree(node)
-    //gui.delete_node(node)
-    let clonedNode: keyof typeof clonetree
 
-    for (clonedNode in clonetree) {
-      const clone = gui.clone(clonetree[clonedNode])
-      gui.set_position(clone, nodepos)
-      gui.set_visible(clone, true)
-
-      const cloneparent: cloneparent = {
-        clone: clone,
-        actor: m.npcname,
-        action: 'label',
-      }
-      clones.push(cloneparent)
-      // gui.delete_node(clone)
+    const cloneparent: cloneparent = {
+      clone: node,
+      actor: m.npcname,
+      action: 'label',
     }
+    clones.push(cloneparent)
+    // gui.delete_node(clone)
 
     nodepos.y = nodepos.y + spacing * 0.5
   }
