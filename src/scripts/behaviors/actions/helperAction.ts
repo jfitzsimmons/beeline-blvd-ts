@@ -46,7 +46,7 @@ export default class HelperAction extends Action {
 
     for (const h of [...new Set([...prevRoom, ...currRoom])]) {
       const helper = this.a.returnNpc(h)
-      if (helper.turnPriority < 97 && math.random() > 0.3) {
+      if (helper.turnPriority < 97 && math.random() > 0.2) {
         //available doctor found
         this.a.addAdjustMendingQueue(this.victim)
         print(

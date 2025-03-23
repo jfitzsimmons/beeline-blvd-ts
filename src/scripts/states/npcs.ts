@@ -7,17 +7,19 @@ import {
 import NpcState from './npc'
 import StateMachine from './stateMachine'
 import { Npcs } from '../../types/state'
+import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
 import { QuestMethods } from '../../types/tasks'
 import { NpcProps, WorldNpcsArgs } from '../../types/world'
+import { QuestionProps } from '../../types/behaviors'
+import { SECURITY } from '../utils/consts'
+import { resetRoomPlaceCount } from '../utils/ai'
 import { arraymove, shuffle } from '../utils/utils'
-import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
-//import { confrontation_check } from './inits/checksFuncs'
-import PlaceSequence from '../behaviors/sequences/placeSequence'
 import Selector from '../behaviors/selector'
+import PlaceSequence from '../behaviors/sequences/placeSequence'
 import InjuredSequence from '../behaviors/sequences/injuredSequence'
 import ImmobileSequence from '../behaviors/sequences/immobileSequence'
 import TrespassSequence from '../behaviors/sequences/trespassSequence'
-import { getRoomPlaceCount, resetRoomPlaceCount } from '../utils/ai'
+import QuestionSequence from '../behaviors/sequences/questionSequence'
 
 const dt = math.randomseed(os.time())
 
@@ -33,11 +35,13 @@ export default class WorldNpcs {
   //injured: string[]
   ignore: string[]
   mendingQueue: string[]
+  wantedQueue: Array<[string, string]>
 
   constructor(npcsProps: WorldNpcsArgs) {
     // this.infirmed = [] // move to room? infrimed action?
     //this.injured = [] // room? injured action?
     this.mendingQueue = []
+    this.wantedQueue = []
     this.ignore = []
     this.order = []
     this.onScreen = []
@@ -59,6 +63,8 @@ export default class WorldNpcs {
         // returnSecurity: this.returnDoctors.bind(this),
         // returnAll: this.returnAll.bind(this),
         // returnOrderAll: this.returnOrderAll.bind(this),
+        getWantedQueue: this.getWantedQueue.bind(this),
+        addAdjustWantedQueue: this.addAdjustWantedQueue.bind(this),
         getMendingQueue: this.getMendingQueue.bind(this),
         addAdjustMendingQueue: this.addAdjustMendingQueue.bind(this),
         removeMendee: this.removeMendee.bind(this),
@@ -88,6 +94,7 @@ export default class WorldNpcs {
 
     this.returnDoctors = this.returnDoctors.bind(this)
     this.returnSecurity = this.returnSecurity.bind(this)
+    this.getMendingQueue = this.getMendingQueue.bind(this)
   }
   public get all(): Npcs {
     return this._all
@@ -123,6 +130,30 @@ export default class WorldNpcs {
   }
   private onNewExit(): void {
     this.sort_npcs_by_encounter()
+    // TEST DATA DEFAULTS
+    this.all.security001.behavior.active.children.push(
+      new QuestionSequence(
+        this.all.security001.getBehaviorProps.bind(this),
+        this.all.mailroom01.getBehaviorProps.bind(this),
+        'assault'
+      )
+    )
+
+    this.all.security004.behavior.active.children.push(
+      new QuestionSequence(
+        this.all.security004.getBehaviorProps.bind(this),
+        this.all.mailroom01.getBehaviorProps.bind(this),
+        'assault'
+      )
+    )
+
+    this.all.security005.behavior.active.children.push(
+      new QuestionSequence(
+        this.all.security005.getBehaviorProps.bind(this),
+        this.all.mailroom01.getBehaviorProps.bind(this),
+        'assault'
+      )
+    )
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
       print('===>>> SETTING::', npc.name, 'TO.ACTIVE')
@@ -148,6 +179,7 @@ export default class WorldNpcs {
           new TrespassSequence(npc.getBehaviorProps.bind(npc))
         )
       }
+
       npc.fsm.setState('active')
     }
   }
@@ -213,21 +245,25 @@ export default class WorldNpcs {
       // prettier-ignore
       // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
     }
+    /**
     let rk: keyof typeof rpctestjpc
     for (rk in rpctestjpc) {
-      const room = rpctestjpc[rk]
+     // const room = rpctestjpc[rk]
       getRoomPlaceCount(rk)
 
-      print('NPCSrpc::: occs: ', rk, room.occupants)
-      let vk: keyof typeof room.ai
+     // print('NPCSrpc::: occs: ', rk, room.occupants)
+     // let vk: keyof typeof room.ai
+    
       for (const n of room.npcs) {
         print('NPCSrpc::: npcs: ', rk, n, this._all[n].currStation)
       }
       for (vk in room.ai) {
         print('NPCSrpc::: key: ', rk, vk, room.ai[vk])
       }
+        
     }
     resetRoomPlaceCount()
+    */
   }
 
   private onPlaceExit(): void {
@@ -285,7 +321,7 @@ export default class WorldNpcs {
       //  actor.behavior.active.run()
       // }
       if (actor.name !== 'player') {
-        print('===>>> SETTING::', actor.name, 'TO.ONSCREEN')
+        print('===>>> SETTING::', actor.name, 'TO.ONSCREEN', actor.turnPriority)
         if (this.all[actor.name].behavior.active.children.length > 0)
           print(
             '===>>> SETTING ::: BeginOnScreen: Active Behaviors::',
@@ -342,6 +378,53 @@ export default class WorldNpcs {
       npc.fsm.setState('turn')
     }
   }
+  getWantedQueue(): [string, string][] {
+    return this.wantedQueue
+  }
+  removeWanted(x: string) {
+    this.wantedQueue.splice(
+      this.wantedQueue.findIndex((f) => f[0] == x),
+      1
+    )
+  }
+  addAdjustWantedQueue(fugitive: string, room: string) {
+    const wantedI = this.wantedQueue.findIndex((f) => f[0] == fugitive)
+
+    if (wantedI != -1) {
+      this.wantedQueue[wantedI][1] = room
+
+      if (wantedI > 1) arraymove(this.wantedQueue, wantedI, 0)
+    } else {
+      // print('cautions caused fugitive:', fugitive, 'to be added to meningQueue')
+      //TESTJPF add a QuestioningSeq to all security / update()
+      //maybe everytime they are included they push a new
+      // /QuestionSeq to a random security!!
+      this.wantedQueue.push([fugitive, room])
+      const cop = SECURITY[math.random(0, 4)]
+      for (const behavior of this.all[cop].behavior.active.children) {
+        if (
+          behavior instanceof QuestionSequence &&
+          (behavior.perp('question') as QuestionProps).name == fugitive
+        ) {
+          print('UPDATEUPDATE APBAPBAPBAPB')
+
+          behavior.update(behavior.reason)
+          break
+        } else {
+          print('APBAPBAPBAPB')
+          this.all[cop].addToBehavior(
+            'active',
+            new QuestionSequence(
+              this.all[cop].getBehaviorProps.bind(this.all[cop]),
+              this.all[fugitive].getBehaviorProps.bind(this.all[fugitive]),
+              'apb'
+            )
+          )
+          break
+        }
+      }
+    }
+  }
   removeMendee(m: string) {
     this.mendingQueue.splice(this.mendingQueue.indexOf(m), 1)
   }
@@ -354,12 +437,12 @@ export default class WorldNpcs {
       this.mendingQueue.push(patient)
     }
   }
+  getMendingQueue(): string[] {
+    return this.mendingQueue
+  }
   returnMendeeLocation(): string | null {
     const injured = this.getMendingQueue()[0]
     return injured === null ? null : this.all[injured].currRoom
-  }
-  getMendingQueue(): string[] {
-    return this.mendingQueue
   }
   addIgnore(n: string): void {
     if (this.ignore.includes(n) == false) this.ignore.push(n)

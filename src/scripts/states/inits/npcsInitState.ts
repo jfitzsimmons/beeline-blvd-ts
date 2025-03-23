@@ -20,7 +20,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   mailroom01: {
     home: { x: 3, y: 2 }, //loading
     name: 'mailroom01',
-    inventory: ['tomato', 'banana'],
+    inventory: ['gold', 'silver', 'bronze', 'tomato', 'banana'],
     clearance: 3,
     clan: 'mailroom',
     body: 'mailroom01body',
@@ -29,7 +29,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   mailroom02: {
     home: { x: 1, y: 1 }, //warehouse
     name: 'mailroom02',
-    inventory: ['mushroom02', 'leaf02'],
+    inventory: ['gold', 'silver', 'bronze', 'mushroom02', 'leaf02'],
     clearance: 2,
     clan: 'mailroom',
     body: 'mailroom02body',
@@ -38,7 +38,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   mailroom03: {
     home: { x: 2, y: 4 }, //warehouse
     name: 'mailroom03',
-    inventory: ['magicb3', 'shrimp02'],
+    inventory: ['gold', 'silver', 'bronze', 'magicb3', 'shrimp02'],
     clearance: 3,
     clan: 'mailroom',
     body: 'mailroom01body',
@@ -47,7 +47,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   custodian01: {
     home: { x: 3, y: 1 }, //loading
     name: 'custodian01',
-    inventory: ['tomato', 'banana'],
+    inventory: ['gold', 'silver', 'bronze', 'tomato', 'banana'],
     clearance: 3,
     clan: 'custodians',
     body: 'custodian01body',
@@ -56,7 +56,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   custodian02: {
     home: { x: 1, y: 3 }, //warehouse
     name: 'custodian02',
-    inventory: ['magica4', 'drumstick01'],
+    inventory: ['gold', 'silver', 'bronze', 'magica4', 'drumstick01'],
     clearance: 2,
     clan: 'custodians',
     body: 'custodian02body',
@@ -65,7 +65,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   maintenance01: {
     home: { x: 3, y: 1 }, //loading
     name: 'maintenance01',
-    inventory: ['tomato', 'banana'],
+    inventory: ['gold', 'silver', 'bronze', 'tomato', 'banana'],
     clearance: 3,
     clan: 'maintenance',
     body: 'maintenance01body',
@@ -74,7 +74,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   maintenance02: {
     home: { x: 2, y: 3 }, //warehouse
     name: 'maintenance02',
-    inventory: ['string', 'mirror'],
+    inventory: ['gold', 'silver', 'bronze', 'string', 'mirror'],
     clearance: 2,
     clan: 'maintenance',
     body: 'maintenance02body',
@@ -83,7 +83,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   labor01: {
     home: { x: 0, y: 2 }, //loading
     name: 'labor01',
-    inventory: ['tomato', 'banana'],
+    inventory: ['gold', 'silver', 'bronze', 'tomato', 'banana'],
     clearance: 2,
     clan: 'labor',
     body: 'labor01body',
@@ -92,7 +92,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   labor02: {
     home: { x: 1, y: 1 }, //warehouse
     name: 'labor02',
-    inventory: ['feather01', 'vial01'],
+    inventory: ['gold', 'silver', 'bronze', 'feather01', 'vial01'],
     clearance: 2,
     clan: 'labor',
     body: 'labor02body',
@@ -101,7 +101,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   labor03: {
     home: { x: 3, y: 2 }, //maintenance
     name: 'labor03',
-    inventory: ['vial02'],
+    inventory: ['gold', 'silver', 'bronze', 'vial02'],
     clearance: 2,
     clan: 'labor',
     body: 'labor03body',
@@ -110,7 +110,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   labor04: {
     home: { x: 0, y: 5 },
     name: 'labor04',
-    inventory: ['mushroom02'],
+    inventory: ['gold', 'silver', 'bronze', 'mushroom02'],
     clearance: 2,
     clan: 'labor',
     body: 'labor04body',
@@ -119,7 +119,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   labor05: {
     home: { x: 2, y: 2 }, //maintenance
     name: 'labor05',
-    inventory: ['vial02'],
+    inventory: ['gold', 'silver', 'bronze', 'vial02'],
     clearance: 3,
     clan: 'labor',
     body: 'labor03body',
@@ -128,7 +128,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   labor06: {
     home: { x: 2, y: 0 },
     name: 'labor06',
-    inventory: ['mushroom02'],
+    inventory: ['gold', 'silver', 'bronze', 'mushroom02'],
     clearance: 1,
     clan: 'labor',
     body: 'labor04body',
@@ -137,7 +137,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   labor07: {
     home: { x: 2, y: 1 },
     name: 'labor07',
-    inventory: ['mushroom01'],
+    inventory: ['gold', 'silver', 'bronze', 'mushroom01'],
     clearance: 2,
     clan: 'labor',
     body: 'labor01body',
@@ -146,7 +146,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   doc03: {
     home: { x: 1, y: 5 },
     name: 'doc03',
-    inventory: ['orange'],
+    inventory: ['gold', 'silver', 'bronze', 'orange'],
     clearance: 3,
     clan: 'doctors',
     body: 'doctors01body',
@@ -155,7 +155,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   doc02: {
     home: { x: 0, y: 4 },
     name: 'doc02',
-    inventory: ['orange'],
+    inventory: ['gold', 'silver', 'bronze', 'orange'],
     clearance: 3,
     clan: 'doctors',
     body: 'doctors01body',
@@ -164,7 +164,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   doc01: {
     home: { x: 3, y: 4 },
     name: 'doc01',
-    inventory: ['orange', 'berry01'],
+    inventory: ['gold', 'silver', 'bronze', 'orange', 'berry01'],
     clearance: 3,
     clan: 'doctors',
     body: 'doctors02body',
@@ -173,7 +173,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   contractor04: {
     home: { x: 3, y: 2 },
     name: 'contractor04',
-    inventory: ['steak01'],
+    inventory: ['gold', 'silver', 'bronze', 'steak01'],
     clearance: 3,
     clan: 'contractors',
     body: 'contractors02body',
@@ -182,7 +182,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   contractor03: {
     home: { x: 3, y: 1 },
     name: 'contractor03',
-    inventory: ['steak01'],
+    inventory: ['gold', 'silver', 'bronze', 'steak01'],
     clearance: 3,
     clan: 'contractors',
     body: 'contractors01body',
@@ -191,7 +191,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   contractor02: {
     home: { x: 2, y: 2 },
     name: 'contractor02',
-    inventory: ['steak01'],
+    inventory: ['gold', 'silver', 'bronze', 'steak01'],
     clearance: 3,
     clan: 'contractors',
     body: 'contractors01body',
@@ -200,34 +200,34 @@ export const NpcsInitState: { [key: string]: Npc } = {
   contractor01: {
     home: { x: 2, y: 4 }, //admin1
     name: 'contractor01',
-    inventory: ['earrings', 'mushroom03'],
+    inventory: ['gold', 'silver', 'bronze', 'earrings', 'mushroom03'],
     clearance: 2,
     clan: 'contractors',
     body: 'contractors02body',
     ...npc_defaults,
   },
   visitor04: {
-    home: { x: 0, y: 4 }, //grounds
+    home: { x: 0, y: 4 },
     name: 'visitor04',
-    inventory: ['steak01', 'tomato'],
+    inventory: ['gold', 'silver', 'bronze', 'steak01', 'tomato'],
     clearance: 3,
     clan: 'visitors',
     body: 'visitors02body',
     ...npc_defaults,
   },
   visitor03: {
-    home: { x: 4, y: 4 }, //grounds
+    home: { x: 4, y: 4 },
     name: 'visitor03',
-    inventory: ['mushroom02', 'tomato'],
+    inventory: ['gold', 'silver', 'bronze', 'mushroom02', 'tomato'],
     clearance: 2,
     clan: 'visitors',
     body: 'visitors01body',
     ...npc_defaults,
   },
   visitor02: {
-    home: { x: 1, y: 4 }, //grounds
+    home: { x: 1, y: 4 },
     name: 'visitor02',
-    inventory: ['mushroom02', 'tomato'],
+    inventory: ['gold', 'silver', 'bronze', 'mushroom02', 'tomato'],
     clearance: 3,
     clan: 'visitors',
     body: 'visitors01body',
@@ -236,7 +236,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   visitor01: {
     home: { x: 2, y: 3 }, //lobby
     name: 'visitor01',
-    inventory: ['leaf02', 'drumstick01'],
+    inventory: ['gold', 'silver', 'bronze', 'leaf02', 'drumstick01'],
     clearance: 1,
     clan: 'visitors',
     body: 'visitors02body',
@@ -245,7 +245,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   sexworker01: {
     home: { x: 4, y: 3 }, //pubgrill
     name: 'sexworker01',
-    inventory: ['magicb2', 'shrimp01'],
+    inventory: ['gold', 'silver', 'bronze', 'magicb2', 'shrimp01'],
     clearance: 1,
     clan: 'sexworkers',
     body: 'sexworkers01body',
@@ -254,7 +254,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   sexworker02: {
     home: { x: 2, y: 2 }, //inn
     name: 'sexworker02',
-    inventory: ['leaf01', 'cheese'],
+    inventory: ['gold', 'silver', 'bronze', 'leaf01', 'cheese'],
     clearance: 2,
     clan: 'sexworkers',
     body: 'sexworkers02body',
@@ -263,7 +263,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   sexworker03: {
     home: { x: 3, y: 3 }, //inn
     name: 'sexworker03',
-    inventory: ['leaf01', 'cheese'],
+    inventory: ['gold', 'silver', 'bronze', 'leaf01', 'cheese'],
     clearance: 3,
     clan: 'sexworkers',
     body: 'sexworkers02body',
@@ -272,7 +272,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   church01: {
     home: { x: 3, y: 2 }, //chapel
     name: 'church01',
-    inventory: ['mirror', 'potion'],
+    inventory: ['gold', 'silver', 'bronze', 'mirror', 'potion'],
     clearance: 1,
     clan: 'church',
     body: 'church02body',
@@ -281,7 +281,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   church02: {
     home: { x: 3, y: 3 }, //store
     name: 'church02',
-    inventory: ['string', 'mushroom01'],
+    inventory: ['gold', 'silver', 'bronze', 'string', 'mushroom01'],
     clearance: 2,
     clan: 'church',
     body: 'church01body',
@@ -290,7 +290,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   church03: {
     home: { x: 2, y: 1 }, //store
     name: 'church03',
-    inventory: ['string', 'mushroom01'],
+    inventory: ['gold', 'silver', 'bronze', 'string', 'mushroom01'],
     clearance: 3,
     clan: 'church',
     body: 'church01body',
@@ -299,7 +299,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   eve: {
     home: { x: 1, y: 4 }, //reception
     name: 'eve',
-    inventory: ['bronze', 'glove01'],
+    inventory: ['gold', 'silver', 'bronze', 'bronze', 'glove01'],
     clearance: 2,
     clan: 'staff',
     body: 'staff01body',
@@ -308,7 +308,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   tyler: {
     home: { x: 4, y: 2 }, //inn1
     name: 'tyler',
-    inventory: ['banana', 'cape'],
+    inventory: ['gold', 'silver', 'bronze', 'banana', 'cape'],
     clearance: 1,
     clan: 'staff',
     body: 'staff02body',
@@ -317,7 +317,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   frank: {
     home: { x: 4, y: 5 }, //dorm
     name: 'frank',
-    inventory: ['envelope', 'vial01'],
+    inventory: ['gold', 'silver', 'bronze', 'envelope', 'vial01'],
     clearance: 3,
     clan: 'staff',
     body: 'staff03body',
@@ -326,7 +326,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   staff04: {
     home: { x: 3, y: 4 }, //store
     name: 'staff04',
-    inventory: ['fish01', 'gold'],
+    inventory: ['gold', 'silver', 'bronze', 'fish01', 'gold'],
     clearance: 2,
     clan: 'staff',
     body: 'staff04body',
@@ -335,7 +335,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   staff05: {
     home: { x: 2, y: 0 }, //alley3
     name: 'staff05',
-    inventory: ['steak02', 'fish02'],
+    inventory: ['gold', 'silver', 'bronze', 'steak02', 'fish02'],
     clearance: 2,
     clan: 'staff',
     body: 'staff05body',
@@ -344,7 +344,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   staff06: {
     home: { x: 2, y: 4 }, //store
     name: 'staff06',
-    inventory: ['fish01', 'gold'],
+    inventory: ['gold', 'silver', 'bronze', 'fish01', 'gold'],
     clearance: 3,
     clan: 'staff',
     body: 'staff04body',
@@ -353,7 +353,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   staff07: {
     home: { x: 1, y: 0 }, //alley3
     name: 'staff07',
-    inventory: ['steak02', 'fish02'],
+    inventory: ['gold', 'silver', 'bronze', 'steak02', 'fish02'],
     clearance: 1,
     clan: 'staff',
     body: 'staff05body',
@@ -362,7 +362,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   staff08: {
     home: { x: 2, y: 1 }, //alley3
     name: 'staff08',
-    inventory: ['mallot', 'fish02'],
+    inventory: ['gold', 'silver', 'bronze', 'mallot', 'fish02'],
     clearance: 3,
     clan: 'staff',
     body: 'staff04body',
@@ -371,7 +371,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   bruiser: {
     home: { x: 4, y: 0 }, //maint
     name: 'bruiser',
-    inventory: ['egg01', 'mallot'],
+    inventory: ['gold', 'silver', 'bronze', 'egg01', 'mallot'],
     clearance: 1,
     clan: 'gang1',
     body: 'gang101body',
@@ -380,7 +380,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   lou: {
     home: { x: 1, y: 0 }, //alley2
     name: 'lou',
-    inventory: ['avacado', 'shrimp02'],
+    inventory: ['gold', 'silver', 'bronze', 'avacado', 'shrimp02'],
     clearance: 2,
     clan: 'gang1',
     body: 'gang102body',
@@ -389,7 +389,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   gang103: {
     home: { x: 2, y: 1 }, //alley2
     name: 'gang103',
-    inventory: ['avacado', 'shrimp02'],
+    inventory: ['gold', 'silver', 'bronze', 'avacado', 'shrimp02'],
     clearance: 3,
     clan: 'gang1',
     body: 'gang102body',
@@ -398,7 +398,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   spike: {
     home: { x: 3, y: 3 },
     name: 'spike',
-    inventory: ['rose', 'berry02'],
+    inventory: ['gold', 'silver', 'bronze', 'rose', 'berry02'],
     clearance: 3,
     clan: 'gang2',
     body: 'gang201body',
@@ -407,7 +407,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   curly: {
     home: { x: 3, y: 4 },
     name: 'curly',
-    inventory: ['berry02', 'avacado'],
+    inventory: ['gold', 'silver', 'bronze', 'berry02', 'avacado'],
     clearance: 1,
     clan: 'gang2',
     body: 'gang202body',
@@ -416,7 +416,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   gang203: {
     home: { x: 3, y: 1 }, //alley2
     name: 'gang203',
-    inventory: ['avacado', 'shrimp02'],
+    inventory: ['gold', 'silver', 'bronze', 'avacado', 'shrimp02'],
     clearance: 2,
     clan: 'gang1',
     body: 'gang102body',
@@ -425,7 +425,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   gang302: {
     home: { x: 0, y: 0 },
     name: 'gang302',
-    inventory: ['shrimp02', 'egg01'],
+    inventory: ['gold', 'silver', 'bronze', 'shrimp02', 'egg01'],
     clearance: 3,
     clan: 'gang3',
     body: 'gang301body',
@@ -434,7 +434,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   gang301: {
     home: { x: 3, y: 3 },
     name: 'gang301',
-    inventory: ['magicc5', 'steak02'],
+    inventory: ['gold', 'silver', 'bronze', 'magicc5', 'steak02'],
     clearance: 2,
     clan: 'gang3',
     body: 'gang302body',
@@ -443,7 +443,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   gang303: {
     home: { x: 2, y: 3 },
     name: 'gang303',
-    inventory: ['magicc5', 'steak02'],
+    inventory: ['gold', 'silver', 'bronze', 'magicc5', 'steak02'],
     clearance: 1,
     clan: 'gang3',
     body: 'gang302body',
@@ -452,7 +452,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   gang402: {
     home: { x: 3, y: 4 },
     name: 'gang402',
-    inventory: ['fish02', 'sunhat'],
+    inventory: ['gold', 'silver', 'bronze', 'fish02', 'sunhat'],
     clearance: 2,
     clan: 'gang4',
     body: 'gang401body',
@@ -461,7 +461,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   gang401: {
     home: { x: 4, y: 5 },
     name: 'gang401',
-    inventory: ['eyeball02', 'fish01'],
+    inventory: ['gold', 'silver', 'bronze', 'eyeball02', 'fish01'],
     clearance: 1,
     clan: 'gang4',
     body: 'gang402body',
@@ -470,7 +470,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   gang403: {
     home: { x: 3, y: 4 },
     name: 'gang403',
-    inventory: ['magicc5', 'steak02'],
+    inventory: ['gold', 'silver', 'bronze', 'magicc5', 'steak02'],
     clearance: 3,
     clan: 'gang3',
     body: 'gang302body',
@@ -479,7 +479,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   corps02: {
     home: { x: 2, y: 4 }, //admin1
     name: 'corps02',
-    inventory: ['magicb3', 'vial01'],
+    inventory: ['gold', 'silver', 'bronze', 'magicb3', 'vial01'],
     clearance: 2,
     clan: 'corps',
     body: 'corps01body',
@@ -488,7 +488,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   corps01: {
     home: { x: 3, y: 4 }, //admin2
     name: 'corps01',
-    inventory: ['sack', 'banana'],
+    inventory: ['gold', 'silver', 'bronze', 'sack', 'banana'],
     clearance: 3,
     clan: 'corps',
     body: 'corps02body',
@@ -497,7 +497,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   corps03: {
     home: { x: 1, y: 5 }, //vip
     name: 'corps03',
-    inventory: ['magica4', 'mushroom02'],
+    inventory: ['gold', 'silver', 'bronze', 'magica4', 'mushroom02'],
     clearance: 3,
     clan: 'corps',
     body: 'corps03body',
@@ -506,7 +506,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   corps04: {
     home: { x: 2, y: 3 }, //vip
     name: 'corps04',
-    inventory: ['magica4', 'potion'],
+    inventory: ['gold', 'silver', 'bronze', 'magica4', 'potion'],
     clearance: 3,
     clan: 'corps',
     body: 'corps03body',
@@ -515,7 +515,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   security001: {
     home: { x: 1, y: 3 }, //customs
     name: 'security001',
-    inventory: ['potion', 'orange'],
+    inventory: ['gold', 'silver', 'bronze', 'potion', 'orange'],
     clearance: 3,
     clan: 'security',
     body: 'security01body',
@@ -525,7 +525,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
     //matrix: { x: 3, y: 6 },
     home: { x: 0, y: 3 }, //baggage
     name: 'security002',
-    inventory: ['ring', 'mushroom03'],
+    inventory: ['gold', 'silver', 'bronze', 'ring', 'mushroom03'],
     clearance: 3,
     clan: 'security',
     body: 'security02body',
@@ -534,7 +534,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   security003: {
     home: { x: 4, y: 4 }, //store
     name: 'security003',
-    inventory: ['drumstick01', 'tomato'],
+    inventory: ['gold', 'silver', 'bronze', 'drumstick01', 'tomato'],
     clearance: 3,
     clan: 'security',
     body: 'security03body',
@@ -543,7 +543,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   security004: {
     home: { x: 3, y: 1 }, //maint
     name: 'security004',
-    inventory: ['coffeemug', 'orange'],
+    inventory: ['gold', 'silver', 'bronze', 'coffeemug', 'orange'],
     clearance: 3,
     clan: 'security',
     body: 'security04body',
@@ -552,7 +552,7 @@ export const NpcsInitState: { [key: string]: Npc } = {
   security005: {
     home: { x: 2, y: 2 }, //maint
     name: 'security005',
-    inventory: ['coffeemug', 'orange'],
+    inventory: ['gold', 'silver', 'bronze', 'coffeemug', 'orange'],
     clearance: 2,
     clan: 'security',
     body: 'security04body',

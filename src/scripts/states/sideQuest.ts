@@ -14,8 +14,6 @@ export default class SideQuest {
   constructor(sidequest: SideQuestProps) {
     this.label = sidequest.label
     this.passed = sidequest.passed
-    //this._spawn = 'grounds'
-    //this.mendingQueue = []
     this.fsm = new StateMachine(this, 'sidequest' + sidequest.id)
     this.fsm.addState('idle')
     this.fsm.addState('turn', {

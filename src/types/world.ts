@@ -39,6 +39,9 @@ export interface WorldNpcsArgs {
     ): string | null
     getWards(room: string): string[]
   }
+  novel: {
+    setConfrontation(npc: string, action: string, reason: string): void
+  }
 }
 export interface NpcProps extends WorldNpcsArgs {
   npcs: {
@@ -48,6 +51,8 @@ export interface NpcProps extends WorldNpcsArgs {
     addIgnore(n: string): void
     removeIgnore(n: string): void
     returnMendeeLocation(): string | null
+    getWantedQueue(): [string, string][]
+    addAdjustWantedQueue(fugitive: string, room: string): void
     getIgnore(): string[]
   }
 }

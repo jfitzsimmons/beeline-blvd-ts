@@ -13,11 +13,9 @@ import AnnouncerSequence from '../sequences/announcerSequence'
 import InjuredSequence from '../sequences/injuredSequence'
 import ImmobileSequence from '../sequences/immobileSequence'
 import JailedSequence from '../sequences/jailedSequence'
-//import SuspectingAction from './suspectingAction'
 import AssaultedSequence from '../sequences/assaultedSequence'
 import EndAction from './endAction'
-//import RecklessSequence from '../sequences/recklessSequence'
-//import SuspectingSequence from '../sequences/suspectingSequence'
+import QuestionSequence from '../sequences/questionSequence'
 
 export default class QuestionAction extends Action {
   a: QuestionProps
@@ -49,7 +47,7 @@ export default class QuestionAction extends Action {
     //testjpf convert rest!!!:::
     //testjpf insetad of removng patient and prisoners
     //make it a condition?!?!?TODO NOW::
-    const currRoom = this.a.currRoom == this.perp.currRoom //&& ['isoner', 'atient'].includes(this.perp.currStation.slice(-7, -1))) ||//(this.hero !== null && this.a.currRoom == this.perp.currRoom)
+    const currRoom = this.a.currRoom == this.perp.currRoom
 
     const crossedPaths =
       currRoom === true
@@ -58,12 +56,47 @@ export default class QuestionAction extends Action {
             (s: string) =>
               s === this.perp.name && this.perp.exitRoom == this.a.currRoom
           ).length > 0
-    // print('QuestionAction:: crossedBOOLEAN: ', crossedPaths, this.perp.exitRoom)
-    if (crossedPaths === false)
+    if (crossedPaths === false) {
+      const cops = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
+        (s: string) => s !== this.a.name && s.substring(0, 3) == 'sec'
+      )
+      for (const c of cops) {
+        //  print('CINQUESTUON:::', c, 'from:', this.a.name)
+        const chatter = this.a.returnNpc(c)
+        for (const b of chatter.behavior.active.children) {
+          /** * print(
+            'CINQUESTUON:::behaviors::',
+            b.constructor.name,
+            'from:',
+            this.a.name,
+            (b as QuestionSequence).perp('question').name
+          )
+*/
+          if (
+            b.constructor.name == 'QuestionSequence' &&
+            (b as QuestionSequence).perp('question').name == this.perp.name
+          ) {
+            print(
+              'CINQUESTUON:::ADDADJUST!!!!',
+              c,
+              'from:',
+              this.a.name,
+              'PERP:',
+              this.perp.name,
+              this.perp.currRoom
+            )
+
+            this.a.addAdjustWantedQueue(this.perp.name, this.perp.currRoom)
+            break
+          }
+        }
+      }
+
       return () =>
         this.continue(
           `QuestionAction::: ${this.a.name} did not cross paths with ${this.perp.name} for ${this.reason}`
         )
+    }
     if (this.hero !== null && crossedPaths === true) {
       this.hero.setConfrontation(this.a.name, this.reason, 'questioning')
       return () =>
@@ -299,10 +332,25 @@ export default class QuestionAction extends Action {
       // prettier-ignore
       print('runrun',this.a.name,this.a.currStation, 'STATION MOVE VIA TASK question', this.perp.name, 'in', this.a.currRoom,this.perp.currRoom, this.perp.currStation)
     }
-      */
+     
+    const cops = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
+      (s: string) => s !== this.a.name && s.substring(0, 3) == 'sec'
+    )
+    for (const c of cops) {
+      const chatter = this.a.returnNpc(c)
+      for (const b of chatter.behavior.active.children) {
+        if (
+          b.constructor.name == 'QuestionSequence' &&
+          (b as QuestionSequence).perp('question').name == this.perp.name
+        ) {
+          this.a.addAdjustWantedQueue(this.perp.name, this.perp.currRoom)
+          break
+        }
+      }
+    } */
     return () =>
-      this.success(
-        `||>> Behavior: QUESTIONACTION::: DEFAULT:: ${consequence.type}`
+      this.fail(
+        `||>> Behavior: QUESTIONACTION::: Default Fail:: ${consequence.type}`
       )
   }
   continue(s: string): string {

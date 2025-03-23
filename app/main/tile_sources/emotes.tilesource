@@ -1,0 +1,272 @@
+image: "/assets/images/pipo-popupemotes.png"
+tile_width: 32
+tile_height: 32
+tile_margin: 0
+tile_spacing: 0
+collision: ""
+material_tag: "tile"
+collision_groups: "default"
+animations {
+  id: "admirer"
+  start_tile: 91
+  end_tile: 93
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "amped"
+  start_tile: 196
+  end_tile: 198
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "angel"
+  start_tile: 244
+  end_tile: 246
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "announcer"
+  start_tile: 10
+  end_tile: 12
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "assaulted"
+  start_tile: 64
+  end_tile: 66
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "crimewave"
+  start_tile: 94
+  end_tile: 96
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "devil"
+  start_tile: 247
+  end_tile: 249
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "distracted"
+  start_tile: 214
+  end_tile: 216
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "helper"
+  start_tile: 262
+  end_tile: 264
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "incharge"
+  start_tile: 235
+  end_tile: 237
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "inhiding"
+  start_tile: 250
+  end_tile: 252
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "injured"
+  start_tile: 58
+  end_tile: 60
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "inspired"
+  start_tile: 49
+  end_tile: 51
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "loudmouth"
+  start_tile: 142
+  end_tile: 144
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "mendee"
+  start_tile: 274
+  end_tile: 276
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "mender"
+  start_tile: 217
+  end_tile: 219
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "modesty"
+  start_tile: 292
+  end_tile: 294
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "more"
+  start_tile: 52
+  end_tile: 52
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "opportunist"
+  start_tile: 163
+  end_tile: 165
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "prejudice"
+  start_tile: 109
+  end_tile: 111
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "questioning"
+  start_tile: 7
+  end_tile: 9
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "readup"
+  start_tile: 205
+  end_tile: 207
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "rebel"
+  start_tile: 40
+  end_tile: 42
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "reckless"
+  start_tile: 85
+  end_tile: 87
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "snitch"
+  start_tile: 241
+  end_tile: 243
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "suspecting"
+  start_tile: 4
+  end_tile: 6
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "trespass"
+  start_tile: 292
+  end_tile: 294
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "vanity"
+  start_tile: 232
+  end_tile: 234
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "yogi"
+  start_tile: 259
+  end_tile: 261
+  playback: PLAYBACK_LOOP_PINGPONG
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+extrude_borders: 2
+inner_padding: 0
+sprite_trim_mode: SPRITE_TRIM_MODE_OFF

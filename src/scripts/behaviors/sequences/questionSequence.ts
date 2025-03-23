@@ -30,6 +30,7 @@ export default class QuestionSequence extends Sequence {
      *
      * need to make sure the timeout after so many TURNS
      */
+
     turnActions.push(
       ...[
         new QuestionAction(getProps, perp('question') as QuestionProps, reason),
@@ -42,6 +43,7 @@ export default class QuestionSequence extends Sequence {
     this.reason = reason
     if (this.a.turnPriority < 95) this.a.updateFromBehavior('turnPriority', 95)
     this.a.cooldown = 10
+    print('___ => Behavior: QuestionSequence:: New::', this.a.name, this.reason)
   }
   update(reason: string) {
     print(
@@ -53,6 +55,8 @@ export default class QuestionSequence extends Sequence {
     if (crimeSeverity[reason] > crimeSeverity[this.reason]) this.reason = reason
     this.incidents++
     this.a.cooldown = this.a.cooldown + 12
+    const perp = this.perp('question') as QuestionProps
+    this.a.addAdjustWantedQueue(perp.name, perp.currRoom)
   }
   run(): BehaviorRunReturn {
     if (this.a.turnPriority < 95) this.a.updateFromBehavior('turnPriority', 95)
@@ -87,6 +91,7 @@ export default class QuestionSequence extends Sequence {
         'xxx => Behavior: QuestionSequence:: should remove seq for',
         this.a.name
       )
+      this.a.updateFromBehavior('turnPriority', math.random(11, 31))
       return 'REMOVE'
     }
     return ''

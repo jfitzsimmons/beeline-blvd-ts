@@ -187,3 +187,95 @@ embedded_components {
     w: 1.0
   }
 }
+embedded_components {
+  id: "emote1"
+  type: "sprite"
+  data: "default_animation: \"more\"\n"
+  "material: \"/builtins/materials/sprite.material\"\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  "textures {\n"
+  "  sampler: \"texture_sampler\"\n"
+  "  texture: \"/main/tile_sources/emotes.tilesource\"\n"
+  "}\n"
+  ""
+  position {
+    x: -35.0
+    y: 83.0
+    z: 0.3
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+embedded_components {
+  id: "emote3"
+  type: "sprite"
+  data: "default_animation: \"more\"\n"
+  "material: \"/builtins/materials/sprite.material\"\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  "textures {\n"
+  "  sampler: \"texture_sampler\"\n"
+  "  texture: \"/main/tile_sources/emotes.tilesource\"\n"
+  "}\n"
+  ""
+  position {
+    x: -93.0
+    y: 83.0
+    z: 0.3
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+embedded_components {
+  id: "emote2"
+  type: "sprite"
+  data: "default_animation: \"more\"\n"
+  "material: \"/builtins/materials/sprite.material\"\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  "textures {\n"
+  "  sampler: \"texture_sampler\"\n"
+  "  texture: \"/main/tile_sources/emotes.tilesource\"\n"
+  "}\n"
+  ""
+  position {
+    x: -64.0
+    y: 83.0
+    z: 0.3
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
+embedded_components {
+  id: "emote4"
+  type: "sprite"
+  data: "default_animation: \"more\"\n"
+  "material: \"/builtins/materials/sprite.material\"\n"
+  "blend_mode: BLEND_MODE_ALPHA\n"
+  "textures {\n"
+  "  sampler: \"texture_sampler\"\n"
+  "  texture: \"/main/tile_sources/emotes.tilesource\"\n"
+  "}\n"
+  ""
+  position {
+    x: -122.0
+    y: 83.0
+    z: 0.3
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}

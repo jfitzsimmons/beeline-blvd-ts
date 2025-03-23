@@ -104,6 +104,7 @@ export default class PhoneSequence extends Sequence {
         'xxx => Behavior: QuestionSequence:: should remove seq for',
         this.a.name
       )
+      this.a.updateFromBehavior('turnPriority', math.random(10, 30))
       return 'REMOVE'
     }
     return ''

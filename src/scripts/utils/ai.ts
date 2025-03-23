@@ -13,7 +13,7 @@ export const turnPriorityLookup = {
   96: ['phone'],
   95: ['question'],
   94: ['announcer', 'reckless', 'snitch', 'helper', 'suspecting'],
-  93: ['trespass'],
+  93: ['trespass', 'assaulted'],
 }
 export const crimeSeverity: { [key: string]: number } = {
   clearance: 0,
@@ -248,18 +248,8 @@ export function set_room_priority(
       ? sortedArr.push(flatArr[i])
       : sortedArr.unshift(flatArr[i])
   }
-
-  for (let i = 1; i <= sortedArr.length; i++) {
-    print(
-      i,
-      'filtered:',
-      sortedArr[i - 1],
-      'from: ',
-      RoomsInitLayout[npc.matrix.y][npc.matrix.x],
-      'target:',
-      RoomsInitLayout[target.y][target.x]
-    )
-  }
+  //prettier-ignore
+  //for (let i = 1; i <= sortedArr.length; i++) {print(i,'filtered:',sortedArr[i - 1],'from: ',RoomsInitLayout[npc.matrix.y][npc.matrix.x],'target:',RoomsInitLayout[target.y][target.x])}
   return sortedArr
 }
 export function set_npc_target(

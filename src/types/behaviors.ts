@@ -1,5 +1,6 @@
 import Sequence from '../scripts/behaviors/sequence'
 import NpcState from '../scripts/states/npc'
+import WorldPlayer from '../scripts/states/player'
 import Storage from '../scripts/states/storage'
 import { Behavior, Traits } from './state'
 import { Effect } from './tasks'
@@ -19,6 +20,8 @@ export type ActionProps =
   | QuestionProps
   | DefaultBehaviorProps
   | AnnouncerProps
+  | OnScreenProps
+  | CopPlaceProps
 
 export type HeroBehaviorKeys =
   | 'place'
@@ -45,6 +48,8 @@ export type BehaviorKeys =
   | 'helper'
   | 'question'
   | 'announcer'
+  | 'onScreen'
+  | 'cops'
 
 export interface BehaviorSetters {
   cooldown: (value: number | [string, string]) => void
@@ -85,6 +90,8 @@ export interface BehaviorProps extends HeroBehaviorProps {
   injury: () => DefaultBehaviorProps
   mender: () => MenderProps
   mendee: () => MendeeProps
+  onScreen: () => OnScreenProps
+  cops: () => CopPlaceProps
 }
 
 export interface DefaultBehaviorProps {
@@ -128,6 +135,14 @@ export interface MedicPlaceProps extends PlaceProps {
   returnMendeeLocation(): string | null
 }
 
+export interface CopPlaceProps extends PlaceProps {
+  checkSetStation(room: string, station: string, npc: string): boolean
+  getWards(room: string): string[]
+  getWantedQueue(): [string, string][]
+  addAdjustWantedQueue(fugitive: string, room: string): void
+  getBehaviorProps(behavior: string): ActionProps
+}
+
 export interface EffectsProps {
   name: string
   effects: Effect[]
@@ -141,6 +156,7 @@ export interface QuestionProps extends DefaultBehaviorProps {
   love: number
   exitRoom: string
   behavior: Behavior
+  addAdjustWantedQueue(fugitive: string, room: string): void
   removeInvBonus: (chest_item: string) => void
   addInvBonus(item: string): void
   addOrExtendEffect(effect: Effect): void
@@ -148,6 +164,7 @@ export interface QuestionProps extends DefaultBehaviorProps {
   getOccupants(r: string): string[]
   getFocusedRoom(): string
   updateInventory(addDelete: 'add' | 'delete', item: string): void
+  returnNpc(n: string): NpcState
 }
 export interface AnnouncerProps extends DefaultBehaviorProps {
   traits: Traits
@@ -161,7 +178,16 @@ export interface AnnouncerProps extends DefaultBehaviorProps {
 export interface HeroQuestionProps extends QuestionProps {
   setConfrontation(npc: string, action: string, reason: string): void
 }
-
+/**
+ * TESTJPF TODO
+ * gothroughsequences and make sure that only
+ * what is needed is in the tyope
+ * and try like hell to trim this down
+ */
+export interface OnScreenProps extends DefaultBehaviorProps {
+  returnPlayer(): WorldPlayer
+  setConfrontation(npc: string, action: string, reason: string): void
+}
 export interface MenderProps extends DefaultBehaviorProps {
   behavior: Behavior
   returnNpc(n: string): NpcState
@@ -174,11 +200,12 @@ export interface HeroInjuredProps extends DefaultBehaviorProps {
   getOccupants(r: string): string[]
 }
 export interface InjuredProps extends HeroInjuredProps {
-  traits: Traits
-  exitRoom: string
-  returnNpc(n: string): NpcState
+  //traits: Traits
+  //exitRoom: string
+  // returnNpc(n: string): NpcState
+  getFocusedRoom(): string
   getMendingQueue(): string[]
-  getOccupants(r: string): string[]
+  //getOccupants(r: string): string[]
   getIgnore(): string[]
   addAdjustMendingQueue(patient: string): void
 }
