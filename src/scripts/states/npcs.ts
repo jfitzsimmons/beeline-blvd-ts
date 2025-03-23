@@ -94,6 +94,7 @@ export default class WorldNpcs {
 
     this.returnDoctors = this.returnDoctors.bind(this)
     this.returnSecurity = this.returnSecurity.bind(this)
+    this.getMendingQueue = this.getMendingQueue.bind(this)
   }
   public get all(): Npcs {
     return this._all
@@ -129,6 +130,30 @@ export default class WorldNpcs {
   }
   private onNewExit(): void {
     this.sort_npcs_by_encounter()
+    // TEST DATA DEFAULTS
+    this.all.security001.behavior.active.children.push(
+      new QuestionSequence(
+        this.all.security001.getBehaviorProps.bind(this),
+        this.all.mailroom01.getBehaviorProps.bind(this),
+        'assault'
+      )
+    )
+
+    this.all.security004.behavior.active.children.push(
+      new QuestionSequence(
+        this.all.security004.getBehaviorProps.bind(this),
+        this.all.mailroom01.getBehaviorProps.bind(this),
+        'assault'
+      )
+    )
+
+    this.all.security005.behavior.active.children.push(
+      new QuestionSequence(
+        this.all.security005.getBehaviorProps.bind(this),
+        this.all.mailroom01.getBehaviorProps.bind(this),
+        'assault'
+      )
+    )
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
       print('===>>> SETTING::', npc.name, 'TO.ACTIVE')
@@ -154,31 +179,6 @@ export default class WorldNpcs {
           new TrespassSequence(npc.getBehaviorProps.bind(npc))
         )
       }
-
-      // TEST DATA DEFAULTS
-      this.all.security001.behavior.active.children.push(
-        new QuestionSequence(
-          this.all.security001.getBehaviorProps.bind(this),
-          this.all.mailroom01.getBehaviorProps.bind(this),
-          'assault'
-        )
-      )
-
-      this.all.security004.behavior.active.children.push(
-        new QuestionSequence(
-          this.all.security004.getBehaviorProps.bind(this),
-          this.all.mailroom01.getBehaviorProps.bind(this),
-          'assault'
-        )
-      )
-
-      this.all.security005.behavior.active.children.push(
-        new QuestionSequence(
-          this.all.security005.getBehaviorProps.bind(this),
-          this.all.mailroom01.getBehaviorProps.bind(this),
-          'assault'
-        )
-      )
 
       npc.fsm.setState('active')
     }
@@ -437,12 +437,12 @@ export default class WorldNpcs {
       this.mendingQueue.push(patient)
     }
   }
+  getMendingQueue(): string[] {
+    return this.mendingQueue
+  }
   returnMendeeLocation(): string | null {
     const injured = this.getMendingQueue()[0]
     return injured === null ? null : this.all[injured].currRoom
-  }
-  getMendingQueue(): string[] {
-    return this.mendingQueue
   }
   addIgnore(n: string): void {
     if (this.ignore.includes(n) == false) this.ignore.push(n)

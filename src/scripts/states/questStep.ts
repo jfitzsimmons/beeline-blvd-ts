@@ -20,8 +20,6 @@ export default class QuestStep {
     this.interval = step.interval
     this.func = step.func
     this.args = step.args
-    //this._spawn = 'grounds'
-    //this.mendingQueue = []
     this.fsm = new StateMachine(this, 'step' + step.id)
     this.fsm.addState('idle')
     this.fsm.addState('active', {

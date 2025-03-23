@@ -29,7 +29,7 @@ export const RoomsInitState: { [key: string]: Room } = {
       }),
       locker: new Storage({
         name: 'locker',
-        inventory: ['silver', 'cape', 'magic5'],
+        inventory: ['ring', 'coingold', 'earrings', 'silver', 'cape', 'magic5'],
         actions: ['use', 'open'],
         watcher: 'desk',
       }),
@@ -54,14 +54,28 @@ export const RoomsInitState: { [key: string]: Room } = {
     actors: {
       luggage_1: new Storage({
         name: 'luggage_1',
-        inventory: ['tomato', 'mushroom03', 'orange'],
+        inventory: [
+          'ring',
+          'coingold',
+          'earrings',
+          'tomato',
+          'mushroom03',
+          'orange',
+        ],
         watcher: 'browse',
         actions: ['open'],
       }),
 
       luggage_2: new Storage({
         name: 'luggage_2',
-        inventory: ['mushroom02', 'banana', 'vial01'],
+        inventory: [
+          'ring',
+          'coingold',
+          'earrings',
+          'mushroom02',
+          'banana',
+          'vial01',
+        ],
         watcher: 'guard',
         actions: ['open'],
       }),
@@ -464,7 +478,14 @@ export const RoomsInitState: { [key: string]: Room } = {
       }),
       locker: new Storage({
         name: 'locker',
-        inventory: ['avacado', 'berry02', 'shrimp02'],
+        inventory: [
+          'ring',
+          'coingold',
+          'earrings',
+          'avacado',
+          'berry02',
+          'shrimp02',
+        ],
         actions: ['use', 'open'],
         watcher: 'desk',
       }),
@@ -491,7 +512,14 @@ export const RoomsInitState: { [key: string]: Room } = {
     actors: {
       drawer: new Storage({
         name: 'desks',
-        inventory: ['deskbook01', 'globegold', 'fish02'],
+        inventory: [
+          'ring',
+          'coingold',
+          'earrings',
+          'deskbook01',
+          'globegold',
+          'fish02',
+        ],
         actions: ['open'],
         watcher: 'desk',
       }),
@@ -503,13 +531,28 @@ export const RoomsInitState: { [key: string]: Room } = {
       }),
       locker: new Storage({
         name: 'locker',
-        inventory: ['silver', 'mushroom01', 'potion'],
+        inventory: [
+          'ring',
+          'coingold',
+          'earrings',
+          'silver',
+          'mushroom01',
+          'potion',
+        ],
         actions: ['use', 'open'],
         watcher: 'desk',
       }),
       vase3: new Storage({
         name: 'vase3',
-        inventory: ['steak02', 'leaf03', 'daisy', 'mushroom02'],
+        inventory: [
+          'ring',
+          'coingold',
+          'earrings',
+          'steak02',
+          'leaf03',
+          'daisy',
+          'mushroom02',
+        ],
         actions: ['open'],
         watcher: 'patrol',
       }),
@@ -537,7 +580,14 @@ export const RoomsInitState: { [key: string]: Room } = {
     actors: {
       drawer: new Storage({
         name: 'drawer',
-        inventory: ['cheese', 'shrimp01', 'drumstick01'],
+        inventory: [
+          'ring',
+          'coingold',
+          'earrings',
+          'cheese',
+          'shrimp01',
+          'drumstick01',
+        ],
         actions: ['open'],
         watcher: 'desk',
       }),
@@ -555,13 +605,21 @@ export const RoomsInitState: { [key: string]: Room } = {
       }),
       vase: new Storage({
         name: 'vase',
-        inventory: ['pillow', 'book', 'tomato'],
+        inventory: ['ring', 'coingold', 'earrings', 'pillow', 'book', 'tomato'],
         actions: ['open'],
         watcher: 'loiter2',
       }),
       vase2: new Storage({
         name: 'vase2',
-        inventory: ['steak01', 'leaf03', 'daisy', 'mushroom03'],
+        inventory: [
+          'ring',
+          'coingold',
+          'earrings',
+          'steak01',
+          'leaf03',
+          'daisy',
+          'mushroom03',
+        ],
         actions: ['open'],
         watcher: 'patrol',
       }),
@@ -572,9 +630,9 @@ export const RoomsInitState: { [key: string]: Room } = {
     roomName: 'grounds',
     clearance: 0,
     swaps: {
-      assistant: ['guard', ''],
+      aid: ['guard', ''],
       loiter1: ['loiter2', ''],
-      guest: ['bench', ''],
+      assistant: ['bench', ''],
     },
     stations: {
       assistant: '',
@@ -589,13 +647,29 @@ export const RoomsInitState: { [key: string]: Room } = {
     actors: {
       player_luggage: new Storage({
         name: 'player_luggage',
-        inventory: ['berry01', 'feather01', 'magica1', 'orange'],
+        inventory: [
+          'ring',
+          'coingold',
+          'earrings',
+          'berry01',
+          'feather01',
+          'magica1',
+          'orange',
+        ],
         watcher: 'worker2',
         actions: ['open'],
       }),
       other_luggage: new Storage({
         name: 'other_luggage',
-        inventory: ['eyeball03', 'feather02', 'magicb1', 'mushroom02'],
+        inventory: [
+          'ring',
+          'coingold',
+          'earrings',
+          'eyeball03',
+          'feather02',
+          'magicb1',
+          'mushroom02',
+        ],
         watcher: 'worker2',
         actions: ['open'],
       }),
@@ -607,8 +681,21 @@ export const RoomsInitState: { [key: string]: Room } = {
       }),
       drawer: new Storage({
         name: 'drawer',
-        inventory: ['book'],
+        inventory: ['ring', 'coingold', 'earrings', 'book'],
         watcher: 'loiter1',
+        actions: ['open'],
+      }),
+      cargo: new Storage({
+        name: 'cargo',
+        inventory: [
+          'ring',
+          'coingold',
+          'earrings',
+          'magica1',
+          'magica4',
+          'magicb3',
+        ],
+        watcher: 'guard',
         actions: ['open'],
       }),
     },
@@ -690,7 +777,14 @@ export const RoomsInitState: { [key: string]: Room } = {
     actors: {
       drawer: new Storage({
         name: 'drawer',
-        inventory: ['vial02', 'banana', 'vial01'],
+        inventory: [
+          'ring',
+          'coingold',
+          'earrings',
+          'vial02',
+          'banana',
+          'vial01',
+        ],
         actions: ['open'],
         watcher: 'assistant',
       }),

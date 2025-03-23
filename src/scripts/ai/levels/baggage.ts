@@ -23,7 +23,7 @@ function steal_stash_checks(_this: RoomState) {
     suspect != null &&
     victim != null &&
     loot.inventory.length > 0 &&
-    suspect.cooldown <= 0
+    suspect.cooldown < 1
   ) {
     const victimProps: AttendantProps = {
       name: victim.name,
@@ -44,7 +44,6 @@ function steal_stash_checks(_this: RoomState) {
       addInvBonus: suspect.addInvBonus.bind(suspect),
       updateInventory: suspect.updateInventory.bind(suspect),
       addOrExtendEffect: suspect.addOrExtendEffect.bind(suspect),
-      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
     const witness = npcStealCheck(suspectProps, victimProps, loot)
     if (witness == 'witness') {
@@ -71,7 +70,6 @@ function steal_stash_checks(_this: RoomState) {
       addInvBonus: suspect.addInvBonus.bind(suspect),
       updateInventory: suspect.updateInventory.bind(suspect),
       addOrExtendEffect: suspect.addOrExtendEffect.bind(suspect),
-      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
     }
     take_or_stash(suspectProps, loot)
   }

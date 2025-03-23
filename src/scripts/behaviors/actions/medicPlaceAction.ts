@@ -40,6 +40,7 @@ export default class MedicPlaceAction extends Action {
       infirmed < 1 &&
       this.a.getMendingQueue().length > 1
     ) {
+      print('medicplaceact::: PARAMEDIC: ', this.a.getMendingQueue().length)
       const target = RoomsInitState[this.a.returnMendeeLocation()!].matrix
 
       this.a.findRoomPlaceStation(target)

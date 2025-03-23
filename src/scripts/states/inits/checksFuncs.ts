@@ -862,8 +862,8 @@ export function npcStealCheck(
   if (consequence.type == 'seen') {
     return 'witness'
   }
+  const actor = storage === undefined ? watcher : storage
   if (consequence.type == 'neutral') {
-    const actor = storage === undefined ? watcher : storage
     let chest_item = null
     if (math.random() < 0.4) {
       chest_item = actor.inventory[math.random(0, actor.inventory.length - 1)]

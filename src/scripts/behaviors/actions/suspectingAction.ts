@@ -236,6 +236,26 @@ export default class SuspectingAction extends Action {
         //new SnitchSequence()
         //snitch sequence should weight concern lower than theft.
         if (this.a.clan == 'security') {
+          for (const behavior of this.a.behavior.active.children) {
+            if (
+              behavior instanceof QuestionSequence &&
+              (behavior.perp('helper') as HelperProps).name == this.perp.name
+            ) {
+              behavior.update(this.cause)
+              print(
+                'suspectingAction::: QuestionSequence extended for:: ',
+                this.a.name,
+                'by:',
+                this.a.name,
+                'for',
+                this.perp.name
+              )
+              return () =>
+                this.success(
+                  `${this.a.name} extended questionhUpdate suspectingACTION in ${this.a.currRoom}`
+                )
+            }
+          }
           this.a.addToBehavior(
             'active',
             new QuestionSequence(

@@ -21,12 +21,18 @@ export default class CopPlaceAction extends Action {
     if (mobile === true && inprisoned > 1) {
       if (math.random() + inprisoned * 0.2 > 1) {
         const filled = this.a.checkSetStation('security', 'desk', this.a.name)
-        print('||>> Behavior: CopPlaceAction: TendingShop!', this.a.name)
 
         if (filled == true) {
           this.a.currRoom = 'security'
           return () => this.success()
         }
+        print(
+          '||>> Behavior: CopPlaceAction: TendingShop!',
+          this.a.name,
+          'filled:',
+          filled
+        )
+
         //testjpf instead parent.checkSetStation()
         //would have to redo conditional logic.
         //!! I think this logic is badd anyway
@@ -58,7 +64,12 @@ export default class CopPlaceAction extends Action {
           crimeScene
       )
         this.a.addAdjustWantedQueue(criminal, 'checked')
-      print('||>> Behavior: CopPlaceAction: Bounty HUuting!', this.a.name)
+      print(
+        '||>> Behavior: CopPlaceAction: Bounty Hunting!',
+        this.a.name,
+        crimeScene,
+        criminal
+      )
 
       return () => this.success()
     }
