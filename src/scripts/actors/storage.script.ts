@@ -32,10 +32,7 @@ export function on_message(
     }
     msg.post('/shared/adam#interact', 'shownode', params)
   } else if (messageId == hash('trigger_response') && message.exit) {
-    const params = {
-      texts: this.actions,
-    }
-    msg.post('/shared/adam#interact', 'hidenode', params)
+    msg.post('/shared/adam#interact', 'hidenode')
   } else if (messageId == hash('load_storage_inventory')) {
     this.storagename = message.storagename
     this.roomName = message.roomName

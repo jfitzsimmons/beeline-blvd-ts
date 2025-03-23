@@ -36,10 +36,10 @@ export function init(this: props): void {
   }
 }
 
-function show_ai_screen() {
-  msg.post('ai_screen#ai_screen', 'show_screen')
-  msg.post('#', 'release_input_focus')
-}
+////function show_ai_screen() {
+//msg.post('ai_screen#ai_screen', 'show_screen')
+//msg.post('#', 'release_input_focus')
+//}
 
 function open_novel(_this: props) {
   npcs.all[_this.npcname].convos = npcs.all[_this.npcname].convos + 1
@@ -183,7 +183,9 @@ function check_nodes(
 ) {
   novel.forced = false
   _this.consequence = { pass: false, type: 'neutral' }
+  print('_this.clones.length', _this.clones.length)
   for (const c of _this.clones) {
+    print('gui.get_layer(c.clone)', c.action, gui.get_layer(c.clone))
     if (
       gui.get_layer(c.clone) != hash('unclickable') &&
       gui.pick_node(c.clone, action.x, action.y)
@@ -195,11 +197,14 @@ function check_nodes(
         c.action == 'pockets'
       ) {
         open_inventory(_this, c.actor, c.action)
+        break
       } else if (c.action == 'talk') {
         print("talkprint('intnovelpriority', novel.forced)", novel.forced)
         open_novel(_this)
+        break
       } else if (c.action == 'use') {
-        show_ai_screen()
+        // show_ai_screen()
+        break
       }
     }
   }
@@ -215,29 +220,29 @@ function check_nodes(
 // would be cool to have a tiny interact that show preview icons of these URGENT actions.
 // urgent isn't the best word for it.
 //if i get this working need to overhaul dialog system
-function set_interactions(
-  actorsActions: {
-    [key: string]: string[]
-  },
+function set_interactions(m: {
+  actions: { [key: string]: string[] }
   pos: vmath.vector3
-): cloneparent[] {
+  npcname: string
+}): cloneparent[] {
   const clones = []
   const spacing = 25
   const [ww, wh] = window.get_size()
   const cw = ww / 2
   const ch = wh / 2
-  const adjx = (cw - pos.x) / 6 + cw
-  const adjy = (ch - pos.y) / 6 + ch
+  const adjx = (cw - m.pos.x) / 6 + cw
+  const adjy = (ch - m.pos.y) / 6 + ch
 
-  let nodepos = vmath.vector3(adjx, adjy, pos.z)
-  let actorKey: keyof typeof actorsActions
-  for (actorKey in actorsActions) {
-    for (const action of actorsActions[actorKey]) {
+  let nodepos = vmath.vector3(adjx, adjy, m.pos.z)
+  let actorKey: keyof typeof m.actions
+  for (actorKey in m.actions) {
+    for (const action of m.actions[actorKey]) {
       nodepos.y = nodepos.y + spacing
       nodepos = vmath.vector3(nodepos)
       print(action)
       const parent = gui.clone(gui.get_node('generic'))
-      gui.set_id(parent, action)
+      print('actorKey + action', actorKey + action)
+      gui.set_id(parent, actorKey + action)
       //  let node: node = gui.get_node('_text_generic')
       const bg = gui.clone(gui.get_node('_bg_generic'))
       gui.set_parent(bg, parent)
@@ -245,6 +250,7 @@ function set_interactions(
       gui.set_text(child, action)
       gui.set_parent(child, parent)
       const clonetree = gui.clone_tree(parent)
+      gui.delete_node(parent)
 
       let clonedNode: keyof typeof clonetree
       for (clonedNode in clonetree) {
@@ -254,10 +260,11 @@ function set_interactions(
 
         const cloneparent: cloneparent = {
           clone: clone,
-          actor: actorKey,
+          actor: m.npcname,
           action,
         }
         clones.push(cloneparent)
+        // gui.delete_node(clone)
       }
     }
     nodepos.y = nodepos.y + spacing * 1.3
@@ -269,6 +276,7 @@ function set_interactions(
     //TS-DEFOLD - lint ERROR
     //export function clone_tree(node: node): any
     const clonetree: any = gui.clone_tree(node)
+    //gui.delete_node(node)
     let clonedNode: keyof typeof clonetree
 
     for (clonedNode in clonetree) {
@@ -278,10 +286,11 @@ function set_interactions(
 
       const cloneparent: cloneparent = {
         clone: clone,
-        actor: 'label',
-        action: actorKey,
+        actor: m.npcname,
+        action: 'label',
       }
       clones.push(cloneparent)
+      // gui.delete_node(clone)
     }
 
     nodepos.y = nodepos.y + spacing * 0.5
@@ -300,19 +309,42 @@ export function on_message(
   _sender: url
 ): void {
   if (messageId == hash('shownode')) {
-    //populate text nodes && show them
-    this.clones = set_interactions(message.actions, message.pos) //GO.pos cannot come from gui script
     this.npcname = message.npcname
+
+    print('!!!!SHOWNODE!!!!')
+    for (let i = this.clones.length; i-- !== 0; ) {
+      print(this.clones.length, 'this.clones[i].actor', this.clones[i].actor)
+      if (this.clones[i].actor !== this.npcname) {
+        print(
+          'this.clones[i].actor !== this.npcname',
+          this.clones[i].actor !== this.npcname,
+          this.clones[i].actor,
+          this.npcname
+        )
+        gui.delete_node(this.clones[i].clone)
+        this.clones.splice(i, 1)
+      }
+    }
+    this.watcher = ''
+    //populate text nodes && show them
+    this.clones = set_interactions(message) //GO.pos cannot come from gui script
     if (npcs.all[this.npcname] != null) {
       this.isNpc = true
     } else {
       this.isNpc = false
     }
   } else if (messageId == hash('hidenode')) {
-    for (const clone of this.clones) {
-      gui.delete_node(clone.clone)
+    print(
+      'HIDENODEFIRED: Message recieve::m this.clones.length',
+      this.clones.length
+    )
+    for (let i = this.clones.length; i-- !== 0; ) {
+      print(i, '222this.clones[i].actor', this.clones[i].actor)
+      if (this.clones[i].actor == this.npcname) {
+        gui.delete_node(this.clones[i].clone)
+        this.clones.splice(i, 1)
+      }
     }
-    this.clones = []
     this.watcher = ''
   }
 }
@@ -323,6 +355,7 @@ export function on_input(
   action: { released: true; x: number; y: number }
 ) {
   if (actionId == hash('touch') && action.released) {
+    print('CEHCKNODES!!!')
     check_nodes(this, action)
   }
 }

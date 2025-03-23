@@ -26,8 +26,8 @@ embedded_components {
   ""
   position {
     x: 135.0
-    y: 113.0
-    z: 0.0
+    y: 129.0
+    z: 0.1
   }
   rotation {
     x: 0.0
@@ -72,7 +72,7 @@ embedded_components {
   ""
   position {
     x: 35.0
-    y: 68.0
+    y: 76.0
     z: 0.0
   }
   rotation {
@@ -142,8 +142,8 @@ embedded_components {
   "  shapes {\n"
   "    shape_type: TYPE_BOX\n"
   "    position {\n"
-  "      x: 37.0\n"
-  "      y: 97.0\n"
+  "      x: 38.0\n"
+  "      y: 94.0\n"
   "      z: 0.0\n"
   "    }\n"
   "    rotation {\n"
@@ -159,8 +159,8 @@ embedded_components {
   "  shapes {\n"
   "    shape_type: TYPE_BOX\n"
   "    position {\n"
-  "      x: 119.0\n"
-  "      y: 97.0\n"
+  "      x: 118.0\n"
+  "      y: 112.0\n"
   "      z: 0.0\n"
   "    }\n"
   "    rotation {\n"
@@ -176,8 +176,8 @@ embedded_components {
   "  shapes {\n"
   "    shape_type: TYPE_BOX\n"
   "    position {\n"
-  "      x: 89.0\n"
-  "      y: 18.0\n"
+  "      x: 86.0\n"
+  "      y: 19.0\n"
   "      z: 0.0\n"
   "    }\n"
   "    rotation {\n"
@@ -190,13 +190,13 @@ embedded_components {
   "    count: 3\n"
   "    id: \"\"\n"
   "  }\n"
-  "  data: 37.983\n"
+  "  data: 40.597908\n"
+  "  data: 70.82055\n"
+  "  data: 13.8\n"
+  "  data: 39.30056\n"
   "  data: 63.273\n"
   "  data: 13.8\n"
-  "  data: 37.983\n"
-  "  data: 63.273\n"
-  "  data: 13.8\n"
-  "  data: 41.6\n"
+  "  data: 45.333435\n"
   "  data: 41.6\n"
   "  data: 41.6\n"
   "}\n"
