@@ -146,26 +146,6 @@ export default class World {
     this.rooms.fsm.update(dt) // runs room based AI Behavior
     this.player.fsm.setState('active')
     this.npcs.fsm.setState('active') // runs each NPC active Behavior
-    // starting with Offscreen
-    //then onScreen WHICH NEEDS TODO!!!
-    // maybe checks onscreen and adds a
-    // ResolveAction??
-    // ex: suspectingSeq
-    // WAIT do i need to do anyhting?
-    // // i think each npc should have seq they need
-    // maybe a few need to make sure they dont get delted 'REMOVE' if ONSCREE
-    //So check ONSCREEN and Delay remove?
-    //Add a removeAct?
-    //in fsm for onscreen
-    //could loop through behavior and
-    // //determine which to delay or remove or add new seq?
-    // ex: suspecting, respass...
-    //things that just run once...??
-    /**
-     * TESTJPF I THINK this is it::
-     * EX trespass: on sequence PROCEED
-     * if Onscreen new OnScreenAction('trespass', this.getprops)
-     */
     print('????? :::: QQQQQ: Quest Related Status checks: Running...')
     this.quests.fsm.update(dt)
     print('???? ::: QQQQ: Quest Related Status checks: Finished.')
@@ -177,16 +157,19 @@ export default class World {
     this.player.hp = this.player.hpMax - 1
   }
   private onFaintUpdate(): void {
-    //testjpf could probably remove
-    // use placebehavior instead?
-    this.player.setRoomInfo()
+    print('XXXX ::: XXXX: worldFAINTupdate: Started...')
+    this.player.fsm.setState('place')
+    this.npcs.fsm.setState('place')
+    if (this.clock > 23) this.clock = this.clock - 24
     this.player.fsm.update(dt)
-    this.quests.fsm.update(dt)
     this.tasks.fsm.update(dt)
     this.npcs.fsm.update(dt)
     this.rooms.fsm.update(dt)
-
+    this.player.fsm.setState('active')
+    this.npcs.fsm.setState('active')
+    this.quests.fsm.update(dt)
     this.fsm.setState('turn')
+    print('XXX ::: XXX: worldFAINTupdate: Finished.')
   }
   private onFaintExit(): void {}
   returnNpc(n: string): NpcState {

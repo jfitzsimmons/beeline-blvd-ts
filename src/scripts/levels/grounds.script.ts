@@ -40,15 +40,19 @@ function load_storage() {
   const params = {
     roomName: 'grounds',
     storagename: 'player_luggage',
-    ani: 'luggage01',
+    // ani: 'luggage01',
   }
   msg.post('/luggageplayer#storage', 'load_storage_inventory', params)
 
   params.storagename = 'other_luggage'
-  params.ani = 'luggage02'
+  //params.ani = 'luggage02'
   msg.post('/luggageother#storage', 'load_storage_inventory', params)
 
   msg.post('/phone#station', 'loadActor', { roomName: 'grounds' })
+
+  params.storagename = 'cargo'
+  // params.ani = 'luggage02'
+  msg.post('/cargo#storage', 'load_storage_inventory', params)
 }
 
 export function on_message(

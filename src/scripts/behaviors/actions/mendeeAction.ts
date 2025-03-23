@@ -15,8 +15,6 @@ export default class MendeeAction extends Action {
     super()
     this.a = props
     this.getProps = getProps
-    //this.a.addIgnore(this.a.name)
-    //this.a.addAdjustMendingQueue(this.a.name)
   }
   run(): { (): void } {
     if (math.random() > 0.4) this.a.hp = this.a.hp + 1

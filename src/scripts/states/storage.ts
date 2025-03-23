@@ -13,9 +13,6 @@ export default class Storage {
     this.inventory = actor.inventory
     this.watcher = actor.watcher
     this.actions = actor.actions
-
-    //this._spawn = 'grounds'
-    //this.mendingQueue = []
     this.updateInventory = this.updateInventory.bind(this)
   }
 

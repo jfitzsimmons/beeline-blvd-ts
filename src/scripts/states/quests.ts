@@ -25,8 +25,6 @@ export default class WorldQuests {
       percent_tutorial: this.percent_tutorial.bind(this),
     }
     this._all = build_quests_state(this.questmethods)
-    //this._spawn = 'grounds'
-    //this.mendingQueue = []
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
       onEnter: this.onTurnEnter.bind(this),

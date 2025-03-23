@@ -93,6 +93,17 @@ export default class NpcState extends ActorState {
             ...behaviorDefaults(),
           }
         },
+        cops: () => {
+          return {
+            checkSetStation: this.p.rooms.checkSetStation.bind(this),
+            getWards: this.p.rooms.getWards.bind(this),
+            getWantedQueue: this.p.npcs.getWantedQueue.bind(this),
+            addAdjustWantedQueue: this.p.npcs.addAdjustWantedQueue.bind(this),
+            getBehaviorProps: this.getBehaviorProps.bind(this),
+            findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
+            ...behaviorDefaults(),
+          }
+        },
         medplace: () => {
           return {
             clearance: this.clearance,
@@ -199,6 +210,8 @@ export default class NpcState extends ActorState {
             getBehaviorProps: this.getBehaviorProps.bind(this),
             getOccupants: this.p.rooms.getOccupants.bind(this),
             updateInventory: this.updateInventory.bind(this),
+            returnNpc: this.p.world.returnNpc.bind(this),
+            addAdjustWantedQueue: this.p.npcs.addAdjustWantedQueue.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -392,6 +405,10 @@ export default class NpcState extends ActorState {
   }
   addInvBonus(i: string) {
     const item: InventoryTableItem = { ...itemStateInit[i] }
+    if (item.skills == null || item.skills == undefined) {
+      print('addInvBonus', i)
+      print('addInvBonus2', item.value)
+    }
     let sKey: keyof typeof item.skills
     for (sKey in item.skills)
       this.traits.skills[sKey] = this.traits.skills[sKey] + item.skills[sKey]

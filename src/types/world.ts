@@ -51,6 +51,8 @@ export interface NpcProps extends WorldNpcsArgs {
     addIgnore(n: string): void
     removeIgnore(n: string): void
     returnMendeeLocation(): string | null
+    getWantedQueue(): [string, string][]
+    addAdjustWantedQueue(fugitive: string, room: string): void
     getIgnore(): string[]
   }
 }
