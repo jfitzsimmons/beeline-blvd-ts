@@ -60,7 +60,7 @@ export function on_message(
         actions: this.actions, //generated from actors
         //script:this.script,
         //collision:"enter",
-        npcname: this.npc,
+        npcname: this.npc == '' ? 'desk' : this.npc,
         //parenturl:this.url,
         //room:this.roomName
       }

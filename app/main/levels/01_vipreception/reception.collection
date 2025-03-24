@@ -83,8 +83,8 @@ instances {
   id: "desk"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 0.0
-    y: -5.0
+    x: -1.0
+    y: -20.0
     z: 0.1
   }
   rotation {
@@ -561,8 +561,8 @@ embedded_instances {
   "  shapes {\\n"
   "    shape_type: TYPE_BOX\\n"
   "    position {\\n"
-  "      x: 1.0\\n"
-  "      y: 17.0\\n"
+  "      x: 0.0\\n"
+  "      y: 11.0\\n"
   "      z: 0.0\\n"
   "    }\\n"
   "    rotation {\\n"
@@ -575,8 +575,8 @@ embedded_instances {
   "    count: 3\\n"
   "    id: \\\"\\\"\\n"
   "  }\\n"
-  "  data: 68.665\\n"
-  "  data: 58.774\\n"
+  "  data: 67.05657\\n"
+  "  data: 73.8197\\n"
   "  data: 12.4\\n"
   "}\\n"
   "linear_damping: 0.0\\n"

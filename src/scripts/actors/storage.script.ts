@@ -24,15 +24,17 @@ export function on_message(
   },
   _sender: url
 ): void {
-  if (messageId == hash('trigger_response') && message.enter) {
-    const params = {
-      pos: go.get_position('/shared/adam'),
-      actions: this.actions,
-      room: this.roomName,
+  if (messageId == hash('trigger_response')) {
+    if (message.enter) {
+      const params = {
+        pos: go.get_position('/shared/adam'),
+        actions: this.actions,
+        npcname: this.storagename,
+      }
+      msg.post('/shared/adam#interact', 'shownode', params)
+    } else {
+      msg.post('/shared/adam#interact', 'hidenode')
     }
-    msg.post('/shared/adam#interact', 'shownode', params)
-  } else if (messageId == hash('trigger_response') && message.exit) {
-    msg.post('/shared/adam#interact', 'hidenode')
   } else if (messageId == hash('load_storage_inventory')) {
     this.storagename = message.storagename
     this.roomName = message.roomName
