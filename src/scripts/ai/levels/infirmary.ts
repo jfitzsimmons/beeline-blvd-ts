@@ -8,17 +8,26 @@ import {
 } from '../../states/inits/checksFuncs'
 import RoomState from '../../states/room'
 import Storage from '../../states/storage'
-import { cicadaModulus } from '../../utils/utils'
-
+//import Storage from '../../states/storage'
+import { cicadaModulus, shuffle } from '../../utils/utils'
+/**
+ *
+ * testjpf
+ * i think these shoudl create Steal / Stash / Take seqs for characters
+ * that might take care of these props. should be behavior props.
+ * then i can deal with them with all other behavior.
+ * run behavior ewheneve i need instead of forced through FSM!!!!!
+ * //maybe not!! see if it pans out later
+ */
 function steal_stash_checks(this: RoomState) {
   let thiefVictim = null
   let thief = null
   let actor: Storage
   let loot: string[] = []
-  let attendant =
+  const attendant =
     this.stations.desk === '' ? null : this.p.returnNpc(this.stations.desk)
-  if (cicadaModulus() && this.stations.guest != '') {
-    thiefVictim = this.p.returnNpc(this.stations.guest)
+  if (this.swaps.servants2[1] != '') {
+    thiefVictim = this.p.returnNpc(this.swaps.servants2[1])
     const thiefVictimProps: ThiefVictimProps = {
       name: thiefVictim.name,
       traits: thiefVictim.traits,
@@ -64,11 +73,9 @@ function steal_stash_checks(this: RoomState) {
     }
   }
 
-  if (this.stations.loiter4 != '') {
-    thief = this.p.returnNpc(this.stations.loiter4)
-  }
+  thief =
+    this.stations.loiter2 != '' ? this.p.returnNpc(this.stations.loiter2) : null
   if (
-    cicadaModulus() &&
     thiefVictim != null &&
     thief != null &&
     loot.length > 0 &&
@@ -124,44 +131,66 @@ function steal_stash_checks(this: RoomState) {
     }
     take_or_stash(attendantProps, actor)
   }
-  if (cicadaModulus() && this.stations.patrol != '') {
-    attendant = this.p.returnNpc(this.stations.patrol)
-    const attendantProps: ThiefVictimProps = {
-      name: attendant.name,
-      traits: attendant.traits,
-      inventory: attendant.inventory,
-      clan: attendant.clan,
-      cooldown: attendant.cooldown,
-      crime: 'concern',
-      removeInvBonus: attendant.removeInvBonus.bind(attendant),
-      addInvBonus: attendant.addInvBonus.bind(attendant),
-      updateInventory: attendant.updateInventory.bind(attendant),
-      addOrExtendEffect: attendant.addOrExtendEffect.bind(attendant),
-      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
-    }
-    actor = this.actors.vase2
-    take_or_stash(attendantProps, actor)
+
+  let [suspect, watcher, third] = shuffle([
+    this.swaps.loiter2[1] == ''
+      ? null
+      : this.p.returnNpc(this.swaps.loiter2[1]),
+    this.stations.servants2 == ''
+      ? null
+      : this.p.returnNpc(this.stations.servants2),
+    this.stations.loiter1 == ''
+      ? null
+      : this.p.returnNpc(this.stations.loiter1),
+  ])
+
+  if (suspect == null && third != null) {
+    suspect = third
+    third = null
   }
-  if (cicadaModulus() && this.stations.loiter2 != '') {
-    attendant = this.p.returnNpc(this.stations.loiter2)
-    const attendantProps: ThiefVictimProps = {
-      name: attendant.name,
-      traits: attendant.traits,
-      inventory: attendant.inventory,
-      clan: attendant.clan,
-      cooldown: attendant.cooldown,
-      crime: 'concern',
-      removeInvBonus: attendant.removeInvBonus.bind(attendant),
-      addInvBonus: attendant.addInvBonus.bind(attendant),
-      updateInventory: attendant.updateInventory.bind(attendant),
-      addOrExtendEffect: attendant.addOrExtendEffect.bind(attendant),
-      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
+  if (watcher == null && third != null) watcher = third
+  if (
+    suspect != null &&
+    watcher != null &&
+    suspect.cooldown < 1 &&
+    watcher.inventory.length > 0
+  ) {
+    const thiefVictimProps: ThiefVictimProps = {
+      name: suspect.name,
+      traits: suspect.traits,
+      inventory: suspect.inventory,
+      clan: suspect.clan,
+      cooldown: suspect.cooldown,
+      crime: 'pockets',
+      removeInvBonus: suspect.removeInvBonus.bind(suspect),
+      addInvBonus: suspect.addInvBonus.bind(suspect),
+      updateInventory: suspect.updateInventory.bind(suspect),
+      addOrExtendEffect: suspect.addOrExtendEffect.bind(suspect),
     }
-    actor = this.actors.vase
-    take_or_stash(attendantProps, actor)
+    const attendantProps: AttendantProps = {
+      name: watcher.name,
+      traits: watcher.traits,
+      clan: watcher.clan,
+      inventory: watcher.inventory,
+      updateInventory: watcher.updateInventory.bind(watcher),
+      addOrExtendEffect: watcher.addOrExtendEffect.bind(watcher),
+    }
+    const witness = npcStealCheck(thiefVictimProps, attendantProps)
+
+    if (witness == 'witness') {
+      const perp = suspect.getBehaviorProps('question') as QuestionProps
+      watcher.addToBehavior(
+        'active',
+        new SuspectingSequence(
+          watcher.getBehaviorProps.bind(watcher),
+          perp,
+          'pockets'
+        )
+      )
+    }
   }
 }
 
-export function reception_checks(this: RoomState) {
+export function infirmary_checks(this: RoomState) {
   steal_stash_checks.bind(this)()
 }

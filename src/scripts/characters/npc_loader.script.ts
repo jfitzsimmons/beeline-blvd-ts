@@ -52,28 +52,26 @@ function show_npc(name: string) {
     for (const b of npc.behavior.active.children) {
       if (emoteLookup[b.constructor.name] !== null) {
         count++
+        if (count == 4) {
+          sprite.play_flipbook(`#emote4`, 'more')
+          msg.post(`#emote4`, 'enable')
+          break
+        }
         sprite.play_flipbook(`#emote${count}`, emoteLookup[b.constructor.name])
         msg.post(`#emote${count}`, 'enable')
-      }
-      if (count == 3) {
-        sprite.play_flipbook(`#emote${count + 1}`, 'more')
-        msg.post(`#emote${count + 1}`, 'enable')
-        count++
-        break
       }
     }
     if (count < 4) {
       for (const e of npc.effects) {
         if (emoteLookup[e.label] !== null) {
           count++
+          if (count == 4) {
+            sprite.play_flipbook(`#emote4`, 'more')
+            msg.post(`#emote4`, 'enable')
+            break
+          }
           sprite.play_flipbook(`#emote${count}`, emoteLookup[e.label])
           msg.post(`#emote${count}`, 'enable')
-        }
-        if (count == 3) {
-          sprite.play_flipbook(`#emote${count + 1}`, 'more')
-          msg.post(`#emote${count + 1}`, 'enable')
-          count++
-          break
         }
       }
     }
@@ -97,7 +95,7 @@ function show_npc(name: string) {
 function move_npc(station: string, from = { x: 0, y: 0 }) {
   print('STation to move to:::', station)
   const pos = go.get_position(station)
-  pos.y = pos.y - math.random(34, 94) + from.y
+  pos.y = pos.y - math.random(34, 100) + from.y
   pos.x = pos.x - math.random(10, 50) + from.x
   go.set_position(pos)
 }
