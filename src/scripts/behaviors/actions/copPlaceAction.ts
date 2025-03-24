@@ -54,7 +54,7 @@ export default class CopPlaceAction extends Action {
         crimeScene != 'checked'
           ? RoomsInitState[crimeScene].matrix
           : RoomsInitState[
-              RoomsInitPriority[math.random(0, RoomsInitPriority.length)]
+              RoomsInitPriority[math.random(0, RoomsInitPriority.length - 1)]
             ].matrix
 
       this.a.findRoomPlaceStation(target)
@@ -74,7 +74,13 @@ export default class CopPlaceAction extends Action {
       return () => this.success()
     }
     print('||>> Behavior: CopPlaceAction: Default Placing.', this.a.name)
-    this.a.findRoomPlaceStation()
+    this.a.turnPriority == 95 && math.random() > 0.3
+      ? this.a.findRoomPlaceStation(
+          RoomsInitState[
+            RoomsInitPriority[math.random(0, RoomsInitPriority.length - 1)]
+          ].matrix
+        )
+      : this.a.findRoomPlaceStation()
 
     return () => this.success()
   }

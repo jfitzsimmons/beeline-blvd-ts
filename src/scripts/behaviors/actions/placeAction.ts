@@ -1,4 +1,8 @@
 import { GetProps, PlaceProps } from '../../../types/behaviors'
+import {
+  RoomsInitState,
+  RoomsInitPriority,
+} from '../../states/inits/roomsInitState'
 //import { RoomsInitState } from '../../states/inits/roomsInitState'
 import Action from '../action'
 
@@ -18,7 +22,18 @@ export default class PlaceAction extends Action {
       '||>> Behavior: PlaceAction: findRoomPlaceStation REGPLACEACTION:',
       this.a.name
     )
-
+    if (this.a.turnPriority == 94 && math.random() > 0.3) {
+      this.a.findRoomPlaceStation(
+        RoomsInitState[
+          RoomsInitPriority[math.random(0, RoomsInitPriority.length - 1)]
+        ].matrix
+      )
+      print(
+        '|> Behavior: PlaceAction: findRoomPlaceStation RANDOM94:',
+        this.a.name
+      )
+      return () => this.success()
+    }
     this.a.findRoomPlaceStation()
     /**
      * testjpf

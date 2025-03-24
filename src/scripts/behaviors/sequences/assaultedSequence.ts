@@ -39,7 +39,6 @@ export default class AssaultedSequence extends Sequence {
       'Suspecting:',
       this.assaulter.name
     )
-    // if (this.prevSpr < 94) this.a.updateFromBehavior('turnPriority', 94)
   }
   run(): BehaviorRunReturn {
     for (const child of this.children) {
@@ -54,7 +53,6 @@ export default class AssaultedSequence extends Sequence {
         )
         return proceed
       }
-      // this.a.updateFromBehavior('turnPriority', this.prevSpr)
     }
 
     return 'REMOVE'

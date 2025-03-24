@@ -32,6 +32,7 @@ export default class HelperSequence extends Sequence {
       this.victim
     )
     if (this.a.turnPriority < 94) this.a.updateFromBehavior('turnPriority', 94)
+    this.a.cooldown = 4
   }
   run(): 'REMOVE' | '' {
     if (this.a.turnPriority < 94) this.a.updateFromBehavior('turnPriority', 94)
@@ -45,11 +46,14 @@ export default class HelperSequence extends Sequence {
         proceed
       )
       if (proceed === 'continue') {
+        /**
         this.a.addToBehavior(
           'active',
           new HelperSequence(this.getProps, this.victim),
           true
         )
+          */
+        this.a.cooldown--
         if (
           this.a.behavior.place.children.length < 1 &&
           this.a.turnPriority < 97
@@ -61,10 +65,20 @@ export default class HelperSequence extends Sequence {
               this.a.returnNpc(this.victim).currRoom
             )
           )
+      } else {
+        this.a.cooldown = 0
       }
     }
     // print('INJUREDSEQUENCE::: COMPLETE:: Remove?')
-
-    return 'REMOVE'
+    if (this.a.cooldown < 1) {
+      if (this.a.turnPriority < 95)
+        this.a.updateFromBehavior('turnPriority', math.random(10, 33))
+      print(
+        'XXX => Behavior: helperSequence:: Remove: should remove seq for',
+        this.a.name
+      )
+      return 'REMOVE'
+    }
+    return ''
   }
 }

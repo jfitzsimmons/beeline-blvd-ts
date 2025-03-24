@@ -40,7 +40,9 @@ export default class AnnouncerSequence extends Sequence {
         ':',
         proceed
       )
-      if (proceed === 'continue') this.announcee.cooldown--
+      proceed === 'continue'
+        ? this.announcee.cooldown--
+        : (this.announcee.cooldown = 0)
       if (this.announcee.cooldown < 1) {
         if (this.a.turnPriority < 95)
           this.a.updateFromBehavior('turnPriority', math.random(15, 35))

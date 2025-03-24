@@ -48,7 +48,7 @@ export default class RecklessSequence extends Sequence {
         ':',
         proceed
       )
-      if (proceed === 'continue') this.inspirer.cooldown--
+      this.inspirer.cooldown--
     }
     if (this.inspirer.cooldown < 1) {
       if (this.a.turnPriority < 95)
