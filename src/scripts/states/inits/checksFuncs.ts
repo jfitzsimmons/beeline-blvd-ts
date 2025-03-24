@@ -662,13 +662,13 @@ export function seen_check(
   // const heat = 'heat' in target ? target.heat * 10 : wb.poor_wealthy * -4
 
   const watcherXp: number = clamp(
-    Math.round((ws.speed + ws.constitution) / 2 + wb.passiveAggressive * 5),
+    Math.round((ws.speed + ws.constitution) / 1.5 + wb.passiveAggressive * 7.5),
     4,
     12
   )
   const targetXp: number = clamp(
     Math.round(
-      ts.stealth + tb.lawlessLawful * -5 - crimeSeverity[target.crime]
+      ts.stealth + tb.lawlessLawful * -7.5 - crimeSeverity[target.crime]
     ),
     4,
     12
@@ -833,13 +833,13 @@ export function npcStealCheck(
   )
        */
   const watcherXp = clamp(
-    Math.round((wb.evil_good + wb.lawlessLawful) * 5 - wo[target.clan]),
+    Math.round((wb.evil_good + wb.lawlessLawful) * 7.5 - wo[target.clan]),
     4,
     12
   )
   const targetXp = clamp(
     Math.round(
-      (ts.speed + ts.stealth) / 2 -
+      (ts.speed + ts.stealth) / 1.5 -
         to[watcher.clan] -
         crimeSeverity[target.crime]
     ),
@@ -898,13 +898,15 @@ export function npcAssaultCheck(
   const { skills: ts, binaries: tb, opinion: to } = target.traits
 
   const watcherXp = clamp(
-    Math.round((wb.evil_good + wb.lawlessLawful) * 5 - wo[target.clan]),
+    Math.round((wb.evil_good + wb.lawlessLawful) * 7.5 - wo[target.clan]),
     4,
     12
   )
   const targetXp = clamp(
     Math.round(
-      (ts.speed + ts.stealth) / 2 - to[watcher.clan] - crimeSeverity['assault']
+      (ts.speed + ts.stealth) / 1.5 -
+        to[watcher.clan] -
+        crimeSeverity['assault']
     ),
     4,
     12

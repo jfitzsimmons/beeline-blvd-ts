@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-
 import { ThiefVictimProps, AttendantProps } from '../../types/ai'
 import { QuestionProps } from '../../types/behaviors'
 import { Consequence } from '../../types/tasks'
@@ -11,13 +7,14 @@ import { witnessPlayer } from '../states/inits/checksFuncs'
 const { npcs, rooms, tasks, player, novel } = globalThis.game.world
 
 interface cloneparent {
+  primary: string
   clone: node
   actor: string
   action: string
 }
 
 interface props {
-  npcname: string
+  actorname: string
   clones: cloneparent[]
   watcher: string
   station: string
@@ -26,7 +23,7 @@ interface props {
 }
 
 export function init(this: props): void {
-  this.npcname = ''
+  this.actorname = ''
   this.clones = []
   this.watcher = ''
   this.station = ''
@@ -36,14 +33,14 @@ export function init(this: props): void {
   }
 }
 
-function show_ai_screen() {
-  msg.post('ai_screen#ai_screen', 'show_screen')
-  msg.post('#', 'release_input_focus')
-}
+////function show_ai_screen() {
+//msg.post('ai_screen#ai_screen', 'show_screen')
+//msg.post('#', 'release_input_focus')
+//}
 
 function open_novel(_this: props) {
-  npcs.all[_this.npcname].convos = npcs.all[_this.npcname].convos + 1
-  novel.npc = npcs.all[_this.npcname]
+  npcs.all[_this.actorname].convos = npcs.all[_this.actorname].convos + 1
+  novel.npc = npcs.all[_this.actorname]
   novel.reason = _this.consequence.type
   novel.forced = false
 
@@ -57,7 +54,7 @@ function open_inventory(_this: props, actor: string, action: string) {
     // station where the watcher will be located
     print(
       '111INTERACTGUI:::: OPENINVENTORY333::: Params',
-      _this.npcname,
+      _this.actorname,
       _this.watcher,
       actor,
       action,
@@ -79,7 +76,7 @@ function open_inventory(_this: props, actor: string, action: string) {
         action: action,
       }
       // prettier-ignore
-      print('INTERACTGUI:::: OPENINVENTORY333::: Params',_this.npcname,_this.watcher,params.actorname,params.action,params.watcher,player.currRoom
+      print('INTERACTGUI:::: OPENINVENTORY333::: Params',_this.actorname,_this.watcher,params.actorname,params.action,params.watcher,player.currRoom
       )
 
       msg.post('/shared/guis#inventory', 'opened_chest', params)
@@ -97,9 +94,6 @@ function open_inventory(_this: props, actor: string, action: string) {
     if (prev_caution != null) {
       _this.consequence = { pass: true, type: 'offender' }
     } else if (action == 'pockets' || action == 'open') {
-      //witnessplayer could be a checkfunc
-      //what is returned creates new SuspicionSeq
-      //USED TODO CHFUNCS SEEN_CHECK()
       const thiefprops: ThiefVictimProps = {
         name: player.name,
         addInvBonus: player.addInvBonus.bind(player),
@@ -137,7 +131,7 @@ function open_inventory(_this: props, actor: string, action: string) {
     }
   }
   if (_this.consequence.pass == true) {
-    if (_this.isNpc == false) _this.npcname = _this.watcher
+    if (_this.isNpc == false) _this.actorname = _this.watcher
     // player.fsm.setState('confronted')
     //TESTJPF NEW
     //should create confrontSeq?confronted?
@@ -183,7 +177,9 @@ function check_nodes(
 ) {
   novel.forced = false
   _this.consequence = { pass: false, type: 'neutral' }
+  print('_this.clones.length', _this.clones.length)
   for (const c of _this.clones) {
+    print('gui.get_layer(c.clone)', c.actor, c.action, gui.get_layer(c.clone))
     if (
       gui.get_layer(c.clone) != hash('unclickable') &&
       gui.pick_node(c.clone, action.x, action.y)
@@ -195,94 +191,84 @@ function check_nodes(
         c.action == 'pockets'
       ) {
         open_inventory(_this, c.actor, c.action)
+        break
       } else if (c.action == 'talk') {
         print("talkprint('intnovelpriority', novel.forced)", novel.forced)
         open_novel(_this)
+        break
       } else if (c.action == 'use') {
-        show_ai_screen()
+        // show_ai_screen()
+        break
       }
     }
   }
 }
-//TESTJPF
-//I need one clickable node that i clone and change the text of.??
-//JUST LIKE you do with label!!
-//let node: node = gui.get_node('_text_label')
-//gui.set_text(node, actorKey)
-//node = gui.get_node('label')
-// what does click look for? action prop that I added!!! array sent from actor
-//really could just be one link. or highligh TALK.  or somethig new like a label Urgent, with actions underneath.?
-// would be cool to have a tiny interact that show preview icons of these URGENT actions.
-// urgent isn't the best word for it.
-//if i get this working need to overhaul dialog system
-function set_interactions(
-  actorsActions: {
-    [key: string]: string[]
-  },
+function set_interactions(m: {
+  actions: { [key: string]: string[] }
   pos: vmath.vector3
-): cloneparent[] {
+  npcname: string
+}): cloneparent[] {
   const clones = []
   const spacing = 25
   const [ww, wh] = window.get_size()
   const cw = ww / 2
   const ch = wh / 2
-  const adjx = (cw - pos.x) / 6 + cw
-  const adjy = (ch - pos.y) / 6 + ch
+  const adjx = (cw - m.pos.x) / 6 + cw
+  const adjy = (ch - m.pos.y) / 6 + ch
 
-  let nodepos = vmath.vector3(adjx, adjy, pos.z)
-  let actorKey: keyof typeof actorsActions
-  for (actorKey in actorsActions) {
-    for (const action of actorsActions[actorKey]) {
+  let nodepos = vmath.vector3(adjx, adjy, m.pos.z)
+  let actorKey: keyof typeof m.actions
+  for (actorKey in m.actions) {
+    for (let i = m.actions[actorKey].length; i-- !== 0; ) {
+      const action = m.actions[actorKey][i]
       nodepos.y = nodepos.y + spacing
       nodepos = vmath.vector3(nodepos)
-      print(action)
-      const parent = gui.clone(gui.get_node('generic'))
-      gui.set_id(parent, action)
-      //  let node: node = gui.get_node('_text_generic')
+
+      const node = gui.clone(gui.get_node('generic'))
+      const text = gui.clone(gui.get_node('_text_generic'))
       const bg = gui.clone(gui.get_node('_bg_generic'))
-      gui.set_parent(bg, parent)
-      const child = gui.clone(gui.get_node('_text_generic'))
-      gui.set_text(child, action)
-      gui.set_parent(child, parent)
-      const clonetree = gui.clone_tree(parent)
+      gui.set_id(node, actorKey + action)
+      gui.set_parent(bg, node)
+      gui.set_text(text, action)
+      gui.set_parent(text, node)
+      gui.set_visible(bg, true)
+      gui.set_visible(text, true)
+      gui.set_visible(node, true)
+      gui.set_position(node, nodepos)
 
-      let clonedNode: keyof typeof clonetree
-      for (clonedNode in clonetree) {
-        const clone = gui.clone(clonetree[clonedNode])
-        gui.set_position(clone, nodepos)
-        gui.set_visible(clone, true)
-
-        const cloneparent: cloneparent = {
-          clone: clone,
-          actor: actorKey,
-          action,
-        }
-        clones.push(cloneparent)
+      const cloneparent: cloneparent = {
+        primary: m.npcname,
+        clone: node,
+        actor: actorKey,
+        action,
       }
+      clones.push(cloneparent)
+      print('actorKey + action', actorKey + action)
     }
     nodepos.y = nodepos.y + spacing * 1.3
-    nodepos.x = nodepos.x - 25
-    let node: node = gui.get_node('_text_label')
-    gui.set_text(node, actorKey)
-    node = gui.get_node('label')
+    nodepos.x = nodepos.x - 16
+
+    const node = gui.clone(gui.get_node('label'))
+    const text = gui.clone(gui.get_node('_text_label'))
+    const bg = gui.clone(gui.get_node('_bg_label'))
+    gui.set_id(node, actorKey + 'label')
+    gui.set_parent(bg, node)
+    gui.set_text(text, actorKey)
+    gui.set_parent(text, node)
+    gui.set_visible(bg, true)
+    gui.set_visible(text, true)
+    gui.set_visible(node, true)
+    gui.set_position(node, nodepos)
 
     //TS-DEFOLD - lint ERROR
     //export function clone_tree(node: node): any
-    const clonetree: any = gui.clone_tree(node)
-    let clonedNode: keyof typeof clonetree
-
-    for (clonedNode in clonetree) {
-      const clone = gui.clone(clonetree[clonedNode])
-      gui.set_position(clone, nodepos)
-      gui.set_visible(clone, true)
-
-      const cloneparent: cloneparent = {
-        clone: clone,
-        actor: 'label',
-        action: actorKey,
-      }
-      clones.push(cloneparent)
+    const cloneparent: cloneparent = {
+      primary: m.npcname,
+      clone: node,
+      actor: actorKey,
+      action: 'label',
     }
+    clones.push(cloneparent)
 
     nodepos.y = nodepos.y + spacing * 0.5
   }
@@ -300,19 +286,33 @@ export function on_message(
   _sender: url
 ): void {
   if (messageId == hash('shownode')) {
+    this.isNpc = npcs.all[message.npcname] != null
+    this.actorname = message.npcname
+    this.watcher = ''
+
+    for (let i = this.clones.length; i-- !== 0; ) {
+      if (this.clones[i].primary !== message.npcname) {
+        print(
+          'this.clones[i].primary !== message.npcname',
+          this.clones[i].primary !== message.npcname,
+          this.clones[i].actor,
+          message.npcname
+        )
+        gui.delete_node(this.clones[i].clone)
+        this.clones.splice(i, 1)
+      }
+    }
+
     //populate text nodes && show them
-    this.clones = set_interactions(message.actions, message.pos) //GO.pos cannot come from gui script
-    this.npcname = message.npcname
-    if (npcs.all[this.npcname] != null) {
-      this.isNpc = true
-    } else {
-      this.isNpc = false
-    }
+    this.clones = set_interactions(message) //GO.pos cannot come from gui script
   } else if (messageId == hash('hidenode')) {
-    for (const clone of this.clones) {
-      gui.delete_node(clone.clone)
+    for (let i = this.clones.length; i-- !== 0; ) {
+      print(i, '222this.clones[i].primary', this.clones[i].primary)
+      if (this.clones[i].primary == this.actorname) {
+        gui.delete_node(this.clones[i].clone)
+        this.clones.splice(i, 1)
+      }
     }
-    this.clones = []
     this.watcher = ''
   }
 }

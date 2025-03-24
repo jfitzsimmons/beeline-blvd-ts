@@ -20,7 +20,7 @@ animations {
   start_tile: 196
   end_tile: 198
   playback: PLAYBACK_LOOP_PINGPONG
-  fps: 2
+  fps: 5
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -29,7 +29,7 @@ animations {
   start_tile: 244
   end_tile: 246
   playback: PLAYBACK_LOOP_PINGPONG
-  fps: 2
+  fps: 1
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -38,7 +38,7 @@ animations {
   start_tile: 10
   end_tile: 12
   playback: PLAYBACK_LOOP_PINGPONG
-  fps: 2
+  fps: 3
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -65,7 +65,7 @@ animations {
   start_tile: 247
   end_tile: 249
   playback: PLAYBACK_LOOP_PINGPONG
-  fps: 2
+  fps: 3
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -110,7 +110,7 @@ animations {
   start_tile: 58
   end_tile: 60
   playback: PLAYBACK_LOOP_PINGPONG
-  fps: 2
+  fps: 3
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -146,7 +146,7 @@ animations {
   start_tile: 217
   end_tile: 219
   playback: PLAYBACK_LOOP_PINGPONG
-  fps: 2
+  fps: 5
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -155,7 +155,7 @@ animations {
   start_tile: 292
   end_tile: 294
   playback: PLAYBACK_LOOP_PINGPONG
-  fps: 2
+  fps: 1
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -182,7 +182,7 @@ animations {
   start_tile: 109
   end_tile: 111
   playback: PLAYBACK_LOOP_PINGPONG
-  fps: 2
+  fps: 5
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -200,7 +200,7 @@ animations {
   start_tile: 205
   end_tile: 207
   playback: PLAYBACK_LOOP_PINGPONG
-  fps: 2
+  fps: 3
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -227,7 +227,7 @@ animations {
   start_tile: 241
   end_tile: 243
   playback: PLAYBACK_LOOP_PINGPONG
-  fps: 2
+  fps: 3
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -236,7 +236,7 @@ animations {
   start_tile: 4
   end_tile: 6
   playback: PLAYBACK_LOOP_PINGPONG
-  fps: 2
+  fps: 5
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -254,7 +254,7 @@ animations {
   start_tile: 232
   end_tile: 234
   playback: PLAYBACK_LOOP_PINGPONG
-  fps: 2
+  fps: 3
   flip_horizontal: 0
   flip_vertical: 0
 }
@@ -263,7 +263,7 @@ animations {
   start_tile: 259
   end_tile: 261
   playback: PLAYBACK_LOOP_PINGPONG
-  fps: 2
+  fps: 1
   flip_horizontal: 0
   flip_vertical: 0
 }

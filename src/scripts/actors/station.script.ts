@@ -34,6 +34,7 @@ function prep_interaction(_this: props) {
     }
     actions.behaviorss = behaviors
   }
+  print('_this.actions = actions', actions[_this.npc])
 
   _this.actions = actions
 }
@@ -59,16 +60,17 @@ export function on_message(
         actions: this.actions, //generated from actors
         //script:this.script,
         //collision:"enter",
-        npcname: this.npc,
+        npcname: this.npc == '' ? 'desk' : this.npc,
         //parenturl:this.url,
         //room:this.roomName
       }
+      print('TRIGGER_PARAMSs', this.actions.length)
+
       msg.post('/shared/adam#interact', 'shownode', params)
     } else {
       // for removing cloned nodes
-      const params = { texts: this.actions }
 
-      msg.post('/shared/adam#interact', 'hidenode', params)
+      msg.post('/shared/adam#interact', 'hidenode')
     }
   } else if (messageId == hash('loadStation')) {
     this.npc = message.npc

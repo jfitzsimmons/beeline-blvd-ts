@@ -45,8 +45,8 @@ instances {
   id: "desk"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 131.0
-    y: 60.0
+    x: 78.0
+    y: 61.0
     z: 0.1
   }
   rotation {

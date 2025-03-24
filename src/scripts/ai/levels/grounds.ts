@@ -53,7 +53,7 @@ function steal_stash_checks(this: RoomState) {
           new SuspectingSequence(
             watcher.getBehaviorProps.bind(watcher),
             perp,
-            'theft',
+            lootSwitch !== true ? 'theft' : 'pockets',
             lootSwitch !== true ? actor : undefined
           )
         )

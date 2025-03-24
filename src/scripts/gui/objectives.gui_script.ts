@@ -78,12 +78,3 @@ export function init(this: props): void {
   info.build_objectives(quests.all)
   set_objectives()
 }
-
-export function on_message(this: props, messageId: hash, _sender: url): void {
-  if (messageId == hash('shownode')) {
-    //populate text nodes && show them
-    // set_interactions() //GO.pos cannot come from gui script
-  } else if (messageId == hash('hidenode')) {
-    //testjpf delete???
-  }
-}
