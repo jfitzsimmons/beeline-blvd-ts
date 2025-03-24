@@ -29,7 +29,14 @@ export const RoomsInitState: { [key: string]: Room } = {
       }),
       locker: new Storage({
         name: 'locker',
-        inventory: ['ring', 'coingold', 'earrings', 'silver', 'cape', 'magic5'],
+        inventory: [
+          'ring',
+          'coingold',
+          'earrings',
+          'silver',
+          'cape',
+          'magicc5',
+        ],
         actions: ['use', 'open'],
         watcher: 'desk',
       }),
@@ -456,10 +463,9 @@ export const RoomsInitState: { [key: string]: Room } = {
     matrix: { x: 2, y: 4 },
     roomName: 'admin1',
     clearance: 2,
-    props: ['phone', 'locker'],
     swaps: {
       boss: ['servants2', ''],
-      patrol: ['guest', ''],
+      patrol: ['servants1', ''],
     },
     stations: {
       monitor: '',
@@ -469,6 +475,7 @@ export const RoomsInitState: { [key: string]: Room } = {
       boss: '',
       desk: '',
     },
+    props: ['phone', 'locker'],
     actors: {
       phone: new Storage({
         name: 'phone',

@@ -412,11 +412,15 @@ export default class WorldNpcs {
           break
         } else {
           print('APBAPBAPBAPB')
+          const perp =
+            fugitive == 'player'
+              ? this.p.world.returnPlayer()
+              : this.all[fugitive]
           this.all[cop].addToBehavior(
             'active',
             new QuestionSequence(
               this.all[cop].getBehaviorProps.bind(this.all[cop]),
-              this.all[fugitive].getBehaviorProps.bind(this.all[fugitive]),
+              perp.getBehaviorProps.bind(perp),
               'apb'
             )
           )

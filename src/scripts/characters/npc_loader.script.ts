@@ -190,12 +190,7 @@ export function on_message(
 
       msg.post('/shared/adam#interact', 'shownode', params)
     } else {
-      const params = {
-        ['collision']: 'exit',
-        ['texts']: this.actions,
-      }
-
-      msg.post('/shared/adam#interact', 'hidenode', params)
+      msg.post('/shared/adam#interact', 'hidenode')
     }
   }
 }

@@ -45,7 +45,7 @@ instances {
   id: "desk"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 131.0
+    x: 90.0
     y: 60.0
     z: 0.1
   }
@@ -202,7 +202,7 @@ instances {
   }
 }
 instances {
-  id: "guest"
+  id: "servants1"
   prototype: "/main/characters/npc_loader.go"
   position {
     x: 856.0
@@ -431,9 +431,9 @@ embedded_instances {
   children: "assistant"
   children: "boss"
   children: "guard"
-  children: "guest"
   children: "monitor"
   children: "patrol"
+  children: "servants1"
   children: "servants2"
   data: ""
   position {
