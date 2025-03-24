@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 const { player } = globalThis.game.world
 const speed = 250
 interface props {
@@ -5,11 +6,29 @@ interface props {
   current_anim: hash
   correction: vmath.vector3
 }
+function window_callback(event: any) {
+  if (event == window.WINDOW_EVENT_RESIZED) {
+    const [ww, wh] = window.get_size()
+    const localZoom =
+      ww > wh && ww > 1408 ? 1 - 1408 / ww : wh > 896 ? 1 - 896 / wh : 0
+
+    //    print(localZoom, 'LOCALZOOMLOCALZOOM')
+    go.set('#camera', 'orthographic_zoom', 1 + localZoom)
+  }
+}
 
 export function init(this: props) {
-  msg.post('#camera', 'acquire_camera_focus')
+  window.set_listener(window_callback)
   msg.post('@render:', 'use_camera_projection')
-  //msg.post('#', 'acquire_input_focus')
+  msg.post('#camera', 'acquire_camera_focus')
+
+  const [ww, wh] = window.get_size()
+  const localZoom =
+    ww > wh && ww > 1408 ? 1 - 1408 / ww : wh > 896 ? 1 - 896 / wh : 0
+
+  go.set('#camera', 'orthographic_zoom', 1 + localZoom)
+
+  msg.post('#', 'acquire_input_focus')
 
   this.dir = vmath.vector3()
   this.current_anim = hash('idle')

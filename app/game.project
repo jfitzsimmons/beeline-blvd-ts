@@ -13,7 +13,7 @@ gamepads = /builtins/input/default.gamepadsc
 width = 1408
 height = 896
 fullscreen = 0
-high_dpi = 0
+high_dpi = 1
 dynamic_orientation = 1
 
 [script]

@@ -61,8 +61,9 @@ function init(self)
     -- default is stretch projection. copy from builtins and change for different projection
     -- or send a message to the render script to change projection:
     -- msg.post("@render:", "use_stretch_projection", { near = -1, far = 1 })
-    -- msg.post("@render:", "use_fixed_projection", { near = -1, far = 1, zoom = 2 })
-    -- msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
+     --msg.post("@render:", "use_fixed_projection", { near = -1, far = 1, zoom = 2 })
+     --msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
+    --msg.post("@render:", "use_fixed_fit_projection")
     self.near = -1
     self.far = 1
     self.projection_fn = fixed_fit_projection
