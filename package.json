@@ -19,9 +19,9 @@
     "clean": "rm -rf app/scripts && yarn build"
   },
   "devDependencies": {
-    "@ts-defold/tstl-export-as-global": "^1.0.1",
+    "@ts-defold/tstl-export-as-global": "^1.0.2",
     "@ts-defold/tstl-userdata-sugar": "^1.0.1",
-    "@ts-defold/types": "^1.2.64",
+    "@ts-defold/types": "^1.2.65",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
     "eslint": "^8.43.0",

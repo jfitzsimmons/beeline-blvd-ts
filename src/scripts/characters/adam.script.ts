@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { WindowHack } from '../../types/utils'
+
 const { player } = globalThis.game.world
 const speed = 250
 interface props {
@@ -6,27 +7,26 @@ interface props {
   current_anim: hash
   correction: vmath.vector3
 }
-function window_callback(event: any) {
+function WindowResize(event: unknown) {
   if (event == window.WINDOW_EVENT_RESIZED) {
     const [ww, wh] = window.get_size()
     const localZoom =
-      ww > wh && ww > 1408 ? 1 - 1408 / ww : wh > 896 ? 1 - 896 / wh : 0
-
-    //    print(localZoom, 'LOCALZOOMLOCALZOOM')
-    go.set('#camera', 'orthographic_zoom', 1 + localZoom)
+      math.max(ww / 1408, wh / 896) /
+      (window as unknown as WindowHack).get_display_scale()
+    go.set('#camera', 'orthographic_zoom', localZoom)
   }
 }
 
 export function init(this: props) {
-  window.set_listener(window_callback)
+  window.set_listener(WindowResize)
   msg.post('@render:', 'use_camera_projection')
   msg.post('#camera', 'acquire_camera_focus')
 
   const [ww, wh] = window.get_size()
   const localZoom =
-    ww > wh && ww > 1408 ? 1 - 1408 / ww : wh > 896 ? 1 - 896 / wh : 0
-
-  go.set('#camera', 'orthographic_zoom', 1 + localZoom)
+    math.max(ww / 1408, wh / 896) /
+    (window as unknown as WindowHack).get_display_scale()
+  go.set('#camera', 'orthographic_zoom', localZoom)
 
   msg.post('#', 'acquire_input_focus')
 
@@ -70,21 +70,20 @@ export function on_message(
   _sender: url
 ): void {
   if (messageId == hash('wake_up')) {
-    const [ww, wh] = window.get_size()
     const pos = player.pos
     const targetpos = vmath.vector3(pos.x, pos.y, 0.5)
-    if (pos.y > wh - 100) {
+    if (pos.y > 896 - 100) {
       targetpos.y = 150
       targetpos.x = pos.x
     } else if (pos.y < 100) {
-      targetpos.y = wh - 150
+      targetpos.y = 896 - 150
       targetpos.x = pos.x
     }
-    if (pos.x > ww - 100) {
+    if (pos.x > 1408 - 100) {
       targetpos.x = 150
       targetpos.y = pos.y
     } else if (pos.x < 100) {
-      targetpos.x = ww - 150
+      targetpos.x = 1408 - 150
       targetpos.y = pos.y
     }
 

@@ -446,6 +446,12 @@ export default class WorldNpcs {
   }
   returnMendeeLocation(): string | null {
     const injured = this.getMendingQueue()[0]
+    print(
+      'BUGRETURNMENDEELOCATION::: injured::',
+      injured,
+      'mendingQ length:',
+      this.mendingQueue.length
+    )
     return injured === null ? null : this.all[injured].currRoom
   }
   addIgnore(n: string): void {
