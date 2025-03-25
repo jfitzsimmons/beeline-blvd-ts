@@ -13,8 +13,8 @@ gamepads = /builtins/input/default.gamepadsc
 width = 1408
 height = 896
 fullscreen = 0
-high_dpi = 0
 dynamic_orientation = 1
+high_dpi = 0
 
 [script]
 shared_state = 1
@@ -33,7 +33,5 @@ texture_profiles = /builtins/graphics/default.texture_profiles
 
 [physics]
 gravity_y = -820.0
-scale = 0.02
-allow_dynamic_transforms = 1
 debug = 0
 

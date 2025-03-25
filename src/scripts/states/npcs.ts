@@ -433,6 +433,12 @@ export default class WorldNpcs {
     this.mendingQueue.splice(this.mendingQueue.indexOf(m), 1)
   }
   addAdjustMendingQueue(patient: string) {
+    print(
+      'patientmendingqBUG:::!!!:::',
+      patient,
+      this.mendingQueue.includes(patient) == true,
+      this.mendingQueue.length
+    )
     if (this.mendingQueue.includes(patient) == true) {
       if (this.mendingQueue.indexOf(patient) > 1)
         arraymove(this.mendingQueue, this.mendingQueue.indexOf(patient), 0)
@@ -446,6 +452,12 @@ export default class WorldNpcs {
   }
   returnMendeeLocation(): string | null {
     const injured = this.getMendingQueue()[0]
+    print(
+      'BUGRETURNMENDEELOCATION::: injured::',
+      injured,
+      'mendingQ length:',
+      this.mendingQueue.length
+    )
     return injured === null ? null : this.all[injured].currRoom
   }
   addIgnore(n: string): void {
