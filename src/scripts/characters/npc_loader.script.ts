@@ -12,9 +12,21 @@ function show_npc(name: string) {
       )
     ) {
       particlefx.play('#injury')
+      particlefx.set_constant(
+        '#injury',
+        'injury',
+        'tint',
+        vmath.vector4(1, 0, 0, 1)
+      )
     } else if (npc.behavior.active.children.length > 0) {
-      particlefx.play('#wanted')
-    }
+      particlefx.play('#injury')
+      particlefx.set_constant(
+        '#injury',
+        'injury',
+        'tint',
+        vmath.vector4(0, 0, 1, 1)
+      )
+    } //
 
     const emoteLookup: { [key: string]: string } = {
       InjuredSequence: 'injured',

@@ -3,11 +3,13 @@ interface props {
   actions: { [key: string]: string[] }
   roomName: string
   npc: string
+  adjacent?: string
 }
 export function init(this: props): void {
   this.actions = {}
   this.roomName = ''
   this.npc = ''
+  this.adjacent = undefined
 }
 
 function prep_interaction(_this: props) {
@@ -48,6 +50,7 @@ export function on_message(
     exit: boolean
     storagename: string
     roomName: string
+    adjacent?: string
   },
   _sender: url
 ): void {
@@ -75,12 +78,24 @@ export function on_message(
   } else if (messageId == hash('loadStation')) {
     this.npc = message.npc
     this.roomName = message.roomName
-    print('loadstation!!!:::', message.npc, this.npc, this.roomName)
+    this.adjacent = message.adjacent
+    print(
+      'loadstation!!!:::',
+      message.npc,
+      this.npc,
+      this.roomName,
+      this.adjacent
+    )
     prep_interaction(this) // combine actor actions
-    msg.post('/desk#npc_loader', 'show_npc', {
-      npc: this.npc,
-      // behavior: this.actions.behaviors,
-    })
+    msg.post(
+      this.adjacent == undefined
+        ? `/desk#npc_loader`
+        : `/${this.adjacent}desk#npc_loader`,
+      'show_npc',
+      {
+        npc: this.npc,
+      }
+    )
   } else if (messageId == hash('loadActor')) {
     this.npc = ''
     this.roomName = message.roomName

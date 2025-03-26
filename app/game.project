@@ -35,3 +35,10 @@ texture_profiles = /builtins/graphics/default.texture_profiles
 gravity_y = -820.0
 debug = 0
 
+[tilemap]
+max_tile_count = 5000
+
+[sprite]
+subpixels = 0
+max_count = 430
+
