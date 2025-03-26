@@ -434,6 +434,7 @@ export default class WorldNpcs {
   }
   addAdjustMendingQueue(patient: string) {
     print(
+      this.getMendingQueue()[0],
       'patientmendingqBUG:::!!!:::',
       patient,
       this.mendingQueue.includes(patient) == true,
@@ -451,7 +452,7 @@ export default class WorldNpcs {
     return this.mendingQueue
   }
   returnMendeeLocation(): string | null {
-    const injured = this.getMendingQueue()[0]
+    const injured = [...this.getMendingQueue()][0]
     print(
       'BUGRETURNMENDEELOCATION::: injured::',
       injured,
