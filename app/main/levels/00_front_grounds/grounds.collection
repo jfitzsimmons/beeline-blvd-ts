@@ -178,6 +178,28 @@ collection_instances {
   id: "shared"
   collection: "/main/levels/shared.collection"
 }
+collection_instances {
+  id: "receptionlite"
+  collection: "/main/levels/adjacents/receptionlite.collection"
+  position {
+    x: 1408.0
+  }
+}
+collection_instances {
+  id: "baggagelite"
+  collection: "/main/levels/adjacents/baggagelite.collection"
+  position {
+    y: 896.0
+  }
+}
+collection_instances {
+  id: "customslite"
+  collection: "/main/levels/adjacents/customslite.collection"
+  position {
+    x: 1408.0
+    y: 896.0
+  }
+}
 scale_along_z: 0
 embedded_instances {
   id: "level"
@@ -231,30 +253,4 @@ embedded_instances {
   children: "to_baggage"
   children: "to_reception"
   data: ""
-}
-embedded_instances {
-  id: "adjacent"
-  data: "components {\n"
-  "  id: \"baggage\"\n"
-  "  component: \"/main/levels/06_baggage/baggage.tilemap\"\n"
-  "  position {\n"
-  "    y: 896.0\n"
-  "  }\n"
-  "}\n"
-  "components {\n"
-  "  id: \"decolvl1\"\n"
-  "  component: \"/main/levels/01_vipreception/decolvl1.tilemap\"\n"
-  "  position {\n"
-  "    x: 1408.0\n"
-  "  }\n"
-  "}\n"
-  "components {\n"
-  "  id: \"admin1lvl4\"\n"
-  "  component: \"/main/levels/04_admin1/admin1lvl4.tilemap\"\n"
-  "  position {\n"
-  "    x: 1408.0\n"
-  "    y: 896.0\n"
-  "  }\n"
-  "}\n"
-  ""
 }

@@ -8,15 +8,8 @@ instances {
     z: 1.0
   }
   rotation {
-    x: 0.0
-    y: 0.0
     z: 1.0
     w: 6.123234E-17
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -27,18 +20,6 @@ instances {
   position {
     x: 975.0
     y: 676.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -49,17 +30,6 @@ instances {
     y: 61.0
     z: 0.1
   }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
 }
 instances {
   id: "loiter1"
@@ -67,18 +37,6 @@ instances {
   position {
     x: 1115.0
     y: 262.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -87,18 +45,6 @@ instances {
   position {
     x: 362.0
     y: 771.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -107,18 +53,6 @@ instances {
   position {
     x: 385.0
     y: 195.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -127,18 +61,6 @@ instances {
   position {
     x: 301.0
     y: 515.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -147,18 +69,6 @@ instances {
   position {
     x: 487.0
     y: 750.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -167,18 +77,6 @@ instances {
   position {
     x: 896.0
     y: 775.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -190,15 +88,8 @@ instances {
     z: 1.0
   }
   rotation {
-    x: 0.0
-    y: 0.0
     z: 0.70710677
     w: 0.70710677
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -209,17 +100,6 @@ instances {
     y: 504.0
     z: 0.1
   }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
 }
 instances {
   id: "gang"
@@ -227,18 +107,6 @@ instances {
   position {
     x: 797.0
     y: 777.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -247,18 +115,6 @@ instances {
   position {
     x: 638.0
     y: 774.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -267,38 +123,40 @@ instances {
   position {
     x: 926.0
     y: 149.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 collection_instances {
   id: "shared"
   collection: "/main/levels/shared.collection"
+}
+collection_instances {
+  id: "admin1lite"
+  collection: "/main/levels/adjacents/admin1lite.collection"
   position {
-    x: 0.0
-    y: 0.0
-    z: 0.0
+    x: 1408.0
+    y: -896.0
   }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
+}
+collection_instances {
+  id: "receptionlite"
+  collection: "/main/levels/adjacents/receptionlite.collection"
+  position {
+    y: -896.0
   }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+}
+collection_instances {
+  id: "groundslite"
+  collection: "/main/levels/adjacents/groundslite.collection"
+  position {
+    x: -1408.0
+    y: -896.0
+  }
+}
+collection_instances {
+  id: "baggagelite"
+  collection: "/main/levels/adjacents/baggagelite.collection"
+  position {
+    x: -1408.0
   }
 }
 scale_along_z: 0
@@ -307,42 +165,15 @@ embedded_instances {
   data: "components {\n"
   "  id: \"background\"\n"
   "  component: \"/main/levels/03_customs/clinicallvl3.tilemap\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
-  "  property_decls {\n"
-  "  }\n"
   "}\n"
   "components {\n"
   "  id: \"customs\"\n"
   "  component: \"/scripts/levels/customs.script\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
-  "  property_decls {\n"
-  "  }\n"
   "}\n"
   "embedded_components {\n"
   "  id: \"walls\"\n"
   "  type: \"collisionobject\"\n"
-  "  data: \"collision_shape: \\\"\\\"\\n"
-  "type: COLLISION_OBJECT_TYPE_STATIC\\n"
+  "  data: \"type: COLLISION_OBJECT_TYPE_STATIC\\n"
   "mass: 0.0\\n"
   "friction: 1.0\\n"
   "restitution: 0.5\\n"
@@ -354,68 +185,44 @@ embedded_instances {
   "    position {\\n"
   "      x: 702.0\\n"
   "      y: 859.0\\n"
-  "      z: 0.0\\n"
   "    }\\n"
   "    rotation {\\n"
-  "      x: 0.0\\n"
-  "      y: 0.0\\n"
-  "      z: 0.0\\n"
-  "      w: 1.0\\n"
   "    }\\n"
   "    index: 0\\n"
   "    count: 3\\n"
-  "    id: \\\"\\\"\\n"
   "  }\\n"
   "  shapes {\\n"
   "    shape_type: TYPE_BOX\\n"
   "    position {\\n"
   "      x: 696.0\\n"
   "      y: 26.0\\n"
-  "      z: 0.0\\n"
   "    }\\n"
   "    rotation {\\n"
-  "      x: 0.0\\n"
-  "      y: 0.0\\n"
-  "      z: 0.0\\n"
-  "      w: 1.0\\n"
   "    }\\n"
   "    index: 3\\n"
   "    count: 3\\n"
-  "    id: \\\"\\\"\\n"
   "  }\\n"
   "  shapes {\\n"
   "    shape_type: TYPE_BOX\\n"
   "    position {\\n"
   "      x: 29.0\\n"
   "      y: 439.0\\n"
-  "      z: 0.0\\n"
   "    }\\n"
   "    rotation {\\n"
-  "      x: 0.0\\n"
-  "      y: 0.0\\n"
-  "      z: 0.0\\n"
-  "      w: 1.0\\n"
   "    }\\n"
   "    index: 6\\n"
   "    count: 3\\n"
-  "    id: \\\"\\\"\\n"
   "  }\\n"
   "  shapes {\\n"
   "    shape_type: TYPE_BOX\\n"
   "    position {\\n"
   "      x: 1372.0\\n"
   "      y: 445.0\\n"
-  "      z: 0.0\\n"
   "    }\\n"
   "    rotation {\\n"
-  "      x: 0.0\\n"
-  "      y: 0.0\\n"
-  "      z: 0.0\\n"
-  "      w: 1.0\\n"
   "    }\\n"
   "    index: 9\\n"
   "    count: 3\\n"
-  "    id: \\\"\\\"\\n"
   "  }\\n"
   "  data: 650.0\\n"
   "  data: 30.0\\n"
@@ -430,40 +237,9 @@ embedded_instances {
   "  data: 400.0\\n"
   "  data: 10.0\\n"
   "}\\n"
-  "linear_damping: 0.0\\n"
-  "angular_damping: 0.0\\n"
-  "locked_rotation: false\\n"
-  "bullet: false\\n"
   "\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
   "}\n"
   ""
-  position {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
 }
 embedded_instances {
   id: "potential_npcs"
@@ -478,20 +254,7 @@ embedded_instances {
   children: "patrol"
   data: ""
   position {
-    x: 0.0
-    y: 0.0
     z: 0.1
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 embedded_instances {
@@ -501,26 +264,12 @@ embedded_instances {
   "  type: \"sprite\"\n"
   "  data: \"default_animation: \\\"banana\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
-  "blend_mode: BLEND_MODE_ALPHA\\n"
   "textures {\\n"
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/main/gui/information/inventories/chestitems.atlas\\\"\\n"
   "}\\n"
   "\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
   "  scale {\n"
-  "    x: 1.0\n"
-  "    y: 1.0\n"
   "    z: 1.0E-6\n"
   "  }\n"
   "}\n"
@@ -530,15 +279,8 @@ embedded_instances {
     y: 56.0
     z: 0.5
   }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
   scale3 {
     x: 2.0
     y: 2.0
-    z: 1.0
   }
 }

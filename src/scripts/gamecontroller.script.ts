@@ -60,6 +60,7 @@ export function on_message(
     if (this.loadType === 'new game') {
       //YOU DONT WANT TO UNLOAD GAME!!! There is NO GAME PROXY!!
       //THE GAMEPROXY IS A LIE! TESTJPF
+
       const params = {
         roomName: 'grounds',
         loadType: 'new game',
@@ -89,6 +90,7 @@ export function on_message(
   }
   //NEW_GAME
   else if (messageId == hash('new_game')) {
+    game.fsm.setState('new')
     this.roomName = message.roomName
     this.loadType = message.loadType
 
@@ -112,6 +114,6 @@ export function on_input(
     //back to game without interruption or changing state.
     show(this.currentProxy, '#world')
     this.isPaused = true
-    msg.post('#', 'acquire_input_focus')
+    //msg.post('#', 'acquire_input_focus')
   }
 }

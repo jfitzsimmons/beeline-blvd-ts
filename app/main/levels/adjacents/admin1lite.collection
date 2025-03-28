@@ -1,0 +1,140 @@
+name: "admin1lite"
+instances {
+  id: "admin1_passer"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 665.0
+    y: 648.0
+  }
+}
+instances {
+  id: "admin1assistant"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 369.0
+    y: 516.0
+  }
+}
+instances {
+  id: "admin1boss"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 1115.0
+    y: 262.0
+  }
+}
+instances {
+  id: "admin1deskarea"
+  prototype: "/main/actors/deskarea02.go"
+  children: "admin1desk"
+  children: "admin1phone"
+  position {
+    x: 975.0
+    y: 676.0
+  }
+}
+instances {
+  id: "admin1guard"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 362.0
+    y: 771.0
+  }
+}
+instances {
+  id: "admin1monitor"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 1113.0
+    y: 553.0
+  }
+}
+instances {
+  id: "admin1patrol"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 385.0
+    y: 195.0
+  }
+}
+instances {
+  id: "admin1servants1"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 856.0
+    y: 781.0
+  }
+}
+instances {
+  id: "admin1servants2"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 962.0
+    y: 598.0
+  }
+}
+instances {
+  id: "admin1desk"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 90.0
+    y: 60.0
+    z: 0.1
+  }
+}
+scale_along_z: 0
+embedded_instances {
+  id: "assets"
+  data: "components {\n"
+  "  id: \"admin1lvl4\"\n"
+  "  component: \"/main/levels/04_admin1/admin1lvl4.tilemap\"\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "admin1_npcs"
+  children: "admin1_passer"
+  children: "admin1assistant"
+  children: "admin1boss"
+  children: "admin1deskarea"
+  children: "admin1guard"
+  children: "admin1monitor"
+  children: "admin1patrol"
+  children: "admin1servants1"
+  children: "admin1servants2"
+  data: ""
+  position {
+    z: 0.1
+  }
+}
+embedded_instances {
+  id: "admin1phone"
+  data: "embedded_components {\n"
+  "  id: \"phone\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"banana\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 16.0\\n"
+  "  y: 16.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/main/gui/information/inventories/chestitems.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  scale {\n"
+  "    z: 1.0E-6\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 13.0
+    y: 54.0
+    z: 0.5
+  }
+  scale3 {
+    x: 2.0
+    y: 2.0
+  }
+}

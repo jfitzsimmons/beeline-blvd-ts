@@ -3,7 +3,7 @@ import { WindowHack } from '../../types/utils'
 const { player } = globalThis.game.world
 const speed = 250
 interface props {
-  dir: vmath.vector3
+  input: vmath.vector3
   current_anim: hash
   correction: vmath.vector3
 }
@@ -30,28 +30,27 @@ export function init(this: props) {
 
   msg.post('#', 'acquire_input_focus')
 
-  this.dir = vmath.vector3()
+  this.input = vmath.vector3()
   this.current_anim = hash('idle')
-  // correction vector
   this.correction = vmath.vector3()
 }
 
 export function update(this: props, dt: number) {
-  if (vmath.length_sqr(this.dir) > 1) {
-    this.dir = vmath.normalize(this.dir)
+  if (vmath.length_sqr(this.input) > 1) {
+    this.input = vmath.normalize(this.input)
   }
+  const movement = this.input * speed * dt
   const p = go.get_position()
-  go.set_position(vmath.vector3(p + this.dir * speed * dt))
-
+  go.set_position(vmath.vector3(p + movement))
   let anim = hash('idle')
 
-  if (this.dir.x > 0) {
+  if (this.input.x > 0) {
     anim = hash('runright')
-  } else if (this.dir.x < 0) {
+  } else if (this.input.x < 0) {
     anim = hash('runleft')
-  } else if (this.dir.y > 0) {
+  } else if (this.input.y > 0) {
     anim = hash('runup')
-  } else if (this.dir.y < 0) {
+  } else if (this.input.y < 0) {
     anim = hash('rundown')
   }
 
@@ -60,8 +59,8 @@ export function update(this: props, dt: number) {
     this.current_anim = anim
   }
 
-  // reset correction
   this.correction = vmath.vector3()
+  this.input = vmath.vector3()
 }
 export function on_message(
   this: props,
@@ -122,16 +121,16 @@ export function on_input(
   }
 ) {
   if (actionId == hash('front')) {
-    this.dir.y = -1
+    this.input.y = -1
   } else if (actionId == hash('back')) {
-    this.dir.y = 1
+    this.input.y = 1
   } else if (actionId == hash('left')) {
-    this.dir.x = -1
+    this.input.x = -1
   } else if (actionId == hash('right')) {
-    this.dir.x = 1
+    this.input.x = 1
   }
   if (action.released) {
     // reset velocity if input was released
-    this.dir = vmath.vector3()
+    this.input = vmath.vector3()
   }
 }

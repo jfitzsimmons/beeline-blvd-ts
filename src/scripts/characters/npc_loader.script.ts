@@ -160,8 +160,39 @@ export function on_message(
     } else {
       p.z = -100
       go.set_position(p)
+
       msg.post('#fluid', 'disable')
       msg.post('#solid', 'disable')
+    }
+    show_npc(this.npc)
+  } else if (messageId == hash('load_shell')) {
+    const p = go.get_position()
+    // toggle npc if present in station
+    if (message.npc != '') {
+      p.z = 0
+      go.set_position(p)
+      this.npc = message.npc
+      //giving diff characters different sets of actions might be funn
+      this.actions[this.npc] = npcs.all[this.npc].actions
+
+      if (
+        npcs.all[this.npc] != null &&
+        npcs.all[this.npc].behavior.active.children.length > 0
+      ) {
+        const behaviors = []
+        for (const behavior of npcs.all[this.npc].behavior.active.children) {
+          behaviors.push(behavior.constructor.name)
+        }
+        this.actions.behaviors = behaviors
+      }
+      this.room = message.room
+      //this.script = message.script
+    } else {
+      p.z = -100
+      go.set_position(p)
+
+      //msg.post('#fluid', 'disable')
+      //msg.post('#solid', 'disable')
     }
     show_npc(this.npc)
   } else if (messageId == hash('move_npc')) {
