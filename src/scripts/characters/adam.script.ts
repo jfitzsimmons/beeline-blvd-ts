@@ -1,38 +1,56 @@
+import { WindowHack } from '../../types/utils'
+
 const { player } = globalThis.game.world
 const speed = 250
 interface props {
-  dir: vmath.vector3
+  input: vmath.vector3
   current_anim: hash
   correction: vmath.vector3
 }
+function WindowResize(event: unknown) {
+  if (event == window.WINDOW_EVENT_RESIZED) {
+    const [ww, wh] = window.get_size()
+    const localZoom =
+      math.max(ww / 1408, wh / 896) /
+      (window as unknown as WindowHack).get_display_scale()
+    go.set('#camera', 'orthographic_zoom', localZoom)
+  }
+}
 
 export function init(this: props) {
-  msg.post('#camera', 'acquire_camera_focus')
+  window.set_listener(WindowResize)
   msg.post('@render:', 'use_camera_projection')
-  //msg.post('#', 'acquire_input_focus')
+  msg.post('#camera', 'acquire_camera_focus')
 
-  this.dir = vmath.vector3()
+  const [ww, wh] = window.get_size()
+  const localZoom =
+    math.max(ww / 1408, wh / 896) /
+    (window as unknown as WindowHack).get_display_scale()
+  go.set('#camera', 'orthographic_zoom', localZoom)
+
+  msg.post('#', 'acquire_input_focus')
+
+  this.input = vmath.vector3()
   this.current_anim = hash('idle')
-  // correction vector
   this.correction = vmath.vector3()
 }
 
 export function update(this: props, dt: number) {
-  if (vmath.length_sqr(this.dir) > 1) {
-    this.dir = vmath.normalize(this.dir)
+  if (vmath.length_sqr(this.input) > 1) {
+    this.input = vmath.normalize(this.input)
   }
+  const movement = this.input * speed * dt
   const p = go.get_position()
-  go.set_position(vmath.vector3(p + this.dir * speed * dt))
-
+  go.set_position(vmath.vector3(p + movement))
   let anim = hash('idle')
 
-  if (this.dir.x > 0) {
+  if (this.input.x > 0) {
     anim = hash('runright')
-  } else if (this.dir.x < 0) {
+  } else if (this.input.x < 0) {
     anim = hash('runleft')
-  } else if (this.dir.y > 0) {
+  } else if (this.input.y > 0) {
     anim = hash('runup')
-  } else if (this.dir.y < 0) {
+  } else if (this.input.y < 0) {
     anim = hash('rundown')
   }
 
@@ -41,8 +59,8 @@ export function update(this: props, dt: number) {
     this.current_anim = anim
   }
 
-  // reset correction
   this.correction = vmath.vector3()
+  this.input = vmath.vector3()
 }
 export function on_message(
   this: props,
@@ -51,21 +69,20 @@ export function on_message(
   _sender: url
 ): void {
   if (messageId == hash('wake_up')) {
-    const [ww, wh] = window.get_size()
     const pos = player.pos
     const targetpos = vmath.vector3(pos.x, pos.y, 0.5)
-    if (pos.y > wh - 100) {
+    if (pos.y > 896 - 100) {
       targetpos.y = 150
       targetpos.x = pos.x
     } else if (pos.y < 100) {
-      targetpos.y = wh - 150
+      targetpos.y = 896 - 150
       targetpos.x = pos.x
     }
-    if (pos.x > ww - 100) {
+    if (pos.x > 1408 - 100) {
       targetpos.x = 150
       targetpos.y = pos.y
     } else if (pos.x < 100) {
-      targetpos.x = ww - 150
+      targetpos.x = 1408 - 150
       targetpos.y = pos.y
     }
 
@@ -104,16 +121,16 @@ export function on_input(
   }
 ) {
   if (actionId == hash('front')) {
-    this.dir.y = -1
+    this.input.y = -1
   } else if (actionId == hash('back')) {
-    this.dir.y = 1
+    this.input.y = 1
   } else if (actionId == hash('left')) {
-    this.dir.x = -1
+    this.input.x = -1
   } else if (actionId == hash('right')) {
-    this.dir.x = 1
+    this.input.x = 1
   }
   if (action.released) {
     // reset velocity if input was released
-    this.dir = vmath.vector3()
+    this.input = vmath.vector3()
   }
 }

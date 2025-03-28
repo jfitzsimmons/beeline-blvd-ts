@@ -8,15 +8,8 @@ instances {
     z: 1.0
   }
   rotation {
-    x: 0.0
-    y: 0.0
     z: -0.70710677
     w: 0.70710677
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -25,17 +18,6 @@ instances {
   position {
     x: 640.0
     y: 842.0
-    z: 1.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
     z: 1.0
   }
 }
@@ -47,17 +29,6 @@ instances {
     y: 218.0
     z: 0.1
   }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
 }
 instances {
   id: "to_grounds"
@@ -65,17 +36,6 @@ instances {
   position {
     x: 53.0
     y: 384.0
-    z: 1.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
     z: 1.0
   }
 }
@@ -87,17 +47,6 @@ instances {
     y: -20.0
     z: 0.1
   }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
 }
 instances {
   id: "vase2"
@@ -106,17 +55,6 @@ instances {
     x: 215.0
     y: 672.0
     z: 0.1
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -127,17 +65,6 @@ instances {
     y: 227.0
     z: 0.1
   }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
 }
 instances {
   id: "guard"
@@ -146,17 +73,6 @@ instances {
     x: 1151.0
     y: 206.0
     z: 0.1
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -167,17 +83,6 @@ instances {
     y: 694.0
     z: 0.1
   }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
 }
 instances {
   id: "guest"
@@ -186,17 +91,6 @@ instances {
     x: 705.0
     y: 344.0
     z: 0.1
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -207,17 +101,6 @@ instances {
     y: 402.0
     z: 0.1
   }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
 }
 instances {
   id: "guest2"
@@ -226,17 +109,6 @@ instances {
     x: 1050.0
     y: 740.0
     z: 0.1
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -247,17 +119,6 @@ instances {
     y: 575.0
     z: 0.1
   }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
 }
 instances {
   id: "lounge"
@@ -266,17 +127,6 @@ instances {
     x: 518.0
     y: 419.0
     z: 0.1
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -287,17 +137,6 @@ instances {
     y: 772.0
     z: 0.1
   }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
 }
 instances {
   id: "boss"
@@ -307,36 +146,46 @@ instances {
     y: 172.0
     z: 0.1
   }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
 }
 collection_instances {
   id: "shared"
   collection: "/main/levels/shared.collection"
+}
+collection_instances {
+  id: "admin1lite"
+  collection: "/main/levels/adjacents/admin1lite.collection"
   position {
-    x: 0.0
-    y: 0.0
-    z: 0.0
+    x: 1408.0
   }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
+}
+collection_instances {
+  id: "customslite"
+  collection: "/main/levels/adjacents/customslite.collection"
+  position {
+    y: 896.0
   }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+}
+collection_instances {
+  id: "groundslite"
+  collection: "/main/levels/adjacents/groundslite.collection"
+  position {
+    x: -1408.0
+  }
+}
+collection_instances {
+  id: "securitylite"
+  collection: "/main/levels/adjacents/securitylite.collection"
+  position {
+    x: 1408.0
+    y: -896.0
+  }
+}
+collection_instances {
+  id: "baggagelite"
+  collection: "/main/levels/adjacents/baggagelite.collection"
+  position {
+    x: -1408.0
+    y: 896.0
   }
 }
 scale_along_z: 0
@@ -345,42 +194,15 @@ embedded_instances {
   data: "components {\n"
   "  id: \"background\"\n"
   "  component: \"/main/levels/01_vipreception/decolvl1.tilemap\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
-  "  property_decls {\n"
-  "  }\n"
   "}\n"
   "components {\n"
   "  id: \"reception\"\n"
   "  component: \"/scripts/levels/reception.script\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
-  "  property_decls {\n"
-  "  }\n"
   "}\n"
   "embedded_components {\n"
   "  id: \"walls\"\n"
   "  type: \"collisionobject\"\n"
-  "  data: \"collision_shape: \\\"\\\"\\n"
-  "type: COLLISION_OBJECT_TYPE_STATIC\\n"
+  "  data: \"type: COLLISION_OBJECT_TYPE_STATIC\\n"
   "mass: 0.0\\n"
   "friction: 1.0\\n"
   "restitution: 0.5\\n"
@@ -392,68 +214,44 @@ embedded_instances {
   "    position {\\n"
   "      x: 701.0\\n"
   "      y: 838.0\\n"
-  "      z: 0.0\\n"
   "    }\\n"
   "    rotation {\\n"
-  "      x: 0.0\\n"
-  "      y: 0.0\\n"
-  "      z: 0.0\\n"
-  "      w: 1.0\\n"
   "    }\\n"
   "    index: 0\\n"
   "    count: 3\\n"
-  "    id: \\\"\\\"\\n"
   "  }\\n"
   "  shapes {\\n"
   "    shape_type: TYPE_BOX\\n"
   "    position {\\n"
   "      x: 701.0\\n"
   "      y: 92.0\\n"
-  "      z: 0.0\\n"
   "    }\\n"
   "    rotation {\\n"
-  "      x: 0.0\\n"
-  "      y: 0.0\\n"
-  "      z: 0.0\\n"
-  "      w: 1.0\\n"
   "    }\\n"
   "    index: 3\\n"
   "    count: 3\\n"
-  "    id: \\\"\\\"\\n"
   "  }\\n"
   "  shapes {\\n"
   "    shape_type: TYPE_BOX\\n"
   "    position {\\n"
   "      x: 58.0\\n"
   "      y: 442.0\\n"
-  "      z: 0.0\\n"
   "    }\\n"
   "    rotation {\\n"
-  "      x: 0.0\\n"
-  "      y: 0.0\\n"
-  "      z: 0.0\\n"
-  "      w: 1.0\\n"
   "    }\\n"
   "    index: 6\\n"
   "    count: 3\\n"
-  "    id: \\\"\\\"\\n"
   "  }\\n"
   "  shapes {\\n"
   "    shape_type: TYPE_BOX\\n"
   "    position {\\n"
   "      x: 1352.0\\n"
   "      y: 437.0\\n"
-  "      z: 0.0\\n"
   "    }\\n"
   "    rotation {\\n"
-  "      x: 0.0\\n"
-  "      y: 0.0\\n"
-  "      z: 0.0\\n"
-  "      w: 1.0\\n"
   "    }\\n"
   "    index: 9\\n"
   "    count: 3\\n"
-  "    id: \\\"\\\"\\n"
   "  }\\n"
   "  data: 650.0\\n"
   "  data: 30.0\\n"
@@ -468,40 +266,9 @@ embedded_instances {
   "  data: 400.0\\n"
   "  data: 10.0\\n"
   "}\\n"
-  "linear_damping: 0.0\\n"
-  "angular_damping: 0.0\\n"
-  "locked_rotation: false\\n"
-  "bullet: false\\n"
   "\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
   "}\n"
   ""
-  position {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
 }
 embedded_instances {
   id: "deskarea"
@@ -510,48 +277,22 @@ embedded_instances {
   data: "components {\n"
   "  id: \"station\"\n"
   "  component: \"/scripts/actors/station.script\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
-  "  property_decls {\n"
-  "  }\n"
   "}\n"
   "embedded_components {\n"
   "  id: \"desk\"\n"
   "  type: \"sprite\"\n"
   "  data: \"default_animation: \\\"centerdesk\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
-  "blend_mode: BLEND_MODE_ALPHA\\n"
   "textures {\\n"
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/main/levels/01_vipreception/level1.atlas\\\"\\n"
   "}\\n"
   "\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
   "}\n"
   "embedded_components {\n"
   "  id: \"solid\"\n"
   "  type: \"collisionobject\"\n"
-  "  data: \"collision_shape: \\\"\\\"\\n"
-  "type: COLLISION_OBJECT_TYPE_STATIC\\n"
+  "  data: \"type: COLLISION_OBJECT_TYPE_STATIC\\n"
   "mass: 0.0\\n"
   "friction: 1.0\\n"
   "restitution: 0.5\\n"
@@ -561,47 +302,24 @@ embedded_instances {
   "  shapes {\\n"
   "    shape_type: TYPE_BOX\\n"
   "    position {\\n"
-  "      x: 0.0\\n"
   "      y: 11.0\\n"
-  "      z: 0.0\\n"
   "    }\\n"
   "    rotation {\\n"
-  "      x: 0.0\\n"
-  "      y: 0.0\\n"
-  "      z: 0.0\\n"
-  "      w: 1.0\\n"
   "    }\\n"
   "    index: 0\\n"
   "    count: 3\\n"
-  "    id: \\\"\\\"\\n"
   "  }\\n"
   "  data: 67.05657\\n"
   "  data: 73.8197\\n"
   "  data: 12.4\\n"
   "}\\n"
-  "linear_damping: 0.0\\n"
-  "angular_damping: 0.0\\n"
-  "locked_rotation: false\\n"
-  "bullet: false\\n"
   "\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
   "}\n"
   "embedded_components {\n"
   "  id: \"comp\"\n"
   "  type: \"sprite\"\n"
   "  data: \"default_animation: \\\"computerleft\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
-  "blend_mode: BLEND_MODE_ALPHA\\n"
   "textures {\\n"
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/main/levels/01_vipreception/level1.atlas\\\"\\n"
@@ -612,41 +330,26 @@ embedded_instances {
   "    y: -5.0\n"
   "    z: 0.1\n"
   "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
   "}\n"
   "embedded_components {\n"
   "  id: \"deskbtm\"\n"
   "  type: \"sprite\"\n"
   "  data: \"default_animation: \\\"deskbtm\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
-  "blend_mode: BLEND_MODE_ALPHA\\n"
   "textures {\\n"
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/main/levels/01_vipreception/level1.atlas\\\"\\n"
   "}\\n"
   "\"\n"
   "  position {\n"
-  "    x: 0.0\n"
   "    y: -55.0\n"
   "    z: 0.2\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
   "  }\n"
   "}\n"
   "embedded_components {\n"
   "  id: \"fluid\"\n"
   "  type: \"collisionobject\"\n"
-  "  data: \"collision_shape: \\\"\\\"\\n"
-  "type: COLLISION_OBJECT_TYPE_TRIGGER\\n"
+  "  data: \"type: COLLISION_OBJECT_TYPE_TRIGGER\\n"
   "mass: 0.0\\n"
   "friction: 0.1\\n"
   "restitution: 0.5\\n"
@@ -656,57 +359,24 @@ embedded_instances {
   "  shapes {\\n"
   "    shape_type: TYPE_BOX\\n"
   "    position {\\n"
-  "      x: 0.0\\n"
   "      y: 12.0\\n"
-  "      z: 0.0\\n"
   "    }\\n"
   "    rotation {\\n"
-  "      x: 0.0\\n"
-  "      y: 0.0\\n"
-  "      z: 0.0\\n"
-  "      w: 1.0\\n"
   "    }\\n"
   "    index: 0\\n"
   "    count: 3\\n"
-  "    id: \\\"\\\"\\n"
   "  }\\n"
   "  data: 74.30621\\n"
   "  data: 87.37925\\n"
   "  data: 10.0\\n"
   "}\\n"
-  "linear_damping: 0.0\\n"
-  "angular_damping: 0.0\\n"
-  "locked_rotation: false\\n"
-  "bullet: false\\n"
   "\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
   "}\n"
   ""
   position {
     x: 861.0
     y: 378.0
     z: 0.1
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 embedded_instances {
@@ -716,40 +386,17 @@ embedded_instances {
   "  type: \"sprite\"\n"
   "  data: \"default_animation: \\\"desklip\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
-  "blend_mode: BLEND_MODE_ALPHA\\n"
   "textures {\\n"
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/main/levels/01_vipreception/level1.atlas\\\"\\n"
   "}\\n"
   "\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
   "}\n"
   ""
   position {
     x: 861.0
     y: 455.0
     z: 0.2
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 embedded_instances {
@@ -766,20 +413,7 @@ embedded_instances {
   children: "reception_unplaced"
   data: ""
   position {
-    x: 0.0
-    y: 0.0
     z: 0.3
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 embedded_instances {
@@ -789,26 +423,12 @@ embedded_instances {
   "  type: \"sprite\"\n"
   "  data: \"default_animation: \\\"banana\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
-  "blend_mode: BLEND_MODE_ALPHA\\n"
   "textures {\\n"
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/main/gui/information/inventories/chestitems.atlas\\\"\\n"
   "}\\n"
   "\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
   "  scale {\n"
-  "    x: 1.0\n"
-  "    y: 1.0\n"
   "    z: 1.0E-6\n"
   "  }\n"
   "}\n"
@@ -818,15 +438,8 @@ embedded_instances {
     y: 64.0
     z: 0.5
   }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
   scale3 {
     x: 2.0
     y: 2.0
-    z: 1.0
   }
 }

@@ -38,6 +38,7 @@ app/build
 app/builtins
 dmengine*
 manifest.*
+.editor_settings
 
 # Local Support
 _support/

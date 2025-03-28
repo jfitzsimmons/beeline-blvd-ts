@@ -1,10 +1,6 @@
 image: "/assets/images/pipo-popupemotes.png"
 tile_width: 32
 tile_height: 32
-tile_margin: 0
-tile_spacing: 0
-collision: ""
-material_tag: "tile"
 collision_groups: "default"
 animations {
   id: "admirer"
@@ -12,8 +8,6 @@ animations {
   end_tile: 93
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "amped"
@@ -21,8 +15,6 @@ animations {
   end_tile: 198
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 5
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "angel"
@@ -30,8 +22,6 @@ animations {
   end_tile: 246
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 1
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "announcer"
@@ -39,8 +29,6 @@ animations {
   end_tile: 12
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 3
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "assaulted"
@@ -48,8 +36,6 @@ animations {
   end_tile: 66
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "crimewave"
@@ -57,8 +43,6 @@ animations {
   end_tile: 96
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "devil"
@@ -66,8 +50,6 @@ animations {
   end_tile: 249
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 3
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "distracted"
@@ -75,8 +57,6 @@ animations {
   end_tile: 216
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "helper"
@@ -84,8 +64,6 @@ animations {
   end_tile: 264
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "incharge"
@@ -93,8 +71,6 @@ animations {
   end_tile: 237
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "inhiding"
@@ -102,8 +78,6 @@ animations {
   end_tile: 252
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "injured"
@@ -111,8 +85,6 @@ animations {
   end_tile: 60
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 3
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "inspired"
@@ -120,8 +92,6 @@ animations {
   end_tile: 51
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "loudmouth"
@@ -129,8 +99,6 @@ animations {
   end_tile: 144
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "mendee"
@@ -138,8 +106,6 @@ animations {
   end_tile: 276
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "mender"
@@ -147,8 +113,6 @@ animations {
   end_tile: 219
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 5
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "modesty"
@@ -156,17 +120,13 @@ animations {
   end_tile: 294
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 1
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "more"
   start_tile: 52
-  end_tile: 52
+  end_tile: 54
   playback: PLAYBACK_LOOP_PINGPONG
-  fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
+  fps: 3
 }
 animations {
   id: "opportunist"
@@ -174,8 +134,6 @@ animations {
   end_tile: 165
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "prejudice"
@@ -183,8 +141,6 @@ animations {
   end_tile: 111
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 5
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "questioning"
@@ -192,8 +148,6 @@ animations {
   end_tile: 9
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "readup"
@@ -201,8 +155,6 @@ animations {
   end_tile: 207
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 3
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "rebel"
@@ -210,8 +162,6 @@ animations {
   end_tile: 42
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "reckless"
@@ -219,8 +169,6 @@ animations {
   end_tile: 87
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "snitch"
@@ -228,8 +176,6 @@ animations {
   end_tile: 243
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 3
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "suspecting"
@@ -237,8 +183,6 @@ animations {
   end_tile: 6
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 5
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "trespass"
@@ -246,8 +190,6 @@ animations {
   end_tile: 294
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 2
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "vanity"
@@ -255,8 +197,6 @@ animations {
   end_tile: 234
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 3
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 animations {
   id: "yogi"
@@ -264,9 +204,5 @@ animations {
   end_tile: 261
   playback: PLAYBACK_LOOP_PINGPONG
   fps: 1
-  flip_horizontal: 0
-  flip_vertical: 0
 }
 extrude_borders: 2
-inner_padding: 0
-sprite_trim_mode: SPRITE_TRIM_MODE_OFF

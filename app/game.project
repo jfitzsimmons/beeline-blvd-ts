@@ -12,9 +12,6 @@ gamepads = /builtins/input/default.gamepadsc
 [display]
 width = 1408
 height = 896
-fullscreen = 0
-high_dpi = 0
-dynamic_orientation = 1
 
 [script]
 shared_state = 1
@@ -27,13 +24,18 @@ cssfile = /builtins/manifests/web/dark_theme.css
 max_count = 50
 
 [graphics]
-default_texture_min_filter = nearest
-default_texture_mag_filter = nearest
+default_texture_min_filter = nearest_mipmap_linear
 texture_profiles = /builtins/graphics/default.texture_profiles
 
 [physics]
 gravity_y = -820.0
-scale = 0.02
-allow_dynamic_transforms = 1
 debug = 0
+
+[tilemap]
+max_tile_count = 4000
+max_count = 14
+
+[sprite]
+subpixels = 1
+max_count = 430
 

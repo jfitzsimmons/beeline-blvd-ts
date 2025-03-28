@@ -13,7 +13,7 @@ end
 
 function on_input(self, actionId, action)
 	if ((actionId == hash("touch") and gui.pick_node(self.node, action.x, action.y)) or actionId == hash("actionbtn")) and action.released then	
-		print('testjpf convert to TS old script touch åß')
+		--print('testjpf convert to TS old script touch åß')
 		create_new_game(self, action)
 	end
 end

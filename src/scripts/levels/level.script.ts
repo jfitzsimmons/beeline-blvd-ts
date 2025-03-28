@@ -38,7 +38,7 @@ function calculate_heat(room: string) {
 }
 function update_hud() {
   label.set_text('hud#time', tostring(world.clock) + ':00')
-  msg.post('hud#map', 'update_heat')
+  // msg.post('hud#map', 'update_heat')
   //sprite.play_flipbook("/hud#security_alert", 'alert_' .. tostring(world.player.alert_level))
   //msg.post("hud#map", "acquire_input_focus")
 }

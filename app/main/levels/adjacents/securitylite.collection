@@ -1,0 +1,187 @@
+name: "admin1lite"
+instances {
+  id: "prisoner1"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 1249.0
+    y: 780.0
+  }
+}
+instances {
+  id: "prisoner2"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 941.0
+    y: 778.0
+  }
+}
+instances {
+  id: "prisoner3"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 1042.0
+    y: 778.0
+  }
+}
+instances {
+  id: "prisoner4"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 1249.0
+    y: 575.0
+    z: -0.1
+  }
+}
+instances {
+  id: "security_outside1"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 269.0
+    y: 9.0
+    z: 0.1
+  }
+}
+instances {
+  id: "security_passer"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 650.0
+    y: 195.0
+  }
+}
+instances {
+  id: "securityaid"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 869.0
+    y: 153.0
+  }
+}
+instances {
+  id: "securityassistant"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 369.0
+    y: 516.0
+  }
+}
+instances {
+  id: "securityauthority"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 1115.0
+    y: 262.0
+  }
+}
+instances {
+  id: "securitydeskarea"
+  prototype: "/main/actors/deskarea02.go"
+  children: "securitydesk"
+  children: "securityphone"
+  position {
+    x: 308.0
+    y: 164.0
+  }
+}
+instances {
+  id: "securityguard"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 362.0
+    y: 771.0
+  }
+}
+instances {
+  id: "securityguest"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 768.0
+    y: 196.0
+  }
+}
+instances {
+  id: "securityguest2"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 258.0
+    y: 740.0
+  }
+}
+instances {
+  id: "securityservants2"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 161.0
+    y: 768.0
+  }
+}
+instances {
+  id: "securitydesk"
+  prototype: "/main/characters/npc_shell.go"
+  position {
+    x: 83.0
+    y: 60.0
+    z: 0.1
+  }
+}
+scale_along_z: 0
+embedded_instances {
+  id: "assets"
+  data: "components {\n"
+  "  id: \"securitylvl5\"\n"
+  "  component: \"/main/levels/05_security/securitylvl5.tilemap\"\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "security_npcs"
+  children: "prisoner1"
+  children: "prisoner2"
+  children: "prisoner3"
+  children: "prisoner4"
+  children: "security_outside1"
+  children: "security_passer"
+  children: "securityaid"
+  children: "securityassistant"
+  children: "securityauthority"
+  children: "securitydeskarea"
+  children: "securityguard"
+  children: "securityguest"
+  children: "securityguest2"
+  children: "securityservants2"
+  data: ""
+  position {
+    z: 0.1
+  }
+}
+embedded_instances {
+  id: "securityphone"
+  data: "embedded_components {\n"
+  "  id: \"phone\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"banana\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 16.0\\n"
+  "  y: 16.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/main/gui/information/inventories/chestitems.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  scale {\n"
+  "    z: 1.0E-6\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 13.0
+    y: 54.0
+    z: 0.5
+  }
+  scale3 {
+    x: 2.0
+    y: 2.0
+  }
+}
