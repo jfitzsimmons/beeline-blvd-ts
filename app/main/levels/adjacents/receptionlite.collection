@@ -1,7 +1,7 @@
 name: "admin1lite"
 instances {
   id: "receptionboss"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 863.0
     y: 172.0
@@ -10,7 +10,7 @@ instances {
 }
 instances {
   id: "receptionguard"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 1151.0
     y: 206.0
@@ -19,7 +19,7 @@ instances {
 }
 instances {
   id: "receptionguest"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 705.0
     y: 344.0
@@ -28,7 +28,7 @@ instances {
 }
 instances {
   id: "receptionguest2"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 1050.0
     y: 740.0
@@ -37,7 +37,7 @@ instances {
 }
 instances {
   id: "receptionloiter2"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 282.0
     y: 227.0
@@ -46,7 +46,7 @@ instances {
 }
 instances {
   id: "receptionloiter3"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 802.0
     y: 772.0
@@ -55,7 +55,7 @@ instances {
 }
 instances {
   id: "receptionloiter4"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 612.0
     y: 402.0
@@ -64,7 +64,7 @@ instances {
 }
 instances {
   id: "receptionlounge"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 518.0
     y: 419.0
@@ -73,7 +73,7 @@ instances {
 }
 instances {
   id: "receptionpatrol"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 417.0
     y: 694.0
@@ -82,7 +82,7 @@ instances {
 }
 instances {
   id: "reception_unplaced"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 1218.0
     y: 575.0
@@ -91,7 +91,7 @@ instances {
 }
 instances {
   id: "receptiondesk"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: -1.0
     y: -20.0

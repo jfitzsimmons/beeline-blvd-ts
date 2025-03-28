@@ -33,7 +33,7 @@ function load_adjacent() {
       const npc = stations[station]
       msg.post(
         `/${adjacent}lite/${adjacent}${station}#npc_loader`,
-        'load_npc',
+        'load_shell',
         { npc }
       )
     }
@@ -45,7 +45,7 @@ function load_adjacent() {
       print('RECEPTIONSWAPS::', swap, swaps[swap][0], swaps[swap][1])
       msg.post(
         `/${adjacent}lite/${adjacent}${swaps[swap][0]}#npc_loader`,
-        'load_npc',
+        'load_shell',
         { npc }
       )
     }
@@ -54,16 +54,18 @@ function load_adjacent() {
   //TESTJPF do you need any of these sopecific level files?
   //see how much you can move to main level.ts
   let npc = rooms.fallbacks.stations.grounds_unplaced
-  msg.post('/groundslite/grounds_unplaced#npc_loader', 'load_npc', { npc })
+  msg.post('/groundslite/grounds_unplaced#npc_loader', 'load_shell', { npc })
 
   npc = rooms.fallbacks.stations.baggage_passer
-  msg.post('/baggagelite/baggage_passer#npc_loader', 'load_npc', { npc })
+  msg.post('/baggagelite/baggage_passer#npc_loader', 'load_shell', { npc })
 
   npc = rooms.fallbacks.stations.admin1_passer
-  msg.post('/admin1lite/admin1_passer#npc_loader', 'load_npc', { npc })
+  msg.post('/admin1lite/admin1_passer#npc_loader', 'load_shell', { npc })
 
   npc = rooms.fallbacks.stations.reception_unplaced
-  msg.post('/receptionlite/reception_unplaced#npc_loader', 'load_npc', { npc })
+  msg.post('/receptionlite/reception_unplaced#npc_loader', 'load_shell', {
+    npc,
+  })
 }
 function load_storage() {
   const params = {

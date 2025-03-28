@@ -1,7 +1,7 @@
 name: "admin1lite"
 instances {
   id: "prisoner1"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 1249.0
     y: 780.0
@@ -9,7 +9,7 @@ instances {
 }
 instances {
   id: "prisoner2"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 941.0
     y: 778.0
@@ -17,7 +17,7 @@ instances {
 }
 instances {
   id: "prisoner3"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 1042.0
     y: 778.0
@@ -25,7 +25,7 @@ instances {
 }
 instances {
   id: "prisoner4"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 1249.0
     y: 575.0
@@ -34,7 +34,7 @@ instances {
 }
 instances {
   id: "security_outside1"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 269.0
     y: 9.0
@@ -43,7 +43,7 @@ instances {
 }
 instances {
   id: "security_passer"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 650.0
     y: 195.0
@@ -51,7 +51,7 @@ instances {
 }
 instances {
   id: "securityaid"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 869.0
     y: 153.0
@@ -59,7 +59,7 @@ instances {
 }
 instances {
   id: "securityassistant"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 369.0
     y: 516.0
@@ -67,7 +67,7 @@ instances {
 }
 instances {
   id: "securityauthority"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 1115.0
     y: 262.0
@@ -85,7 +85,7 @@ instances {
 }
 instances {
   id: "securityguard"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 362.0
     y: 771.0
@@ -93,7 +93,7 @@ instances {
 }
 instances {
   id: "securityguest"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 768.0
     y: 196.0
@@ -101,7 +101,7 @@ instances {
 }
 instances {
   id: "securityguest2"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 258.0
     y: 740.0
@@ -109,7 +109,7 @@ instances {
 }
 instances {
   id: "securityservants2"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 161.0
     y: 768.0
@@ -117,7 +117,7 @@ instances {
 }
 instances {
   id: "securitydesk"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 83.0
     y: 60.0

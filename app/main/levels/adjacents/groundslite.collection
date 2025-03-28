@@ -1,7 +1,7 @@
 name: "admin1lite"
 instances {
   id: "grounds_unplaced"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 901.0
     y: 549.0
@@ -9,7 +9,7 @@ instances {
 }
 instances {
   id: "groundsaid"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 888.0
     y: 795.0
@@ -17,7 +17,7 @@ instances {
 }
 instances {
   id: "groundsassistant"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 159.0
     y: 570.0
@@ -25,7 +25,7 @@ instances {
 }
 instances {
   id: "groundsbench"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 399.0
     y: 349.0
@@ -33,7 +33,7 @@ instances {
 }
 instances {
   id: "groundsguard"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 64.0
     y: 661.0
@@ -41,7 +41,7 @@ instances {
 }
 instances {
   id: "groundsguest"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 213.0
     y: 59.0
@@ -49,7 +49,7 @@ instances {
 }
 instances {
   id: "groundsguest2"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 882.0
     y: 61.0
@@ -57,7 +57,7 @@ instances {
 }
 instances {
   id: "groundsloiter1"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 1179.0
     y: 670.0
@@ -65,7 +65,7 @@ instances {
 }
 instances {
   id: "groundsloiter2"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 494.0
     y: 347.0
@@ -73,7 +73,7 @@ instances {
 }
 instances {
   id: "groundsworker1"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 725.0
     y: 776.0
@@ -81,7 +81,7 @@ instances {
 }
 instances {
   id: "groundsworker2"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 491.0
     y: 58.0

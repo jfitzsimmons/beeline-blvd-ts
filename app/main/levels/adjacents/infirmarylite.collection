@@ -1,7 +1,7 @@
 name: "admin1lite"
 instances {
   id: "infirmaryaid"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 1167.0
     y: 414.0
@@ -10,7 +10,7 @@ instances {
 }
 instances {
   id: "infirmary_outside1"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 675.0
     y: 12.0
@@ -19,7 +19,7 @@ instances {
 }
 instances {
   id: "infirmaryloiter1"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 359.0
     y: 633.0
@@ -28,7 +28,7 @@ instances {
 }
 instances {
   id: "infirmaryloiter2"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 604.0
     y: 413.0
@@ -37,7 +37,7 @@ instances {
 }
 instances {
   id: "infirmaryloiter4"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 319.0
     y: 167.0
@@ -46,7 +46,7 @@ instances {
 }
 instances {
   id: "patient1"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 1094.0
     y: 747.0
@@ -54,7 +54,7 @@ instances {
 }
 instances {
   id: "patient2"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 1224.0
     y: 745.0
@@ -62,7 +62,7 @@ instances {
 }
 instances {
   id: "patient3"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 1234.0
     y: 176.0
@@ -70,7 +70,7 @@ instances {
 }
 instances {
   id: "patient4"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 1103.0
     y: 173.0
@@ -78,7 +78,7 @@ instances {
 }
 instances {
   id: "infirmaryservants1"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 715.0
     y: 412.0
@@ -87,7 +87,7 @@ instances {
 }
 instances {
   id: "infirmaryservants2"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 184.0
     y: 724.0
@@ -96,7 +96,7 @@ instances {
 }
 instances {
   id: "infirmaryworker1"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 465.0
     y: 732.0
@@ -105,7 +105,7 @@ instances {
 }
 instances {
   id: "infirmaryassistant"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: -1.0
     y: -20.0

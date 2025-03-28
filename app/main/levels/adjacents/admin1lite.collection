@@ -1,7 +1,7 @@
 name: "admin1lite"
 instances {
   id: "admin1_passer"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 665.0
     y: 648.0
@@ -9,7 +9,7 @@ instances {
 }
 instances {
   id: "admin1assistant"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 369.0
     y: 516.0
@@ -17,7 +17,7 @@ instances {
 }
 instances {
   id: "admin1boss"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 1115.0
     y: 262.0
@@ -35,7 +35,7 @@ instances {
 }
 instances {
   id: "admin1guard"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 362.0
     y: 771.0
@@ -43,7 +43,7 @@ instances {
 }
 instances {
   id: "admin1monitor"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 1113.0
     y: 553.0
@@ -51,7 +51,7 @@ instances {
 }
 instances {
   id: "admin1patrol"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 385.0
     y: 195.0
@@ -59,7 +59,7 @@ instances {
 }
 instances {
   id: "admin1servants1"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 856.0
     y: 781.0
@@ -67,7 +67,7 @@ instances {
 }
 instances {
   id: "admin1servants2"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 962.0
     y: 598.0
@@ -75,7 +75,7 @@ instances {
 }
 instances {
   id: "admin1desk"
-  prototype: "/main/characters/npc_loader.go"
+  prototype: "/main/characters/npc_shell.go"
   position {
     x: 90.0
     y: 60.0

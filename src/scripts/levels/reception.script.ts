@@ -19,7 +19,7 @@ function load_npcs() {
   }
 
   //TESTJPF do you need any of these sopecific level files?
-  //see how much you can move to main level.ts//
+  //see how much you can move to main level.ts
   const npc = rooms.fallbacks.stations.reception_unplaced
   msg.post('/reception_unplaced#npc_loader', 'load_npc', { npc })
 }
@@ -33,7 +33,7 @@ function load_adjacent() {
       const npc = stations[station]
       msg.post(
         `/${adjacent}lite/${adjacent}${station}#npc_loader`,
-        'load_npc',
+        'load_shell',
         { npc }
       )
     }
@@ -45,7 +45,7 @@ function load_adjacent() {
       print('RECEPTIONSWAPS::', swap, swaps[swap][0], swaps[swap][1])
       msg.post(
         `/${adjacent}lite/${adjacent}${swaps[swap][0]}#npc_loader`,
-        'load_npc',
+        'load_shell',
         { npc }
       )
     }
@@ -54,30 +54,30 @@ function load_adjacent() {
   //TESTJPF do you need any of these sopecific level files?
   //see how much you can move to main level.ts
   let npc = rooms.fallbacks.stations.grounds_unplaced
-  msg.post('/groundslite/grounds_unplaced#npc_loader', 'load_npc', { npc })
+  msg.post('/groundslite/grounds_unplaced#npc_loader', 'load_shell', { npc })
 
   npc = rooms.fallbacks.stations.customs_unplaced
-  msg.post('/customslite/customs_unplaced#npc_loader', 'load_npc', { npc })
+  msg.post('/customslite/customs_unplaced#npc_loader', 'load_shell', { npc })
 
   npc = rooms.fallbacks.stations.baggage_passer
-  msg.post('/baggagelite/baggage_passer#npc_loader', 'load_npc', { npc })
+  msg.post('/baggagelite/baggage_passer#npc_loader', 'load_shell', { npc })
 
   npc = rooms.fallbacks.stations.admin1_passer
-  msg.post('/admin1lite/admin1_passer#npc_loader', 'load_npc', { npc })
+  msg.post('/admin1lite/admin1_passer#npc_loader', 'load_shell', { npc })
 
   npc = rooms.fallbacks.stations.security_passer
-  msg.post('/securitylite/security_passer#npc_loader', 'load_npc', { npc })
+  msg.post('/securitylite/security_passer#npc_loader', 'load_shell', { npc })
 
-  msg.post('/securitylite/prisoner1#npc_loader', 'load_npc', {
+  msg.post('/securitylite/prisoner1#npc_loader', 'load_shell', {
     npc: rooms.all['security'].wards!.prisoner1,
   })
-  msg.post('/securitylite/prisoner2#npc_loader', 'load_npc', {
+  msg.post('/securitylite/prisoner2#npc_loader', 'load_shell', {
     npc: rooms.all['security'].wards!.prisoner2,
   })
-  msg.post('/securitylite/prisoner3#npc_loader', 'load_npc', {
+  msg.post('/securitylite/prisoner3#npc_loader', 'load_shell', {
     npc: rooms.all['security'].wards!.prisoner3,
   })
-  msg.post('/securitylite/prisoner4#npc_loader', 'load_npc', {
+  msg.post('/securitylite/prisoner4#npc_loader', 'load_shell', {
     npc: rooms.all['security'].wards!.prisoner4,
   })
 }

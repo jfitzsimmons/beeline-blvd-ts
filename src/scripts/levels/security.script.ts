@@ -51,7 +51,7 @@ function load_adjacent() {
       const npc = stations[station]
       msg.post(
         `/${adjacent}lite/${adjacent}${station}#npc_loader`,
-        'load_npc',
+        'load_shell',
         { npc }
       )
     }
@@ -63,7 +63,7 @@ function load_adjacent() {
       print('RECEPTIONSWAPS::', swap, swaps[swap][0], swaps[swap][1])
       msg.post(
         `/${adjacent}lite/${adjacent}${swaps[swap][0]}#npc_loader`,
-        'load_npc',
+        'load_shell',
         { npc }
       )
     }
@@ -73,23 +73,25 @@ function load_adjacent() {
   //see how much you can move to main level.ts
 
   let npc = rooms.fallbacks.stations.admin1_passer
-  msg.post('/admin1lite/admin1_passer#npc_loader', 'load_npc', { npc })
+  msg.post('/admin1lite/admin1_passer#npc_loader', 'load_shell', { npc })
 
   npc = rooms.fallbacks.stations.reception_unplaced
-  msg.post('/receptionlite/reception_unplaced#npc_loader', 'load_npc', { npc })
-  msg.post('/infirmarylite/infirmary_outside1#npc_loader', 'load_npc', {
+  msg.post('/receptionlite/reception_unplaced#npc_loader', 'load_shell', {
+    npc,
+  })
+  msg.post('/infirmarylite/infirmary_outside1#npc_loader', 'load_shell', {
     npc: rooms.fallbacks.stations.infirmary_outside1,
   })
-  msg.post('/infirmarylite/patient1#npc_loader', 'load_npc', {
+  msg.post('/infirmarylite/patient1#npc_loader', 'load_shell', {
     npc: rooms.all['infirmary'].wards!.patient1,
   })
-  msg.post('/infirmarylite/patient2#npc_loader', 'load_npc', {
+  msg.post('/infirmarylite/patient2#npc_loader', 'load_shell', {
     npc: rooms.all['infirmary'].wards!.patient2,
   })
-  msg.post('/infirmarylite/patient3#npc_loader', 'load_npc', {
+  msg.post('/infirmarylite/patient3#npc_loader', 'load_shell', {
     npc: rooms.all['infirmary'].wards!.patient3,
   })
-  msg.post('/infirmarylite/patient4#npc_loader', 'load_npc', {
+  msg.post('/infirmarylite/patient4#npc_loader', 'load_shell', {
     npc: rooms.all['infirmary'].wards!.patient4,
   })
 }

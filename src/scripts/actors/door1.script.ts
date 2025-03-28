@@ -43,8 +43,15 @@ function transition() {
   print('DOORpick room')
   msg.post('worldproxies:/controller#worldcontroller', 'pick_room', params)
 }
+interface props {
+  startTransition: boolean
+}
+export function init(this: props) {
+  this.startTransition = true
+}
 
 export function on_message(
+  this: props,
   messageId: hash,
   message: {
     distance: number
@@ -52,8 +59,9 @@ export function on_message(
   _sender: url
 ): void {
   if (messageId == hash('contact_point_response')) {
-    if (message.distance < 10) {
+    if (message.distance < 10 && this.startTransition === true) {
       transition()
+      this.startTransition = false
     }
   }
 }
