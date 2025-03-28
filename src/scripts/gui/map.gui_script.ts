@@ -1,4 +1,5 @@
-const { player, rooms } = globalThis.game.world
+const { player } = globalThis.game.world
+/**
 function check_room_nodes(action: { x: number; y: number }) {
   let kr: keyof typeof rooms.all
   for (kr in rooms.all) {
@@ -13,6 +14,7 @@ function check_room_nodes(action: { x: number; y: number }) {
     }
   }
 }
+
 export function on_input(
   this: any,
   actionId: hash,
@@ -28,6 +30,7 @@ export function on_input(
     msg.post('worldproxies:/controller#infocontroller', 'show_menu')
   }
 }
+  */
 
 export function on_message(this: any, messageId: hash, _sender: url): void {
   if (messageId == hash('update_heat')) {

@@ -239,7 +239,7 @@ instances {
   id: "groundsphone"
   prototype: "/main/actors/phonebooth.go"
   position {
-    x: -58.0
+    x: 1350.0
     y: 574.0
   }
 }
@@ -924,7 +924,7 @@ embedded_instances {
   "}\\n"
   "\"\n"
   "  position {\n"
-  "    x: -1377.0\n"
+  "    x: 42.0\n"
   "    y: 208.0\n"
   "    z: 0.1\n"
   "  }\n"
@@ -944,9 +944,13 @@ embedded_instances {
   "}\\n"
   "\"\n"
   "  position {\n"
-  "    x: -48.0\n"
+  "    x: 1360.0\n"
   "    y: 384.0\n"
   "    z: 0.1\n"
+  "  }\n"
+  "  rotation {\n"
+  "    z: 1.0\n"
+  "    w: 6.123234E-17\n"
   "  }\n"
   "}\n"
   "embedded_components {\n"
@@ -964,7 +968,7 @@ embedded_instances {
   "}\\n"
   "\"\n"
   "  position {\n"
-  "    x: -1119.0\n"
+  "    x: 290.0\n"
   "    y: 630.0\n"
   "    z: 0.1\n"
   "  }\n"
@@ -984,7 +988,7 @@ embedded_instances {
   "}\\n"
   "\"\n"
   "  position {\n"
-  "    x: -866.0\n"
+  "    x: 542.0\n"
   "    y: 940.0\n"
   "    z: 0.1\n"
   "  }\n"
@@ -1004,7 +1008,7 @@ embedded_instances {
   "}\\n"
   "\"\n"
   "  position {\n"
-  "    x: -828.0\n"
+  "    x: 572.0\n"
   "    y: 37.0\n"
   "    z: 0.1\n"
   "  }\n"
@@ -1024,12 +1028,15 @@ embedded_instances {
   "}\\n"
   "\"\n"
   "  position {\n"
-  "    x: -687.0\n"
+  "    x: 741.0\n"
   "    y: 41.0\n"
   "    z: 0.1\n"
   "  }\n"
   "}\n"
   ""
+  position {
+    x: -1408.0
+  }
 }
 embedded_instances {
   id: "grounds_npcs"
@@ -1046,7 +1053,6 @@ embedded_instances {
   children: "groundsworker2"
   data: ""
   position {
-    x: -1408.0
     z: 0.1
   }
   scale3 {
@@ -1144,11 +1150,11 @@ embedded_instances {
   data: "components {\n"
   "  id: \"admin1lvl4\"\n"
   "  component: \"/main/levels/04_admin1/admin1lvl4.tilemap\"\n"
-  "  position {\n"
-  "    x: 1408.0\n"
-  "  }\n"
   "}\n"
   ""
+  position {
+    x: 1408.0
+  }
 }
 embedded_instances {
   id: "admin1_npcs"
@@ -1163,7 +1169,6 @@ embedded_instances {
   children: "admin1servants2"
   data: ""
   position {
-    x: 1408.0
     z: 0.1
   }
 }

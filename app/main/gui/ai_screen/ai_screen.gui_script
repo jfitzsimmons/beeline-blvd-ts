@@ -1,8 +1,9 @@
+--[[
 function on_input(self, actionId, action)
 	if actionId == hash("touch") and action.released then
 		print("TOUCH")
 		if gui.pick_node(gui.get_node("exit"), action.x, action.y) then 
-			--[[
+			
 			local params = {
 				parentprop = self.parentprop,
 				character = self.character,
@@ -18,13 +19,13 @@ function on_input(self, actionId, action)
 			end
 
 			msg.post("shared/scripts#level", "exit_gui")
-			]]--
+			
 			gui.set_enabled(gui.get_node("screen"),false)
 			msg.post("/shared/adam#adam", "acquire_input_focus")
 		end
 	end
 end
-
+]]--
 function on_message(self, message_id, message, sender)
 	if message_id == hash("show_screen") then 
 		node = gui.get_node("screen")

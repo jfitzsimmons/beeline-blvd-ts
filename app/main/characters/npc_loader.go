@@ -83,6 +83,9 @@ embedded_components {
   "  texture: \"/main/characters/tilesources/npcs64x128.tilesource\"\n"
   "}\n"
   ""
+  position {
+    z: 0.2
+  }
 }
 embedded_components {
   id: "emote1"
@@ -97,7 +100,7 @@ embedded_components {
   position {
     x: -35.0
     y: 83.0
-    z: 0.3
+    z: 0.4
   }
 }
 embedded_components {
@@ -113,7 +116,7 @@ embedded_components {
   position {
     x: -93.0
     y: 83.0
-    z: 0.3
+    z: 0.4
   }
 }
 embedded_components {
@@ -129,7 +132,7 @@ embedded_components {
   position {
     x: -64.0
     y: 83.0
-    z: 0.3
+    z: 0.4
   }
 }
 embedded_components {
@@ -145,6 +148,6 @@ embedded_components {
   position {
     x: -122.0
     y: 83.0
-    z: 0.3
+    z: 0.4
   }
 }
