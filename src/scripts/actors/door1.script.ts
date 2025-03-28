@@ -40,6 +40,7 @@ function transition() {
     }
   }
   player.pos = go.get_position()
+  print('DOORpick room')
   msg.post('worldproxies:/controller#worldcontroller', 'pick_room', params)
 }
 

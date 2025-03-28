@@ -30,28 +30,18 @@ export function init(this: props) {
 
   msg.post('#', 'acquire_input_focus')
 
-  //this.dir = vmath.vector3()
   this.input = vmath.vector3()
-
   this.current_anim = hash('idle')
-  // correction vector
   this.correction = vmath.vector3()
-  //this.velocity = vmath.vector3()
 }
 
 export function update(this: props, dt: number) {
-  // if vmath.length_sqr(self.input) > 1 then        -- [1]
-  // self.input = vmath.normalize(self.input)
-  //end
-
   if (vmath.length_sqr(this.input) > 1) {
     this.input = vmath.normalize(this.input)
   }
   const movement = this.input * speed * dt
-
   const p = go.get_position()
   go.set_position(vmath.vector3(p + movement))
-
   let anim = hash('idle')
 
   if (this.input.x > 0) {
@@ -69,7 +59,6 @@ export function update(this: props, dt: number) {
     this.current_anim = anim
   }
 
-  // reset correction
   this.correction = vmath.vector3()
   this.input = vmath.vector3()
 }

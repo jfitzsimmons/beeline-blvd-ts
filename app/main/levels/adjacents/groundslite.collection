@@ -1,0 +1,243 @@
+name: "admin1lite"
+instances {
+  id: "grounds_unplaced"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 901.0
+    y: 549.0
+  }
+}
+instances {
+  id: "groundsaid"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 888.0
+    y: 795.0
+  }
+}
+instances {
+  id: "groundsassistant"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 159.0
+    y: 570.0
+  }
+}
+instances {
+  id: "groundsbench"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 399.0
+    y: 349.0
+  }
+}
+instances {
+  id: "groundsguard"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 64.0
+    y: 661.0
+  }
+}
+instances {
+  id: "groundsguest"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 213.0
+    y: 59.0
+  }
+}
+instances {
+  id: "groundsguest2"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 882.0
+    y: 61.0
+  }
+}
+instances {
+  id: "groundsloiter1"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 1179.0
+    y: 670.0
+  }
+}
+instances {
+  id: "groundsloiter2"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 494.0
+    y: 347.0
+  }
+}
+instances {
+  id: "groundsworker1"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 725.0
+    y: 776.0
+  }
+}
+instances {
+  id: "groundsworker2"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 491.0
+    y: 58.0
+  }
+}
+scale_along_z: 0
+embedded_instances {
+  id: "assets"
+  data: "components {\n"
+  "  id: \"level\"\n"
+  "  component: \"/main/levels/00_front_grounds/level.tilemap\"\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"sprite\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"shipping1\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 144.0\\n"
+  "  y: 688.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/main/tile_sources/shipping.tilesource\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 42.0\n"
+  "    y: 208.0\n"
+  "    z: 0.1\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"sprite1\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"opendoor256\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 96.0\\n"
+  "  y: 256.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/main/levels/01_vipreception/level1.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 1360.0\n"
+  "    y: 384.0\n"
+  "    z: 0.1\n"
+  "  }\n"
+  "  rotation {\n"
+  "    z: 1.0\n"
+  "    w: 6.123234E-17\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"sprite2\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"shipping1\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 144.0\\n"
+  "  y: 688.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/main/tile_sources/shipping.tilesource\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 290.0\n"
+  "    y: 630.0\n"
+  "    z: 0.1\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"sprite3\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"shipping1\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 144.0\\n"
+  "  y: 688.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/main/tile_sources/shipping.tilesource\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 542.0\n"
+  "    y: 940.0\n"
+  "    z: 0.1\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"sprite4\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"vase_art4\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 51.0\\n"
+  "  y: 51.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/main/tile_sources/vase_art.tilesource\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 572.0\n"
+  "    y: 37.0\n"
+  "    z: 0.1\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"sprite5\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"vase_art4\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 51.0\\n"
+  "  y: 51.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/main/tile_sources/vase_art.tilesource\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 741.0\n"
+  "    y: 41.0\n"
+  "    z: 0.1\n"
+  "  }\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "grounds_npcs"
+  children: "grounds_unplaced"
+  children: "groundsaid"
+  children: "groundsassistant"
+  children: "groundsbench"
+  children: "groundsguard"
+  children: "groundsguest"
+  children: "groundsguest2"
+  children: "groundsloiter1"
+  children: "groundsloiter2"
+  children: "groundsworker1"
+  children: "groundsworker2"
+  data: ""
+  position {
+    z: 0.1
+  }
+  scale3 {
+    z: 0.9
+  }
+}

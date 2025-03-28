@@ -1,119 +1,96 @@
-name: "infirmary"
+name: "admin1lite"
 instances {
-  id: "to_security"
-  prototype: "/main/actors/door2.go"
-  position {
-    x: 53.0
-    y: 384.0
-    z: 1.0
-  }
-}
-instances {
-  id: "loiter4"
+  id: "receptionboss"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 319.0
-    y: 167.0
+    x: 863.0
+    y: 172.0
     z: 0.1
   }
 }
 instances {
-  id: "aid"
+  id: "receptionguard"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 1167.0
-    y: 414.0
+    x: 1151.0
+    y: 206.0
     z: 0.1
   }
 }
 instances {
-  id: "loiter1"
+  id: "receptionguest"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 359.0
-    y: 633.0
+    x: 705.0
+    y: 344.0
     z: 0.1
   }
 }
 instances {
-  id: "loiter2"
+  id: "receptionguest2"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 604.0
-    y: 413.0
+    x: 1050.0
+    y: 740.0
     z: 0.1
   }
 }
 instances {
-  id: "patient1"
+  id: "receptionloiter2"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 1094.0
-    y: 747.0
-  }
-}
-instances {
-  id: "patient2"
-  prototype: "/main/characters/npc_loader.go"
-  position {
-    x: 1224.0
-    y: 745.0
-  }
-}
-instances {
-  id: "patient3"
-  prototype: "/main/characters/npc_loader.go"
-  position {
-    x: 1234.0
-    y: 176.0
-  }
-}
-instances {
-  id: "patient4"
-  prototype: "/main/characters/npc_loader.go"
-  position {
-    x: 1103.0
-    y: 173.0
-  }
-}
-instances {
-  id: "servants2"
-  prototype: "/main/characters/npc_loader.go"
-  position {
-    x: 184.0
-    y: 724.0
+    x: 282.0
+    y: 227.0
     z: 0.1
   }
 }
 instances {
-  id: "infirmary_outside1"
+  id: "receptionloiter3"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 675.0
-    y: 12.0
+    x: 802.0
+    y: 772.0
     z: 0.1
   }
 }
 instances {
-  id: "worker1"
+  id: "receptionloiter4"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 465.0
-    y: 732.0
+    x: 612.0
+    y: 402.0
     z: 0.1
   }
 }
 instances {
-  id: "servants1"
+  id: "receptionlounge"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 715.0
-    y: 412.0
+    x: 518.0
+    y: 419.0
     z: 0.1
   }
 }
 instances {
-  id: "desk"
+  id: "receptionpatrol"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 417.0
+    y: 694.0
+    z: 0.1
+  }
+}
+instances {
+  id: "reception_unplaced"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 1218.0
+    y: 575.0
+    z: 0.1
+  }
+}
+instances {
+  id: "receptiondesk"
   prototype: "/main/characters/npc_loader.go"
   position {
     x: -1.0
@@ -121,150 +98,37 @@ instances {
     z: 0.1
   }
 }
-collection_instances {
-  id: "shared"
-  collection: "/main/levels/shared.collection"
-}
-collection_instances {
-  id: "securitylite"
-  collection: "/main/levels/adjacents/securitylite.collection"
-  position {
-    x: -1408.0
-  }
-}
-collection_instances {
-  id: "admin1lite"
-  collection: "/main/levels/adjacents/admin1lite.collection"
-  position {
-    x: -1408.0
-    y: 896.0
-  }
-}
 scale_along_z: 0
 embedded_instances {
-  id: "level"
+  id: "assets"
   data: "components {\n"
-  "  id: \"background\"\n"
-  "  component: \"/main/levels/07_infirmary/infirmary.tilemap\"\n"
-  "}\n"
-  "components {\n"
-  "  id: \"infirmary\"\n"
-  "  component: \"/scripts/levels/infirmary.script\"\n"
-  "}\n"
-  "embedded_components {\n"
-  "  id: \"walls\"\n"
-  "  type: \"collisionobject\"\n"
-  "  data: \"type: COLLISION_OBJECT_TYPE_STATIC\\n"
-  "mass: 0.0\\n"
-  "friction: 1.0\\n"
-  "restitution: 0.5\\n"
-  "group: \\\"default\\\"\\n"
-  "mask: \\\"default\\\"\\n"
-  "embedded_collision_shape {\\n"
-  "  shapes {\\n"
-  "    shape_type: TYPE_BOX\\n"
-  "    position {\\n"
-  "      x: 701.0\\n"
-  "      y: 838.0\\n"
-  "    }\\n"
-  "    rotation {\\n"
-  "    }\\n"
-  "    index: 0\\n"
-  "    count: 3\\n"
-  "  }\\n"
-  "  shapes {\\n"
-  "    shape_type: TYPE_BOX\\n"
-  "    position {\\n"
-  "      x: 701.0\\n"
-  "      y: 92.0\\n"
-  "    }\\n"
-  "    rotation {\\n"
-  "    }\\n"
-  "    index: 3\\n"
-  "    count: 3\\n"
-  "  }\\n"
-  "  shapes {\\n"
-  "    shape_type: TYPE_BOX\\n"
-  "    position {\\n"
-  "      x: 58.0\\n"
-  "      y: 442.0\\n"
-  "    }\\n"
-  "    rotation {\\n"
-  "    }\\n"
-  "    index: 6\\n"
-  "    count: 3\\n"
-  "  }\\n"
-  "  shapes {\\n"
-  "    shape_type: TYPE_BOX\\n"
-  "    position {\\n"
-  "      x: 1352.0\\n"
-  "      y: 437.0\\n"
-  "    }\\n"
-  "    rotation {\\n"
-  "    }\\n"
-  "    index: 9\\n"
-  "    count: 3\\n"
-  "  }\\n"
-  "  data: 650.0\\n"
-  "  data: 30.0\\n"
-  "  data: 10.0\\n"
-  "  data: 650.0\\n"
-  "  data: 30.0\\n"
-  "  data: 10.0\\n"
-  "  data: 30.0\\n"
-  "  data: 400.0\\n"
-  "  data: 10.0\\n"
-  "  data: 30.0\\n"
-  "  data: 400.0\\n"
-  "  data: 10.0\\n"
-  "}\\n"
-  "\"\n"
+  "  id: \"decolvl1\"\n"
+  "  component: \"/main/levels/01_vipreception/decolvl1.tilemap\"\n"
   "}\n"
   ""
 }
 embedded_instances {
-  id: "desklip"
-  data: "embedded_components {\n"
-  "  id: \"sprite\"\n"
-  "  type: \"sprite\"\n"
-  "  data: \"default_animation: \\\"desklip\\\"\\n"
-  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
-  "textures {\\n"
-  "  sampler: \\\"texture_sampler\\\"\\n"
-  "  texture: \\\"/main/levels/01_vipreception/level1.atlas\\\"\\n"
-  "}\\n"
-  "\"\n"
-  "}\n"
-  ""
-  position {
-    x: 861.0
-    y: 455.0
-    z: 0.7
-  }
-}
-embedded_instances {
-  id: "potential_npcs"
-  children: "aid"
-  children: "infirmary_outside1"
-  children: "loiter1"
-  children: "loiter2"
-  children: "loiter4"
-  children: "patient1"
-  children: "patient2"
-  children: "patient3"
-  children: "patient4"
-  children: "servants1"
-  children: "servants2"
-  children: "worker1"
+  id: "reception_npcs"
+  children: "reception_unplaced"
+  children: "receptionboss"
+  children: "receptiondeskarea"
+  children: "receptionguard"
+  children: "receptionguest"
+  children: "receptionguest2"
+  children: "receptionloiter2"
+  children: "receptionloiter3"
+  children: "receptionloiter4"
+  children: "receptionlounge"
+  children: "receptionpatrol"
   data: ""
   position {
-    z: 0.1
+    z: 0.3
   }
 }
 embedded_instances {
-  id: "deskarea"
-  children: "desk"
+  id: "receptiondeskarea"
   children: "phone"
+  children: "receptiondesk"
   data: "components {\n"
   "  id: \"station\"\n"
   "  component: \"/scripts/actors/station.script\"\n"
@@ -274,6 +138,10 @@ embedded_instances {
   "  type: \"sprite\"\n"
   "  data: \"default_animation: \\\"computerleft\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 38.0\\n"
+  "  y: 49.0\\n"
+  "}\\n"
   "textures {\\n"
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/main/levels/01_vipreception/level1.atlas\\\"\\n"
@@ -290,6 +158,10 @@ embedded_instances {
   "  type: \"sprite\"\n"
   "  data: \"default_animation: \\\"centerdesk\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 132.0\\n"
+  "  y: 170.0\\n"
+  "}\\n"
   "textures {\\n"
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/main/levels/01_vipreception/level1.atlas\\\"\\n"
@@ -301,6 +173,10 @@ embedded_instances {
   "  type: \"sprite\"\n"
   "  data: \"default_animation: \\\"deskbtm\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 128.0\\n"
+  "  y: 55.0\\n"
+  "}\\n"
   "textures {\\n"
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/main/levels/01_vipreception/level1.atlas\\\"\\n"
@@ -377,6 +253,10 @@ embedded_instances {
   "  type: \"sprite\"\n"
   "  data: \"default_animation: \\\"banana\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 16.0\\n"
+  "  y: 16.0\\n"
+  "}\\n"
   "textures {\\n"
   "  sampler: \\\"texture_sampler\\\"\\n"
   "  texture: \\\"/main/gui/information/inventories/chestitems.atlas\\\"\\n"

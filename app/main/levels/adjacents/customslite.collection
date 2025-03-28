@@ -1,0 +1,149 @@
+name: "admin1lite"
+instances {
+  id: "customs_unplaced"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 926.0
+    y: 149.0
+  }
+}
+instances {
+  id: "customsdeskarea"
+  prototype: "/main/actors/deskarea02.go"
+  children: "customsdesk"
+  children: "customsphone1"
+  position {
+    x: 975.0
+    y: 676.0
+  }
+}
+instances {
+  id: "customsgang"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 797.0
+    y: 777.0
+  }
+}
+instances {
+  id: "customsguard"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 362.0
+    y: 771.0
+  }
+}
+instances {
+  id: "customsguest"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 896.0
+    y: 775.0
+  }
+}
+instances {
+  id: "customsloiter1"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 1115.0
+    y: 262.0
+  }
+}
+instances {
+  id: "customsloiter2"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 638.0
+    y: 774.0
+  }
+}
+instances {
+  id: "customsloiter3"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 301.0
+    y: 515.0
+  }
+}
+instances {
+  id: "customsloiter4"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 487.0
+    y: 750.0
+  }
+}
+instances {
+  id: "customspatrol"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 385.0
+    y: 195.0
+  }
+}
+instances {
+  id: "customsdesk"
+  prototype: "/main/characters/npc_loader.go"
+  position {
+    x: 78.0
+    y: 61.0
+    z: 0.1
+  }
+}
+scale_along_z: 0
+embedded_instances {
+  id: "assets"
+  data: "components {\n"
+  "  id: \"clinicallvl3\"\n"
+  "  component: \"/main/levels/03_customs/clinicallvl3.tilemap\"\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "customs_npcs"
+  children: "customs_unplaced"
+  children: "customsdeskarea"
+  children: "customsgang"
+  children: "customsguard"
+  children: "customsguest"
+  children: "customsloiter1"
+  children: "customsloiter2"
+  children: "customsloiter3"
+  children: "customsloiter4"
+  children: "customspatrol"
+  data: ""
+  position {
+    z: 0.1
+  }
+}
+embedded_instances {
+  id: "customsphone1"
+  data: "embedded_components {\n"
+  "  id: \"phone\"\n"
+  "  type: \"sprite\"\n"
+  "  data: \"default_animation: \\\"banana\\\"\\n"
+  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
+  "size {\\n"
+  "  x: 16.0\\n"
+  "  y: 16.0\\n"
+  "}\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/main/gui/information/inventories/chestitems.atlas\\\"\\n"
+  "}\\n"
+  "\"\n"
+  "  scale {\n"
+  "    z: 1.0E-6\n"
+  "  }\n"
+  "}\n"
+  ""
+  position {
+    x: 15.0
+    y: 56.0
+    z: 0.5
+  }
+  scale3 {
+    x: 2.0
+    y: 2.0
+  }
+}
