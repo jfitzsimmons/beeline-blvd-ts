@@ -22,7 +22,7 @@ embedded_components {
   type: "collisionobject"
   data: "type: COLLISION_OBJECT_TYPE_KINEMATIC\n"
   "mass: 0.0\n"
-  "friction: 0.3\n"
+  "friction: 1.0\n"
   "restitution: 0.5\n"
   "group: \"default\"\n"
   "mask: \"default\"\n"
@@ -42,6 +42,8 @@ embedded_components {
   "  data: 30.6\n"
   "  data: 10.0\n"
   "}\n"
+  "event_collision: false\n"
+  "event_trigger: false\n"
   ""
 }
 embedded_components {

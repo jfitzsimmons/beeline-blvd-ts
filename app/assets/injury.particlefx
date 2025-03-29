@@ -2,72 +2,102 @@ emitters {
   id: "injury"
   mode: PLAY_MODE_LOOP
   duration: 1.0
-  space: EMISSION_SPACE_WORLD
+  space: EMISSION_SPACE_EMITTER
   tile_source: "/builtins/graphics/particle_blob.tilesource"
   animation: "anim"
   material: "/builtins/materials/particlefx.material"
   inherit_velocity: 1.0
-  max_particle_count: 18
+  max_particle_count: 15
   type: EMITTER_TYPE_2DCONE
   properties {
     key: EMITTER_KEY_SPAWN_RATE
     points {
-      y: 50.0
+      y: 40.0
     }
+    spread: 10.0
   }
   properties {
     key: EMITTER_KEY_SIZE_X
     points {
       y: 10.0
     }
+    spread: 2.0
   }
   properties {
     key: EMITTER_KEY_SIZE_Y
     points {
-      y: 10.0
+      y: 20.0
     }
+    spread: 3.0
   }
   properties {
     key: EMITTER_KEY_PARTICLE_LIFE_TIME
     points {
-      y: 3.0
+      y: 4.0
     }
   }
   properties {
     key: EMITTER_KEY_PARTICLE_SPEED
     points {
-      y: 50.0
+      y: 40.0
     }
+    spread: 10.0
   }
   properties {
     key: EMITTER_KEY_PARTICLE_SIZE
     points {
       y: 16.0
     }
+    spread: 4.0
   }
   properties {
     key: EMITTER_KEY_PARTICLE_RED
     points {
       y: 1.0
     }
+    spread: 0.5
   }
   properties {
     key: EMITTER_KEY_PARTICLE_GREEN
     points {
       y: 1.0
     }
+    spread: 0.5
   }
   properties {
     key: EMITTER_KEY_PARTICLE_BLUE
     points {
       y: 1.0
     }
+    spread: 0.5
   }
   properties {
     key: EMITTER_KEY_PARTICLE_ALPHA
     points {
       y: 0.8
     }
+    spread: 0.2
+  }
+  properties {
+    key: EMITTER_KEY_PARTICLE_STRETCH_FACTOR_X
+    points {
+      y: 0.0
+    }
+    spread: 0.1
+  }
+  properties {
+    key: EMITTER_KEY_PARTICLE_STRETCH_FACTOR_Y
+    points {
+      y: 0.0
+    }
+    spread: 0.1
+  }
+  properties {
+    key: EMITTER_KEY_PARTICLE_ANGULAR_VELOCITY
+    points {
+      y: 0.0
+    }
+    spread: 0.1
   }
   particle_properties {
     key: PARTICLE_KEY_SCALE
@@ -79,6 +109,18 @@ emitters {
     key: PARTICLE_KEY_RED
     points {
       y: 1.0
+    }
+  }
+  particle_properties {
+    key: PARTICLE_KEY_GREEN
+    points {
+      y: 0.2
+    }
+  }
+  particle_properties {
+    key: PARTICLE_KEY_BLUE
+    points {
+      y: 0.2
     }
   }
   particle_properties {
@@ -108,6 +150,18 @@ emitters {
     }
   }
   particle_properties {
+    key: PARTICLE_KEY_STRETCH_FACTOR_X
+    points {
+      y: 0.2
+    }
+  }
+  particle_properties {
+    key: PARTICLE_KEY_STRETCH_FACTOR_Y
+    points {
+      y: 0.2
+    }
+  }
+  particle_properties {
     key: PARTICLE_KEY_ANGULAR_VELOCITY
     points {
       y: 1.0
@@ -118,9 +172,11 @@ emitters {
     properties {
       key: MODIFIER_KEY_MAGNITUDE
       points {
-        y: 1.0
+        y: 0.6
       }
-      spread: 1.0
+      spread: 0.7
     }
   }
+  size_mode: SIZE_MODE_AUTO
+  stretch_with_velocity: true
 }
