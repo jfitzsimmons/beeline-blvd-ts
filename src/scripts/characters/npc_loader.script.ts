@@ -128,15 +128,17 @@ function setInteractions(npc: string, actions: { [key: string]: string[] }) {
   }
 }
 
-export function init(this: props) {
-  this.actions = {}
-  this.npc = ''
-}
 interface props {
   npc: string
   room: string
   actions: { [key: string]: string[] }
 }
+
+export function init(this: props) {
+  this.actions = {}
+  this.npc = ''
+}
+
 export function on_message(
   this: props,
   messageId: hash,
@@ -149,8 +151,6 @@ export function on_message(
   },
   _sender: url
 ): void {
-  //const senderId = go.get_id()
-
   if (messageId == hash('load_npc') || messageId == hash('load_shell')) {
     const p = go.get_position()
     this.room = message.room
@@ -160,8 +160,6 @@ export function on_message(
       p.z = 0
       go.set_position(p)
       setInteractions(this.npc, this.actions)
-
-      //this.script = message.script
     } else {
       p.z = -100
       go.set_position(p)
@@ -170,10 +168,8 @@ export function on_message(
         msg.post('#solid', 'disable')
       }
     }
-
     show_npc(this.npc)
   } else if (messageId == hash('move_npc')) {
-    // print('MOVENPCmsg::', this.npc, _sender, _sender.fragment)
     let deskarea = { x: 0, y: 0 }
     if (npcs.all[this.npc].currStation == 'desk') {
       let deskpos = deskarea
@@ -200,12 +196,10 @@ export function on_message(
       const params = {
         pos: go.get_position('/shared/adam'), //must come from .script
         actions: this.actions,
-        //  script: this.script,
         collision: 'enter',
         npcname: this.npc,
         room: this.room,
       }
-
       msg.post('/shared/adam#interact', 'shownode', params)
     } else {
       msg.post('/shared/adam#interact', 'hidenode')

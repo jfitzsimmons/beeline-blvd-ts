@@ -45,12 +45,14 @@ embedded_components {
   "  data: 66.26912\n"
   "  data: 10.0\n"
   "}\n"
+  "event_collision: false\n"
+  "event_contact: false\n"
   ""
 }
 embedded_components {
   id: "solid"
   type: "collisionobject"
-  data: "type: COLLISION_OBJECT_TYPE_KINEMATIC\n"
+  data: "type: COLLISION_OBJECT_TYPE_STATIC\n"
   "mass: 0.0\n"
   "friction: 1.0\n"
   "restitution: 0.5\n"
@@ -71,6 +73,9 @@ embedded_components {
   "  data: 57.719387\n"
   "  data: 9.2\n"
   "}\n"
+  "event_collision: false\n"
+  "event_contact: false\n"
+  "event_trigger: false\n"
   ""
 }
 embedded_components {
