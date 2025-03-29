@@ -23,6 +23,7 @@ export interface Typewriter {
   next: () => void
   set_scale: (arg: number) => void
   redraw: () => void
+  get_state: () => string
 }
 
 export interface NovelNpc {

@@ -347,19 +347,19 @@ export function new_typewriter(_options?: any): Typewriter {
   new_writer.auto = false
   new_writer.letter_nodes = {}
   new_writer.init = init
-  //new_writer.set_node = set_node
+  new_writer.set_node = set_node
   new_writer.set_options = set_options
-  //new_writer.change_typewriter = change_typewriter
+  new_writer.change_typewriter = change_typewriter
   new_writer.start = start
   new_writer.set_instant_text = set_instant_text
   new_writer.hide_instant_text = hide_instant_text
   new_writer.next = next
-  //new_writer.clear = clear
-  // new_writer.reposition = reposition
+  new_writer.clear = clear
+  new_writer.reposition = reposition
   new_writer.set_scale = set_scale
   new_writer.redraw = redraw
-  //new_writer.get_state = get_state
-  // new_writer.zoom = zoom
+  new_writer.get_state = get_state
+  new_writer.zoom = zoom
   const id: number = Object.entries(typewriters).length + 1
   typewriters[id] = new_writer
   current = new_writer
@@ -539,8 +539,7 @@ export function zoom(scale: number) {
 // "inactive": typewrite is not in use
 // "typing": typewriter is not yet finished typing the current text
 // "waiting": typewriter is finished typing the current text && waits for next action
-/** 
+
 function get_state() {
   return current.state
 }
-**/

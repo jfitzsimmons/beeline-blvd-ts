@@ -3,7 +3,7 @@
 //const matchanovel = require('main.novel.matchanovel')
 //const typewriterlib = require('../../../main.novel.typewriter')
 //const settings = require "main.novel.settings"
-import { novelsave } from '../../types/legacylua'
+//import { novelsave } from '../../types/legacylua'
 import { new_typewriter } from './typewriter'
 import { add_to_log, get_log, get_log_size, textbox_done } from './matchanovel'
 import { Typewriter } from '../../types/novel'
@@ -16,8 +16,13 @@ const textbox_color_y = 1 / 5
 const textbox_gradient_y = 1 / 2
 const text_width = 2 / 3
 const text_height = 0.3
+const skip_per_second = 30
+
 let skipping = false
+let skip_t = 0
+
 let auto = false
+let auto_t = 0
 let log_position: number | boolean = false
 let textbox_visible = true
 let name_scale = 1
@@ -82,13 +87,15 @@ function show_name(name: string) {
 function say(this: any, text: string, name: string) {
   typewriter.start(text)
   add_to_log(text, 'Name')
-  let local_name: [string, string] = ['', '']
+  // let local_name: [string, string] = ['', '']
   if (name !== '') {
-    const name_prop = name + '.name'
+    print('textmsgNAME:::111::', name, text, this)
+
+    // const name_prop = name + '.name'
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    local_name = novelsave.get_var(name_prop)
+    // local_name = novelsave.get_var(name_prop)
   }
-  show_name(local_name[0])
+  show_name(name)
 }
 
 function end_skip() {
@@ -273,6 +280,7 @@ export function on_message(
   _sender: url
 ) {
   if (messageId == hash('say')) {
+    print('textmsgNAME:::000::', message.name)
     show()
     say(message.text, message.name)
     //gui.set_text(gui.get_node("text"), message.text)
@@ -327,5 +335,24 @@ export function on_input(
     back()
   } else if (actionId == hash('forward') && action.repeated) {
     forward()
+  }
+}
+
+export function update(this: any, dt: number) {
+  if (skipping) {
+    skip_t = skip_t + dt
+    if (skip_t >= 1 / skip_per_second) end_skip()
+  } else if (auto) {
+    // 2 + 8*(1 - 50/100)
+    //const  auto_duration = get_auto_duration()
+    auto_t = auto_t + dt
+    if (auto_t >= 6) {
+      gui.set_fill_angle(gui.get_node('auto'), 360)
+      if (typewriter.get_state() == 'waiting') auto_t = 0
+    } else {
+      let angle = (360 * auto_t) / 6
+      angle = math.min(angle, 360)
+      gui.set_fill_angle(gui.get_node('auto'), angle)
+    }
   }
 }

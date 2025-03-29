@@ -113,6 +113,13 @@ function substitute_in_expression(w: string) {
     '([%a_][%w_]*)%.([%a_][%w_]*)'
   )
   const is_in_lib = before_dot !== '' && Sandbox[before_dot]
+  print(
+    'substitute_in_expression:: before_dot, after_dot:',
+    before_dot,
+    after_dot,
+    '| is_in_lib',
+    is_in_lib
+  )
 
   //const is_in_lib = before_dot && Sandbox[before_dot]
   let add_quotes = false
@@ -121,7 +128,9 @@ function substitute_in_expression(w: string) {
   //	add_quotes = true
   //} else
   if (is_in_lib == true || w == '__STRIPPED_QUOTE__') {
+    print('RESULTddd000:::', result, w, is_in_lib)
     result = w
+    print('RESULTddd111:::', result, w)
   } else {
     const name = string.lower(w)
     const [var_value, var_type]: [string | number, string] =
@@ -129,11 +138,13 @@ function substitute_in_expression(w: string) {
     if (var_type != null && var_type == 'string') {
       add_quotes = true
     }
+    print('RESULTEEE000:::', result, w, name, var_value, var_type)
     if (var_value != null) {
       result = tostring(var_value)
     } else {
       result = w
     }
+    print('RESULTEEE111:::', result, w)
   }
   if (is_all_capitalized(w) ?? false) {
     result = string.upper(result)
@@ -145,6 +156,8 @@ function substitute_in_expression(w: string) {
   if (add_quotes && result != '') {
     result = '"' + result + '"'
   }
+  print('RETURN!!!!RESULT:::', result, w)
+
   return result
 }
 
@@ -237,8 +250,17 @@ function action_return() {
 
 function say(args: any) {
   state = 'say'
-  let name
+  let name: string | null = null
+  let expression_name: string | null = null
   let text
+  print(
+    'MNOVELSAY:::args.left/right::',
+    args.left,
+    args.right,
+    args.name,
+    args.text,
+    args[0]
+  )
   if (args.right != undefined) {
     name = args.left
     text = args.right
@@ -248,6 +270,52 @@ function say(args: any) {
   }
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const interpolated_text = interpolate_string(text)
+  print('MNOVELNAME:::000::', name)
+  if (name !== null) {
+    const [before_dot, after_dot] = string.match(name, '(.*)%.([^%.]*)$')
+    print(
+      'MNOVELNAME:::!!!::[before_dot, after_dot]',
+      name,
+      before_dot,
+      after_dot
+    )
+    name = novelsave.get_var(name + '.name')[1]
+
+    print('MNOVELNAME:::!!!::GETVAR!!!:', name)
+    if (before_dot !== null && after_dot !== null) {
+      name = before_dot
+      print('MNOVELNAME:::111::', name)
+      const expression = after_dot
+      const sprite = novelsave.get_var(name + '.' + expression + '.sprite')
+      name = string.lower(name)
+      print('MNOVELNAME:::222::', name)
+      if (sprite != null) {
+        novelsave.set_var('_temp_expression_name', name, 'string')
+        novelsave.set_var('_temp_expression_sprite', expression, 'string')
+        messages.post('sprites', 'set_sprite', { name: name, sprite: sprite })
+      }
+      //else if (has_alternative_sprite(name, expression)) then {
+      //	novelsave.set_var("_temp_expression_name", name, "string")
+      //	novelsave.set_var("_temp_expression_sprite", expression, "string")
+      //	change_sprite(name, expression)
+      //	end
+      expression_name = novelsave.get_var(name + '.' + expression + '.name')
+      if (expression_name !== null) {
+        name = expression_name
+      }
+      print('MNOVELNAME:::333::', name)
+    }
+    //if (expression_name == null) {
+    // const expression = novelsave.get_var(name + '.expression')
+    // if (expression !== null) {
+    //   expression_name = novelsave.get_var(name + '.' + expression + '.name')
+    //  if (expression_name !== null) {
+    //    name = expression_name
+    // }
+    //}
+    // }
+  }
+  print('MNOVELNAME:::444::', name)
   messages.post('textbox', 'say', { text: interpolated_text, name: name })
   messages.post('choices', 'delete')
 }
