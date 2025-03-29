@@ -59,6 +59,8 @@ function animate_letter(node: node, delay: number, last?: boolean) {
 
 function fade_done() {
   current.state = 'empty'
+  print('FADEDONETW')
+  //auto = false
   msg.post('#textbox', 'typewriter_next')
 }
 
@@ -183,9 +185,10 @@ function set_letters(line_table: { [key: string]: string }, instant: boolean) {
       text = text + character
     }
   }
-  if (instant || n_letters == 0) {
-    current.state = 'waiting'
-  }
+  print('TYPEWRITER:: SETLETTERS:: instatn,neltter:', instant, n_letters)
+  //  if (instant == true || n_letters == chara) {
+  current.state = 'waiting'
+  //  }
 }
 
 function reposition_letters(line_table: { [key: string]: string }) {
@@ -292,6 +295,7 @@ function split_text_into_lines(text: string, max_width: number) {
 }
 
 function start_typewriter(text: string, instant: boolean) {
+  print('STARTTYPEWWRITER:: instatn:', instant, text)
   text = text.length > 0 ? text : ''
   current.state = 'typing'
   current.text = text
@@ -308,6 +312,8 @@ function end_typewriter() {
     animate_letter(node, 0)
   }
   current.state = 'waiting'
+  // msg.post('#textbox', 'typewriter_next')
+  //fade_away()
 }
 
 function fade_away() {
@@ -413,8 +419,9 @@ export function change_typewriter(id: number) {
 }
 
 // Clears old text && starts typing.
-export function start(text: string) {
-  start_typewriter(text, true)
+function start(text: string) {
+  print('Typewriter:: start(): text:', text)
+  start_typewriter(text, false)
 }
 
 function add_line_breaks(text: string, max_width: number) {
@@ -486,8 +493,10 @@ export function hide_instant_text() {
 // Finishes current text if still typing, removes text && asks for next text if already typed.
 export function next() {
   if (current.state == 'typing') {
+    print('ENDTW:: typewriter:', current.state)
     end_typewriter()
   } else if (current.state == 'waiting') {
+    print('FADEAWAY:: typewriter:', current.state)
     fade_away()
   }
 }
@@ -506,15 +515,15 @@ export function reposition() {
   }
 }
 
-export function redraw() {
+export function redraw(instant: boolean) {
   delete_letters()
-  if (instant_text != false) {
+  if (instant_text) {
     set_instant_text(tostring(instant_text))
   }
   if (current.state == 'empty') {
     return
   }
-  start_typewriter(current.text, true)
+  start_typewriter(current.text, instant)
 }
 
 export function set_scale(scale: number) {

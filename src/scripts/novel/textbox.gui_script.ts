@@ -21,7 +21,7 @@ const skip_per_second = 30
 let skipping = false
 let skip_t = 0
 
-let auto = false
+let auto = true
 let auto_t = 0
 let log_position: number | boolean = false
 let textbox_visible = true
@@ -69,13 +69,15 @@ function init_textbox() {
 function set_font(font: hash) {
   gui.set_font(gui.get_node('text'), font)
   gui.set_font(gui.get_node('name'), font)
-  typewriter.redraw()
+  typewriter.redraw(true)
 }
 
 function text_continue() {
   //novelsave.set_global_read()
 
   typewriter.next()
+  auto = true
+  auto_t = 0
 }
 
 function show_name(name: string) {
@@ -85,11 +87,12 @@ function show_name(name: string) {
 }
 
 function say(this: any, text: string, name: string) {
+  print('textbox::: say:: pre tw.start')
   typewriter.start(text)
   add_to_log(text, 'Name')
   // let local_name: [string, string] = ['', '']
   if (name !== '') {
-    print('textmsgNAME:::111::', name, text, this)
+    print('TEXTBOX:: SAY:: name,text', name, text)
 
     // const name_prop = name + '.name'
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
@@ -100,16 +103,16 @@ function say(this: any, text: string, name: string) {
 
 function end_skip() {
   skipping = false
-  msg.post('quickmenu#quickmenu', 'deactivate_button', { name: 'skip' })
+  //msg.post('quickmenu#quickmenu', 'deactivate_button', { name: 'skip' })
 
   const node = gui.get_node('auto')
   gui.animate(node, 'scale.y', 0, gui.EASING_INOUTSINE, 0.05)
 }
 
 function end_auto() {
-  auto = false
   gui.set_fill_angle(gui.get_node('auto'), 0)
-  msg.post('quickmenu#quickmenu', 'deactivate_button', { name: 'auto' })
+  //msg.post('quickmenu#quickmenu', 'deactivate_button', { name: 'auto' })
+  auto = true
 }
 
 function start_skip() {
@@ -253,7 +256,7 @@ function resize_window() {
     vmath.vector3(text_zoom * name_scale, text_zoom * name_scale, 1)
   )
   typewriter.set_scale(text_zoom)
-  typewriter.redraw()
+  typewriter.redraw(true)
 }
 
 export function init(this: any) {
@@ -280,11 +283,13 @@ export function on_message(
   _sender: url
 ) {
   if (messageId == hash('say')) {
-    print('textmsgNAME:::000::', message.name)
+    print('textbox:: on_msg:: SAY:', message.name)
     show()
     say(message.text, message.name)
     //gui.set_text(gui.get_node("text"), message.text)
   } else if (messageId == hash('typewriter_next')) {
+    print('TXTBOXMSG:::typewriter_next')
+    auto = true
     textbox_done()
   } else if (messageId == hash('set_font')) {
     set_font(message.font)
@@ -292,8 +297,12 @@ export function on_message(
     window_resized_zoom = message.zoom
     resize_window()
   } else if (messageId == hash('skip_button')) {
+    print('TXTBOXMSG:::SKIPBTN')
+
     toggle_skip()
   } else if (messageId == hash('auto_button')) {
+    print('TXTBOXMSG:::AUTOBTNAUTOBTN!!!!')
+
     toggle_auto()
   } else if (messageId == hash('set_textspeed')) {
     let textspeed: number
@@ -339,20 +348,33 @@ export function on_input(
 }
 
 export function update(this: any, dt: number) {
+  //print('textboxtestjpf::UPDATE!!!', auto, auto_t, dt)
+
   if (skipping) {
     skip_t = skip_t + dt
     if (skip_t >= 1 / skip_per_second) end_skip()
   } else if (auto) {
+    // print('textboxtestjpf::auto???', auto, auto_t, dt)
+
     // 2 + 8*(1 - 50/100)
     //const  auto_duration = get_auto_duration()
     auto_t = auto_t + dt
-    if (auto_t >= 6) {
+    if (auto_t < 6) {
+      print('textboxtestjpf:: autot>=6::', auto_t, dt)
+
       gui.set_fill_angle(gui.get_node('auto'), 360)
-      if (typewriter.get_state() == 'waiting') auto_t = 0
-    } else {
+      if (typewriter.get_state() == 'waiting') {
+        print('textboxtestjpf:: waiting::', typewriter.get_state(), dt)
+
+        auto_t = 0
+        typewriter.redraw(false)
+        auto = false
+      }
+    } /**else {
       let angle = (360 * auto_t) / 6
       angle = math.min(angle, 360)
       gui.set_fill_angle(gui.get_node('auto'), angle)
-    }
+      typewriter.redraw(true)
+    }*/
   }
 }

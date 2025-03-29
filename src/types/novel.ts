@@ -22,7 +22,7 @@ export interface Typewriter {
   hide_instant_text: () => void
   next: () => void
   set_scale: (arg: number) => void
-  redraw: () => void
+  redraw: (instant: boolean) => void
   get_state: () => string
 }
 
