@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //const matchanovel = require('main.novel.matchanovel')
 //const typewriterlib = require('../../../main.novel.typewriter')
 //const settings = require "main.novel.settings"
@@ -8,19 +6,18 @@ import { new_typewriter } from './typewriter'
 import { add_to_log, get_log, get_log_size, textbox_done } from './matchanovel'
 import { Typewriter } from '../../types/novel'
 
-const display_width = tonumber(sys.get_config_string('display.width'))
-const display_height = tonumber(sys.get_config_string('display.height'))
+//const display_width = tonumber(sys.get_config_string('display.width'))
+//const display_height = tonumber(sys.get_config_string('display.height'))
 const typewriter: Typewriter = new_typewriter()
-const alpha = 0.8
-const textbox_color_y = 1 / 5
-const textbox_gradient_y = 1 / 2
+const alpha = 1
+const textbox_color_y = 1.2
+const textbox_gradient_y = 3 / 4
 const text_width = 2 / 3
-const text_height = 0.3
-const skip_per_second = 30
+const text_height = 0.1
+const skip_per_second = 3
 
 let skipping = false
 let skip_t = 0
-
 let auto = true
 let auto_t = 0
 let log_position: number | boolean = false
@@ -31,9 +28,11 @@ let window_resized_zoom = 1
 
 function init_textbox() {
   const node_color = gui.get_node('textbox_color')
-  const scale = gui.get_scale(gui.get_node('gui'))
-  const w = display_width! / scale.x
-  const h = display_height! / scale.y
+  //const scale = gui.get_scale(gui.get_node('gui'))
+  // print('TEXTBOXTEST:::: display_width,scale.x', display_width, scale.x)
+  const w = 900
+  const h = 896
+  print('TEXTBOXTEST:::: w,h', w, h)
 
   const size_color = vmath.vector3(
     math.floor(w),
@@ -42,7 +41,8 @@ function init_textbox() {
   )
   gui.set_size(node_color, size_color)
   gui.set_alpha(node_color, alpha)
-
+  print('TEXTBOXTEST:::: node_color, size_color', node_color, size_color)
+  gui.set_position(node_color, vmath.vector3(950, 0, 0))
   const node_gradient = gui.get_node('textbox_gradient')
   if (textbox_gradient_y != null) {
     gui.set_enabled(node_gradient, true)
@@ -50,7 +50,7 @@ function init_textbox() {
       node_gradient,
       vmath.vector3(math.floor(w), math.floor(h * textbox_gradient_y), 0)
     )
-    gui.set_position(node_gradient, vmath.vector3(0, size_color.y, 0))
+    gui.set_position(node_gradient, vmath.vector3(950, size_color.y, 0))
     gui.set_alpha(node_gradient, alpha)
   } else {
     gui.set_enabled(node_gradient, false)
@@ -61,7 +61,7 @@ function init_textbox() {
   const size = vmath.vector3(0, 0, 1)
   size.x = w * (1 - width_border)
   size.y = h * text_height
-  const position = vmath.vector3(-size.x / 2, size.y * window_resized_zoom, 0)
+  const position = vmath.vector3(950 - size.x / 2, 750, 0)
   gui.set_size(node_text, size)
   gui.set_position(node_text, position)
 }
