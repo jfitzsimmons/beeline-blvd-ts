@@ -112,6 +112,22 @@ function move_npc(station: string, from = { x: 0, y: 0 }) {
   go.set_position(pos)
 }
 
+function setInteractions(npc: string, actions: { [key: string]: string[] }) {
+  //giving diff characters different sets of actions might be funn
+  actions[npc] = npcs.all[npc].actions
+
+  if (
+    npcs.all[npc] != null &&
+    npcs.all[npc].behavior.active.children.length > 0
+  ) {
+    const behaviors = []
+    for (const behavior of npcs.all[npc].behavior.active.children) {
+      behaviors.push(behavior.constructor.name)
+    }
+    actions.behaviors = behaviors
+  }
+}
+
 export function init(this: props) {
   this.actions = {}
   this.npc = ''
@@ -135,70 +151,31 @@ export function on_message(
 ): void {
   //const senderId = go.get_id()
 
-  if (messageId == hash('load_npc')) {
+  if (messageId == hash('load_npc') || messageId == hash('load_shell')) {
     const p = go.get_position()
+    this.room = message.room
+    this.npc = message.npc
     // toggle npc if present in station
-    if (message.npc != '') {
+    if (this.npc != '') {
       p.z = 0
       go.set_position(p)
-      this.npc = message.npc
-      //giving diff characters different sets of actions might be funn
-      this.actions[this.npc] = npcs.all[this.npc].actions
+      setInteractions(this.npc, this.actions)
 
-      if (
-        npcs.all[this.npc] != null &&
-        npcs.all[this.npc].behavior.active.children.length > 0
-      ) {
-        const behaviors = []
-        for (const behavior of npcs.all[this.npc].behavior.active.children) {
-          behaviors.push(behavior.constructor.name)
-        }
-        this.actions.behaviors = behaviors
-      }
-      this.room = message.room
       //this.script = message.script
     } else {
       p.z = -100
       go.set_position(p)
-
-      msg.post('#fluid', 'disable')
-      msg.post('#solid', 'disable')
-    }
-    show_npc(this.npc)
-  } else if (messageId == hash('load_shell')) {
-    const p = go.get_position()
-    // toggle npc if present in station
-    if (message.npc != '') {
-      p.z = 0
-      go.set_position(p)
-      this.npc = message.npc
-      //giving diff characters different sets of actions might be funn
-      this.actions[this.npc] = npcs.all[this.npc].actions
-
-      if (
-        npcs.all[this.npc] != null &&
-        npcs.all[this.npc].behavior.active.children.length > 0
-      ) {
-        const behaviors = []
-        for (const behavior of npcs.all[this.npc].behavior.active.children) {
-          behaviors.push(behavior.constructor.name)
-        }
-        this.actions.behaviors = behaviors
+      if (messageId == hash('load_npc')) {
+        msg.post('#fluid', 'disable')
+        msg.post('#solid', 'disable')
       }
-      this.room = message.room
-      //this.script = message.script
-    } else {
-      p.z = -100
-      go.set_position(p)
-
-      //msg.post('#fluid', 'disable')
-      //msg.post('#solid', 'disable')
     }
+
     show_npc(this.npc)
   } else if (messageId == hash('move_npc')) {
-    // print('MOVENPCmsg::', message.npc, _sender, _sender.fragment)
+    // print('MOVENPCmsg::', this.npc, _sender, _sender.fragment)
     let deskarea = { x: 0, y: 0 }
-    if (npcs.all[message.npc].currStation == 'desk') {
+    if (npcs.all[this.npc].currStation == 'desk') {
       let deskpos = deskarea
       if (message.station == 'phone') {
         deskpos = go.get_position('phone')
