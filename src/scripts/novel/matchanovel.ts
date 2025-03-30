@@ -525,7 +525,7 @@ function choice() {
     }
 
     messages.post('choices', 'show_text_choices', { text: text })
-    messages.post('textbox', 'hide')
+    // messages.post('textbox', 'hide')
   } else {
     const line = matchascript.get_end_of_current_action_block()
     matchascript.set_line(line)

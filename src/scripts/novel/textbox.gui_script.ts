@@ -12,9 +12,9 @@ const typewriter: Typewriter = new_typewriter()
 const alpha = 1
 const textbox_color_y = 1.2
 const textbox_gradient_y = 3 / 4
-const text_width = 2 / 3
+const text_width = 5 / 6
 const text_height = 0.1
-const skip_per_second = 3
+const skip_per_second = 1
 
 let skipping = false
 let skip_t = 0
@@ -359,10 +359,11 @@ export function update(this: any, dt: number) {
     // 2 + 8*(1 - 50/100)
     //const  auto_duration = get_auto_duration()
     auto_t = auto_t + dt
+    gui.set_fill_angle(gui.get_node('auto'), 360)
+
     if (auto_t < 6) {
       print('textboxtestjpf:: autot>=6::', auto_t, dt)
 
-      gui.set_fill_angle(gui.get_node('auto'), 360)
       if (typewriter.get_state() == 'waiting') {
         print('textboxtestjpf:: waiting::', typewriter.get_state(), dt)
 
@@ -370,11 +371,10 @@ export function update(this: any, dt: number) {
         typewriter.redraw(false)
         auto = false
       }
-    } /**else {
-      let angle = (360 * auto_t) / 6
-      angle = math.min(angle, 360)
-      gui.set_fill_angle(gui.get_node('auto'), angle)
+    } else {
+      print('textboxtestjpf:: Elseelseelse::', auto_t, dt)
       typewriter.redraw(true)
-    }*/
+      auto_t = 0
+    }
   }
 }

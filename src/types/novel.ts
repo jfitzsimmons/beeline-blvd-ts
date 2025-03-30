@@ -11,6 +11,12 @@ export interface Typewriter {
   node: node
   auto: boolean
   letter_nodes: { [key: string]: node }
+  archive: {
+    [key: string]: {
+      clone: node
+      animationComplete: boolean
+    }
+  }[]
   text: string
   parent: node
   instant_node: node | null

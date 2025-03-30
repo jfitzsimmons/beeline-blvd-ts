@@ -95,7 +95,7 @@ nodes {
   }
   size {
     x: 1300.0
-    y: 100.0
+    y: 300.0
   }
   type: TYPE_TEXT
   text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \n"
@@ -110,8 +110,8 @@ nodes {
 }
 nodes {
   position {
-    x: -700.0
-    y: 446.0
+    x: 500.0
+    y: 1758.0
   }
   scale {
     x: 1.5
