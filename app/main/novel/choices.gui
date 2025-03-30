@@ -25,7 +25,7 @@ nodes {
 nodes {
   position {
     x: 1950.0
-    y: 510.0
+    y: 400.0
   }
   type: TYPE_BOX
   id: "center"
@@ -58,13 +58,14 @@ nodes {
     y: 80.0
   }
   color {
-    x: 0.8
+    x: 0.867
+    z: 0.667
   }
   type: TYPE_BOX
   id: "choice_box"
   pivot: PIVOT_W
   parent: "choice"
-  alpha: 0.7
+  alpha: 0.6
 }
 nodes {
   size {
@@ -93,6 +94,7 @@ nodes {
   }
   parent: "choice"
   inherit_alpha: true
+  alpha: 0.9
 }
 material: "/builtins/materials/gui.material"
 adjust_reference: ADJUST_REFERENCE_PARENT
