@@ -26,6 +26,8 @@ embedded_components {
   "  data: 50.0\n"
   "  data: 10.0\n"
   "}\n"
+  "event_collision: false\n"
+  "event_trigger: false\n"
   ""
 }
 embedded_components {

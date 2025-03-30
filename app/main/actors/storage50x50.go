@@ -39,6 +39,8 @@ embedded_components {
   "  data: 33.0\n"
   "  data: 10.0\n"
   "}\n"
+  "event_collision: false\n"
+  "event_contact: false\n"
   ""
 }
 embedded_components {
@@ -64,5 +66,8 @@ embedded_components {
   "  data: 20.3815\n"
   "  data: 10.0\n"
   "}\n"
+  "event_collision: false\n"
+  "event_contact: false\n"
+  "event_trigger: false\n"
   ""
 }

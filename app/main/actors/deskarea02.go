@@ -134,6 +134,9 @@ embedded_components {
   "  data: 41.6\n"
   "  data: 41.6\n"
   "}\n"
+  "event_collision: false\n"
+  "event_contact: false\n"
+  "event_trigger: false\n"
   ""
 }
 embedded_components {
