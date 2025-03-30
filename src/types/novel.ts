@@ -11,6 +11,11 @@ export interface Typewriter {
   node: node
   auto: boolean
   letter_nodes: { [key: string]: node }
+  archive: {
+    [key: string]: {
+      clone: node
+    }
+  }[]
   text: string
   parent: node
   instant_node: node | null
@@ -22,7 +27,8 @@ export interface Typewriter {
   hide_instant_text: () => void
   next: () => void
   set_scale: (arg: number) => void
-  redraw: () => void
+  redraw: (instant: boolean) => void
+  get_state: () => string
 }
 
 export interface NovelNpc {

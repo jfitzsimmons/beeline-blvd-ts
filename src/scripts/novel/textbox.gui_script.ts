@@ -1,23 +1,25 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 //const matchanovel = require('main.novel.matchanovel')
 //const typewriterlib = require('../../../main.novel.typewriter')
 //const settings = require "main.novel.settings"
-import { novelsave } from '../../types/legacylua'
+//import { novelsave } from '../../types/legacylua'
 import { new_typewriter } from './typewriter'
 import { add_to_log, get_log, get_log_size, textbox_done } from './matchanovel'
 import { Typewriter } from '../../types/novel'
 
-const display_width = tonumber(sys.get_config_string('display.width'))
-const display_height = tonumber(sys.get_config_string('display.height'))
+//const display_width = tonumber(sys.get_config_string('display.width'))
+//const display_height = tonumber(sys.get_config_string('display.height'))
 const typewriter: Typewriter = new_typewriter()
-const alpha = 0.8
-const textbox_color_y = 1 / 5
-const textbox_gradient_y = 1 / 2
-const text_width = 2 / 3
-const text_height = 0.3
+const alpha = 1
+const textbox_color_y = 1.2
+const textbox_gradient_y = 3 / 4
+const text_width = 5 / 6
+const text_height = 0.1
+const skip_per_second = 1
+
 let skipping = false
-let auto = false
+let skip_t = 0
+let auto = true
+let auto_t = 0
 let log_position: number | boolean = false
 let textbox_visible = true
 let name_scale = 1
@@ -26,9 +28,11 @@ let window_resized_zoom = 1
 
 function init_textbox() {
   const node_color = gui.get_node('textbox_color')
-  const scale = gui.get_scale(gui.get_node('gui'))
-  const w = display_width! / scale.x
-  const h = display_height! / scale.y
+  //const scale = gui.get_scale(gui.get_node('gui'))
+  // print('TEXTBOXTEST:::: display_width,scale.x', display_width, scale.x)
+  const w = 900
+  const h = 896
+  print('TEXTBOXTEST:::: w,h', w, h)
 
   const size_color = vmath.vector3(
     math.floor(w),
@@ -37,7 +41,8 @@ function init_textbox() {
   )
   gui.set_size(node_color, size_color)
   gui.set_alpha(node_color, alpha)
-
+  print('TEXTBOXTEST:::: node_color, size_color', node_color, size_color)
+  gui.set_position(node_color, vmath.vector3(950, 0, 0))
   const node_gradient = gui.get_node('textbox_gradient')
   if (textbox_gradient_y != null) {
     gui.set_enabled(node_gradient, true)
@@ -45,7 +50,7 @@ function init_textbox() {
       node_gradient,
       vmath.vector3(math.floor(w), math.floor(h * textbox_gradient_y), 0)
     )
-    gui.set_position(node_gradient, vmath.vector3(0, size_color.y, 0))
+    gui.set_position(node_gradient, vmath.vector3(950, size_color.y, 0))
     gui.set_alpha(node_gradient, alpha)
   } else {
     gui.set_enabled(node_gradient, false)
@@ -56,7 +61,7 @@ function init_textbox() {
   const size = vmath.vector3(0, 0, 1)
   size.x = w * (1 - width_border)
   size.y = h * text_height
-  const position = vmath.vector3(-size.x / 2, size.y * window_resized_zoom, 0)
+  const position = vmath.vector3(950 - size.x / 2, 750, 0)
   gui.set_size(node_text, size)
   gui.set_position(node_text, position)
 }
@@ -64,13 +69,15 @@ function init_textbox() {
 function set_font(font: hash) {
   gui.set_font(gui.get_node('text'), font)
   gui.set_font(gui.get_node('name'), font)
-  typewriter.redraw()
+  typewriter.redraw(true)
 }
 
 function text_continue() {
   //novelsave.set_global_read()
 
   typewriter.next()
+  auto = true
+  auto_t = 0
 }
 
 function show_name(name: string) {
@@ -80,29 +87,32 @@ function show_name(name: string) {
 }
 
 function say(this: any, text: string, name: string) {
+  print('textbox::: say:: pre tw.start')
   typewriter.start(text)
   add_to_log(text, 'Name')
-  let local_name: [string, string] = ['', '']
+  // let local_name: [string, string] = ['', '']
   if (name !== '') {
-    const name_prop = name + '.name'
+    print('TEXTBOX:: SAY:: name,text', name, text)
+
+    // const name_prop = name + '.name'
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    local_name = novelsave.get_var(name_prop)
+    // local_name = novelsave.get_var(name_prop)
   }
-  show_name(local_name[0])
+  show_name(name)
 }
 
 function end_skip() {
   skipping = false
-  msg.post('quickmenu#quickmenu', 'deactivate_button', { name: 'skip' })
+  //msg.post('quickmenu#quickmenu', 'deactivate_button', { name: 'skip' })
 
   const node = gui.get_node('auto')
   gui.animate(node, 'scale.y', 0, gui.EASING_INOUTSINE, 0.05)
 }
 
 function end_auto() {
-  auto = false
   gui.set_fill_angle(gui.get_node('auto'), 0)
-  msg.post('quickmenu#quickmenu', 'deactivate_button', { name: 'auto' })
+  //msg.post('quickmenu#quickmenu', 'deactivate_button', { name: 'auto' })
+  auto = true
 }
 
 function start_skip() {
@@ -246,7 +256,7 @@ function resize_window() {
     vmath.vector3(text_zoom * name_scale, text_zoom * name_scale, 1)
   )
   typewriter.set_scale(text_zoom)
-  typewriter.redraw()
+  typewriter.redraw(true)
 }
 
 export function init(this: any) {
@@ -273,10 +283,13 @@ export function on_message(
   _sender: url
 ) {
   if (messageId == hash('say')) {
+    print('textbox:: on_msg:: SAY:', message.name)
     show()
     say(message.text, message.name)
     //gui.set_text(gui.get_node("text"), message.text)
   } else if (messageId == hash('typewriter_next')) {
+    print('TXTBOXMSG:::typewriter_next')
+    auto = true
     textbox_done()
   } else if (messageId == hash('set_font')) {
     set_font(message.font)
@@ -284,8 +297,12 @@ export function on_message(
     window_resized_zoom = message.zoom
     resize_window()
   } else if (messageId == hash('skip_button')) {
+    print('TXTBOXMSG:::SKIPBTN')
+
     toggle_skip()
   } else if (messageId == hash('auto_button')) {
+    print('TXTBOXMSG:::AUTOBTNAUTOBTN!!!!')
+
     toggle_auto()
   } else if (messageId == hash('set_textspeed')) {
     let textspeed: number
@@ -327,5 +344,37 @@ export function on_input(
     back()
   } else if (actionId == hash('forward') && action.repeated) {
     forward()
+  }
+}
+
+export function update(this: any, dt: number) {
+  //print('textboxtestjpf::UPDATE!!!', auto, auto_t, dt)
+
+  if (skipping) {
+    skip_t = skip_t + dt
+    if (skip_t >= 1 / skip_per_second) end_skip()
+  } else if (auto) {
+    // print('textboxtestjpf::auto???', auto, auto_t, dt)
+
+    // 2 + 8*(1 - 50/100)
+    //const  auto_duration = get_auto_duration()
+    auto_t = auto_t + dt
+    gui.set_fill_angle(gui.get_node('auto'), 360)
+
+    if (auto_t < 6) {
+      print('textboxtestjpf:: autot>=6::', auto_t, dt)
+
+      if (typewriter.get_state() == 'waiting') {
+        print('textboxtestjpf:: waiting::', typewriter.get_state(), dt)
+
+        auto_t = 0
+        typewriter.redraw(false)
+        auto = false
+      }
+    } else {
+      print('textboxtestjpf:: Elseelseelse::', auto_t, dt)
+      typewriter.redraw(true)
+      auto_t = 0
+    }
   }
 }

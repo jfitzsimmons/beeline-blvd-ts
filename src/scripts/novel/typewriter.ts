@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { Typewriter } from '../../types/novel'
+//import { toFixed } from '../../types/utils'
 
 let typewriters: { [key: number]: Typewriter } = {}
 let current: Typewriter
@@ -22,12 +23,18 @@ const gui_get_font_resource = gui.get_font_resource
 const gui_get_node = gui.get_node
 const gui_get_size = gui.get_size
 const gui_set_alpha = gui.set_alpha
+const gui_get_alpha = gui.get_alpha
 const gui_set_line_break = gui.set_line_break
 const gui_set_parent = gui.set_parent
+const gui_get_position = gui.get_position
 const gui_set_position = gui.set_position
 const gui_set_scale = gui.set_scale
+//const gui_get_scale = gui.get_scale
 const gui_set_size = gui.set_size
+
+//const gui_get_text = gui.get_text
 const gui_set_text = gui.set_text
+//const gui_get_id = gui.get_id
 const resource_get_text_metrics = resource.get_text_metrics
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -59,6 +66,8 @@ function animate_letter(node: node, delay: number, last?: boolean) {
 
 function fade_done() {
   current.state = 'empty'
+  print('FADEDONETW')
+  //auto = false
   msg.post('#textbox', 'typewriter_next')
 }
 
@@ -160,7 +169,7 @@ function set_letters(line_table: { [key: string]: string }, instant: boolean) {
     for (const character of character_table) {
       n_letters = n_letters + 1
       metrics = resource_get_text_metrics(font_resource, text + 'X')
-      const letter = get_letter(n_letters)
+      const letter = get_letter(n_letters) //sets letter_nodes
       gui_set_text(letter, character)
       gui_cancel_animation(letter, 'position')
       gui_cancel_animation(letter, 'color.w')
@@ -183,9 +192,10 @@ function set_letters(line_table: { [key: string]: string }, instant: boolean) {
       text = text + character
     }
   }
-  if (instant || n_letters == 0) {
-    current.state = 'waiting'
-  }
+  print('TYPEWRITER:: SETLETTERS:: instatn,neltter:', instant, n_letters)
+  //  if (instant == true || n_letters == chara) {
+  current.state = 'waiting'
+  //  }
 }
 
 function reposition_letters(line_table: { [key: string]: string }) {
@@ -292,6 +302,7 @@ function split_text_into_lines(text: string, max_width: number) {
 }
 
 function start_typewriter(text: string, instant: boolean) {
+  print('STARTTYPEWWRITER:: instatn:', instant, text)
   text = text.length > 0 ? text : ''
   current.state = 'typing'
   current.text = text
@@ -309,9 +320,120 @@ function end_typewriter() {
   }
   current.state = 'waiting'
 }
+function archive_text() {
+  const textNodes: {
+    [key: string]: { clone: node }
+  } = {}
+  let nodeKey: keyof typeof current.letter_nodes
+  //testjpf
+  //you could add properties to this like
+  //animationComplete
+  //so textNodes[nodeKey].clone = guiclone()
+  //textNodes[nodeKey].animationComplete = false
+  for (nodeKey in current.letter_nodes) {
+    textNodes[nodeKey] = {
+      clone: gui_clone(current.letter_nodes[nodeKey]),
+      // animationComplete: false,
+    }
+    gui_set_alpha(textNodes[nodeKey].clone, 1)
+  }
+
+  current.archive.push(textNodes)
+  //current.archive.animationComplete = false
+  for (const tns of current.archive) {
+    let nodeKey: keyof typeof tns
+    for (nodeKey in tns) {
+      const node = tns[nodeKey]
+      // print('preenode.animationComplete::', node.animationComplete)
+
+      raise_letter(node)
+    }
+  }
+
+  //current.archive.animationComplete = true
+}
+function raise_letter(node: { clone: node }) {
+  //testjpf
+  //then here we'd need node.clone
+  //(maybe name better than node? nodeProps?.clone)
+
+  const pos = gui_get_position(node.clone)
+  const width = gui_get_size(node.clone).x / current.scale
+  const metrics: {
+    width: number
+    height: number
+  } = resource_get_text_metrics(
+    gui_get_font_resource(gui_get_font(node.clone)),
+    current.text
+  )
+  //const y = gui_get_size(node).y
+  print(
+    'ISYBIGGER??',
+    metrics.width,
+    width,
+    math.ceil(metrics.width / width),
+    metrics.height * math.ceil(metrics.width / width)
+  )
+  // const scale = toFixed(gui_get_scale(node.clone).x)
+  //print('0000::: node.animationComplete::', node.animationComplete)
+
+  // const testjpf = gui_get_node(node.clone)
+
+  //const scale = gui_get_scale(node.clone)
+  /**
+   *
+   * TESTJPF
+   * WARNING:GUI: Out of animation resources (1024)
+   * also for some reason just breaks with logic in txts
+   * at least thats what i think is going on
+   * 
+  gui_animate(
+    node.clone,
+    'scale',
+    v3(scale.x - 0.05, scale.y - 0.05, 1),
+    EASING_LINEAR,
+    0.2,
+    0
+  )
+  */
+  gui_animate(
+    node.clone,
+    'position',
+    v3(pos.x, pos.y + metrics.height * math.ceil(metrics.width / width), 0),
+    EASING_LINEAR,
+    0.2,
+    0
+    //something like::
+  )
+
+  gui_animate(
+    node.clone,
+    'color.w',
+    gui_get_alpha(node.clone) - 0.1,
+    EASING_LINEAR,
+    0.2,
+    0
+    //  () => setAnimComplete(node)
+  )
+  //fart()
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  //  print(`postnode.animationComplete::, ${node.animationComplete}`)
+
+  //animate_alpha(node, gui_get_alpha(node) - 0.1, 0.3, 0.3)
+
+  // gui_set_position
+}
 
 function fade_away() {
   current.state = 'fade_away'
+  archive_text()
+  /**
+   * testjpf
+   * archive_letternodes()
+   * move all previous entrees up if they exist
+   * else add new entry
+   * and animate it up
+   */
   let nodeKey: keyof typeof current.letter_nodes
   for (nodeKey in current.letter_nodes) {
     const node = current.letter_nodes[nodeKey]
@@ -346,20 +468,21 @@ export function new_typewriter(_options?: any): Typewriter {
   new_writer.node = null
   new_writer.auto = false
   new_writer.letter_nodes = {}
+  new_writer.archive = []
   new_writer.init = init
-  //new_writer.set_node = set_node
+  new_writer.set_node = set_node
   new_writer.set_options = set_options
-  //new_writer.change_typewriter = change_typewriter
+  new_writer.change_typewriter = change_typewriter
   new_writer.start = start
   new_writer.set_instant_text = set_instant_text
   new_writer.hide_instant_text = hide_instant_text
   new_writer.next = next
-  //new_writer.clear = clear
-  // new_writer.reposition = reposition
+  new_writer.clear = clear
+  new_writer.reposition = reposition
   new_writer.set_scale = set_scale
   new_writer.redraw = redraw
-  //new_writer.get_state = get_state
-  // new_writer.zoom = zoom
+  new_writer.get_state = get_state
+  new_writer.zoom = zoom
   const id: number = Object.entries(typewriters).length + 1
   typewriters[id] = new_writer
   current = new_writer
@@ -413,8 +536,9 @@ export function change_typewriter(id: number) {
 }
 
 // Clears old text && starts typing.
-export function start(text: string) {
-  start_typewriter(text, true)
+function start(text: string) {
+  print('Typewriter:: start(): text:', text)
+  start_typewriter(text, false)
 }
 
 function add_line_breaks(text: string, max_width: number) {
@@ -485,9 +609,13 @@ export function hide_instant_text() {
 
 // Finishes current text if still typing, removes text && asks for next text if already typed.
 export function next() {
+  //testjpf probably not using typing.
+  //because of setletters
   if (current.state == 'typing') {
+    print('ENDTW:: typewriter:', current.state)
     end_typewriter()
   } else if (current.state == 'waiting') {
+    print('FADEAWAY:: typewriter:', current.state)
     fade_away()
   }
 }
@@ -506,15 +634,15 @@ export function reposition() {
   }
 }
 
-export function redraw() {
+export function redraw(instant: boolean) {
   delete_letters()
-  if (instant_text != false) {
+  if (instant_text) {
     set_instant_text(tostring(instant_text))
   }
   if (current.state == 'empty') {
     return
   }
-  start_typewriter(current.text, true)
+  start_typewriter(current.text, instant)
 }
 
 export function set_scale(scale: number) {
@@ -539,8 +667,7 @@ export function zoom(scale: number) {
 // "inactive": typewrite is not in use
 // "typing": typewriter is not yet finished typing the current text
 // "waiting": typewriter is finished typing the current text && waits for next action
-/** 
+
 function get_state() {
   return current.state
 }
-**/

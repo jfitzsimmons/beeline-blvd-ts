@@ -11,17 +11,22 @@ local actions = {}
 local arguments = {}
 -- table of position of all labels
 local labels = {}
-
+--local file_labels = {}
 
 local define = true
 
+--local definition = require "matchanovel.matchascript_novel"
 local definition
+
+--local scripts_folder = "/assets/scripts/"
+
 
 function file_exists(name)
 	local f = io.open(name, "r")
 	return f ~= nil and io.close(f)
 end
 
+-- returns table with lines of file "filename"
 local function load_file(filenames)
 	--local count = #script
 	script = {}
@@ -74,6 +79,7 @@ local function read_variable(value)
 	if #value == 0 then 
 		return "", "string"
 	end
+
 	value = remove_spaces(value)
 	if value == "true" then
 		return true, "bool"
@@ -82,6 +88,7 @@ local function read_variable(value)
 	elseif value == "nil" then
 		return nil, "nil"
 	end
+
 	local str = string.match(value, "^[^\"]*\"([^\"]*)\"")
 	if not str then 
 		str = string.match(value, "^[^\']*\'([^\']*)\"")
@@ -101,21 +108,25 @@ local function read_variable(value)
 	end
 end
 
+
+
 function M.get_var_from_savestate(var)
-	local vtable = save.get_var(this,var)
-	return vtable
+	local v, t = save.get_var(this, var)
+	return v, t
 end
 
 function M.get_variable(this, v)
 	local value, type = read_variable(v)
 	if type == "pointer" then
-		local saved= M.get_var_from_savestate(value)
-		return {saved[1], saved[2]}
+		local v, t = M.get_var_from_savestate(value)
+		return v, t
 	else
-		return{ value, type}
+		return value, type
 	end
 end
 
+-- returns table of words from string
+-- words are substrings seprated by spaces, if they aren't in quotation marks
 local function get_words(line)
 	if not line or line == "" then 
 		return {} 
@@ -188,52 +199,35 @@ local function separate_arguments(argument_string)
 
 	return arguments_table
 end
+
 -- returns next line with same or smaller indention than current line
-local function get_next_line( this, line)
-	--print("get_next_line(lin)",line)
-	if line == nil then
-		line = save.state.pos
-	else
-		line = line
-	end
-	--line = line or save.state.pos
-	--print("line and script line", line, script[line], get_indention(script[line]))
+local function get_next_line(this, line)
+	line = line or save.state.pos
 	local current_indention = get_indention(script[line])
-	--print("curr indentation::",current_indention, "for line:", line, get_indention(script[line]))
 	local next_line = line + 1
 	if next_line > #script then 
 		return 1
 	end
 	local indention = get_indention(script[next_line])
-	--print("next indentation::",indention, "for next_line:", next_line, get_indention(script[line]))
-	
-	--print("get_next_line:: line, next_line, indentation:", line, next_line, indention)
 	while not indention or indention > current_indention do 
 		next_line = next_line + 1
-		--print("while indented::", line, next_line, indention)
-				
 		if next_line > #script then return false end
 		indention = get_indention(script[next_line])
-		--print("while indented2::", line, next_line, indention)
-				
 	end
-	--print("is this always staying the same??",next_line)
-		return next_line
+	return next_line
 end
 
 -- returns previous line with same or smaller indention than current line
-local function get_previous_line(this, line)
+local function get_previous_line(this,line)
 	line = line or save.state.pos
 	local current_indention = get_indention(script[line])
 	local previous_line = line - 1
 	local indention = get_indention(script[previous_line])
-
 	while not indention or indention > current_indention do 
 		previous_line = previous_line - 1
 		if previous_line < 1 then return false end
 		indention = get_indention(script[previous_line])
 	end
-
 	return previous_line
 end
 
@@ -241,24 +235,17 @@ end
 -- lines are in same block if they are of same action, same indention, 
 -- and are next of each other (disregaring empty lines)
 local function get_action_block(starting_line)
-	local current_action = actions[starting_line] -- choice?
+	local current_action = actions[starting_line]
 	local line = starting_line
 	local action = current_action
 	local action_block = {}
-	--print("1: starting_line, line:::", starting_line,line)
 	while (action == "empty" or action == current_action) and line and line <= #script do
 		if action == current_action then
 			table.insert(action_block, line)
 		end
-	--	print(line, "is this always incresing?")
-
-		line = get_next_line(this, line)
-	--	print("get block :: line each, action", line, action)
-		
-	--	print("MSCRIPTRiPT::: get_action_block::actions[line]: ",actions[line])
+		line = get_next_line(this,line)
 		action = actions[line]
 	end
-	--print("GETACTIONBLOCK LOOP ENDS. actionblockreturned", action_block)
 	return action_block
 end
 
@@ -277,12 +264,16 @@ local function get_end_of_action_block(starting_line)
 	for k, v in pairs(action_block) do
 		end_line = math.max(v, end_line)
 	end
-
 	return end_line
-
 end
 
+local function get_value(s)
+	local str = string.match(s, "^[^\"]*\"([^\"]*)\"")
+	if str then return str end
 
+	local num = tonumber(s)
+	if num then return num end
+end
 
 local function set_define(name, value_string)
 	local value, type = read_variable(value_string)
@@ -290,18 +281,17 @@ local function set_define(name, value_string)
 end
 
 local function execute_function(action, args)
-	--this is the 1st logging of a table instead
 	local f = definition.functions[action]
 	if f then
 		f(this,args)
 	end
 end
 
-function M.set_definition(this, definition_table)
+function M.set_definition(this,definition_table)
 	definition = definition_table
 end
 
-function M.add_file(opt, filename)
+function M.add_file(filename)
 	load_file(filename)
 end
 
@@ -354,11 +344,11 @@ function M.init()
 
 		-- check for operator command ("argument[1]OPERATORargument[2]")
 		--[[
-		This will prioritize the operator the furthest to the left
-		and if two start at the same position, the longer one will be prioritized, so for
-		alice: The function is y = a * b + c
-		it will match ":", and not "="
-		so you can put any operator to the right of the first in the line without worrying about conflicts
+			This will prioritize the operator the furthest to the left
+			and if two start at the same position, the longer one will be prioritized, so for
+				alice: The function is y = a * b + c
+			it will match ":", and not "="
+			so you can put any operator to the right of the first in the line without worrying about conflicts
 		--]] 
 		if not action then
 			local max_operator_length = 1
@@ -374,7 +364,8 @@ function M.init()
 						local is_furthes_to_left = arg_left and ((not arguments[k].left) or #arg_left < #arguments[k].left)
 						local is_equally_far_to_left = arg_left and arguments[k].left and #arg_left == #arguments[k].left
 						local is_longer = #operator > operator_length
-						if is_furthes_to_left or (is_equally_far_to_left and is_longer) then
+						local escape_character = arg_left and string.match(arg_left, "%\\$")
+						if (is_furthes_to_left or (is_equally_far_to_left and is_longer)) and not escape_character then
 							action = action_name
 							arguments[k].left = arg_left
 							arguments[k].right = arg_right
@@ -386,6 +377,7 @@ function M.init()
 				--if matched then break end
 			end
 		end
+
 		if not action then
 			action = "default"
 			arguments[k][0] = line
@@ -394,10 +386,10 @@ function M.init()
 			action = "label"
 			define = false
 		end
-
+		
 		-- set action
 		actions[k] = action or "none"
-
+		
 		-- set arguments 
 		if arguments[k][0] then
 			local argument_table = separate_arguments(arguments[k][0])
@@ -411,54 +403,63 @@ function M.init()
 		end
 	end
 	define = false
+	save.init_variables()
 end
 
 -- execute the action on the current line
 function M.execute()
 	local action = actions[save.state.pos]
 	local args = arguments[save.state.pos]
+	--pprint(action, args)
+	
+	for _, extension in pairs(definition.extensions) do
+		if extension.before_action then
+			extension.before_action(action, args)
+		end
+	end
 
-	if action == "none" or action == "empty" then
+	--if action == "none" or action == "empty" then
+	if action == "empty" then
 		M.next()
 	else
-	--	print(action,"<---LINE in mscript EXEcute")
 		execute_function(action, args)
 	end
 end
 
 -- set the current line of script
-function M.set_line(this, line)
-	--print("MSCRIPT setLine:", line)
+function M.set_line(this,line)
 	save.state.pos = line
 end
 
 -- jump to given line and execute it
-function M.jump_to_line(this, line)
-	--print(line,"<---LINE in mscript jump to line")
-
-	M.set_line(this, line)
+function M.jump_to_line(this,line)
+	M.set_line(this,line)
 	M.execute()
 end
 
+
+function M.label_exists(label)
+	if labels[label] then
+		return true
+	end
+end
+
 -- jump to line of given label and execute it
-function M.jump_to_label(this, label)
-	--print(label, "<--jump to label: label ")
+function M.jump_to_label(this,label)
 	if label == "start" and not labels["start"] then 
-		M.jump_to_line(this, 1)
+		M.jump_to_line(this,1)
 	end
 	
 	local line = labels[label]
---	print(line, "<--jump to label: line ")
-
 	if line then
-		M.jump_to_line(this, line)
+		M.jump_to_line(this,line)
 	end
 end
 
 -- go to the next line with same or smaller indention and execute it
 function M.next(this)
 	if not define then
-		local next_line = get_next_line(this, nil)
+		local next_line = get_next_line(this)
 		M.jump_to_line(this,next_line)
 	end
 end
@@ -466,7 +467,7 @@ end
 -- go to the next line (regardless of indention) and execute it
 function M.next_step()
 	local next_line = save.state.pos + 1
-	M.jump_to_line(this, next_line)
+	M.jump_to_line(this,next_line)
 end
 
 -- returns table of lines of all actions in block starting from current line
@@ -475,7 +476,7 @@ function M.get_current_action_block(starting_line)
 end
 
 -- returns argument of given line
-function M.get_argument(this, line)
+function M.get_argument(this,line)
 	return arguments[line]
 end
 
@@ -504,13 +505,19 @@ end
 
 
 -- jump to line of given by label "start" and execute it 
-function M.start()
-	if labels["start"] then
+function M.start(label)
+	--save.init_variables()
+	if label and labels[label] then
+		M.jump_to_label(label)
+	elseif labels["start"] then
 		M.jump_to_label(this,"start")
 	else
-		M.jump_to_line(this, 1)
+		M.jump_to_line(this,1)
 	end
 end
 
+local function add_line_to_script(line)
+	table.insert(script, line)
+end
 
 return M
