@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { Typewriter } from '../../types/novel'
-import { toFixed } from '../../types/utils'
+//import { toFixed } from '../../types/utils'
 
 let typewriters: { [key: number]: Typewriter } = {}
 let current: Typewriter
@@ -31,7 +31,10 @@ const gui_set_position = gui.set_position
 const gui_set_scale = gui.set_scale
 //const gui_get_scale = gui.get_scale
 const gui_set_size = gui.set_size
+
+//const gui_get_text = gui.get_text
 const gui_set_text = gui.set_text
+//const gui_get_id = gui.get_id
 const resource_get_text_metrics = resource.get_text_metrics
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -319,7 +322,7 @@ function end_typewriter() {
 }
 function archive_text() {
   const textNodes: {
-    [key: string]: { clone: node; animationComplete: boolean }
+    [key: string]: { clone: node }
   } = {}
   let nodeKey: keyof typeof current.letter_nodes
   //testjpf
@@ -330,22 +333,26 @@ function archive_text() {
   for (nodeKey in current.letter_nodes) {
     textNodes[nodeKey] = {
       clone: gui_clone(current.letter_nodes[nodeKey]),
-      animationComplete: true,
+      // animationComplete: false,
     }
+    gui_set_alpha(textNodes[nodeKey].clone, 1)
+  }
 
-    current.archive.push(textNodes)
-    //current.archive.animationComplete = false
-    for (const textNodes of current.archive) {
-      let nodeKey: keyof typeof textNodes
-      for (nodeKey in textNodes) {
-        const node = textNodes[nodeKey]
-        raise_letter(node)
-      }
+  current.archive.push(textNodes)
+  //current.archive.animationComplete = false
+  for (const tns of current.archive) {
+    let nodeKey: keyof typeof tns
+    for (nodeKey in tns) {
+      const node = tns[nodeKey]
+      // print('preenode.animationComplete::', node.animationComplete)
+
+      raise_letter(node)
     }
   }
+
   //current.archive.animationComplete = true
 }
-function raise_letter(node: { clone: node; animationComplete: boolean }) {
+function raise_letter(node: { clone: node }) {
   //testjpf
   //then here we'd need node.clone
   //(maybe name better than node? nodeProps?.clone)
@@ -368,60 +375,55 @@ function raise_letter(node: { clone: node; animationComplete: boolean }) {
     metrics.height * math.ceil(metrics.width / width)
   )
   // const scale = toFixed(gui_get_scale(node.clone).x)
+  //print('0000::: node.animationComplete::', node.animationComplete)
 
-  if (node.animationComplete == false) {
-    const pos = gui_get_position(node.clone)
-    const alpha = gui_get_alpha(node.clone)
-    gui_cancel_animation(node.clone, 'position')
+  // const testjpf = gui_get_node(node.clone)
 
-    // gui_cancel_animation(node.clone, 'scale')
-    gui_cancel_animation(node.clone, 'color.w')
-    gui_set_alpha(node.clone, toFixed(alpha))
-    // gui_set_scale(node.clone, v3(scale, scale, 1))
-    gui_set_position(
-      node.clone,
-      v3(pos.x, pos.y + metrics.height * math.ceil(metrics.width / width), 0)
-    )
-  } else {
-    node.animationComplete = false
-    gui_animate(
-      node.clone,
-      'position',
-      v3(pos.x, pos.y + metrics.height * math.ceil(metrics.width / width), 0),
-      EASING_LINEAR,
-      0.2,
-      0
-      //something like::
-    )
-    //   const scale = gui_get_scale(node.clone)
-    /**
- * 
- * TESTJPF
- * WARNING:GUI: Out of animation resources (1024)
-    gui_animate(
-      node.clone,
-      'scale',
-      v3(scale - 0.1, scale - 0.1, 1),
-      EASING_LINEAR,
-      0.3,
-      0.3
-    )
-*/
-    gui_animate(
-      node.clone,
-      'color.w',
-      gui_get_alpha(node.clone) - 0.1,
-      EASING_LINEAR,
-      0.2,
-      0,
-      (node.animationComplete = true)
-    )
-  }
+  //const scale = gui_get_scale(node.clone)
+  /**
+   *
+   * TESTJPF
+   * WARNING:GUI: Out of animation resources (1024)
+   * also for some reason just breaks with logic in txts
+   * at least thats what i think is going on
+   * 
+  gui_animate(
+    node.clone,
+    'scale',
+    v3(scale.x - 0.05, scale.y - 0.05, 1),
+    EASING_LINEAR,
+    0.2,
+    0
+  )
+  */
+  gui_animate(
+    node.clone,
+    'position',
+    v3(pos.x, pos.y + metrics.height * math.ceil(metrics.width / width), 0),
+    EASING_LINEAR,
+    0.2,
+    0
+    //something like::
+  )
+
+  gui_animate(
+    node.clone,
+    'color.w',
+    gui_get_alpha(node.clone) - 0.1,
+    EASING_LINEAR,
+    0.2,
+    0
+    //  () => setAnimComplete(node)
+  )
+  //fart()
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  //  print(`postnode.animationComplete::, ${node.animationComplete}`)
 
   //animate_alpha(node, gui_get_alpha(node) - 0.1, 0.3, 0.3)
 
   // gui_set_position
 }
+
 function fade_away() {
   current.state = 'fade_away'
   archive_text()

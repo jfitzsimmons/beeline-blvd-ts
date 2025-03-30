@@ -14,7 +14,6 @@ export interface Typewriter {
   archive: {
     [key: string]: {
       clone: node
-      animationComplete: boolean
     }
   }[]
   text: string
