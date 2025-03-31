@@ -42,6 +42,86 @@ export function messages.post(
 }
 **/
 
+interface scriptDefs {
+  actions: string[]
+  prefixes: { [key: string]: string }
+  suffixes: { [key: string]: string }
+  operators: { [key: string]: string }
+  functions: { [key: string]: (args: any) => void }
+}
+const script_definition: scriptDefs = {
+  actions: [
+    'none',
+    'label',
+    'jump',
+    'set',
+    'add',
+    'addone',
+    'subtract',
+    'if',
+    'comment',
+    'say',
+    'show',
+    'hide',
+    'hideall',
+    'move',
+    'scene',
+    'choice',
+    'fcall',
+    'return',
+    'title',
+    'empty',
+    'saydefault',
+  ],
+  prefixes: {
+    choice: '>',
+    comment: '//',
+    label: '*',
+    jump: '->',
+  },
+  suffixes: {
+    addone: '++',
+    call: '()',
+  },
+  operators: {
+    say: ':',
+    add: '+=',
+    subtract: '-=',
+    set: '=',
+  },
+  functions: {
+    jump: jump,
+    set: set,
+    say: say,
+    show: show,
+    hide: hide,
+    scene: scene,
+    move: move,
+    choice: choice,
+    fcall: fcall,
+    add: add,
+    addone: addone,
+    subtract: subtract,
+    label: label,
+    comment: none,
+    empty: empty,
+    default: saydefault,
+    ['return']: action_return,
+    ['if']: action_if,
+  },
+}
+//script_definition.extensions = {pronouns}
+
+const render_order = [
+  'novel/background',
+  //"transition_bg",
+  'novel/sprites',
+  'novel/textbox',
+  'novel/choices',
+  //"border",
+  'novel/debug',
+]
+const input_order = ['textbox', 'choices']
 function is_all_capitalized(s: string) {
   if (type(s) == 'string') {
     const upper = string.upper(s)
@@ -252,7 +332,6 @@ function say(args: any) {
   state = 'say'
   let name: string | null = null
   let expression_name: string | null = null
-  let text
   print(
     'MNOVELSAY:::args.left/right::',
     args.left,
@@ -261,13 +340,14 @@ function say(args: any) {
     args.text,
     args[0]
   )
-  if (args.right != undefined) {
-    name = args.left
-    text = args.right
-  } else {
-    name = args.name
-    text = args.text !== '' ? args.text : args[0]
-  }
+  //testjpf
+  //if (args.right != undefined) {
+  name = args.left
+  const text = args.right
+  //} else {
+  // name = args.name
+  // text = args.text !== '' ? args.text : args[0]
+  //}
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const interpolated_text = interpolate_string(text)
   print('MNOVELNAME:::000::', name)
@@ -283,11 +363,11 @@ function say(args: any) {
 
     print('MNOVELNAME:::!!!::GETVAR!!!:', name)
     if (before_dot !== null && after_dot !== null) {
-      name = before_dot
+      //name = before_dot
       print('MNOVELNAME:::111::', name)
       const expression = after_dot
       const sprite = novelsave.get_var(name + '.' + expression + '.sprite')
-      name = string.lower(name)
+      //name = string.lower(name)
       print('MNOVELNAME:::222::', name)
       if (sprite != null) {
         novelsave.set_var('_temp_expression_name', name, 'string')
@@ -561,87 +641,6 @@ function saydefault(args: any) {
   say(args)
 }
 
-interface scriptDefs {
-  actions: string[]
-  prefixes: { [key: string]: string }
-  suffixes: { [key: string]: string }
-  operators: { [key: string]: string }
-  functions: { [key: string]: (args: any) => void }
-}
-const script_definition: scriptDefs = {
-  actions: [
-    'none',
-    'label',
-    'jump',
-    'set',
-    'add',
-    'addone',
-    'subtract',
-    'if',
-    'comment',
-    'say',
-    'show',
-    'hide',
-    'hideall',
-    'move',
-    'scene',
-    'choice',
-    'fcall',
-    'return',
-    'title',
-    'empty',
-    'saydefault',
-  ],
-  prefixes: {
-    choice: '>',
-    comment: '//',
-    label: '*',
-    jump: '->',
-  },
-  suffixes: {
-    addone: '++',
-    call: '()',
-  },
-  operators: {
-    say: ':',
-    add: '+=',
-    subtract: '-=',
-    set: '=',
-  },
-  functions: {
-    jump: jump,
-    set: set,
-    say: say,
-    show: show,
-    hide: hide,
-    scene: scene,
-    move: move,
-    choice: choice,
-    fcall: fcall,
-    add: add,
-    addone: addone,
-    subtract: subtract,
-    label: label,
-    comment: none,
-    empty: empty,
-    default: saydefault,
-    ['return']: action_return,
-    ['if']: action_if,
-  },
-}
-//script_definition.extensions = {pronouns}
-
-const render_order = [
-  'novel/background',
-  //"transition_bg",
-  'novel/sprites',
-  'novel/textbox',
-  'novel/choices',
-  //"border",
-  'novel/debug',
-]
-const input_order = ['textbox', 'choices']
-
 function set_render_order() {
   for (let i = 0; i < render_order.length - 1; i++) {
     const extracted = string.match(render_order[i], '/(.*)')
@@ -657,7 +656,7 @@ function set_input_order() {
 
 export function novel_init(paths: string[]) {
   if (paths.length > 0) {
-    matchascript.add_file(paths)
+    matchascript.add_files(paths)
   }
   matchascript.set_definition(script_definition)
   set_render_order()
