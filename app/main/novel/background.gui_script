@@ -1,4 +1,6 @@
--- local save = require "main.novel.save"
+local save = require "types.node_modules.legacylua.novel-save"
+local save = save.return_module()
+
 local colors = require "main.novel.colors"
 local images = require "main.novel.images"
 
@@ -37,13 +39,20 @@ local function create_image_scene(image_name)
 	else
 		filepath = "/assets/images/background/"..image_name
 	end
+	print("sceneimagefilepath::", image_name, filepath)
+
 	images.set_gui_sprite(loaded_textures, current_node, filepath)
 end
 
 local function get_color(name)
 	return colors.get_color(name)
 end
-
+local function get_image_name(scene)
+	print("getimagename", scene)
+	local testjpf2 = save.get_var(scene..".image")
+	print("testjpf2",testjpf2.value,testjpf2.type,testjpf2[1],testjpf2[2])
+	return save.get_var(scene..".image").value or save.get_var(scene).value or scene
+end
 local function create_new_scene(scene, color)	
 	delete_node(_, old_node)
 	old_node = current_node
@@ -55,7 +64,9 @@ local function create_new_scene(scene, color)
 	if scene_name_color then
 		set_scene_color(scene_name_color)
 	else
-		create_image_scene(scene)
+		local image_name = get_image_name(scene)
+		print("NEWCODE IMAGENAME::",image_name)
+		create_image_scene(image_name)
 	end
 	if color then
 		local tint_color = get_color(color)
@@ -201,6 +212,7 @@ local transitions = {
 }
 
 local function action_scene(scene, transition, duration, color, transition_color)
+	print('bg:: action_scene:',scene,transition)
 	create_new_scene(scene, color)
 	if old_node and transition then
 		(transitions[transition] or transition_instant)(duration, transition_color)

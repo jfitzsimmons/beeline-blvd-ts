@@ -1,6 +1,6 @@
 --local pronouns = require "matchanovel.extensions.pronouns"
-
-local save = require "main.novel.save"
+local save = require "types.node_modules.legacylua.novel-save"
+local save = save.return_module()
 
 local M = {}
 

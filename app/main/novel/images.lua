@@ -5,7 +5,8 @@ local reader = false
 
 local function load_data_from_engine_resource(filepath)
 	local data = sys.load_resource(filepath)
-	if data then
+print("load_data_from_engine_resource",data,filepath)	
+if data then
 		return data
 	else
 		print("Error: ")
@@ -13,7 +14,8 @@ local function load_data_from_engine_resource(filepath)
 end
 
 local function load_data_from_file(filepath)
-	local file, error = io.open("."..filepath, "rb")
+	local file, error = io.open("."..filepath, "rb")print("load_data_from_engine_resource",file,filepath)	
+
 	if file then
 		local data = file:read("*a")
 		file:close()
@@ -58,6 +60,7 @@ end
 function M.set_gui_sprite(textures_table, node, filepath)
 	if load_gui_texture(textures_table, filepath) then
 		gui.set_texture(node, filepath)
+		print("texturesegtWQQ!~!!!!!",node,filepath)
 	end
 end
 

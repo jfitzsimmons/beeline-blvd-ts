@@ -34,13 +34,17 @@ activeq = _G.game.world.novel.active_quest
 priority = _G.game.world.novel.forced
 
 n.name = _G.game.world.novel.npc.name
+n.sprite = _G.game.world.novel.npc.sprites.smile
 n.scale = 3
 n.y = 0.5
-
 p.name = "Player"
 
+
 label start
+scene haikeisozai_tatemono4.jpg
+show n
 n: priority is {priority}
+n: sprite is  {n.sprite}
 if priority == "true"
   jump prioritystart
 n: default start

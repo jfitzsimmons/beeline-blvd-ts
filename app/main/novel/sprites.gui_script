@@ -1,5 +1,6 @@
-local save = require "main.novel.save"
-local colors = require "main.novel.colors"
+local save = require "types.node_modules.legacylua.novel-save"
+local save = save.return_module()
+
 local images = require "main.novel.images"
 
 
@@ -39,18 +40,27 @@ end
 
 local function set_sprite(name, spr)
 	local node = sprites[name]
+	print("000SPRSPRSPR",spr,node)
+
 	
 	if node and spr then 
+		print("if node and spr then ",spr)
+
 		local first = string.sub(spr, 1, 1)
 		local filepath
 		if first == "/" or first == "." then
+			print("SPRSPRSPR",spr)
 			filepath = spr
 		else
-			filepath = "/assets/images/sprites/"..spr
+			print("SPRSPRSPR",spr)
+
+			filepath = "/assets/images/characters/"..spr
 		end
 
 		images.set_gui_sprite(loaded_textures, node, filepath)
 	end
+	print("zzzSPRSPRSPR:: never????",spr,node)
+
 end
 
 local function get_character_delta_position(name)
@@ -67,7 +77,10 @@ local function show(name, at, transition, duration)
 
 	local node = sprites[name]
 	local gui_scale = gui.get_scale(gui.get_node("gui")).x
+	print("SPRITESGUI:: show():: prespr:",name)
 	local spr = save.get_var(this,name..".sprite")[1]
+	print("SPRITESGUI:: show():: pPOSTspr:",spr, name)
+
 	local spine_node = save.get_var(this,name..".spine")[1]
 	local scale = save.get_var(this,name..".scale")[1] or 1
 	local character_pos = get_character_delta_position(name)
@@ -85,13 +98,18 @@ local function show(name, at, transition, duration)
 		at_pos.x = 0.5
 		at_pos.y = 0
 	end
+	print("SPRITESGUIpre transition and crap::: SHOW:: name:",name)
+
 	local position = get_screen_position(character_pos + at_pos)
 	
 	transition = transition or save.get_var(this,"show.transition")[1]
 	duration = duration or save.get_var(this,"show.duration")[1]
+	print("postSPRITESGUIpre transition and crap::: SHOW:: name:",name)
 	if spr then
+		print("SPRITESGUIpre setsprite::: noSPR so set NOW!!:: name:",name)
 		set_sprite(name, spr)
 		gui.move_below(node, gui.get_node("front"))
+		print("SPRITESGUIpre setsprite::: setmovebelow:",name)
 	end
 	
 	if spine_node then
@@ -134,6 +152,7 @@ local function show(name, at, transition, duration)
 	end
 	
 	save.state.sprites[name] = true
+	print("SPRITESGUI::: SHOW:: name:",name)
 	
 end
 
@@ -219,6 +238,7 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("show") then 
+		print("SPRITESGUI:: MESSAGES:: SHOW: NAME:",message.name)
 		show(message.name, message.at, message.transition, message.duration)
 	elseif message_id == hash("hide") then
 		hide(message.name, message.to, message.transition, message.duration)
