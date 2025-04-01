@@ -40,3 +40,6 @@ max_count = 14
 subpixels = 1
 max_count = 430
 
+[gui]
+max_animation_count = 512
+
