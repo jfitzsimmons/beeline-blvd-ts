@@ -31,7 +31,10 @@ export default class WorldNovel {
     this._npcsWithQuest = []
     this._scripts = []
     // this._alertChange = 0
-    this._npc = { ...NpcsInitState.labor01 }
+    this._npc = {
+      sprites: { smile: '/assets/images/characters/eve/smile.png' },
+      ...NpcsInitState.labor01,
+    }
     this.p = novelMethods
     /** 
     this._quest = {
@@ -127,6 +130,8 @@ export default class WorldNovel {
       traits: n.traits,
       sincePlayerConvo: n.sincePlayerConvo,
       love: n.love,
+      //sprites: { smile: `/assets/characters/${n.name}/smile.png` },//testjpf ,ay need to bace on race/ head
+      sprites: { smile: '/assets/characters/eve/smile.png' },
     }
   }
   getNovelUpdates(): NovelNpc {

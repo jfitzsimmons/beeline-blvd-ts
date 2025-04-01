@@ -2,10 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-//const matchascript = require('../../../main.novel.matchascript')
-//const save = require('../../../main.novel.save')
-//const settings = require "main.novel.//settings"
-//const system = require "main.novel.engine.defold.system"
 import { matchascript, novelsave, messages } from '../../types/legacylua'
 //const messages = require('../../../main.novel.engine.defold.messages')
 let Sandbox: any = { math, vmath, string }
@@ -328,6 +324,7 @@ function action_return() {
   }
 }
 
+//testjpf todo now!!!::: capy back over with origin lua
 function say(args: any) {
   state = 'say'
   let name: string | null = null
@@ -353,32 +350,30 @@ function say(args: any) {
   print('MNOVELNAME:::000::', name)
   if (name !== null) {
     const [before_dot, after_dot] = string.match(name, '(.*)%.([^%.]*)$')
-    print(
-      'MNOVELNAME:::!!!::[before_dot, after_dot]',
-      name,
-      before_dot,
-      after_dot
-    )
-    name = novelsave.get_var(name + '.name')[1]
-
+    //prettier-ignore
+    //print('MNOVELNAME:::!!!::[before_dot, after_dot]',name,before_dot,after_dot )
+    // name = novelsave.get_var(name + '.name')[1]
     print('MNOVELNAME:::!!!::GETVAR!!!:', name)
     if (before_dot !== null && after_dot !== null) {
-      //name = before_dot
-      print('MNOVELNAME:::111::', name)
+      name = before_dot
+      print('MNOVELNAME:::111::', name, after_dot)
       const expression = after_dot
       const sprite = novelsave.get_var(name + '.' + expression + '.sprite')
       //name = string.lower(name)
-      print('MNOVELNAME:::222::', name)
+      print('MNOVELNAME:::222::', name, expression)
       if (sprite != null) {
+        print('MNOVELNAME:::2b2b2b:: sprite != null:', name, expression)
         novelsave.set_var('_temp_expression_name', name, 'string')
         novelsave.set_var('_temp_expression_sprite', expression, 'string')
         messages.post('sprites', 'set_sprite', { name: name, sprite: sprite })
+      } else {
+        print('MNOVELNAME:::2c2c2c:: spriteEXISTS:', name, expression)
+
+        messages.post('sprites', 'set_sprite', {
+          name: name,
+          sprite: expression,
+        })
       }
-      //else if (has_alternative_sprite(name, expression)) then {
-      //	novelsave.set_var("_temp_expression_name", name, "string")
-      //	novelsave.set_var("_temp_expression_sprite", expression, "string")
-      //	change_sprite(name, expression)
-      //	end
       expression_name = novelsave.get_var(name + '.' + expression + '.name')
       if (expression_name !== null) {
         name = expression_name
@@ -396,7 +391,10 @@ function say(args: any) {
     // }
   }
   print('MNOVELNAME:::444::', name)
-  messages.post('textbox', 'say', { text: interpolated_text, name: name })
+  messages.post('textbox', 'say', {
+    text: interpolated_text,
+    name: novelsave.get_var(name + '.name')[1],
+  })
   messages.post('choices', 'delete')
 }
 
@@ -405,7 +403,8 @@ function set(args: any) {
     args.left != '' ? args.left : args.name != '' ? args.name : args[0]
   const value_string =
     args.right != '' ? args.right : args.value != '' ? args.value : args[1]
-
+  //testjpf use a ne novel utils
+  //combined with novesave module!!::??
   const val_table = matchascript.get_variable(value_string)
   let [value, var_type]: [string, string] = val_table
 
@@ -417,12 +416,23 @@ function set(args: any) {
       var_type = 'string'
     }
   }
+  print('MNSET::: name, value, var_type::', name, value, var_type)
   novelsave.set_var(name, value, var_type)
-
+  //MNSET::: 	room.image	haikeisozai_tatemono4.jpg	string
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const before_dot = string.match(name, '[%a_][%w_]*')
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const after_dot = string.match(name, '[%a_][%w_]*$')
+  print(
+    'MNSET::: BEFOREAFTER:::',
+    before_dot[0],
+    after_dot[0],
+    name,
+    value,
+    var_type,
+    value_string
+  )
+
   if (before_dot != null) {
     if (before_dot[0] == 'scene') {
       messages.post('background', 'action_set', {
@@ -448,6 +458,8 @@ function add(args: any) {
     args.left != null ? args.left : args.name != null ? args.name : args[0]
   const value_string =
     args.left != null ? args.left : args.name != null ? args.name : args[1]
+  //testjpf remove all getvars
+  //maybe more replace with utils/ novelsave
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [value, _i] = matchascript.get_variable(value_string)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -524,6 +536,7 @@ function scene(args: any) {
 }
 
 function show(args: any) {
+  print('MATCHANOVEL:: SHOW:: ARGS0/1:', args[0], args[1])
   const name = args[0]
   const at = args.at != null ? args.at : args[1]
   const transition =
@@ -636,9 +649,94 @@ function action_if(args: any) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   action_if_true(execute_string(args[0]))
 }
+function set_expression(name: string, expression: string) {
+  if (expression !== null) {
+    if (expression == 'default') {
+      novelsave.set_var(name + '.expression', null)
+    } else {
+      novelsave.set_var(name + '.expression', expression)
+    }
+  }
+}
+//   function has_alternative_sprite(name:string, expression:string){
+//const filename = "/assets/images/sprites/"+name+"_"+expression+".png"
+//	if (images.exists(filename) ){
+//	return filename
+//  }
+// }
+//TESTJPF DELETE ALL THIS
+/**EVERYTHING needs review */
+function check_for_statement_function(str: string): boolean {
+  print('ISESETEZPRESSIONUSEDATALL???!!!', str)
 
+  const s = string.lower(str)
+  let found_statement_function = false
+
+  const [before_dot, after_dot] = string.match(
+    s,
+    '([%a_][%w_]*)%.([%a_][%w_]*)'
+  )
+
+  if (before_dot !== null) {
+    const statement_sprite = novelsave.get_var(s + '.sprite')
+    const statement_name = novelsave.get_var(s + '.name')
+    const statement_color = novelsave.get_var(s + '.color')
+
+    if (after_dot == 'default') {
+      set_expression(before_dot, after_dot)
+      found_statement_function = true
+      const args = { name: before_dot, color: 'white', wait: true }
+      show(args)
+      // TODO: change no not show, but only change color (but) { check at next show for name.expression.color)
+      //   }else if( after_dot == "flip") {
+      //		flip_sprite(before_dot)
+      //	found_statement_function = true
+    }
+
+    if (statement_sprite !== null) {
+      set_expression(before_dot, after_dot)
+      //change_sprite(before_dot, statement_sprite)
+      messages.post('sprites', 'set_sprite', {
+        name: before_dot,
+        sprite: statement_sprite,
+      })
+      found_statement_function = true
+    } //else if( has_alternative_sprite(before_dot, after_dot)) {
+    //set_expression(before_dot, after_dot)
+    //change_sprite(before_dot, after_dot)
+    ////  messages.post('sprites', 'set_sprite', {
+    //    name: before_dot,
+    //    sprite: after_dot,
+    //  })
+    //	found_statement_function = true
+    //}
+
+    if (statement_name !== null) {
+      set_expression(before_dot, after_dot)
+      found_statement_function = true
+    }
+    if (statement_color !== null) {
+      const name = before_dot
+      const args = { name: name, color: statement_color, wait: true }
+      show(args)
+      set_expression(name, after_dot)
+      novelsave.set_var(name + '.color', statement_color)
+      found_statement_function = true
+    }
+  }
+
+  //if( _fmod && _fmod.check_for_statement(s)) {
+  //	found_statement_function = true
+  //}
+
+  return found_statement_function
+}
 function saydefault(args: any) {
-  say(args)
+  print('ISSAYDEFAULTEVERUSED????')
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  if (check_for_statement_function(args[0])) {
+    matchascript.next()
+  } else say(args)
 }
 
 function set_render_order() {
