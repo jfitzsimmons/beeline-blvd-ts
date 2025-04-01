@@ -29,7 +29,7 @@ const gui_set_parent = gui.set_parent
 const gui_get_position = gui.get_position
 const gui_set_position = gui.set_position
 const gui_set_scale = gui.set_scale
-//const gui_get_scale = gui.get_scale
+const gui_get_scale = gui.get_scale
 const gui_set_size = gui.set_size
 
 //const gui_get_text = gui.get_text
@@ -119,6 +119,8 @@ function create_character_table(text: string) {
 
 function get_letter(n: number) {
   if (current.letter_nodes[n] == undefined) {
+    print('GETLETTERCLONE!', n)
+
     current.letter_nodes[n] = gui_clone(current.node)
     gui_set_parent(current.letter_nodes[n], current.parent, false)
   }
@@ -128,7 +130,13 @@ function get_letter(n: number) {
 function delete_letters() {
   let nodeKey: keyof typeof current.letter_nodes
   for (nodeKey in current.letter_nodes) {
-    gui_delete_node(current.letter_nodes[nodeKey])
+    const node = current.letter_nodes[nodeKey]
+    print('deletednode:: deleteleters', nodeKey)
+    gui_cancel_animation(node, 'color.w')
+    gui_cancel_animation(node, 'position')
+    gui_set_alpha(node, 0)
+    gui_set_text(node, '')
+    gui_delete_node(node)
   }
   current.letter_nodes = {}
 
@@ -169,7 +177,10 @@ function set_letters(line_table: { [key: string]: string }, instant: boolean) {
     for (const character of character_table) {
       n_letters = n_letters + 1
       metrics = resource_get_text_metrics(font_resource, text + 'X')
+      print('SETLETTERSGETLETTER::: ', n_letters, character)
       const letter = get_letter(n_letters) //sets letter_nodes
+      print('POST::: SETLETTERSGETLETTER::: ', letter)
+
       gui_set_text(letter, character)
       gui_cancel_animation(letter, 'position')
       gui_cancel_animation(letter, 'color.w')
@@ -226,7 +237,10 @@ function reposition_letters(line_table: { [key: string]: string }) {
     for (const character of character_table) {
       n_letters = n_letters + 1
       metrics = resource_get_text_metrics(font_resource, text + 'X')
+      print('repositionletters::: ', n_letters, character)
       const letter = get_letter(n_letters)
+      print('POST::: repositionletters::: ', n_letters, character)
+
       gui_animate(
         letter,
         'position',
@@ -321,49 +335,49 @@ function end_typewriter() {
   current.state = 'waiting'
 }
 function archive_text() {
-  const textNodes: {
-    [key: string]: { clone: node }
-  } = {}
   let nodeKey: keyof typeof current.letter_nodes
   //testjpf
   //you could add properties to this like
   //animationComplete
   //so textNodes[nodeKey].clone = guiclone()
   //textNodes[nodeKey].animationComplete = false
+  const parent = gui_clone(gui_get_node('text'))
   for (nodeKey in current.letter_nodes) {
-    textNodes[nodeKey] = {
-      clone: gui_clone(current.letter_nodes[nodeKey]),
-      // animationComplete: false,
-    }
-    gui_set_alpha(textNodes[nodeKey].clone, 1)
+    print('ARCHIVECLONE!', nodeKey)
+    const child = gui_clone(current.letter_nodes[nodeKey])
+    gui_set_alpha(child, 1)
+    gui_set_parent(child, parent)
+    /////textNodes[nodeKey] = {
+    // clone: gui_clone(current.letter_nodes[nodeKey]),
+    // animationComplete: false,
+    //}
   }
 
-  current.archive.push(textNodes)
+  current.archive.push(parent)
   //current.archive.animationComplete = false
-  for (const tns of current.archive) {
-    let nodeKey: keyof typeof tns
-    for (nodeKey in tns) {
-      const node = tns[nodeKey]
-      // print('preenode.animationComplete::', node.animationComplete)
+  for (const parentnode of current.archive) {
+    //   let nodeKey: keyof typeof tns
+    // for (nodeKey in tns) {
 
-      raise_letter(node)
-    }
+    // print('preenode.animationComplete::', node.animationComplete)
+
+    raise_letter(parentnode)
+    // }
   }
-
   //current.archive.animationComplete = true
 }
-function raise_letter(node: { clone: node }) {
+function raise_letter(clone: node) {
   //testjpf
   //then here we'd need node.clone
   //(maybe name better than node? nodeProps?.clone)
 
-  const pos = gui_get_position(node.clone)
-  const width = gui_get_size(node.clone).x / current.scale
+  const pos = gui_get_position(clone)
+  const width = gui_get_size(clone).x / current.scale
   const metrics: {
     width: number
     height: number
   } = resource_get_text_metrics(
-    gui_get_font_resource(gui_get_font(node.clone)),
+    gui_get_font_resource(gui_get_font(clone)),
     current.text
   )
   //const y = gui_get_size(node).y
@@ -379,49 +393,41 @@ function raise_letter(node: { clone: node }) {
 
   // const testjpf = gui_get_node(node.clone)
 
-  //const scale = gui_get_scale(node.clone)
+  const scale = gui_get_scale(clone)
   /**
    *
    * TESTJPF
    * WARNING:GUI: Out of animation resources (1024)
    * also for some reason just breaks with logic in txts
    * at least thats what i think is going on
-   * 
+   *
+   * */
   gui_animate(
-    node.clone,
+    clone,
     'scale',
     v3(scale.x - 0.05, scale.y - 0.05, 1),
     EASING_LINEAR,
     0.2,
     0
   )
-  */
+
   gui_animate(
-    node.clone,
+    clone,
     'position',
     v3(pos.x, pos.y + metrics.height * math.ceil(metrics.width / width), 0),
     EASING_LINEAR,
     0.2,
     0
-    //something like::
   )
 
   gui_animate(
-    node.clone,
+    clone,
     'color.w',
-    gui_get_alpha(node.clone) - 0.1,
+    gui_get_alpha(clone) - 0.05,
     EASING_LINEAR,
     0.2,
     0
-    //  () => setAnimComplete(node)
   )
-  //fart()
-  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-  //  print(`postnode.animationComplete::, ${node.animationComplete}`)
-
-  //animate_alpha(node, gui_get_alpha(node) - 0.1, 0.3, 0.3)
-
-  // gui_set_position
 }
 
 function fade_away() {
@@ -495,6 +501,7 @@ export function set_node(id: string) {
   // current.node = null
   //current.parent = null
   current.node = gui_get_node(id)
+  print('setnodeclone!', id)
   current.parent = gui_clone(current.node)
   gui_set_parent(current.parent, current.node, true)
   gui_set_scale(current.parent, v3(1, 1, 1))
@@ -538,6 +545,7 @@ export function change_typewriter(id: number) {
 // Clears old text && starts typing.
 function start(text: string) {
   print('Typewriter:: start(): text:', text)
+  delete_letters()
   start_typewriter(text, false)
 }
 
@@ -567,6 +575,7 @@ export function set_instant_text(text: string) {
   instant_text = text
   const duration = 0.1
   if (!current.instant_node) {
+    print('INSTATNTEXTCLONE!', text)
     current.instant_node = gui_clone(current.node)
     gui_set_parent(current.instant_node, current.node)
     gui_set_scale(current.instant_node, v3(current.scale, current.scale, 1))
@@ -589,6 +598,8 @@ export function set_instant_text(text: string) {
     gui_set_text(current.instant_node, text_with_lines_breaks)
 
   //[[
+  print('INSTATNTEXTCLONE222!!!! ::: PROBLEM????', text)
+
   current.instant_node = gui_clone(current.node)
   gui_set_text(current.instant_node, text)
   gui_set_alpha(current.instant_node, 0)

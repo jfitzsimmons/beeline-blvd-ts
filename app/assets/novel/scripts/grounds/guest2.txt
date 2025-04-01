@@ -1,9 +1,7 @@
 label defaultstart
-show n
 n: the v::reason {reason}
-
-    
-n: Got to keep an eye on your luggage.
+n: Got to keep an eye on your luggage. because ineed to test how many animation nodes i can animeate at one time before it maxs out and acts funny. am i there yet?????
+n: or is this some other bug cause by special characters?
 > What's with the workers here?
     jump guest2random1
 > What do they do with the luggage?

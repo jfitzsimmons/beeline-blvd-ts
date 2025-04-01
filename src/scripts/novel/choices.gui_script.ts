@@ -3,11 +3,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 //const matchanovel = require('main.novel.matchanovel')
 import { choose } from './matchanovel'
-const distance = 32
-const border_x = 32
-const border_y = 16
-const color_hovered = vmath.vector4(179 / 255, 102 / 255, 128 / 255, 1)
-const color_unhovered = vmath.vector4(0.8, 1, 1, 0.9)
+const distance = 24
+const border_x = 24
+const border_y = 8
+const color_hovered = vmath.vector4(179 / 255, 1, 128 / 255, 1)
+const color_unhovered = vmath.vector4(221 / 255, 1, 170 / 255, 1)
 const hover_duration = 0.2
 
 let active = false

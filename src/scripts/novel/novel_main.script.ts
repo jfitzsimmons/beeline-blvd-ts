@@ -9,60 +9,10 @@ interface props {
   cause: string
 }
 
-function prepare_novel_txts(
-  room: boolean | true = true,
-  extend: boolean | false = false
-) {
+function prepare_novel_txts(room = true, extend = false) {
   print('PNT::: frcn', novel.forced, novel.reason, novel.cause, novel.npc.name)
   //TESTJPF could move some logic to novelcontroller
   const paths: string[] = []
-
-  const quest_paths: string[] = prepareQuestTxts[player.checkpoint + 'scripts'](
-    novel.npc.name
-  )
-  print(
-    'NOVELVOVEL1:: questpaths',
-    quest_paths[0],
-    novel.npc.name,
-    novel.reason
-  )
-
-  let checkpoint = player.checkpoint.slice(0, -1)
-
-  if (extend == true) {
-    checkpoint = player.checkpoint
-  }
-  //const task = tasks.npcHasTask([novel.npc.name], ['player'])
-  //if (task != null) {
-  // print('NOVELVOVEL2 task1:', task.label)
-  //could use this at level addresstasks testjpf
-  // novel.task = { ...task }
-  //used for ai witnessing player and failing confrontation check
-  //questioning without accusation
-  // if (!['concern'].includes(novel.reason)) novel.reason = task.cause
-  // print('NOVELVOVEL2 task2: novel.reason:', novel.reason)
-  /**TESTJPF
-   * this is checking if npcs has arrest or task.
-   * Player is checked on level
-   * I believe this will overwrite player if NPX also has one of these tasks
-   * could test with test npc on grounds
-   * FIX:::
-   * this checks if already set
-   * naming could be better
-   */
-  //}
-  print('posttaskchk', novel.reason)
-  // if (
-  //  !['questioning', 'arrest'].includes(novel.reason) &&
-  //  ['questioning', 'arrest'].includes(novel.cause)
-  // ) {
-  //  novel.reason = novel.task.cause
-  // }
-  print('NOVELVOVEL2 task3: novel.reason:', novel.reason)
-
-  if (novel.npcsWithQuest.includes(novel.npc.name)) novel.reason = 'quest'
-  print('NOVELVOVEL3 quest??: novel.reason:', novel.reason)
-
   if (room) paths.unshift(player.currRoom + '/default')
   if (novel.npc.currStation != null) {
     paths.unshift('stations/' + novel.npc.currStation)
@@ -74,15 +24,26 @@ function prepare_novel_txts(
     : novel.reason
   paths.push(`reasons/${causeOrReason}`)
   paths.unshift('clans/' + novel.npc.clan)
+  const checkpoint =
+    extend == true ? player.checkpoint : player.checkpoint.slice(0, -1)
   paths.unshift(checkpoint + '/default')
-
   //TESTJPF one of these will/should have "label queststart"????
   //so reason will be quest and questScript will load appropriate txts
   // ex tutorial/getadoctor.txt
   // so stop worrying about reason = "quest"
   //you'll find a reason to use /reasons/quest.txt defaults
+  //testjpf this should be a Behavior!!! Todo!!
+  if (novel.npcsWithQuest.includes(novel.npc.name)) novel.reason = 'quest'
+  const quest_paths: string[] = prepareQuestTxts[player.checkpoint + 'scripts'](
+    novel.npc.name
+  )
+  print(
+    'NOVELVOVEL1:: questpaths',
+    quest_paths[0],
+    novel.npc.name,
+    novel.reason
+  )
   paths.push(...quest_paths)
-
   novel.scripts = paths
 }
 

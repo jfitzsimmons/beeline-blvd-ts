@@ -39,4 +39,5 @@ export interface NovelNpc {
   sincePlayerConvo: number
   love: number
   currStation: string
+  sprites: { smile: string }
 }

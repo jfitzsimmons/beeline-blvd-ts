@@ -1,16 +1,16 @@
-local save = require "main.novel.save"
-local files = require "main.novel.engine.defold.filesys"
+--local save = require "main.novel.save"
+--local files = require "main.novel.engine.defold.filesys"
 
-local M = {}
+--local M = {}
 
 -- table of all lines of script
-local script = {}
+--local script = {}
 -- table of actions of all lines of script
-local actions = {}
+--local actions = {}
 -- table of argument strings of all lines of script
-local arguments = {}
+----local arguments = {}
 -- table of position of all labels
-local labels = {}
+--local labels = {}
 --local file_labels = {}
 
 local define = true

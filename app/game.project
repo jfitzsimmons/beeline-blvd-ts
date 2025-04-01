@@ -1,5 +1,6 @@
 [project]
 title = Beeline Blvd
+custom_resources = assets
 dependencies#0 = https://github.com/ts-defold/defold-lldebugger/archive/extension.zip
 
 [bootstrap]
@@ -38,4 +39,7 @@ max_count = 14
 [sprite]
 subpixels = 1
 max_count = 430
+
+[gui]
+max_animation_count = 512
 

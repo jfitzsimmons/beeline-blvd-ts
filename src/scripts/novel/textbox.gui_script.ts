@@ -355,24 +355,22 @@ export function update(this: any, dt: number) {
     if (skip_t >= 1 / skip_per_second) end_skip()
   } else if (auto) {
     // print('textboxtestjpf::auto???', auto, auto_t, dt)
-
-    // 2 + 8*(1 - 50/100)
     //const  auto_duration = get_auto_duration()
     auto_t = auto_t + dt
     gui.set_fill_angle(gui.get_node('auto'), 360)
 
     if (auto_t < 6) {
-      print('textboxtestjpf:: autot>=6::', auto_t, dt)
+      //  print('textboxtestjpf:: autot>=6::', auto_t, dt)
 
       if (typewriter.get_state() == 'waiting') {
-        print('textboxtestjpf:: waiting::', typewriter.get_state(), dt)
+        //  print('textboxtestjpf:: waiting::', typewriter.get_state(), dt)
 
         auto_t = 0
-        typewriter.redraw(false)
+        //typewriter.redraw(false)
         auto = false
       }
     } else {
-      print('textboxtestjpf:: Elseelseelse::', auto_t, dt)
+      // print('textboxtestjpf:: Elseelseelse::', auto_t, dt)
       typewriter.redraw(true)
       auto_t = 0
     }
