@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import { Typewriter } from '../../types/novel'
-//import { toFixed } from '../../types/utils'
 
 let typewriters: { [key: number]: Typewriter } = {}
 let current: Typewriter
+let instant_text: string | boolean = false
 
 const v3 = vmath.vector3
 const string_sub = string.sub
@@ -24,20 +23,17 @@ const gui_get_node = gui.get_node
 const gui_get_size = gui.get_size
 const gui_set_alpha = gui.set_alpha
 const gui_get_alpha = gui.get_alpha
-const gui_set_line_break = gui.set_line_break
+////const gui_set_line_break = gui.set_line_break
 const gui_set_parent = gui.set_parent
 const gui_get_position = gui.get_position
 const gui_set_position = gui.set_position
 const gui_set_scale = gui.set_scale
 const gui_get_scale = gui.get_scale
-const gui_set_size = gui.set_size
-
+//const gui_set_size = gui.set_size
 //const gui_get_text = gui.get_text
 const gui_set_text = gui.set_text
 //const gui_get_id = gui.get_id
 const resource_get_text_metrics = resource.get_text_metrics
-
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const EASING_LINEAR = gui.EASING_LINEAR
 
 function animate_alpha(
@@ -140,10 +136,13 @@ function delete_letters() {
   }
   current.letter_nodes = {}
 
+  /**
+  print('DELETELETTERS:: NSTATN NODE???:', current.instant_node)
   if (current.instant_node) {
     gui_delete_node(current.instant_node)
     current.instant_node = null
   }
+    */
 }
 
 function set_letters(line_table: { [key: string]: string }, instant: boolean) {
@@ -324,6 +323,7 @@ function start_typewriter(text: string, instant: boolean) {
   const width = gui_get_size(current.node).x / current.scale
   const lines = split_text_into_lines(text, width)
   set_letters(lines, instant)
+  if (instant == true) hide_instant_text()
 }
 
 function end_typewriter() {
@@ -342,35 +342,28 @@ function archive_text() {
   //so textNodes[nodeKey].clone = guiclone()
   //textNodes[nodeKey].animationComplete = false
   const parent = gui_clone(gui_get_node('text'))
+  ////// if (instantNode !== null) {
+  //const child = gui_clone(instantNode)
+  //gui_set_alpha(child, 1)
+  // gui_set_parent(child, parent)
+  //} else {
   for (nodeKey in current.letter_nodes) {
     print('ARCHIVECLONE!', nodeKey)
     const child = gui_clone(current.letter_nodes[nodeKey])
     gui_set_alpha(child, 1)
     gui_set_parent(child, parent)
-    /////textNodes[nodeKey] = {
-    // clone: gui_clone(current.letter_nodes[nodeKey]),
-    // animationComplete: false,
-    //}
   }
 
   current.archive.push(parent)
   //current.archive.animationComplete = false
   for (const parentnode of current.archive) {
-    //   let nodeKey: keyof typeof tns
-    // for (nodeKey in tns) {
-
     // print('preenode.animationComplete::', node.animationComplete)
 
     raise_letter(parentnode)
-    // }
   }
   //current.archive.animationComplete = true
 }
 function raise_letter(clone: node) {
-  //testjpf
-  //then here we'd need node.clone
-  //(maybe name better than node? nodeProps?.clone)
-
   const pos = gui_get_position(clone)
   const width = gui_get_size(clone).x / current.scale
   const metrics: {
@@ -391,17 +384,8 @@ function raise_letter(clone: node) {
   // const scale = toFixed(gui_get_scale(node.clone).x)
   //print('0000::: node.animationComplete::', node.animationComplete)
 
-  // const testjpf = gui_get_node(node.clone)
-
   const scale = gui_get_scale(clone)
-  /**
-   *
-   * TESTJPF
-   * WARNING:GUI: Out of animation resources (1024)
-   * also for some reason just breaks with logic in txts
-   * at least thats what i think is going on
-   *
-   * */
+
   gui_animate(
     clone,
     'scale',
@@ -433,13 +417,7 @@ function raise_letter(clone: node) {
 function fade_away() {
   current.state = 'fade_away'
   archive_text()
-  /**
-   * testjpf
-   * archive_letternodes()
-   * move all previous entrees up if they exist
-   * else add new entry
-   * and animate it up
-   */
+
   let nodeKey: keyof typeof current.letter_nodes
   for (nodeKey in current.letter_nodes) {
     const node = current.letter_nodes[nodeKey]
@@ -546,76 +524,29 @@ export function change_typewriter(id: number) {
 function start(text: string) {
   print('Typewriter:: start(): text:', text)
   delete_letters()
-  start_typewriter(text, false)
+  start_typewriter(text, instant_text !== false)
 }
-
-function add_line_breaks(text: string, max_width: number) {
-  const text_lines = split_text_into_lines(text, max_width)
-  let text_with_lines_breaks
-  let first_line = true
-
-  let lKey: keyof typeof text_lines
-  for (lKey in text_lines) {
-    const line = text_lines[lKey]
-
-    //for k, v in pairs(text_lines) do
-    if (first_line) {
-      text_with_lines_breaks = line
-      first_line = false
-    } else {
-      text_with_lines_breaks = text_with_lines_breaks + '\n' + line
-    }
-  }
-  return text_with_lines_breaks
-}
-
-let instant_text: string | boolean
 
 export function set_instant_text(text: string) {
   instant_text = text
-  const duration = 0.1
-  if (!current.instant_node) {
-    print('INSTATNTEXTCLONE!', text)
-    current.instant_node = gui_clone(current.node)
-    gui_set_parent(current.instant_node, current.node)
-    gui_set_scale(current.instant_node, v3(current.scale, current.scale, 1))
-    gui_set_position(current.instant_node, v3(0, 0, 0))
-    gui_set_size(
-      current.instant_node,
-      v3(gui_get_size(current.node) / current.scale)
-    )
-    gui_set_line_break(current.instant_node, true)
-  }
-  gui_set_alpha(current.instant_node, 1)
-  gui_set_alpha(current.parent, 0)
-
-  const max_width = gui_get_size(current.instant_node).x
-  let text_with_lines_breaks = null
-  if (typeof text == 'string')
-    text_with_lines_breaks = add_line_breaks(text, max_width)
-
-  if (text_with_lines_breaks != null)
-    gui_set_text(current.instant_node, text_with_lines_breaks)
-
-  //[[
-  print('INSTATNTEXTCLONE222!!!! ::: PROBLEM????', text)
-
-  current.instant_node = gui_clone(current.node)
-  gui_set_text(current.instant_node, text)
-  gui_set_alpha(current.instant_node, 0)
-  animate_alpha(current.parent, 0, duration, 0)
-  animate_alpha(current.instant_node, 1, duration, duration)
-  //]]
 }
 
 export function hide_instant_text() {
+  print('prearchive.predelte:: ')
+  archive_text()
+  /**
   if (current.instant_node) {
+    print('DELETEDELETEDELETE:: ', current.instant_node)
+
     gui_delete_node(current.instant_node)
     current.instant_node = null
   }
+    */
   instant_text = false
   //animate_alpha(current.parent, 1, 0.2, 0, null)
   gui_set_alpha(current.parent, 1)
+  // msg.post('#textbox', 'typewriter_next')
+  redraw(false)
 }
 
 // Finishes current text if still typing, removes text && asks for next text if already typed.
@@ -646,13 +577,15 @@ export function reposition() {
 }
 
 export function redraw(instant: boolean) {
-  delete_letters()
-  if (instant_text) {
+  //delete_letters()
+  if (instant_text !== false) {
     set_instant_text(tostring(instant_text))
+    instant = true
   }
   if (current.state == 'empty') {
     return
   }
+  print('REDRAWWHATDO INSTANT:', instant_text, instant)
   start_typewriter(current.text, instant)
 }
 
