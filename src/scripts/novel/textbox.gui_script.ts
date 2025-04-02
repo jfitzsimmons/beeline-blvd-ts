@@ -287,6 +287,12 @@ export function on_message(
     show()
     say(message.text, message.name)
     //gui.set_text(gui.get_node("text"), message.text)
+  } else if (messageId == hash('sayInstant')) {
+    print('textbox:: INST:: SAY:', message.name)
+    typewriter.set_instant_text(message.text)
+    show()
+    say(message.text, message.name)
+    //gui.set_text(gui.get_node("text"), message.text)
   } else if (messageId == hash('typewriter_next')) {
     print('TXTBOXMSG:::typewriter_next')
     auto = true
