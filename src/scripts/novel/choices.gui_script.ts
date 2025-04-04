@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-//const matchanovel = require('main.novel.matchanovel')
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { novelsave } from '../../types/legacylua'
 import { choose } from './matchanovel'
 const distance = 24
 const border_x = 24
@@ -23,12 +22,9 @@ let nodes: { [key: number]: ChoiceNodes } = {}
 
 function get_text_size(node: node, text: string) {
   const font_resource = gui.get_font_resource(gui.get_font(node))
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const metrics: any = resource.get_text_metrics(font_resource, text)
   const text_scale = gui.get_scale(node)
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   const width = metrics.width * text_scale.x
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   const height = metrics.height * text_scale.y
   return [width, height]
 }
@@ -95,6 +91,13 @@ function create_choices(choices: { [key: number]: string }) {
 
 function pick_choices(choice: number) {
   active = false
+  print('gui.get_text(nodes[choice].text::', gui.get_text(nodes[choice].text))
+
+  msg.post('textbox#textbox', 'sayInstant', {
+    text: gui.get_text(nodes[choice].text),
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unsafe-call
+    name: novelsave.get_var('p.name')[1],
+  })
   choose(choice)
   delete_choices()
 }
