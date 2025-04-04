@@ -61,7 +61,68 @@ export function update(this: props, dt: number) {
 
   this.correction = vmath.vector3()
   this.input = vmath.vector3()
+
+  //   /level#ceiling
+
+  const fromcenterx = p.x - 704
+  const fromcentery = p.y - 448
+  const flipx = fromcenterx <= 0 ? 1 : -1
+  const flipy = fromcentery <= 0 ? 1 : -1
+  // const growwallx = flipx == 1 ? 0 : 1
+
+  go.set_position(
+    vmath.vector3(
+      80 * (math.abs(fromcenterx) / 704) * flipx,
+      80 * (math.abs(fromcentery) / 448) * flipy,
+      0.1
+    ),
+    '/shared/ceiling'
+  )
+
+  //TESTJPF NORT EXAMPLe
+  //fromcentery = -1
+  //flipy=1
+  //scaling = 0000.1 !!! should be .9999999999999!!!!
+  //growwally = 0
+  // const growwally = flipy == 1 ? 0 : 1
+  const scalingN = 1 + (math.abs(fromcentery) / 672) * flipy
+  const scalingS = 1 + (math.abs(fromcentery) / 672) * (flipy * -1)
+  const scalingE = 1 + (math.abs(fromcenterx) / 1056) * flipx
+  const scalingW = 1 + (math.abs(fromcenterx) / 1056) * (flipx * -1)
+  //pos y should start at 0 on load
+  //scaling should be 1
+  // wall height is really 896
+
+  // as player y grow, scale decreases, increasing northy by...???
+  //896 - (896 * scale)
+  const newpostiony = 896 - 896 * scalingN - (128 - 128 * scalingN)
+  const newpostiony2 = 128 - 128 * scalingS
+  const newpostionx = 1408 - 1408 * scalingE - (128 - 128 * scalingE)
+  const newpostionx2 = 128 - 128 * scalingW
+
+  print(
+    'YYY:::',
+    go.get_position('/north').y,
+    'TESTUPDATE:::',
+    fromcentery,
+    flipy,
+    scalingS,
+    newpostiony2
+  )
+  go.set_scale(vmath.vector3(1, scalingN, 1), '/north')
+  go.set_position(vmath.vector3(1, newpostiony, 0.3), '/north')
+  go.set_scale(vmath.vector3(1, scalingS, 1), '/south')
+  go.set_position(vmath.vector3(1, newpostiony2, 0.3), '/south')
+  go.set_scale(vmath.vector3(scalingE, 1, 1), '/east')
+  go.set_position(vmath.vector3(newpostionx, 1, 0.3), '/east')
+  go.set_scale(vmath.vector3(scalingW, 1, 1), '/west')
+  go.set_position(vmath.vector3(newpostionx2, 1, 0.3), '/west')
+  //0you want ceiling to plus./ minus 32pixels
+  // as player y increase ceiling y decrease
+  // x increase ceiling decrase
+  // vice versas
 }
+
 export function on_message(
   this: props,
   messageId: hash,

@@ -1,0 +1,216 @@
+tile_set: "/main/tile_sources/tiles64x64.tilesource"
+layers {
+  id: "layer1"
+  z: 0.0
+  cell {
+    x: 0
+    y: 0
+    tile: 81
+  }
+  cell {
+    x: 1
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 2
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 3
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 4
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 5
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 6
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 7
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 8
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 9
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 10
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 11
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 12
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 13
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 14
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 15
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 16
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 17
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 18
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 19
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 20
+    y: 0
+    tile: 49
+  }
+  cell {
+    x: 21
+    y: 0
+    tile: 80
+  }
+  cell {
+    x: 1
+    y: 1
+    tile: 67
+  }
+  cell {
+    x: 2
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 3
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 4
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 5
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 6
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 7
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 8
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 9
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 10
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 11
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 12
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 13
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 14
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 15
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 16
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 17
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 18
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 19
+    y: 1
+    tile: 34
+  }
+  cell {
+    x: 20
+    y: 1
+    tile: 64
+  }
+}
+material: "/builtins/materials/tile_map.material"

@@ -50,7 +50,7 @@ export default class WorldPlayer extends ActorState {
   clan: string
   constructor(name: string, playerProps: WorldPlayerArgs) {
     super(name, playerProps)
-    this.currRoom = 'grounds'
+    this.currRoom = 'reception'
     this.matrix = { x: 0, y: 4 }
     this.ap = 30
     this.apMax = 30
