@@ -22,12 +22,9 @@ let nodes: { [key: number]: ChoiceNodes } = {}
 
 function get_text_size(node: node, text: string) {
   const font_resource = gui.get_font_resource(gui.get_font(node))
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const metrics: any = resource.get_text_metrics(font_resource, text)
   const text_scale = gui.get_scale(node)
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   const width = metrics.width * text_scale.x
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   const height = metrics.height * text_scale.y
   return [width, height]
 }
