@@ -459,12 +459,6 @@ embedded_instances {
   "  component: \"/main/levels/01_vipreception/recNorthWall.tilemap\"\n"
   "}\n"
   ""
-  position {
-    y: 310.0
-  }
-  scale3 {
-    y: 0.6
-  }
 }
 embedded_instances {
   id: "south"
@@ -481,16 +475,6 @@ embedded_instances {
   "  component: \"/main/levels/01_vipreception/recWestWall.tilemap\"\n"
   "}\n"
   ""
-  position {
-    x: 50.0
-  }
-  rotation {
-    y: 0.17364818
-    w: 0.9848077
-  }
-  scale3 {
-    x: 0.6
-  }
 }
 embedded_instances {
   id: "east"

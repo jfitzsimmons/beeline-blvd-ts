@@ -95,28 +95,55 @@ export function update(this: props, dt: number) {
 
   // as player y grow, scale decreases, increasing northy by...???
   //896 - (896 * scale)
-  const newpostiony = 896 - 896 * scalingN - (128 - 128 * scalingN)
-  const newpostiony2 = 128 - 128 * scalingS
-  const newpostionx = 1408 - 1408 * scalingE - (128 - 128 * scalingE)
-  const newpostionx2 = 128 - 128 * scalingW
+  const newpostionyN = 896 - 896 * scalingN - (128 - 128 * scalingN)
+  const newpostionyS = 128 - 128 * scalingS
+  const newpostionxE = 1408 - 1408 * scalingE - (128 - 128 * scalingE)
+  const newpostionxW = 128 - 128 * scalingW
 
   print(
+    128 * (fromcentery / 672) + 128 - 128 * (1 + fromcentery / 672),
     'YYY:::',
     go.get_position('/north').y,
     'TESTUPDATE:::',
     fromcentery,
     flipy,
-    scalingS,
-    newpostiony2
+    1 - scalingN,
+    newpostionyS
   )
   go.set_scale(vmath.vector3(1, scalingN, 1), '/north')
-  go.set_position(vmath.vector3(1, newpostiony, 0.3), '/north')
+  go.set_position(vmath.vector3(0, newpostionyN, 0.3), '/north')
   go.set_scale(vmath.vector3(1, scalingS, 1), '/south')
-  go.set_position(vmath.vector3(1, newpostiony2, 0.3), '/south')
-  go.set_scale(vmath.vector3(scalingE, 1, 1), '/east')
-  go.set_position(vmath.vector3(newpostionx, 1, 0.3), '/east')
+  go.set_position(vmath.vector3(0, newpostionyS, 0.3), '/south')
   go.set_scale(vmath.vector3(scalingW, 1, 1), '/west')
-  go.set_position(vmath.vector3(newpostionx2, 1, 0.3), '/west')
+  go.set_position(
+    vmath.vector3(newpostionxW, 128 - 128 * (1 + fromcentery / 672), 0.3),
+    '/west'
+  )
+  go.set_scale(vmath.vector3(scalingE, 1, 1), '/east')
+
+  go.set_position(
+    vmath.vector3(
+      newpostionxE,
+      -672 + 128 - 128 * (1 + fromcentery / 672),
+      //-130,
+      0.3
+    ),
+    '/east'
+  )
+  /**
+  go.animate(
+    '/west',
+    'euler.z',
+    go.PLAYBACK_LOOP_FORWARD,
+    360,
+    go.EASING_INOUTSINE,
+    7
+  )
+    */
+  go.set('/west#recWestWall', 'skewYleft.y', fromcentery / 672)
+  //go.set('/east#recEastWall', 'skewYright.y', 1 + math.abs(fromcentery / 672))
+  go.set('/east#recEastWall', 'skewYleft.y', 0.5)
+
   //0you want ceiling to plus./ minus 32pixels
   // as player y increase ceiling y decrease
   // x increase ceiling decrase

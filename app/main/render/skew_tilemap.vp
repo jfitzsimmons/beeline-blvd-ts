@@ -1,0 +1,19 @@
+uniform mediump mat4 view_proj;
+
+attribute mediump vec4 position;
+attribute mediump vec2 texcoord0;
+
+varying mediump vec2 var_texcoord0;
+uniform lowp vec4 skewYleft;
+uniform lowp vec4 skewYright;
+
+void main()
+{
+    mat4 transform = mat4(
+        1,           skewYleft.x, 0,0,
+        skewYleft.y, skewYright.y,0,0,
+        0,           0,           1,0,
+        0,           0,           0,1);        
+        gl_Position = view_proj * (vec4(position.xyz, 1.0) * transform);
+    var_texcoord0 = texcoord0;
+}

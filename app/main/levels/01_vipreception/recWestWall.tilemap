@@ -138,4 +138,4 @@ layers {
     tile: 73
   }
 }
-material: "/builtins/materials/tile_map.material"
+material: "/main/render/tile_map_skewed_room.material"
