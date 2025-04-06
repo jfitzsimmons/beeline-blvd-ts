@@ -72,73 +72,64 @@ export function update(this: props, dt: number) {
 
   go.set_position(
     vmath.vector3(
-      80 * (math.abs(fromCenterX) / 704) * flipX,
-      80 * (math.abs(fromCenterY) / 448) * flipY,
+      50 * (math.abs(fromCenterX) / 1408) * flipX,
+      50 * (math.abs(fromCenterY) / 896) * flipY,
       0.1
     ),
     '/shared/ceiling'
   )
-
-  const yCorrectionSkew = 128 - 128 * (1 + fromCenterY / 672)
-  const xCorrectionSkew = fromCenterX / 1056
-  const scalingN = 1 + (math.abs(fromCenterY) / 672) * flipY
-  const scalingS = 1 + fromCenterY / 672
-  const scalingE = 1 + math.abs(xCorrectionSkew) * flipX
-  const scalingW = 1 + fromCenterX / 1056
+  const skewEastWest = fromCenterY / 1120
+  const skewNorthSouth = fromCenterX / 1760
+  const yCorrectionSkew = 128 - 128 * (1 + skewEastWest)
+  //const xCorrectionSkew = skewNorthSouth
+  const scalingN = 1 + math.abs(skewEastWest) * flipY
+  const scalingS = 1 + skewEastWest
+  const scalingE = 1 + math.abs(skewNorthSouth) * flipX
+  const scalingW = 1 + skewNorthSouth
   const positionYn = 896 - 896 * scalingN - (128 - 128 * scalingN)
   const positionYs = 128 - 128 * scalingS
   const positionXe = 1280
   const positionXw = 128 - 128 * scalingW
 
-  //const xCorrectionSkew = -fromCenterX / 1056 //- (scalingN - (128 - 128 * scalingN))
-  // NORTHWALL
-  go.set_scale(vmath.vector3(1, scalingN, 1), '/north')
-  go.set_position(
-    vmath.vector3(xCorrectionSkew * 896 + positionXw, positionYn, 0.3),
-    '/north'
-  )
-  go.set('/north#recNorthWall', 'skewRoom.x', -fromCenterX / 1056) //im moving the right side down a fractiion or the original 896!!
-
-  //SOUTHWALL
-  go.set_scale(vmath.vector3(1, scalingS, 1), '/south')
-  go.set_position(
-    vmath.vector3(-128 * xCorrectionSkew, positionYs, 0.3),
-    '/south'
-  )
-  go.set('/south#recSouthWall', 'skewRoom.x', fromCenterX / 1056) //im moving the right side down a fractiion or the original 896!!
-
   //WESTWALL
-  go.set('/west#recWestWall', 'skewRoom.y', fromCenterY / 672)
+  go.set('/west#recWestWall', 'skewRoom.y', skewEastWest)
   go.set_scale(vmath.vector3(scalingW, 1, 1), '/west')
   go.set_position(vmath.vector3(positionXw, yCorrectionSkew, 0.3), '/west')
 
   //EASTWALL
   //testjpf skew probably needs to be a little higher than west wall TODO minor
-  go.set('/east#recEastWall', 'skewRoom.y', -fromCenterY / 672) //im moving the right side down a fractiion or the original 896!!
+  go.set('/east#recEastWall', 'skewRoom.y', -skewEastWest) //im moving the right side down a fractiion or the original 896!!
   go.set_scale(vmath.vector3(scalingE, 1, 1), '/east')
   go.set_position(
-    vmath.vector3(
-      positionXe,
-      yCorrectionSkew + (fromCenterY / 672) * 1408,
-      0.3
-    ),
+    vmath.vector3(positionXe, yCorrectionSkew + skewEastWest * 1408, 0.3),
     '/east'
   )
 
+  // NORTHWALL
+  go.set_scale(vmath.vector3(1, scalingN, 1), '/north')
+  go.set_position(
+    vmath.vector3(skewNorthSouth * 896 + positionXw, positionYn, 0.3),
+    '/north'
+  )
+  go.set('/north#recNorthWall', 'skewRoom.x', -skewNorthSouth) //im moving the right side down a fractiion or the original 896!!
+
+  //SOUTHWALL
+  go.set_scale(vmath.vector3(1, scalingS, 1), '/south')
+  go.set_position(
+    vmath.vector3(-128 * skewNorthSouth, positionYs, 0.3),
+    '/south'
+  )
+  go.set('/south#recSouthWall', 'skewRoom.x', skewNorthSouth) //im moving the right side down a fractiion or the original 896!!
+
   print(
-    scalingE,
-    'MAIN:',
-    (fromCenterY / 672) * 1408,
-    'fromCenterY',
-    fromCenterY,
-    'WestAngle::',
-    fromCenterY / 672,
-    'EastAngle::',
-    -fromCenterY / 672,
+    'MAIN:northAngle::',
+    skewNorthSouth,
+    'westAngle::',
+    skewEastWest,
     'westpos::',
-    128 - 128 * (1 + fromCenterY / 672),
+    128 - 128 * (1 + skewEastWest),
     'eastpos:',
-    -1 * (128 - 128 * (1 + fromCenterY / 672))
+    -1 * (128 - 128 * (1 + skewEastWest))
   )
 }
 
