@@ -105,7 +105,7 @@ export function update(this: props, dt: number) {
   //896 - (896 * scale)
   const positionYn = 896 - 896 * scalingN - (128 - 128 * scalingN)
   const positionYs = 128 - 128 * scalingS
-  const positionXe = 1280 + (128 - 128 * scalingE)
+  const positionXe = 1280
   const positionXw = 128 - 128 * scalingW
   /** 
   print(
@@ -119,10 +119,17 @@ export function update(this: props, dt: number) {
     positionYs
   )
     */
+  //const testjpf = positionXw < 0 ? math.abs(positionXw) * 2 : 0
   const yCorrectionSkew = 128 - 128 * (1 + fromCenterY / 672)
+  //const xCorrectionSkew = 128 - 128 * (1 + -fromCenterX / 1056)
+  //const xCorrectionSkew = -fromCenterX / 1056 //- (scalingN - (128 - 128 * scalingN))
   // NORTHWALL
   go.set_scale(vmath.vector3(1, scalingN, 1), '/north')
-  go.set_position(vmath.vector3(0, positionYn, 0.3), '/north')
+  go.set_position(
+    vmath.vector3((fromCenterX / 1056) * 896 + positionXw, positionYn, 0.3),
+    '/north'
+  )
+  go.set('/north#recNorthWall', 'skewRoom.x', -fromCenterX / 1056) //im moving the right side down a fractiion or the original 896!!
 
   //SOUTHWALL
   go.set_scale(vmath.vector3(1, scalingS, 1), '/south')
@@ -145,8 +152,10 @@ export function update(this: props, dt: number) {
     ),
     '/east'
   )
-  /**
+
   print(
+    scalingE,
+    'MAIN:',
     (fromCenterY / 672) * 1408,
     'fromCenterY',
     fromCenterY,
@@ -159,7 +168,6 @@ export function update(this: props, dt: number) {
     'eastpos:',
     -1 * (128 - 128 * (1 + fromCenterY / 672))
   )
-    */
 }
 
 export function on_message(
