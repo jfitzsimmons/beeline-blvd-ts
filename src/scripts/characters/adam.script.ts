@@ -72,94 +72,65 @@ export function update(this: props, dt: number) {
 
   go.set_position(
     vmath.vector3(
-      80 * (math.abs(fromCenterX) / 704) * flipX,
-      80 * (math.abs(fromCenterY) / 448) * flipY,
+      50 * (math.abs(fromCenterX) / 1408) * flipX,
+      50 * (math.abs(fromCenterY) / 896) * flipY,
       0.1
     ),
     '/shared/ceiling'
   )
-
-  //TESTJPF NORT EXAMPLe
-  //fromCenterY = -1
-  //flipY=1
-  //scaling = 0000.1 !!! should be .9999999999999!!!!
-  //growwally = 0
-  // const growwally = flipY == 1 ? 0 : 1
-  //           ((-448(0) to 448)0 to 2/3) (-2/3 to 2/3)
-
-  /**
-   * testjpf ineed!!!
-   * how far from center because
-   * ex: N needs 1+ diff if below centerY,,,
-   * 1-diff if above
-   */
-  const scalingN = 1 + (math.abs(fromCenterY) / 672) * flipY
-  const scalingS = 1 + fromCenterY / 672
-  const scalingE = 1 + (math.abs(fromCenterX) / 1056) * flipX
-  const scalingW = 1 + fromCenterX / 1056
-  //pos y should start at 0 on load
-  //scaling should be 1
-  // wall height is really 896
-
-  // as player y grow, scale decreases, increasing northy by...???
-  //896 - (896 * scale)
+  const skewEastWest = fromCenterY / 1120
+  const skewNorthSouth = fromCenterX / 1760
+  const yCorrectionSkew = 128 - 128 * (1 + skewEastWest)
+  //const xCorrectionSkew = skewNorthSouth
+  const scalingN = 1 + math.abs(skewEastWest) * flipY
+  const scalingS = 1 + skewEastWest
+  const scalingE = 1 + math.abs(skewNorthSouth) * flipX
+  const scalingW = 1 + skewNorthSouth
   const positionYn = 896 - 896 * scalingN - (128 - 128 * scalingN)
   const positionYs = 128 - 128 * scalingS
-  const positionXe = 1280 + (128 - 128 * scalingE)
+  const positionXe = 1280
   const positionXw = 128 - 128 * scalingW
-  /** 
-  print(
-    -1 * (128 - 128 * (1 + fromCenterY / 672)),
-    'YYY:::',
-    go.get_position('/north').y,
-    'TESTUPDATE:::',
-    fromCenterY,
-    flipY,
-    1 - scalingN,
-    positionYs
-  )
-    */
-  const yCorrectionSkew = 128 - 128 * (1 + fromCenterY / 672)
-  // NORTHWALL
-  go.set_scale(vmath.vector3(1, scalingN, 1), '/north')
-  go.set_position(vmath.vector3(0, positionYn, 0.3), '/north')
-
-  //SOUTHWALL
-  go.set_scale(vmath.vector3(1, scalingS, 1), '/south')
-  go.set_position(vmath.vector3(0, positionYs, 0.3), '/south')
 
   //WESTWALL
-  go.set('/west#recWestWall', 'skewRoom.y', fromCenterY / 672)
+  go.set('/west#recWestWall', 'skewRoom.y', skewEastWest)
   go.set_scale(vmath.vector3(scalingW, 1, 1), '/west')
   go.set_position(vmath.vector3(positionXw, yCorrectionSkew, 0.3), '/west')
 
   //EASTWALL
   //testjpf skew probably needs to be a little higher than west wall TODO minor
-  go.set('/east#recEastWall', 'skewRoom.y', -fromCenterY / 672) //im moving the right side down a fractiion or the original 896!!
+  go.set('/east#recEastWall', 'skewRoom.y', -skewEastWest) //im moving the right side down a fractiion or the original 896!!
   go.set_scale(vmath.vector3(scalingE, 1, 1), '/east')
   go.set_position(
-    vmath.vector3(
-      positionXe,
-      yCorrectionSkew + (fromCenterY / 672) * 1408,
-      0.3
-    ),
+    vmath.vector3(positionXe, yCorrectionSkew + skewEastWest * 1408, 0.3),
     '/east'
   )
-  /**
-  print(
-    (fromCenterY / 672) * 1408,
-    'fromCenterY',
-    fromCenterY,
-    'WestAngle::',
-    fromCenterY / 672,
-    'EastAngle::',
-    -fromCenterY / 672,
-    'westpos::',
-    128 - 128 * (1 + fromCenterY / 672),
-    'eastpos:',
-    -1 * (128 - 128 * (1 + fromCenterY / 672))
+
+  // NORTHWALL
+  go.set_scale(vmath.vector3(1, scalingN, 1), '/north')
+  go.set_position(
+    vmath.vector3(skewNorthSouth * 896 + positionXw, positionYn, 0.3),
+    '/north'
   )
-    */
+  go.set('/north#recNorthWall', 'skewRoom.x', -skewNorthSouth) //im moving the right side down a fractiion or the original 896!!
+
+  //SOUTHWALL
+  go.set_scale(vmath.vector3(1, scalingS, 1), '/south')
+  go.set_position(
+    vmath.vector3(-128 * skewNorthSouth, positionYs, 0.3),
+    '/south'
+  )
+  go.set('/south#recSouthWall', 'skewRoom.x', skewNorthSouth) //im moving the right side down a fractiion or the original 896!!
+
+  print(
+    'MAIN:northAngle::',
+    skewNorthSouth,
+    'westAngle::',
+    skewEastWest,
+    'westpos::',
+    128 - 128 * (1 + skewEastWest),
+    'eastpos:',
+    -1 * (128 - 128 * (1 + skewEastWest))
+  )
 }
 
 export function on_message(
