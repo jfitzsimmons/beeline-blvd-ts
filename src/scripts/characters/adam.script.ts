@@ -64,90 +64,102 @@ export function update(this: props, dt: number) {
 
   //   /level#ceiling
 
-  const fromcenterx = p.x - 704
-  const fromcentery = p.y - 448
-  const flipx = fromcenterx <= 0 ? 1 : -1
-  const flipy = fromcentery <= 0 ? 1 : -1
-  // const growwallx = flipx == 1 ? 0 : 1
+  const fromCenterX = p.x - 704
+  const fromCenterY = p.y - 448
+  const flipX = fromCenterX <= 0 ? 1 : -1
+  const flipY = fromCenterY <= 0 ? 1 : -1
+  // const growwallx = flipX == 1 ? 0 : 1
 
   go.set_position(
     vmath.vector3(
-      80 * (math.abs(fromcenterx) / 704) * flipx,
-      80 * (math.abs(fromcentery) / 448) * flipy,
+      80 * (math.abs(fromCenterX) / 704) * flipX,
+      80 * (math.abs(fromCenterY) / 448) * flipY,
       0.1
     ),
     '/shared/ceiling'
   )
 
   //TESTJPF NORT EXAMPLe
-  //fromcentery = -1
-  //flipy=1
+  //fromCenterY = -1
+  //flipY=1
   //scaling = 0000.1 !!! should be .9999999999999!!!!
   //growwally = 0
-  // const growwally = flipy == 1 ? 0 : 1
-  const scalingN = 1 + (math.abs(fromcentery) / 672) * flipy
-  const scalingS = 1 + (math.abs(fromcentery) / 672) * (flipy * -1)
-  const scalingE = 1 + (math.abs(fromcenterx) / 1056) * flipx
-  const scalingW = 1 + (math.abs(fromcenterx) / 1056) * (flipx * -1)
+  // const growwally = flipY == 1 ? 0 : 1
+  //           ((-448(0) to 448)0 to 2/3) (-2/3 to 2/3)
+
+  /**
+   * testjpf ineed!!!
+   * how far from center because
+   * ex: N needs 1+ diff if below centerY,,,
+   * 1-diff if above
+   */
+  const scalingN = 1 + (math.abs(fromCenterY) / 672) * flipY
+  const scalingS = 1 + fromCenterY / 672
+  const scalingE = 1 + (math.abs(fromCenterX) / 1056) * flipX
+  const scalingW = 1 + fromCenterX / 1056
   //pos y should start at 0 on load
   //scaling should be 1
   // wall height is really 896
 
   // as player y grow, scale decreases, increasing northy by...???
   //896 - (896 * scale)
-  const newpostionyN = 896 - 896 * scalingN - (128 - 128 * scalingN)
-  const newpostionyS = 128 - 128 * scalingS
-  const newpostionxE = 1408 - 1408 * scalingE - (128 - 128 * scalingE)
-  const newpostionxW = 128 - 128 * scalingW
-
+  const positionYn = 896 - 896 * scalingN - (128 - 128 * scalingN)
+  const positionYs = 128 - 128 * scalingS
+  const positionXe = 1280 + (128 - 128 * scalingE)
+  const positionXw = 128 - 128 * scalingW
+  /** 
   print(
-    128 * (fromcentery / 672) + 128 - 128 * (1 + fromcentery / 672),
+    -1 * (128 - 128 * (1 + fromCenterY / 672)),
     'YYY:::',
     go.get_position('/north').y,
     'TESTUPDATE:::',
-    fromcentery,
-    flipy,
+    fromCenterY,
+    flipY,
     1 - scalingN,
-    newpostionyS
+    positionYs
   )
+    */
+  const yCorrectionSkew = 128 - 128 * (1 + fromCenterY / 672)
+  // NORTHWALL
   go.set_scale(vmath.vector3(1, scalingN, 1), '/north')
-  go.set_position(vmath.vector3(0, newpostionyN, 0.3), '/north')
-  go.set_scale(vmath.vector3(1, scalingS, 1), '/south')
-  go.set_position(vmath.vector3(0, newpostionyS, 0.3), '/south')
-  go.set_scale(vmath.vector3(scalingW, 1, 1), '/west')
-  go.set_position(
-    vmath.vector3(newpostionxW, 128 - 128 * (1 + fromcentery / 672), 0.3),
-    '/west'
-  )
-  go.set_scale(vmath.vector3(scalingE, 1, 1), '/east')
+  go.set_position(vmath.vector3(0, positionYn, 0.3), '/north')
 
+  //SOUTHWALL
+  go.set_scale(vmath.vector3(1, scalingS, 1), '/south')
+  go.set_position(vmath.vector3(0, positionYs, 0.3), '/south')
+
+  //WESTWALL
+  go.set('/west#recWestWall', 'skewRoom.y', fromCenterY / 672)
+  go.set_scale(vmath.vector3(scalingW, 1, 1), '/west')
+  go.set_position(vmath.vector3(positionXw, yCorrectionSkew, 0.3), '/west')
+
+  //EASTWALL
+  //testjpf skew probably needs to be a little higher than west wall TODO minor
+  go.set('/east#recEastWall', 'skewRoom.y', -fromCenterY / 672) //im moving the right side down a fractiion or the original 896!!
+  go.set_scale(vmath.vector3(scalingE, 1, 1), '/east')
   go.set_position(
     vmath.vector3(
-      newpostionxE,
-      -672 + 128 - 128 * (1 + fromcentery / 672),
-      //-130,
+      positionXe,
+      yCorrectionSkew + (fromCenterY / 672) * 1408,
       0.3
     ),
     '/east'
   )
   /**
-  go.animate(
-    '/west',
-    'euler.z',
-    go.PLAYBACK_LOOP_FORWARD,
-    360,
-    go.EASING_INOUTSINE,
-    7
+  print(
+    (fromCenterY / 672) * 1408,
+    'fromCenterY',
+    fromCenterY,
+    'WestAngle::',
+    fromCenterY / 672,
+    'EastAngle::',
+    -fromCenterY / 672,
+    'westpos::',
+    128 - 128 * (1 + fromCenterY / 672),
+    'eastpos:',
+    -1 * (128 - 128 * (1 + fromCenterY / 672))
   )
     */
-  go.set('/west#recWestWall', 'skewYleft.y', fromcentery / 672)
-  //go.set('/east#recEastWall', 'skewYright.y', 1 + math.abs(fromcentery / 672))
-  go.set('/east#recEastWall', 'skewYleft.y', 0.5)
-
-  //0you want ceiling to plus./ minus 32pixels
-  // as player y increase ceiling y decrease
-  // x increase ceiling decrase
-  // vice versas
 }
 
 export function on_message(

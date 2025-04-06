@@ -483,4 +483,7 @@ embedded_instances {
   "  component: \"/main/levels/01_vipreception/recEastWall.tilemap\"\n"
   "}\n"
   ""
+  position {
+    x: 1280.0
+  }
 }

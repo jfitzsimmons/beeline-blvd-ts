@@ -17,15 +17,8 @@ fragment_constants {
   }
 }
 fragment_constants {
-  name: "skewYleft"
+  name: "skewRoom"
   type: CONSTANT_TYPE_USER
   value {
-  }
-}
-fragment_constants {
-  name: "skewYright"
-  type: CONSTANT_TYPE_USER
-  value {
-    y: 1.0
   }
 }
