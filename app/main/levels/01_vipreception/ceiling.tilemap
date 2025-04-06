@@ -2,7 +2,6 @@ tile_set: "/main/tile_sources/tiles64x64.tilesource"
 layers {
   id: "layer1"
   z: 0.5
-  is_visible: 0
   cell {
     x: 0
     y: 0
