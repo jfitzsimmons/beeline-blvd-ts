@@ -43,7 +43,4 @@ embedded_components {
   "  texture: \"/main/levels/01_vipreception/level1.atlas\"\n"
   "}\n"
   ""
-  position {
-    z: 1.0
-  }
 }

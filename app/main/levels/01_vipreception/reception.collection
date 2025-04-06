@@ -5,7 +5,7 @@ instances {
   position {
     x: 1354.0
     y: 384.0
-    z: 1.0
+    z: 0.7
   }
   rotation {
     z: -0.70710677
@@ -18,7 +18,7 @@ instances {
   position {
     x: 640.0
     y: 842.0
-    z: 1.0
+    z: 0.7
   }
 }
 instances {
@@ -162,7 +162,7 @@ collection_instances {
   id: "customslite"
   collection: "/main/levels/adjacents/customslite.collection"
   position {
-    y: 896.0
+    y: 832.0
   }
 }
 collection_instances {
@@ -185,12 +185,13 @@ collection_instances {
   collection: "/main/levels/adjacents/baggagelite.collection"
   position {
     x: -1408.0
-    y: 896.0
+    y: 832.0
   }
 }
 scale_along_z: 0
 embedded_instances {
   id: "level"
+  children: "walls"
   data: "components {\n"
   "  id: \"background\"\n"
   "  component: \"/main/levels/01_vipreception/decolvl1.tilemap\"\n"
@@ -198,75 +199,6 @@ embedded_instances {
   "components {\n"
   "  id: \"reception\"\n"
   "  component: \"/scripts/levels/reception.script\"\n"
-  "}\n"
-  "embedded_components {\n"
-  "  id: \"walls\"\n"
-  "  type: \"collisionobject\"\n"
-  "  data: \"type: COLLISION_OBJECT_TYPE_STATIC\\n"
-  "mass: 0.0\\n"
-  "friction: 1.0\\n"
-  "restitution: 0.5\\n"
-  "group: \\\"default\\\"\\n"
-  "mask: \\\"default\\\"\\n"
-  "embedded_collision_shape {\\n"
-  "  shapes {\\n"
-  "    shape_type: TYPE_BOX\\n"
-  "    position {\\n"
-  "      x: 701.0\\n"
-  "      y: 838.0\\n"
-  "    }\\n"
-  "    rotation {\\n"
-  "    }\\n"
-  "    index: 0\\n"
-  "    count: 3\\n"
-  "  }\\n"
-  "  shapes {\\n"
-  "    shape_type: TYPE_BOX\\n"
-  "    position {\\n"
-  "      x: 701.0\\n"
-  "      y: 92.0\\n"
-  "    }\\n"
-  "    rotation {\\n"
-  "    }\\n"
-  "    index: 3\\n"
-  "    count: 3\\n"
-  "  }\\n"
-  "  shapes {\\n"
-  "    shape_type: TYPE_BOX\\n"
-  "    position {\\n"
-  "      x: 58.0\\n"
-  "      y: 442.0\\n"
-  "    }\\n"
-  "    rotation {\\n"
-  "    }\\n"
-  "    index: 6\\n"
-  "    count: 3\\n"
-  "  }\\n"
-  "  shapes {\\n"
-  "    shape_type: TYPE_BOX\\n"
-  "    position {\\n"
-  "      x: 1352.0\\n"
-  "      y: 437.0\\n"
-  "    }\\n"
-  "    rotation {\\n"
-  "    }\\n"
-  "    index: 9\\n"
-  "    count: 3\\n"
-  "  }\\n"
-  "  data: 650.0\\n"
-  "  data: 30.0\\n"
-  "  data: 10.0\\n"
-  "  data: 650.0\\n"
-  "  data: 30.0\\n"
-  "  data: 10.0\\n"
-  "  data: 30.0\\n"
-  "  data: 400.0\\n"
-  "  data: 10.0\\n"
-  "  data: 30.0\\n"
-  "  data: 400.0\\n"
-  "  data: 10.0\\n"
-  "}\\n"
-  "\"\n"
   "}\n"
   ""
 }
@@ -441,5 +373,117 @@ embedded_instances {
   scale3 {
     x: 2.0
     y: 2.0
+  }
+}
+embedded_instances {
+  id: "walls"
+  children: "east"
+  children: "north"
+  children: "south"
+  children: "west"
+  data: "embedded_components {\n"
+  "  id: \"walls\"\n"
+  "  type: \"collisionobject\"\n"
+  "  data: \"type: COLLISION_OBJECT_TYPE_STATIC\\n"
+  "mass: 0.0\\n"
+  "friction: 1.0\\n"
+  "restitution: 0.5\\n"
+  "group: \\\"default\\\"\\n"
+  "mask: \\\"default\\\"\\n"
+  "embedded_collision_shape {\\n"
+  "  shapes {\\n"
+  "    shape_type: TYPE_BOX\\n"
+  "    position {\\n"
+  "      x: 701.0\\n"
+  "      y: 838.0\\n"
+  "    }\\n"
+  "    rotation {\\n"
+  "    }\\n"
+  "    index: 0\\n"
+  "    count: 3\\n"
+  "  }\\n"
+  "  shapes {\\n"
+  "    shape_type: TYPE_BOX\\n"
+  "    position {\\n"
+  "      x: 701.0\\n"
+  "      y: 92.0\\n"
+  "    }\\n"
+  "    rotation {\\n"
+  "    }\\n"
+  "    index: 3\\n"
+  "    count: 3\\n"
+  "  }\\n"
+  "  shapes {\\n"
+  "    shape_type: TYPE_BOX\\n"
+  "    position {\\n"
+  "      x: 58.0\\n"
+  "      y: 442.0\\n"
+  "    }\\n"
+  "    rotation {\\n"
+  "    }\\n"
+  "    index: 6\\n"
+  "    count: 3\\n"
+  "  }\\n"
+  "  shapes {\\n"
+  "    shape_type: TYPE_BOX\\n"
+  "    position {\\n"
+  "      x: 1352.0\\n"
+  "      y: 437.0\\n"
+  "    }\\n"
+  "    rotation {\\n"
+  "    }\\n"
+  "    index: 9\\n"
+  "    count: 3\\n"
+  "  }\\n"
+  "  data: 650.0\\n"
+  "  data: 30.0\\n"
+  "  data: 10.0\\n"
+  "  data: 650.0\\n"
+  "  data: 30.0\\n"
+  "  data: 10.0\\n"
+  "  data: 30.0\\n"
+  "  data: 400.0\\n"
+  "  data: 10.0\\n"
+  "  data: 30.0\\n"
+  "  data: 400.0\\n"
+  "  data: 10.0\\n"
+  "}\\n"
+  "\"\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "north"
+  data: "components {\n"
+  "  id: \"recNorthWall\"\n"
+  "  component: \"/main/levels/01_vipreception/recNorthWall.tilemap\"\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "south"
+  data: "components {\n"
+  "  id: \"recSouthWall\"\n"
+  "  component: \"/main/levels/01_vipreception/recSouthWall.tilemap\"\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "west"
+  data: "components {\n"
+  "  id: \"recWestWall\"\n"
+  "  component: \"/main/levels/01_vipreception/recWestWall.tilemap\"\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "east"
+  data: "components {\n"
+  "  id: \"recEastWall\"\n"
+  "  component: \"/main/levels/01_vipreception/recEastWall.tilemap\"\n"
+  "}\n"
+  ""
+  position {
+    x: 1280.0
   }
 }
