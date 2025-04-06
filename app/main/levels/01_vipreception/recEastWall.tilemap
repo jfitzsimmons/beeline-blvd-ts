@@ -1,0 +1,136 @@
+tile_set: "/main/tile_sources/tiles64x64.tilesource"
+layers {
+  id: "layer1"
+  z: 0.0
+  cell {
+    x: 1
+    y: 0
+    tile: 117
+  }
+  cell {
+    x: 0
+    y: 1
+    tile: 101
+  }
+  cell {
+    x: 1
+    y: 1
+    tile: 52
+  }
+  cell {
+    x: 0
+    y: 2
+    tile: 51
+  }
+  cell {
+    x: 1
+    y: 2
+    tile: 52
+  }
+  cell {
+    x: 0
+    y: 3
+    tile: 51
+  }
+  cell {
+    x: 1
+    y: 3
+    tile: 52
+  }
+  cell {
+    x: 0
+    y: 4
+    tile: 51
+  }
+  cell {
+    x: 1
+    y: 4
+    tile: 52
+  }
+  cell {
+    x: 0
+    y: 5
+    tile: 51
+  }
+  cell {
+    x: 1
+    y: 5
+    tile: 52
+  }
+  cell {
+    x: 0
+    y: 6
+    tile: 51
+  }
+  cell {
+    x: 1
+    y: 6
+    tile: 52
+  }
+  cell {
+    x: 0
+    y: 7
+    tile: 51
+  }
+  cell {
+    x: 1
+    y: 7
+    tile: 52
+  }
+  cell {
+    x: 0
+    y: 8
+    tile: 51
+  }
+  cell {
+    x: 1
+    y: 8
+    tile: 52
+  }
+  cell {
+    x: 0
+    y: 9
+    tile: 51
+  }
+  cell {
+    x: 1
+    y: 9
+    tile: 52
+  }
+  cell {
+    x: 0
+    y: 10
+    tile: 51
+  }
+  cell {
+    x: 1
+    y: 10
+    tile: 52
+  }
+  cell {
+    x: 0
+    y: 11
+    tile: 51
+  }
+  cell {
+    x: 1
+    y: 11
+    tile: 52
+  }
+  cell {
+    x: 0
+    y: 12
+    tile: 86
+  }
+  cell {
+    x: 1
+    y: 12
+    tile: 52
+  }
+  cell {
+    x: 1
+    y: 13
+    tile: 72
+  }
+}
+material: "/main/render/tile_map_skewed_room.material"

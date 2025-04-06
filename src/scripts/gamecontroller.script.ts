@@ -30,7 +30,7 @@ function show(currentProxy: url | null, p: string) {
 export function init(this: props) {
   this.currentProxy = null
   this.loadType = 'game init'
-  this.roomName = 'grounds'
+  this.roomName = 'receptiion'
   this.isPaused = false
 
   gamesave.init() // checks if theres app support data and if you're out of save slots
@@ -62,7 +62,7 @@ export function on_message(
       //THE GAMEPROXY IS A LIE! TESTJPF
 
       const params = {
-        roomName: 'grounds',
+        roomName: 'reception',
         loadType: 'new game',
       }
       msg.post('worldproxies:/controller#worldcontroller', 'pick_room', params)
