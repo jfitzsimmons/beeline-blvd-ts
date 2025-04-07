@@ -201,6 +201,9 @@ embedded_instances {
   "  component: \"/scripts/levels/reception.script\"\n"
   "}\n"
   ""
+  position {
+    y: -3.0
+  }
 }
 embedded_instances {
   id: "deskarea"
@@ -467,6 +470,9 @@ embedded_instances {
   "  component: \"/main/levels/01_vipreception/recSouthWall.tilemap\"\n"
   "}\n"
   ""
+  position {
+    y: -768.0
+  }
 }
 embedded_instances {
   id: "west"
