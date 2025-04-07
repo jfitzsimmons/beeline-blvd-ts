@@ -155,37 +155,60 @@ collection_instances {
   id: "admin1lite"
   collection: "/main/levels/adjacents/admin1lite.collection"
   position {
-    x: 1408.0
+    x: 1376.0
+    y: 16.0
+  }
+  scale3 {
+    x: 0.96
+    y: 0.96
   }
 }
 collection_instances {
   id: "customslite"
   collection: "/main/levels/adjacents/customslite.collection"
   position {
-    y: 832.0
+    x: 32.0
+    y: 864.0
+  }
+  scale3 {
+    x: 0.96
+    y: 0.96
   }
 }
 collection_instances {
   id: "groundslite"
   collection: "/main/levels/adjacents/groundslite.collection"
   position {
-    x: -1408.0
+    x: -1320.0
+    y: 16.0
+  }
+  scale3 {
+    x: 0.96
+    y: 0.96
   }
 }
 collection_instances {
   id: "securitylite"
   collection: "/main/levels/adjacents/securitylite.collection"
   position {
-    x: 1408.0
-    y: -896.0
+    x: 1376.0
+    y: -840.0
+  }
+  scale3 {
+    x: 0.96
+    y: 0.96
   }
 }
 collection_instances {
   id: "baggagelite"
   collection: "/main/levels/adjacents/baggagelite.collection"
   position {
-    x: -1408.0
-    y: 832.0
+    x: -1320.0
+    y: 864.0
+  }
+  scale3 {
+    x: 0.96
+    y: 0.96
   }
 }
 scale_along_z: 0
