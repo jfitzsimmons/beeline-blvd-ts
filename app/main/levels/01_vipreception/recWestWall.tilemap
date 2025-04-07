@@ -8,11 +8,6 @@ layers {
     tile: 118
   }
   cell {
-    x: 1
-    y: 0
-    tile: 65
-  }
-  cell {
     x: 0
     y: 1
     tile: 53
