@@ -10,7 +10,7 @@ layers {
   cell {
     x: 1
     y: 12
-    tile: 49
+    tile: 82
   }
   cell {
     x: 2
@@ -105,12 +105,17 @@ layers {
   cell {
     x: 20
     y: 12
-    tile: 49
+    tile: 79
   }
   cell {
     x: 21
     y: 12
     tile: 80
+  }
+  cell {
+    x: 0
+    y: 13
+    tile: 66
   }
   cell {
     x: 1
@@ -211,6 +216,11 @@ layers {
     x: 20
     y: 13
     tile: 64
+  }
+  cell {
+    x: 21
+    y: 13
+    tile: 65
   }
 }
 material: "/main/render/tile_map_skewed_room.material"

@@ -88,8 +88,8 @@ export function update(this: props, dt: number) {
   const scalingE = 1 + math.abs(fromCenterX / 2240) * flipX
   const scalingW = 1 + fromCenterX / 2240
   const positionYn = 896 - 896 * scalingN - (128 - 128 * scalingN)
-  const positionYs = -768 + (896 - 896 * scalingS) //- (128 - 128 * scalingS + (128 - 128 * scalingS))
-  const positionXe = 1280
+  const positionYs = 896 - (768 - 768 * scalingS)
+  const positionXe = 1408 - (128 - 128 * scalingE)
   const positionXw = 128 - 128 * scalingW
 
   //WESTWALL
@@ -102,7 +102,7 @@ export function update(this: props, dt: number) {
   go.set('/east#recEastWall', 'skewRoom.y', -skewEastWest) //im moving the right side down a fractiion or the original 896!!
   go.set_scale(vmath.vector3(scalingE, 1, 1), '/east')
   go.set_position(
-    vmath.vector3(positionXe, yCorrectionSkew + skewEastWest * 1408, 0.3),
+    vmath.vector3(positionXe, yCorrectionSkew + skewEastWest * 1408 + 896, 0.3),
     '/east'
   )
 
@@ -116,7 +116,10 @@ export function update(this: props, dt: number) {
 
   //SOUTHWALL
   go.set_scale(vmath.vector3(1, scalingS, 1), '/south')
-  go.set_position(vmath.vector3(-128 * southTESTJPF, positionYs, 0.3), '/south')
+  go.set_position(
+    vmath.vector3(-128 * southTESTJPF + 1408, positionYs, 0.3),
+    '/south'
+  )
   go.set('/south#recSouthWall', 'skewRoom.x', southTESTJPF) //im moving the right side down a fractiion or the original 896!!
 
   print(

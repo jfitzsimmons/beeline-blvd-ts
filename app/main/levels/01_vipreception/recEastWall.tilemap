@@ -3,6 +3,11 @@ layers {
   id: "layer1"
   z: 0.0
   cell {
+    x: 0
+    y: 0
+    tile: 116
+  }
+  cell {
     x: 1
     y: 0
     tile: 117
@@ -15,7 +20,7 @@ layers {
   cell {
     x: 1
     y: 1
-    tile: 52
+    tile: 102
   }
   cell {
     x: 0
@@ -125,7 +130,12 @@ layers {
   cell {
     x: 1
     y: 12
-    tile: 52
+    tile: 87
+  }
+  cell {
+    x: 0
+    y: 13
+    tile: 71
   }
   cell {
     x: 1
