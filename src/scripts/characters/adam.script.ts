@@ -121,18 +121,6 @@ export function update(this: props, dt: number) {
     '/south'
   )
   go.set('/south#recSouthWall', 'skewRoom.x', southTESTJPF) //im moving the right side down a fractiion or the original 896!!
-
-  print(
-    'MAIN:northAngle::',
-    skewNorthSouth,
-    'westAngle::',
-    skewEastWest,
-    'positions n,s,e,w::',
-    positionYn,
-    positionYs,
-    positionXe,
-    positionXw
-  )
 }
 
 export function on_message(

@@ -29,8 +29,10 @@ default_texture_min_filter = nearest_mipmap_linear
 texture_profiles = /builtins/graphics/default.texture_profiles
 
 [physics]
-gravity_y = -820.0
+gravity_y = -800.0
 debug = 0
+use_fixed_timestep = 1
+scale = 0.2
 
 [tilemap]
 max_tile_count = 4000
