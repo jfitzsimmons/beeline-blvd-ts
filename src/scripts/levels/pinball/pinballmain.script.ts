@@ -41,10 +41,11 @@ function apply_flipper_force(flipper: string, offset: vmath.vector3) {
 }
 
 function remove_flipper_force(flipper: string, offset: vmath.vector3) {
+  print('remove_flipper_force', flipper)
   const position = go.get_position(flipper)
   const message = {
     position: position + offset,
-    force: vmath.vector3(0, -500, 0), // times mass
+    force: vmath.vector3(0, -5000, 0), // times mass
   }
   msg.post(flipper, 'apply_force', message)
 }
@@ -54,7 +55,6 @@ export function init(this: props) {
   this.right = false
 
   create_flipper_joint('lflipper#collisionobject', 'lhinge#collisionobject')
-  // create_flipper_joint('lflipper#rubber', 'lhinge#collisionobject')
   create_flipper_joint('llflipper#collisionobject', 'llhinge#collisionobject')
   create_flipper_joint('rflipper#collisionobject', 'rhinge#collisionobject')
   create_flipper_joint('rrflipper#collisionobject', 'rrhinge#collisionobject')
@@ -67,16 +67,10 @@ export function fixed_update(this: props, _dt: number) {
     // apply_flipper_force('lflipper#rubber', vmath.vector3(300, 0, 0))
     apply_flipper_force('lflipper#collisionobject', vmath.vector3(300, 0, 0))
     apply_flipper_force('llflipper#collisionobject', vmath.vector3(300, 0, 0))
-  } else {
-    remove_flipper_force('lflipper#collisionobject', vmath.vector3(300, 0, 0))
-    remove_flipper_force('llflipper#collisionobject', vmath.vector3(300, 0, 0))
   }
   if (this.right) {
     apply_flipper_force('rflipper#collisionobject', vmath.vector3(-300, 0, 0))
     apply_flipper_force('rrflipper#collisionobject', vmath.vector3(-300, 0, 0))
-  } else {
-    remove_flipper_force('rflipper#collisionobject', vmath.vector3(-300, 0, 0))
-    remove_flipper_force('rrflipper#collisionobject', vmath.vector3(-300, 0, 0))
   }
 }
 
@@ -85,11 +79,29 @@ export function on_input(
   actionId: hash,
   action: {
     value: number
+    released: boolean
   }
 ) {
   if (actionId == hash('leftflip')) {
     this.left = action.value != 0
+    if (action.released) {
+      remove_flipper_force('lflipper#collisionobject', vmath.vector3(300, 0, 0))
+      remove_flipper_force(
+        'llflipper#collisionobject',
+        vmath.vector3(300, 0, 0)
+      )
+    }
   } else if (actionId == hash('rightflip')) {
     this.right = action.value != 0
+    if (action.released) {
+      remove_flipper_force(
+        'rflipper#collisionobject',
+        vmath.vector3(-300, 0, 0)
+      )
+      remove_flipper_force(
+        'rrflipper#collisionobject',
+        vmath.vector3(-300, 0, 0)
+      )
+    }
   }
 }
