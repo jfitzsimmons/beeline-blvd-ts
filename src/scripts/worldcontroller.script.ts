@@ -113,6 +113,6 @@ export function on_input(
   } else if (actionId == hash('info_gui') && action.released) {
     msg.post('#', 'toggle_info')
   } else if (actionId == hash('pinball') && action.released) {
-    msg.post('proxies:/controller#pinballcontroller', 'show_pinball')
+    msg.post('/controller#pinballcontroller', 'show_pinball')
   }
 }
