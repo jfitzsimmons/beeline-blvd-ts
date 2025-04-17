@@ -12,7 +12,6 @@ function create_flipper_joint(flipper: string, hinge: string) {
   const position_b = vmath.vector3(0, 0, 0)
   const properties = {
     enable_limit: true, // A flag to enable joint limits.
-    //testjpf flip neg and psitive for left flip??
     reference_angle: math.rad(0), // The bodyB angle minus bodyA angle in the reference state (radians).
     lower_angle: math.rad(-30), // The lower angle for the joint limit (radians).
     upper_angle: math.rad(30), // The upper angle for the joint limit (radians).

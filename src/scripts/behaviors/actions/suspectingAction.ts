@@ -232,9 +232,6 @@ export default class SuspectingAction extends Action {
     //testjpf
     if (this.isHero === false) {
       if (consequence.type == 'snitch') {
-        //testjpf::
-        //new SnitchSequence()
-        //snitch sequence should weight concern lower than theft.
         if (this.a.clan == 'security') {
           for (const behavior of this.a.behavior.active.children) {
             if (

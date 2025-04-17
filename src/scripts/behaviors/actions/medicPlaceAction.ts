@@ -24,9 +24,7 @@ export default class MedicPlaceAction extends Action {
           this.a.currRoom = 'infirmary'
           return () => this.success()
         }
-        //testjpf instead parent.checkSetStation()
-        //would have to redo conditional logic.
-        //!! I think this logic is badd anyway
+        //testjpf
         //this has no ELSE!!!
         //!!! RELY on () => success()  INSTEAD
       } else if (infirmed > 2) {

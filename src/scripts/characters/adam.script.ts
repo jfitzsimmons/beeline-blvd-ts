@@ -79,8 +79,8 @@ export function update(this: props, dt: number) {
     '/shared/ceiling'
   )
   const skewEastWest = fromCenterY / 1224
-  const skewNorthSouth = fromCenterX / (2240 + fromCenterY * -2)
-  const southTESTJPF = fromCenterX / (2240 + -fromCenterY * -2)
+  const skewNorth = fromCenterX / (2240 + fromCenterY * -2)
+  const skewSouth = fromCenterX / (2240 + -fromCenterY * -2)
   const yCorrectionSkew = 128 - 128 * (1 + skewEastWest * 1.1)
   const xCorrectionSkew = fromCenterX / (2240 + fromCenterY * -1.8)
   const scalingN = 1 + math.abs(fromCenterY / 1280) * flipY
@@ -112,15 +112,15 @@ export function update(this: props, dt: number) {
     vmath.vector3(xCorrectionSkew * 896 + positionXw, positionYn, 0.3),
     '/north'
   )
-  go.set('/north#recNorthWall', 'skewRoom.x', -skewNorthSouth) //im moving the right side down a fractiion or the original 896!!
+  go.set('/north#recNorthWall', 'skewRoom.x', -skewNorth) //im moving the right side down a fractiion or the original 896!!
 
   //SOUTHWALL
   go.set_scale(vmath.vector3(1, scalingS, 1), '/south')
   go.set_position(
-    vmath.vector3(-128 * southTESTJPF + 1408, positionYs, 0.3),
+    vmath.vector3(-128 * skewSouth + 1408, positionYs, 0.3),
     '/south'
   )
-  go.set('/south#recSouthWall', 'skewRoom.x', southTESTJPF) //im moving the right side down a fractiion or the original 896!!
+  go.set('/south#recSouthWall', 'skewRoom.x', skewSouth) //im moving the right side down a fractiion or the original 896!!
 }
 
 export function on_message(

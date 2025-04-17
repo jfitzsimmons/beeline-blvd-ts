@@ -38,6 +38,6 @@ export default class ScoutAction extends Action {
     )
     // if (isNpc(this.a))
     // prettier-ignore
-    //print('PlaceAction:: Success::', this.a.name, 'placedin:', this.a.currRoom, this.a.currStation, '||| from:',   this.a.exitRoom ) //testjpf
+    //print('PlaceAction:: Success::', this.a.name, 'placedin:', this.a.currRoom, this.a.currStation, '||| from:',   this.a.exitRoom )
   }
 }

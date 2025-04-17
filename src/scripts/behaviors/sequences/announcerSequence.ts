@@ -23,7 +23,7 @@ export default class AnnouncerSequence extends Sequence {
     turnActions.push(...[new AnnouncerAction(getProps, announcee, purpose)])
 
     super(turnActions)
-    //testjpf updating a doesnt update npc? getter setter?
+
     this.a = props
     this.announcee = announcee
     this.announcee.cooldown = 3

@@ -19,7 +19,6 @@ export default class InjuredSequence extends Sequence {
     turnActions.push(...[new InjuredAction(getProps)])
 
     super(turnActions)
-    //testjpf updating a doesnt update npc? getter setter?
     this.a = props
     this.getProps = getProps
     this.a.updateFromBehavior('turnPriority', 98)

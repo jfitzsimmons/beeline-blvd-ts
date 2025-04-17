@@ -77,7 +77,7 @@ export default class WorldNpcs {
     this.fsm = new StateMachine(this, 'npcs')
     this.fsm.addState('idle')
     this.fsm.addState('place', {
-      onEnter: this.onPlaceEnter.bind(this),
+      // onEnter: this.onPlaceEnter.bind(this),
       onUpdate: this.onPlaceUpdate.bind(this),
       onExit: this.onPlaceExit.bind(this),
     })
@@ -183,12 +183,9 @@ export default class WorldNpcs {
       npc.fsm.setState('active')
     }
   }
-  private onPlaceEnter(): void {
-    //testjpf
-  }
 
   private onPlaceUpdate(): void {
-    const rpctestjpc: {
+    const rpctestjpf: {
       [key: string]: {
         npcs: string[]
         occupants: number
@@ -214,21 +211,21 @@ export default class WorldNpcs {
       // print(rpc[npc.currRoom][npc.aiPath])
       npc.fsm.update(dt)
 
-      if (rpctestjpc[npc.currRoom] != null) {
-        rpctestjpc[npc.currRoom].occupants += 1
+      if (rpctestjpf[npc.currRoom] != null) {
+        rpctestjpf[npc.currRoom].occupants += 1
       } else {
-        rpctestjpc[npc.currRoom] = {
+        rpctestjpf[npc.currRoom] = {
           occupants: 1,
           ai: { clyde: 0, pinky: 0, blinky: 0, inky: 0 },
           npcs: [],
         }
       }
-      rpctestjpc[npc.currRoom].npcs.push(npc.name)
+      rpctestjpf[npc.currRoom].npcs.push(npc.name)
 
-      if (rpctestjpc[npc.currRoom].ai[npc.aiPath] != null) {
-        rpctestjpc[npc.currRoom].ai[npc.aiPath] += 1
+      if (rpctestjpf[npc.currRoom].ai[npc.aiPath] != null) {
+        rpctestjpf[npc.currRoom].ai[npc.aiPath] += 1
       } else {
-        rpctestjpc[npc.currRoom].ai[npc.aiPath] = 1
+        rpctestjpf[npc.currRoom].ai[npc.aiPath] = 1
       }
 
       playerRoom == npc.currRoom
@@ -246,9 +243,9 @@ export default class WorldNpcs {
       // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
     }
     /**
-    let rk: keyof typeof rpctestjpc
-    for (rk in rpctestjpc) {
-     // const room = rpctestjpc[rk]
+    let rk: keyof typeof rpctestjpf
+    for (rk in rpctestjpf) {
+     // const room = rpctestjpf[rk]
       getRoomPlaceCount(rk)
 
      // print('NPCSrpc::: occs: ', rk, room.occupants)
@@ -267,7 +264,6 @@ export default class WorldNpcs {
   }
 
   private onPlaceExit(): void {
-    //filter out onscreen testjpf
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
 
