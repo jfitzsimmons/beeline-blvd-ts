@@ -29,10 +29,8 @@ let window_resized_zoom = 1
 function init_textbox() {
   const node_color = gui.get_node('textbox_color')
   //const scale = gui.get_scale(gui.get_node('gui'))
-  // print('TEXTBOXTEST:::: display_width,scale.x', display_width, scale.x)
   const w = 900
   const h = 896
-  print('TEXTBOXTEST:::: w,h', w, h)
 
   const size_color = vmath.vector3(
     math.floor(w),
@@ -41,7 +39,6 @@ function init_textbox() {
   )
   gui.set_size(node_color, size_color)
   gui.set_alpha(node_color, alpha)
-  print('TEXTBOXTEST:::: node_color, size_color', node_color, size_color)
   gui.set_position(node_color, vmath.vector3(950, 0, 0))
   const node_gradient = gui.get_node('textbox_gradient')
   if (textbox_gradient_y != null) {
@@ -354,29 +351,20 @@ export function on_input(
 }
 
 export function update(this: any, dt: number) {
-  //print('textboxtestjpf::UPDATE!!!', auto, auto_t, dt)
-
   if (skipping) {
     skip_t = skip_t + dt
     if (skip_t >= 1 / skip_per_second) end_skip()
   } else if (auto) {
-    // print('textboxtestjpf::auto???', auto, auto_t, dt)
-    //const  auto_duration = get_auto_duration()
     auto_t = auto_t + dt
     gui.set_fill_angle(gui.get_node('auto'), 360)
 
     if (auto_t < 6) {
-      //  print('textboxtestjpf:: autot>=6::', auto_t, dt)
-
       if (typewriter.get_state() == 'waiting') {
-        //  print('textboxtestjpf:: waiting::', typewriter.get_state(), dt)
-
         auto_t = 0
         //typewriter.redraw(false)
         auto = false
       }
     } else {
-      // print('textboxtestjpf:: Elseelseelse::', auto_t, dt)
       typewriter.redraw(true)
       auto_t = 0
     }

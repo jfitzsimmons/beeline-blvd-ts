@@ -10,11 +10,8 @@ embedded_components {
   "friction: 0.1\n"
   "restitution: 0.0\n"
   "group: \"ball\"\n"
-  "mask: \"flipper\"\n"
-  "mask: \"wall\"\n"
   "mask: \"respawn\"\n"
-  "mask: \"bumper\"\n"
-  "mask: \"floor\"\n"
+  "mask: \"obstacles\"\n"
   "embedded_collision_shape {\n"
   "  shapes {\n"
   "    shape_type: TYPE_SPHERE\n"
@@ -27,6 +24,8 @@ embedded_components {
   "  }\n"
   "  data: 18.0\n"
   "}\n"
+  "event_contact: false\n"
+  "event_trigger: false\n"
   ""
 }
 embedded_components {

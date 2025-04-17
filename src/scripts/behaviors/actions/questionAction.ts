@@ -40,15 +40,8 @@ export default class QuestionAction extends Action {
   run(): { (): void } {
     this.perp = this.perp.getBehaviorProps('question') as QuestionProps
     this.a = this.getProps('question') as QuestionProps
-    //if (this.a.getApb().includes(target)) {
-    // this.p.world.returnNpc(this.target).fsm.setState('arrestee')
-    // return
-    // } else if (this.label == 'questioning') {
-    //testjpf convert rest!!!:::
-    //testjpf insetad of removng patient and prisoners
-    //make it a condition?!?!?TODO NOW::
-    const currRoom = this.a.currRoom == this.perp.currRoom
 
+    const currRoom = this.a.currRoom == this.perp.currRoom
     const crossedPaths =
       currRoom === true
         ? currRoom
@@ -56,6 +49,7 @@ export default class QuestionAction extends Action {
             (s: string) =>
               s === this.perp.name && this.perp.exitRoom == this.a.currRoom
           ).length > 0
+
     if (crossedPaths === false) {
       const cops = Object.values(this.a.getOccupants(this.a.currRoom)).filter(
         (s: string) => s !== this.a.name && s.substring(0, 3) == 'sec'

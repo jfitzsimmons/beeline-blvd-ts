@@ -38,8 +38,6 @@ export default class JailedAction extends Action {
       this.a.cooldown
     )
     if (this.a.cooldown < 1) {
-      //cooldown too??? testjpf
-      //this.a.removeInfirmed(this.a.name)
       print('JailedAction:: cooldown reset. RE-PLACE npc??')
       return () => this.success()
     }

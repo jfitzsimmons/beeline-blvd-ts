@@ -23,7 +23,6 @@ export default class RecklessSequence extends Sequence {
     turnActions.push(...[new RecklessAction(getProps, inspirer, purpose)])
 
     super(turnActions)
-    //testjpf updating a doesnt update npc? getter setter?
     this.a = props
     this.inspirer = inspirer
     this.inspirer.cooldown = 3
