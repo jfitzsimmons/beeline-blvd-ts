@@ -1,58 +1,68 @@
 images {
   image: "/assets/pinball/ball.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/assets/pinball/flipper.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/pinball/bumper1.png"
+}
+images {
+  image: "/assets/pinball/inlane.png"
+}
+images {
+  image: "/assets/pinball/bumper3.png"
 }
 animations {
   id: "flipperani"
   images {
     image: "/assets/pinball/flipper.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
+  fps: 1
 }
 animations {
   id: "flipperanir"
   images {
     image: "/assets/pinball/flipper.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
+  fps: 1
   flip_horizontal: 1
-  flip_vertical: 0
 }
 animations {
   id: "bumper1ani"
   images {
-    image: "/assets/pinball/bumper1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+    image: "/assets/pinball/bumper2.png"
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
-  flip_horizontal: 0
-  flip_vertical: 0
+  fps: 1
 }
 animations {
   id: "bumper1anir"
   images {
-    image: "/assets/pinball/bumper1.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+    image: "/assets/pinball/bumper2.png"
   }
-  playback: PLAYBACK_ONCE_FORWARD
-  fps: 30
+  fps: 1
   flip_horizontal: 1
-  flip_vertical: 0
 }
-margin: 0
+animations {
+  id: "inlaneani"
+  images {
+    image: "/assets/pinball/inlane.png"
+  }
+  fps: 1
+}
+animations {
+  id: "inlaneanir"
+  images {
+    image: "/assets/pinball/inlane.png"
+  }
+  fps: 1
+  flip_horizontal: 1
+}
+animations {
+  id: "bumperSmall"
+  images {
+    image: "/assets/pinball/bumper3.png"
+  }
+  fps: 1
+}
 extrude_borders: 2
-inner_padding: 0
-max_page_width: 0
-max_page_height: 0
-rename_patterns: ""
