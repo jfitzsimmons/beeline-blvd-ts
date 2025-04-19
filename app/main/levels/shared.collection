@@ -3,7 +3,7 @@ instances {
   id: "adam"
   prototype: "/main/characters/adam.go"
   position {
-    z: 1.0
+    z: 0.3
   }
 }
 instances {

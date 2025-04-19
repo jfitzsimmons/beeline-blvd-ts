@@ -88,8 +88,13 @@ instances {
   id: "guest"
   prototype: "/main/characters/npc_loader.go"
   position {
-    x: 705.0
-    y: 344.0
+    x: -999.0
+    y: -999.0
+    z: -1.0
+  }
+  scale3 {
+    x: 0.1
+    y: 0.1
     z: 0.1
   }
 }
