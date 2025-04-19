@@ -3,8 +3,8 @@ instances {
   id: "ball"
   prototype: "/main/levels/pinball/ball.go"
   position {
-    x: 1239.0
-    y: 223.0
+    x: 121.0
+    y: 217.0
     z: 1.0
   }
 }
