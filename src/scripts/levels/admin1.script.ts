@@ -21,9 +21,6 @@ function load_npcs() {
     msg.post(`/${swaps[swap][0]}#npc_loader`, 'load_npc', params)
   }
 
-  //TESTJPF do you need any of these sopecific level files?
-  //see how much you can move to main level.ts
-
   const npc = rooms.fallbacks.stations.admin1_passer
   msg.post('/admin1_passer#npc_loader', 'load_npc', { npc })
 }

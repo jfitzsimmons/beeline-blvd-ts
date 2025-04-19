@@ -33,8 +33,7 @@ export default class CopPlaceAction extends Action {
           filled
         )
 
-        //testjpf instead parent.checkSetStation()
-        //would have to redo conditional logic.
+        //testjpf
         //!! I think this logic is badd anyway
         //this has no ELSE!!!
         //!!! RELY on () => success()  INSTEAD

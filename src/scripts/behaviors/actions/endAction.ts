@@ -1,12 +1,6 @@
-import {
-  ActionProps,
-  BehaviorKeys,
-  // DefaultBehaviorProps,
-} from '../../../types/behaviors'
+import { ActionProps, BehaviorKeys } from '../../../types/behaviors'
 import Storage from '../../states/storage'
-
 import Action from '../action'
-//testjpf DELTEE ME ?!?!?!?
 export default class EndAction extends Action {
   props: [
     string,
@@ -24,9 +18,7 @@ export default class EndAction extends Action {
       Storage?
     ]
   ) {
-    //const props = getProps('injury') as DefaultBehaviorProps
     super()
-    // this.a = props
     this.props = sequenceProps
   }
   run(): { (): void } {

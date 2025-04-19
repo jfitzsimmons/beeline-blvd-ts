@@ -69,9 +69,6 @@ function load_adjacent() {
     }
   }
 
-  //TESTJPF do you need any of these sopecific level files?
-  //see how much you can move to main level.ts
-
   let npc = rooms.fallbacks.stations.admin1_passer
   msg.post('/admin1lite/admin1_passer#npc_loader', 'load_shell', { npc })
 

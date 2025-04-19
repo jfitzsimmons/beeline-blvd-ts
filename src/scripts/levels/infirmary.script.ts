@@ -1,6 +1,6 @@
 const { rooms } = globalThis.game.world
 function load_npcs() {
-  const roomName = 'infirmary' // testjpf remove hardcode string!
+  const roomName = 'infirmary'
 
   const stations: { [key: string]: string } = rooms.all[roomName].stations
   let station: keyof typeof stations

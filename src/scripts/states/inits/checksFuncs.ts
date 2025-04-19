@@ -130,43 +130,7 @@ export function pledgeCheck(
 
   return { pass: false, type: 'neutral' }
 }
-/**
-export function playerSnitchCheck(
-  this: WorldTasks,
-  priors: boolean,
-  cop: string,
-  cause: string
-): Consequence {
-  ///testjpf still nrrd to figure out alert_level!!!
-  //do alert_level search
 
-  let caution_state = 'questioning'
-  const player = this.parent.returnPlayer()
-  if (player.alert_level > 3) caution_state = 'arrest'
-  player.alert_level =
-    priors == null ? player.alert_level + 1 : player.alert_level + 2
-  if (player.alert_level > 5 && this.npcHasTask([cop], ['player']) == null) {
-    this.taskBuilder(cop, 'snitch', 'player', cause)
-  }
-  // print('plauer snitch chk :: alertlvl::', player.alert_level)
-  return { pass: true, type: caution_state }
-}
-export function npcCommitSnitchCheck(
-  this: WorldTasks,
-  c: string,
-  t: string
-): Consequence {
-  let caution_state = 'questioning'
-  const cop = this.p.world.returnNpc(c)
-  const target = this.p.world.returnNpc(t)
-  if (this.npcHasTask([c], [t], ['questioning', 'arrest'])) {
-    cop.traits.opinion[target.clan] = cop.traits.opinion[target.clan] - 1
-    // print('NPCSNITCHCHK')
-    if (math.random() < 0.33) caution_state = 'arrest'
-  }
-  return { pass: true, type: caution_state }
-}
-  */
 //Checks and Helpers
 //effects
 function addMasterCriminal(
@@ -650,9 +614,6 @@ export function suspicious_check(
 }
 
 export function seen_check(
-  //_this: WorldTasks,
-  //TESTJPF\
-  //REMOVE player, trimdown npc state.
   t: ThiefVictimProps,
   watcher: AttendantProps
 ): { confront: boolean; type: string } {
@@ -783,18 +744,6 @@ export function witnessPlayer(
   print('witness_player::: consequence:', consequence.pass, consequence.type)
 
   return consequence
-
-  /**
-   * consequence = testjpfplayerthief_consequences('player', w, seen)
-  print(
-    'witness_player:: w,confront,type::',
-    w,
-    consequence.confront,
-    consequence.type
-  )
-
-  return consequence
-  **/
 }
 // only being used between npcs (just tutorial luggage)
 //this.npcs.checks.stealCheck
