@@ -8,7 +8,7 @@ embedded_components {
   data: "collision_shape: \"/main/levels/pinball/pinballCollisions.tilemap\"\n"
   "type: COLLISION_OBJECT_TYPE_STATIC\n"
   "mass: 0.0\n"
-  "friction: 1.0\n"
+  "friction: 0.1\n"
   "restitution: 0.1\n"
   "group: \"obstacles\"\n"
   "mask: \"ball\"\n"

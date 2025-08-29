@@ -65,4 +65,18 @@ animations {
   }
   fps: 1
 }
+animations {
+  id: "rampH"
+  images {
+    image: "/assets/pinball/rampH.png"
+  }
+  fps: 1
+}
+animations {
+  id: "rampV"
+  images {
+    image: "/assets/pinball/rampV.png"
+  }
+  fps: 1
+}
 extrude_borders: 2
