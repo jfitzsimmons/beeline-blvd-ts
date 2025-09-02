@@ -87,13 +87,28 @@ export interface Rooms {
 }
 export interface Room {
   matrix: { x: number; y: number }
-  roomName: string
+  name: string
   clearance: number
-  stations: { [key: string]: string }
-  swaps: Swaps
+  //swaps: Swaps
   actors: Actors
   props?: string[]
-  wards?: Wards
+  focus: boolean
+  onScreen: boolean
+  //wards?: Wards
+}
+export interface Stations {
+  [key: string]: Station
+}
+export interface Station {
+  name: string
+  room: string
+  roles?: string[]
+  occupant: string
+  swap?: string
+  schedule: string
+  ward: boolean
+  fallback: boolean
+  onScreen: boolean
 }
 export interface Wards {
   [key: string]: string

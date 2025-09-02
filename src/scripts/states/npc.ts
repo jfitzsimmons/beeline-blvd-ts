@@ -95,8 +95,8 @@ export default class NpcState extends ActorState {
         },
         cops: () => {
           return {
-            checkSetStation: this.p.rooms.checkSetStation.bind(this),
-            getWards: this.p.rooms.getWards.bind(this),
+            // checkSetStation: this.p.rooms.checkSetStation.bind(this),
+            // getWards: this.p.rooms.getWards.bind(this),
             getWantedQueue: this.p.npcs.getWantedQueue.bind(this),
             addAdjustWantedQueue: this.p.npcs.addAdjustWantedQueue.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
@@ -110,8 +110,8 @@ export default class NpcState extends ActorState {
             clan: this.clan,
             exitRoom: this.exitRoom,
             findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
-            checkSetStation: this.p.rooms.checkSetStation.bind(this),
-            getWards: this.p.rooms.getWards.bind(this),
+            // checkSetStation: this.p.rooms.checkSetStation.bind(this),
+            //  getWards: this.p.rooms.getWards.bind(this),
             getMendingQueue: this.p.npcs.getMendingQueue.bind(this),
             returnMendeeLocation: this.p.npcs.returnMendeeLocation.bind(this),
             ...behaviorDefaults(),
@@ -139,7 +139,7 @@ export default class NpcState extends ActorState {
         },
         immobile: () => {
           return {
-            pruneStationMap: this.p.rooms.pruneStationMap.bind(this),
+            //    pruneStationMap: this.p.rooms.pruneStationMap.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -149,7 +149,7 @@ export default class NpcState extends ActorState {
             exitRoom: this.exitRoom,
             returnNpc: this.p.world.returnNpc.bind(this),
             getMendingQueue: this.p.npcs.getMendingQueue.bind(this),
-            getOccupants: this.p.rooms.getOccupants.bind(this),
+            //    getOccupants: this.p.rooms.getOccupants.bind(this),
             getIgnore: this.p.npcs.getIgnore.bind(this),
             addAdjustMendingQueue: this.p.npcs.addAdjustMendingQueue.bind(this),
             getFocusedRoom: this.p.rooms.getFocusedRoom.bind(this),
@@ -161,7 +161,7 @@ export default class NpcState extends ActorState {
             clearance: this.clearance,
             clan: this.clan,
             returnNpc: this.p.world.returnNpc.bind(this),
-            getOccupants: this.p.rooms.getOccupants.bind(this),
+            //   getOccupants: this.p.rooms.getOccupants.bind(this),
             addAdjustMendingQueue: this.p.npcs.addAdjustMendingQueue.bind(this),
             exitRoom: this.exitRoom,
             findRoomPlaceStation: this.findRoomPlaceStation.bind(this),
@@ -183,7 +183,7 @@ export default class NpcState extends ActorState {
         infirm: () => {
           return {
             exitRoom: this.exitRoom,
-            sendToVacancy: this.p.rooms.sendToVacancy.bind(this),
+            // sendToVacancy: this.p.rooms.sendToVacancy.bind(this),
             // addInfirmed: this.p.addInfirmed.bind(this),
             ...behaviorDefaults(),
           }
@@ -191,7 +191,7 @@ export default class NpcState extends ActorState {
         infirmed: () => {
           return {
             clearance: this.clearance,
-            getOccupants: this.p.rooms.getOccupants.bind(this),
+            //    getOccupants: this.p.rooms.getOccupants.bind(this),
             // removeInfirmed: this.p.removeInfirmed.bind(this),
             ...behaviorDefaults(),
           }
@@ -208,7 +208,7 @@ export default class NpcState extends ActorState {
             addInvBonus: this.addInvBonus.bind(this),
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
-            getOccupants: this.p.rooms.getOccupants.bind(this),
+            //  getOccupants: this.p.rooms.getOccupants.bind(this),
             updateInventory: this.updateInventory.bind(this),
             returnNpc: this.p.world.returnNpc.bind(this),
             addAdjustWantedQueue: this.p.npcs.addAdjustWantedQueue.bind(this),
@@ -221,7 +221,7 @@ export default class NpcState extends ActorState {
             love: this.love,
             traits: this.traits,
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
-            getOccupants: this.p.rooms.getOccupants.bind(this),
+            //  getOccupants: this.p.rooms.getOccupants.bind(this),
             returnNpc: this.p.world.returnNpc.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
             ...behaviorDefaults(),
@@ -353,16 +353,16 @@ export default class NpcState extends ActorState {
     const rooms = r !== undefined ? r : this.makePriorityRoomList(roomTarget)
 
     this.exitRoom = this.currRoom
-
+    //TODO most importatn need to figure out new station stuff as POC
     const { chosenRoom, chosenStation } = fillStationAttempt(
       rooms,
       this.name,
       this.matrix,
-      this.clan,
-      this.p.rooms.getStationMap()
+      this.clan
+      // this.p.rooms.getStationMap()
     )
-    this.p.rooms.clearStation(this.currRoom, this.currStation, this.name)
-    this.p.rooms.setStation(chosenRoom, chosenStation, this.name)
+    // this.p.rooms.clearStation(this.currRoom, this.currStation, this.name)
+    // this.p.rooms.setStation(chosenRoom, chosenStation, this.name)
 
     //prettier-ignore
     print('length:!:',rooms.length,this.name,':: findRoomPlaceStation ::',chosenRoom,chosenStation,':EXIT:',this.exitRoom)
@@ -441,22 +441,5 @@ export default class NpcState extends ActorState {
   add_effects_bonus(e: Effect) {
     this.traits[e.fx.type]![e.fx.stat] =
       this.traits[e.fx.type]![e.fx.stat] + e.fx.adjustment
-  }
-  remove_effects_bonus(e: Effect) {
-    this.traits[e.fx.type]![e.fx.stat] =
-      this.traits[e.fx.type]![e.fx.stat] - e.fx.adjustment
-  }
-  remove_effects(effects: Effect[]) {
-    if (effects.length < 1) return
-    //let eKey: keyof typeof
-    for (let i = effects.length; i-- !== 0; ) {
-      const e = effects[i]
-      if (e.turns < 0) {
-        this.remove_effects_bonus(e)
-        effects.splice(i, 1)
-      } else {
-        e.turns = e.turns - 1
-      }
-    }
   }
 }

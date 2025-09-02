@@ -16,12 +16,14 @@ import {
   WorldQuestsMethods,
   WorldArgs,
 } from '../../types/world'
+import WorldStations from './stations'
 
 const dt = math.randomseed(os.time())
 
 export default class World {
   fsm: StateMachine
   rooms: WorldRooms
+  stations: WorldStations
   novel: WorldNovel
   tasks: WorldTasks
   player: WorldPlayer
@@ -36,6 +38,7 @@ export default class World {
       returnPlayer: this.returnPlayer.bind(this),
     }
     this.rooms = new WorldRooms(roomsProps)
+    this.stations = new WorldStations()
     this.novel = new WorldNovel(roomsProps)
     this.tasks = new WorldTasks(roomsProps)
     const playerProps: WorldPlayerArgs = {
@@ -45,7 +48,7 @@ export default class World {
       },
       rooms: {
         getFocusedRoom: this.rooms.get_focused.bind(this),
-        getOccupants: this.rooms.getOccupants.bind(this),
+        //  getOccupants: this.rooms.getOccupants.bind(this),
       },
       novel: {
         setConfrontation: this.novel.setConfrontation.bind(this),
@@ -58,13 +61,13 @@ export default class World {
         ...playerProps.world,
       },
       rooms: {
-        clearStation: this.rooms.clearStation.bind(this),
-        setStation: this.rooms.setStation.bind(this),
-        checkSetStation: this.rooms.checkSetStation.bind(this),
-        pruneStationMap: this.rooms.pruneStationMap.bind(this),
-        getStationMap: this.rooms.getStationMap.bind(this),
-        sendToVacancy: this.rooms.sendToVacancy.bind(this),
-        getWards: this.rooms.getWards.bind(this),
+        //  clearStation: this.rooms.clearStation.bind(this),
+        //  setStation: this.rooms.setStation.bind(this),
+        // checkSetStation: this.rooms.checkSetStation.bind(this),
+        //  pruneStationMap: this.rooms.pruneStationMap.bind(this),
+        //  getStationMap: this.rooms.getStationMap.bind(this),
+        //   sendToVacancy: this.rooms.sendToVacancy.bind(this),
+        //    getWards: this.rooms.getWards.bind(this),
         ...playerProps.rooms,
       },
       novel: {
@@ -117,7 +120,9 @@ export default class World {
         : this.rooms.all.grounds.stations.guest,
       'testing'
     )**/
-    this.npcs.addIgnore(this.rooms.all.grounds.stations.worker1)
+    //TESTJPF TODO NOW!!
+    //Cant test this way since mods::: / stations class
+    //  this.npcs.addIgnore(this.rooms.all.grounds.stations.worker1)
   }
   private onNewUpdate(): void {}
   private onNewExit(): void {

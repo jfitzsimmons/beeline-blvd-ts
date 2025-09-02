@@ -45,8 +45,11 @@ export default class PlaceSequence extends Sequence {
     const props = getProps('place') as PlaceProps
     const placeActions: Action[] = []
 
-    placeActions.push(new EffectsAction(getProps))
-    placeActions.push(clanActions(props.clan, getProps))
+    placeActions.push(
+      new EffectsAction(getProps),
+      clanActions(props.clan, getProps)
+    )
+    // placeActions.push(clanActions(props.clan, getProps))
 
     super(placeActions)
   }

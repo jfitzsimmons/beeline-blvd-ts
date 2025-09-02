@@ -42,6 +42,22 @@ function update_hud() {
   //sprite.play_flipbook("/hud#security_alert", 'alert_' .. tostring(world.player.alert_level))
   //msg.post("hud#map", "acquire_input_focus")
 }
+//TESTJPF going to have to really diagnos
+//turns/ticks...
+/**
+ * going to have different kinds of 'ticks
+???
+ai move1, 1 player ap, 2ap, 3ap, ai move2, 4ap, 5ap, 6ap, move
+
+overall need tomake stat calculations
+reset novel state,
+load level specifics
+ai first move
+update notifications
+repeat 8x
+good!!!
+
+*/
 function game_turn() {
   novel.reset_novel()
   world.fsm.update(dt)

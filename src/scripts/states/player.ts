@@ -112,7 +112,7 @@ export default class WorldPlayer extends ActorState {
             traits: this.traits,
             exitRoom: this.exitRoom,
             returnNpc: this.p.world.returnNpc.bind(this),
-            getOccupants: this.p.rooms.getOccupants.bind(this),
+            //   getOccupants: this.p.rooms.getOccupants.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -121,7 +121,7 @@ export default class WorldPlayer extends ActorState {
             clearance: this.clearance,
             clan: 'hero',
             returnNpc: this.p.world.returnNpc.bind(this),
-            getOccupants: this.p.rooms.getOccupants.bind(this),
+            //   getOccupants: this.p.rooms.getOccupants.bind(this),
             exitRoom: this.exitRoom,
             ...behaviorDefaults(),
           }
@@ -135,7 +135,7 @@ export default class WorldPlayer extends ActorState {
         infirmed: () => {
           return {
             clearance: this.clearance,
-            getOccupants: this.p.rooms.getOccupants.bind(this),
+            //       getOccupants: this.p.rooms.getOccupants.bind(this),
             ...behaviorDefaults(),
           }
         },
@@ -150,7 +150,7 @@ export default class WorldPlayer extends ActorState {
             removeInvBonus: this.removeInvBonus.bind(this),
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
-            getOccupants: this.p.rooms.getOccupants.bind(this),
+            //     getOccupants: this.p.rooms.getOccupants.bind(this),
             setConfrontation: this.p.novel.setConfrontation.bind(this),
             ...behaviorDefaults(),
           }
@@ -161,7 +161,7 @@ export default class WorldPlayer extends ActorState {
             //love: this.love,
             traits: this.traits,
             addOrExtendEffect: this.addOrExtendEffect.bind(this),
-            getOccupants: this.p.rooms.getOccupants.bind(this),
+            //    getOccupants: this.p.rooms.getOccupants.bind(this),
             returnNpc: this.p.world.returnNpc.bind(this),
             getBehaviorProps: this.getBehaviorProps.bind(this),
             ...behaviorDefaults(),
@@ -339,7 +339,7 @@ export default class WorldPlayer extends ActorState {
   add_effects_bonus(e: Effect) {
     this.traits[e.fx.type]![e.fx.stat] =
       this.traits[e.fx.type]![e.fx.stat] + e.fx.adjustment
-  }
+  } /** 
   remove_effects_bonus(e: Effect) {
     this.traits[e.fx.type]![e.fx.stat] =
       this.traits[e.fx.type]![e.fx.stat] - e.fx.adjustment
@@ -357,4 +357,5 @@ export default class WorldPlayer extends ActorState {
       }
     }
   }
+    **/
 }

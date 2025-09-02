@@ -1,34 +1,30 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { RoomsInitState } from './inits/roomsInitState'
+
 import StateMachine from './stateMachine'
-import { Actors, Swaps, Wards } from '../../types/state'
-import { RoomProps } from '../../types/world'
+import { Actors, Room } from '../../types/state'
+//import { RoomProps } from '../../types/world'
 import { aiActions } from '../ai/ai_main'
 
 export default class RoomState {
   fsm: StateMachine
   matrix: { x: number; y: number }
-  roomName: string
+  name: string
   clearance: number
-  stations: { [key: string]: string }
-  swaps: Swaps
   actors: Actors
   props?: string[]
-  wards?: Wards
-  p: RoomProps
+  stationKeys: string[]
+  // p: RoomProps
   //checks: RoomChecks
   //outcomes: RoomOutcomes
-  constructor(r: string, roomProps: RoomProps) {
+  constructor(r: Room) {
     this.fsm = new StateMachine(this, 'room' + r)
-    this.matrix = RoomsInitState[r].matrix
-    this.roomName = RoomsInitState[r].roomName
-    this.clearance = RoomsInitState[r].clearance
-    this.stations = RoomsInitState[r].stations
-    this.swaps = RoomsInitState[r].swaps
-    this.actors = RoomsInitState[r].actors
-    this.props = RoomsInitState[r].props || []
-    this.wards = RoomsInitState[r].wards || {}
-    this.p = roomProps
+    this.matrix = r.matrix
+    this.name = r.name
+    this.clearance = r.clearance
+    this.actors = r.actors
+    this.props = r.props || []
+    this.stationKeys = []
+    // this.p = roomProps
     this.fsm
       .addState('idle')
       .addState('turn', {
@@ -46,18 +42,14 @@ export default class RoomState {
   private onFocusStart(): void {
     //highlight room neighbors and directions
     //testjpf
-    this.p.setFocused(this.roomName)
+    // this.p.setFocused(this.name)
   }
   private onFocusUpdate(): void {
-    this.roomName as keyof typeof aiActions
-    if (this.roomName in aiActions) {
-      print(
-        '##### FOCUSEDRoom::::: >>',
-        this.roomName,
-        'AIACTIONS:: Running...'
-      )
-      aiActions[this.roomName as keyof typeof aiActions].bind(this)()
-      print('#### FOCUSEDRoom:::: >>', this.roomName, 'AIACTIONS:: Finished.')
+    this.name as keyof typeof aiActions
+    if (this.name in aiActions) {
+      print('##### FOCUSEDRoom::::: >>', this.name, 'AIACTIONS:: Running...')
+      aiActions[this.name as keyof typeof aiActions].bind(this)()
+      print('#### FOCUSEDRoom:::: >>', this.name, 'AIACTIONS:: Finished.')
     }
     this.fsm.setState('turn')
   }
@@ -65,20 +57,20 @@ export default class RoomState {
   /**
   private onBlurEnter(): void {}
   private onBlurUpdate(): void {
-    this.roomName as keyof typeof aiActions
-    if (this.roomName in aiActions)
-      aiActions[this.roomName as keyof typeof aiActions].bind(this)()
+    this.name as keyof typeof aiActions
+    if (this.name in aiActions)
+      aiActions[this.name as keyof typeof aiActions].bind(this)()
     this.fsm.setState('turn')
   }
   private onBlurExit(): void {}
   **/
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {
-    this.roomName as keyof typeof aiActions
-    if (this.roomName in aiActions) {
-      print('##### Room::::: >>', this.roomName, 'AIACTIONS:: Running...')
-      aiActions[this.roomName as keyof typeof aiActions].bind(this)()
-      print('#### Room:::: >>', this.roomName, 'AIACTIONS:: Finished.')
+    this.name as keyof typeof aiActions
+    if (this.name in aiActions) {
+      print('##### Room::::: >>', this.name, 'AIACTIONS:: Running...')
+      aiActions[this.name as keyof typeof aiActions].bind(this)()
+      print('#### Room:::: >>', this.name, 'AIACTIONS:: Finished.')
     }
   }
   private onTurnExit(): void {}

@@ -9,13 +9,13 @@ import { doctors } from '../../utils/consts'
 import { from_same_room } from '../../utils/quest'
 //import { shuffle } from '../../utils/utils'
 
-const { rooms, npcs, tasks, player, novel, info, quests } =
+const { stations, rooms, npcs, tasks, player, novel, info, quests } =
   globalThis.game.world
 
 function injured_checks() {
   const quest = quests.all.tutorial.medic_assist
   const { '0': injury } = quest.conditions
-  const injured = npcs.all[rooms.all.grounds.stations.worker1]
+  const injured = npcs.all[stations.all.grounds_worker1.occupant]
 
   if (injury.fsm.getState() == 'new' && injury.passed == true) {
     injury.fsm.setState('active')
@@ -41,7 +41,7 @@ function infirmary_checks(delivery: QuestStep) {
 }
 function doctor_checks() {
   const quest = quests.all.tutorial.medic_assist
-  const injured = npcs.all[rooms.all.grounds.stations.worker1]
+  const injured = npcs.all[stations.all.grounds_worker1.occupant]
   // let's you interact with any doctor
   const doctor = npcs.all[novel.npc.name]
   const { '0': injury, '2': apple, '3': meds, '5': delivery } = quest.conditions
@@ -225,7 +225,7 @@ function medic_assist_checks() {
   }**/
   //need doctor checks and "non-doctor" cjecks?
   //testjpf if novel.npc isn't a doctor::: RETURN!!!????
-  // const injured = npcs.all[rooms.all.grounds.stations.worker1]
+  // const injured =npcs.all[stations.all.grounds_worker1.occupant]
   // BUG::: testjpf I think this will
   // let you interact with any doctor
   //const doctor = npcs.all[novel.npc.name].
@@ -275,14 +275,14 @@ export function tutorialA(interval = 'turn') {
       ? rooms.all.grounds.actors.player_luggage
       : rooms.all.grounds.actors.other_luggage
 
-  const guest2 = npcs.all[rooms.all['grounds'].stations.guest2]
+  const guest2 = npcs.all[stations.all.grounds_guest2.occupant]
   if (
     luggage.inventory.length > 0 &&
     interval == 'turn' &&
     guest2 != null &&
     guest2.clan != 'doctors'
   ) {
-    const worker2 = npcs.all[rooms.all['grounds'].stations.worker2]
+    const worker2 = npcs.all[stations.all.grounds_worker2.occupant]
 
     if (worker2 != null && worker2.cooldown <= 0) {
       const worker2Props: ThiefVictimProps = {
