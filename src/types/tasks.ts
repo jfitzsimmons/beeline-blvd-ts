@@ -38,13 +38,27 @@ export interface QuestsState {
   [key: string]: { [key: string]: QuestState }
 }
 export interface Quests {
-  [key: string]: QuestState
+  [key: string]: Quest
 }
-export interface Quest {
+/**
+  export interface Quest {
   id: string
+  nextId: string
   passed: boolean
   conditions: QuestConditions
   side_quests: { [key: string]: SideQuest }
+}**/
+export interface Quest {
+  id: string
+  nextId: string
+  checkpoint: string
+  scope: string
+  status: {
+    active: boolean
+    passed: boolean
+    see: boolean
+    archive: boolean
+  }
 }
 export interface QuestMethods {
   [key: string]: (

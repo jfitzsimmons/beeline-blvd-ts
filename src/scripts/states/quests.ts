@@ -1,30 +1,36 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
-import { QuestsState } from '../../types/tasks'
-import { tutorialQuests } from './inits/quests/tutorialstate'
+import { Quest, Quests } from '../../types/tasks'
+//import { tutorialQuests } from './inits/quests/tutorialstate'
 import { WorldQuestsMethods } from '../../types/world'
+import { QuestsInitState } from './inits/questInitState'
 
 const dt = math.randomseed(os.time())
 
-function build_quests_state(questmethods: WorldQuestsMethods): QuestsState {
+/**
+ function build_quests_state(questmethods: WorldQuestsMethods): QuestsState {
   return {
     tutorial: tutorialQuests(questmethods),
   }
 }
+  */
 export default class WorldQuests {
   private _questmethods: WorldQuestsMethods
-  private _all: QuestsState
+  //private _all: QuestsState
+  private _all: Quests
+
   checkpoint: string
   fsm: StateMachine
 
   constructor(questmethods: WorldQuestsMethods) {
     this.fsm = new StateMachine(this, 'quests')
     this.checkpoint = 'tutorialA'
+
     this._questmethods = questmethods
     this._questmethods.qq = {
       percent_tutorial: this.percent_tutorial.bind(this),
     }
-    this._all = build_quests_state(this.questmethods)
+    this._all = { ...QuestsInitState }
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
       onEnter: this.onTurnEnter.bind(this),
@@ -41,6 +47,7 @@ export default class WorldQuests {
       onUpdate: this.onNewUpdate.bind(this),
       onExit: this.onNewExit.bind(this),
     })
+    this.initQuest = this.initQuest.bind(this)
   }
   private onNewEnter(): void {
     //  print('questsNEWENTER')
@@ -93,6 +100,10 @@ export default class WorldQuests {
   }
   public get questmethods() {
     return this._questmethods
+  }
+  initQuest(quest: Quest) {
+    const questKey = `${quest.checkpoint}_${quest.id}`
+    this._all[questKey] = quest
   }
   percent_tutorial(): number {
     let qKey: keyof typeof this.all

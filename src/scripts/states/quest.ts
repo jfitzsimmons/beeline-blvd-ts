@@ -1,23 +1,40 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
 import { Quest } from '../../types/tasks'
-import QuestStep from './questStep'
-import SideQuest from './sideQuest'
+//import QuestStep from './questStep'
+//import SideQuest from './sideQuest'
 const dt = math.randomseed(os.time())
 
 export default class QuestState {
   //private _questmethods: WorldQuestsMethods
   id: string
-  passed: boolean
+  nextId: string
+  status: {
+    active: boolean
+    passed: boolean
+    see: boolean
+    archive: boolean
+  }
+  //passed: boolean
   fsm: StateMachine
-  conditions: { [key: string]: QuestStep }
-  sideQuests: { [key: string]: SideQuest }
+
+  //conditions: { [key: string]: QuestStep }
+  //sideQuests: { [key: string]: SideQuest }
   constructor(questparams: Quest) {
     this.id = questparams.id
+    this.nextId = questparams.nextId
     this.fsm = new StateMachine(this, 'quest' + this.id)
-    this.passed = questparams.passed
-    this.conditions = questparams.conditions
-    this.sideQuests = questparams.side_quests
+
+    this.status = {
+      active: false,
+      passed: false,
+      see: false,
+      archive: false,
+    }
+
+    //this.passed = questparams.passed
+    // this.conditions = questparams.conditions
+    // this.sideQuests = questparams.side_quests
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
       onEnter: this.onTurnEnter.bind(this),
