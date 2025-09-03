@@ -13,7 +13,7 @@ import {
   WorldNpcsArgs,
   WorldPlayerArgs,
   //WorldTasksArgs,
-  WorldQuestsMethods,
+  //WorldQuestsMethods,
   WorldArgs,
 } from '../../types/world'
 import WorldStations from './stations'
@@ -75,13 +75,15 @@ export default class World {
       },
     }
     this.npcs = new WorldNpcs(npcsProps)
-    const allquestmethods: WorldQuestsMethods = {
+    /**
+     const allquestmethods: WorldQuestsMethods = {
       pq: this.player.quests,
       nq: this.npcs.quests,
       nvq: this.novel.quests,
       tq: this.tasks.quests,
     }
-    this.quests = new WorldQuests(allquestmethods)
+      */
+    this.quests = new WorldQuests()
     this.info = new WorldInfo(this.quests.all)
     this.clock = 6
     this.fsm
@@ -108,7 +110,7 @@ export default class World {
     this.npcs.fsm.setState('new') //Adds a PlaceSeq and runs it //also test defaults
     this.rooms.fsm.update(dt) // runs room based AI Behavior
     this.tasks.fsm.setState('turn')
-    this.quests.fsm.setState('new')
+    // this.quests.fsm.setState('new')
 
     //debug defaults
     /**
@@ -152,7 +154,7 @@ export default class World {
     this.player.fsm.setState('active')
     this.npcs.fsm.setState('active') // runs each NPC active Behavior
     print('????? :::: QQQQQ: Quest Related Status checks: Running...')
-    this.quests.fsm.update(dt)
+    //this.quests.fsm.update(dt)
     print('???? ::: QQQQ: Quest Related Status checks: Finished.')
   }
   private onTurnExit(): void {}
@@ -172,7 +174,7 @@ export default class World {
     this.rooms.fsm.update(dt)
     this.player.fsm.setState('active')
     this.npcs.fsm.setState('active')
-    this.quests.fsm.update(dt)
+    // this.quests.fsm.update(dt)
     this.fsm.setState('turn')
     print('XXX ::: XXX: worldFAINTupdate: Finished.')
   }

@@ -3,9 +3,22 @@ import { Quests } from '../../../types/tasks'
 export const QuestsInitState: Quests = {
   world_example_start: {
     id: '',
-    nextId: '',
+    // nextId: '',
     checkpoint: '',
     scope: '',
+    stage: 0,
+    stages: [
+      {
+        status: {
+          active: false,
+          passed: false,
+          see: false,
+          archive: false,
+        },
+        note: '',
+        tasks: [{ type: '', subtype: '', name: '', operator: '', value: '' }],
+      },
+    ],
     status: {
       active: false,
       passed: false,

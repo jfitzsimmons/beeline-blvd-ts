@@ -1,16 +1,23 @@
-import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
-import { QuestionProps } from '../../../types/behaviors'
-import SuspectingSequence from '../../behaviors/sequences/suspectingSequence'
-import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
-import QuestStep from '../../states/questStep'
-import { doctors } from '../../utils/consts'
+import { AttendantProps, ThiefVictimProps } from '../../../../types/ai'
+import { QuestionProps } from '../../../../types/behaviors'
+import SuspectingSequence from '../../../behaviors/sequences/suspectingSequence'
+import { take_or_stash, npcStealCheck } from '../../../states/inits/checksFuncs'
+import QuestStep from '../../../states/questStep'
+import { doctors } from '../../../utils/consts'
 //import { npc_action_move } from '../../ai/ai_main'
 //import NpcState from '../../states/npc'
-import { from_same_room } from '../../utils/quest'
+import { from_same_room } from '../../../utils/quest'
 //import { shuffle } from '../../utils/utils'
 
 const { stations, rooms, npcs, tasks, player, novel, info, quests } =
   globalThis.game.world
+
+// testjpf
+/////// need something like an init that
+// adds questkey to npc?
+// sunscribes npc to questkey?
+// activates tutorial
+// activates stage 1 medic?
 
 function injured_checks() {
   const quest = quests.all.tutorial.medic_assist

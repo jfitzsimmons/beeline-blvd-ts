@@ -1,38 +1,19 @@
-import questsData from './quests/data'
+//import questsData from './quests/data'
 //testjpf make new import
 //quest
-import { subscribe, unsubscribe } from './dispatcher'
-import { quest_checker, questChecks } from '../listeners/quests/quests_main'
+import { subscribe, unsubscribe } from '../dispatcher'
 
 const { quests } = globalThis.game.world
 
 export default {
   quests: {},
-  // TESTJPF !!! NOW unlocks / upgrades: ???
-  dispatches: {},
-  tick() {
-    for (const [, quest] of Object.entries(quests.all)) {
-      //testjpf need to formalize a questlistener
-      if (questChecks[quest.id] !== null) questChecks[quest.id].tick()
-      //TESTJPF then tutorialA, tutb will ahve things like
-      // .active(),.see(), that will be called in tick
-      // quests.loadCstenss(k)
-    }
-  },
   init() {
     for (const [, quest] of Object.entries(questsData)) {
       quests.initQuest(quest)
-      questChecks[quest.id].init()
-      // quests.loadListeners(k)
     }
+
     ///testjpf
     // now activate new game stuff?
-  },
-  newGame() {
-    //testjpf
-    // load tutorial listeners
-    //make active
-    //when active send message with msgid of questid  and message of active
   },
 }
 

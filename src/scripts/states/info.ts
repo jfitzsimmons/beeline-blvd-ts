@@ -1,8 +1,4 @@
-import {
-  ObjectivesGroup,
-  ObjectivesGroupOpt,
-  QuestsState,
-} from '../../types/tasks'
+import { ObjectivesGroup, ObjectivesGroupOpt, Quests } from '../../types/tasks'
 
 export default class WorldInfo {
   private _objectives: ObjectivesGroup
@@ -31,7 +27,7 @@ export default class WorldInfo {
     string
   ]
 
-  constructor(quests: QuestsState) {
+  constructor(quests: Quests) {
     this.interactions = [
       'asdf',
       'asdf',
@@ -67,7 +63,7 @@ export default class WorldInfo {
     return this._objectives
   }
 
-  build_objectives(quests: QuestsState) {
+  build_objectives(quests: Quests) {
     const objectives: ObjectivesGroupOpt = {}
     //ex tutorial
     let cPoint: keyof typeof quests
@@ -81,18 +77,20 @@ export default class WorldInfo {
       let qKey: keyof typeof checkpoint
       for (qKey in checkpoint) {
         objectives[cPoint].quest[qKey] = {
-          status: checkpoint[qKey].fsm.getState(),
+          status: 'active', //checkpoint[qKey].status,
           objective: {},
         }
+        /**
         const conditions = checkpoint[qKey].conditions
-        //
+       
         let cNum: keyof typeof conditions
         for (cNum in conditions) {
           objectives[cPoint].quest[qKey].objective[cNum] = {
-            status: conditions[cNum].fsm.getState(),
+            status: conditions[cNum].status,
             label: conditions[cNum].label,
           }
         }
+          **/
       }
     }
     this.objectives = { ...objectives }

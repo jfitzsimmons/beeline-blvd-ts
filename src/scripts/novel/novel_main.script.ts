@@ -1,7 +1,7 @@
 import { novel_init, novel_start } from './matchanovel'
 const { npcs, tasks, player, novel } = globalThis.game.world
 
-import { prepareQuestTxts } from '../quests/quests_main'
+import { prepareQuestTxts } from '../listeners/quests/quests_main'
 import { impressed_checks, unimpressed_checks } from '../systems/chaossystem'
 
 interface props {
