@@ -13,6 +13,7 @@ export default {
     actors: {
       phone: {
         id: '',
+        animation: 'vase_art1',
         name: 'phone',
         inventory: [],
         actions: ['use'],
@@ -20,6 +21,7 @@ export default {
       },
       locker: {
         id: '',
+        animation: 'vase_art1',
         name: 'locker',
         inventory: [
           'ring',
@@ -46,6 +48,7 @@ export default {
     actors: {
       luggage_1: {
         id: '',
+        animation: 'vase_art1',
         name: 'luggage_1',
         inventory: [
           'ring',
@@ -60,6 +63,7 @@ export default {
       },
       luggage_2: {
         id: '',
+        animation: 'vase_art1',
         name: 'luggage_2',
         inventory: [
           'ring',
@@ -227,6 +231,7 @@ export default {
     actors: {
       phone: {
         id: '',
+        animation: 'vase_art1',
         name: 'phone',
         inventory: [],
         actions: ['use'],
@@ -234,6 +239,7 @@ export default {
       },
       locker: {
         id: '',
+        animation: 'vase_art1',
         name: 'locker',
         inventory: [
           'ring',
@@ -257,6 +263,7 @@ export default {
     actors: {
       drawer: {
         id: '',
+        animation: 'vase_art1',
         name: 'desks',
         inventory: [
           'ring',
@@ -271,6 +278,7 @@ export default {
       },
       phone: {
         id: '',
+        animation: 'vase_art1',
         name: 'phone',
         inventory: [],
         actions: ['use'],
@@ -278,6 +286,7 @@ export default {
       },
       locker: {
         id: '',
+        animation: 'vase_art1',
         name: 'locker',
         inventory: [
           'ring',
@@ -292,6 +301,7 @@ export default {
       },
       vase3: {
         id: '',
+        animation: 'vase_art1',
         name: 'vase3',
         inventory: [
           'ring',
@@ -316,6 +326,7 @@ export default {
     actors: {
       drawer: {
         id: '',
+        animation: 'vase_art1',
         name: 'drawer',
         inventory: [
           'ring',
@@ -330,6 +341,7 @@ export default {
       },
       computer: {
         id: '',
+        animation: 'vase_art1',
         name: 'computer',
         inventory: [],
         actions: ['use'],
@@ -337,6 +349,7 @@ export default {
       },
       phone: {
         id: '',
+        animation: 'vase_art1',
         name: 'phone',
         inventory: [],
         actions: ['use'],
@@ -344,6 +357,7 @@ export default {
       },
       vase: {
         id: '',
+        animation: 'vase_art1',
         name: 'vase',
         inventory: ['ring', 'coingold', 'earrings', 'pillow', 'book', 'tomato'],
         actions: ['open'],
@@ -351,6 +365,7 @@ export default {
       },
       vase2: {
         id: '',
+        animation: 'vase_art1',
         name: 'vase2',
         inventory: [
           'ring',
@@ -375,6 +390,7 @@ export default {
     actors: {
       player_luggage: {
         id: '',
+        animation: 'vase_art1',
         name: 'player_luggage',
         inventory: [
           'ring',
@@ -390,6 +406,7 @@ export default {
       },
       other_luggage: {
         id: '',
+        animation: 'vase_art1',
         name: 'other_luggage',
         inventory: [
           'ring',
@@ -405,6 +422,7 @@ export default {
       },
       phone: {
         id: '',
+        animation: 'vase_art1',
         name: 'phone',
         inventory: [],
         watcher: 'loiter1',
@@ -412,6 +430,7 @@ export default {
       },
       drawer: {
         id: '',
+        animation: 'vase_art1',
         name: 'drawer',
         inventory: ['ring', 'coingold', 'earrings', 'book'],
         watcher: 'loiter1',
@@ -419,6 +438,7 @@ export default {
       },
       cargo: {
         id: '',
+        animation: 'vase_art1',
         name: 'cargo',
         inventory: [
           'ring',
@@ -464,6 +484,7 @@ export default {
     actors: {
       drawer: {
         id: '',
+        animation: 'vase_art1',
         name: 'drawer',
         inventory: [
           'ring',
@@ -478,6 +499,7 @@ export default {
       },
       computer: {
         id: '',
+        animation: 'vase_art1',
         name: 'computer',
         inventory: [],
         actions: ['use'],
@@ -485,6 +507,7 @@ export default {
       },
       phone: {
         id: '',
+        animation: 'vase_art1',
         name: 'phone',
         inventory: [],
         watcher: 'assistant',

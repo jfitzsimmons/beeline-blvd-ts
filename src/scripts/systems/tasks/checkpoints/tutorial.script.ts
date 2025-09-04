@@ -1,4 +1,4 @@
-import { subscribe, unsubscribe } from '../../../../systems/dispatcher'
+import { subscribe, unsubscribe } from '../../dispatcher'
 const { quests, info, npcs, stations } = globalThis.game.world
 const { world_tutorial_medic: wtm } = quests.all
 
@@ -11,7 +11,7 @@ export const world_tutorial_medic = {
     //since already here dont use this:
     //quests.updateStatus('activate', 'world_tutorial_medic')
     //but this:
-    msg.post('#', hash('quest_tutorial_start'), { status: 'active' })
+    msg.post('#', hash('world_tutorial_medic'), { status: 'active' })
     wtm.status.active = true //testjpf should probable be a setter
     //make a random npc injured.
     //subscribe to their quest.
@@ -56,22 +56,30 @@ export function on_message(
   message: { questId: string; status: string },
   _sender: url
 ) {
-  if (messageId == hash('quest_tutorial_start')) {
-    print('TESTJPF!!: This should eventually make a quest available.')
-  }
   //  if (message == "unlock"){print("unlock")}
   //todo testjpf make more specific
   if (message.status == 'activate') {
-    //testjpf
-    //use command object to fire funciton based on msgID
-    //that processes below:::ß
-    print('unlock: TESTJPF questID:: ', message.questId)
-    npcs.all[world_tutorial_medic.actors.patient].love =
-      npcs.all[world_tutorial_medic.actors.patient].love + 1
-    //this needs to be taken care of by npc??
-    //NPC module -> -> subscriptions.ts??
-    info.add_interaction(
-      `${world_tutorial_medic.actors.patient} likes that you are helping them.`
-    )
+    if (messageId == hash('world_tutorial_medic')) {
+      //at some point i need to injure a default npc testjpf
+      print('TESTJPF!!: This should eventually make a quest available.')
+    }
+    if (messageId == hash('world_tutorial_medic_0')) {
+      //testjpf
+      //use command object to fire funciton based on msgID
+      //that processes below:::ß
+      print('unlock: TESTJPF questID:: ', message.questId)
+      npcs.all[world_tutorial_medic.actors.patient].love =
+        npcs.all[world_tutorial_medic.actors.patient].love + 1
+      //this needs to be taken care of by npc??
+      //NPC module -> -> subscriptions.ts??
+      info.add_interaction(
+        `${world_tutorial_medic.actors.patient} likes that you are helping them.`
+      )
+      msg.post('#', hash('world_tutorial_medic_1'), { status: 'active' })
+    }
+    if (messageId == hash('world_tutorial_medic_1')) {
+      //testjpf subscribe doctors to this task.
+      // // add to active quests probably
+    }
   }
 }

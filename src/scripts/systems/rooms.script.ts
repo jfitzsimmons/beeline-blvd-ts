@@ -4,9 +4,11 @@ import roomsData from './initData/rooms'
 //testjpf make new import
 //quest
 import { subscribe, unsubscribe } from './dispatcher'
+import { load_adjacent, load_storage, loadNpcs } from './rooms/onScreen'
+//import { RoomsInitLayout } from '../states/inits/roomsInitState'
 //import { quest_checker, questChecks } from '../listeners/quests/quests_main'
 
-const { rooms } = globalThis.game.world
+const { rooms, inventory } = globalThis.game.world
 
 export default {
   quests: {},
@@ -24,6 +26,9 @@ export default {
   init() {
     for (const [, room] of Object.entries(roomsData)) {
       rooms.initRoom(room)
+      for (const [, storage] of Object.entries(room.actors)) {
+        inventory.initStorage(storage)
+      }
       //questChecks[quest.id].init()
       // quests.loadListeners(k)
     }
@@ -35,6 +40,11 @@ export default {
     // load tutorial listeners
     //make active
     //when active send message with msgid of questid  and message of active
+  },
+  loadOnScreenRooms() {
+    load_adjacent()
+    loadNpcs()
+    load_storage()
   },
 }
 

@@ -17,6 +17,7 @@ import {
   WorldArgs,
 } from '../../types/world'
 import WorldStations from './stations'
+import WorldInventory from './inventory'
 
 const dt = math.randomseed(os.time())
 
@@ -30,6 +31,7 @@ export default class World {
   npcs: WorldNpcs
   quests: WorldQuests
   info: WorldInfo
+  inventory: WorldInventory
   clock: number
   constructor() {
     this.fsm = new StateMachine(this, 'world')
@@ -41,6 +43,7 @@ export default class World {
     this.stations = new WorldStations()
     this.novel = new WorldNovel(roomsProps)
     this.tasks = new WorldTasks(roomsProps)
+    this.inventory = new WorldInventory()
     const playerProps: WorldPlayerArgs = {
       world: {
         returnNpc: this.returnNpc.bind(this),

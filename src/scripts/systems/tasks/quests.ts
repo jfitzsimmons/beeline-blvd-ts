@@ -1,9 +1,4 @@
-/**
- * this whole folder may need to go under a folder called listerners???
- * testjpf
- */
-
-import { tutorialAscripts } from './checkpoints/tutorial'
+import { tutorialA, tutorialAscripts, tutorialB } from '../../quests/tutorial'
 
 export const prepareQuestTxts: { [key: string]: (actor: string) => string[] } =
   {
@@ -11,9 +6,11 @@ export const prepareQuestTxts: { [key: string]: (actor: string) => string[] } =
     //["tutorialB"] = tutorialBscripts,
   }
 export const questChecks: { [key: string]: () => void } = {
-  // ['tutorialA']: tutorialA,
-  // ['tutorialB']: tutorialB,
+  ['tutorialA']: tutorialA,
+  ['tutorialB']: tutorialB,
 }
+/**
+ * 
 
 export function quest_checker() {
   let cKey: keyof typeof questChecks
@@ -21,3 +18,4 @@ export function quest_checker() {
     questChecks[cKey]()
   }
 }
+   */

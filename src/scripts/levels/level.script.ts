@@ -1,5 +1,5 @@
-import { quest_checker } from '../listeners/quests/quests_main'
-
+//import { quest_checker } from '../systems/tasks/quests'
+import roomSys from '../systems/rooms.script'
 const dt = math.randomseed(os.time())
 const { world } = globalThis.game
 const { player, novel } = world
@@ -64,12 +64,13 @@ function game_turn() {
   novel.reset_novel()
   world.fsm.update(dt)
   print('????* *::: qQqQq: Quest Related AI checks: Running...')
-  quest_checker()
+  //quest_checker() seeBELOW!!! 2nd use
   print('????* *::: qQqQq: Quest Related AI checks: Finished.')
 }
 function quickLoad(_this: props) {
   // msg.post(_this.roomName + ':/level#' + _this.roomName, 'room_load')
   // instead testjpf we'll fire loadRoomNpcs() loadAdjacentRooms()
+  roomSys.loadOnScreenRooms()
   msg.post('/shared/adam#adam', 'wake_up')
   print('111 --- === ::: NEW ROOM LOADED ::: === --- 111')
 }
@@ -107,7 +108,10 @@ export function on_message(
     //quests.update_quests_progress('interact')
     //todo testjpf make some sort of. turhn system???
     //quests.fsm.update(dt)
-    quest_checker()
+
+    //change below to taskSys.tick()
+    //also, probably not here testjpf
+    //quest_checker()
 
     print('exitgui reason::', novel.reason)
     novel.reset_novel()

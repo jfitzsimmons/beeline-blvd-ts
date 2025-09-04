@@ -141,6 +141,7 @@ export interface Storage {
   inventory: string[]
   watcher?: string
   actions: string[]
+  animation: string
 }
 export interface Roles {
   [key: string]: string[]

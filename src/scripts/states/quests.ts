@@ -135,6 +135,9 @@ export default class WorldQuests {
   // checks quest completion after interactions and turns
 
   update_quests_progress = (interval: string) => {
+    //i think this hsould handle every type of quest
+    // room task npc or whatevs achievement
+
     ///Testjpf add dispatches for each status
     //  print('.checkpointslice(0, -1)', checkpoint.slice(0, -1))
     // const quests = this.all[this.checkpoint.slice(0, -1)]

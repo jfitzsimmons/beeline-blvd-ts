@@ -3,7 +3,7 @@ import RoomState from './room'
 import StateMachine from './stateMachine'
 import { Room, Rooms } from '../../types/state'
 import { RoomProps, WorldArgs } from '../../types/world'
-import { RoomsInitState } from './inits/roomsInitState'
+import { RoomsInitLayout, RoomsInitState } from './inits/roomsInitState'
 
 const dt = math.randomseed(os.time())
 
@@ -60,6 +60,28 @@ export default class WorldRooms {
   }
   get_focused(): string {
     return this.focused
+  }
+  getAdjacentRoomNames(): string[] {
+    const c = this.all[this.focused].matrix
+    const adjacent = []
+    if (c.y - 1 > -1 && c.x - 1 > -1)
+      adjacent.push(
+        RoomsInitLayout[c.y - 1][c.x],
+        RoomsInitLayout[c.y - 1][c.x - 1],
+        RoomsInitLayout[c.y][c.x - 1]
+      )
+    if (c.y + 1 < 6 && c.x + 1 < 5)
+      adjacent.push(
+        RoomsInitLayout[c.y + 1][c.x],
+        RoomsInitLayout[c.y + 1][c.x + 1],
+        RoomsInitLayout[c.y][c.x + 1]
+      )
+    if (c.y - 1 > -1 && c.x + 1 < 5)
+      adjacent.push(RoomsInitLayout[c.y - 1][c.x + 1])
+    if (c.y + 1 < 6 && c.x - 1 > -1)
+      adjacent.push(RoomsInitLayout[c.y - 1][c.x + 1])
+
+    return adjacent
   }
 
   private onTurnEnter(): void {
