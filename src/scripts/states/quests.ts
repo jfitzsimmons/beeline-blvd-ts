@@ -15,6 +15,7 @@ import { QuestsInitState } from './inits/questInitState'
   }
 }
   */
+//let q = {}
 export default class WorldQuests {
   //private _questmethods: WorldQuestsMethods
   //private _all: QuestsState
@@ -117,9 +118,29 @@ export default class WorldQuests {
   public get all() {
     return this._all
   }
-  initQuest(quest: Quest) {
-    const questKey = `${quest.checkpoint}_${quest.id}`
-    this._all[questKey] = quest
+
+  //{ name = 'Bobby', age }: Person
+  initQuest({
+    id = 'default_id',
+    //nextId: string
+    checkpoint = 'none',
+    scope = 'quest',
+    stage = 0,
+    stages = [],
+    status = { active: false, archive: false, passed: false, see: false },
+  }: Partial<Quest> = {}): void {
+    const required: Quest = {
+      id,
+      //nextId: string
+      checkpoint,
+      scope,
+      stage,
+      stages,
+      status,
+    }
+    const questKey = `${checkpoint}_${id}`
+
+    this._all[questKey] = required
   }
   updateStatus(questKey: string, statusKey: string) {
     if (statusKey == 'activate') {

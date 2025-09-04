@@ -1,8 +1,10 @@
 import questsData from './initData/tasks/questData'
+import questioningSys from '../systems/tasks/behaviors/questioning'
 //testjpf make new import
 //quest
 import { subscribe, unsubscribe } from './dispatcher'
-import { questChecks } from './tasks/quests'
+import { questTasks } from './tasks/quests'
+//import { npcTasks } from './npcs/crimeChecks'
 
 const { quests } = globalThis.game.world
 
@@ -13,7 +15,8 @@ export default {
   tick() {
     for (const [, quest] of Object.entries(quests.all)) {
       //testjpf need to formalize a questlistener
-      if (questChecks[quest.id] !== null) questChecks.tick()
+      if (questTasks[quest.id] !== null) questTasks.tick()
+      if (quest.id.split('_')[1] == 'questioning') questioningSys.tick(quest)
       //TESTJPF then tutorialA, tutb will ahve things like
       // .active(),.see(), that will be called in tick
       // quests.loadCstenss(k)
@@ -22,7 +25,7 @@ export default {
   init() {
     for (const [, quest] of Object.entries(questsData)) {
       quests.initQuest(quest)
-      questChecks[quest.id]()
+      //questTasks[quest.id]()
       // quests.loadListeners(k)
     }
     ///testjpf
@@ -85,5 +88,9 @@ export function on_message(
     if (message.status == 'unlock') {
       print('unlock: TESTJPF questID:: ', message.questId)
     }
+  }
+  if (message.status == 'add') {
+    print('unlock: TESTJPF questID:: ', message.questId)
+    // quests.initQuest(quest)
   }
 }

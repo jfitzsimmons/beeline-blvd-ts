@@ -1,7 +1,7 @@
 import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
 import { QuestionProps } from '../../../types/behaviors'
 import SuspectingSequence from '../../behaviors/sequences/suspectingSequence'
-import { take_or_stash, npcStealCheck } from '../../states/inits/checksFuncs'
+import { take_or_stash, npcStealCheck } from '../../systems/npcs/crimeChecks'
 import RoomState from '../../states/room'
 import Storage from '../../states/storage'
 import { shuffle } from '../../utils/utils'

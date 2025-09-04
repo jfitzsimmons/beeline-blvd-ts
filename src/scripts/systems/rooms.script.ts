@@ -6,7 +6,7 @@ import roomsData from './initData/rooms'
 import { subscribe, unsubscribe } from './dispatcher'
 import { load_adjacent, load_storage, loadNpcs } from './rooms/onScreen'
 //import { RoomsInitLayout } from '../states/inits/roomsInitState'
-//import { quest_checker, questChecks } from '../listeners/quests/quests_main'
+//import { quest_checker, questTasks } from '../listeners/quests/quests_main'
 
 const { rooms, inventory } = globalThis.game.world
 
@@ -17,7 +17,7 @@ export default {
   tick() {
     // for (const [, room] of Object.entries(rooms.all)) {
     //testjpf need to formalize a questlistener
-    //if (questChecks[quest.id] !== null) questChecks[quest.id].tick()
+    //if (questTasks[quest.id] !== null) questTasks[quest.id].tick()
     //TESTJPF then tutorialA, tutb will ahve things like
     // .active(),.see(), that will be called in tick
     // quests.loadCstenss(k)
@@ -29,7 +29,7 @@ export default {
       for (const [, storage] of Object.entries(room.actors)) {
         inventory.initStorage(storage)
       }
-      //questChecks[quest.id].init()
+      //questTasks[quest.id].init()
       // quests.loadListeners(k)
     }
     ///testjpf

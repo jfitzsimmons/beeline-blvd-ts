@@ -1,4 +1,9 @@
-import { Traits } from '../../../types/state'
+/**
+ * testjpf could this be a system?
+ * seems to be npc relate. probabley all npc task related. soo....
+ *
+ */
+import { Storage, Traits } from '../../../types/state'
 import { Effect, Consequence } from '../../../types/tasks'
 import {
   removeAdvantageous,
@@ -10,7 +15,6 @@ import { roll_dice, ROLLODDS, rollSpecialDice } from '../../utils/dice'
 import { shuffle, clamp } from '../../utils/utils'
 import { QuestionProps } from '../../../types/behaviors'
 import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
-import Storage from '../storage'
 import { crimeSeverity } from '../../utils/ai'
 
 export const crimeChecks: {

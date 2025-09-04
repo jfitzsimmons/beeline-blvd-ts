@@ -5,7 +5,7 @@ import {
   take_check,
   npcStealCheck,
   take_or_stash,
-} from '../../states/inits/checksFuncs'
+} from '../../systems/npcs/crimeChecks'
 import RoomState from '../../states/room'
 //import Storage from '../../states/storage'
 import { cicadaModulus, shuffle } from '../../utils/utils'

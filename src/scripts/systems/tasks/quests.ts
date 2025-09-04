@@ -5,7 +5,7 @@ export const prepareQuestTxts: { [key: string]: (actor: string) => string[] } =
     ['tutorialAscripts']: tutorialAscripts,
     //["tutorialB"] = tutorialBscripts,
   }
-export const questChecks: { [key: string]: () => void } = {
+export const questTasks: { [key: string]: () => void } = {
   ['tutorialA']: tutorialA,
   ['tutorialB']: tutorialB,
 }
@@ -13,9 +13,9 @@ export const questChecks: { [key: string]: () => void } = {
  * 
 
 export function quest_checker() {
-  let cKey: keyof typeof questChecks
-  for (cKey in questChecks) {
-    questChecks[cKey]()
+  let cKey: keyof typeof questTasks
+  for (cKey in questTasks) {
+    questTasks[cKey]()
   }
 }
    */

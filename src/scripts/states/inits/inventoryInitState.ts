@@ -9,6 +9,7 @@ export const InventoryInitState: Inventories = {
     watcher: '',
     actions: [],
     name: '',
+    animation: '',
   },
 }
 

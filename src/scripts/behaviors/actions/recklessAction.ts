@@ -12,7 +12,7 @@ import {
   chaotic_good_check,
   classy_check,
   predator_check,
-} from '../../states/inits/checksFuncs'
+} from '../../systems/npcs/crimeChecks'
 
 import { shuffle } from '../../utils/utils'
 import Action from '../action'

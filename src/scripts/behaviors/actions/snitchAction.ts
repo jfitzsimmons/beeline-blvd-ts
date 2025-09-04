@@ -3,8 +3,11 @@ import {
   BehaviorKeys,
   HelperProps,
 } from '../../../types/behaviors'
+import { Quest } from '../../../types/tasks'
 import Action from '../action'
 import QuestionSequence from '../sequences/questionSequence'
+
+const { quests } = globalThis.game.world
 
 export default class SnitchAction extends Action {
   a: HelperProps
@@ -76,6 +79,41 @@ export default class SnitchAction extends Action {
               )
           }
         }
+        //testjpf
+        //so instead of adding new behavior.
+        //add new npc task to quests stor
+        //like npc_questioning_theft
+        //so tasks.addQuest, or just initQuest
+        //may need some initdata for default crimes
+
+        //could do something like initCrimeQuest()
+        //auto fill this stuff.
+        const crimeQuest: Partial<Quest> = {
+          id: `npc_${cop.name}_${this.reason}`,
+          stages: [
+            {
+              status: {
+                active: false,
+                archive: false,
+                passed: false,
+                see: false,
+              },
+              note: `${perp.name} is going to be questioned for ${this.reason}`,
+              tasks: [
+                {
+                  type: 'questioning',
+                  subtype: this.reason,
+                  name: 'Questioning Task',
+                  operator: '==',
+                  value: perp.name,
+                },
+              ],
+            },
+          ],
+        }
+
+        quests.initQuest(crimeQuest)
+        /** 
         cop.addToBehavior(
           'active',
           new QuestionSequence(
@@ -84,7 +122,7 @@ export default class SnitchAction extends Action {
             this.reason
           )
         )
-
+**/
         if (this.a.currRoom == this.a.getFocusedRoom()) {
           msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
             station: cop.currStation,

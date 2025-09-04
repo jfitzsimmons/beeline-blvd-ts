@@ -2,7 +2,7 @@ import { ThiefVictimProps, AttendantProps } from '../../types/ai'
 import { QuestionProps } from '../../types/behaviors'
 import { Consequence } from '../../types/tasks'
 import SuspectingSequence from '../behaviors/sequences/suspectingSequence'
-import { witnessPlayer } from '../states/inits/checksFuncs'
+import { witnessPlayer } from '../systems/npcs/crimeChecks'
 
 const { npcs, rooms, tasks, player, novel } = globalThis.game.world
 

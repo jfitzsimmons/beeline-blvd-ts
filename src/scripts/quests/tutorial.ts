@@ -1,7 +1,7 @@
 import { AttendantProps, ThiefVictimProps } from '../../types/ai'
 import { QuestionProps } from '../../types/behaviors'
 import SuspectingSequence from '../behaviors/sequences/suspectingSequence'
-import { take_or_stash, npcStealCheck } from '../states/inits/checksFuncs'
+import { take_or_stash, npcStealCheck } from '../systems/npcs/crimeChecks'
 import QuestStep from '../states/questStep'
 import { doctors } from '../utils/consts'
 //import { npc_action_move } from '../../ai/ai_main'

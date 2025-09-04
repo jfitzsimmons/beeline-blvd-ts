@@ -6,7 +6,7 @@ import {
   InjuredProps,
   QuestionProps,
 } from '../../../types/behaviors'
-import { confrontation_check } from '../../states/inits/checksFuncs'
+import { confrontation_check } from '../../systems/npcs/crimeChecks'
 import Action from '../action'
 import QuestionSequence from '../sequences/questionSequence'
 
