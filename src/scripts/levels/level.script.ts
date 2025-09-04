@@ -68,7 +68,8 @@ function game_turn() {
   print('????* *::: qQqQq: Quest Related AI checks: Finished.')
 }
 function quickLoad(_this: props) {
-  msg.post(_this.roomName + ':/level#' + _this.roomName, 'room_load')
+  // msg.post(_this.roomName + ':/level#' + _this.roomName, 'room_load')
+  // instead testjpf we'll fire loadRoomNpcs() loadAdjacentRooms()
   msg.post('/shared/adam#adam', 'wake_up')
   print('111 --- === ::: NEW ROOM LOADED ::: === --- 111')
 }

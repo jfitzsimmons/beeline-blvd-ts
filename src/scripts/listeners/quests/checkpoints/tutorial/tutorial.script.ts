@@ -8,7 +8,10 @@ export const world_tutorial_medic = {
     doctor: '',
   },
   init() {
-    quests.updateStatus('activate', 'world_tutorial_medic')
+    //since already here dont use this:
+    //quests.updateStatus('activate', 'world_tutorial_medic')
+    //but this:
+    msg.post('#', hash('quest_tutorial_start'), { status: 'active' })
     wtm.status.active = true //testjpf should probable be a setter
     //make a random npc injured.
     //subscribe to their quest.
@@ -59,6 +62,9 @@ export function on_message(
   //  if (message == "unlock"){print("unlock")}
   //todo testjpf make more specific
   if (message.status == 'activate') {
+    //testjpf
+    //use command object to fire funciton based on msgID
+    //that processes below:::ß
     print('unlock: TESTJPF questID:: ', message.questId)
     npcs.all[world_tutorial_medic.actors.patient].love =
       npcs.all[world_tutorial_medic.actors.patient].love + 1

@@ -1,7 +1,7 @@
 import Selector from '../scripts/behaviors/selector'
 import NpcState from '../scripts/states/npc'
 import RoomState from '../scripts/states/room'
-import Storage from '../scripts/states/storage'
+//import RoomState from '../scripts/states/room'
 import { BehaviorProps, BehaviorSetters, HeroBehaviorProps } from './behaviors'
 import { Effect } from './tasks'
 
@@ -90,11 +90,20 @@ export interface Room {
   name: string
   clearance: number
   //swaps: Swaps
-  actors: Actors
+  actors: { [key: string]: Storage }
+  stationKeys: string[]
   props?: string[]
   focus: boolean
   onScreen: boolean
   //wards?: Wards
+}
+export interface Unlocks {
+  [key: string]: Unlock
+}
+export interface Unlock {
+  id: string
+  name: string
+  scope: string
 }
 export interface Stations {
   [key: string]: Station
@@ -119,10 +128,15 @@ export interface Swaps {
 export interface Fallbacks {
   stations: { [key: string]: string }
 }
-export interface Actors {
+export interface Inventories {
   [key: string]: Storage
 }
-export interface ActorProps {
+//export interface Actors {
+//[key: string]: Storage
+//}
+export interface Storage {
+  id: string
+  room?: string
   name: string
   inventory: string[]
   watcher?: string

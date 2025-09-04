@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { RoomsInitState } from './inits/roomsInitState'
 import RoomState from './room'
 import StateMachine from './stateMachine'
 import { Room, Rooms } from '../../types/state'
 import { RoomProps, WorldArgs } from '../../types/world'
+import { RoomsInitState } from './inits/roomsInitState'
 
 const dt = math.randomseed(os.time())
 
@@ -26,7 +26,7 @@ export default class WorldRooms {
       ...roomsProps,
     }
 
-    this._all = seedInitRooms()
+    this._all = { ex: new RoomState({ ...RoomsInitState.roomexample }) }
     this._focused = 'grounds'
 
     this.fsm
@@ -67,6 +67,12 @@ export default class WorldRooms {
   }
   private onTurnUpdate(): void {
     //  this.resetStationMap()
+    //testjpf. this runs the level ai checks for focused room.
+    //this will probably be task/quest related.
+    //meaning room sys needs quest/task props.
+    //inquestinitdata probably need folder that can also include roomtask/upgrade tasks
+    //import all files from folder into quests sys and initialize
+    //need conditional to add id to roomState?
     let kr: keyof typeof this._all
     for (kr in this._all) this._all[kr].fsm.update(dt)
   }
@@ -78,13 +84,7 @@ export default class WorldRooms {
     this._all = {}
     this._all[room.name] = new RoomState(room)
   }
-}
-
-function seedInitRooms() {
-  const seeded: Rooms = {}
-  let ki: keyof typeof RoomsInitState
-  for (ki in RoomsInitState) {
-    seeded[ki] = new RoomState(RoomsInitState[ki])
+  initStation(room: string, id: string) {
+    this._all[room].stationKeys.push(id)
   }
-  return seeded
 }

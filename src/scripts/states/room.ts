@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 
 import StateMachine from './stateMachine'
-import { Actors, Room } from '../../types/state'
+import { Inventories, Room } from '../../types/state'
 //import { RoomProps } from '../../types/world'
 import { aiActions } from '../ai/ai_main'
 
@@ -10,9 +10,11 @@ export default class RoomState {
   matrix: { x: number; y: number }
   name: string
   clearance: number
-  actors: Actors
+  actors: Inventories
   props?: string[]
   stationKeys: string[]
+  focus: boolean
+  onScreen: boolean
   // p: RoomProps
   //checks: RoomChecks
   //outcomes: RoomOutcomes
@@ -24,6 +26,7 @@ export default class RoomState {
     this.actors = r.actors
     this.props = r.props || []
     this.stationKeys = []
+    ;(this.focus = false), (this.onScreen = false)
     // this.p = roomProps
     this.fsm
       .addState('idle')

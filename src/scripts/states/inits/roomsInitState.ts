@@ -15,6 +15,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     clearance: 3,
     props: [],
     actors: {},
+    stationKeys: [],
     focus: false,
     onScreen: false,
   },
