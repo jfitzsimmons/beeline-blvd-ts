@@ -1,14 +1,34 @@
-import { Quest } from '../../../../types/tasks'
-import { subscribe, unsubscribe } from '../../dispatcher'
-const { quests, info, npcs, stations } = globalThis.game.world
-//const { world_tutorial_medic: wtm } = quests.all
+/**
+ * so we will have access to state
+ * so 2 returnNpc functions?
+ *  seems to be going down the same road...
+ * need to be able to update stats.
+ * needs to be able to add other behaviors
+ * !!!  will have that because of behavio sstate!!!!
+ *
+ */
 
+import { Behavior } from '../../../types/state'
+import { NpcsInitState } from '../../states/inits/npcsInitState'
+import NpcState from '../../states/npc'
+import { subscribe, unsubscribe } from '../dispatcher'
+const { npcs } = globalThis.game.world
+//const { world_tutorial_medic: wtm } = quests.all
+// testjpf need new nps inits
 export default {
-  actors: {
-    patient: stations.all.grounds_worker1.occupant,
-    doctor: '',
-  },
-  init() {
+  id: '',
+  recipient: new NpcState({ ...NpcsInitState }),
+  agent: new NpcState({ ...NpcsInitState }),
+  reason: '',
+  type: '',
+
+  init(behavior: Behavior) {
+    this.id = behavior.id
+    this.recipient = npcs.all[behavior.agent]
+    this.agent = npcs.all[behavior.agent]
+    this.reason = behavior.reason
+    this.type = behavior.type
+
     //since already here dont use this:
     //quests.updateStatus('activate', 'world_tutorial_medic')
     //but this:
@@ -18,7 +38,7 @@ export default {
     //subscribe to their quest.
     //ignored by other  npcs
   },
-  tick(quest: Quest) {
+  tick() {
     //loop through other npcs and see if they passed by
     // add questionAction logic here
   },
@@ -48,7 +68,7 @@ export function final(this: props) {
 //something like questHashTable
 export function on_message(
   this: props,
-  messageId: hash,
+  _messageId: hash,
   message: { questId: string; status: string },
   _sender: url
 ) {

@@ -1,21 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Behavior, InventoryTableItem, Trait } from '../../types/state'
+import { Trait } from '../../types/state'
 import { Effect, QuestMethods } from '../../types/tasks'
 import { shuffle } from '../utils/utils'
 import { RoomsInitState } from './inits/roomsInitState'
-import { itemStateInit } from './inits/inventoryInitState'
-import { WorldPlayerArgs } from '../../types/world'
+
+//import { WorldPlayerArgs } from '../../types/world'
 import ActorState from './actor'
-import Selector from '../behaviors/selector'
-import Sequence from '../behaviors/sequence'
-import {
-  ActionProps,
-  BehaviorSetters,
-  HeroBehaviorKeys,
-  HeroBehaviorProps,
-} from '../../types/behaviors'
-import PlaceSequence from '../behaviors/sequences/placeSequence'
-import TrespassSequence from '../behaviors/sequences/trespassSequence'
 
 function randomTrait(skills: Trait, bins: Trait) {
   let tempvals: number[] = shuffle([1, 1, 3, 4, 5, 6, 6, 7])
@@ -45,11 +35,11 @@ export default class WorldPlayer extends ActorState {
   turns = 0
   checkpoint = 'tutorialA'
   quests: QuestMethods
-  p: WorldPlayerArgs
-  behavior: Behavior
+  // p: WorldPlayerArgs
+  //behavior: Behavior
   clan: string
-  constructor(name: string, playerProps: WorldPlayerArgs) {
-    super(name, playerProps)
+  constructor(name: string) {
+    super(name)
     this.currRoom = 'reception'
     this.matrix = { x: 0, y: 4 }
     this.ap = 30
@@ -58,6 +48,7 @@ export default class WorldPlayer extends ActorState {
     this.name = 'player'
     this.clan = 'hero'
     this.exitRoom = 'grounds'
+    /*
     const behaviorDefaults = () => {
       return {
         name: this.name,
@@ -65,15 +56,16 @@ export default class WorldPlayer extends ActorState {
         cooldown: this.cooldown,
         turnPriority: this.turnPriority,
         currRoom: this.currRoom,
-        behavior: this.behavior,
+     //   behavior: this.behavior,
         addToBehavior: this.addToBehavior.bind(this),
         hp: this.hp,
         updateFromBehavior: this.updateFromBehavior.bind(this),
       }
     }
+
     this.behavior = {
-      active: new Selector([]),
-      place: new Selector([]),
+     // active: new Selector([]),
+     // place: new Selector([]),
       update: {
         cooldown: (value) => (this.cooldown = value as number),
         hp: (value) => (this.hp = value as number),
@@ -169,13 +161,14 @@ export default class WorldPlayer extends ActorState {
         },
       } as HeroBehaviorProps,
     }
+      */
     randomTrait(this.traits.skills, this.traits.binaries)
     this.inventory = ['axe', 'apple01']
-    this.p = playerProps
+    // this.p = playerProps
     this.quests = {
-      return_inventory: this.return_inventory.bind(this),
+      // return_inventory: this.return_inventory.bind(this),
       return_skills: this.return_skills.bind(this),
-      return_playerroom: this.p.rooms.getFocusedRoom.bind(this),
+      // return_playerroom: this.p.rooms.getFocusedRoom.bind(this),
     }
     this.inventory_init()
     this.fsm
@@ -194,35 +187,36 @@ export default class WorldPlayer extends ActorState {
     this.addToAlertLevel = this.addToAlertLevel.bind(this)
     // this.getPlayerRoom = this.getPlayerRoom.bind(this)
     this.setRoomInfo = this.setRoomInfo.bind(this)
-    this.addInvBonus = this.addInvBonus.bind(this)
+    // this.addInvBonus = this.addInvBonus.bind(this)
     this.add_effects_bonus = this.add_effects_bonus.bind(this)
     this.addOrExtendEffect = this.addOrExtendEffect.bind(this)
-    this.addToBehavior = this.addToBehavior.bind(this)
-    this.getBehaviorProps = this.getBehaviorProps.bind(this)
+    // this.addToBehavior = this.addToBehavior.bind(this)
+    //this.getBehaviorProps = this.getBehaviorProps.bind(this)
     this.updateFromBehavior = this.updateFromBehavior.bind(this)
-    this.updateInventory = this.updateInventory.bind(this)
+    //this.updateInventory = this.updateInventory.bind(this)
   }
   private onPlaceEnter(): void {
+    /*
     if (this.behavior.place.children.length < 1)
       this.behavior.place.children.push(
         new PlaceSequence(this.getBehaviorProps.bind(this))
       )
+        */
   }
   private onPlaceUpdate(): void {
-    this.behavior.place.run()
+    //this.behavior.place.run()
   }
   private onPlaceExit(): void {
-    if (
-      this.clearance + math.random(0, 1) <
-      RoomsInitState[this.currRoom].clearance
-    )
-      //TESTJPF I think i need to remove player and
-      // npcstate from checkfuncs init!!!
-      this.behavior.active.children.push(
-        new TrespassSequence(this.getBehaviorProps.bind(this))
-      )
-
-    this.behavior.active.run()
+    // if (
+    //this.clearance + math.random(0, 1) <
+    //  RoomsInitState[this.currRoom].clearance
+    // )
+    //TESTJPF I think i need to remove player and
+    // npcstate from checkfuncs init!!!
+    //  this.behavior.active.children.push(
+    //     new TrespassSequence(this.getBehaviorProps.bind(this))
+    //    )
+    // this.behavior.active.run()
   }
   private onActiveEnter(): void {}
   private onActiveUpdate(): void {}
@@ -232,7 +226,7 @@ export default class WorldPlayer extends ActorState {
     this.ap = this.ap - 1
     this.turns = this.turns + 1
     this.exitRoom = this.currRoom
-    this.currRoom = this.p.rooms.getFocusedRoom()
+    //this.currRoom = this.p.rooms.getFocusedRoom()
     this.matrix = RoomsInitState[this.currRoom].matrix
     print('::: SETROOMINFO:::exit,enter::', this.exitRoom, this.currRoom)
   }
@@ -241,18 +235,18 @@ export default class WorldPlayer extends ActorState {
     return this.currRoom
   }
     **/
-  updateFromBehavior(
-    prop: keyof BehaviorSetters,
-    value: number | [string, string]
-  ): void {
-    this.behavior.update[prop](value)
-
+  updateFromBehavior(): // prop: keyof BehaviorSetters,
+  //  value: number | [string, string]
+  void {
+    //   this.behavior.update[prop](value)
     //this.behavior.props[behavior]()
   }
-  getBehaviorProps(behavior: HeroBehaviorKeys): ActionProps {
+  /*
+  getBehaviorProps(behavior: HeroBehaviorKeys): //ActionProps {
     const b = behavior
-    return this.behavior.props[b]()
+  //  return this.behavior.props[b]()
   }
+
   addToBehavior(selector: 'place' | 'active', s: Sequence, unshift = false) {
     unshift === false
       ? this.behavior[selector].children.push(s)
@@ -314,6 +308,7 @@ export default class WorldPlayer extends ActorState {
   return_inventory(): string[] {
     return this.inventory
   }
+    */
   return_skills(): Trait {
     return this.traits.skills
   }
@@ -321,9 +316,9 @@ export default class WorldPlayer extends ActorState {
     this.alert_level += n
   }
   private inventory_init() {
-    for (const item of this.inventory) {
-      this.addInvBonus(item)
-    }
+    // for (const item of this.inventory) {
+    //  this.addInvBonus(item)
+    //   }
   }
   addOrExtendEffect(e: Effect) {
     //   let ek: keyof typeof this.effects

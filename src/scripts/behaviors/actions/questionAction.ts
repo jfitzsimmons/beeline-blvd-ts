@@ -7,6 +7,7 @@ import {
   QuestionProps,
 } from '../../../types/behaviors'
 import Action from '../action'
+//testjpf ../../systems/STATS/crimeChecks' may be a better folder
 import { crimeChecks } from '../../systems/npcs/crimeChecks'
 import ArrestSequence from '../sequences/arrestSequence'
 import AnnouncerSequence from '../sequences/announcerSequence'

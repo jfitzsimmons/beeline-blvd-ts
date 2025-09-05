@@ -18,12 +18,12 @@ export interface WorldPlayerArgs {
 }
 export interface WorldNpcsArgs {
   world: {
-    returnNpc(n: string): NpcState
+    // returnNpc(n: string): NpcState
     returnPlayer(): WorldPlayer
   }
   rooms: {
     // getOccupants(r: string): string[]
-    getFocusedRoom(): string
+    //  getFocusedRoom(): string
   }
   novel: {
     setConfrontation(npc: string, action: string, reason: string): void
@@ -47,10 +47,10 @@ export interface WorldQuestsMethods {
 }
 
 export interface WorldArgs {
-  returnNpc(n: string): NpcState
-  returnPlayer(): WorldPlayer
+  //returnNpc(n: string): NpcState
+  //returnPlayer(): WorldPlayer
 }
-export interface RoomProps extends WorldArgs {
+export interface RoomProps {
   setFocused(r: string): void
 }
 export interface TaskProps extends WorldArgs {

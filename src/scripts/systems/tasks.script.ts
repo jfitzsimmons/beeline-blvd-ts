@@ -1,10 +1,11 @@
 import questsData from './initData/tasks/questData'
-import questioningSys from '../systems/tasks/behaviors/questioning'
+import questioningSys from './behaviors/questioning'
 //testjpf make new import
 //quest
 import { subscribe, unsubscribe } from './dispatcher'
 import { questTasks } from './tasks/quests'
 //import { npcTasks } from './npcs/crimeChecks'
+import questioning from './behaviors/questioning'
 
 const { quests } = globalThis.game.world
 
@@ -12,11 +13,12 @@ export default {
   quests: {},
   // TESTJPF !!! NOW unlocks / upgrades: ???
   dispatches: {},
+  behaviors: { questioning },
   tick() {
     for (const [, quest] of Object.entries(quests.all)) {
       //testjpf need to formalize a questlistener
       if (questTasks[quest.id] !== null) questTasks.tick()
-      if (quest.id.split('_')[1] == 'questioning') questioningSys.tick(quest)
+      if (quest.id.split('_')[1] == 'questioning') questioningSys.tick()
       //TESTJPF then tutorialA, tutb will ahve things like
       // .active(),.see(), that will be called in tick
       // quests.loadCstenss(k)

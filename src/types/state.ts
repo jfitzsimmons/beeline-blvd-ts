@@ -1,8 +1,6 @@
-import Selector from '../scripts/behaviors/selector'
 import NpcState from '../scripts/states/npc'
 import RoomState from '../scripts/states/room'
 //import RoomState from '../scripts/states/room'
-import { BehaviorProps, BehaviorSetters, HeroBehaviorProps } from './behaviors'
 import { Effect } from './tasks'
 
 export interface NpcsState {
@@ -31,6 +29,7 @@ export interface NpcDefaults {
   exitRoom: string
   currStation: string
   race: string
+  behaviorKeys: string[]
 }
 export interface Npc extends NpcDefaults {
   home: { x: number; y: number }
@@ -40,11 +39,20 @@ export interface Npc extends NpcDefaults {
   clan: string
   body: string
 }
+export interface Behaviors {
+  [key: string]: Behavior
+}
 export interface Behavior {
-  place: Selector
-  active: Selector
-  update: BehaviorSetters
-  props: BehaviorProps | HeroBehaviorProps
+  id: string
+  type: string
+  agent: string
+  recipient: string
+  reason: string
+
+  //place: Selector
+  // active: Selector
+  //update: BehaviorSetters
+  //props: BehaviorProps | HeroBehaviorProps
 }
 export interface PlayerState {
   currRoom: string

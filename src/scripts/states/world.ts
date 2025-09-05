@@ -8,14 +8,6 @@ import WorldTasks from './tasks'
 import WorldInfo from './info'
 import WorldNovel from './novel'
 import WorldQuests from './quests'
-import NpcState from './npc'
-import {
-  WorldNpcsArgs,
-  WorldPlayerArgs,
-  //WorldTasksArgs,
-  //WorldQuestsMethods,
-  WorldArgs,
-} from '../../types/world'
 import WorldStations from './stations'
 import WorldInventory from './inventory'
 
@@ -35,33 +27,22 @@ export default class World {
   clock: number
   constructor() {
     this.fsm = new StateMachine(this, 'world')
-    const roomsProps: WorldArgs = {
-      returnNpc: this.returnNpc.bind(this),
-      returnPlayer: this.returnPlayer.bind(this),
-    }
-    this.rooms = new WorldRooms(roomsProps)
+    // const roomsProps: WorldArgs = {
+    //   returnNpc: this.returnNpc.bind(this),
+    //  returnPlayer: this.returnPlayer.bind(this),
+    //}
+    this.rooms = new WorldRooms()
     this.stations = new WorldStations()
-    this.novel = new WorldNovel(roomsProps)
-    this.tasks = new WorldTasks(roomsProps)
+    this.novel = new WorldNovel()
+    this.tasks = new WorldTasks()
     this.inventory = new WorldInventory()
-    const playerProps: WorldPlayerArgs = {
-      world: {
-        returnNpc: this.returnNpc.bind(this),
-        // didCrossPaths: this.didCrossPaths.bind(this),
-      },
-      rooms: {
-        getFocusedRoom: this.rooms.get_focused.bind(this),
-        //  getOccupants: this.rooms.getOccupants.bind(this),
-      },
-      novel: {
-        setConfrontation: this.novel.setConfrontation.bind(this),
-      },
-    }
-    this.player = new WorldPlayer('hero', playerProps)
+
+    this.player = new WorldPlayer('hero')
+    /*
     const npcsProps: WorldNpcsArgs = {
       world: {
         returnPlayer: this.returnPlayer.bind(this),
-        ...playerProps.world,
+        // ...playerProps.world,
       },
       rooms: {
         //  clearStation: this.rooms.clearStation.bind(this),
@@ -71,13 +52,14 @@ export default class World {
         //  getStationMap: this.rooms.getStationMap.bind(this),
         //   sendToVacancy: this.rooms.sendToVacancy.bind(this),
         //    getWards: this.rooms.getWards.bind(this),
-        ...playerProps.rooms,
+        //  ...playerProps.rooms,
       },
       novel: {
         setConfrontation: this.novel.setConfrontation.bind(this),
       },
     }
-    this.npcs = new WorldNpcs(npcsProps)
+      */
+    this.npcs = new WorldNpcs()
     /**
      const allquestmethods: WorldQuestsMethods = {
       pq: this.player.quests,
@@ -182,9 +164,7 @@ export default class World {
     print('XXX ::: XXX: worldFAINTupdate: Finished.')
   }
   private onFaintExit(): void {}
-  returnNpc(n: string): NpcState {
-    return this.npcs.all[n]
-  }
+
   returnPlayer(): WorldPlayer {
     return this.player
   }

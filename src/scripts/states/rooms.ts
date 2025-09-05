@@ -2,7 +2,7 @@
 import RoomState from './room'
 import StateMachine from './stateMachine'
 import { Room, Rooms } from '../../types/state'
-import { RoomProps, WorldArgs } from '../../types/world'
+import { RoomProps } from '../../types/world'
 import { RoomsInitLayout, RoomsInitState } from './inits/roomsInitState'
 
 const dt = math.randomseed(os.time())
@@ -16,14 +16,14 @@ export default class WorldRooms {
   world: RoomProps
   //fallbacks: Fallbacks
 
-  constructor(roomsProps: WorldArgs) {
+  constructor() {
     this.fsm = new StateMachine(this, 'rooms')
     //this.fallbacks = { ...RoomsInitFallbacks }
     // this.layout = [...RoomsInitLayout]
     //this.roles = { ...RoomsInitRoles }
     this.world = {
       setFocused: this.setFocused.bind(this),
-      ...roomsProps,
+      // ...roomsProps,
     }
 
     this._all = { ex: new RoomState({ ...RoomsInitState.roomexample }) }

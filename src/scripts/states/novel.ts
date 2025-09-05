@@ -1,6 +1,6 @@
 import { NovelNpc } from '../../types/novel'
 import { QuestMethods } from '../../types/tasks'
-import { WorldArgs } from '../../types/world'
+//import { WorldArgs } from '../../types/world'
 import { NpcsInitState } from './inits/npcsInitState'
 import NpcState from './npc'
 
@@ -16,11 +16,11 @@ export default class WorldNovel {
   private _scripts: string[]
   //private _alertChange: number
   private _npc: NovelNpc
-  p: WorldArgs
+  //p: WorldArgs
   //private _quest: QuestCondition
   quests: QuestMethods
 
-  constructor(novelMethods: WorldArgs) {
+  constructor() {
     // this.background = ''
     //  this.sprites = {}
     this._active_quest = false
@@ -33,9 +33,9 @@ export default class WorldNovel {
     // this._alertChange = 0
     this._npc = {
       sprites: { smile: '/assets/images/characters/eve/smile.png' },
-      ...NpcsInitState.labor01,
+      ...NpcsInitState,
     }
-    this.p = novelMethods
+    // this.p = novelMethods
     /** 
     this._quest = {
       label: '',
@@ -137,8 +137,8 @@ export default class WorldNovel {
   getNovelUpdates(): NovelNpc {
     return this.npc
   }
-  setConfrontation(npc: string, action: string, reason: string) {
-    this.npc = this.p.returnNpc(npc)
+  setConfrontation(_npc: string, action: string, reason: string) {
+    //this.npc = //this.p.returnNpc(npc)
     this.reason = reason
     this.cause = action
     this._forced = true

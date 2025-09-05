@@ -16,6 +16,7 @@ import { shuffle, clamp } from '../../utils/utils'
 import { QuestionProps } from '../../../types/behaviors'
 import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
 import { crimeSeverity } from '../../utils/ai'
+const { inventory } = globalThis.game.world
 
 export const crimeChecks: {
   [key: string]: Array<
@@ -684,8 +685,8 @@ export function take_check(
   //prettier-ignore
   print('CHKFUNCS::: TAKECHECK::', chest_item,'stolenFrom:',actor.name,'by',taker.name)
   if (chest_item !== null) {
-    taker.updateInventory('add', chest_item)
-    actor.updateInventory('delete', chest_item)
+    inventory.updateInventory(`${actor.name}_storage`, 'delete', chest_item)
+    inventory.updateInventory(`${taker.name}_wallet`, 'add', chest_item)
     // taker.addInvBonus(chest_item)
   }
 }
@@ -712,8 +713,8 @@ export function stash_check(
   print('CHKFUNCS::: stashCHECK::', chest_item,'stolenFrom:',actor.name,'by',stasher.name)
 
   if (chest_item !== null) {
-    stasher.updateInventory('delete', chest_item)
-    actor.updateInventory('add', chest_item)
+    inventory.updateInventory(`${actor.name}_storage`, 'add', chest_item)
+    inventory.updateInventory(`${stasher.name}_wallet`, 'delete', chest_item)
   }
   // if victim == true ){ add_chest_bonus(n, chest_item) }
 }
@@ -827,8 +828,8 @@ export function npcStealCheck(
     }
 
     if (chest_item !== null) {
-      target.updateInventory('add', chest_item)
-      actor.updateInventory('delete', chest_item)
+      inventory.updateInventory(`${target.name}_storage`, 'add', chest_item)
+      inventory.updateInventory(`${actor.name}_wallet`, 'delete', chest_item)
     }
     target.cooldown = math.random(5, 15)
   }

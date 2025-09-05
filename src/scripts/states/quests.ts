@@ -155,15 +155,15 @@ export default class WorldQuests {
   //and better FSM condtionals!!!
   // checks quest completion after interactions and turns
 
-  update_quests_progress = (interval: string) => {
+  update_quests_progress = (_interval: string) => {
     //i think this hsould handle every type of quest
     // room task npc or whatevs achievement
-
     ///Testjpf add dispatches for each status
     //  print('.checkpointslice(0, -1)', checkpoint.slice(0, -1))
     // const quests = this.all[this.checkpoint.slice(0, -1)]
     //let questKey: keyof typeof quests
     //for (questKey in quests) {
+    /*
     const quest = quests[questKey]
     if (quest.passed == false) {
       let quest_passed = true
@@ -199,5 +199,6 @@ export default class WorldQuests {
         print(questKey, 'quest COMPLETE!!!')
       }
     }
+      */
   }
 }

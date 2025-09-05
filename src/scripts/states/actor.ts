@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import StateMachine from './stateMachine'
-import { Behavior, Traits } from '../../types/state'
+import { Traits } from '../../types/state'
 import { Effect } from '../../types/tasks'
-import { NpcProps, WorldPlayerArgs } from '../../types/world'
 
 export default class ActorState {
   fsm: StateMachine
@@ -14,7 +13,6 @@ export default class ActorState {
   cooldown = 0
   convos = 0
   matrix = { x: 0, y: 0 }
-  behavior: Partial<Behavior>
   traits: Traits = {
     opinion: {
       church: 0,
@@ -63,11 +61,9 @@ export default class ActorState {
   currRoom = 'grounds'
   exitRoom = ''
   race = ''
-  parent: NpcProps | WorldPlayerArgs
-  constructor(n: string, lists: NpcProps | WorldPlayerArgs) {
+
+  constructor(n: string) {
     this.fsm = new StateMachine(this, 'actor_' + n)
-    this.behavior = {}
-    this.parent = lists
   }
 
   public get hp() {
