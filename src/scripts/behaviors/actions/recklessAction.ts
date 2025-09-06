@@ -12,7 +12,7 @@ import {
   chaotic_good_check,
   classy_check,
   predator_check,
-} from '../../states/inits/checksFuncs'
+} from '../../systems/npcs/crimeChecks'
 
 import { shuffle } from '../../utils/utils'
 import Action from '../action'
@@ -42,7 +42,9 @@ export default class RecklessAction extends Action {
     const listeners = Object.values(
       this.a.getOccupants(this.a.currRoom)
     ).filter((s) => s != '' && s != this.a.name && s != this.inspirer.name)
-
+    //testjpf so this will be something like
+    //dispatch (reskless to room) to any subscribed lsiteners
+    //OR Opposite, dispatch listeners and have reckless subscribe
     for (const l of listeners) {
       print('LISTERNER::: Recklessaction::', l)
       const listener = this.a.returnNpc(l)

@@ -25,6 +25,7 @@ export default class InjuredAction extends Action {
     this.getProps = getProps
   }
   run(): { (): void } {
+    // check to see if injured npc should be ignored
     if (this.a.getIgnore().includes(this.a.name))
       return () =>
         this.continue(
@@ -33,7 +34,7 @@ export default class InjuredAction extends Action {
             ':' +
             this.a.turnPriority
         )
-
+    //sort doctors first
     const helpers = Object.values(this.a.getOccupants(this.a.currRoom))
       .filter((s) => s != '' && s != this.a.name)
       .sort(function (a, b) {

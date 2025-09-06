@@ -19,7 +19,7 @@ import {
   meritsDemerits,
   recklessCheck,
   pledgeCheck,
-} from '../../states/inits/checksFuncs'
+} from '../../systems/npcs/crimeChecks'
 import { shuffle } from '../../utils/utils'
 import { removeValuable, removeAdvantageous } from '../../utils/inventory'
 import Storage from '../../states/storage'

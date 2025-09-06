@@ -1,8 +1,6 @@
-import Selector from '../scripts/behaviors/selector'
 import NpcState from '../scripts/states/npc'
 import RoomState from '../scripts/states/room'
-import Storage from '../scripts/states/storage'
-import { BehaviorProps, BehaviorSetters, HeroBehaviorProps } from './behaviors'
+//import RoomState from '../scripts/states/room'
 import { Effect } from './tasks'
 
 export interface NpcsState {
@@ -31,6 +29,7 @@ export interface NpcDefaults {
   exitRoom: string
   currStation: string
   race: string
+  behaviorKeys: string[]
 }
 export interface Npc extends NpcDefaults {
   home: { x: number; y: number }
@@ -40,11 +39,25 @@ export interface Npc extends NpcDefaults {
   clan: string
   body: string
 }
+export interface Behaviors {
+  [key: string]: Behavior
+}
 export interface Behavior {
-  place: Selector
-  active: Selector
-  update: BehaviorSetters
-  props: BehaviorProps | HeroBehaviorProps
+  id: string
+  type: string
+  agent: string
+  recipient: string
+  reason: string
+  turns: number
+
+  //place: Selector
+  // active: Selector
+  //update: BehaviorSetters
+  //props: BehaviorProps | HeroBehaviorProps
+}
+export interface BehaviorSystem extends Behavior {
+  init(b: Behavior): BehaviorSystem
+  tick(): void
 }
 export interface PlayerState {
   currRoom: string
@@ -87,13 +100,37 @@ export interface Rooms {
 }
 export interface Room {
   matrix: { x: number; y: number }
-  roomName: string
+  name: string
   clearance: number
-  stations: { [key: string]: string }
-  swaps: Swaps
-  actors: Actors
+  //swaps: Swaps
+  actors: { [key: string]: Storage }
+  stationKeys: string[]
   props?: string[]
-  wards?: Wards
+  focus: boolean
+  onScreen: boolean
+  //wards?: Wards
+}
+export interface Unlocks {
+  [key: string]: Unlock
+}
+export interface Unlock {
+  id: string
+  name: string
+  scope: string
+}
+export interface Stations {
+  [key: string]: Station
+}
+export interface Station {
+  name: string
+  room: string
+  roles?: string[]
+  occupant: string
+  swap?: string
+  schedule: string
+  ward: boolean
+  fallback: boolean
+  onScreen: boolean
 }
 export interface Wards {
   [key: string]: string
@@ -104,14 +141,20 @@ export interface Swaps {
 export interface Fallbacks {
   stations: { [key: string]: string }
 }
-export interface Actors {
+export interface Inventories {
   [key: string]: Storage
 }
-export interface ActorProps {
+//export interface Actors {
+//[key: string]: Storage
+//}
+export interface Storage {
+  id: string
+  room?: string
   name: string
   inventory: string[]
   watcher?: string
   actions: string[]
+  animation: string
 }
 export interface Roles {
   [key: string]: string[]

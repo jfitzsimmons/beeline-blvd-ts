@@ -1,8 +1,8 @@
 import Sequence from '../scripts/behaviors/sequence'
 import NpcState from '../scripts/states/npc'
 import WorldPlayer from '../scripts/states/player'
-import Storage from '../scripts/states/storage'
-import { Behavior, Traits } from './state'
+//import Storage from '../scripts/states/storage'
+import { Behavior, Storage, Traits } from './state'
 import { Effect } from './tasks'
 
 export type ActionProps =

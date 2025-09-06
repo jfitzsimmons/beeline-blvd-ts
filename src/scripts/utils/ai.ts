@@ -1,10 +1,13 @@
 import { Direction } from '../../types/ai'
+import { Station } from '../../types/state'
 import {
-  RoomsInitRoles,
   RoomsInitLayout,
+  // RoomsInitRoles,
+  // RoomsInitLayout,
   RoomsInitState,
 } from '../states/inits/roomsInitState'
 import { shuffle } from './utils'
+const { stations } = globalThis.game.world
 
 export const turnPriorityLookup = {
   99: [],
@@ -37,6 +40,7 @@ export const getRoomPlaceCount = (room: string) => {
 }
 let roomListCount: { [key: string]: number } = {}
 //const unplacedcount: { [key: string]: number } = {}
+/**
 const fallbackTable: { [key: string]: string[] } = {
   loading: ['loading_outside1'],
   grounds: ['grounds_unplaced'],
@@ -52,14 +56,15 @@ const fallbackTable: { [key: string]: string[] } = {
   customs: ['customs_unplaced'],
   store: ['store_unplaced'],
 }
+  */
 export function fillStationAttempt(
   room_list: string[],
   npc: string,
   matrix: { x: number; y: number },
-  clan: string,
-  stationMap: {
-    [key: string]: { [key: string]: { [key: string]: string } }
-  }
+  clan: string
+  //stationMap: {
+  //    [key: string]: { [key: string]: { [key: string]: string } }
+  // }
 ): { chosenRoom: string; chosenStation: string } {
   //testjpf debug number of roomlist occurences
   room_list.forEach((room) => {
@@ -73,6 +78,7 @@ export function fillStationAttempt(
   let placed = false
   let chosenRoom = ''
   let chosenStation = ''
+  const fallbacks = []
 
   while (placed == false) {
     for (const room of room_list) {
@@ -81,23 +87,30 @@ export function fillStationAttempt(
       } else {
         roomPlaceCount[room] = { listed: 1, occupants: 0 }
       }
-      const shuffledStations: [string, string][] = shuffle(
-        Object.entries(stationMap[room].stations)
+      const shuffledStations: [string, boolean][] = shuffle(
+        //This should only bring back if stationkey is false
+        //TESTJPF
+        Object.entries(stations.stationsMap[room]).filter(
+          (placed) => placed[1] == false
+        )
       )
       for (const ks of shuffledStations) {
-        chosenStation =
-          ks[0] in RoomsInitState[room].swaps && math.random() > 0.6
-            ? RoomsInitState[room].swaps[ks[0]][0]
-            : ks[0]
+        const station: Station = stations.all[ks[0]]
+        if (station.fallback == true) fallbacks.push(station)
+        if (station.ward == false) {
+          chosenStation =
+            station.swap !== undefined && math.random() > 0.6
+              ? station.swap
+              : station.name
 
-        const role = RoomsInitRoles[chosenStation]
-        if (role.includes(clan)) {
-          //loop thru room stations see if empty or has correct role
-          chosenRoom = room
-          // prettier-ignore
-          // print(npc, ',went to ,', room, ks[0], ',from,', RoomsInitLayout[matrix.y][matrix.x])
-          placed = true
-          break
+          if (station.roles !== undefined && station.roles.includes(clan)) {
+            //loop thru room stations see if empty or has correct role
+            chosenRoom = room
+            // prettier-ignore
+            // print(npc, ',went to ,', room, ks[0], ',from,', RoomsInitLayout[matrix.y][matrix.x])
+            placed = true
+            break
+          }
         }
       }
       //print('CHOSENROOM AI:: ', room, npc)
@@ -106,34 +119,32 @@ export function fillStationAttempt(
 
     // fallback stations
     if (placed == false) {
-      for (const room of room_list) {
-        if (fallbackTable[room] !== null)
-          for (const station of fallbackTable[room]) {
-            const passer = station.slice(-6) == 'passer'
-            if (
-              (passer == false &&
-                stationMap.backup.fallbacks[station] !== null) ||
-              (passer == true &&
-                RoomsInitLayout[matrix.y][matrix.x] != room &&
-                stationMap.backup.fallbacks[station] !== null)
-            ) {
-              chosenStation = station
-              chosenRoom = room
-              placed = true
-              break
-            }
-          }
-        if (placed == true) break
+      for (const fback of fallbacks) {
+        //const station: Station = stations.all[fback]
+        // if (fallbackTable[room] !== null)
+        //for (const station of fallbackTable[room]) {
+        const passer = fback.name.slice(-6) == 'passer'
+        if (
+          (passer == false &&
+            stations.stationsMap[fback.room][fback.name] !== true) ||
+          (passer == true &&
+            RoomsInitLayout[matrix.y][matrix.x] != fback.room &&
+            stations.stationsMap[fback.room][fback.name] !== true)
+        ) {
+          chosenStation = fback.name
+          chosenRoom = fback.room
+          placed = true
+          break
+        }
       }
-
-      if (chosenRoom == '')
-        print(
-          'COMPLETELY UNPLACED.  NEed passers for unloading, alley 1...',
-          npc
-        )
-      placed = true
+      //        if (placed == true) break
     }
+
+    if (chosenRoom == '')
+      print('COMPLETELY UNPLACED.  NEed passers for unloading, alley 1...', npc)
+    placed = true
   }
+
   // prettier-ignore
   // print( 'fillStationAttempt::: ///utils/ai:: ||| chosenRoom:', chosenRoom, '| chosenStation:', chosenStation, '| npc: ', npc )
   if (roomPlaceCount[chosenRoom] != null) {
@@ -254,6 +265,7 @@ export function set_room_priority(
 }
 export function set_npc_target(
   direction: Direction,
+  //TESTJPF TODO // GET this from world.npcs global!!!
   n: {
     turnPriority: number
     aiPath: string

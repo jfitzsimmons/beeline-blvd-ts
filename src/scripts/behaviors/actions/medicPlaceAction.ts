@@ -14,7 +14,7 @@ export default class MedicPlaceAction extends Action {
 
     if (this.a.cooldown > 0) this.a.cooldown = this.a.cooldown - 1
     this.a.exitRoom = this.a.currRoom
-
+    //testjpf could have a subscription to infirmary status that changes all docs!!!
     if (mobile === true && infirmed > 1) {
       if (math.random() + infirmed * 0.2 > 1) {
         const filled = this.a.checkSetStation('infirmary', 'aid', this.a.name)

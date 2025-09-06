@@ -9,7 +9,7 @@ export interface WorldPlayerArgs {
     //didCrossPaths(owner: string, target: string): boolean
   }
   rooms: {
-    getOccupants(r: string): string[]
+    //  getOccupants(r: string): string[]
     getFocusedRoom(): string
   }
   novel: {
@@ -18,26 +18,12 @@ export interface WorldPlayerArgs {
 }
 export interface WorldNpcsArgs {
   world: {
-    returnNpc(n: string): NpcState
+    // returnNpc(n: string): NpcState
     returnPlayer(): WorldPlayer
   }
   rooms: {
-    getOccupants(r: string): string[]
-    getFocusedRoom(): string
-    clearStation(room: string, station: string, npc: string): void
-    checkSetStation(room: string, station: string, npc: string): boolean
-    pruneStationMap(room: string, station: string): void
-    setStation(room: string, station: string, npc: string): void
-    getStationMap(): {
-      [key: string]: { [key: string]: { [key: string]: string } }
-    }
-    sendToVacancy(
-      room: string,
-      npc: string,
-      currRoom: string,
-      currStation: string
-    ): string | null
-    getWards(room: string): string[]
+    // getOccupants(r: string): string[]
+    //  getFocusedRoom(): string
   }
   novel: {
     setConfrontation(npc: string, action: string, reason: string): void
@@ -61,10 +47,10 @@ export interface WorldQuestsMethods {
 }
 
 export interface WorldArgs {
-  returnNpc(n: string): NpcState
-  returnPlayer(): WorldPlayer
+  //returnNpc(n: string): NpcState
+  //returnPlayer(): WorldPlayer
 }
-export interface RoomProps extends WorldArgs {
+export interface RoomProps {
   setFocused(r: string): void
 }
 export interface TaskProps extends WorldArgs {

@@ -1,7 +1,7 @@
 import { ThiefVictimProps, AttendantProps } from '../../../types/ai'
 import { QuestionProps } from '../../../types/behaviors'
 import SuspectingSequence from '../../behaviors/sequences/suspectingSequence'
-import { npcStealCheck, take_or_stash } from '../../states/inits/checksFuncs'
+import { npcStealCheck, take_or_stash } from '../../systems/npcs/crimeChecks'
 import RoomState from '../../states/room'
 import Storage from '../../states/storage'
 import { cicadaModulus, shuffle } from '../../utils/utils'

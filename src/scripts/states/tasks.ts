@@ -2,25 +2,24 @@
 import StateMachine from './stateMachine'
 import { QuestMethods, Task } from '../../types/tasks'
 import TaskState from './task'
-import { TaskProps, WorldArgs } from '../../types/world'
+import { TaskProps } from '../../types/world'
 export default class WorldTasks {
   private _all: TaskState[]
   private _spawn: string
   fsm: StateMachine
   quests: QuestMethods
   methods: TaskProps
-  p: WorldArgs
+  // p: WorldArgs
 
-  constructor(worldProps: WorldArgs) {
+  constructor() {
     this.fsm = new StateMachine(this, 'tasks')
     this._all = []
     this._spawn = 'grounds'
-    this.p = worldProps
     this.methods = {
       npcHasTask: this.npcHasTask.bind(this),
       // didCrossPaths: this.p.didCrossPaths.bind(this),
-      returnNpc: this.p.returnNpc.bind(this),
-      returnPlayer: this.p.returnPlayer.bind(this),
+      // returnNpc: this.p.returnNpc.bind(this),
+      // returnPlayer: this.p.returnPlayer.bind(this),
       taskBuilder: this.taskBuilder.bind(this),
       //getOccupants: this.p.getOccupants.bind(this),
     }
@@ -186,14 +185,16 @@ export default class WorldTasks {
     return count
   }
 
-  taskBuilder(o: string, label: string, target: string, cause = 'theft') {
-    const owner = this.p.returnNpc(o)
+  taskBuilder(_o: string, label: string, target: string, cause = 'theft') {
+    // const owner = this.p.returnNpc(o)
     const append: Task = {
-      owner: owner.name,
+      // owner: owner.name,
+      owner: 'testjpf',
       turns: 15,
       label,
       scope: 'npc',
-      authority: owner.clan, //ex; labor
+      authority: 'testjpf',
+      //  authority: owner.clan, //ex; labor
       target,
       cause,
     }
@@ -202,12 +203,12 @@ export default class WorldTasks {
       append.scope = 'clan'
     } else if (label == 'merits') {
       if (target == 'player') {
-        owner.love = owner.love + 1
+        //  owner.love = owner.love + 1
       }
       append.turns = 3
     } else if (label == 'demerits') {
       if (target == 'player') {
-        owner.love = owner.love - 1
+        //  owner.love = owner.love - 1
       }
       append.turns = 3
     } else if (label == 'reckless') {

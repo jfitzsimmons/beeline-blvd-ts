@@ -6,38 +6,30 @@ import {
 } from './inits/npcsInitState'
 import NpcState from './npc'
 import StateMachine from './stateMachine'
-import { Npcs } from '../../types/state'
-import { RoomsInitPriority, RoomsInitState } from './inits/roomsInitState'
+import { Npc, Npcs } from '../../types/state'
+
 import { QuestMethods } from '../../types/tasks'
-import { NpcProps, WorldNpcsArgs } from '../../types/world'
-import { QuestionProps } from '../../types/behaviors'
-import { SECURITY } from '../utils/consts'
+
 import { resetRoomPlaceCount } from '../utils/ai'
 import { arraymove, shuffle } from '../utils/utils'
-import Selector from '../behaviors/selector'
-import PlaceSequence from '../behaviors/sequences/placeSequence'
-import InjuredSequence from '../behaviors/sequences/injuredSequence'
-import ImmobileSequence from '../behaviors/sequences/immobileSequence'
-import TrespassSequence from '../behaviors/sequences/trespassSequence'
-import QuestionSequence from '../behaviors/sequences/questionSequence'
 
 const dt = math.randomseed(os.time())
 
 export default class WorldNpcs {
   fsm: StateMachine
-  private _all: Npcs
+  private _all: { [key: string]: NpcState }
   order: string[]
   onScreen: string[]
   offScreen: string[]
   quests: QuestMethods
-  p: NpcProps
+  //p: NpcProps
   //infirmed: string[]
   //injured: string[]
   ignore: string[]
   mendingQueue: string[]
   wantedQueue: Array<[string, string]>
 
-  constructor(npcsProps: WorldNpcsArgs) {
+  constructor() {
     // this.infirmed = [] // move to room? infrimed action?
     //this.injured = [] // room? injured action?
     this.mendingQueue = []
@@ -52,6 +44,7 @@ export default class WorldNpcs {
       // returnAll: this.returnAll.bind(this),
       returnOrderAll: this.returnOrderAll.bind(this),
     }
+    /*
     this.p = {
       npcs: {
         // onScreen: this.onScreen,
@@ -71,9 +64,10 @@ export default class WorldNpcs {
       },
       ...npcsProps,
     }
-    this._all = seedNpcs(this.p)
+      */
+    this._all = { example: new NpcState({ ...NpcsInitState }) }
     random_attributes(this.all, this.order)
-    this.inventory_init()
+    //this.inventory_init()
     this.fsm = new StateMachine(this, 'npcs')
     this.fsm.addState('idle')
     this.fsm.addState('place', {
@@ -95,6 +89,7 @@ export default class WorldNpcs {
     this.returnDoctors = this.returnDoctors.bind(this)
     this.returnSecurity = this.returnSecurity.bind(this)
     this.getMendingQueue = this.getMendingQueue.bind(this)
+    //this.returnNpc = this.returnNpc.bind(this)
   }
   public get all(): Npcs {
     return this._all
@@ -103,19 +98,20 @@ export default class WorldNpcs {
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
       print('===>>> NEWPLACING::: NPCSSTATE:: FOR::', npc.name)
-
+      /**
       npc.behavior.place = new Selector([])
       npc.behavior.active = new Selector([])
       npc.findRoomPlaceStation({ x: 0, y: 0 }, [...RoomsInitPriority])
-
-      npc.fsm.update(dt)
+*/
+      this.fsm.update(dt)
       //TEST DEFAULTS
       //Simulating behaviors.Active
-      const playerRoom = this.p.rooms.getFocusedRoom()
-
+      // const playerRoom = this.p.rooms.getFocusedRoom()
+      /*
       playerRoom == npc.currRoom
         ? this.onScreen.push(npc.name)
         : this.offScreen.push(npc.name)
+        */
       if (
         (npc.currRoom == 'grounds' && npc.currStation == 'worker1') ||
         (npc.currRoom == 'reception' && npc.currStation == 'guest')
@@ -129,6 +125,7 @@ export default class WorldNpcs {
     resetRoomPlaceCount()
   }
   private onNewExit(): void {
+    /** 
     this.sort_npcs_by_encounter()
     // TEST DATA DEFAULTS
     this.all.security001.behavior.active.children.push(
@@ -182,6 +179,7 @@ export default class WorldNpcs {
 
       npc.fsm.setState('active')
     }
+      */
   }
 
   private onPlaceUpdate(): void {
@@ -195,7 +193,7 @@ export default class WorldNpcs {
     this.onScreen = []
     this.offScreen = []
     print('<< << :: NPCSplaceUpdate() :: >> >>')
-    const playerRoom = this.p.rooms.getFocusedRoom()
+    //  const playerRoom = this.p.rooms.getFocusedRoom()
     this.sort_npcs_by_encounter()
 
     for (let i = this.order.length; i-- !== 0; ) {
@@ -227,11 +225,11 @@ export default class WorldNpcs {
       } else {
         rpctestjpf[npc.currRoom].ai[npc.aiPath] = 1
       }
-
+      /*
       playerRoom == npc.currRoom
         ? this.onScreen.push(npc.name)
         : this.offScreen.push(npc.name)
-
+     
       if (
           npc.clearance <
           RoomsInitState[npc.currRoom].clearance
@@ -239,6 +237,7 @@ export default class WorldNpcs {
           npc.behavior.active.children.push(
             new TrespassSequence(npc.getBehaviorProps.bind(npc))
           )
+            */
       // prettier-ignore
       // print( 'NPCSonPlaceUpdate::: ///states/npcs:: ||| room:', npc.currRoom, '| station:', npc.currStation, '| name: ', npc.name )
     }
@@ -264,6 +263,7 @@ export default class WorldNpcs {
   }
 
   private onPlaceExit(): void {
+    /*
     for (let i = this.order.length; i-- !== 0; ) {
       const npc = this.all[this.order[i]]
 
@@ -304,7 +304,7 @@ export default class WorldNpcs {
         this.all[a].turnPriority - this.all[b].turnPriority
     )
     this.onScreen.push('player')
-    const player = this.p.world.returnPlayer()
+   // const player = this.p.world.returnPlayer()
     print('this.onScreen.length', this.onScreen.length)
 
     for (let i = this.onScreen.length; i-- !== 0; ) {
@@ -327,6 +327,7 @@ export default class WorldNpcs {
         actor.fsm.setState('onscreen')
       }
     }
+      */
   }
   private onActiveEnter(): void {
     //  this.sort_npcs_by_encounter()
@@ -341,6 +342,7 @@ export default class WorldNpcs {
      */
   }
   private onActiveExit(): void {
+    /*
     print('NPCSAVTIVEEXIT!!!')
     //this.sort_npcs_by_encounter()
     this.onScreen.splice(this.onScreen.indexOf('player'), 1)
@@ -373,6 +375,7 @@ export default class WorldNpcs {
       print('===>>> SETTING OffSCREEN::', npc.name, 'TO.TURN')
       npc.fsm.setState('turn')
     }
+      */
   }
   getWantedQueue(): [string, string][] {
     return this.wantedQueue
@@ -383,6 +386,7 @@ export default class WorldNpcs {
       1
     )
   }
+  /*
   addAdjustWantedQueue(fugitive: string, room: string) {
     const wantedI = this.wantedQueue.findIndex((f) => f[0] == fugitive)
 
@@ -425,6 +429,7 @@ export default class WorldNpcs {
       }
     }
   }
+    */
   removeMendee(m: string) {
     this.mendingQueue.splice(this.mendingQueue.indexOf(m), 1)
   }
@@ -492,13 +497,21 @@ export default class WorldNpcs {
   returnOrderAll(): [string[], Npcs] {
     return [shuffle(this.order), this.all]
   }
-  inventory_init() {
+  /** 
+     inventory_init() {
     let nKey: keyof typeof this.all
     for (nKey in this.all) {
       for (const item of this.all[nKey].inventory) {
         this.all[nKey].addInvBonus(item)
       }
     }
+  }
+    **/
+  returnNpc(n: string): NpcState {
+    return this.all[n]
+  }
+  initNpc(n: Npc) {
+    this.all[n.name] = new NpcState(n)
   }
 }
 
@@ -512,7 +525,7 @@ function adjust_binaries(value: number, clan: string, binary: string) {
 
   return adj
 }
-
+/*
 function seedNpcs(lists: NpcProps) {
   const seeded: Npcs = {}
   let ki: keyof typeof NpcsInitState
@@ -521,7 +534,7 @@ function seedNpcs(lists: NpcProps) {
   }
   return seeded
 }
-
+*/
 function random_attributes(npcs: Npcs, order: string[]) {
   const aiPaths = ['inky', 'blinky', 'pinky', 'clyde']
   const startskills = [1, 2, 3, 5, 7, 7, 8, 8]

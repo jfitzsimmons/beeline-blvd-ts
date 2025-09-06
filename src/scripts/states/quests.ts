@@ -1,30 +1,40 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import StateMachine from './stateMachine'
-import { QuestsState } from '../../types/tasks'
-import { tutorialQuests } from './inits/quests/tutorialstate'
-import { WorldQuestsMethods } from '../../types/world'
+//import StateMachine from './stateMachine'
+import { Quest, Quests } from '../../types/tasks'
+import { dispatch } from '../systems/dispatcher'
+//import { tutorialQuests } from './inits/quests/tutorialstate'
+//import { WorldQuestsMethods } from '../../types/world'
+import { QuestsInitState } from './inits/questInitState'
 
-const dt = math.randomseed(os.time())
+//const dt = math.randomseed(os.time())
 
-function build_quests_state(questmethods: WorldQuestsMethods): QuestsState {
+/**
+ function build_quests_state(questmethods: WorldQuestsMethods): QuestsState {
   return {
     tutorial: tutorialQuests(questmethods),
   }
 }
+  */
+//let q = {}
 export default class WorldQuests {
-  private _questmethods: WorldQuestsMethods
-  private _all: QuestsState
-  checkpoint: string
-  fsm: StateMachine
+  //private _questmethods: WorldQuestsMethods
+  //private _all: QuestsState
+  private _all: Quests
 
-  constructor(questmethods: WorldQuestsMethods) {
-    this.fsm = new StateMachine(this, 'quests')
+  checkpoint: string
+  //fsm: StateMachine
+
+  constructor() {
+    // this.fsm = new StateMachine(this, 'quests')
     this.checkpoint = 'tutorialA'
-    this._questmethods = questmethods
-    this._questmethods.qq = {
+
+    // this._questmethods = questmethods
+
+    this._all = { ...QuestsInitState }
+    /**
+       this._questmethods.qq = {
       percent_tutorial: this.percent_tutorial.bind(this),
-    }
-    this._all = build_quests_state(this.questmethods)
+    } 
     this.fsm.addState('idle')
     this.fsm.addState('turn', {
       onEnter: this.onTurnEnter.bind(this),
@@ -41,7 +51,10 @@ export default class WorldQuests {
       onUpdate: this.onNewUpdate.bind(this),
       onExit: this.onNewExit.bind(this),
     })
+      */
+    this.initQuest = this.initQuest.bind(this)
   }
+  /** 
   private onNewEnter(): void {
     //  print('questsNEWENTER')
     let kq: keyof typeof this.all.tutorial
@@ -88,13 +101,9 @@ export default class WorldQuests {
     }
   }
   private onInteractExit(): void {}
-  public get all() {
-    return this._all
-  }
-  public get questmethods() {
-    return this._questmethods
-  }
-  percent_tutorial(): number {
+
+
+    percent_tutorial(): number {
     let qKey: keyof typeof this.all
     let count = 0
     let passed = 0
@@ -105,52 +114,93 @@ export default class WorldQuests {
 
     return Math.round((passed / count) * 100)
   }
+    */
+  public get all() {
+    return this._all
+  }
+
+  //{ name = 'Bobby', age }: Person
+  initQuest({
+    id = 'default_id',
+    //nextId: string
+    checkpoint = 'none',
+    scope = 'quest',
+    unlocks = [],
+    stage = 0,
+    stages = [],
+    status = { active: false, archive: false, passed: false, see: false },
+  }: Partial<Quest> = {}): void {
+    const required: Quest = {
+      id,
+      //nextId: string
+      checkpoint,
+      scope,
+      unlocks,
+      stage,
+      stages,
+      status,
+    }
+    const questKey = `${checkpoint}_${id}`
+
+    this._all[questKey] = required
+  }
+  updateStatus(questKey: string, statusKey: string) {
+    if (statusKey == 'activate') {
+      this.all[questKey].status.active = true
+      dispatch(questKey, { status: 'activate' })
+    }
+  }
+
   //TESTJPF NEW this really should just loop through each quest, update.
   //each quest could update. each step can fire it's own function and args
   // this could lead to better function imports
   //and better FSM condtionals!!!
   // checks quest completion after interactions and turns
-  /** 
-  update_quests_progress = (interval: string) => {
+
+  update_quests_progress = (_interval: string) => {
+    //i think this hsould handle every type of quest
+    // room task npc or whatevs achievement
+    ///Testjpf add dispatches for each status
     //  print('.checkpointslice(0, -1)', checkpoint.slice(0, -1))
-   // const quests = this.all[this.checkpoint.slice(0, -1)]
+    // const quests = this.all[this.checkpoint.slice(0, -1)]
     //let questKey: keyof typeof quests
     //for (questKey in quests) {
-      const quest = quests[questKey]
-      if (quest.passed == false) {
-        let quest_passed = true
-        //print('questKey:', questKey)
-        let condition: keyof typeof quest.conditions
-        for (condition in quest.conditions) {
-          // print('condition:', condition)
-          const goal = quest.conditions[condition]
-          //print('PREgoal label:', goal.label, goal.passed, goal.status)
-          if (goal.passed == false && goal.fsm.getState() != 'failed') {
-            // arg:func is array in case need for more than 1 check
-            for (let i: number = goal.func.length; i-- !== 0; ) {
-              if (
-                goal.interval[i] == interval &&
-                goal.func[i]!(goal.args[i]) == true
-              ) {
-                print('goal PASSED: GOAL', goal.label)
-                goal.passed = true
-                //goal.status = 'complete'
-                quest.fsm.setState('active')
-                //quest.status = 'active'
-                break
-              }
+    /*
+    const quest = quests[questKey]
+    if (quest.passed == false) {
+      let quest_passed = true
+      //print('questKey:', questKey)
+      let condition: keyof typeof quest.conditions
+      for (condition in quest.conditions) {
+        // print('condition:', condition)
+        const goal = quest.conditions[condition]
+        //print('PREgoal label:', goal.label, goal.passed, goal.status)
+        if (goal.passed == false && goal.fsm.getState() != 'failed') {
+          // arg:func is array in case need for more than 1 check
+          for (let i: number = goal.func.length; i-- !== 0; ) {
+            if (
+              goal.interval[i] == interval &&
+              goal.func[i]!(goal.args[i]) == true
+            ) {
+              print('goal PASSED: GOAL', goal.label)
+              goal.passed = true
+              //goal.status = 'complete'
+              quest.fsm.setState('active')
+              //quest.status = 'active'
+              break
             }
           }
-          //print('POSTgoal label:', goal.label, goal.passed, goal.status)
+        }
+        //print('POSTgoal label:', goal.label, goal.passed, goal.status)
 
-          if (goal.passed == false) quest_passed = false
-        }
-        if (quest_passed == true) {
-          quest.passed = true
-          quest.fsm.setState('complete')
-          print(questKey, 'quest COMPLETE!!!')
-        }
+        if (goal.passed == false) quest_passed = false
+      }
+      if (quest_passed == true) {
+        quest.passed = true
+        quest.fsm.setState('complete')
+        print(questKey, 'quest COMPLETE!!!')
       }
     }
-  }*/
+      */
+  }
 }

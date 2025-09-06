@@ -74,7 +74,7 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@ts-defold/tstl-export-as-global@^1.0.1":
+"@ts-defold/tstl-export-as-global@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@ts-defold/tstl-export-as-global/-/tstl-export-as-global-1.0.2.tgz#da98176dd21719edc9006e82df388373d3cc2b24"
   integrity sha512-sowPgp90Rts4pYaELvu8egoN+/hs5p/5jT+mnKUv9d07OaT+vrrKRS4IcPzYFHawOcPIUGR/k63ceFOPKa0EXw==

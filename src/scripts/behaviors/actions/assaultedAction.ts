@@ -8,7 +8,7 @@ import {
   InjuredProps,
   QuestionProps,
 } from '../../../types/behaviors'
-import { npcAssaultCheck } from '../../states/inits/checksFuncs'
+import { npcAssaultCheck } from '../../systems/npcs/crimeChecks'
 //import { confrontation_check, seen_check } from '../../states/inits/checksFuncs'
 import Action from '../action'
 //import PhoneSequence from '../sequences/phoneSequence'

@@ -1,9 +1,10 @@
-import { quest_checker } from '../quests/quests_main'
-
+//import { quest_checker } from '../systems/tasks/quests'
+import roomSys from '../systems/rooms.script'
 const dt = math.randomseed(os.time())
 const { world } = globalThis.game
-const { rooms, npcs, player, tasks, novel, quests } = world
+const { player, novel } = world
 
+/** 
 function calculate_heat(room: string) {
   let heat = 0
   let cold = 0
@@ -36,21 +37,40 @@ function calculate_heat(room: string) {
   cold += player.ap
   player.heat = heat / cold
 }
+  */
 function update_hud() {
   label.set_text('hud#time', tostring(world.clock) + ':00')
   // msg.post('hud#map', 'update_heat')
   //sprite.play_flipbook("/hud#security_alert", 'alert_' .. tostring(world.player.alert_level))
   //msg.post("hud#map", "acquire_input_focus")
 }
+//TESTJPF going to have to really diagnos
+//turns/ticks...
+/**
+ * going to have different kinds of 'ticks
+???
+ai move1, 1 player ap, 2ap, 3ap, ai move2, 4ap, 5ap, 6ap, move
+
+overall need tomake stat calculations
+reset novel state,
+load level specifics
+ai first move
+update notifications
+repeat 8x
+good!!!
+
+*/
 function game_turn() {
   novel.reset_novel()
   world.fsm.update(dt)
   print('????* *::: qQqQq: Quest Related AI checks: Running...')
-  quest_checker('turn')
+  //quest_checker() seeBELOW!!! 2nd use
   print('????* *::: qQqQq: Quest Related AI checks: Finished.')
 }
 function quickLoad(_this: props) {
-  msg.post(_this.roomName + ':/level#' + _this.roomName, 'room_load')
+  // msg.post(_this.roomName + ':/level#' + _this.roomName, 'room_load')
+  // instead testjpf we'll fire loadRoomNpcs() loadAdjacentRooms()
+  roomSys.loadOnScreenRooms()
   msg.post('/shared/adam#adam', 'wake_up')
   print('111 --- === ::: NEW ROOM LOADED ::: === --- 111')
 }
@@ -77,7 +97,7 @@ export function on_message(
     // calculate_heat(this.roomName)
     quickLoad(this)
     if (novel.forced === true) {
-      calculate_heat(this.roomName)
+      //calculate_heat(this.roomName)
       msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
       //  npcs.all[novel.npc.name].fsm.setState('turn')
       //  player.fsm.setState('turn')
@@ -86,8 +106,12 @@ export function on_message(
     quickLoad(this)
   } else if (messageId == hash('exit_gui')) {
     //quests.update_quests_progress('interact')
-    quests.fsm.update(dt)
-    quest_checker('interact')
+    //todo testjpf make some sort of. turhn system???
+    //quests.fsm.update(dt)
+
+    //change below to taskSys.tick()
+    //also, probably not here testjpf
+    //quest_checker()
 
     print('exitgui reason::', novel.reason)
     novel.reset_novel()

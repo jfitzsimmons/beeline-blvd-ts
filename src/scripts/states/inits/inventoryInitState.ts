@@ -1,4 +1,17 @@
 import { InventoryTable } from '../../../types/state'
+import { Inventories } from '../../../types/state'
+
+export const InventoryInitState: Inventories = {
+  room_reception_vase1: {
+    id: '',
+    room: '',
+    inventory: [],
+    watcher: '',
+    actions: [],
+    name: '',
+    animation: '',
+  },
+}
 
 export const itemStateInit: InventoryTable = {
   magica1: {
