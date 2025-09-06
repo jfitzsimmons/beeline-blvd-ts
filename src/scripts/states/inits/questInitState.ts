@@ -1,4 +1,11 @@
-import { Quests } from '../../../types/tasks'
+import { Quests, Unlocks } from '../../../types/tasks'
+
+export const UnlockInitState: Unlocks = {
+  quest_world_example: {
+    id: '',
+    unlock: () => false,
+  },
+}
 
 export const QuestsInitState: Quests = {
   world_example_start: {
@@ -6,7 +13,7 @@ export const QuestsInitState: Quests = {
     // nextId: '',
     checkpoint: '',
     scope: '',
-    unlocks: [],
+    unlockSubKeys: [],
     stage: 0,
     stages: [
       {

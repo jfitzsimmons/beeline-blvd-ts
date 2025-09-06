@@ -74,7 +74,7 @@ export interface Quest {
   stage: number
   stages: QuestStage[]
   status: Status
-  unlocks: { (u: string): void }[]
+  unlockSubKeys: string[]
 }
 export interface QuestMethods {
   [key: string]: (
@@ -120,4 +120,12 @@ export interface Effect {
 export interface Consequence {
   pass: boolean
   type: string
+}
+export interface Unlocks {
+  [key: string]: Unlock
+}
+
+export interface Unlock {
+  id: string
+  unlock: (u: string) => void
 }

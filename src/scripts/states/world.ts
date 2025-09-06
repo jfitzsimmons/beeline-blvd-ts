@@ -11,6 +11,7 @@ import WorldQuests from './quests'
 import WorldStations from './stations'
 import WorldInventory from './inventory'
 import WorldBehaviors from './behaviors'
+import WorldUnlocks from './unlocks'
 
 const dt = math.randomseed(os.time())
 
@@ -26,6 +27,7 @@ export default class World {
   behaviors: WorldBehaviors
   info: WorldInfo
   inventory: WorldInventory
+  unlocks: WorldUnlocks
   clock: number
   constructor() {
     this.fsm = new StateMachine(this, 'world')
@@ -39,6 +41,7 @@ export default class World {
     this.tasks = new WorldTasks()
     this.inventory = new WorldInventory()
     this.behaviors = new WorldBehaviors()
+    this.unlocks = new WorldUnlocks()
 
     this.player = new WorldPlayer('hero')
     /*

@@ -16,7 +16,8 @@ export default {
     //nextId: 'world_tutorial_task1',
     checkpoint: 'tutorial',
     scope: 'world',
-    unlocks: [(p: string) => wtm0injured({ patient: p })],
+    //unlockKeys: { wtm0injured: (p: string) => wtm0injured({ patient: p }) },
+    unlockSubKeys: ['wtm0injured'],
     stages: [
       {
         status: { ...defaults.status },
@@ -104,7 +105,7 @@ export default {
     id: 'world_tutorial_luggage',
     checkpoint: 'tutorial',
     scope: 'world',
-    unlocks: [],
+    unlockSubKeys: [],
     stages: [
       {
         status: { ...defaults.status },
