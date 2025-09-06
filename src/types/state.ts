@@ -48,6 +48,7 @@ export interface Behavior {
   agent: string
   recipient: string
   reason: string
+  turns: number
 
   //place: Selector
   // active: Selector

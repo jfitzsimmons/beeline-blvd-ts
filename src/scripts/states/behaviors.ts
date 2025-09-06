@@ -20,14 +20,15 @@ export default class WorldBehaviors {
     return this._all
   }
   addBehavior({
-    id = 'behavior_npc_default',
+    id = 'behavior_npc_player',
     recipient = 'player',
-    agent = '',
+    agent = 'security001',
     reason = 'theft',
     type = 'question',
+    turns = 5,
   }: Partial<Behavior> = {}): void {
-    const required: Behavior = { id, recipient, agent, reason, type }
-    const behaviorKey = `behavior_${agent}_${id}`
+    const required: Behavior = { id, recipient, agent, reason, type, turns }
+    const behaviorKey = `behavior_${agent}_${recipient}`
     //testjpf this needs to be the actual entity
     // probably need entity command object.
     //Id like to add behaviorKey to npc state as well
@@ -39,6 +40,9 @@ export default class WorldBehaviors {
   }
   deleteBehavior(id: string): void {
     delete this._all[id]
+  }
+  updateBehavior(id: string): void {
+    this.all[id].turns += 4
   }
   /**
   updateStatus(questKey: string, statusKey: string) {

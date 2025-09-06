@@ -1,47 +1,42 @@
-/**
- * so we will have access to state
- * so 2 returnNpc functions?
- *  seems to be going down the same road...
- * need to be able to update stats.
- * needs to be able to add other behaviors
- * !!!  will have that because of behavio sstate!!!!
- *
- */
-
-//import { NpcsInitState } from '../../states/inits/npcsInitState'
-//import NpcState from '../../states/npc'
 import { Behavior, BehaviorSystem } from '../../../types/state'
 import { subscribe, unsubscribe } from '../dispatcher'
-const { npcs, rooms } = globalThis.game.world
-//const { world_tutorial_medic: wtm } = quests.all
-// testjpf need new nps inits
+import { crimeChecks } from '../npcs/crimeChecks'
+
+const { npcs, rooms, stations, behaviors, novel } = globalThis.game.world
+
 export default {
   id: '',
   recipient: '',
   agent: '',
   reason: '',
   type: '',
+  turns: 0,
 
   init(behavior: Behavior): BehaviorSystem {
     //TESTJP loop through types of behaviors
     //snitch, quest, injured, etc...
     // init blank
     this.id = behavior.id
-    this.recipient = behavior.agent
+    this.recipient = behavior.recipient
     this.agent = behavior.agent
     this.reason = behavior.reason
     this.type = behavior.type
-    //since already here dont use this:
-    //quests.updateStatus('activate', 'world_tutorial_medic')
-    //but this:
-    // msg.post('#', hash('world_tutorial_medic'), { status: 'active' })
-    //  wtm.status.active = true //testjpf should probable be a setter
-    //make a random npc injured.
-    //subscribe to their quest.
-    //ignored by other  npcs
+    this.turns = behavior.turns
+
+    // this.sub_id = subscribe(['behavior_npc_default'])
+    /**testjpf here we can subscribe
+     * then on tick()we dispatch this id with message tick?
+     *
+     *
+     * subscribe would be good because we can keep updating
+     * with more security guards and civilians
+     */
+
     return { ...this }
   },
-  tick() {
+
+  tick(): void {
+    // dispatch(this.id, { type: 'tick' })
     //loop through other npcs and see if they passed by
     // add questionAction logic here
     const recipient = npcs.all[this.recipient]
@@ -50,70 +45,47 @@ export default {
     const crossedPaths =
       currRoom === true
         ? currRoom
-        : Object.values(rooms.getOccupants(agent.exitRoom)).filter(
-            (s: string) =>
-              s === recipient.name && recipient.exitRoom == agent.currRoom
+        : Object.values(rooms.all[agent.exitRoom].stationKeys).filter(
+            (sk: string) =>
+              stations.all[sk].occupant === recipient.name &&
+              recipient.exitRoom == agent.currRoom
           ).length > 0
 
     if (crossedPaths === false) {
-      const cops = Object.values(agent.getOccupants(agent.currRoom)).filter(
-        (s: string) => s !== agent.name && s.substring(0, 3) == 'sec'
+      const cops = Object.values(rooms.all[agent.currRoom].stationKeys).filter(
+        (sk: string) =>
+          stations.all[sk].occupant !== agent.name &&
+          stations.all[sk].occupant.substring(0, 3) == 'sec'
       )
+      /**
+       * testjpf
+       * maybe we do a dispatch 'cop_chatter'
+       * where
+       */
       for (const c of cops) {
         //  print('CINQUESTUON:::', c, 'from:', agent.name)
-        const chatter = agent.returnNpc(c)
-        for (const b of chatter.behavior.active.children) {
-          /** * print(
-                'CINQUESTUON:::behaviors::',
-                b.constructor.name,
-                'from:',
-                agent.name,
-                (b as QuestionSequence).perp('question').name
-              )
-    */
-          if (
-            b.constructor.name == 'QuestionSequence' &&
-            (b as QuestionSequence).perp('question').name == recipient.name
-          ) {
-            print(
-              'CINQUESTUON:::ADDADJUST!!!!',
-              c,
-              'from:',
-              agent.name,
-              'PERP:',
-              recipient.name,
-              recipient.currRoom
-            )
+        const chatter = npcs.all[stations.all[c].occupant]
+        const priors = Object.values(chatter.behaviorKeys).filter(
+          (bk: string) => bk.split('_')[2] == recipient.name
+        )
 
-            agent.addAdjustWantedQueue(recipient.name, recipient.currRoom)
-            break
-          }
-        }
+        //testjpf may need more. raise suspicion. increase heat. etc..
+        for (const pk of priors) behaviors.updateBehavior(pk)
+        return
       }
-
-      return () =>
-        this.continue(
-          `QuestionAction::: ${agent.name} did not cross paths with ${recipient.name} for ${this.reason}`
-        )
     }
-    if (this.hero !== null && crossedPaths === true) {
-      this.hero.setConfrontation(agent.name, this.reason, 'questioning')
-      return () =>
-        this.success(
-          'QuestionAction::: HERO:: this should set novel for player confrontation.'
-        )
+    if (this.recipient == 'player' && crossedPaths === true) {
+      novel.setConfrontation(agent.name, this.reason, 'questioning')
+      return
     }
     const resultChecks: Array<
-      (
-        chkr: QuestionProps,
-        chkd: QuestionProps
-      ) => { pass: boolean; type: string }
-    > = crimeChecks[this.reason]!
+      (chkr: string, chkd: string) => { pass: boolean; type: string }
+    > = crimeChecks[this.reason]
 
     let consequence = { pass: false, type: 'neutral' }
 
     for (let i = 0; i < resultChecks.length - 1; i++) {
-      consequence = resultChecks[i](this.a, this.perp)
+      consequence = resultChecks[i](this.agent, this.recipient)
       if (consequence.pass == true) i = resultChecks.length
     }
     //For abstraction could have a
@@ -127,6 +99,9 @@ export default {
       // if infirmed add arrestsequence that delays itself until uninfirmed
       // maybe arrestseq has a skip bail FUGITIVE option?
       if (recipient.currStation.slice(0, 4) == 'patie') {
+        /**
+         * testjpf. need arrestsys
+
         recipient.addToBehavior(
           'place',
           new ArrestSequence(
@@ -140,33 +115,26 @@ export default {
           recipient.name,
           'delayed Arrest because is Patient'
         )
+                   */
       } else if (recipient.currStation.slice(0, 4) == 'priso') {
-        for (const behavior of recipient.behavior.active.children) {
-          if (
-            behavior instanceof JailedSequence &&
-            behavior.a.name == recipient.name
-          ) {
-            behavior.update()
-            print(
-              'QuestionAction::: JAil Sentence extended for:: ',
-              recipient.name,
-              'by:',
-              agent.name
-            )
-            break
-          }
-        }
-      } else {
-        recipient.updateFromBehavior('turnPriority', 97)
-        print('QuestionAction::', agent.name, 'has Arrested::', recipient.name)
-        recipient.addToBehavior(
-          'place',
-          new ArrestSequence(recipient.getBehaviorProps.bind(this.perp))
+        this.turns += 8
+        print(
+          'QuestionAction::: JAil Sentence extended for:: ',
+          recipient.name,
+          'by:',
+          agent.name
         )
+      } else {
+        recipient.turnPriority = 97
+        print('QuestionAction::', agent.name, 'has Arrested::', recipient.name)
+        // recipient.addToBehavior(
+        //    'place',
+        //    new ArrestSequence(recipient.getBehaviorProps.bind(this.perp))
+        //  )
       }
       if (
         agent.currRoom == recipient.currRoom &&
-        agent.currRoom == agent.getFocusedRoom()
+        agent.currRoom == rooms.focused
       ) {
         msg.post(`/${agent.currStation}#npc_loader`, hash('move_npc'), {
           station: recipient.currStation,
@@ -175,10 +143,6 @@ export default {
         // prettier-ignore
         print('runrun',agent.name,agent.currStation, 'STATION MOVE VIA  question',consequence.type, recipient.name, 'in', agent.currRoom,recipient.currRoom, recipient.currStation)
       }
-      return () =>
-        this.success(
-          `QuestionAction::: Success:: ARREST:: ${recipient.name} by ${agent.name} `
-        )
     } else if (consequence.type == 'merits' || consequence.type == 'demerits') {
       print(
         'QuestionAction::',
@@ -186,6 +150,7 @@ export default {
         'will make announcements about::',
         recipient.name
       )
+      /*
       recipient.addToBehavior(
         'active',
         new AnnouncerSequence(
@@ -193,10 +158,10 @@ export default {
           recipient.getBehaviorProps('announcer') as AnnouncerProps,
           consequence.type
         )
-      )
+      )*/
       if (
         agent.currRoom == recipient.currRoom &&
-        agent.currRoom == agent.getFocusedRoom()
+        agent.currRoom == rooms.focused
       ) {
         msg.post(`/${agent.currStation}#npc_loader`, hash('move_npc'), {
           station: recipient.currStation,
@@ -215,6 +180,7 @@ export default {
         'in',
         agent.currRoom
       )
+      /*
       if ((recipient.getBehaviorProps('announcer') as AnnouncerProps).hp < 1) {
         recipient.addToBehavior(
           'active',
@@ -230,10 +196,11 @@ export default {
             new ImmobileSequence(recipient.getBehaviorProps.bind(this.perp))
           )
       }
+          */
 
       if (
         agent.currRoom == recipient.currRoom &&
-        agent.currRoom == agent.getFocusedRoom()
+        agent.currRoom == rooms.focused
       ) {
         msg.post(`/${agent.currStation}#npc_loader`, hash('move_npc'), {
           station: recipient.currStation,
@@ -242,14 +209,6 @@ export default {
         // prettier-ignore
         print('runrun',agent.name,agent.currStation, 'STATION MOVE VIA  question',consequence.type, recipient.name, 'in', agent.currRoom,recipient.currRoom, recipient.currStation)
       }
-
-      return () =>
-        this.alternate(
-          new AssaultedSequence(
-            recipient.getBehaviorProps.bind(this.perp),
-            this.getProps('question') as QuestionProps
-          )
-        )
     } else if (consequence.type.slice(0, 6) === 'sPunch') {
       print(
         agent.hp,
@@ -257,7 +216,7 @@ export default {
         agent.name,
         'by',
         recipient.name
-      )
+      ) /*
       if ((agent.getBehaviorProps('announcer') as AnnouncerProps).hp < 1) {
         // testjpf probably need an update()
         //for injuredsequencetoo!
@@ -276,10 +235,10 @@ export default {
             new ImmobileSequence(agent.getBehaviorProps.bind(this.a))
           )
       }
-
+*/
       if (
         agent.currRoom == recipient.currRoom &&
-        agent.currRoom == agent.getFocusedRoom()
+        agent.currRoom == rooms.focused
       ) {
         msg.post(`/${recipient.currStation}#npc_loader`, hash('move_npc'), {
           station: agent.currStation,
@@ -288,7 +247,7 @@ export default {
         // prettier-ignore
         print('runrun',recipient.name,agent.currStation, 'STATION MOVE VIA  question',consequence.type, agent.name, 'in', agent.currRoom,recipient.currRoom, recipient.currStation)
       }
-
+      /*
       return () =>
         this.alternate(
           new AssaultedSequence(
@@ -296,10 +255,11 @@ export default {
             recipient.getBehaviorProps('question') as QuestionProps
           )
         )
+          */
     } else if (consequence.type == 'reckless') {
       if (
         agent.currRoom == recipient.currRoom &&
-        agent.currRoom == agent.getFocusedRoom()
+        agent.currRoom == rooms.focused
       ) {
         msg.post(`/${agent.currStation}#npc_loader`, hash('move_npc'), {
           station: recipient.currStation,
@@ -308,6 +268,7 @@ export default {
         // prettier-ignore
         print('runrun',agent.name,agent.currStation, 'STATION MOVE VIA  question',consequence.type, recipient.name, 'in', agent.currRoom,recipient.currRoom, recipient.currStation)
       }
+      /*
       return () =>
         this.alternate(
           new EndAction([
@@ -317,12 +278,13 @@ export default {
             this.reason,
           ])
         )
+          */
       // new RecklessSequence()
     }
     /**
         if (
           agent.currRoom == recipient.currRoom &&
-          agent.currRoom == agent.getFocusedRoom()
+          agent.currRoom == rooms.focused
         ) {
           msg.post(`/${agent.currStation}#npc_loader`, hash('move_npc'), {
             station: recipient.currStation,
@@ -347,10 +309,8 @@ export default {
             }
           }
         } */
-    return () =>
-      this.fail(
-        `||>> Behavior: QUESTIONACTION::: Default Fail:: ${consequence.type}`
-      )
+
+    this.turns--
   },
 }
 
@@ -379,12 +339,12 @@ export function final(this: props) {
 export function on_message(
   this: props,
   _messageId: hash,
-  message: { questId: string; status: string },
+  message: { questId: string; type: string },
   _sender: url
 ) {
   //  if (message == "unlock"){print("unlock")}
   //todo testjpf make more specific
-  if (message.status == 'backup') {
+  if (message.type == 'backup') {
     //warn other officers
   }
 }

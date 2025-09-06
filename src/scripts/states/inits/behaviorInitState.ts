@@ -7,5 +7,6 @@ export const BehaviorsInitState: Behaviors = {
     recipient: '',
     reason: '',
     type: '',
+    turns: 0,
   },
 }

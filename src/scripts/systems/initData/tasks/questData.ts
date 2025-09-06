@@ -1,3 +1,5 @@
+import { wtm0injured } from '../../tasks/checkpoints/tutorial/stage0'
+
 const defaults = {
   status: {
     active: false,
@@ -7,12 +9,14 @@ const defaults = {
   },
   stage: 0,
 }
+
 export default {
   world_tutorial_medic: {
     id: 'world_tutorial_medic',
     //nextId: 'world_tutorial_task1',
     checkpoint: 'tutorial',
     scope: 'world',
+    unlocks: [(p: string) => wtm0injured({ patient: p })],
     stages: [
       {
         status: { ...defaults.status },
@@ -100,6 +104,7 @@ export default {
     id: 'world_tutorial_luggage',
     checkpoint: 'tutorial',
     scope: 'world',
+    unlocks: [],
     stages: [
       {
         status: { ...defaults.status },

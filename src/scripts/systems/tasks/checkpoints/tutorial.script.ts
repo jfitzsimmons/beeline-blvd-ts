@@ -1,17 +1,29 @@
 import { subscribe, unsubscribe } from '../../dispatcher'
+//import { tutorialA, wtm0injured } from './tutorial/stage1'
 const { quests, info, npcs, stations } = globalThis.game.world
 const { world_tutorial_medic: wtm } = quests.all
 
+/**
+ * TESTJPF
+ * this isnt being used at all
+ * in reality this would be an upgead/unlock/reward/achievement/completion
+ * unlocks can recieve a message
+ * but either way they are
+ * going to use a method called
+ * unlock()?
+ * export default {
+ * id: 'unlock_quest_default'
+ * unlock: wtm0default({message:{patient:''}})
+ * init(unlock: Unlock){set everything}
+ * }
+ */
 export const world_tutorial_medic = {
-  actors: {
-    patient: stations.all.grounds_worker1.occupant,
-    doctor: '',
-  },
+  //stages: [wtm0injured],
   init() {
     //since already here dont use this:
     //quests.updateStatus('activate', 'world_tutorial_medic')
     //but this:
-    msg.post('#', hash('world_tutorial_medic'), { status: 'active' })
+    //msg.post('#', hash('world_tutorial_medic'), { status: 'active' })
     wtm.status.active = true //testjpf should probable be a setter
     //make a random npc injured.
     //subscribe to their quest.
@@ -22,6 +34,7 @@ export const world_tutorial_medic = {
       if (wtm.stages[0].status.active == false) {
         //increases number of turns until fail??
       } else if (wtm.stages[0].status.active == true) {
+        // this.stages[0]()
         //increases number of turns until fail?? after a reset???
       }
     }
@@ -53,7 +66,7 @@ export function final(this: props) {
 export function on_message(
   this: props,
   messageId: hash,
-  message: { questId: string; status: string },
+  message: { questId: string; status: string; patient: string },
   _sender: url
 ) {
   //  if (message == "unlock"){print("unlock")}
@@ -63,19 +76,8 @@ export function on_message(
       //at some point i need to injure a default npc testjpf
       print('TESTJPF!!: This should eventually make a quest available.')
     }
-    if (messageId == hash('world_tutorial_medic_0')) {
-      //testjpf
-      //use command object to fire funciton based on msgID
-      //that processes below:::ß
-      print('unlock: TESTJPF questID:: ', message.questId)
-      npcs.all[world_tutorial_medic.actors.patient].love =
-        npcs.all[world_tutorial_medic.actors.patient].love + 1
-      //this needs to be taken care of by npc??
-      //NPC module -> -> subscriptions.ts??
-      info.add_interaction(
-        `${world_tutorial_medic.actors.patient} likes that you are helping them.`
-      )
-      msg.post('#', hash('world_tutorial_medic_1'), { status: 'active' })
+    if (messageId == hash('agreedToHelp') && wtm.unlocks != undefined) {
+      wtm.unlocks[0](message.patient)
     }
     if (messageId == hash('world_tutorial_medic_1')) {
       //testjpf subscribe doctors to this task.

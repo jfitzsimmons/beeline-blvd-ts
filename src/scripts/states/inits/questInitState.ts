@@ -6,6 +6,7 @@ export const QuestsInitState: Quests = {
     // nextId: '',
     checkpoint: '',
     scope: '',
+    unlocks: [],
     stage: 0,
     stages: [
       {

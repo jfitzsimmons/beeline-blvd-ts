@@ -7,7 +7,7 @@ import { questTasks } from './tasks/quests'
 //import { npcTasks } from './npcs/crimeChecks'
 import questioning from './behaviors/questioning.script'
 
-const { quests, behaviors } = globalThis.game.world
+const { quests, behaviors, unlocks } = globalThis.game.world
 
 export default {
   quests: {},
@@ -18,7 +18,7 @@ export default {
     for (const [, quest] of Object.entries(quests.all)) {
       //testjpf need to formalize a questlistener
       if (questTasks[quest.id] !== null) questTasks.tick()
-      if (quest.id.split('_')[1] == 'questioning') questioningSys.tick()
+      // if (quest.id.split('_')[1] == 'questioning') questioningSys.tick()
       //TESTJPF then tutorialA, tutb will ahve things like
       // .active(),.see(), that will be called in tick
       // quests.loadCstenss(k)
@@ -27,6 +27,7 @@ export default {
   init() {
     for (const [, quest] of Object.entries(questsData)) {
       quests.initQuest(quest)
+      for (const unlock of quest.unlocks) unlocks.initUnlock(unlock)
       //questTasks[quest.id]()
       // quests.loadListeners(k)
     }

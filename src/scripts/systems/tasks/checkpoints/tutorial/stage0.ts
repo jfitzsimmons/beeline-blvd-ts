@@ -1,35 +1,19 @@
-import { AttendantProps, ThiefVictimProps } from '../../types/ai'
-import { QuestionProps } from '../../types/behaviors'
-import SuspectingSequence from '../behaviors/sequences/suspectingSequence'
-import { take_or_stash, npcStealCheck } from '../systems/npcs/crimeChecks'
-import QuestStep from '../states/questStep'
-import { doctors } from '../utils/consts'
-//import { npc_action_move } from '../../ai/ai_main'
-//import NpcState from '../../states/npc'
-import { from_same_room } from '../utils/quest'
-//import { shuffle } from '../../utils/utils'
+const { quests, info, npcs, stations } = globalThis.game.world
+const { world_tutorial_medic: wtm } = quests.all
+export function wtm0injured(message: { patient: string }): void {
+  //testjpf
+  //use command object to fire funciton based on msgID
+  //that processes below:::ß
+  //print('unlock: TESTJPF questID:: ', message.questId)
+  npcs.all[message.patient].love = npcs.all[message.patient].love + 1
+  //this needs to be taken care of by npc??
+  //NPC module -> -> subscriptions.ts??
+  info.add_interaction(`${message.patient} likes that you are helping them.`)
 
-const { stations, rooms, npcs, tasks, player, novel, info, quests } =
-  globalThis.game.world
-
-// testjpf
-/////// need something like an init that
-// adds questkey to npc?
-// sunscribes npc to questkey?
-// activates tutorial
-// activates stage 1 medic?
-/*
-function injured_checks() {
-  const quest = quests.all.tutorial.medic_assist
-  const { '0': injury } = quest.conditions
-  const injured = npcs.all[stations.all.grounds_worker1.occupant]
-
-  if (injury.fsm.getState() == 'new' && injury.passed == true) {
-    injury.fsm.setState('active')
-    quest.fsm.setState('active')
-    injured.love = injured.love + 1
-    info.add_interaction(`${injured.name} likes that you are helping them.`)
-  }
+  wtm.stage = 1
+  wtm.stages[0].status.see = true
+  wtm.stages[1].status.see = true
+  wtm.stages[1].status.active = true
 }
 function infirmary_checks(delivery: QuestStep) {
   //print('infirmary_checks', novel.reason, delivery.fsm.getState())
@@ -81,7 +65,7 @@ function doctor_checks() {
      * might need to do "ask a favor" like with vial02
      * TODOTESTJPF
      *
-   
+     */
     //apple.passed = true
     tasks.remove_quest_tasks(doctor.name)
     tasks.taskBuilder(doctor.name, 'mender', injured.name, 'injury')
@@ -109,17 +93,17 @@ function doctor_checks() {
     player.add_inventory('note')
     quest.sideQuests.hallpass.fsm.setState('active')
     /*
-    need hallpass seq?? testjpf
-    tasks.append_task({
-      label: 'hallpass',
-      turns: 8,
-      scope: 'type3',
-      cause: 'medical',
-      owner: 'player',
-      target: 'infirmary',
-      authority: 'security',
-    })
-  
+     need hallpass seq?? testjpf
+     tasks.append_task({
+       label: 'hallpass',
+       turns: 8,
+       scope: 'type3',
+       cause: 'medical',
+       owner: 'player',
+       target: 'infirmary',
+       authority: 'security',
+     })
+       */
     tasks.taskBuilder(doctor.name, 'quest', injured.name, 'waitingformeds')
     novel.append_npc_quest(doctor.name)
     info.add_interaction(`${doctor.name}'s gave you clearance for 8 turns`)
@@ -188,22 +172,22 @@ function doctor_checks() {
        * quest complete when talk to doc again?? with timeout??
        * remove any related npcs from npcsWithQuest
        */
-// testjpf this is overwriting my scriptsdialog functions
-// novel.npc = doctor
-//novel.forced = true
-/**
-       * TODO TESTJPF
-       * funcitonality has been replaced by behavior trees
-      tasks.append_task({
-        label: 'favor',
-        turns: 15,
-        scope: 'quest',
-        cause: 'favordoctorquest',
-        owner: doctor.name,
-        target: npcs.all[waiting!].name,
-        authority: 'player',
-      })
-        
+      // testjpf this is overwriting my scriptsdialog functions
+      novel.npc = doctor
+      //novel.forced = true
+      /**
+        * TODO TESTJPF
+        * funcitonality has been replaced by behavior trees
+       tasks.append_task({
+         label: 'favor',
+         turns: 15,
+         scope: 'quest',
+         cause: 'favordoctorquest',
+         owner: doctor.name,
+         target: npcs.all[waiting!].name,
+         authority: 'player',
+       })
+         **/
       novel.reason = 'askdocafavor'
     }
     novel.forced = true
@@ -211,12 +195,12 @@ function doctor_checks() {
     msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
     // removed after scene
     /** 
-    if (waiting != null) {
-      print('does this get calledhuhuh???')
-      tasks.remove_quest_tasks(waiting)
-      novel.remove_npc_quest(waiting)
-      
-    }
+     if (waiting != null) {
+       print('does this get calledhuhuh???')
+       tasks.remove_quest_tasks(waiting)
+       novel.remove_npc_quest(waiting)
+       
+     }**/
   } else if (
     novel.reason == 'docquestcomplete' &&
     meds.fsm.getState() == 'complete'
@@ -224,13 +208,12 @@ function doctor_checks() {
     tasks.remove_quest_tasks(doctor.name)
   }
 }
-
 function medic_assist_checks() {
   const quest = quests.all.tutorial.medic_assist
   /**  if (quest.passed == false) {
-    //overly cautious? TESTJPF make sure injured doesnt get into other trouble???
-    tasks.removeHeat(injured.name)
-  }
+     //overly cautious? TESTJPF make sure injured doesnt get into other trouble???
+     tasks.removeHeat(injured.name)
+   }**/
   //need doctor checks and "non-doctor" cjecks?
   //testjpf if novel.npc isn't a doctor::: RETURN!!!????
   // const injured =npcs.all[stations.all.grounds_worker1.occupant]
@@ -242,17 +225,17 @@ function medic_assist_checks() {
   //const {"0":injury,"1":doc, "2":apple} = cons
   //const { "0": injury, "1": doc, "2": apple, "3": meds } = cons
   if (conditions['0'].passed == true) injured_checks()
+  /**
+    * testjpf this conditional sucks. BUG will break things based on who you last talked to.
  
-   * testjpf this conditional sucks. BUG will break things based on who you last talked to.
-
-  print(
-    'TUTTTS:: clan:',
-    npcs.all[novel.npc.name].clan,
-    '| docquest:?',
-    tasks.npcHasTask(doctors, [], ['quest']),
-    '| currroom:',
-    npcs.all[novel.npc.name].currRoom
-  )   
+   print(
+     'TUTTTS:: clan:',
+     npcs.all[novel.npc.name].clan,
+     '| docquest:?',
+     tasks.npcHasTask(doctors, [], ['quest']),
+     '| currroom:',
+     npcs.all[novel.npc.name].currRoom
+   )   */
   if (
     npcs.all[novel.npc.name].clan == 'doctors' ||
     tasks.npcHasTask(doctors, [], ['quest']) !== null
@@ -266,7 +249,6 @@ function medic_assist_checks() {
   }
   //TESTJPF ELSE if quest complete dialog, xp / money???
 }
-
 export function tutorialA(interval = 'turn') {
   const quest = quests.all.tutorial.medic_assist
   const { conditions: cons } = quest
@@ -393,23 +375,23 @@ export function tutorialA(interval = 'turn') {
         rooms.all.grounds.stations.aid = doc.name
         currRoom = 'grounds'
         currStation = 'aid'*/
-/**todo testjpf ≈
+    /**todo testjpf ≈
         npc_action_move(
           replace,
           surrounding_room_matrix(player.matrix, npcs.all[replace].matrix)
         )√*/
-//   }
-//  }
-/**
- * so testjpf we have a propert that accepts multipl type of export functions and returns
- *
- * we then use one of those export functions, which has a more specific type.
- *
- * lint still thinks it's type is the original vague one
- */
-// eslint-disable-next-line @typescript-eslint/unbound-method
-// const _return_docs = npcs.returnDoctors
-/*
+    //   }
+    //  }
+    /**
+     * so testjpf we have a propert that accepts multipl type of export functions and returns
+     *
+     * we then use one of those export functions, which has a more specific type.
+     *
+     * lint still thinks it's type is the original vague one
+     */
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    // const _return_docs = npcs.returnDoctors
+    /*
     if (
       injury.passed == true &&
       interval == 'interact' &&
@@ -442,109 +424,6 @@ export function tutorialA(interval = 'turn') {
         npcs.all[rooms.all['grounds'].stations.aid].inventory.push(note[0])
       }
     }*/
-/// }
-////  medic_assist_checks()
-//}
-
-function doctorsScripts() {
-  const quest = quests.all.tutorial.medic_assist
-  const { conditions: cons } = quest
-  //const {"0":injury,"1":doc,"2": apple, "3": meds} = cons
-  const { '0': injury, '2': apple, '5': delivery } = cons
-  // bad??:: if reasonstring.startswith('quest - ')
-  //then on novel_main novel.quest.solution = endof(message.reason)
-
-  if (injury.fsm.getState() == 'active' && apple.fsm.getState() == 'new') {
-    novel.reason = 'quest'
-    novel.forced = true
-    //testjpf could add conditional if encounters == 0 ) {
-    // "I'm going as fast as i can" -doc
-    return 'tutorial/tutorialAdoctor'
-  } else if (apple.fsm.getState() == 'active') {
-    novel.forced = true
-    novel.reason = 'quest'
-    //testjpf could add conditional if encounters == 0 ) {
-    // "I'm going as fast as i can" -doc
-    //testjpf future naming files may be better:
-    //docAsksForFavor, docActiveFavor
-    return apple.passed == false ? 'tutorial/hungrydoc' : 'tutorial/getadoctor'
-  } else if (delivery.fsm.getState() == 'active') {
-    novel.forced = true
-    novel.reason = 'quest'
-    return tasks.taskHasOwner('waitingformeds') == null
-      ? 'tutorial/askDocAfavor'
-      : 'tutorial/medAssistComplete'
   }
-  return null
-}
-
-function infirmaryScripts() {
-  const quest = quests.all.tutorial.medic_assist
-  const { conditions: cons } = quest
-  //const {"0":injury,"1":doc,"2": apple, "3": meds} = cons
-  const { '3': meds } = cons
-  if (meds.fsm.getState() == 'active' && novel.npc.currStation == 'assistant') {
-    novel.forced = true
-    novel.reason = 'quest'
-    npcs.all[novel.npc.name].fsm.setState('turn')
-    player.fsm.setState('turn')
-    //testjpf there is no default for resetting these states
-    // after player caught 'stealing'
-    //may be case by case, will porbably need a new overall solution
-    //level repeats this functionality
-    return 'tutorial/giveMeMeds'
-  }
-  return null
-}
-
-function worker1Scripts() {
-  const quest = quests.all.tutorial.medic_assist
-  const { conditions: cons } = quest
-  //const {"0":injury,"1":doc,"2": apple, "3": meds} = cons
-  const { '0': injury } = cons
-  if (injury.passed == false) {
-    novel.forced = true
-    novel.reason = 'quest'
-    return 'tutorial/helpThatMan'
-  }
-  return null
-}
-function worker2Scripts() {
-  //testjpf maybe have another fedUpLuggage that is majority alerts?
-  //also, just add a lot more love chcks to the concern and offender
-  //more alert checks as well
-  //by checks i mean choices with checks
-
-  if (novel.reason == 'concern') {
-    novel.forced = true
-    novel.reason = 'quest'
-    return 'tutorial/concernLuggage'
-  }
-
-  return null
-}
-
-const tutorialAlookup: { [key: string]: () => string | null } = {
-  //assistant: assistantScripts,
-  doctors: doctorsScripts,
-  worker2: worker2Scripts,
-  worker1: worker1Scripts,
-  infirmary: infirmaryScripts,
-}
-
-export function tutorialAscripts(actor: string): string[] {
-  const scripts = []
-  if (tutorialAlookup[actor] != null) scripts.push(tutorialAlookup[actor]())
-  if (tutorialAlookup[npcs.all[actor].clan] != null)
-    scripts.push(tutorialAlookup[npcs.all[actor].clan]())
-  if (tutorialAlookup[npcs.all[actor].currStation] != null)
-    scripts.push(tutorialAlookup[npcs.all[actor].currStation]())
-  if (tutorialAlookup[npcs.all[actor].currRoom] != null)
-    scripts.push(tutorialAlookup[npcs.all[actor].currRoom]())
-
-  return scripts.filter((s: string | null): s is string => s != null)
-}
-
-export function tutorialB() {
-  // tutorialA()
+  medic_assist_checks()
 }

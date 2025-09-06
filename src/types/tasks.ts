@@ -74,6 +74,7 @@ export interface Quest {
   stage: number
   stages: QuestStage[]
   status: Status
+  unlocks: { (u: string): void }[]
 }
 export interface QuestMethods {
   [key: string]: (
