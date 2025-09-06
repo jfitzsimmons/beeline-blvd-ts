@@ -54,6 +54,10 @@ export interface Behavior {
   //update: BehaviorSetters
   //props: BehaviorProps | HeroBehaviorProps
 }
+export interface BehaviorSystem extends Behavior {
+  init(b: Behavior): BehaviorSystem
+  tick(): void
+}
 export interface PlayerState {
   currRoom: string
   exitRoom: string

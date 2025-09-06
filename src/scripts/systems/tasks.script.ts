@@ -1,13 +1,13 @@
 import questsData from './initData/tasks/questData'
-import questioningSys from './behaviors/questioning'
+import questioningSys from './behaviors/questioning.script'
 //testjpf make new import
 //quest
 import { subscribe, unsubscribe } from './dispatcher'
 import { questTasks } from './tasks/quests'
 //import { npcTasks } from './npcs/crimeChecks'
-import questioning from './behaviors/questioning'
+import questioning from './behaviors/questioning.script'
 
-const { quests } = globalThis.game.world
+const { quests, behaviors } = globalThis.game.world
 
 export default {
   quests: {},
@@ -29,6 +29,12 @@ export default {
       quests.initQuest(quest)
       //questTasks[quest.id]()
       // quests.loadListeners(k)
+    }
+    let bk: keyof typeof this.behaviors
+    for (bk in this.behaviors) {
+      const behavior = this.behaviors[bk]
+      //behaviors.initBehavior(behavior)
+      behaviors.addCommand(behavior)
     }
     ///testjpf
     // now activate new game stuff?

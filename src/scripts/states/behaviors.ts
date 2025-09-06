@@ -1,26 +1,26 @@
-import { Behavior } from '../../types/state'
+import { Behavior, BehaviorSystem } from '../../types/state'
 import { BehaviorsInitState } from './inits/behaviorInitState'
 
 export default class WorldBehaviors {
   private _all: { [key: string]: Behavior }
 
   checkpoint: string
-
+  commands: { [key: string]: BehaviorSystem } = {}
   constructor() {
     // this.fsm = new StateMachine(this, 'quests')
     this.checkpoint = 'tutorialA'
 
     this._all = { ...BehaviorsInitState }
 
-    this.initBehavior = this.initBehavior.bind(this)
+    //   this.initBehavior = this.initBehavior.bind(this)
+    this.addCommand = this.addCommand.bind(this)
   }
 
   public get all() {
     return this._all
   }
-  initBehavior({}) {}
   addBehavior({
-    id = 'behavior_npc_question',
+    id = 'behavior_npc_default',
     recipient = 'player',
     agent = '',
     reason = 'theft',
@@ -31,7 +31,11 @@ export default class WorldBehaviors {
     //testjpf this needs to be the actual entity
     // probably need entity command object.
     //Id like to add behaviorKey to npc state as well
-    this._all[behaviorKey] = required
+
+    this._all[behaviorKey] = this.commands[type].init(required)
+  }
+  addCommand(bs: BehaviorSystem): void {
+    this.commands[bs.id] = bs
   }
   deleteBehavior(id: string): void {
     delete this._all[id]

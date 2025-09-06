@@ -10,6 +10,7 @@ import WorldNovel from './novel'
 import WorldQuests from './quests'
 import WorldStations from './stations'
 import WorldInventory from './inventory'
+import WorldBehaviors from './behaviors'
 
 const dt = math.randomseed(os.time())
 
@@ -22,6 +23,7 @@ export default class World {
   player: WorldPlayer
   npcs: WorldNpcs
   quests: WorldQuests
+  behaviors: WorldBehaviors
   info: WorldInfo
   inventory: WorldInventory
   clock: number
@@ -36,6 +38,7 @@ export default class World {
     this.novel = new WorldNovel()
     this.tasks = new WorldTasks()
     this.inventory = new WorldInventory()
+    this.behaviors = new WorldBehaviors()
 
     this.player = new WorldPlayer('hero')
     /*
