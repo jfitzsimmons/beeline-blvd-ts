@@ -9,7 +9,7 @@ import { doctors } from '../utils/consts'
 import { from_same_room } from '../utils/quest'
 //import { shuffle } from '../../utils/utils'
 
-const { stations, rooms, npcs, tasks, player, novel, info, quests } =
+const { stations, rooms, npcs, tasks, player, novels, info, quests } =
   globalThis.game.world
 
 // testjpf
@@ -32,46 +32,46 @@ function injured_checks() {
   }
 }
 function infirmary_checks(delivery: QuestStep) {
-  //print('infirmary_checks', novel.reason, delivery.fsm.getState())
+  //print('infirmary_checks', novels.reason, delivery.fsm.getState())
   if (
     //testjpf this only works if talking to doctors
     // doctor sripts only gets called for doctors!!!
     //BUG!! STOP hardcoding these TODO NOW!!
     //Type not string, but "favormedsquest" |""|""etc...?
     //or ENUMS?!?!?!
-    novel.reason == 'favormedsquest' &&
+    novels.reason == 'favormedsquest' &&
     delivery.fsm.getState() == 'new'
   ) {
     player.add_inventory('vial02')
-    info.add_interaction(`${novel.npc.name}'s gave you meds for a doctor`)
+    info.add_interaction(`${novels.npc.name}'s gave you meds for a doctor`)
   }
 }
 function doctor_checks() {
   const quest = quests.all.tutorial.medic_assist
   const injured = npcs.all[stations.all.grounds_worker1.occupant]
   // let's you interact with any doctor
-  const doctor = npcs.all[novel.npc.name]
+  const doctor = npcs.all[novels.npc.name]
   const { '0': injury, '2': apple, '3': meds, '5': delivery } = quest.conditions
-  //print('APPLE:PASSED:STATE::', novel.item, apple.passed, apple.fsm.getState())
+  //print('APPLE:PASSED:STATE::', novels.item, apple.passed, apple.fsm.getState())
   if (
-    novel.reason == 'hungrydoc' &&
+    novels.reason == 'hungrydoc' &&
     injury.fsm.getState() == 'active' &&
     apple.fsm.getState() == 'new'
   ) {
     apple.fsm.setState('active')
     tasks.taskBuilder(doctor.name, 'quest', injured.name, 'quest')
-    novel.append_npc_quest(doctor.name)
+    novels.append_npc_quest(doctor.name)
     info.add_interaction(`${doctor.name} needs food.`)
   } else if (
     //testjpf TODO:::
-    novel.reason == 'druggiedoc' &&
+    novels.reason == 'druggiedoc' &&
     apple.fsm.getState() == 'new'
   ) {
-    novel.append_npc_quest(doctor.name)
+    novels.append_npc_quest(doctor.name)
     tasks.taskBuilder(doctor.name, 'quest', injured.name, 'quest')
     info.add_interaction(`${doctor.name} needs drugs.`)
   } else if (
-    novel.item == 'apple01' &&
+    novels.item == 'apple01' &&
     apple.passed == true &&
     apple.fsm.getState() == 'active'
   ) {
@@ -86,12 +86,12 @@ function doctor_checks() {
     tasks.remove_quest_tasks(doctor.name)
     tasks.taskBuilder(doctor.name, 'mender', injured.name, 'injury')
 
-    novel.remove_npc_quest(doctor.name)
-    novel.reason = 'getadoctor'
-    novel.npc = doctor
+    novels.remove_npc_quest(doctor.name)
+    novels.reason = 'getadoctor'
+    novels.npc = doctor
     //testjpf needed for non optional dialog.
     // optional quest options need TODO
-    novel.forced = true
+    novels.forced = true
 
     info.add_interaction(`${doctor.name} likes that you fed them.`)
     doctor.love = doctor.love + 1
@@ -102,7 +102,7 @@ function doctor_checks() {
     injured.love = injured.love + 1
 
     msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
-  } else if (novel.reason == 'getsomemeds' && meds.fsm.getState() == 'new') {
+  } else if (novels.reason == 'getsomemeds' && meds.fsm.getState() == 'new') {
     meds.fsm.setState('active')
     apple.fsm.setState('complete')
 
@@ -121,14 +121,14 @@ function doctor_checks() {
     })
   
     tasks.taskBuilder(doctor.name, 'quest', injured.name, 'waitingformeds')
-    novel.append_npc_quest(doctor.name)
+    novels.append_npc_quest(doctor.name)
     info.add_interaction(`${doctor.name}'s gave you clearance for 8 turns`)
 
     msg.post(`/${doctor.currStation}#npc_loader`, hash('move_npc'), {
       station: 'worker1',
       npc: doctor.name,
     })
-  } else if (novel.reason == 'rejectmeds') {
+  } else if (novels.reason == 'rejectmeds') {
     apple.fsm.setState('complete')
     info.add_interaction(`${doctor.name} doesn't like you wont help.`)
     injured.love = injured.love - 1
@@ -143,33 +143,33 @@ function doctor_checks() {
     from_same_room(npcs.returnSecurity(), player.currRoom) != null
   ) {
     // print('thebigelseif@!@!@!')
-    novel.cause = 'questioning'
-    novel.reason = 'tutsclearance'
-    novel.forced = true
-    novel.npc = from_same_room(npcs.returnSecurity(), player.currRoom)!
-    // print('tutsclearances', novel.reason, novel.npc.name)
+    novels.cause = 'questioning'
+    novels.reason = 'tutsclearance'
+    novels.forced = true
+    novels.npc = from_same_room(npcs.returnSecurity(), player.currRoom)!
+    // print('tutsclearances', novels.reason, novels.npc.name)
     quest.sideQuests.hallpass.fsm.setState('complete')
     quest.sideQuests.hallpass.passed = true
     msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
   } else if (
-    novel.item == 'vial02' &&
+    novels.item == 'vial02' &&
     meds.passed == true &&
     meds.fsm.getState() == 'active'
   ) {
-    novel.forced = true
+    novels.forced = true
     //TESTjpf start here
     delivery.fsm.setState('active')
     const waiting = tasks.taskHasOwner('waitingformeds')
     //testjpf doesnt work if you talk to someone else!!! BUG
-    if (novel.npc.name == waiting) {
+    if (novels.npc.name == waiting) {
       // print('WAITING DOES ANYHTING???!!!')
       //meds.passed = true
       meds.fsm.setState('complete')
       info.add_interaction(`${waiting} likes that you gave them meds.`)
       doctor.love = doctor.love + 1
-      novel.npc = npcs.all[waiting]
-      novel.reason = 'docquestcomplete'
-      novel.remove_npc_quest(doctor.name)
+      novels.npc = npcs.all[waiting]
+      novels.reason = 'docquestcomplete'
+      novels.remove_npc_quest(doctor.name)
       tasks.removeTaskByLabel(doctor.name, 'mender')
       npcs.all[injured.name].fsm.setState('infirm')
       npcs.all[doctor.name].fsm.setState('turn')
@@ -189,8 +189,8 @@ function doctor_checks() {
        * remove any related npcs from npcsWithQuest
        */
 // testjpf this is overwriting my scriptsdialog functions
-// novel.npc = doctor
-//novel.forced = true
+// novels.npc = doctor
+//novels.forced = true
 /**
        * TODO TESTJPF
        * funcitonality has been replaced by behavior trees
@@ -204,9 +204,9 @@ function doctor_checks() {
         authority: 'player',
       })
         
-      novel.reason = 'askdocafavor'
+      novels.reason = 'askdocafavor'
     }
-    novel.forced = true
+    novels.forced = true
 
     msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
     // removed after scene
@@ -214,11 +214,11 @@ function doctor_checks() {
     if (waiting != null) {
       print('does this get calledhuhuh???')
       tasks.remove_quest_tasks(waiting)
-      novel.remove_npc_quest(waiting)
+      novels.remove_npc_quest(waiting)
       
     }
   } else if (
-    novel.reason == 'docquestcomplete' &&
+    novels.reason == 'docquestcomplete' &&
     meds.fsm.getState() == 'complete'
   ) {
     tasks.remove_quest_tasks(doctor.name)
@@ -232,11 +232,11 @@ function medic_assist_checks() {
     tasks.removeHeat(injured.name)
   }
   //need doctor checks and "non-doctor" cjecks?
-  //testjpf if novel.npc isn't a doctor::: RETURN!!!????
+  //testjpf if novels.npc isn't a doctor::: RETURN!!!????
   // const injured =npcs.all[stations.all.grounds_worker1.occupant]
   // BUG::: testjpf I think this will
   // let you interact with any doctor
-  //const doctor = npcs.all[novel.npc.name].
+  //const doctor = npcs.all[novels.npc.name].
 
   const { conditions } = quest
   //const {"0":injury,"1":doc, "2":apple} = cons
@@ -247,21 +247,21 @@ function medic_assist_checks() {
 
   print(
     'TUTTTS:: clan:',
-    npcs.all[novel.npc.name].clan,
+    npcs.all[novels.npc.name].clan,
     '| docquest:?',
     tasks.npcHasTask(doctors, [], ['quest']),
     '| currroom:',
-    npcs.all[novel.npc.name].currRoom
+    npcs.all[novels.npc.name].currRoom
   )   
   if (
-    npcs.all[novel.npc.name].clan == 'doctors' ||
+    npcs.all[novels.npc.name].clan == 'doctors' ||
     tasks.npcHasTask(doctors, [], ['quest']) !== null
   ) {
     doctor_checks()
     //TESTJPF
   }
-  if (npcs.all[novel.npc.name].currRoom == 'infirmary') {
-    // print('novel reason pre infirm check', novel.reason)
+  if (npcs.all[novels.npc.name].currRoom == 'infirmary') {
+    // print('novel reason pre infirm check', novels.reason)
     infirmary_checks(conditions['5'])
   }
   //TESTJPF ELSE if quest complete dialog, xp / money???
@@ -452,25 +452,25 @@ function doctorsScripts() {
   //const {"0":injury,"1":doc,"2": apple, "3": meds} = cons
   const { '0': injury, '2': apple, '5': delivery } = cons
   // bad??:: if reasonstring.startswith('quest - ')
-  //then on novel_main novel.quest.solution = endof(message.reason)
+  //then on novel_main novels.quest.solution = endof(message.reason)
 
   if (injury.fsm.getState() == 'active' && apple.fsm.getState() == 'new') {
-    novel.reason = 'quest'
-    novel.forced = true
+    novels.reason = 'quest'
+    novels.forced = true
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
     return 'tutorial/tutorialAdoctor'
   } else if (apple.fsm.getState() == 'active') {
-    novel.forced = true
-    novel.reason = 'quest'
+    novels.forced = true
+    novels.reason = 'quest'
     //testjpf could add conditional if encounters == 0 ) {
     // "I'm going as fast as i can" -doc
     //testjpf future naming files may be better:
     //docAsksForFavor, docActiveFavor
     return apple.passed == false ? 'tutorial/hungrydoc' : 'tutorial/getadoctor'
   } else if (delivery.fsm.getState() == 'active') {
-    novel.forced = true
-    novel.reason = 'quest'
+    novels.forced = true
+    novels.reason = 'quest'
     return tasks.taskHasOwner('waitingformeds') == null
       ? 'tutorial/askDocAfavor'
       : 'tutorial/medAssistComplete'
@@ -483,10 +483,13 @@ function infirmaryScripts() {
   const { conditions: cons } = quest
   //const {"0":injury,"1":doc,"2": apple, "3": meds} = cons
   const { '3': meds } = cons
-  if (meds.fsm.getState() == 'active' && novel.npc.currStation == 'assistant') {
-    novel.forced = true
-    novel.reason = 'quest'
-    npcs.all[novel.npc.name].fsm.setState('turn')
+  if (
+    meds.fsm.getState() == 'active' &&
+    novels.npc.currStation == 'assistant'
+  ) {
+    novels.forced = true
+    novels.reason = 'quest'
+    npcs.all[novels.npc.name].fsm.setState('turn')
     player.fsm.setState('turn')
     //testjpf there is no default for resetting these states
     // after player caught 'stealing'
@@ -503,8 +506,8 @@ function worker1Scripts() {
   //const {"0":injury,"1":doc,"2": apple, "3": meds} = cons
   const { '0': injury } = cons
   if (injury.passed == false) {
-    novel.forced = true
-    novel.reason = 'quest'
+    novels.forced = true
+    novels.reason = 'quest'
     return 'tutorial/helpThatMan'
   }
   return null
@@ -515,9 +518,9 @@ function worker2Scripts() {
   //more alert checks as well
   //by checks i mean choices with checks
 
-  if (novel.reason == 'concern') {
-    novel.forced = true
-    novel.reason = 'quest'
+  if (novels.reason == 'concern') {
+    novels.forced = true
+    novels.reason = 'quest'
     return 'tutorial/concernLuggage'
   }
 

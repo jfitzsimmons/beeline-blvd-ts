@@ -1,5 +1,22 @@
 import { Traits } from './state'
 
+export interface Novels {
+  [key: string]: Novel
+}
+
+export interface NovelDefaults {
+  stage: number
+  mood: string
+  owned: boolean
+  last: number
+  read: number
+}
+export interface Novel extends NovelDefaults {
+  type: string
+  name: string
+  id: string
+}
+
 export interface Typewriter {
   state: string
   textspeed: number

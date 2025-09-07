@@ -2,7 +2,7 @@ import { Behavior, BehaviorSystem } from '../../../types/state'
 import { subscribe, unsubscribe } from '../dispatcher'
 import { crimeChecks } from '../npcs/crimeChecks'
 
-const { npcs, rooms, stations, behaviors, novel } = globalThis.game.world
+const { npcs, rooms, stations, behaviors, novels } = globalThis.game.world
 
 export default {
   id: '',
@@ -75,7 +75,7 @@ export default {
       }
     }
     if (this.recipient == 'player' && crossedPaths === true) {
-      novel.setConfrontation(agent.name, this.reason, 'questioning')
+      novels.setConfrontation(agent.name, this.reason, 'questioning')
       return
     }
     const resultChecks: Array<

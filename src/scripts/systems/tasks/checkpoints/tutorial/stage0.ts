@@ -14,6 +14,25 @@ export function wtm0injured(message: { patient: string }): void {
   wtm.stages[0].status.see = true
   wtm.stages[1].status.see = true
   wtm.stages[1].status.active = true
+  //need to use tasksys? this is a med task normally
+  // so its a different task now?
+  //add subscriptions to doctors??
+  //no? add quest subKeyst to npcs?
+}
+export function wtm1findDoc(message: { patient: string }): void {
+  //testjpf
+  //use command object to fire funciton based on msgID
+  //that processes below:::ß
+  //print('unlock: TESTJPF questID:: ', message.questId)
+  npcs.all[message.patient].love = npcs.all[message.patient].love + 1
+  //this needs to be taken care of by npc??
+  //NPC module -> -> subscriptions.ts??
+  info.add_interaction(`${message.patient} likes that you are helping them.`)
+
+  wtm.stage = 1
+  wtm.stages[0].status.see = true
+  wtm.stages[1].status.see = true
+  wtm.stages[1].status.active = true
 }
 function infirmary_checks(delivery: QuestStep) {
   //print('infirmary_checks', novel.reason, delivery.fsm.getState())

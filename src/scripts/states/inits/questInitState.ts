@@ -1,4 +1,18 @@
+import { Novels } from '../../../types/novel'
 import { Quests, Unlocks } from '../../../types/tasks'
+
+export const NovelsInitState: Novels = {
+  quest_wtm0_default: {
+    type: '',
+    name: '',
+    id: '',
+    stage: 0,
+    mood: '',
+    owned: false,
+    last: Infinity,
+    read: 0,
+  },
+}
 
 export const UnlockInitState: Unlocks = {
   quest_world_example: {
@@ -14,6 +28,7 @@ export const QuestsInitState: Quests = {
     checkpoint: '',
     scope: '',
     unlockSubKeys: [],
+    novelKeys: [],
     stage: 0,
     stages: [
       {

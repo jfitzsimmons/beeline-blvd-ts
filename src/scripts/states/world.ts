@@ -19,7 +19,7 @@ export default class World {
   fsm: StateMachine
   rooms: WorldRooms
   stations: WorldStations
-  novel: WorldNovel
+  novels: WorldNovel
   tasks: WorldTasks
   player: WorldPlayer
   npcs: WorldNpcs
@@ -37,7 +37,7 @@ export default class World {
     //}
     this.rooms = new WorldRooms()
     this.stations = new WorldStations()
-    this.novel = new WorldNovel()
+    this.novels = new WorldNovel()
     this.tasks = new WorldTasks()
     this.inventory = new WorldInventory()
     this.behaviors = new WorldBehaviors()

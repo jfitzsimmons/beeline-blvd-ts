@@ -4,7 +4,7 @@ import { Consequence } from '../../types/tasks'
 import SuspectingSequence from '../behaviors/sequences/suspectingSequence'
 import { witnessPlayer } from '../systems/npcs/crimeChecks'
 
-const { npcs, rooms, tasks, player, novel } = globalThis.game.world
+const { npcs, rooms, tasks, player, novels, stations } = globalThis.game.world
 
 interface cloneparent {
   primary: string
@@ -40,9 +40,9 @@ export function init(this: props): void {
 
 function open_novel(_this: props) {
   npcs.all[_this.actorname].convos = npcs.all[_this.actorname].convos + 1
-  novel.npc = npcs.all[_this.actorname]
-  novel.reason = _this.consequence.type
-  novel.forced = false
+  novels.npc = npcs.all[_this.actorname]
+  novels.reason = _this.consequence.type
+  novels.forced = false
 
   msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
   msg.post('#', 'release_input_focus')
@@ -65,7 +65,7 @@ function open_inventory(_this: props, actor: string, action: string) {
       actor === '' ? undefined : room.actors[actor].watcher
     // the actual npc assigned to that station
     if (station != undefined) {
-      _this.watcher = room.stations[station]
+      _this.watcher = stations.all[station].occupant
     }
 
     if (_this.watcher === '') {
@@ -87,7 +87,7 @@ function open_inventory(_this: props, actor: string, action: string) {
     _this.watcher = actor
   }
   if (_this.watcher != '' && _this.watcher != null) {
-    novel.npc = npcs.all[_this.watcher]
+    novels.npc = npcs.all[_this.watcher]
 
     const prev_caution = tasks.npcHasTask([_this.watcher], ['player'])
 
@@ -96,9 +96,9 @@ function open_inventory(_this: props, actor: string, action: string) {
     } else if (action == 'pockets' || action == 'open') {
       const thiefprops: ThiefVictimProps = {
         name: player.name,
-        addInvBonus: player.addInvBonus.bind(player),
-        removeInvBonus: player.removeInvBonus.bind(player),
-        updateInventory: player.updateInventory.bind(player),
+        //   addInvBonus: player.addInvBonus.bind(player),
+        //    removeInvBonus: player.removeInvBonus.bind(player),
+        // updateInventory: player.updateInventory.bind(player),
         addOrExtendEffect: player.addOrExtendEffect.bind(player),
         traits: player.traits,
         inventory: player.inventory,
@@ -112,8 +112,8 @@ function open_inventory(_this: props, actor: string, action: string) {
         traits: watcher.traits,
         clan: watcher.clan,
         inventory: watcher.inventory,
-        updateInventory: watcher.updateInventory.bind(watcher),
-        addOrExtendEffect: watcher.addOrExtendEffect.bind(watcher),
+        //updateInventory: watcher.updateInventory.bind(watcher),
+        // addOrExtendEffect: watcher.addOrExtendEffect.bind(watcher),
       }
       _this.consequence = witnessPlayer(thiefprops, watcherProps)
     } else if (action == 'give' || action == 'trade') {
@@ -175,7 +175,7 @@ function check_nodes(
   _this: props,
   action: { released: boolean; x: number; y: number }
 ) {
-  novel.forced = false
+  novels.forced = false
   _this.consequence = { pass: false, type: 'neutral' }
   print('_this.clones.length', _this.clones.length)
   for (const c of _this.clones) {
@@ -193,7 +193,7 @@ function check_nodes(
         open_inventory(_this, c.actor, c.action)
         break
       } else if (c.action == 'talk') {
-        print("talkprint('intnovelpriority', novel.forced)", novel.forced)
+        print("talkprint('intnovelpriority', novels.forced)", novels.forced)
         open_novel(_this)
         break
       } else if (c.action == 'use') {

@@ -75,6 +75,7 @@ export interface Quest {
   stages: QuestStage[]
   status: Status
   unlockSubKeys: string[]
+  novelKeys: string[]
 }
 export interface QuestMethods {
   [key: string]: (
