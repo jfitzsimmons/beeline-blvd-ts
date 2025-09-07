@@ -1,12 +1,15 @@
-import { NovelNpc } from '../../types/novel'
+import { Novel, NovelNpc, Novels } from '../../types/novel'
 import { QuestMethods } from '../../types/tasks'
 //import { WorldArgs } from '../../types/world'
 import { NpcsInitState } from './inits/npcsInitState'
+import { NovelsInitState } from './inits/questInitState'
 import NpcState from './npc'
 
-export default class WorldNovel {
+export default class WorldNovels {
   //private background: string
   //private sprites: { [key: string]: string }
+  private _all: Novels
+
   private _reason: string
   private _item: string
   cause: string
@@ -23,6 +26,7 @@ export default class WorldNovel {
   constructor() {
     // this.background = ''
     //  this.sprites = {}
+    this._all = { ...NovelsInitState }
     this._active_quest = false
     this._forced = false
     this._reason = 'none'
@@ -160,5 +164,9 @@ export default class WorldNovel {
     if (hp <= 0) {
       this.novelclose(this.npc.love, 0, 0, 'faint')
     }
+  }
+  initNovel(novel: Novel) {
+    const novelKey = novel.id
+    this._all[novelKey] = novel
   }
 }

@@ -1,13 +1,15 @@
 import questsData from './initData/tasks/questData'
-import questioningSys from './behaviors/questioning.script'
+import unlockData from './initData/unlocks'
+
 //testjpf make new import
 //quest
 import { subscribe, unsubscribe } from './dispatcher'
 import { questTasks } from './tasks/quests'
 //import { npcTasks } from './npcs/crimeChecks'
 import questioning from './behaviors/questioning.script'
+import { novelDefaults } from './initData/novels'
 
-const { quests, behaviors, unlocks } = globalThis.game.world
+const { quests, behaviors, unlocks, novels } = globalThis.game.world
 
 export default {
   quests: {},
@@ -18,6 +20,10 @@ export default {
     for (const [, quest] of Object.entries(quests.all)) {
       //testjpf need to formalize a questlistener
       if (questTasks[quest.id] !== null) questTasks.tick()
+
+      //TESTJPF need behaviovs.tick()
+      //for injuredquest -> doctors...
+
       // if (quest.id.split('_')[1] == 'questioning') questioningSys.tick()
       //TESTJPF then tutorialA, tutb will ahve things like
       // .active(),.see(), that will be called in tick
@@ -27,7 +33,32 @@ export default {
   init() {
     for (const [, quest] of Object.entries(questsData)) {
       quests.initQuest(quest)
-      for (const unlock of quest.unlocks) unlocks.initUnlock(unlock)
+      //if (quest.unlockKeys !== null) {
+      for (const unlockSubKey of quest.unlockSubKeys) {
+        unlocks.initUnlock({
+          id: `tasks_${quest.scope}_${unlockSubKey}`,
+          unlock: unlockData[unlockSubKey].unlock,
+        })
+        for (const novelKey of quest.novelKeys) {
+          novels.initNovel({
+            type: 'task',
+            name: novelKey,
+            id: `task_${novelKey}`,
+            ...novelDefaults,
+          })
+        }
+
+        // unlockData.wtm0injured
+        //  }
+        // let uk: keyof typeof quest.unlocks
+        /*
+        for (uk in quest.unlocks)
+          unlocks.initUnlock({
+            id: `tasks_${quest.scope}_${uk}`,
+            unlock: quest.unlocks[uk],
+          })
+            */
+      }
       //questTasks[quest.id]()
       // quests.loadListeners(k)
     }

@@ -125,7 +125,7 @@ export default class WorldQuests {
     //nextId: string
     checkpoint = 'none',
     scope = 'quest',
-    unlocks = [],
+    unlockSubKeys = [],
     stage = 0,
     stages = [],
     status = { active: false, archive: false, passed: false, see: false },
@@ -135,7 +135,7 @@ export default class WorldQuests {
       //nextId: string
       checkpoint,
       scope,
-      unlocks,
+      unlockSubKeys,
       stage,
       stages,
       status,

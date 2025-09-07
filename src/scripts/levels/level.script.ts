@@ -2,7 +2,7 @@
 import roomSys from '../systems/rooms.script'
 const dt = math.randomseed(os.time())
 const { world } = globalThis.game
-const { player, novel } = world
+const { player, novels } = world
 
 /** 
 function calculate_heat(room: string) {
@@ -61,7 +61,7 @@ good!!!
 
 */
 function game_turn() {
-  novel.reset_novel()
+  novels.reset_novel()
   world.fsm.update(dt)
   print('????* *::: qQqQq: Quest Related AI checks: Running...')
   //quest_checker() seeBELOW!!! 2nd use
@@ -96,7 +96,7 @@ export function on_message(
     // address_busy_tasks()
     // calculate_heat(this.roomName)
     quickLoad(this)
-    if (novel.forced === true) {
+    if (novels.forced === true) {
       //calculate_heat(this.roomName)
       msg.post('worldproxies:/controller#novelcontroller', 'show_scene')
       //  npcs.all[novel.npc.name].fsm.setState('turn')
@@ -113,8 +113,8 @@ export function on_message(
     //also, probably not here testjpf
     //quest_checker()
 
-    print('exitgui reason::', novel.reason)
-    novel.reset_novel()
+    print('exitgui reason::', novels.reason)
+    novels.reset_novel()
     //calculate_heat(this.roomName)
     msg.post('/shared/adam#adam', 'get_focus')
   } else if (messageId == hash('update_alert')) {

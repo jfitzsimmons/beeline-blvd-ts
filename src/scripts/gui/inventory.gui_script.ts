@@ -1,6 +1,6 @@
 import { inventoryLookup } from '../utils/inventory'
 
-const { player, npcs, rooms, novel } = globalThis.game.world
+const { player, npcs, rooms, novels } = globalThis.game.world
 interface props {
   actorinventory: string[]
   watcher: string
@@ -148,8 +148,8 @@ function check_inventory_nodes(
       textureHash != hash('empty')
     ) {
       const item = inventoryLookup[hash_to_hex(textureHash)]
-      novel.item = item
-      if (npcs.all[actorname] != null) novel.npc = npcs.all[actorname]
+      novels.item = item
+      if (npcs.all[actorname] != null) novels.npc = npcs.all[actorname]
       hide_inventory_animation(node)
 
       if (i < 21) {

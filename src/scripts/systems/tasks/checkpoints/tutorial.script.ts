@@ -1,6 +1,6 @@
 import { subscribe, unsubscribe } from '../../dispatcher'
 //import { tutorialA, wtm0injured } from './tutorial/stage1'
-const { quests, info, npcs, stations } = globalThis.game.world
+const { quests, info, npcs, stations, unlocks } = globalThis.game.world
 const { world_tutorial_medic: wtm } = quests.all
 
 /**
@@ -17,7 +17,7 @@ const { world_tutorial_medic: wtm } = quests.all
  * init(unlock: Unlock){set everything}
  * }
  */
-export const world_tutorial_medic = {
+export default {
   //stages: [wtm0injured],
   init() {
     //since already here dont use this:
@@ -76,8 +76,9 @@ export function on_message(
       //at some point i need to injure a default npc testjpf
       print('TESTJPF!!: This should eventually make a quest available.')
     }
-    if (messageId == hash('agreedToHelp') && wtm.unlocks != undefined) {
-      wtm.unlocks[0](message.patient)
+    if (messageId == hash('agreedToHelp')) {
+      //unlocks.all.
+      unlocks.all['tasks_world_wtm0injured'].unlock(message.patient)
     }
     if (messageId == hash('world_tutorial_medic_1')) {
       //testjpf subscribe doctors to this task.

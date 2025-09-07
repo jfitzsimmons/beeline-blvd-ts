@@ -16,7 +16,9 @@ export default {
     //nextId: 'world_tutorial_task1',
     checkpoint: 'tutorial',
     scope: 'world',
-    unlocks: [(p: string) => wtm0injured({ patient: p })],
+    //unlockKeys: { wtm0injured: (p: string) => wtm0injured({ patient: p }) },
+    unlockSubKeys: ['wtm0injured'],
+    novelKeys: ['wtm0injured'],
     stages: [
       {
         status: { ...defaults.status },
@@ -52,7 +54,7 @@ export default {
             type: 'inventory',
             subtype: 'current',
             name: 'doctorProcureNeeds',
-            operator: 'contains',
+            operator: 'includes',
             value: ['vial', 'apple01'],
           },
           {
@@ -104,7 +106,8 @@ export default {
     id: 'world_tutorial_luggage',
     checkpoint: 'tutorial',
     scope: 'world',
-    unlocks: [],
+    unlockSubKeys: [],
+    novelKeys: [],
     stages: [
       {
         status: { ...defaults.status },
