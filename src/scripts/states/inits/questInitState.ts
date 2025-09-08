@@ -1,5 +1,5 @@
 import { Novels } from '../../../types/novel'
-import { Quests, Unlocks } from '../../../types/tasks'
+import { Moments, Quests, Unlocks } from '../../../types/tasks'
 
 export const NovelsInitState: Novels = {
   quest_wtm0_default: {
@@ -20,7 +20,12 @@ export const UnlockInitState: Unlocks = {
     unlock: () => false,
   },
 }
-
+export const MomentInitState: Moments = {
+  room__reception_steal: {
+    id: '',
+    moment: () => false,
+  },
+}
 export const QuestsInitState: Quests = {
   world_example_start: {
     id: '',

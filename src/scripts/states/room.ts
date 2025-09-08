@@ -15,6 +15,7 @@ export default class RoomState {
   stationKeys: string[]
   focus: boolean
   onScreen: boolean
+  moments: string[]
   // p: RoomProps
   //checks: RoomChecks
   //outcomes: RoomOutcomes
@@ -26,6 +27,7 @@ export default class RoomState {
     this.actors = r.actors
     this.props = r.props || []
     this.stationKeys = []
+    this.moments = r.moments
     ;(this.focus = false), (this.onScreen = false)
     // this.p = roomProps
     this.fsm

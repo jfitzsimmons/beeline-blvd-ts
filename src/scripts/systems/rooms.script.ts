@@ -15,6 +15,13 @@ export default {
   // TESTJPF !!! NOW unlocks / upgrades: ???
   dispatches: {},
   tick() {
+    for (const [, room] of Object.entries(roomsData)) {
+      // for (const moment of room.moments) {
+      //testjpf need to have init schedule/moment data!!!
+      //and loop trhough that
+      //schedule.initMoment(moment)
+      //   }
+    }
     // for (const [, room] of Object.entries(rooms.all)) {
     //testjpf need to formalize a questlistener
     //if (questTasks[quest.id] !== null) questTasks[quest.id].tick()
@@ -29,6 +36,11 @@ export default {
       for (const [, storage] of Object.entries(room.actors)) {
         inventory.initStorage(storage)
       }
+
+      //for every station, init check? have check data file? like unlovks
+      //something like:
+      /// quests.initCheck()
+
       //questTasks[quest.id].init()
       // quests.loadListeners(k)
     }

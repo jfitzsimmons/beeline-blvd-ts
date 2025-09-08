@@ -12,7 +12,7 @@ import WorldStations from './stations'
 import WorldInventory from './inventory'
 import WorldBehaviors from './behaviors'
 import WorldUnlocks from './unlocks'
-
+import WorldSchedule from './schedule'
 const dt = math.randomseed(os.time())
 
 export default class World {
@@ -28,6 +28,7 @@ export default class World {
   info: WorldInfo
   inventory: WorldInventory
   unlocks: WorldUnlocks
+  schedule: WorldSchedule
   clock: number
   constructor() {
     this.fsm = new StateMachine(this, 'world')
@@ -42,6 +43,7 @@ export default class World {
     this.inventory = new WorldInventory()
     this.behaviors = new WorldBehaviors()
     this.unlocks = new WorldUnlocks()
+    this.schedule = new WorldSchedule()
 
     this.player = new WorldPlayer('hero')
     /*

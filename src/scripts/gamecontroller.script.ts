@@ -30,7 +30,7 @@ function show(currentProxy: url | null, p: string) {
 export function init(this: props) {
   this.currentProxy = null
   this.loadType = 'game init'
-  this.roomName = 'receptiion'
+  this.roomName = 'reception'
   this.isPaused = false
 
   gamesave.init() // checks if theres app support data and if you're out of save slots

@@ -57,20 +57,6 @@ export default class SuspectingAction extends Action {
     this.storage = storage
     this.cause = cause
     this.isHero = this.perp.name === 'player' ? true : false
-    /**
-    if (
-      this.a.currRoom == this.perp.currRoom &&
-      this.a.currRoom == this.a.getFocusedRoom() &&
-      this.isHero == false
-    ) {
-      msg.post(`/${this.a.currStation}#npc_loader`, hash('move_npc'), {
-        station: this.perp.currStation,
-        npc: this.a.name,
-      })
-      // prettier-ignore
-      print("NEWNEW",this.a.name, 'STATION MOVE VIA TASK confront', this.perp.name, 'in', this.a.currRoom)
-    }
-      **/
   }
   run(): { (): void } {
     //testjpf have conditions fro severity?!?!?

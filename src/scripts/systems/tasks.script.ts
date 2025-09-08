@@ -20,6 +20,21 @@ export default {
     for (const [, quest] of Object.entries(quests.all)) {
       //testjpf need to formalize a questlistener
       if (questTasks[quest.id] !== null) questTasks.tick()
+      // if (roomTasks[quest.id] !== null) questTasks.tick()
+
+      //TESTJPF need behaviovs.tick()
+      //for injuredquest -> doctors...
+
+      // if (quest.id.split('_')[1] == 'questioning') questioningSys.tick()
+      //TESTJPF then tutorialA, tutb will ahve things like
+      // .active(),.see(), that will be called in tick
+      // quests.loadCstenss(k)
+    }
+    for (const [, behavior] of Object.entries(behaviors.all)) {
+      //testjpf need to formalize a questlistener
+      behavior.tick()
+
+      //if (roomTasks[quest.id] !== null) questTasks.tick()
 
       //TESTJPF need behaviovs.tick()
       //for injuredquest -> doctors...

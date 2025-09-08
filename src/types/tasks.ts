@@ -130,3 +130,11 @@ export interface Unlock {
   id: string
   unlock: (u: string) => void
 }
+export interface Moments {
+  [key: string]: Moment
+}
+
+export interface Moment {
+  id: string
+  moment: (u: string) => void
+}

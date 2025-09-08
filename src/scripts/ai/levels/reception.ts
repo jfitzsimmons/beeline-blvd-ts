@@ -1,71 +1,45 @@
-import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
-import { QuestionProps } from '../../../types/behaviors'
-import SuspectingSequence from '../../behaviors/sequences/suspectingSequence'
 import {
   take_check,
   npcStealCheck,
   take_or_stash,
 } from '../../systems/npcs/crimeChecks'
 import RoomState from '../../states/room'
-import Storage from '../../states/storage'
 import { cicadaModulus } from '../../utils/utils'
+import { Storage } from '../../../types/state'
 
-function steal_stash_checks(this: RoomState) {
+const { behaviors, stations, npcs, inventory } = globalThis.game.world
+export function receptionsStealStash1() {
   let thiefVictim = null
   let thief = null
   let actor: Storage
   let loot: string[] = []
-  let attendant =
-    this.stations.desk === '' ? null : this.p.returnNpc(this.stations.desk)
-  if (cicadaModulus() && this.stations.guest != '') {
-    thiefVictim = this.p.returnNpc(this.stations.guest)
-    const thiefVictimProps: ThiefVictimProps = {
-      name: thiefVictim.name,
-      traits: thiefVictim.traits,
-      inventory: thiefVictim.inventory,
-      clan: thiefVictim.clan,
-      cooldown: thiefVictim.cooldown,
-      crime: 'theft',
-      removeInvBonus: thiefVictim.removeInvBonus.bind(thiefVictim),
-      addInvBonus: thiefVictim.addInvBonus.bind(thiefVictim),
-      updateInventory: thiefVictim.updateInventory.bind(thiefVictim),
-      addOrExtendEffect: thiefVictim.addOrExtendEffect.bind(thiefVictim),
-    }
+  let attendant = npcs.all[stations.all.reception_desk.occupant]
+  // stations.all.reception_desk.occupant === '' ? null : this.p.returnNpc(this.stations.desk)
+  if (cicadaModulus() && stations.all.reception_guest.occupant != '') {
+    thiefVictim = npcs.all[stations.all.reception_guest.occupant]
+
     loot = thiefVictim.inventory
-    actor = this.actors.drawer
+    actor = inventory.all.room_reception_drawer
     if (actor.inventory.length > 0 && attendant !== null) {
-      const attendantProps: AttendantProps = {
-        name: attendant.name,
-        traits: attendant.traits,
-        clan: attendant.clan,
-        inventory: attendant.inventory,
-        updateInventory: attendant.updateInventory.bind(attendant),
-        addOrExtendEffect: attendant.addOrExtendEffect.bind(attendant),
-      }
       const witness: string | null = npcStealCheck(
-        thiefVictimProps,
-        attendantProps,
-        actor
+        thiefVictim.name,
+        attendant.name,
+        actor.id
       )
+      //todotestjpf behaviors.addBehavior()
       if (witness == 'witness') {
-        const perp = thiefVictim.getBehaviorProps('question') as QuestionProps
-        attendant.addToBehavior(
-          'active',
-          new SuspectingSequence(
-            attendant.getBehaviorProps.bind(attendant),
-            perp,
-            'theft',
-            actor
-          )
-        )
+        // const perp = thiefVictim.getBehaviorProps('question') as QuestionProps
+        behaviors.addBehavior({
+          id: `suspecting_${attendant.name}_${thiefVictim.name}`,
+        })
       }
     } else if (actor.inventory.length > 0) {
-      take_check(thiefVictimProps, actor)
+      take_check(thiefVictim.name, actor.id)
     }
   }
 
-  if (this.stations.loiter4 != '') {
-    thief = this.p.returnNpc(this.stations.loiter4)
+  if (stations.all.reception_loiter4.occupant != '') {
+    thief = npcs.all[stations.all.reception_loiter4.occupant]
   }
   if (
     cicadaModulus() &&
@@ -74,91 +48,30 @@ function steal_stash_checks(this: RoomState) {
     loot.length > 0 &&
     thief.cooldown <= 0
   ) {
-    const victimProps: AttendantProps = {
-      name: thiefVictim.name,
-      traits: thiefVictim.traits,
-      clan: thiefVictim.clan,
-      inventory: thiefVictim.inventory,
-      updateInventory: thiefVictim.updateInventory.bind(thiefVictim),
-      addOrExtendEffect: thiefVictim.addOrExtendEffect.bind(thiefVictim),
-    }
-    const thiefProps: ThiefVictimProps = {
-      name: thief.name,
-      traits: thief.traits,
-      inventory: thief.inventory,
-      clan: thief.clan,
-      cooldown: thief.cooldown,
-      crime: 'pockets',
-      removeInvBonus: thief.removeInvBonus.bind(thief),
-      addInvBonus: thief.addInvBonus.bind(thief),
-      updateInventory: thief.updateInventory.bind(thief),
-      addOrExtendEffect: thief.addOrExtendEffect.bind(thief),
-    }
-    const witness: string | null = npcStealCheck(thiefProps, victimProps)
+    const witness: string | null = npcStealCheck(thief.name, thiefVictim.name)
     if (witness == 'witness') {
-      const perp = thief.getBehaviorProps('question') as QuestionProps
-      thiefVictim.addToBehavior(
-        'active',
-        new SuspectingSequence(
-          thiefVictim.getBehaviorProps.bind(thiefVictim),
-          perp,
-          'pockets'
-        )
-      )
+      //  const perp = thief.getBehaviorProps('question') as QuestionProps
+      behaviors.addBehavior({
+        id: `suspecting_${thiefVictim.name}_${thief.name}`,
+      })
     }
   }
   if (cicadaModulus() && attendant !== null) {
     actor = this.actors.drawer
-    const attendantProps: ThiefVictimProps = {
-      name: attendant.name,
-      traits: attendant.traits,
-      inventory: attendant.inventory,
-      clan: attendant.clan,
-      cooldown: attendant.cooldown,
-      crime: 'concern',
-      removeInvBonus: attendant.removeInvBonus.bind(attendant),
-      addInvBonus: attendant.addInvBonus.bind(attendant),
-      updateInventory: attendant.updateInventory.bind(attendant),
-      addOrExtendEffect: attendant.addOrExtendEffect.bind(attendant),
-      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
-    }
-    take_or_stash(attendantProps, actor)
+
+    take_or_stash(attendant.name, actor.id)
   }
-  if (cicadaModulus() && this.stations.patrol != '') {
-    attendant = this.p.returnNpc(this.stations.patrol)
-    const attendantProps: ThiefVictimProps = {
-      name: attendant.name,
-      traits: attendant.traits,
-      inventory: attendant.inventory,
-      clan: attendant.clan,
-      cooldown: attendant.cooldown,
-      crime: 'concern',
-      removeInvBonus: attendant.removeInvBonus.bind(attendant),
-      addInvBonus: attendant.addInvBonus.bind(attendant),
-      updateInventory: attendant.updateInventory.bind(attendant),
-      addOrExtendEffect: attendant.addOrExtendEffect.bind(attendant),
-      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
-    }
+  if (cicadaModulus() && stations.all.reception_patrol.occupant != '') {
+    attendant = npcs.all[stations.all.reception_patrol.occupant]
+
     actor = this.actors.vase2
-    take_or_stash(attendantProps, actor)
+    take_or_stash(attendant.name, actor.id)
   }
-  if (cicadaModulus() && this.stations.loiter2 != '') {
-    attendant = this.p.returnNpc(this.stations.loiter2)
-    const attendantProps: ThiefVictimProps = {
-      name: attendant.name,
-      traits: attendant.traits,
-      inventory: attendant.inventory,
-      clan: attendant.clan,
-      cooldown: attendant.cooldown,
-      crime: 'concern',
-      removeInvBonus: attendant.removeInvBonus.bind(attendant),
-      addInvBonus: attendant.addInvBonus.bind(attendant),
-      updateInventory: attendant.updateInventory.bind(attendant),
-      addOrExtendEffect: attendant.addOrExtendEffect.bind(attendant),
-      //  npcHasTask: thiefVictim.parent.npcHasTask.bind(this),
-    }
+  if (cicadaModulus() && stations.all.reception_loiter2.occupant != '') {
+    attendant = npcs.all[stations.all.reception_loiter2.occupant]
+
     actor = this.actors.vase
-    take_or_stash(attendantProps, actor)
+    take_or_stash(attendant.name, actor.id)
   }
 }
 

@@ -5,6 +5,7 @@ const defaults = {
 }
 export default {
   security: {
+    moments: [],
     matrix: { x: 2, y: 5 },
     name: 'security',
     clearance: 3,
@@ -38,6 +39,7 @@ export default {
     ...defaults,
   },
   baggage: {
+    moments: [],
     matrix: { x: 0, y: 4 },
     name: 'baggage',
     clearance: 1,
@@ -80,6 +82,7 @@ export default {
     ...defaults,
   },
   viplobby: {
+    moments: [],
     matrix: { x: 1, y: 5 },
     name: 'viplobby',
     clearance: 2,
@@ -91,6 +94,7 @@ export default {
     ...defaults,
   },
   entrance: {
+    moments: [],
     matrix: { x: 0, y: 5 },
     name: 'entrance',
     clearance: 0,
@@ -98,6 +102,7 @@ export default {
     ...defaults,
   },
   recroom: {
+    moments: [],
     matrix: { x: 3, y: 3 },
     name: 'recroom',
     clearance: 1,
@@ -105,6 +110,7 @@ export default {
     ...defaults,
   },
   chapel: {
+    moments: [],
     matrix: { x: 3, y: 2 },
     name: 'chapel',
     clearance: 1,
@@ -112,6 +118,7 @@ export default {
     ...defaults,
   },
   inn1: {
+    moments: [],
     matrix: { x: 4, y: 2 },
     name: 'inn1',
     clearance: 1,
@@ -119,6 +126,7 @@ export default {
     ...defaults,
   },
   pubgrill: {
+    moments: [],
     matrix: { x: 4, y: 3 },
     name: 'pubgrill',
     clearance: 1,
@@ -126,6 +134,7 @@ export default {
     ...defaults,
   },
   maintenance: {
+    moments: [],
     matrix: { x: 4, y: 1 },
     name: 'maintenance',
     clearance: 2,
@@ -133,6 +142,7 @@ export default {
     ...defaults,
   },
   lobby: {
+    moments: [],
     matrix: { x: 2, y: 3 },
     name: 'lobby',
     clearance: 1,
@@ -140,6 +150,7 @@ export default {
     ...defaults,
   },
   storage: {
+    moments: [],
     matrix: { x: 3, y: 1 },
     name: 'storage',
     clearance: 1,
@@ -147,6 +158,7 @@ export default {
     ...defaults,
   },
   commonsint: {
+    moments: [],
     matrix: { x: 2, y: 2 },
     name: 'commonsint',
     clearance: 1,
@@ -154,6 +166,7 @@ export default {
     ...defaults,
   },
   commonsext: {
+    moments: [],
     matrix: { x: 2, y: 1 },
     name: 'commonsext',
     clearance: 1,
@@ -161,6 +174,7 @@ export default {
     ...defaults,
   },
   warehouse: {
+    moments: [],
     matrix: { x: 1, y: 1 },
     name: 'warehouse',
     clearance: 2,
@@ -168,6 +182,7 @@ export default {
     ...defaults,
   },
   lockers: {
+    moments: [],
     matrix: { x: 1, y: 2 },
     name: 'lockers',
     clearance: 1,
@@ -175,6 +190,7 @@ export default {
     ...defaults,
   },
   unloading: {
+    moments: [],
     matrix: { x: 0, y: 1 },
     name: 'unloading',
     clearance: 2,
@@ -182,6 +198,7 @@ export default {
     ...defaults,
   },
   alley5: {
+    moments: [],
     matrix: { x: 4, y: 0 },
     name: 'alley5',
     clearance: 2,
@@ -189,6 +206,7 @@ export default {
     ...defaults,
   },
   alley4: {
+    moments: [],
     matrix: { x: 3, y: 0 },
     name: 'alley4',
     clearance: 2,
@@ -196,6 +214,7 @@ export default {
     ...defaults,
   },
   alley3: {
+    moments: [],
     matrix: { x: 2, y: 0 },
     name: 'alley3',
     clearance: 1,
@@ -203,6 +222,7 @@ export default {
     ...defaults,
   },
   alley2: {
+    moments: [],
     matrix: { x: 1, y: 0 },
     name: 'alley2',
     clearance: 1,
@@ -210,6 +230,7 @@ export default {
     ...defaults,
   },
   alley1: {
+    moments: [],
     matrix: { x: 0, y: 0 },
     name: 'alley1',
     clearance: 2,
@@ -217,6 +238,7 @@ export default {
     ...defaults,
   },
   loading: {
+    moments: [],
     matrix: { x: 0, y: 2 },
     name: 'loading',
     clearance: 2,
@@ -224,6 +246,7 @@ export default {
     ...defaults,
   },
   admin1: {
+    moments: [],
     matrix: { x: 2, y: 4 },
     name: 'admin1',
     clearance: 2,
@@ -256,6 +279,7 @@ export default {
     ...defaults,
   },
   customs: {
+    moments: [],
     matrix: { x: 1, y: 3 },
     name: 'customs',
     clearance: 0,
@@ -319,6 +343,7 @@ export default {
     ...defaults,
   },
   reception: {
+    moments: ['steal_stash'],
     matrix: { x: 1, y: 4 },
     name: 'reception',
     clearance: 0,
@@ -380,9 +405,11 @@ export default {
         watcher: 'patrol',
       },
     },
+
     ...defaults,
   },
   grounds: {
+    moments: [],
     matrix: { x: 0, y: 4 },
     name: 'grounds',
     clearance: 0,
@@ -455,6 +482,7 @@ export default {
     ...defaults,
   },
   dorms: {
+    moments: [],
     matrix: { x: 4, y: 5 },
     name: 'dorms',
     clearance: 1,
@@ -462,6 +490,7 @@ export default {
     ...defaults,
   },
   gym: {
+    moments: [],
     matrix: { x: 3, y: 4 },
     name: 'gym',
     clearance: 1,
@@ -469,6 +498,7 @@ export default {
     ...defaults,
   },
   store: {
+    moments: [],
     matrix: { x: 4, y: 4 },
     name: 'store',
     clearance: 1,
@@ -476,6 +506,7 @@ export default {
     ...defaults,
   },
   infirmary: {
+    moments: [],
     matrix: { x: 3, y: 5 },
     name: 'infirmary',
     clearance: 2,

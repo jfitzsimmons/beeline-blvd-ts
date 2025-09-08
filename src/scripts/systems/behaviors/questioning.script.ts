@@ -5,18 +5,19 @@ import { crimeChecks } from '../npcs/crimeChecks'
 const { npcs, rooms, stations, behaviors, novels } = globalThis.game.world
 
 export default {
-  id: '',
+  id: 'behavior_questioning',
   recipient: '',
   agent: '',
   reason: '',
   type: '',
   turns: 0,
+  optionKeys: [],
 
   init(behavior: Behavior): BehaviorSystem {
     //TESTJP loop through types of behaviors
     //snitch, quest, injured, etc...
     // init blank
-    this.id = behavior.id
+    //this.id = behavior.id
     this.recipient = behavior.recipient
     this.agent = behavior.agent
     this.reason = behavior.reason

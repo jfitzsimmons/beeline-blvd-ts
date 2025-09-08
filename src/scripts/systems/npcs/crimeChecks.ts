@@ -3,7 +3,7 @@
  * seems to be npc relate. probabley all npc task related. soo....
  *
  */
-import { Storage, Traits } from '../../../types/state'
+import { Traits } from '../../../types/state'
 import { Effect, Consequence } from '../../../types/tasks'
 import {
   removeAdvantageous,
@@ -13,7 +13,6 @@ import {
 import { fx } from '../../utils/consts'
 import { roll_dice, ROLLODDS, rollSpecialDice } from '../../utils/dice'
 import { shuffle, clamp } from '../../utils/utils'
-import { AttendantProps, ThiefVictimProps } from '../../../types/ai'
 import { crimeSeverity } from '../../utils/ai'
 const { inventory, npcs } = globalThis.game.world
 
@@ -587,8 +586,8 @@ export function suspicious_check(chkr: string, chkd: string): Consequence {
 }
 
 export function seen_check(
-  t: ThiefVictimProps,
-  watcher: AttendantProps
+  t: string,
+  watcher: string
 ): { confront: boolean; type: string } {
   const target = t
   const { binaries: wb, skills: ws } = watcher.traits
@@ -630,11 +629,8 @@ export function seen_check(
     ? { confront: false, type: 'seen' }
     : { confront: false, type: 'neutral' }
 }
-export function take_check(
-  taker: ThiefVictimProps,
-  actor: ThiefVictimProps | Storage
-) {
-  const { skills, binaries } = taker.traits
+export function take_check(taker: string, actor: string | string) {
+  const { skills, binaries } = npcs.all[taker].traits
   const modifier = Math.round(
     skills.stealth - skills.charisma + binaries.passiveAggressive * -5
   )
@@ -644,25 +640,22 @@ export function take_check(
 
   let chest_item = null
   if (math.random() < 0.5) {
-    chest_item = removeValuable(actor.inventory)
+    chest_item = removeValuable(`npc_${actor}_inventory`)
   } else if (math.random() < 0.51) {
-    chest_item = removeAdvantageous(actor.inventory, skills)
+    chest_item = removeAdvantageous(`npc_${actor}_inventory`, taker)
   } else {
     chest_item = actor.inventory[math.random(0, actor.inventory.length)]
   }
   //prettier-ignore
-  print('CHKFUNCS::: TAKECHECK::', chest_item,'stolenFrom:',actor.name,'by',taker.name)
+  print('CHKFUNCS::: TAKECHECK::', chest_item,'stolenFrom:',actor,'by',taker)
   if (chest_item !== null) {
-    inventory.updateInventory(`${actor.name}_storage`, 'delete', chest_item)
-    inventory.updateInventory(`${taker.name}_wallet`, 'add', chest_item)
+    inventory.updateInventory(`${actor}_storage`, 'delete', chest_item)
+    inventory.updateInventory(`${taker}_wallet`, 'add', chest_item)
     // taker.addInvBonus(chest_item)
   }
 }
 
-export function stash_check(
-  stasher: ThiefVictimProps,
-  actor: ThiefVictimProps | Storage
-) {
+export function stash_check(stasher: string, actor: string | string) {
   const modifier = stasher.inventory.length - actor.inventory.length
   const advantage = actor.inventory.length < 2 || stasher.inventory.length > 5
   const result = rollSpecialDice(5, advantage, 3, 2) + modifier
@@ -686,10 +679,7 @@ export function stash_check(
   }
   // if victim == true ){ add_chest_bonus(n, chest_item) }
 }
-export function take_or_stash(
-  attendant: ThiefVictimProps,
-  actor: ThiefVictimProps | Storage
-) {
+export function take_or_stash(attendant: string, actor: string | string) {
   if (
     actor.inventory.length > 0 &&
     (attendant.inventory.length == 0 || math.random() < 0.5)
@@ -700,9 +690,9 @@ export function take_or_stash(
   }
 }
 export function witnessPlayer(
-  player: ThiefVictimProps,
-  watcher: AttendantProps
-  //storage?: Storage
+  player: string,
+  watcher: string
+  //storage?: string
 ): Consequence {
   const consequence =
     seen_check(player, watcher).type == 'seen'
@@ -722,9 +712,9 @@ export function witnessPlayer(
 //this.npcs.checks.stealCheck
 export function npcStealCheck(
   // this: WorldTasks,
-  target: ThiefVictimProps,
-  watcher: AttendantProps,
-  storage?: Storage
+  target: string,
+  watcher: string,
+  storage?: string
 ): null | string {
   // prettier-ignore
   // print('npcSTEALchkLOOT:::', target.name, target.currRoom, watcher.name, watcher.currRoom, loot[0])
@@ -808,8 +798,8 @@ export function npcStealCheck(
 
 export function npcAssaultCheck(
   // this: WorldTasks,
-  target: ThiefVictimProps,
-  watcher: AttendantProps
+  target: string,
+  watcher: string
 ): null | string {
   // prettier-ignore
   // print('npcSTEALchkLOOT:::', target.name, target.currRoom, watcher.name, watcher.currRoom, loot[0])

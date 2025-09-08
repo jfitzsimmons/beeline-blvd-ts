@@ -49,6 +49,7 @@ export interface Behavior {
   recipient: string
   reason: string
   turns: number
+  optionKeys: string[]
 
   //place: Selector
   // active: Selector
@@ -102,6 +103,7 @@ export interface Room {
   matrix: { x: number; y: number }
   name: string
   clearance: number
+  moments: string[]
   //swaps: Swaps
   actors: { [key: string]: Storage }
   stationKeys: string[]

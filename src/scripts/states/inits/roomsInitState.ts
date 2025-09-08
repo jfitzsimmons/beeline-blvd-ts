@@ -18,6 +18,7 @@ export const RoomsInitState: { [key: string]: Room } = {
     stationKeys: [],
     focus: false,
     onScreen: false,
+    moments: [],
   },
 }
 export const RoomsInitPriority = [

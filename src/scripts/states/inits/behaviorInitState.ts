@@ -8,5 +8,6 @@ export const BehaviorsInitState: Behaviors = {
     reason: '',
     type: '',
     turns: 0,
+    optionKeys: [],
   },
 }
