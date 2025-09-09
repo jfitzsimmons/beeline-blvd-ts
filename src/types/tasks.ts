@@ -136,5 +136,5 @@ export interface Moments {
 
 export interface Moment {
   id: string
-  moment: (u: string) => void
+  tick: () => void
 }

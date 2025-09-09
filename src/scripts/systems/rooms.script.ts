@@ -5,10 +5,11 @@ import roomsData from './initData/rooms'
 //quest
 import { subscribe, unsubscribe } from './dispatcher'
 import { load_adjacent, load_storage, loadNpcs } from './rooms/onScreen'
+import scheduleData from './initData/schedule'
 //import { RoomsInitLayout } from '../states/inits/roomsInitState'
 //import { quest_checker, questTasks } from '../listeners/quests/quests_main'
 
-const { rooms, inventory } = globalThis.game.world
+const { rooms, inventory, schedule } = globalThis.game.world
 
 export default {
   quests: {},
@@ -16,10 +17,15 @@ export default {
   dispatches: {},
   tick() {
     for (const [, room] of Object.entries(roomsData)) {
+      // schedule.moments
       // for (const moment of room.moments) {
       //testjpf need to have init schedule/moment data!!!
       //and loop trhough that
-      //schedule.initMoment(moment)
+      for (const moment of room.moments) {
+        //testjpf need to have init schedule/moment data!!!
+        // and loop trhough that
+        schedule.moments[moment].tick()
+      }
       //   }
     }
     // for (const [, room] of Object.entries(rooms.all)) {
@@ -36,7 +42,11 @@ export default {
       for (const [, storage] of Object.entries(room.actors)) {
         inventory.initStorage(storage)
       }
-
+      for (const moment of room.moments) {
+        //testjpf need to have init schedule/moment data!!!
+        // and loop trhough that
+        schedule.initMoment(scheduleData.moments[moment])
+      }
       //for every station, init check? have check data file? like unlovks
       //something like:
       /// quests.initCheck()
