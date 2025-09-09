@@ -10,30 +10,34 @@ import {
 import { surrounding_room_matrix } from '../utils/utils'
 import { RoomsInitState } from '../states/inits/roomsInitState'
 
-const { npcs, rooms } = globalThis.game.world
+const { npcs, rooms, behaviors } = globalThis.game.world
 
 export default {
+  //behaviors: { placement },
   tick() {
-    //testjpf need to formalize a questlistener
-    //
-    //TESTJPF then tutorialA, tutb will ahve things like
-    // .active(),.see(), that will be called in tick
-    // quests.loadCstenss(k)
+    for (const [, npc] of Object.entries(npcs.all)) {
+      npc.cooldown -= 1
+    }
+    //testjpf this is where i need to give thought to...
+    // mutliple actions with AP
+    //placing vs behavior. vs moments....
   },
   init() {
     for (const [, npc] of Object.entries(npcsData)) {
       npcs.initNpc(npc)
+      behaviors.addBehavior({
+        id: `place_${npc.name}_${npc.clan}`,
+        turns: Infinity,
+      })
       //questTasks[quest.id]()
       // quests.loadListeners(k)
     }
+
     ///testjpf
     // now activate new game stuff?
   },
   newGame() {
-    //testjpf
-    // load tutorial listeners
-    //make active
-    //when active send message with msgid of questid  and message of active
+    //npcs newenter and exit can go herer
   },
   makePriorityRoomList(n: string, target: { x: number; y: number }): string[] {
     const searcher = npcs.all[n]

@@ -27,5 +27,5 @@ export default {
     ...defaults,
   },
   grounds_unplaced: { name: 'unplaced', room: 'grounds', ...defaults },
-  infirmary_patient1: { name: 'patient1', room: 'infirmary', ...defaults },
+  infirmary_patient1_ward: { name: 'patient1', room: 'infirmary', ...defaults },
 }

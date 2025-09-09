@@ -92,7 +92,11 @@ export function groundsStealStash1() {
       : npcs.all[stations.all.grounds_aid.occupant],
   ])
 
-  if (suspect != null && watcher != null && suspect.cooldown < 1) {
+  if (
+    suspect != null &&
+    watcher != null &&
+    math.random() > suspect.cooldown * 0.1
+  ) {
     const lootSwitch =
       math.random() > 0.5
         ? actor.inventory.length > 0 && actor

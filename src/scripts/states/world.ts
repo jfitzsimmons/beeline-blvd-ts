@@ -127,6 +127,7 @@ export default class World {
   private onTurnEnter(): void {
     print('<<< ::: AI TURN HAS ENDED ::: >>>')
   }
+  //doesnt update on new game. from level testjpf
   private onTurnUpdate(): void {
     print('<<< ::: WORLDTurnUpdate() ::: >>>')
     /**

@@ -2,6 +2,7 @@ const defaults = {
   onScreen: false,
   focus: false,
   stationKeys: [],
+  wardKeys: [],
 }
 export default {
   security: {
@@ -9,7 +10,7 @@ export default {
     matrix: { x: 2, y: 5 },
     name: 'security',
     clearance: 3,
-    wards: { prisoner1: '', prisoner2: '', prisoner3: '', prisoner4: '' },
+    // wards: { prisoner1: '', prisoner2: '', prisoner3: '', prisoner4: '' },
     props: ['phone', 'locker'],
     actors: {
       phone: {
@@ -511,7 +512,7 @@ export default {
     name: 'infirmary',
     clearance: 2,
     props: ['drawer', 'computer', 'phone'],
-    wards: { patient1: '', patient2: '', patient3: '', patient4: '' },
+    // wards: { patient1: '', patient2: '', patient3: '', patient4: '' },
     actors: {
       drawer: {
         id: '',

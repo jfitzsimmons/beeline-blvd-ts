@@ -7,15 +7,18 @@ import { subscribe, unsubscribe } from './dispatcher'
 import { questTasks } from './tasks/quests'
 //import { npcTasks } from './npcs/crimeChecks'
 import questioning from './behaviors/questioning.script'
+import suspecting from './behaviors/suspecting.script'
+import placement from './behaviors/placement.script'
 import { novelDefaults } from './initData/novels'
 
-const { quests, behaviors, unlocks, novels } = globalThis.game.world
+const { quests, behaviors, unlocks, novels, npcs } = globalThis.game.world
 
 export default {
+  action: 1,
   quests: {},
   // TESTJPF !!! NOW unlocks / upgrades: ???
   dispatches: {},
-  behaviors: { questioning },
+  behaviors: { questioning, suspecting, placement },
   tick() {
     for (const [, quest] of Object.entries(quests.all)) {
       //testjpf need to formalize a questlistener
@@ -30,9 +33,10 @@ export default {
       // .active(),.see(), that will be called in tick
       // quests.loadCstenss(k)
     }
-    for (const [, behavior] of Object.entries(behaviors.all)) {
+    for (const [, behavior] of Object.entries(behaviors.all['action'])) {
       //testjpf need to formalize a questlistener
       behavior.tick()
+      npcs.all[behavior.agent].cooldown += 1
 
       //if (roomTasks[quest.id] !== null) questTasks.tick()
 

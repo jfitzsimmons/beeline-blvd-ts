@@ -17,6 +17,12 @@ export const npc_defaults: NpcDefaults = {
   currStation: '',
   race: '',
   behaviorKeys: [],
+  questKeys: [],
+  status: {
+    spent: false,
+    ignore: false,
+    immobile: false,
+  },
 }
 export default {
   mailroom01: {

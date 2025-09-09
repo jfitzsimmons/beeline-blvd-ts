@@ -4,7 +4,6 @@ import { Moment, Moments } from '../../types/tasks'
 import { MomentInitState } from './inits/questInitState'
 
 export default class WorldSchedule {
-  //  private _all: Moments
   private _moments: Moments
 
   constructor() {
@@ -17,7 +16,6 @@ export default class WorldSchedule {
     return this._moments
   }
 
-  //{ name = 'Bobby', age }: Person
   initMoment(moment: Moment) {
     const momentKey = moment.id
     this._moments[momentKey] = moment

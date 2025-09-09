@@ -2,7 +2,7 @@ import { Behavior, BehaviorSystem } from '../../types/state'
 //import { BehaviorsInitState } from './inits/behaviorInitState'
 
 export default class WorldBehaviors {
-  private _all: { [key: string]: BehaviorSystem } = {}
+  private _all: { [key: string]: { [key: string]: BehaviorSystem } } = {}
 
   checkpoint: string
   commands: { [key: string]: BehaviorSystem } = {}
@@ -22,7 +22,7 @@ export default class WorldBehaviors {
     return this._all
   }
   addBehavior({
-    id = 'behavior_npc_player',
+    id = 'action_npc_player',
     //recipient = 'player',
     //agent = 'security001',
     reason = 'theft',
@@ -44,8 +44,8 @@ export default class WorldBehaviors {
     //testjpf this needs to be the actual entity
     // probably need entity command object.
     //Id like to add behaviorKey to npc state as well
-
-    this._all[behaviorKey] = this.commands[type].init(
+    //testjpf can adjust _all: TYPE by splitting these keyys between move and action beahvior keys
+    this._all[type][behaviorKey] = this.commands[type].init(
       required
     ) as BehaviorSystem
   }
@@ -56,7 +56,7 @@ export default class WorldBehaviors {
     delete this._all[id]
   }
   updateBehavior(id: string): void {
-    this.all[id].turns += 4
+    this.all['action'][id].turns += 4
   }
   /**
   updateStatus(questKey: string, statusKey: string) {

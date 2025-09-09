@@ -125,7 +125,6 @@ export default class WorldNpcs {
     resetRoomPlaceCount()
   }
   private onNewExit(): void {
-    /** 
     this.sort_npcs_by_encounter()
     // TEST DATA DEFAULTS
     this.all.security001.behavior.active.children.push(
@@ -179,7 +178,6 @@ export default class WorldNpcs {
 
       npc.fsm.setState('active')
     }
-      */
   }
 
   private onPlaceUpdate(): void {
@@ -512,6 +510,7 @@ export default class WorldNpcs {
   }
   initNpc(n: Npc) {
     this.all[n.name] = new NpcState(n)
+    this.all[n.name].behaviorKeys.push(`place_${n.name}_${n.clan}`)
   }
 }
 

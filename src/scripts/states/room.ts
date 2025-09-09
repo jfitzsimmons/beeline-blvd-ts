@@ -3,7 +3,7 @@
 import StateMachine from './stateMachine'
 import { Inventories, Room } from '../../types/state'
 //import { RoomProps } from '../../types/world'
-import { aiActions } from '../ai/ai_main'
+//import { aiActions } from '../ai/ai_main'
 
 export default class RoomState {
   fsm: StateMachine
@@ -13,6 +13,7 @@ export default class RoomState {
   actors: Inventories
   props?: string[]
   stationKeys: string[]
+  wardKeys: string[] = []
   focus: boolean
   onScreen: boolean
   moments: string[]
@@ -50,12 +51,14 @@ export default class RoomState {
     // this.p.setFocused(this.name)
   }
   private onFocusUpdate(): void {
-    this.name as keyof typeof aiActions
-    if (this.name in aiActions) {
+    // this.name as keyof typeof aiActions
+    /*
+   if (this.name in aiActions) {
       print('##### FOCUSEDRoom::::: >>', this.name, 'AIACTIONS:: Running...')
       aiActions[this.name as keyof typeof aiActions].bind(this)()
       print('#### FOCUSEDRoom:::: >>', this.name, 'AIACTIONS:: Finished.')
     }
+      */
     this.fsm.setState('turn')
   }
   private onFocusEnd(): void {}
@@ -71,12 +74,14 @@ export default class RoomState {
   **/
   private onTurnEnter(): void {}
   private onTurnUpdate(): void {
+    /*
     this.name as keyof typeof aiActions
     if (this.name in aiActions) {
       print('##### Room::::: >>', this.name, 'AIACTIONS:: Running...')
       aiActions[this.name as keyof typeof aiActions].bind(this)()
       print('#### Room:::: >>', this.name, 'AIACTIONS:: Finished.')
     }
+      */
   }
   private onTurnExit(): void {}
 }

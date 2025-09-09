@@ -96,6 +96,7 @@ export default class WorldRooms {
     //import all files from folder into quests sys and initialize
     //need conditional to add id to roomState?
     let kr: keyof typeof this._all
+    //does nothing after new sys TeSTJPF!!!
     for (kr in this._all) this._all[kr].fsm.update(dt)
   }
   private onTurnExit(): void {}
@@ -108,5 +109,6 @@ export default class WorldRooms {
   }
   initStation(room: string, id: string) {
     this._all[room].stationKeys.push(id)
+    if (id.split('_')[2] == 'ward') this._all[room].wardKeys.push(id)
   }
 }
